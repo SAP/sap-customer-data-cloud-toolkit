@@ -1,0 +1,42 @@
+.fd-side-nav .fd-side-nav__main-navigation {
+  height: calc(100vh - 75px) !important;
+  overflow: scroll !important;
+}
+
+.customer-data-label {
+  color: #fff;
+}
+
+.container[_ngcontent-kye-c103] {
+  position: relative;
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+}
+
+.app-area[_ngcontent-kye-c103] {
+  flex-grow: 1;
+  flex-basis: 70%;
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+}
+
+.app-area[_ngcontent-kye-c103] bread-crumbs {
+  padding: 0.5rem 1rem 0 2rem;
+  background-color: var(--sapBaseColor);
+}
+
+app-not-found {
+  background-image: url(../images/not-found.png);
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-color: var(--sapBaseColor);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 3rem;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./popup.css" />
+</head>
+
+<body>
+  <div class="fd-bar fd-bar--header fd-dialog__header">
+    <span aria-label="SAP" class="fd-shellbar__logo fd-shellbar__logo--image-replaced"></span>
+    <h1 class="fd-title fd-title--h2" style="text-align: center; width: 100%;">
+      CDC Tools
+    </h1>
+  </div>
+
+  <div class="fd-dialog__body">
+    <div class="fd-form-item">
+      <label for="userKey"
+        class="fd-form-label__wrapper fd-form-label__wrapper--inline-help fd-form-label__wrapper--inline-help--after">
+        <span class="fd-form-label">User key:</span>
+      </label>
+      <input id="userKey" name="userKey" placeholder="" class="fd-input ng-pristine ng-invalid ng-touched">
+    </div>
+    <div class="fd-form-item">
+      <label for="secretKey"
+        class="fd-form-label__wrapper fd-form-label__wrapper--inline-help fd-form-label__wrapper--inline-help--after">
+        <span class="fd-form-label">Secret key:</span>
+      </label>
+      <input type="password" id="secretKey" name="secretKey" placeholder=""
+        class="fd-input ng-pristine ng-invalid ng-touched">
+    </div>
+  </div>
+
+  <script src="./popup.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+/* 
+  Get all styles: 
+copy(querySelectorAllShadows('style').reduce((fullStr, style) => fullStr + style.innerHTML.replaceAll("\n", "")).replaceAll("[object HTMLStyleElement]", ""));
+  */

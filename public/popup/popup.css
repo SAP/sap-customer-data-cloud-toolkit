@@ -1,0 +1,211 @@
+
+body {
+  width: 20rem;
+  margin: 0;
+}
+
+.fd-form-item {
+  font-size: .875rem;
+  font-size: var(--sapFontSize,.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight,1.4);
+  color: #32363a;
+  color: var(--sapTextColor,#32363a);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily,"72","72full",Arial,Helvetica,sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  position: relative;
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+}
+
+.fd-form-label {
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily, "72", "72full", Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: -moz-fit-content;
+  width: fit-content;
+  position: relative;
+  max-width: 100%;
+  font-size: .875rem;
+  font-size: var(--sapFontSize, .875rem);
+  color: #6a6d70;
+  color: var(--sapContent_LabelColor, #6a6d70);
+  margin-right: 0.5rem;
+  cursor: text;
+  align-self: flex-start;
+}
+
+.fd-input {
+  font-size: .875rem;
+  font-size: var(--sapFontSize, .875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: var(--sapTextColor, #32363a);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily, "72", "72full", Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #32363a;
+  color: var(--sapField_TextColor, #32363a);
+  background-color: #fff;
+  background-color: var(--sapField_Background, #fff);
+  border-style: solid;
+  border-width: 0.0625rem;
+  border-width: var(--sapField_BorderWidth, .0625rem);
+  border-color: #89919a;
+  border-color: var(--sapField_BorderColor, #89919a);
+  border-radius: 0.125rem;
+  border-radius: var(--sapField_BorderCornerRadius, .125rem);
+  outline: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  min-width: 2.75rem;
+  width: 100%;
+  height: 2.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding: 0 0.625rem;
+  z-index: 1;
+  cursor: text;
+  overflow: hidden;
+  text-shadow: none;
+  text-shadow: var(--fdInput_Text_Shadow, none);
+}
+
+.fd-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+  font-size: .875rem;
+  font-size: var(--sapFontSize,.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight,1.4);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily,"72","72full",Arial,Helvetica,sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  color: #32363a;
+  color: var(--sapTextColor,#32363a);
+}
+
+.fd-title--h1 {
+  font-size: 2.25rem;
+  font-size: var(--sapFontHeader1Size,2.25rem);
+}
+
+.fd-title--h2 {
+  font-size: 1.5rem;
+  font-size: var(--sapFontHeader2Size,1.5rem);
+}
+
+.fd-title--h3 {
+  font-size: 1.25rem;
+  font-size: var(--sapFontHeader3Size,1.25rem);
+}
+
+/* Dialog */
+
+.fd-bar--header {
+  height: 2.5rem;
+  background: #fff;
+  background: var(--sapPageHeader_Background, #fff);
+  box-shadow: 0 0 0.25rem #00000026, inset 0 -0.0625rem #d9d9d9;
+  box-shadow: var(--sapContent_HeaderShadow, 0 0 .25rem 0 rgba(0, 0, 0, .15), inset 0 -0.0625rem 0 0 #d9d9d9);
+  z-index: 1;
+}
+
+.fd-bar {
+  font-size: .875rem;
+  font-size: var(--sapFontSize, .875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily, "72", "72full", Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  height: 2.5rem;
+  background: #fff;
+  background: var(--sapPageHeader_Background, #fff);
+  box-shadow: 0 0 0.25rem #00000026, inset 0 -0.0625rem #d9d9d9;
+  box-shadow: var(--sapContent_HeaderShadow, 0 0 .25rem 0 rgba(0, 0, 0, .15), inset 0 -0.0625rem 0 0 #d9d9d9);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+}
+
+.fd-dialog__footer.fd-bar, .fd-dialog__header.fd-bar {
+  padding: 1rem 1rem;
+  height: auto;
+}
+
+.fd-dialog__body {
+  font-size: .875rem;
+  font-size: var(--sapFontSize, .875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: "72","72full",Arial,Helvetica,sans-serif;
+  font-family: var(--sapFontFamily, "72", "72full", Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  position: relative;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-radius: 0.25rem;
+  border-radius: var(--sapElement_BorderCornerRadius, .25rem);
+}
+
+.fd-dialog__body {
+  padding: 24px 16px!important;
+}
+
+/* Logo */
+.fd-shellbar__logo--image-replaced {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MTIuMzggMjA0Ij48ZGVmcz48c3R5bGU+LmNscy0xLC5jbHMtMntmaWxsLXJ1bGU6ZXZlbm9kZH0uY2xzLTF7ZmlsbDp1cmwoI2xpbmVhci1ncmFkaWVudCl9LmNscy0ye2ZpbGw6I2ZmZn08L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMjA2LjE5IiB4Mj0iMjA2LjE5IiB5Mj0iMjA0IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDBiOGYxIi8+PHN0b3Agb2Zmc2V0PSIuMDIiIHN0b3AtY29sb3I9IiMwMWI2ZjAiLz48c3RvcCBvZmZzZXQ9Ii4zMSIgc3RvcC1jb2xvcj0iIzBkOTBkOSIvPjxzdG9wIG9mZnNldD0iLjU4IiBzdG9wLWNvbG9yPSIjMTc3NWM4Ii8+PHN0b3Agb2Zmc2V0PSIuODIiIHN0b3AtY29sb3I9IiMxYzY1YmYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxZTVmYmIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48dGl0bGU+U0FQX2dyYWRfUl9zY3JuX1plaWNoZW5mbMOkY2hlIDE8L3RpdGxlPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTAgMjA0aDIwOC40MUw0MTIuMzggMEgwdjIwNCIvPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTI0NC43MyAzOC4zNmgtNDAuNnY5Ni41MmwtMzUuNDYtOTYuNTVoLTM1LjE2bC0zMC4yNyA4MC43MkMxMDAgOTguNyA3OSA5MS42NyA2Mi40IDg2LjQgNTEuNDYgODIuODkgMzkuODUgNzcuNzIgNDAgNzJjLjA5LTQuNjggNi4yMy05IDE4LjM4LTguMzggOC4xNy40MyAxNS4zNyAxLjA5IDI5LjcxIDhsMTQuMS0yNC41NUM4OS4wNiA0MC40MiA3MSAzNi4yMSA1Ni4xNyAzNi4xOWgtLjA5Yy0xNy4yOCAwLTMxLjY4IDUuNi00MC42IDE0LjgzQTM0LjIzIDM0LjIzIDAgMCAwIDUuNzcgNzQuN0M1LjU0IDg3LjE1IDEwLjExIDk2IDE5LjcxIDEwM2M4LjEgNS45NCAxOC40NiA5Ljc5IDI3LjYgMTIuNjIgMTEuMjcgMy40OSAyMC40NyA2LjUzIDIwLjM2IDEzQTkuNTcgOS41NyAwIDAgMSA2NSAxMzVjLTIuODEgMi45LTcuMTMgNC0xMy4wOSA0LjEtMTEuNDkuMjQtMjAtMS41Ni0zMy42MS05LjU5TDUuNzcgMTU0LjQyYTkzLjc3IDkzLjc3IDAgMCAwIDQ2IDEyLjIyaDIuMTFjMTQuMjQtLjI1IDI1Ljc0LTQuMzEgMzQuOTItMTEuNzEuNTMtLjQxIDEtLjg0IDEuNDktMS4yOGwtNC4xMiAxMC44NUgxMjNsNi4xOS0xOC44MmE2Ny40NiA2Ny40NiAwIDAgMCAyMS42OCAzLjQzIDY4LjMzIDY4LjMzIDAgMCAwIDIxLjE2LTMuMjVsNiAxOC42NGg2MC4xNHYtMzloMTMuMTFjMzEuNzEgMCA1MC40Ni0xNi4xNSA1MC40Ni00My4yIDAtMzAuMTEtMTguMjItNDMuOTQtNTcuMDEtNDMuOTR6TTE1MC45MSAxMjFhMzYuOTMgMzYuOTMgMCAwIDEtMTMtMi4yOGwxMi44Ny00MC41OWguMjJsMTIuNjUgNDAuNzFhMzguNSAzOC41IDAgMCAxLTEyLjc0IDIuMTZ6bTk2LjItMjMuMzNoLTguOTRWNjQuOTFoOC45NGMxMS45MyAwIDIxLjQ0IDQgMjEuNDQgMTYuMTQgMCAxMi42LTkuNTEgMTYuNTctMjEuNDQgMTYuNTciLz48L3N2Zz4=);
+  width: 3rem;
+  height: 1.5rem;
+  display: inline-block;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 20px;
+  left: 15px;
+}

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/images/icon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/icon-128.png" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  <title>CDC Automation Tools</title>
+
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-variables.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-0.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-1.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-2.css">
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+
+  <div class="demo-environment">
+    <app-root _nghost-kye-c103="">
+      <fd-busy-indicator _ngcontent-kye-c103="" role="presentation" tabindex="-1" aria-busy="false" aria-live="polite"
+        class="fd-busy-indicator__container">
+        <shell-bar _ngcontent-kye-c103="" _nghost-kye-c172="">
+          <fd-shellbar _ngcontent-kye-c172="">
+            <div class="fd-shellbar fd-shellbar--m">
+              <div class="fd-shellbar__group fd-shellbar__group--product">
+                <button _ngcontent-kye-c172="" fd-shellbar-side-nav="" fd-button="" glyph="menu2" fdtype="transparent"
+                  class="fd-button fd-button--transparent side-nav__button fd-shellbar__button fd-shellbar-side-nav-control"
+                  type="button">
+                  <fd-icon role="presentation" class="sap-icon--menu2"></fd-icon>
+                </button>
+                <fd-shellbar-logo _ngcontent-kye-c172=""><span _ngcontent-kye-c172="" aria-label="SAP"
+                    class="fd-shellbar__logo fd-shellbar__logo--image-replaced"></span></fd-shellbar-logo>
+                <div class="fd-shellbar__product">
+                  <div _ngcontent-kye-c172="" class="customer-data-label">
+                    Customer Data Cloud
+                  </div>
+                </div>
+                <fd-shellbar-subtitle _ngcontent-kye-c172="">
+                  <div class="fd-shellbar__subtitle">
+                    <fd-info-label _ngcontent-kye-c172="" title="Tenant ID" class="fd-info-label">
+                      <span class="fd-info-label__text" title="Tenant ID">000000000999999999</span>
+                    </fd-info-label>
+                  </div>
+                </fd-shellbar-subtitle>
+              </div>
+              <fd-shellbar-actions _ngcontent-kye-c172="" class="fd-shellbar__group fd-shellbar__group--actions">
+                <div class="fd-shellbar__action fd-shellbar__action--mobile">
+                  <fd-shellbar-actions-mobile>
+                    <div class="fd-shellbar-collapse">
+                      <div class="fd-shellbar-collapse--control">
+                        <button fd-button="" glyph="overflow" class="fd-button fd-button--standard fd-shellbar__button"
+                          type="button" aria-haspopup="true" aria-expanded="false">
+                          <fd-icon role="presentation" class="sap-icon--overflow"></fd-icon>
+                        </button>
+                      </div>
+                      <fd-menu> </fd-menu>
+                    </div>
+                  </fd-shellbar-actions-mobile>
+                </div>
+                <div class="fd-shellbar__action fd-shellbar__action--desktop">
+                  <console-switcher _ngcontent-kye-c172="" class="header-menu-item" _nghost-kye-c163="">
+                  </console-switcher>
+                  <global-search _ngcontent-kye-c172="" _nghost-kye-c164="" class="fd-shellbar__action">
+                    <fd-popover _ngcontent-kye-c164="" placement="bottom-end" id="fd-popover-0"
+                      class="fd-popover-custom">
+                      <div cdkoverlayorigin="" class="fd-popover__control">
+                        <fd-popover-control _ngcontent-kye-c164="">
+                          <fd-input-group _ngcontent-kye-c164="" glyph="search" placement="after"
+                            placeholder="Search..." tabindex="0" class="ng-untouched ng-pristine ng-valid">
+                            <div class="fd-input-group fd-shellbar__input-group">
+                              <input fd-input-group-input="" id="fd-input-group-input-id-0" type="text"
+                                aria-labelledby="" placeholder="Search..." aria-required="false"
+                                class="fd-input fd-input-group__input ng-untouched ng-pristine ng-valid fd-shellbar__input-group__input" />
+
+                              <span fd-input-group-addon=""
+                                class="fd-input-group__addon fd-input-group__addon--button fd-shellbar__input-group__addon"><button
+                                  fd-button="" type="button" fdtype="transparent"
+                                  class="fd-button fd-button--transparent fd-input-group__button fd-shellbar__button"
+                                  id="fd-input-group-button-id-0" tabindex="0" title="search"
+                                  aria-controls="[object Object]" aria-label="search" aria-expanded="false">
+                                  <fd-icon role="presentation" class="sap-icon--search"></fd-icon>
+                                </button></span>
+                            </div>
+                          </fd-input-group>
+                        </fd-popover-control>
+                      </div>
+                    </fd-popover>
+                  </global-search>
+                  <partner-site-switcher _ngcontent-kye-c172="" class="header-menu-item" _nghost-kye-c165="">
+                    <fd-popover _ngcontent-kye-c165="" placement="bottom-start" id="fd-popover-1"
+                      class="fd-popover-custom ng-untouched ng-pristine ng-pending">
+                      <div cdkoverlayorigin="" class="fd-popover__control">
+                        <fd-popover-control _ngcontent-kye-c165=""><button _ngcontent-kye-c165="" fd-button=""
+                            glyph="dimension" fd-inline-help="Partner/Site Switcher"
+                            class="fd-button fd-button--standard fd-shellbar__button fd-inline-help__trigger"
+                            tabindex="0" type="button">
+                            <fd-icon role="presentation" class="sap-icon--dimension"></fd-icon>
+                          </button></fd-popover-control>
+                      </div>
+                    </fd-popover>
+                  </partner-site-switcher>
+                  <academic-dropdown _ngcontent-kye-c172="" class="header-menu-item">
+                    <fd-popover placement="bottom-end" id="fd-popover-2" class="fd-popover-custom">
+                      <div cdkoverlayorigin="" class="fd-popover__control">
+                        <fd-popover-control><button fd-button="" glyph="co" fd-inline-help="Tools"
+                            class="fd-button fd-button--standard fd-shellbar__button fd-inline-help__trigger"
+                            tabindex="0" type="button">
+                            <fd-icon role="presentation" class="sap-icon--co"></fd-icon>
+                          </button></fd-popover-control>
+                      </div>
+                    </fd-popover>
+                  </academic-dropdown>
+                  <notifications _ngcontent-kye-c172="" class="header-menu-item" _nghost-kye-c168=""><button
+                      _ngcontent-kye-c168="" fd-button="" glyph="bell" fd-inline-help="Notifications"
+                      class="fd-button fd-button--standard is-disabled fd-shellbar__button header-menu-item fd-popover-custom--disabled fd-inline-help__trigger"
+                      type="button" disabled="true">
+                      <fd-icon role="presentation" class="sap-icon--bell"></fd-icon>
+                    </button> </notifications><button _ngcontent-kye-c172="" fd-button="" glyph="question-mark"
+                    fd-inline-help="Documentation"
+                    class="fd-button fd-button--standard is-disabled fd-shellbar__button header-menu-item fd-inline-help__trigger fd-popover-custom--disabled"
+                    type="button" disabled="true">
+                    <fd-icon role="presentation" class="sap-icon--question-mark"></fd-icon>
+                  </button><button _ngcontent-kye-c172="" fd-inline-help="Built-in Support"
+                    class="fd-button fd-button--standard fd-shellbar__button header-menu-item fd-inline-help__trigger">
+                    <fd-icon _ngcontent-kye-c172="" role="presentation" glyph="headset" class="sap-icon--headset">
+                    </fd-icon>
+                  </button>
+
+                  <feedback-tool _ngcontent-kye-c172="">
+                    <fd-busy-indicator size="s" role="presentation" tabindex="-1" aria-busy="false" aria-live="polite"
+                      class="fd-busy-indicator__container fd-busy-indicator__container--inline"><button fd-button=""
+                        glyph="feedback" fd-inline-help="Give Feedback"
+                        class="fd-button fd-button--standard fd-shellbar__button header-menu-item fd-inline-help__trigger"
+                        type="button">
+                        <fd-icon role="presentation" class="sap-icon--feedback"></fd-icon>
+                      </button>
+                    </fd-busy-indicator>
+                  </feedback-tool>
+                  <user-menu _ngcontent-kye-c172="" class="header-menu-item" _nghost-kye-c171="">
+                    <fd-popover _ngcontent-kye-c171="" placement="bottom-end" id="fd-popover-3"
+                      class="fd-popover-custom">
+                      <div cdkoverlayorigin="" class="fd-popover__control">
+                        <fd-popover-control _ngcontent-kye-c171="">
+                          <fd-avatar _ngcontent-kye-c171="" size="xs" fd-inline-help="My Account"
+                            class="fd-avatar fd-avatar--xs fd-avatar--circle fd-inline-help__trigger" tabindex="0"
+                            id="fd-avatar-0" aria-label="Luís Marques" role="img">-
+
+                            <div style="display: none"></div>
+                          </fd-avatar>
+                        </fd-popover-control>
+                      </div>
+                    </fd-popover>
+                  </user-menu>
+                </div>
+              </fd-shellbar-actions>
+            </div>
+          </fd-shellbar>
+        </shell-bar>
+        <div _ngcontent-kye-c103="" class="container">
+          <side-nav _ngcontent-kye-c103="" _nghost-kye-c173="">
+            <div _ngcontent-kye-c173="" class="side-nav">
+              <fd-side-nav _ngcontent-kye-c173="">
+                <nav class="fd-side-nav">
+                  <div fd-side-nav-main="" class="fd-side-nav__main-navigation">
+                    <fd-prepared-nested-list>
+                      <ul fd-nested-list="" class="level-1 fd-nested-list" aria-hidden="false">
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/site-selector"
+                            tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                              class="fd-nested-list__icon sap-icon--product" role="presentation"></span>
+                            <span fd-nested-list-title="" class="fd-nested-list__title">Sites</span>
+                          </a>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/dashboard/profiles"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--account" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Identity Access</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/dashboard/profiles"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Profiles</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/dashboard/identity-groups" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Groups</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link=""
+                              href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app" tabindex="0"
+                              class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--create-session" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">User Interfacing</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">UI Builder</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/email-templates"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Email Templates</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/identity/connect"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--user-settings" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Identity</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/identity/connect"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Connect</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/identity/security"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Security</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/orchestrate/etl-app"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--split" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Orchestrate</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/orchestrate/etl-app"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Dataflows</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/orchestrate/web-hooks" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Webhooks</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/orchestrate/extensions-engine-web-app"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Extensions</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link=""
+                              href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent-vault" tabindex="0"
+                              class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--shield" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Data Privacy</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent-vault" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Consent Vault</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/reports/user-identities"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--bar-chart" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Reports</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/reports/user-identities" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">User Identities</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/reports/identity-query" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Identity Query Tool</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/reports/customer-insights" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Customer Insights</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
+                            <a fd-nested-list-link=""
+                              href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/site-groups-web-app" tabindex="0"
+                              class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--wrench" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Advanced</span>
+                            </a>
+
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/site-groups-web-app" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Site Groups</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/schema-editor-web" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Accounts Schema</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/group-management-web" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Group Model
+                                    Management</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/certificate-provisioning"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Certificate
+                                    Provisioning</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/copy-configuration" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Copy Configuration</span>
+                                </a>
+                              </li>
+
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/advanced/web-sdk-configuration-app"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Web SDK
+                                    Configuration</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
+                        </li>
+                      </ul>
+                    </fd-prepared-nested-list>
+                  </div>
+
+                  <div fd-side-nav-utility="" class="fd-side-nav__utility">
+                    <fd-prepared-nested-list>
+                      <ul fd-nested-list="" class="level-1 fd-nested-list" aria-hidden="false">
+                        <li fd-nested-list-item="" class="fd-nested-list__item">
+                          <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/system-status"
+                            tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                              class="fd-nested-list__icon sap-icon--action-settings" role="presentation"></span>
+                            <span fd-nested-list-title="" class="fd-nested-list__title">Administration</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </fd-prepared-nested-list>
+                  </div>
+                </nav>
+              </fd-side-nav>
+            </div>
+          </side-nav>
+          <div _ngcontent-kye-c103="" class="app-area">
+            <bread-crumbs _ngcontent-kye-c103="" _nghost-kye-c110="">
+              <fd-breadcrumb _ngcontent-kye-c110="" class="fd-breadcrumb">
+                <fd-menu closeonescapekey="true"> </fd-menu>
+
+                <fd-breadcrumb-item _ngcontent-kye-c110="" class="fd-breadcrumb__item"><a _ngcontent-kye-c110=""
+                    fd-breadcrumb-link="" class="fd-breadcrumb__link"
+                    href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/site-selector">
+                    CDC Tools
+                  </a></fd-breadcrumb-item>
+                <fd-breadcrumb-item _ngcontent-kye-c110="" class="fd-breadcrumb__item"><a _ngcontent-kye-c110=""
+                    fd-breadcrumb-link="" class="fd-breadcrumb__link"
+                    href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/site-settings">
+                    dev.cdc-tools
+                  </a>
+                </fd-breadcrumb-item>
+              </fd-breadcrumb>
+            </bread-crumbs>
+            <router-outlet _ngcontent-kye-c103=""></router-outlet>
+            <app-not-found _nghost-kye-c102="">
+              <h2 _ngcontent-kye-c102="">Page not available</h2>
+              <div _ngcontent-kye-c102="" class="not-found-msg">
+                This is a development environment only for CDC Automation Tools.
+              </div>
+              <!-- <div _ngcontent-kye-c102="" class="not-found-msg">
+                The currently active partner or site does not have access to
+                this page.
+              </div> -->
+              <!-- <div _ngcontent-kye-c102="" class="not-found-msg">
+                Please select another page from the left-hand menu, or choose
+                a different parter/site from the Site Selector at the top of
+                the page.
+              </div> -->
+            </app-not-found>
+          </div>
+        </div>
+      </fd-busy-indicator>
+    </app-root>
+  </div>
+  <div id="root"></div>
+</body>
+
+</html>
