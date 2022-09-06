@@ -6,9 +6,8 @@ node() {
         setupCommonPipelineEnvironment script:this
     }
 
-    stage('info') {
+    stage('environment info') {
         sh 'env'
-        sh 'node -v'
     }
 
     stage('build') {
@@ -20,8 +19,9 @@ node() {
     //}
 
     stage('SonarQube report') {
-        withEnv(['JAVA_HOME=/var/jenkins_home/tools/hudson.model.JDK/jdk11/jdk-11']) {
-            def scannerHome = tool 'cdctoolbox';
+        def scannerHome = tool 'cdctoolbox';
+        def nodeHome = tool 'nodejs16';
+        withEnv(["JAVA_HOME=${JAVA_HOME}/jdk-11", "PATH=${nodeHome}/bin:${PATH}"]) {
             withSonarQubeEnv('SAP SonarQube Enterprise') {
                 sh "${scannerHome}/bin/sonar-scanner"
             }

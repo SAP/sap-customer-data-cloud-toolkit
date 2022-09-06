@@ -10,7 +10,7 @@ steps:
     excludeFolders: ''
     failBuildOnNewResults: false
     failBuildOnNewSeverity: 'MEDIUM'
-    filterPattern: '!**/_cvs/**/*, !Checkmarx/Reports/*.*, !**/*_test.js, **/*.js **/*.jsx'
+    filterPattern: '!**/_cvs/**/*, !Checkmarx/Reports/*.*, **/*.js **/*.jsx'
     fullScanCycle: 5
     generatePdfReport: true
     includeOpenSourceFolders: ''
