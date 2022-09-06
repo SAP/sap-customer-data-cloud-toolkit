@@ -6,6 +6,11 @@ node() {
         setupCommonPipelineEnvironment script:this
     }
 
+    stage('info') {
+        sh 'env'
+        sh 'node -v'
+    }
+
     stage('build') {
         mtaBuild script: this
     }
