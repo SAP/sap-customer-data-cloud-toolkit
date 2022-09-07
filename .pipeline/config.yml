@@ -17,7 +17,7 @@ steps:
     incremental: false
     osaArchiveIncludePatterns: '*.zip, *.war, *.ear, *.tgz'
     osaInstallBeforeScan: false
-    preset: 'SAP_Corp_JavaScript_Client_UI5' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
     sastEnabled: true
     serverUrl: 'https://cx.wdf.sap.corp:443'
     sourceEncoding: '9'
