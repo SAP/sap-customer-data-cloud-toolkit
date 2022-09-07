@@ -10,7 +10,8 @@ steps:
     excludeFolders: ''
     failBuildOnNewResults: false
     failBuildOnNewSeverity: 'MEDIUM'
-    filterPattern: '**/*.js **/*.jsx src/*.js src/*.css scripts/*.js src/utils/*.js src/components/sites-table/sites-table.component.jsx'
+    filterPattern: 'src/**/*.js src/*, **/*.ts, **/*.html **/*'
+    #filterPattern: '**/*.js **/*.jsx src/*.js src/*.css scripts/*.js src/utils/*.js src/components/sites-table/sites-table.component.jsx, **/*.ts, **/*.html'
     #filterPattern: '!**/_cvs/**/*, !Checkmarx/Reports/*.*, **/*.js **/*.jsx'
     fullScanCycle: 5
     generatePdfReport: true
