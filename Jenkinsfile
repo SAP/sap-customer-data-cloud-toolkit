@@ -10,13 +10,13 @@ node() {
         sh 'env'
     }
 
-    stage('build') {
-        mtaBuild script: this
-    }
-    
-    //stage ('build') {
-    //    npmExecuteScripts script:this
+    //stage('build') {
+    //    mtaBuild script: this
     //}
+    
+    stage ('build') {
+        npmExecuteScripts script:this
+    }
 
     stage('SonarQube report') {
         def scannerHome = tool 'cdctoolbox';
