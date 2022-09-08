@@ -1,0 +1,32 @@
+general:
+  buildTool: 'npm'
+steps:
+  mtaBuild:
+    buildTarget: 'CF'
+  checkmarxExecuteScan:
+    avoidDuplicateProjectScans: false
+    projectName: cdc-tools-chrome-extension
+    checkmarxCredentialsId: f262c01d-ba51-4591-afcb-8c5c77e9d4c2
+    excludeFolders: ''
+    failBuildOnNewResults: false
+    failBuildOnNewSeverity: 'MEDIUM'
+    fullScanCycle: 5
+    generatePdfReport: true
+    includeOpenSourceFolders: ''
+    incremental: false
+    osaArchiveIncludePatterns: '*.zip, *.war, *.ear, *.tgz'
+    osaInstallBeforeScan: false
+    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    sastEnabled: true
+    serverUrl: 'https://cx.wdf.sap.corp:443'
+    sourceEncoding: '1'
+    teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program' # 502
+    vulnerabilityThresholdResult: 'FAILURE'
+    waitForResultsEnabled: true
+  cloudFoundryDeploy:
+    deployTool: 'mtaDeployPlugin'
+    deployType: 'standard'
+    cloudFoundry:
+      org: '<your-organisation>'
+      space: '<your-space>'
+      credentialsId: 'CF_CREDENTIALSID'
