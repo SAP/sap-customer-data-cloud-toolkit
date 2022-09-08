@@ -28,6 +28,12 @@ node() {
         }
     }
 
+    stage("Check sonarQube result") {
+        timeout(time: 1, unit: 'HOURS') {
+          waitForQualityGate abortPipeline: true
+        }
+    }
+
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
