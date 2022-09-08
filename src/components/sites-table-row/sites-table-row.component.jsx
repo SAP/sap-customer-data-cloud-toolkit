@@ -22,7 +22,12 @@ import '@ui5/webcomponents-icons/dist/overflow.js';
 
 import dataCenters from '../../dataCenters.json';
 
+import { useDispatch } from 'react-redux'
+import { deleteParent, updateParent, addChild, deleteChild, updateChild } from '../../redux/siteSlice';
+
+
 const SitesTableRow = ({
+  parentSiteTempId,
   tempId,
   baseDomain,
   description,
@@ -40,6 +45,8 @@ const SitesTableRow = ({
     // dataset contains all attributes that were passed with the data- prefix.
     console.log(event.detail.selectedOption.dataset.value);
   };
+
+  const dispatch = useDispatch()
 
   return (
     <Fragment>
@@ -127,7 +134,11 @@ design="Transparent"
                   icon="overflow"
                   design="Transparent"
                   onClick={() => {
-                    setActionSheetOpen(true);
+                    if (actionSheetOpen) {
+                      setActionSheetOpen(false);
+                    } else {
+                      setActionSheetOpen(true);
+                    }
                   }}
                   id={`actionSheetOpener${tempId}`}
                 ></Button>
@@ -139,8 +150,8 @@ design="Transparent"
                     setActionSheetOpen(false);
                   }}
                 >
-                  <Button>Create Child Site</Button>
-                  <Button>Delete</Button>
+                  <Button onClick={() => { dispatch(addChild({ tempId })) }}>Create Child Site</Button>
+                  <Button onClick={() => { dispatch(deleteParent({ tempId })) }}>Delete</Button>
                 </ActionSheet>
               </>
             ) : (
@@ -149,7 +160,11 @@ design="Transparent"
                   icon="overflow"
                   design="Transparent"
                   onClick={() => {
-                    setActionSheetOpen(true);
+                    if (actionSheetOpen) {
+                      setActionSheetOpen(false);
+                    } else {
+                      setActionSheetOpen(true);
+                    }
                   }}
                   id={`actionSheetOpener${tempId}`}
                 ></Button>
@@ -161,7 +176,7 @@ design="Transparent"
                     setActionSheetOpen(false);
                   }}
                 >
-                  <Button>Delete</Button>
+                  <Button onClick={() => { dispatch(deleteChild({ parentSiteTempId, tempId })) }}>Delete</Button>
                 </ActionSheet>
               </>
             )}

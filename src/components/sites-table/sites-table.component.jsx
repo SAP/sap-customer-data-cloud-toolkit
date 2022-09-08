@@ -18,57 +18,61 @@ import '@ui5/webcomponents-icons/dist/add.js';
 import '@ui5/webcomponents-icons/dist/decline.js';
 import '@ui5/webcomponents-icons/dist/overflow.js';
 
-import { generateUUID } from '../../utils/generateUUID';
+import { useSelector, useDispatch } from 'react-redux'
 
 import SitesTableRow from '../sites-table-row/sites-table-row.component';
+import { addParent } from '../../redux/siteSlice';
 
 const SitesTable = () => {
-  const sitesStructure = [
-    {
-      tempId: generateUUID(),
-      baseDomain: 'parent.dev.website.com',
-      description: 'development parent',
-      dataCenter: 'EU',
-      childSites: [
-        {
-          tempId: generateUUID(),
-          baseDomain: 'dev.website.com',
-          description: 'development',
-          dataCenter: 'EU',
-        },
-      ],
-    },
-    {
-      tempId: generateUUID(),
-      baseDomain: 'stag.website.com',
-      description: 'staging',
-      dataCenter: 'EU',
-    },
-    {
-      tempId: generateUUID(),
-      baseDomain: 'mig.website.com',
-      description: 'migration',
-      dataCenter: 'EU',
-    },
-    {
-      tempId: generateUUID(),
-      baseDomain: 'prod.eu.website.com',
-      description: 'production Europe',
-      dataCenter: 'EU',
-    },
-    {
-      tempId: generateUUID(),
-      baseDomain: 'prod.us.website.com',
-      description: 'production United States',
-      dataCenter: 'US',
-    },
-    {
-      tempId: generateUUID(),
-      baseDomain: 'prod.au.website.com',
-      description: 'production Japan',
-      dataCenter: 'AU',
-    },
-  ];
+  const sitesStructure = useSelector(state => state.sites.sites)
+  // [
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'parent.dev.website.com',
+  //     description: 'development parent',
+  //     dataCenter: 'EU',
+  //     childSites: [
+  //       {
+  //         tempId: generateUUID(),
+  //         baseDomain: 'dev.website.com',
+  //         description: 'development',
+  //         dataCenter: 'EU',
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'stag.website.com',
+  //     description: 'staging',
+  //     dataCenter: 'EU',
+  //   },
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'mig.website.com',
+  //     description: 'migration',
+  //     dataCenter: 'EU',
+  //   },
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'prod.eu.website.com',
+  //     description: 'production Europe',
+  //     dataCenter: 'EU',
+  //   },
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'prod.us.website.com',
+  //     description: 'production United States',
+  //     dataCenter: 'US',
+  //   },
+  //   {
+  //     tempId: generateUUID(),
+  //     baseDomain: 'prod.au.website.com',
+  //     description: 'production Japan',
+  //     dataCenter: 'AU',
+  //   },
+  // ];
+
+  const dispatch = useDispatch()
 
   return (
     <Fragment>
@@ -222,7 +226,7 @@ const SitesTable = () => {
         </TableRow> */}
       </Table>
       <div style={{ textAlign: 'center' }}>
-        <Button icon="add" design="Transparent" style={{ display: 'block' }}>
+        <Button onClick={() => { dispatch(addParent())}} icon="add" design="Transparent" style={{ display: 'block' }}>
           Add Parent Site
         </Button>
       </div>
