@@ -11,6 +11,7 @@ import {
   TableRow,
   TableCell,
   TableColumn,
+  Bar
 } from '@ui5/webcomponents-react';
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js';
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js';
@@ -21,7 +22,7 @@ import '@ui5/webcomponents-icons/dist/overflow.js';
 import { useSelector, useDispatch } from 'react-redux'
 
 import SitesTableRow from '../sites-table-row/sites-table-row.component';
-import { addParent } from '../../redux/siteSlice';
+import { addParent, clearSites } from '../../redux/siteSlice';
 
 const SitesTable = () => {
   const sitesStructure = useSelector(state => state.sites.sites)
@@ -226,12 +227,29 @@ const SitesTable = () => {
         </TableRow> */}
       </Table>
       <div style={{ textAlign: 'center' }}>
-        <Button onClick={() => { dispatch(addParent())}} icon="add" design="Transparent" style={{ display: 'block' }}>
+        <Button onClick={() => { dispatch(addParent()) }} icon="add" design="Transparent" style={{ display: 'block' }}>
           Add Parent Site
         </Button>
       </div>
+      {sitesStructure.length ? (
+        <Bar design="FloatingFooter" >
+          <div style={{ textAlign: 'right' }}>
+            {/* <fd-layout-panel-header class="fd-layout-panel__header">
+              <fd-layout-panel-actions class="fd-layout-panel__actions"> */}
+            <button type="submit" id="save-main" class="fd-button fd-button--emphasized fd-button--compact"
+              onClick={() => {
+                // TODO: submit sitesStructure to backend
+              }}>Save</button>
+            <button type="button" fd-button="" id="cancel-main" class="fd-button fd-button--transparent fd-button--compact"
+              onClick={() => dispatch(clearSites())}>Cancel</button>
+            {/* </fd-layout-panel-actions>
+            </fd-layout-panel-header> */}
+          </div>
+        </Bar>
+      ) : console.log()}
     </Fragment>
   );
 };
 
 export default SitesTable;
+

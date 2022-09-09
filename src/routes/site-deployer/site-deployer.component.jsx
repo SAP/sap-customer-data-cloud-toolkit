@@ -18,6 +18,7 @@ import {
   Text,
   TitleLevel,
   FlexBox,
+  Button
 } from '@ui5/webcomponents-react';
 import { spacing } from '@ui5/webcomponents-react-base';
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js';
@@ -124,6 +125,11 @@ const SiteDeployer = () => {
                   ))}
                 </Select>
               </div>
+              <div style={{ textAlign: 'center' }}>
+                <Button onClick={() => {  }} icon="add" design="Transparent" style={{ display: 'block' }}>
+                  Create
+                </Button>
+              </div>
             </Card>
           </div>
         </div>
@@ -134,7 +140,7 @@ const SiteDeployer = () => {
                 <CardHeader
                   titleText="Site Creation Preview"
                   subtitleText="Quickly add or remove sites, change the structure, update the domains naming, description and select data centers."
-                  // subtitleText="Quickly change the domains naming and structure. You can also set policies, and other configurations to be copied from an existing site seed."
+                // subtitleText="Quickly change the domains naming and structure. You can also set policies, and other configurations to be copied from an existing site seed."
                 ></CardHeader>
               }
             >

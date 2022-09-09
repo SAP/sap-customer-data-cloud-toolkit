@@ -22,7 +22,7 @@ import '@ui5/webcomponents-icons/dist/overflow.js';
 
 import dataCenters from '../../dataCenters.json';
 
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { deleteParent, updateParent, addChild, deleteChild, updateChild } from '../../redux/siteSlice';
 
 
@@ -37,6 +37,7 @@ const SitesTableRow = ({
   isChildSite,
 }) => {
   const [actionSheetOpen, setActionSheetOpen] = useState(false);
+  const [isChildListOpen, setChildListOpen] = useState(false)
 
   const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters];
 
@@ -44,7 +45,16 @@ const SitesTableRow = ({
     // event.detail.selectedOption is a reference to the selected HTML Element
     // dataset contains all attributes that were passed with the data- prefix.
     console.log(event.detail.selectedOption.dataset.value);
+    const dataCenter = event.detail.selectedOption.dataset.value
+    dispatch(updateParent({
+      tempId,
+      baseDomain,
+      description,
+      dataCenter
+    }))
   };
+
+  const sitesStructure = useSelector(state => state.sites.sites)
 
   const dispatch = useDispatch()
 
@@ -57,14 +67,36 @@ const SitesTableRow = ({
               type={InputType.Text}
               style={{ width: 'calc(100% - 82px)', marginLeft: '80px' }}
               value={baseDomain}
+              onInput={(event) => {
+                console.log(event.target.value)
+                const baseDomain = event.target.value
+                dispatch(updateChild({
+                  parentSiteTempId,
+                  tempId,
+                  baseDomain,
+                  description,
+                  dataCenter,
+                }))
+              }
+              }
             />
           ) : childSites && childSites.length ? (
             <Fragment>
-              <Button
-                icon="navigation-down-arrow"
-                design="Transparent"
-                tooltip="Add Parent Site"
-              ></Button>
+              {isChildListOpen ? (
+                <Button
+                  icon="navigation-down-arrow"
+                  design="Transparent"
+                  tooltip="Add Parent Site"
+                  onClick={() => { setChildListOpen(false) }}
+                ></Button>
+              ) :
+                <Button
+                  icon="navigation-right-arrow"
+                  design="Transparent"
+                  tooltip="Add Parent Site"
+                  onClick={() => { setChildListOpen(true) }}
+                ></Button>
+              }
               <Input
                 type={InputType.Text}
                 style={{ width: 'calc(100% - 40px)' }}
@@ -76,6 +108,19 @@ const SitesTableRow = ({
               type={InputType.Text}
               style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
               value={baseDomain}
+              onInput={(event) => {
+                console.log(event.target.value)
+                const baseDomain = event.target.value
+                dispatch(updateParent({
+                  tempId,
+                  baseDomain,
+                  description,
+                  dataCenter,
+                }))
+                console.log('sitesStructure')
+                console.log(sitesStructure)
+              }
+              }
             />
           )}
           {/* <Button
@@ -84,11 +129,45 @@ design="Transparent"
 ></Button> */}
         </TableCell>
         <TableCell>
-          <Input
-            type={InputType.Text}
-            style={{ width: '100%' }}
-            value={description}
-          />
+          {isChildSite ? (
+            <Input
+              type={InputType.Text}
+              style={{ width: '100%' }}
+              value={description}
+              onInput={(event) => {
+                console.log(event.target.value)
+                const description = event.target.value
+                dispatch(updateChild({
+                  parentSiteTempId,
+                  tempId,
+                  baseDomain,
+                  description,
+                  dataCenter,
+                }))
+                console.log('sitesStructure')
+                console.log(sitesStructure)
+              }
+              }
+            />
+          ) :
+            <Input
+              type={InputType.Text}
+              style={{ width: '100%' }}
+              value={description}
+              onInput={(event) => {
+                console.log(event.target.value)
+                const description = event.target.value
+                dispatch(updateParent({
+                  tempId,
+                  baseDomain,
+                  description,
+                  dataCenter,
+                }))
+                console.log('sitesStructure')
+                console.log(sitesStructure)
+              }
+              }
+            />}
         </TableCell>
         <TableCell>
           {isChildSite ? (
@@ -150,7 +229,10 @@ design="Transparent"
                     setActionSheetOpen(false);
                   }}
                 >
-                  <Button onClick={() => { dispatch(addChild({ tempId })) }}>Create Child Site</Button>
+                  <Button onClick={() => {
+                    dispatch(addChild({ tempId }))
+                    setChildListOpen(true)
+                  }}>Create Child Site</Button>
                   <Button onClick={() => { dispatch(deleteParent({ tempId })) }}>Delete</Button>
                 </ActionSheet>
               </>
@@ -189,13 +271,16 @@ design="Transparent"
           </div>
         </TableCell>
       </TableRow>
-      {childSites?.map((childSite) => (
-        <SitesTableRow
-          key={childSite.tempId}
-          {...childSite}
-          isChildSite={true}
-        />
-      ))}
+      {
+        isChildListOpen ?
+          childSites?.map((childSite) => (
+            <SitesTableRow
+              key={childSite.tempId}
+              {...childSite}
+              isChildSite={true}
+            />
+          )) : console.log()
+      }
     </Fragment>
   );
 };

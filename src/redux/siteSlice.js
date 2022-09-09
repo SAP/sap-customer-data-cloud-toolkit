@@ -30,14 +30,14 @@ export const siteSlice = createSlice({
             parentSite.baseDomain = action.payload.baseDomain
             parentSite.description = action.payload.description
             parentSite.dataCenter = action.payload.dataCenter
+            parentSite.childSites.forEach(childSite => {
+                childSite.dataCenter = parentSite.dataCenter
+            });
         },
         addChild: (state, action) => {
             const parentSiteTempId = action.payload.tempId
             const parentSite = state.sites.filter(site => site.tempId === parentSiteTempId)[0]
-            const childSites = parentSite.childSites
-
-            // if (!childSites)
-            //     childSites = []
+            let childSites = parentSite.childSites
 
             childSites.push({
                 parentSiteTempId: parentSiteTempId,
@@ -47,7 +47,6 @@ export const siteSlice = createSlice({
                 dataCenter: parentSite.dataCenter,
                 isChildSite: true
             })
-
         },
         deleteChild: (state, action) => {
             const parentSiteTempId = action.payload.parentSiteTempId
@@ -60,15 +59,18 @@ export const siteSlice = createSlice({
             const parentSiteTempId = action.payload.parentSiteTempId
             const childTempId = action.payload.tempId
             const parentSite = state.sites.filter(site => site.tempId === parentSiteTempId)[0]
-            const childSite = parentSite.childSites.filter(childSite => childSite.tempId !== childTempId)[0]
+            const childSite = parentSite.childSites.filter(childSite => childSite.tempId === childTempId)[0]
             childSite.baseDomain = action.payload.baseDomain
             childSite.description = action.payload.description
             childSite.dataCenter = action.payload.dataCenter
+        },
+        clearSites: (state) => {
+            state.sites = []
         }
     },
 })
 
 export const { addParent, deleteParent, updateParent,
-    updateChild, addChild, deleteChild } = siteSlice.actions
+    updateChild, addChild, deleteChild, clearSites } = siteSlice.actions
 
 export default siteSlice.reducer
