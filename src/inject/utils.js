@@ -1,3 +1,6 @@
+export const getInnerText = (domElement) =>
+  domElement?.textContent.trim().replaceAll('  ', '').replaceAll('\n', ' ');
+
 /**
  * Finds all elements in the entire page matching `selector`, even if they are in shadowRoots.
  * Just like `querySelectorAll`, but automatically expand on all child `shadowRoot` elements.
@@ -5,14 +8,14 @@
  */
 export function querySelectorAllShadows(selector, el = document.body) {
   // recurse on childShadows
-  const childShadows = Array.from(el.querySelectorAll("*"))
+  const childShadows = Array.from(el.querySelectorAll('*'))
     .map((el) => el.shadowRoot)
     .filter(Boolean);
 
   // console.log('[querySelectorAllShadows]', selector, el, `(${childShadows.length} shadowRoots)`);
 
   const childResults = childShadows.map((child) =>
-    querySelectorAllShadows(selector, child)
+    querySelectorAllShadows(selector, child),
   );
 
   // fuse all results into singular, flat array
@@ -22,7 +25,7 @@ export function querySelectorAllShadows(selector, el = document.body) {
 
 // Create a New DOM Element from HTML String - https://www.w3docs.com/snippets/javascript/how-to-create-a-new-dom-element-from-html-string.html
 export function htmlToElem(html) {
-  let temp = document.createElement("template");
+  let temp = document.createElement('template');
   html = html.trim(); // Never return a space text node as a result
   temp.innerHTML = html;
   return temp.content.firstChild;
@@ -34,7 +37,7 @@ export const onElementExists = (elemSelector, onExists) => {
   if (!elem.length)
     return setTimeout(() => onElementExists(elemSelector, onExists), 75);
 
-  if (typeof onExists == "function") onExists(elem);
+  if (typeof onExists == 'function') onExists(elem);
 };
 
 // Watch changes to element: created, removed
@@ -44,12 +47,12 @@ export const watchElement = (args) => {
   if (querySelectorAllShadows(elemSelector).length) {
     if (!args.exists) {
       args.exists = true;
-      if (typeof onCreated == "function") onCreated(args);
+      if (typeof onCreated == 'function') onCreated(args);
     }
   } else {
     if (args.exists) {
       args.exists = false;
-      if (typeof onRemoved == "function") onRemoved(args);
+      if (typeof onRemoved == 'function') onRemoved(args);
     }
   }
 
@@ -60,7 +63,7 @@ export const watchElement = (args) => {
 export const onHashChange = (onChange, prevHash) => {
   if (window.location.hash !== prevHash) {
     prevHash = window.location.hash;
-    if (typeof onChange == "function") onChange();
+    if (typeof onChange == 'function') onChange();
   }
   setTimeout(() => onHashChange(onChange, prevHash), 75);
 };
@@ -68,15 +71,15 @@ export const onHashChange = (onChange, prevHash) => {
 // Console.log styles
 export const logStyles = {
   green: [
-    "color: #fff",
-    "background-color: green",
-    "padding: 2px 4px",
-    "border-radius: 2px",
-  ].join(";"),
+    'color: #fff',
+    'background-color: green',
+    'padding: 2px 4px',
+    'border-radius: 2px',
+  ].join(';'),
   gray: [
-    "color: #fff",
-    "background-color: #444",
-    "padding: 2px 4px",
-    "border-radius: 2px",
-  ].join(";"),
+    'color: #fff',
+    'background-color: #444',
+    'padding: 2px 4px',
+    'border-radius: 2px',
+  ].join(';'),
 };

@@ -2,41 +2,50 @@ import {
   querySelectorAllShadows,
   watchElement,
   htmlToElem,
-  logStyles,
+  // logStyles,
+  getInnerText,
 } from './utils';
 
 // Menu elements
 export const menuElements = [
   {
+    appendAfterText: 'Site Settings',
     name: 'Site Deployer',
-    appendAfterText: 'Sites',
-    html: `\
-    <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item">\
-      <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/site-deployer" tabindex="0" class="fd-nested-list__link" name="site-deployer">\
+    tabName: 'site-deployer',
+    html: () => {
+      const index = 0;
+      return `\
+    <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item" data-cdc-toolbox-index="${index}">\
+      <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0" class="fd-nested-list__link" name="${menuElements[index].tabName}">\
         <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--product" role="presentation"></span>-->\
         <span fd-nested-list-title="" class="fd-nested-list__title">\
-          Site Deployer\
+          ${menuElements[index].name}\
           <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
           <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
         </span>\
       </a>\
-    </li>`,
+    </li>`;
+    },
   },
-  {
-    name: 'Copy Configuration Extended',
-    appendAfterText: 'Copy Configuration',
-    html: `\
-    <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item">\
-      <a fd-nested-list-link="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/copy-configuration-extended" tabindex="0" class="fd-nested-list__link" name="copy-configuration-extended">\
-      <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--task" role="presentation"></span>-->\
-        <span fd-nested-list-title="" class="fd-nested-list__title">\
-          Copy Config. Extended \
-          <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
-          <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
-        </span>\
-      </a>\
-    </li>`,
-  },
+  // {
+  //   appendAfterText: 'Copy Configuration',
+  //   name: 'Copy Config. Extended',
+  //   tabName: 'copy-configuration-extended',
+  //   html: () => {
+  //     const index = 1;
+  //     return `\
+  //   <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item" data-cdc-toolbox-index="${index}">\
+  //     <a fd-nested-list-link="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0" class="fd-nested-list__link" name="${menuElements[index].tabName}">\
+  //     <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--task" role="presentation"></span>-->\
+  //       <span fd-nested-list-title="" class="fd-nested-list__title">\
+  //         ${menuElements[index].name}\
+  //         <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
+  //         <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
+  //       </span>\
+  //     </a>\
+  //   </li>`;
+  //   },
+  // },
 ];
 
 export const initMenuExtension = () => {
@@ -52,12 +61,12 @@ export const initMenuExtension = () => {
     const elem = menuElements.filter(
       (el) =>
         el.appendAfterText ===
-        li.querySelector('.fd-nested-list__title').innerText,
+        getInnerText(li.querySelector('.fd-nested-list__title')),
     );
 
     if (!elem.length) return true;
 
-    let elemHtml = elem[0].html;
+    let elemHtml = elem[0].html();
     elemHtml = elemHtml.replaceAll('{{partnerId}}', partnerId);
     elemHtml = elemHtml.replaceAll('{{apiKey}}', apiKey);
 
@@ -80,15 +89,14 @@ export const destroyMenuExtension = () => {
 
 export const injectMenu = () => {
   watchElement({
-    // elemSelector: ".fd-info-label__text", // Tenant ID
     elemSelector: '.fd-nested-list__icon.sap-icon--action-settings', // Admin button
     onCreated: () => {
       initMenuExtension();
-      console.log('CDC Toolbox Menu - %cLoaded', logStyles.green);
+      // console.log('CDC Toolbox Menu - %cLoaded', logStyles.green);
     },
     onRemoved: () => {
       destroyMenuExtension();
-      console.log('CDC Toolbox Menu - %cClosed', logStyles.gray);
+      // console.log('CDC Toolbox Menu - %cClosed', logStyles.gray);
     },
   });
 };
