@@ -9,18 +9,11 @@ node() {
     stage('environment info') {
         sh 'env'
     }
-
-    stage('Coverage') {
-        dockerExecute(script: this, dockerImage: 'node:16') {
-          script {
-            sh 'node -v'
-            sh "npm run test"
-          }
-        }
-    }
     
     stage ('build') {
-        npmExecuteScripts script:this
+        npmExecuteScripts script:this, 
+                          runScripts: ["test"],
+                          verbose: true
     }
 
     stage('SonarQube report') {

@@ -21,7 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "postbuild": "node ./scripts/postbuild.js",
-    "test": "CI=true react-scripts test --watch=all",
+    "test": "CI=true react-scripts test --collect-coverage --watch=all",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
