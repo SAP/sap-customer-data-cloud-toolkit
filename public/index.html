@@ -183,11 +183,36 @@
                     <fd-prepared-nested-list>
                       <ul fd-nested-list="" class="level-1 fd-nested-list" aria-hidden="false">
                         <li fd-nested-list-item="" class="fd-nested-list__item">
-                          <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/site-selector"
-                            tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
-                              class="fd-nested-list__icon sap-icon--product" role="presentation"></span>
-                            <span fd-nested-list-title="" class="fd-nested-list__title">Sites</span>
-                          </a>
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child"><a
+                              fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/sites/site-selector"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--product" role="presentation"></span>
+                              <span fd-nested-list-title="" class="fd-nested-list__title">Sites</span>
+                            </a>
+                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
+                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                              <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
+                            </button>
+                          </div>
+                          <fd-prepared-nested-list>
+                            <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
+                              aria-hidden="false">
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/sites/site-selector"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Site
+                                    Selector</span>
+                                </a>
+                              </li>
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/sites/site-settings"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Site
+                                    Settings</span>
+                                </a>
+                              </li>
+                            </ul>
+                          </fd-prepared-nested-list>
                         </li>
 
                         <li fd-nested-list-item="" class="fd-nested-list__item">
@@ -225,14 +250,13 @@
                         </li>
 
                         <li fd-nested-list-item="" class="fd-nested-list__item">
-                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
-                            <a fd-nested-list-link=""
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child"><a
+                              fd-nested-list-link=""
                               href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app" tabindex="0"
                               class="fd-nested-list__link"><span fd-nested-list-icon=""
                                 class="fd-nested-list__icon sap-icon--create-session" role="presentation"></span>
                               <span fd-nested-list-title="" class="fd-nested-list__title">User Interfacing</span>
                             </a>
-
                             <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
                               aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
                               <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
@@ -248,12 +272,34 @@
                                   <span fd-nested-list-title="" class="fd-nested-list__title">UI Builder</span>
                                 </a>
                               </li>
-
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/flow-builder-web-app"
+                                  tabindex="0" class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Flow Builder</span>
+                                </a>
+                              </li>
                               <li fd-nested-list-item="" class="fd-nested-list__item">
                                 <a fd-nested-list-link=""
                                   href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/email-templates"
                                   tabindex="0" class="fd-nested-list__link">
-                                  <span fd-nested-list-title="" class="fd-nested-list__title">Email Templates</span>
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Email
+                                    Templates</span>
+                                </a>
+                              </li>
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/sms-templates" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">SMS
+                                    Templates</span>
+                                </a>
+                              </li>
+                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                                <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/hosted-pages" tabindex="0"
+                                  class="fd-nested-list__link">
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Hosted Pages</span>
                                 </a>
                               </li>
                             </ul>
@@ -336,29 +382,30 @@
                         </li>
 
                         <li fd-nested-list-item="" class="fd-nested-list__item">
-                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child">
-                            <a fd-nested-list-link=""
-                              href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent-vault" tabindex="0"
-                              class="fd-nested-list__link"><span fd-nested-list-icon=""
-                                class="fd-nested-list__icon sap-icon--shield" role="presentation"></span>
-                              <span fd-nested-list-title="" class="fd-nested-list__title">Data Privacy</span>
-                            </a>
-
-                            <button aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon=""
-                              aria-expanded="true" class="fd-nested-list__button fd-button is-expanded">
+                          <div tabindex="0" fd-nested-list-content="" class="fd-nested-list__content has-child"><a
+                              fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent"
+                              tabindex="0" class="fd-nested-list__link"><span fd-nested-list-icon=""
+                                class="fd-nested-list__icon sap-icon--shield" role="presentation"></span><span
+                                fd-nested-list-title="" class="fd-nested-list__title">Data Privacy</span></a><button
+                              aria-haspopup="true" tabindex="-1" fd-nested-list-expand-icon="" aria-expanded="true"
+                              class="fd-nested-list__button fd-button is-expanded">
                               <fd-icon role="presentation" class="sap-icon--navigation-down-arrow"></fd-icon>
-                            </button>
-                          </div>
+                            </button></div>
                           <fd-prepared-nested-list>
                             <ul fd-nested-list="" class="level-2 fd-nested-list--text-only fd-nested-list"
                               aria-hidden="false">
-                              <li fd-nested-list-item="" class="fd-nested-list__item">
-                                <a fd-nested-list-link=""
+                              <li fd-nested-list-item="" class="fd-nested-list__item"><a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent" tabindex="0"
+                                  class="fd-nested-list__link"><span fd-nested-list-title=""
+                                    class="fd-nested-list__title">Consent Statements</span></a></li>
+                              <li fd-nested-list-item="" class="fd-nested-list__item"><a fd-nested-list-link=""
                                   href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/consent-vault" tabindex="0"
-                                  class="fd-nested-list__link">
-                                  <span fd-nested-list-title="" class="fd-nested-list__title">Consent Vault</span>
-                                </a>
-                              </li>
+                                  class="fd-nested-list__link"><span fd-nested-list-title=""
+                                    class="fd-nested-list__title">Consent Vault</span></a></li>
+                              <li fd-nested-list-item="" class="fd-nested-list__item"><a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/data-privacy/communication-topics-web-app"
+                                  tabindex="0" class="fd-nested-list__link"><span fd-nested-list-title=""
+                                    class="fd-nested-list__title">Communication Topics</span></a></li>
                             </ul>
                           </fd-prepared-nested-list>
                         </li>
