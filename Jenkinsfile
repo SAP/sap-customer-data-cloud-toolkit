@@ -9,7 +9,7 @@ node() {
     stage('environment info') {
         sh 'env'
     }
-ß
+
     stage('Coverage') {
         dockerExecute(script: this, dockerImage: 'node:16') {
           script {
