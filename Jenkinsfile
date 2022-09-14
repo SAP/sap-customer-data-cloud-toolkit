@@ -9,13 +9,11 @@ node() {
     stage('environment info') {
         sh 'env'
     }
-
-    //stage('build') {
-    //    mtaBuild script: this
-    //}
     
     stage ('build') {
-        npmExecuteScripts script:this
+        npmExecuteScripts script:this, 
+                          runScripts: ["test"],
+                          verbose: true
     }
 
     stage('SonarQube report') {
@@ -29,7 +27,7 @@ node() {
     }
 
     stage("Check sonarQube result") {
-        timeout(time: 1, unit: 'HOURS') {
+        timeout(time: 30, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true
         }
     }
