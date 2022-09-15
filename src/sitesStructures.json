@@ -4,12 +4,12 @@
         "name": "Structure 1",
         "data": [
             {
-                "siteDomain": "a.com",
+                "baseDomain": "a.com",
                 "description": "",
                 "dataCenter": "",
                 "childSites": [
                     {
-                        "siteDomain": "dev.a.com",
+                        "baseDomain": "dev.a.com",
                         "description": "",
                         "dataCenter": ""
                     }

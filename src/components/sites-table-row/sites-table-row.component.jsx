@@ -36,10 +36,12 @@ const SitesTableRow = ({
   childSites,
   isChildSite,
 }) => {
-  const [actionSheetOpen, setActionSheetOpen] = useState(false);
+  const [isActionSheetOpen, setActionSheetOpen] = useState(false);
   const [isChildListOpen, setChildListOpen] = useState(false)
 
   const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters];
+
+  const dispatch = useDispatch()
 
   const onChangeDataCenter = (event) => {
     // event.detail.selectedOption is a reference to the selected HTML Element
@@ -52,11 +54,74 @@ const SitesTableRow = ({
       description,
       dataCenter
     }))
-  };
+  }
 
-  const sitesStructure = useSelector(state => state.sites.sites)
+  const onChangeParentDomain = (event) => {
+    const baseDomain = event.target.value
+    dispatch(updateParent({
+      tempId,
+      baseDomain,
+      description,
+      dataCenter
+    }))
+  }
 
-  const dispatch = useDispatch()
+  const onChangeParentDescription = (event) => {
+    const description = event.target.value
+    dispatch(updateParent({
+      tempId,
+      baseDomain,
+      description,
+      dataCenter,
+    }))
+  }
+
+  const onChangeChildDomain = (event) => {
+    const baseDomain = event.target.value
+    dispatch(updateChild({
+      parentSiteTempId,
+      tempId,
+      baseDomain,
+      description,
+      dataCenter,
+    }))
+  }
+
+  const onChangeChildDescription = (event) => {
+    const description = event.target.value
+    dispatch(updateChild({
+      parentSiteTempId,
+      tempId,
+      baseDomain,
+      description,
+      dataCenter,
+    }))
+  }
+
+  const actionSheetOpenerHandler = () => {
+    if (isActionSheetOpen) {
+      setActionSheetOpen(false);
+    } else {
+      setActionSheetOpen(true);
+    }
+  }
+
+  const actionSheetOnAfterCloseHandler = () => {
+    setActionSheetOpen(false)
+  }
+
+  const onDeleteParentHandler = () => {
+    dispatch(deleteParent({ tempId }))
+  }
+
+  const onDeleteChildHandler = () => {
+    dispatch(deleteChild({ parentSiteTempId, tempId }))
+  }
+
+  const onAddChildHandler = () => {
+    dispatch(addChild({ tempId }))
+    setChildListOpen(true)
+  }
 
   return (
     <Fragment>
@@ -67,18 +132,8 @@ const SitesTableRow = ({
               type={InputType.Text}
               style={{ width: 'calc(100% - 82px)', marginLeft: '80px' }}
               value={baseDomain}
-              onInput={(event) => {
-                console.log(event.target.value)
-                const baseDomain = event.target.value
-                dispatch(updateChild({
-                  parentSiteTempId,
-                  tempId,
-                  baseDomain,
-                  description,
-                  dataCenter,
-                }))
-              }
-              }
+              onInput={event => onChangeChildDomain(event)}
+              required='true'
             />
           ) : childSites && childSites.length ? (
             <Fragment>
@@ -101,6 +156,8 @@ const SitesTableRow = ({
                 type={InputType.Text}
                 style={{ width: 'calc(100% - 40px)' }}
                 value={baseDomain}
+                onInput={event => onChangeParentDomain(event)}
+                required='true'
               />
             </Fragment>
           ) : (
@@ -108,25 +165,10 @@ const SitesTableRow = ({
               type={InputType.Text}
               style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
               value={baseDomain}
-              onInput={(event) => {
-                console.log(event.target.value)
-                const baseDomain = event.target.value
-                dispatch(updateParent({
-                  tempId,
-                  baseDomain,
-                  description,
-                  dataCenter,
-                }))
-                console.log('sitesStructure')
-                console.log(sitesStructure)
-              }
-              }
+              onInput={event => onChangeParentDomain(event)}
+              required='true'
             />
           )}
-          {/* <Button
-icon="navigation-down-arrow"
-design="Transparent"
-></Button> */}
         </TableCell>
         <TableCell>
           {isChildSite ? (
@@ -134,39 +176,14 @@ design="Transparent"
               type={InputType.Text}
               style={{ width: '100%' }}
               value={description}
-              onInput={(event) => {
-                console.log(event.target.value)
-                const description = event.target.value
-                dispatch(updateChild({
-                  parentSiteTempId,
-                  tempId,
-                  baseDomain,
-                  description,
-                  dataCenter,
-                }))
-                console.log('sitesStructure')
-                console.log(sitesStructure)
-              }
-              }
+              onInput={event => onChangeChildDescription(event)}
             />
           ) :
             <Input
               type={InputType.Text}
               style={{ width: '100%' }}
               value={description}
-              onInput={(event) => {
-                console.log(event.target.value)
-                const description = event.target.value
-                dispatch(updateParent({
-                  tempId,
-                  baseDomain,
-                  description,
-                  dataCenter,
-                }))
-                console.log('sitesStructure')
-                console.log(sitesStructure)
-              }
-              }
+              onInput={event => onChangeParentDescription(event)}
             />}
         </TableCell>
         <TableCell>
@@ -184,6 +201,7 @@ design="Transparent"
               style={{ width: '100%' }}
               onChange={onChangeDataCenter}
               disabled={isChildSite}
+              required='true'
             >
               {dataCentersSelect.map(({ value }) => (
                 <Option
@@ -204,36 +222,20 @@ design="Transparent"
           <div style={{ position: 'relative' }}>
             {!isChildSite ? (
               <>
-                {/* <Button
-                  icon="add"
-                  design="Transparent"
-                  tooltip="Add Child Site"
-                ></Button> */}
                 <Button
                   icon="overflow"
                   design="Transparent"
-                  onClick={() => {
-                    if (actionSheetOpen) {
-                      setActionSheetOpen(false);
-                    } else {
-                      setActionSheetOpen(true);
-                    }
-                  }}
+                  onClick={actionSheetOpenerHandler}
                   id={`actionSheetOpener${tempId}`}
                 ></Button>
                 <ActionSheet
                   opener={`actionSheetOpener${tempId}`}
-                  open={actionSheetOpen}
+                  open={isActionSheetOpen}
                   placementType="Bottom"
-                  onAfterClose={() => {
-                    setActionSheetOpen(false);
-                  }}
+                  onAfterClose={actionSheetOnAfterCloseHandler}
                 >
-                  <Button onClick={() => {
-                    dispatch(addChild({ tempId }))
-                    setChildListOpen(true)
-                  }}>Create Child Site</Button>
-                  <Button onClick={() => { dispatch(deleteParent({ tempId })) }}>Delete</Button>
+                  <Button onClick={onAddChildHandler}>Create Child Site</Button>
+                  <Button onClick={onDeleteParentHandler}>Delete</Button>
                 </ActionSheet>
               </>
             ) : (
@@ -241,33 +243,19 @@ design="Transparent"
                 <Button
                   icon="overflow"
                   design="Transparent"
-                  onClick={() => {
-                    if (actionSheetOpen) {
-                      setActionSheetOpen(false);
-                    } else {
-                      setActionSheetOpen(true);
-                    }
-                  }}
+                  onClick={actionSheetOpenerHandler}
                   id={`actionSheetOpener${tempId}`}
                 ></Button>
                 <ActionSheet
                   opener={`actionSheetOpener${tempId}`}
-                  open={actionSheetOpen}
+                  open={isActionSheetOpen}
                   placementType="Bottom"
-                  onAfterClose={() => {
-                    setActionSheetOpen(false);
-                  }}
+                  onAfterClose={actionSheetOnAfterCloseHandler}
                 >
-                  <Button onClick={() => { dispatch(deleteChild({ parentSiteTempId, tempId })) }}>Delete</Button>
+                  <Button onClick={onDeleteChildHandler}>Delete</Button>
                 </ActionSheet>
               </>
             )}
-
-            {/* <Button
-  icon="decline"
-  design="Transparent"
-  tooltip="Remove"
-></Button> */}
           </div>
         </TableCell>
       </TableRow>

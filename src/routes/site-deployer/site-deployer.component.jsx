@@ -1,17 +1,12 @@
 import {
   Card,
   CardHeader,
-  Form,
-  FormItem,
   Input,
   InputType,
   Select,
   MultiComboBox,
   MultiComboBoxItem,
   Option,
-  FormGroup,
-  CheckBox,
-  TextArea,
   Label,
   Bar,
   Title,
@@ -27,10 +22,15 @@ import '@ui5/webcomponents-icons/dist/add.js';
 import '@ui5/webcomponents-icons/dist/decline.js';
 import '@ui5/webcomponents-icons/dist/overflow.js';
 
+import { useState } from 'react';
+
 import SitesTable from '../../components/sites-table/sites-table.component';
 
 import dataCenters from '../../dataCenters.json';
-import siteStructures from '../../sitesStructures.json';
+import structures from '../sitesStructures.json';
+
+import { useSelector, useDispatch } from 'react-redux'
+import { addParent, clearSites } from '../../redux/siteSlice';
 
 const BarStart = (props) => (
   <Title
@@ -43,6 +43,64 @@ const BarStart = (props) => (
 );
 
 const SiteDeployer = () => {
+  const dispatch = useDispatch()
+
+  const sites = useSelector(state => state.sites.sites)
+
+  const [selectedStructureId, setSelectedStructureId] = useState()
+  const [baseDomain, setBaseDomain] = useState()
+
+  const onSaveHandler = () => {
+    console.log(sites)
+  }
+
+  const onCancelHandler = () => {
+    dispatch(clearSites())
+  }
+
+  const onChangeSiteStructure = (event) => {
+    setSelectedStructureId(event.detail.selectedOption.dataset.value)
+  }
+
+  const onCreateHandler = () => {
+    const selectedDataCenters = getSelectedDataCenters()
+    const selectedtructure = getSelectedStructure()
+
+    dispatch(clearSites())
+
+    selectedDataCenters.forEach(dataCenter => {
+      selectedtructure.data.forEach(structure => {
+        dispatch(addParent({
+          baseDomain: tryGetBaseDomainFromStructure(structure),
+          description: structure.description,
+          dataCenter: dataCenter,
+          childSites: structure.childSites
+        }))
+      })
+    })
+  }
+
+  const tryGetBaseDomainFromStructure = (structure) => {
+    return baseDomain !== '' ? baseDomain : structure.baseDomain
+  }
+
+  const getSelectedStructure = () => {
+    return structures.filter(siteStructure => siteStructure._id === selectedStructureId)[0]
+  }
+
+  const getSelectedDataCenters = () => {
+    const dataCenterHTMLCollection = document.getElementById("cdctools-dataCenter")
+      .children
+
+    return [...dataCenterHTMLCollection]
+      .filter(item => item._state.selected === true)
+      .map(item => item._state.text)
+  }
+
+  const onBaseDomainChange = (event) => {
+    setBaseDomain(event.target.value)
+  }
+
   return (
     <div className="cdc-tools-app-container" name="site-deployer">
       <Bar design="Header" startContent={<BarStart />}></Bar>
@@ -75,7 +133,8 @@ const SiteDeployer = () => {
                     type={InputType.Text}
                     style={{ width: '100%' }}
                     placeholder="e.g. mysite.com"
-                    onInput={(e) => console.log('changed', e.target.value)}
+                    onInput={(event) => {onBaseDomainChange(event)}
+                    }
                   />
                 </div>
                 <div
@@ -116,17 +175,23 @@ const SiteDeployer = () => {
                   Select a Site Structure: *
                 </Label>
 
-                <Select id="cdctools-siteStructure" style={{ width: '100%' }}>
+                <Select id="cdctools-siteStructure" style={{ width: '100%' }}
+                  onChange={onChangeSiteStructure}
+                  required='true'>
                   <Option></Option>
-                  {siteStructures.map(({ _id, name }) => (
-                    <Option key={_id} value={_id}>
+                  {structures.map(({ _id, name }) => (
+                    <Option
+                      key={_id}
+                      value={_id}
+                      data-value={_id}>
                       {name}
                     </Option>
                   ))}
                 </Select>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <Button onClick={() => {  }} icon="add" design="Transparent" style={{ display: 'block' }}>
+                <Button onClick={onCreateHandler}
+                  icon="add" design="Transparent" style={{ display: 'block' }}>
                   Create
                 </Button>
               </div>
@@ -145,6 +210,24 @@ const SiteDeployer = () => {
               }
             >
               <SitesTable />
+            </Card>
+          </div>
+        </div>
+        <div style={spacing.sapUiSmallMargin}>
+          <div style={spacing.sapUiTinyMargin}>
+            <Card>
+              {sites.length ? (
+                <Bar design="FloatingFooter"
+                  endContent={
+                    <div>
+                      <button type="submit" id="save-main" class="fd-button fd-button--emphasized fd-button--compact"
+                        onClick={onSaveHandler}>Save</button>
+                      <button type="button" fd-button="" id="cancel-main" class="fd-button fd-button--transparent fd-button--compact"
+                        onClick={onCancelHandler}>Cancel</button>
+                    </div>
+                  }>
+                </Bar>
+              ) : console.log()}
             </Card>
           </div>
         </div>
