@@ -1,6 +1,4 @@
-import { Fragment, 
-  // useState 
-} from 'react';
+import { Fragment, useState } from 'react';
 // import ReactDOM from "react-dom";
 import {
   Label,
@@ -14,7 +12,7 @@ import '@ui5/webcomponents-icons/dist/add.js';
 import '@ui5/webcomponents-icons/dist/decline.js';
 import '@ui5/webcomponents-icons/dist/overflow.js';
 
-import SitesTableRow from '../sites-table-row/sites-table-row.component';
+import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row';
 // import InputDialog from '../input-dialog/input-dialog.component';
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -99,7 +97,7 @@ const SitesTable = () => {
         }
       >
         {sitesStructure.map((site) => (
-          <SitesTableRow key={site.tempId} {...site} />
+          <ParentSiteTableRow key={site.tempId} {...site} />
         ))}
       </Table>
       <div style={{ textAlign: 'center' }}>
