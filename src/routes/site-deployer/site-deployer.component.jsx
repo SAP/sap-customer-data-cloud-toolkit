@@ -27,7 +27,7 @@ import { useState } from 'react';
 import SitesTable from '../../components/sites-table/sites-table.component';
 
 import dataCenters from '../../dataCenters.json';
-import structures from '../sitesStructures.json';
+import structures from '../../sitesStructures.json';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addParent, clearSites } from '../../redux/siteSlice';

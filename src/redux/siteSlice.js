@@ -106,7 +106,7 @@ export const siteSlice = createSlice({
             const childSite = getSiteById(parentSite.childSites, childTempId)
             childSite.baseDomain = sourceChild.baseDomain
             childSite.description = sourceChild.description
-            childSite.dataCenter = parentSite.dataCenter
+            childSite.dataCenter = sourceChild.dataCenter
         },
         clearSites: (state) => {
             state.sites = []

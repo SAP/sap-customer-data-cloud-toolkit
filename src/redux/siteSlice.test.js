@@ -1,6 +1,5 @@
 import sitesReducer, {
-    addParent, deleteParent, updateParent,
-    updateChild, addChild, deleteChild, clearSites
+    addParent, deleteParent, updateParent, updateChild, addChild, deleteChild, clearSites
 } from './siteSlice'
 
 
