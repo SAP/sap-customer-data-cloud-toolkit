@@ -21,8 +21,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "postbuild": "node ./scripts/postbuild.js",
-    "test": "CI=true react-scripts test --collect-coverage --watch=all",
+    "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@ui5|lit-html|@babel)).*\\.js$"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -41,5 +49,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.7",
+    "enzyme": "^3.11.0",
+    "enzyme-to-json": "^3.6.2"
   }
 }
