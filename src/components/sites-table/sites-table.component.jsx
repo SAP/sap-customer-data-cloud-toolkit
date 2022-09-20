@@ -1,5 +1,4 @@
-import { Fragment, useState } from 'react';
-// import ReactDOM from "react-dom";
+import { Fragment } from 'react';
 import {
   Label,
   Button,
@@ -13,45 +12,18 @@ import '@ui5/webcomponents-icons/dist/decline.js';
 import '@ui5/webcomponents-icons/dist/overflow.js';
 
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row';
-// import InputDialog from '../input-dialog/input-dialog.component';
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParent, 
-  // clearSites, addStructure 
-} from '../../redux/siteSlice';
+import { addParent } from '../../redux/siteSlice';
 
 const SitesTable = () => {
   const sitesStructure = useSelector(state => state.sites.sites)
 
   const dispatch = useDispatch()
 
-  // const [isDialogOpen, setDialogOpen] = useState(false)
-  // const [newStrutureName, setNewStructureName] = useState('')
-
   const onAddParentSiteHandler = () => {
     dispatch(addParent())
   }
-
-  // const getNewSiteStructure = () => {
-  //   return sitesStructure.map(site => {
-  //     return {
-  //       baseDomain: site.baseDomain,
-  //       description: site.description,
-  //       dataCenter: site.dataCenter,
-  //       childSites: getNewStructureChildSites(site)
-  //     }
-  //   })
-  // }
-
-  // const getNewStructureChildSites = (site) => {
-  //   return site.childSites.map(childSite => {
-  //     return {
-  //       baseDomain: childSite.baseDomain,
-  //       description: childSite.description,
-  //       dataCenter: childSite.dataCenter
-  //     }
-  //   })
-  // }
 
   return (
     <Fragment>
@@ -105,35 +77,6 @@ const SitesTable = () => {
           Add Parent Site
         </Button>
       </div>
-
-      {/* {ReactDOM.createPortal(
-        <Dialog open={isDialogOpen}
-          footer={<Bar endContent={[
-            <Button onClick={() => {
-              dispatch(addStructure({
-                "_id": generateUUID(),
-                "name": newStrutureName,
-                "data": getNewSiteStructure()
-              }))
-              dispatch(clearSites())
-              setNewStructureName('')
-              setDialogOpen(false)
-            }}>Save</Button>,
-            <Button onClick={() => {
-              setDialogOpen(false)
-              setNewStructureName('')
-            }}>Close</Button>]}></Bar>}
-          header={<Bar><Title>Enter new Structure name</Title></Bar>}
-          headerText="Dialog Header">
-          <Input
-            onInput={(event) => {
-              console.log(event.target.value)
-              setNewStructureName(event.target.value)
-            }}>
-          </Input>
-        </Dialog>
-        , document.body)} */}
-
     </Fragment>
   );
 };

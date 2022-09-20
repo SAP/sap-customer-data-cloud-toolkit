@@ -39,7 +39,7 @@ const ParentSiteTableRow = ({
     const dispatch = useDispatch()
 
     const onChangeDataCenter = (event) => {
-        const dataCenter = event.detail.selectedOption.dataset.value
+        dataCenter = event.detail.selectedOption.dataset.value
         dispatch(updateParentDataCenter({
             tempId,
             dataCenter
@@ -47,7 +47,7 @@ const ParentSiteTableRow = ({
     }
 
     const onChangeParentDomain = (event) => {
-        const baseDomain = event.target.value
+        baseDomain = event.target.value
         dispatch(updateParentBaseDomain({
             tempId,
             baseDomain
@@ -55,7 +55,7 @@ const ParentSiteTableRow = ({
     }
 
     const onChangeParentDescription = (event) => {
-        const description = event.target.value
+        description = event.target.value
         dispatch(updateParentDescription({
             tempId,
             description
@@ -79,44 +79,50 @@ const ParentSiteTableRow = ({
         setChildListOpen(true)
     }
 
+    const checkChildSitesView = () => {
+        if (childSites && childSites.length) {
+            return <Fragment>
+                {isChildListOpen ? (
+                    <Button
+                        icon="navigation-down-arrow"
+                        design="Transparent"
+                        tooltip="Add Parent Site"
+                        onClick={() => { setChildListOpen(false) }}
+                    ></Button>
+                ) :
+                    <Button
+                        icon="navigation-right-arrow"
+                        design="Transparent"
+                        tooltip="Add Parent Site"
+                        onClick={() => { setChildListOpen(true) }}
+                    ></Button>
+                }
+                <Input
+                    type={InputType.Text}
+                    style={{ width: 'calc(100% - 40px)' }}
+                    value={baseDomain}
+                    onInput={event => onChangeParentDomain(event)}
+                    required='true'
+                />
+            </Fragment>
+        } else {
+            return (
+                <Input
+                    type={InputType.Text}
+                    style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
+                    value={baseDomain}
+                    onInput={event => onChangeParentDomain(event)}
+                    required='true'
+                />
+            )
+        }
+    }
+
     return (
         <Fragment>
             <TableRow>
                 <TableCell>
-                    {childSites && childSites.length ? (
-                        <Fragment>
-                            {isChildListOpen ? (
-                                <Button
-                                    icon="navigation-down-arrow"
-                                    design="Transparent"
-                                    tooltip="Add Parent Site"
-                                    onClick={() => { setChildListOpen(false) }}
-                                ></Button>
-                            ) :
-                                <Button
-                                    icon="navigation-right-arrow"
-                                    design="Transparent"
-                                    tooltip="Add Parent Site"
-                                    onClick={() => { setChildListOpen(true) }}
-                                ></Button>
-                            }
-                            <Input
-                                type={InputType.Text}
-                                style={{ width: 'calc(100% - 40px)' }}
-                                value={baseDomain}
-                                onInput={event => onChangeParentDomain(event)}
-                                required='true'
-                            />
-                        </Fragment>
-                    ) : (
-                        <Input
-                            type={InputType.Text}
-                            style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
-                            value={baseDomain}
-                            onInput={event => onChangeParentDomain(event)}
-                            required='true'
-                        />
-                    )}
+                    {checkChildSitesView()}
                 </TableCell>
 
                 <TableCell>

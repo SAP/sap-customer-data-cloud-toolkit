@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { generateUUID } from '../utils/generateUUID';
-// import siteStructures from '../sitesStructures.json';
-
 
 const addChildsFromStructure = (parentSiteTempId, dataCenter, structureChildSites) => {
     const childSites = []
@@ -62,8 +60,7 @@ const getSiteById = (sites, tempId) => {
 export const siteSlice = createSlice({
     name: 'sites',
     initialState: {
-        sites: [],
-        // structures: siteStructures
+        sites: []
     },
     reducers: {
         addParent: (state, action) => {
@@ -126,16 +123,11 @@ export const siteSlice = createSlice({
         },
         clearSites: (state) => {
             state.sites = []
-        },
-        // addStructure: (state, action) => {
-        //     state.structures.push(action.payload)
-        // }
+        }
     },
 })
 
 export const { addParent, deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter,
-    updateChildBaseDomain, updateChildDescription, updateChildDataCenter, addChild, deleteChild, clearSites, 
-    // addStructure 
-} = siteSlice.actions
+    updateChildBaseDomain, updateChildDescription, updateChildDataCenter, addChild, deleteChild, clearSites } = siteSlice.actions
 
 export default siteSlice.reducer
