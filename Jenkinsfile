@@ -9,13 +9,11 @@ node() {
     stage('environment info') {
         sh 'env'
     }
-
-    //stage('build') {
-    //    mtaBuild script: this
-    //}
     
     stage ('build') {
-        npmExecuteScripts script:this
+        npmExecuteScripts script:this, 
+                          runScripts: ["test"],
+                          verbose: true
     }
 
     stage('SonarQube report') {
@@ -25,6 +23,12 @@ node() {
             withSonarQubeEnv('SAP SonarQube Enterprise') {
                 sh "${scannerHome}/bin/sonar-scanner"
             }
+        }
+    }
+
+    stage("Check sonarQube result") {
+        timeout(time: 30, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
         }
     }
 
