@@ -17,13 +17,18 @@ import { injectMenu } from "./inject/injectMenu";
 import { injectAppContainer } from "./inject/injectAppContainer";
 import "./inject/main.css";
 
+import store from './redux/store'
+import { Provider } from 'react-redux'
+
 initChromeStorage();
 initNavigation();
 injectMenu();
 injectAppContainer(() => {
   ReactDOM.render(
     <React.StrictMode>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </React.StrictMode>,
     document.querySelector(".cdc-tools-app")
   );
