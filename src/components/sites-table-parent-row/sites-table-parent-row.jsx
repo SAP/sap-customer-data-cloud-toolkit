@@ -39,26 +39,26 @@ const ParentSiteTableRow = ({
     const dispatch = useDispatch()
 
     const onChangeDataCenter = (event) => {
-        dataCenter = event.detail.selectedOption.dataset.value
+        const newDataCenter = event.detail.selectedOption.dataset.value
         dispatch(updateParentDataCenter({
             tempId,
-            dataCenter
+            newDataCenter
         }))
     }
 
     const onChangeParentDomain = (event) => {
-        baseDomain = event.target.value
+        const newBaseDomain = event.target.value
         dispatch(updateParentBaseDomain({
             tempId,
-            baseDomain
+            newBaseDomain
         }))
     }
 
     const onChangeParentDescription = (event) => {
-        description = event.target.value
+        const newDescription = event.target.value
         dispatch(updateParentDescription({
             tempId,
-            description
+            newDescription
         }))
     }
 

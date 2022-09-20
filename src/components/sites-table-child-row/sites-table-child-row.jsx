@@ -26,20 +26,20 @@ const ChildTableRow = ({
     const dispatch = useDispatch()
 
     const onChangeChildDomain = (event) => {
-        baseDomain = event.target.value
+        const newBaseDomain = event.target.value
         dispatch(updateChildBaseDomain({
             parentSiteTempId,
             tempId,
-            baseDomain
+            newBaseDomain
         }))
     }
 
     const onChangeChildDescription = (event) => {
-        description = event.target.value
+        const newDescription = event.target.value
         dispatch(updateChildDescription({
             parentSiteTempId,
             tempId,
-            description
+            newDescription
         }))
     }
 

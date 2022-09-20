@@ -78,19 +78,19 @@ export const siteSlice = createSlice({
             const sourceParent = action.payload
             const parentSiteTempId = sourceParent.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
-            parentSite.baseDomain = sourceParent.baseDomain
+            parentSite.baseDomain = sourceParent.newBaseDomain
         },
         updateParentDescription: (state, action) => {
             const sourceParent = action.payload
             const parentSiteTempId = sourceParent.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
-            parentSite.description = sourceParent.description
+            parentSite.description = sourceParent.newDescription
         },
         updateParentDataCenter: (state, action) => {
             const sourceParent = action.payload
             const parentSiteTempId = sourceParent.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
-            parentSite.dataCenter = sourceParent.dataCenter
+            parentSite.dataCenter = sourceParent.newDataCenter
             parentSite.childSites.forEach(childSite => childSite.dataCenter = sourceParent.dataCenter)
         },
         addChild: (state, action) => {
@@ -111,7 +111,7 @@ export const siteSlice = createSlice({
             const childTempId = sourceChild.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             const childSite = getSiteById(parentSite.childSites, childTempId)
-            childSite.baseDomain = sourceChild.baseDomain
+            childSite.baseDomain = sourceChild.newBaseDomain
         },
         updateChildDescription: (state, action) => {
             const sourceChild = action.payload
@@ -119,7 +119,7 @@ export const siteSlice = createSlice({
             const childTempId = sourceChild.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             const childSite = getSiteById(parentSite.childSites, childTempId)
-            childSite.description = sourceChild.description
+            childSite.description = sourceChild.newDescription
         },
         clearSites: (state) => {
             state.sites = []
