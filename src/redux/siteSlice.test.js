@@ -138,8 +138,11 @@ test('should update parent site Description', () => {
 })
 
 test('should update parent site Data Center', () => {
-    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDataCenter(parentToUpdate)).sites[0]
+    const updatedParent = sitesReducer(stateWithParentWithChild, updateParentDataCenter(parentToUpdate)).sites[0]
     expect(updatedParent.dataCenter).toEqual(parentToUpdate.newDataCenter)
+    updatedParent.childSites.forEach(childSite => {
+        expect(childSite.dataCenter).toEqual(parentToUpdate.newDataCenter)
+    })
 })
 
 test('should update child site Base Domain', () => {

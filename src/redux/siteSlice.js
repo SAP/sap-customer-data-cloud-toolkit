@@ -91,7 +91,7 @@ export const siteSlice = createSlice({
             const parentSiteTempId = sourceParent.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             parentSite.dataCenter = sourceParent.newDataCenter
-            parentSite.childSites.forEach(childSite => childSite.dataCenter = sourceParent.dataCenter)
+            parentSite.childSites.forEach(childSite => childSite.dataCenter = sourceParent.newDataCenter)
         },
         addChild: (state, action) => {
             const parentSiteTempId = action.payload.tempId
