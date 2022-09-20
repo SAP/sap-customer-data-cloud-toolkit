@@ -1,11 +1,11 @@
-import { ThemeProvider } from '@ui5/webcomponents-react';
+import { ThemeProvider } from '@ui5/webcomponents-react'
 
-import SiteDeployer from './routes/site-deployer/site-deployer.component';
-import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component';
+import SiteDeployer from './routes/site-deployer/site-deployer.component'
+import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
 
-import './App.css';
+import './App.css'
 
-import logo from './logo.svg';
+import logo from './logo.svg'
 
 // function getLogo() {
 //   if (window.chrome & window.chrome.runtime) {
@@ -16,14 +16,14 @@ import logo from './logo.svg';
 // }
 
 function App() {
-  return (
-    <ThemeProvider>
-      <div className="App">
-        <SiteDeployer />
-        <CopyConfigurationExtended />
-      </div>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider>
+			<div className="App">
+				<SiteDeployer />
+				<CopyConfigurationExtended />
+			</div>
+		</ThemeProvider>
+	)
 }
 
-export default App;
+export default App
