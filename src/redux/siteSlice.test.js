@@ -1,4 +1,7 @@
-import sitesReducer, { addParent, deleteParent, updateParent, updateChild, addChild, deleteChild, clearSites } from './siteSlice'
+import sitesReducer, {
+    addParent, deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter,
+    updateChildBaseDomain, updateChildDescription, addChild, deleteChild, clearSites
+} from './siteSlice'
 
 const initialState = { sites: [] }
 
@@ -52,6 +55,22 @@ const structure = {
     ]
 }
 
+const parentToUpdate = {
+    tempId: '1234',
+    baseDomain: 'updated domain',
+    description: 'updated description',
+    dataCenter: 'updated data center'
+}
+
+const childToUpdate = {
+    parentSiteTempId: '1234',
+    tempId: '5678',
+    baseDomain: 'updated domain',
+    description: 'updated description',
+    dataCenter: 'updated data center'
+}
+
+
 test('should return initial state', () => {
     expect(sitesReducer(undefined, { type: undefined })).toEqual(initialState)
 })
@@ -72,7 +91,7 @@ test('should add a new Parent site', () => {
 })
 
 test('should add a Parent site with a child from a Structure', () => {
-    const newState = sitesReducer(initialState, addParent( structure.data[0]))
+    const newState = sitesReducer(initialState, addParent(structure.data[0]))
     expect(newState.sites.length).toEqual(1)
 
     const newParent = newState.sites[0]
@@ -109,34 +128,31 @@ test('should add a new child site', () => {
 })
 
 
-test('should update parent site', () => {
-    const parentToUpdate = {
-        tempId: '1234',
-        baseDomain: 'updated domain',
-        description: 'updated description',
-        dataCenter: 'updated data center'
-    }
-
-    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParent(parentToUpdate)).sites[0]
+test('should update parent site Base Domain', () => {
+    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentBaseDomain(parentToUpdate)).sites[0]
     expect(updatedParent.baseDomain).toEqual(parentToUpdate.baseDomain)
+})
+
+test('should update parent site Description', () => {
+    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDescription(parentToUpdate)).sites[0]
     expect(updatedParent.description).toEqual(parentToUpdate.description)
+})
+
+test('should update parent site Data Center', () => {
+    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDataCenter(parentToUpdate)).sites[0]
     expect(updatedParent.dataCenter).toEqual(parentToUpdate.dataCenter)
 })
 
+test('should update child site Base Domain', () => {
 
-test('should update child site', () => {
-    const childToUpdate = {
-        parentSiteTempId: '1234',
-        tempId: '5678',
-        baseDomain: 'updated domain',
-        description: 'updated description',
-        dataCenter: 'updated data center'
-    }
 
-    const updatedChild = sitesReducer(stateWithParentWithChild, updateChild(childToUpdate)).sites[0].childSites[0]
+    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildBaseDomain(childToUpdate)).sites[0].childSites[0]
     expect(updatedChild.baseDomain).toEqual(childToUpdate.baseDomain)
+})
+
+test('should update child site Description', () => {
+    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildDescription(childToUpdate)).sites[0].childSites[0]
     expect(updatedChild.description).toEqual(childToUpdate.description)
-    expect(updatedChild.dataCenter).toEqual(childToUpdate.dataCenter)
 })
 
 test('should delete child site', () => {

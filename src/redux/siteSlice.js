@@ -77,12 +77,22 @@ export const siteSlice = createSlice({
             const parentSiteTempId = action.payload.tempId
             state.sites = state.sites.filter(site => site.tempId !== parentSiteTempId)
         },
-        updateParent: (state, action) => {
+        updateParentBaseDomain: (state, action) => {
             const sourceParent = action.payload
             const parentSiteTempId = sourceParent.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             parentSite.baseDomain = sourceParent.baseDomain
+        },
+        updateParentDescription: (state, action) => {
+            const sourceParent = action.payload
+            const parentSiteTempId = sourceParent.tempId
+            const parentSite = getSiteById(state.sites, parentSiteTempId)
             parentSite.description = sourceParent.description
+        },
+        updateParentDataCenter: (state, action) => {
+            const sourceParent = action.payload
+            const parentSiteTempId = sourceParent.tempId
+            const parentSite = getSiteById(state.sites, parentSiteTempId)
             parentSite.dataCenter = sourceParent.dataCenter
             parentSite.childSites.forEach(childSite => childSite.dataCenter = sourceParent.dataCenter)
         },
@@ -98,15 +108,21 @@ export const siteSlice = createSlice({
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             parentSite.childSites = parentSite.childSites.filter(childSite => childSite.tempId !== childTempId)
         },
-        updateChild: (state, action) => {
+        updateChildBaseDomain: (state, action) => {
             const sourceChild = action.payload
             const parentSiteTempId = sourceChild.parentSiteTempId
             const childTempId = sourceChild.tempId
             const parentSite = getSiteById(state.sites, parentSiteTempId)
             const childSite = getSiteById(parentSite.childSites, childTempId)
             childSite.baseDomain = sourceChild.baseDomain
+        },
+        updateChildDescription: (state, action) => {
+            const sourceChild = action.payload
+            const parentSiteTempId = sourceChild.parentSiteTempId
+            const childTempId = sourceChild.tempId
+            const parentSite = getSiteById(state.sites, parentSiteTempId)
+            const childSite = getSiteById(parentSite.childSites, childTempId)
             childSite.description = sourceChild.description
-            childSite.dataCenter = sourceChild.dataCenter
         },
         clearSites: (state) => {
             state.sites = []
@@ -117,8 +133,8 @@ export const siteSlice = createSlice({
     },
 })
 
-export const { addParent, deleteParent, updateParent,
-    updateChild, addChild, deleteChild, clearSites, 
+export const { addParent, deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter,
+    updateChildBaseDomain, updateChildDescription, updateChildDataCenter, addChild, deleteChild, clearSites, 
     // addStructure 
 } = siteSlice.actions
 

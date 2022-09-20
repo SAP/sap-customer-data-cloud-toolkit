@@ -11,7 +11,7 @@ import {
 } from '@ui5/webcomponents-react';
 
 import { useDispatch } from 'react-redux'
-import { deleteChild, updateChild } from '../../redux/siteSlice';
+import { deleteChild, updateChildBaseDomain, updateChildDescription } from '../../redux/siteSlice';
 
 
 const ChildTableRow = ({
@@ -27,23 +27,19 @@ const ChildTableRow = ({
 
     const onChangeChildDomain = (event) => {
         const baseDomain = event.target.value
-        dispatch(updateChild({
+        dispatch(updateChildBaseDomain({
             parentSiteTempId,
             tempId,
-            baseDomain,
-            description,
-            dataCenter,
+            baseDomain
         }))
     }
 
     const onChangeChildDescription = (event) => {
         const description = event.target.value
-        dispatch(updateChild({
+        dispatch(updateChildDescription({
             parentSiteTempId,
             tempId,
-            baseDomain,
-            description,
-            dataCenter,
+            description
         }))
     }
 

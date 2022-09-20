@@ -20,7 +20,7 @@ import ChildTableRow from '../sites-table-child-row/sites-table-child-row';
 import dataCenters from '../../dataCenters.json';
 
 import { useDispatch } from 'react-redux'
-import { deleteParent, updateParent, addChild } from '../../redux/siteSlice';
+import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild } from '../../redux/siteSlice';
 
 
 const ParentSiteTableRow = ({
@@ -40,31 +40,25 @@ const ParentSiteTableRow = ({
 
     const onChangeDataCenter = (event) => {
         const dataCenter = event.detail.selectedOption.dataset.value
-        dispatch(updateParent({
+        dispatch(updateParentDataCenter({
             tempId,
-            baseDomain,
-            description,
             dataCenter
         }))
     }
 
     const onChangeParentDomain = (event) => {
         const baseDomain = event.target.value
-        dispatch(updateParent({
+        dispatch(updateParentBaseDomain({
             tempId,
-            baseDomain,
-            description,
-            dataCenter
+            baseDomain
         }))
     }
 
     const onChangeParentDescription = (event) => {
         const description = event.target.value
-        dispatch(updateParent({
+        dispatch(updateParentDescription({
             tempId,
-            baseDomain,
-            description,
-            dataCenter,
+            description
         }))
     }
 
