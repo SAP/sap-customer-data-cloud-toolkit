@@ -48,11 +48,7 @@ const ChildTableRow = ({
     }
 
     const actionSheetOpenerHandler = () => {
-        if (isActionSheetOpen) {
-            setActionSheetOpen(false);
-        } else {
-            setActionSheetOpen(true);
-        }
+        setActionSheetOpen(!isActionSheetOpen)
     }
 
     const actionSheetOnAfterCloseHandler = () => {
