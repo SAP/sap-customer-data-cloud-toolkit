@@ -1,6 +1,3 @@
-import { Card, CardHeader, Text } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
-
 const CopyConfigurationExtended = () => {
 	const handleHeaderClick = () => {
 		alert('Header clicked')

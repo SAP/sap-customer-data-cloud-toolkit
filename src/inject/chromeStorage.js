@@ -23,8 +23,12 @@ export const initChromeStorage = () => {
 
 	window.chrome.storage.onChanged.addListener((changes, area) => {
 		if (area === 'local') {
-			if (changes.userKey) state.userKey = changes.userKey.newValue
-			if (changes.secretKey) state.secretKey = changes.secretKey.newValue
+			if (changes.userKey) {
+				state.userKey = changes.userKey.newValue
+			}
+			if (changes.secretKey) {
+				state.secretKey = changes.secretKey.newValue
+			}
 		}
 	})
 }

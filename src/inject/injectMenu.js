@@ -54,7 +54,9 @@ export const initMenuExtension = () => {
 	let ulMenu = querySelectorAllShadows(
 		'.fd-side-nav__main-navigation .level-1.fd-nested-list',
 	)
-	if (!ulMenu.length) return
+	if (!ulMenu.length) {
+		return
+	}
 	ulMenu = ulMenu[0]
 
 	ulMenu.querySelectorAll('li').forEach((li) => {
@@ -64,13 +66,15 @@ export const initMenuExtension = () => {
 				getInnerText(li.querySelector('.fd-nested-list__title')),
 		)
 
-		if (!elem.length) return true
+		if (!elem.length) {
+			return true
+		}
 
 		let elemHtml = elem[0].html()
 		elemHtml = elemHtml.replaceAll('{{partnerId}}', partnerId)
 		elemHtml = elemHtml.replaceAll('{{apiKey}}', apiKey)
 
-		let newElem = htmlToElem(elemHtml)
+		const newElem = htmlToElem(elemHtml)
 
 		// Add on click event to show tools wrap container before HASH changes
 		newElem.addEventListener('click', () =>

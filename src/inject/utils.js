@@ -25,7 +25,7 @@ export function querySelectorAllShadows(selector, el = document.body) {
 
 // Create a New DOM Element from HTML String - https://www.w3docs.com/snippets/javascript/how-to-create-a-new-dom-element-from-html-string.html
 export function htmlToElem(html) {
-	let temp = document.createElement('template')
+	const temp = document.createElement('template')
 	html = html.trim() // Never return a space text node as a result
 	temp.innerHTML = html
 	return temp.content.firstChild
@@ -33,11 +33,14 @@ export function htmlToElem(html) {
 
 // Run function when element exists
 export const onElementExists = (elemSelector, onExists) => {
-	let elem = querySelectorAllShadows(elemSelector)
-	if (!elem.length)
+	const elem = querySelectorAllShadows(elemSelector)
+	if (!elem.length) {
 		return setTimeout(() => onElementExists(elemSelector, onExists), 75)
+	}
 
-	if (typeof onExists == 'function') onExists(elem)
+	if (typeof onExists == 'function') {
+		onExists(elem)
+	}
 }
 
 // Watch changes to element: created, removed
@@ -47,12 +50,16 @@ export const watchElement = (args) => {
 	if (querySelectorAllShadows(elemSelector).length) {
 		if (!args.exists) {
 			args.exists = true
-			if (typeof onCreated == 'function') onCreated(args)
+			if (typeof onCreated == 'function') {
+				onCreated(args)
+			}
 		}
 	} else {
 		if (args.exists) {
 			args.exists = false
-			if (typeof onRemoved == 'function') onRemoved(args)
+			if (typeof onRemoved == 'function') {
+				onRemoved(args)
+			}
 		}
 	}
 
@@ -63,7 +70,9 @@ export const watchElement = (args) => {
 export const onHashChange = (onChange, prevHash) => {
 	if (window.location.hash !== prevHash) {
 		prevHash = window.location.hash
-		if (typeof onChange == 'function') onChange()
+		if (typeof onChange == 'function') {
+			onChange()
+		}
 	}
 	setTimeout(() => onHashChange(onChange, prevHash), 75)
 }

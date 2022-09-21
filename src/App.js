@@ -5,8 +5,6 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 
 import './App.css'
 
-import logo from './logo.svg'
-
 // function getLogo() {
 //   if (window.chrome & window.chrome.runtime) {
 //     return window.chrome.runtime.getURL(logo);

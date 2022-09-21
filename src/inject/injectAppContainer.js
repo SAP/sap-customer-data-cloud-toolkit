@@ -21,7 +21,9 @@ export const initAppContainer = (onCreated) => {
 
 	console.log('CDC Toolbox App - %cLoaded', logStyles.green)
 
-	if (typeof onCreated == 'function') onCreated()
+	if (typeof onCreated == 'function') {
+		onCreated()
+	}
 }
 
 export const destroyAppContainer = () => {
