@@ -33,7 +33,7 @@ export function htmlToElem(html) {
 export const onElementExists = (elemSelector, onExists) => {
 	const elem = querySelectorAllShadows(elemSelector)
 	if (!elem.length) {
-		return setTimeout(() => onElementExists(elemSelector, onExists), 75)
+		setTimeout(() => onElementExists(elemSelector, onExists), 75)
 	} else {
 		if (typeof onExists == 'function') {
 			onExists(elem)

@@ -135,6 +135,7 @@ const SiteDeployer = () => {
 				></Bar>
 			)
 		}
+		return <Bar></Bar>
 	}
 
 	return (
