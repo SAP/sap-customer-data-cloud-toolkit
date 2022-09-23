@@ -16,11 +16,13 @@ export const menuElements = [
 			const index = 0
 			return `\
     <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item" data-cdc-toolbox-index="${index}">\
-      <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0" class="fd-nested-list__link" name="${menuElements[index].tabName}">\
+      <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0" 
+	  class="fd-nested-list__link" name="${menuElements[index].tabName}">\
         <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--product" role="presentation"></span>-->\
         <span fd-nested-list-title="" class="fd-nested-list__title">\
           ${menuElements[index].name}\
-          <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
+          <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);
+		  color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
           <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
         </span>\
       </a>\
@@ -35,11 +37,13 @@ export const menuElements = [
 	//     const index = 1;
 	//     return `\
 	//   <li fd-nested-list-item="" class="fd-nested-list__item cdc-tools--menu-item" data-cdc-toolbox-index="${index}">\
-	//     <a fd-nested-list-link="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0" class="fd-nested-list__link" name="${menuElements[index].tabName}">\
+	//     <a fd-nested-list-link="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/${menuElements[index].tabName}" tabindex="0"
+	//     class="fd-nested-list__link" name="${menuElements[index].tabName}">\
 	//     <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--task" role="presentation"></span>-->\
 	//       <span fd-nested-list-title="" class="fd-nested-list__title">\
 	//         ${menuElements[index].name}\
-	//         <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
+	//         <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);
+	//         color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
 	//         <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
 	//       </span>\
 	//     </a>\
@@ -82,6 +86,7 @@ export const initMenuExtension = () => {
 		)
 
 		li.after(newElem)
+		return true
 	})
 }
 
@@ -96,11 +101,9 @@ export const injectMenu = () => {
 		elemSelector: '.fd-nested-list__icon.sap-icon--action-settings', // Admin button
 		onCreated: () => {
 			initMenuExtension()
-			// console.log('CDC Toolbox Menu - %cLoaded', logStyles.green);
 		},
 		onRemoved: () => {
 			destroyMenuExtension()
-			// console.log('CDC Toolbox Menu - %cClosed', logStyles.gray);
 		},
 	})
 }

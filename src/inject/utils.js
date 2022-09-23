@@ -12,8 +12,6 @@ export function querySelectorAllShadows(selector, el = document.body) {
 		.map((el) => el.shadowRoot)
 		.filter(Boolean)
 
-	// console.log('[querySelectorAllShadows]', selector, el, `(${childShadows.length} shadowRoots)`);
-
 	const childResults = childShadows.map((child) =>
 		querySelectorAllShadows(selector, child),
 	)
@@ -41,6 +39,7 @@ export const onElementExists = (elemSelector, onExists) => {
 	if (typeof onExists == 'function') {
 		onExists(elem)
 	}
+	return
 }
 
 // Watch changes to element: created, removed

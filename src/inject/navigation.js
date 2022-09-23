@@ -7,6 +7,7 @@ import {
 import { state } from './chromeStorage'
 
 const IS_SELECTED = 'is-selected'
+const CDC_TOOLS_APP_CONTAINER = '.cdc-tools-app-container'
 
 const init = () => {
 	onHashChange(() => processHashChange())
@@ -25,14 +26,16 @@ const processHashChange = () => {
 	state.apiKey = apiKey
 
 	showTool({ partnerId, apiKey, tabName })
+	return
 }
 
 const showTool = ({ partnerId, apiKey, tabName }) => {
 	if (
-		!document.querySelectorAll('.cdc-tools-app-container').length ||
+		!document.querySelectorAll(CDC_TOOLS_APP_CONTAINER).length ||
 		!document.querySelector(`.cdc-tools-app-container[name="${tabName}"]`)
-	)
+	) {
 		return
+	}
 
 	hideTool()
 
@@ -53,18 +56,19 @@ const showTool = ({ partnerId, apiKey, tabName }) => {
 	).forEach((el) => {
 		el.classList.add(IS_SELECTED)
 		// Set dropdown list selector as is-selected
-		let menuParentElem = el.parentElement.parentElement.closest(
+		const menuParentElem = el.parentElement.parentElement.closest(
 			'.fd-nested-list__item',
 		)
-		if (menuParentElem)
+		if (menuParentElem) {
 			menuParentElem
 				.querySelector('.fd-nested-list__content')
 				.classList.add(IS_SELECTED)
+		}
 	})
 }
 
 const hideTool = () => {
-	if (!document.querySelectorAll('.cdc-tools-app-container').length) {
+	if (!document.querySelectorAll(CDC_TOOLS_APP_CONTAINER).length) {
 		return
 	}
 
@@ -73,7 +77,7 @@ const hideTool = () => {
 
 	// Hide cdc-tools containers
 	document
-		.querySelectorAll('.cdc-tools-app-container')
+		.querySelectorAll(CDC_TOOLS_APP_CONTAINER)
 		.forEach((el) => el.classList.remove('show-cdc-tools-app-container'))
 
 	// Remove is-selected from all cdc-tools links
@@ -85,7 +89,7 @@ const hideTool = () => {
 export const initNavigation = () => {
 	watchElement({
 		// elemSelector: '.fd-info-label__text', // Tenant ID
-		elemSelector: '.cdc-tools-app-container', // CDC Toolbox container
+		elemSelector: CDC_TOOLS_APP_CONTAINER, // CDC Toolbox container
 		onCreated: () => {
 			init()
 			console.log('CDC Toolbox Navigation - %cLoaded', logStyles.green)
