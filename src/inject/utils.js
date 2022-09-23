@@ -6,9 +6,9 @@ export const getInnerText = (domElement) =>
  * Just like `querySelectorAll`, but automatically expand on all child `shadowRoot` elements.
  * @see https://stackoverflow.com/a/71692555/2228771
  */
-export function querySelectorAllShadows(selector, el = document.body) {
+export function querySelectorAllShadows(selector, element = document.body) {
 	// recurse on childShadows
-	const childShadows = Array.from(el.querySelectorAll('*'))
+	const childShadows = Array.from(element.querySelectorAll('*'))
 		.map((el) => el.shadowRoot)
 		.filter(Boolean)
 
@@ -17,7 +17,7 @@ export function querySelectorAllShadows(selector, el = document.body) {
 	)
 
 	// fuse all results into singular, flat array
-	const result = Array.from(el.querySelectorAll(selector))
+	const result = Array.from(element.querySelectorAll(selector))
 	return result.concat(childResults).flat()
 }
 
@@ -34,12 +34,11 @@ export const onElementExists = (elemSelector, onExists) => {
 	const elem = querySelectorAllShadows(elemSelector)
 	if (!elem.length) {
 		return setTimeout(() => onElementExists(elemSelector, onExists), 75)
+	} else {
+		if (typeof onExists == 'function') {
+			onExists(elem)
+		}
 	}
-
-	if (typeof onExists == 'function') {
-		onExists(elem)
-	}
-	return
 }
 
 // Watch changes to element: created, removed

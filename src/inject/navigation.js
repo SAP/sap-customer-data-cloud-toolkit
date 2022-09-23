@@ -17,16 +17,15 @@ const init = () => {
 const processHashChange = () => {
 	const hash = window.location.hash.split('/')
 	if (hash.length !== 5 || hash[3] !== 'cdc-tools') {
-		return hideTool()
+		hideTool()
+	} else {
+		const [, partnerId, apiKey, , tabName] = hash
+
+		state.partnerId = partnerId
+		state.apiKey = apiKey
+
+		showTool({ partnerId, apiKey, tabName })
 	}
-
-	const [, partnerId, apiKey, , tabName] = hash
-
-	state.partnerId = partnerId
-	state.apiKey = apiKey
-
-	showTool({ partnerId, apiKey, tabName })
-	return
 }
 
 const showTool = ({ partnerId, apiKey, tabName }) => {

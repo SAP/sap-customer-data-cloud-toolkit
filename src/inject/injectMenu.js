@@ -70,23 +70,22 @@ export const initMenuExtension = () => {
 				getInnerText(li.querySelector('.fd-nested-list__title')),
 		)
 
-		if (!elem.length) {
-			return true
+		if (elem.length) {
+			let elemHtml = elem[0].html()
+			elemHtml = elemHtml.replaceAll('{{partnerId}}', partnerId)
+			elemHtml = elemHtml.replaceAll('{{apiKey}}', apiKey)
+
+			const newElem = htmlToElem(elemHtml)
+
+			// Add on click event to show tools wrap container before HASH changes
+			newElem.addEventListener('click', () =>
+				document
+					.querySelector('.cdc-tools-app')
+					.classList.add('show-cdc-tools'),
+			)
+
+			li.after(newElem)
 		}
-
-		let elemHtml = elem[0].html()
-		elemHtml = elemHtml.replaceAll('{{partnerId}}', partnerId)
-		elemHtml = elemHtml.replaceAll('{{apiKey}}', apiKey)
-
-		const newElem = htmlToElem(elemHtml)
-
-		// Add on click event to show tools wrap container before HASH changes
-		newElem.addEventListener('click', () =>
-			document.querySelector('.cdc-tools-app').classList.add('show-cdc-tools'),
-		)
-
-		li.after(newElem)
-		return true
 	})
 }
 

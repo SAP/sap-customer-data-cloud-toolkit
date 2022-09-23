@@ -106,6 +106,37 @@ const SiteDeployer = () => {
 		setBaseDomain(event.target.value)
 	}
 
+	const showHideSaveCancelButtons = () => {
+		if (sites.length) {
+			return (
+				<Bar
+					design="FloatingFooter"
+					endContent={
+						<div>
+							<button
+								type="submit"
+								id="save-main"
+								class="fd-button fd-button--emphasized fd-button--compact"
+								onClick={onSaveHandler}
+							>
+								Save
+							</button>
+							<button
+								type="button"
+								fd-button=""
+								id="cancel-main"
+								class="fd-button fd-button--transparent fd-button--compact"
+								onClick={onCancelHandler}
+							>
+								Cancel
+							</button>
+						</div>
+					}
+				></Bar>
+			)
+		}
+	}
+
 	return (
 		<div className="cdc-tools-app-container" name="site-deployer">
 			<Bar design="Header" startContent={<BarStart />}></Bar>
@@ -225,36 +256,7 @@ const SiteDeployer = () => {
 				</div>
 				<div style={spacing.sapUiSmallMargin}>
 					<div style={spacing.sapUiTinyMargin}>
-						<Card>
-							{sites.length ? (
-								<Bar
-									design="FloatingFooter"
-									endContent={
-										<div>
-											<button
-												type="submit"
-												id="save-main"
-												class="fd-button fd-button--emphasized fd-button--compact"
-												onClick={onSaveHandler}
-											>
-												Save
-											</button>
-											<button
-												type="button"
-												fd-button=""
-												id="cancel-main"
-												class="fd-button fd-button--transparent fd-button--compact"
-												onClick={onCancelHandler}
-											>
-												Cancel
-											</button>
-										</div>
-									}
-								></Bar>
-							) : (
-								console.log()
-							)}
-						</Card>
+						<Card>{showHideSaveCancelButtons()}</Card>
 					</div>
 				</div>
 			</div>
