@@ -6,7 +6,7 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row'
+import ParentSiteTableRow from '../sites-table-parent-row/ParentSiteTableRow'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addParent } from '../../redux/siteSlice'

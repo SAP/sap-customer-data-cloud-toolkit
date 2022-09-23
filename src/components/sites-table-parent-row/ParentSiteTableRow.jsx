@@ -15,7 +15,7 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import ChildTableRow from '../sites-table-child-row/sites-table-child-row'
+import ChildTableRow from '../sites-table-child-row/ChildTableRow'
 
 import dataCenters from '../../dataCenters.json'
 

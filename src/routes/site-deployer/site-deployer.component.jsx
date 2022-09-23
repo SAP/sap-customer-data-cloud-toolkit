@@ -42,6 +42,16 @@ const BarStart = (props) => (
 	</Title>
 )
 
+const getSelectedDataCenters = () => {
+	const dataCenterHTMLCollection = document.getElementById(
+		'cdctools-dataCenter',
+	).children
+
+	return [...dataCenterHTMLCollection]
+		.filter((item) => item._state.selected === true)
+		.map((item) => item._state.text)
+}
+
 const SiteDeployer = () => {
 	const dispatch = useDispatch()
 
@@ -90,16 +100,6 @@ const SiteDeployer = () => {
 		return structures.filter(
 			(siteStructure) => siteStructure._id === selectedStructureId,
 		)[0]
-	}
-
-	const getSelectedDataCenters = () => {
-		const dataCenterHTMLCollection = document.getElementById(
-			'cdctools-dataCenter',
-		).children
-
-		return [...dataCenterHTMLCollection]
-			.filter((item) => item._state.selected === true)
-			.map((item) => item._state.text)
 	}
 
 	const onBaseDomainChange = (event) => {
