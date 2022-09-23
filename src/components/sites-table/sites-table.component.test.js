@@ -4,6 +4,6 @@
 // import SitesTable from './sites-table.component'
 
 it('shoud render', () => {
-    // TODO
-    // expect(shallow(<SitesTable/>).length).toEqual(1)
+	// TODO
+	// expect(shallow(<SitesTable/>).length).toEqual(1)
 })
