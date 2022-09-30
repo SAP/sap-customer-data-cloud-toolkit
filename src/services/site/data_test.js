@@ -1,6 +1,10 @@
-const URL = 'https://admin.us1.gigya.com'
-const CREATE_SITE_ENDPOINT = URL + CREATE_SITE
-const SET_SITE_CONFIG_ENDPOINT = URL + SET_SITE_CONFIG
+const HttpStatus = {
+	OK: 200,
+}
+
+// const URL = 'https://admin.us1.gigya.com'
+// const CREATE_SITE_ENDPOINT = URL + CREATE_SITE
+// const SET_SITE_CONFIG_ENDPOINT = URL + SET_SITE_CONFIG
 
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
@@ -8,7 +12,7 @@ const child1SiteId = 'C1'
 const child2SiteId = 'C2'
 
 const expectedGigyaResponseOk = {
-	APIKey: 'apiKey',
+	ApiKey: 'apiKey',
 	StatusCode: 200,
 	ErrorCode: 0,
 	StatusReason: 'OK',
@@ -25,7 +29,7 @@ const expectedGigyaResponseNoSecret = {
 	StatusReason: 'Forbidden',
 	CallID: 'ed5c54bfe321478b8db4298c2539265a',
 	ApiVersion: 2,
-	Time: time.Now(),
+	Time: '',
 }
 
 const expectedGigyaResponseNoUserKey = expectedGigyaResponseNoSecret
@@ -187,3 +191,27 @@ function createParentWithTwoChildRequest() {
 	delete clone.Sites[1]
 	return clone
 }
+
+module.exports = {
+	HttpStatus,
+	expectedGigyaResponseOk,
+	expectedGigyaResponseNoSecret,
+	createSingleParentRequest,
+}
+
+/*
+    const object = {
+  a: 'a',
+  b: 'b',
+  c: 'c',
+  d: 'd',
+}
+
+// Remove "c" and "d" fields from original object:
+const {c, d, ...partialObject} = object;
+const subset = {c, d};
+
+console.log(partialObject) // => { a: 'a', b: 'b'}
+console.log(subset) // => { c: 'c', d: 'd'};
+    */
+//const object = { a: 5, b: 6, c: 7  };const subset = (({ a, c }) => ({ a, c }))(object);console.log(subset); // { a: 5, c: 7
