@@ -2,6 +2,7 @@
 const Site = require('./site.js')
 const axios = require('axios').default
 const TestData = require('./data_test.js')
+const client = require('../gigya/client')
 
 jest.mock('axios')
 
@@ -21,17 +22,17 @@ describe('Service Site test suite', () => {
 		const mockedResponse = {
 			data: TestData.createSingleParentRequest().Sites[0],
 		}
-		axios.post.mockResolvedValue(mockedResponse)
+		axios.mockResolvedValue(mockedResponse)
 
 		const siteService = new Site('partnerId', 'userKey', 'secret')
 		let response = await siteService.create(requestBody)
 		console.log('test.response=' + JSON.stringify(response))
-		expect(response).toEqual(requestBody)
+		expect(response).toEqual(mockedResponse.data)
 	})
 
 	test('create site successfully', async () => {
 		const mockedResponse = { data: TestData.expectedGigyaResponseOk }
-		axios.post.mockResolvedValue(mockedResponse)
+		axios.mockResolvedValue(mockedResponse)
 
 		const siteService = new Site('partnerId', 'userKey', 'secret')
 		let response = await siteService.create(
@@ -49,7 +50,7 @@ describe('Service Site test suite', () => {
 		// 	TestData.expectedGigyaResponseNoSecret,
 		// )
 		const mockedResponse = { data: TestData.expectedGigyaResponseNoSecret }
-		axios.post.mockResolvedValue(mockedResponse)
+		axios.mockResolvedValue(mockedResponse)
 
 		const siteService = new Site('partnerId', 'userKey', '')
 		let response = await siteService.create(
@@ -74,7 +75,7 @@ describe('Service Site test suite', () => {
 		// 	},
 		// )
 		const mockedResponse = { data: TestData.expectedGigyaResponseNoPartnerId }
-		axios.post.mockResolvedValue(mockedResponse)
+		axios.mockResolvedValue(mockedResponse)
 
 		const siteService = new Site('', 'userKey', 'secret')
 		let response = await siteService.create(

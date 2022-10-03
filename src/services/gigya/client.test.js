@@ -1,5 +1,4 @@
 'use strict'
-//import { get } from './client.js'
 const client = require('./client')
 
 describe('Gigya client test suite', () => {

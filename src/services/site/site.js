@@ -25,7 +25,7 @@ class Site {
 			'isPromise=' +
 				(typeof response === 'object' && typeof response.then === 'function'),
 		)
-		return response
+		return response.data
 	}
 
 	addCredentials(body) {
