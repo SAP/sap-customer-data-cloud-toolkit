@@ -48,6 +48,11 @@ describe('Service Site test suite', () => {
 		// const response = createSites(
 		// 	TestData.createSingleParentRequest().Sites[0],
 		// 	TestData.expectedGigyaResponseNoSecret,
+		// 	{
+		// 		partnerId: 'partnerId',
+		// 		userKey: 'userKey',
+		// 		secret: '',
+		// 	},
 		// )
 		const mockedResponse = { data: TestData.expectedGigyaResponseNoSecret }
 		axios.mockResolvedValue(mockedResponse)
@@ -56,7 +61,7 @@ describe('Service Site test suite', () => {
 		let response = await siteService.create(
 			TestData.createSingleParentRequest().Sites[0],
 		)
-		console.log('response=' + JSON.stringify(response))
+		console.log('test.response=' + JSON.stringify(response))
 
 		verifyResponseIsNotOk(
 			response,
@@ -69,9 +74,9 @@ describe('Service Site test suite', () => {
 		// 	TestData.createSingleParentRequest().Sites[0],
 		// 	TestData.expectedGigyaResponseNoPartnerId,
 		// 	{
-		// 		PartnerId: '',
-		// 		UserKey: 'userKey',
-		// 		Secret: 'secret',
+		// 		partnerId: '',
+		// 		userKey: 'userKey',
+		// 		secret: 'secret',
 		// 	},
 		// )
 		const mockedResponse = { data: TestData.expectedGigyaResponseNoPartnerId }
@@ -81,7 +86,7 @@ describe('Service Site test suite', () => {
 		let response = await siteService.create(
 			TestData.createSingleParentRequest().Sites[0],
 		)
-		console.log('response=' + JSON.stringify(response))
+		console.log('test.response=' + JSON.stringify(response))
 
 		verifyResponseIsNotOk(
 			response,
@@ -115,17 +120,17 @@ describe('Service Site test suite', () => {
 	// })
 })
 
-function createSites(request, expectedResponseFromServer, siteParams) {
+async function createSites(request, expectedResponseFromServer, siteParams) {
 	const mockedResponse = { data: expectedResponseFromServer }
-	axios.post.mockResolvedValue(expectedResponseFromServer)
+	axios.mockResolvedValue(mockedResponse)
 
 	const siteService = new Site(
-		siteParams.PartnerId,
-		siteParams.UserKey,
-		siteParams.Secret,
+		siteParams.partnerId,
+		siteParams.userKey,
+		siteParams.secret,
 	)
-	let response = siteService.create(request)
-	console.log('response=' + JSON.stringify(response))
+	let response = await siteService.create(request)
+	console.log('cs.response=' + JSON.stringify(response))
 	return response
 }
 
