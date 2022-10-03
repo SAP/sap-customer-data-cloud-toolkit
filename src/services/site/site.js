@@ -20,11 +20,11 @@ class Site {
 
 	async create(body) {
 		const response = await this.createAsync(body)
-		console.log('create.response=' + JSON.stringify(response))
-		console.log(
-			'isPromise=' +
-				(typeof response === 'object' && typeof response.then === 'function'),
-		)
+		//console.log('create.response=' + JSON.stringify(response))
+		// console.log(
+		// 	'isPromise=' +
+		// 		(typeof response === 'object' && typeof response.then === 'function'),
+		// )
 		return response.data
 	}
 

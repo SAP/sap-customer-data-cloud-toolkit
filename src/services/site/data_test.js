@@ -198,7 +198,11 @@ module.exports = {
 	expectedGigyaResponseNoSecret,
 	expectedGigyaResponseNoUserKey,
 	expectedGigyaResponseNoPartnerId,
+	expectedGigyaResponseNoBaseDomain,
+	expectedGigyaResponseInvalidDataCenter,
 	createSingleParentRequest,
+	createParentWithOneChildRequest,
+	createParentWithTwoChildRequest,
 }
 
 /*

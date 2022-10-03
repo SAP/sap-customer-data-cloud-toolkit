@@ -9,59 +9,31 @@ jest.mock('axios')
 describe('Service Site test suite', () => {
 	const parent1SiteId = 'idP1'
 
-	const requestBody = {
-		baseDomain: 'p1.com',
-		description: 'parent 1 description',
-		dataCenter: 'us1',
-		isChildSite: false,
-		id: parent1SiteId,
-		parentSiteId: '',
+	const credentials = {
+		partnerId: 'partnerId',
+		userKey: 'userKey',
+		secret: 'secret',
 	}
 
-	test('reference comparison', async () => {
-		const mockedResponse = {
-			data: TestData.createSingleParentRequest().Sites[0],
-		}
-		axios.mockResolvedValue(mockedResponse)
-
-		const siteService = new Site('partnerId', 'userKey', 'secret')
-		let response = await siteService.create(requestBody)
-		console.log('test.response=' + JSON.stringify(response))
-		expect(response).toEqual(mockedResponse.data)
-	})
-
 	test('create site successfully', async () => {
-		const mockedResponse = { data: TestData.expectedGigyaResponseOk }
-		axios.mockResolvedValue(mockedResponse)
-
-		const siteService = new Site('partnerId', 'userKey', 'secret')
-		let response = await siteService.create(
+		const response = await createSites(
 			TestData.createSingleParentRequest().Sites[0],
+			TestData.expectedGigyaResponseOk,
+			credentials,
 		)
-		console.log('response=' + JSON.stringify(response))
 
 		expect(response.ApiKey).toBeDefined()
 		expect(response.StatusCode).toEqual(TestData.HttpStatus.OK)
 	})
 
 	test('create site without secret', async () => {
-		// const response = createSites(
-		// 	TestData.createSingleParentRequest().Sites[0],
-		// 	TestData.expectedGigyaResponseNoSecret,
-		// 	{
-		// 		partnerId: 'partnerId',
-		// 		userKey: 'userKey',
-		// 		secret: '',
-		// 	},
-		// )
-		const mockedResponse = { data: TestData.expectedGigyaResponseNoSecret }
-		axios.mockResolvedValue(mockedResponse)
-
-		const siteService = new Site('partnerId', 'userKey', '')
-		let response = await siteService.create(
+		let clone = Object.assign({}, credentials)
+		delete clone.secret
+		const response = await createSites(
 			TestData.createSingleParentRequest().Sites[0],
+			TestData.expectedGigyaResponseNoSecret,
+			clone,
 		)
-		console.log('test.response=' + JSON.stringify(response))
 
 		verifyResponseIsNotOk(
 			response,
@@ -70,27 +42,62 @@ describe('Service Site test suite', () => {
 	})
 
 	test('create site without partnerId', async () => {
-		// const response = createSites(
-		// 	TestData.createSingleParentRequest().Sites[0],
-		// 	TestData.expectedGigyaResponseNoPartnerId,
-		// 	{
-		// 		partnerId: '',
-		// 		userKey: 'userKey',
-		// 		secret: 'secret',
-		// 	},
-		// )
-		const mockedResponse = { data: TestData.expectedGigyaResponseNoPartnerId }
-		axios.mockResolvedValue(mockedResponse)
-
-		const siteService = new Site('', 'userKey', 'secret')
-		let response = await siteService.create(
+		let clone = Object.assign({}, credentials)
+		delete clone.partnerId
+		const response = await createSites(
 			TestData.createSingleParentRequest().Sites[0],
+			TestData.expectedGigyaResponseNoPartnerId,
+			clone,
 		)
-		console.log('test.response=' + JSON.stringify(response))
 
 		verifyResponseIsNotOk(
 			response,
 			TestData.expectedGigyaResponseNoPartnerId.ErrorMessage,
+		)
+	})
+
+	test('create site without user key', async () => {
+		let clone = Object.assign({}, credentials)
+		delete clone.userKey
+		const response = await createSites(
+			TestData.createSingleParentRequest().Sites[0],
+			TestData.expectedGigyaResponseNoUserKey,
+			clone,
+		)
+
+		verifyResponseIsNotOk(
+			response,
+			TestData.expectedGigyaResponseNoUserKey.ErrorMessage,
+		)
+	})
+
+	test('create site without baseDomain', async () => {
+		let request = TestData.createSingleParentRequest().Sites[0]
+		delete request.baseDomain
+		const response = await createSites(
+			TestData.createSingleParentRequest().Sites[0],
+			TestData.expectedGigyaResponseNoBaseDomain,
+			credentials,
+		)
+
+		verifyResponseIsNotOk(
+			response,
+			TestData.expectedGigyaResponseNoBaseDomain.ErrorMessage,
+		)
+	})
+
+	test('create site with invalid data center', async () => {
+		let request = TestData.createSingleParentRequest().Sites[0]
+		request.dataCenter = 'INVALID_DATA_CENTER'
+		const response = await createSites(
+			request,
+			TestData.expectedGigyaResponseInvalidDataCenter,
+			credentials,
+		)
+
+		verifyResponseIsNotOk(
+			response,
+			TestData.expectedGigyaResponseInvalidDataCenter.ErrorMessage,
 		)
 	})
 
@@ -112,7 +119,7 @@ describe('Service Site test suite', () => {
 	// 		request.UserKey,
 	// 		request.Secret,
 	// 	)
-	// 	let response = await siteService.createAsync(request.Sites[0])
+	// 	let response = await siteService.create(request.Sites[0])
 	// 	console.log('response=' + JSON.stringify(response))
 
 	// 	//expect(response.ApiKey).toBeDefined()
@@ -130,12 +137,13 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
 		siteParams.secret,
 	)
 	let response = await siteService.create(request)
-	console.log('cs.response=' + JSON.stringify(response))
+	console.log('response=' + JSON.stringify(response))
 	return response
 }
 
 function verifyResponseIsNotOk(response, message) {
 	expect(response.ApiKey).toBeUndefined()
+	expect(response.StatusCode).toBeDefined()
 	expect(response.StatusCode).not.toEqual(TestData.HttpStatus.OK)
 	//expect(response.SiteUid).toBeDefined()
 	expect(response.ErrorMessage).toEqual(message)
