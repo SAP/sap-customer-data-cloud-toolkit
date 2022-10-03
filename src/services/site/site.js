@@ -14,18 +14,27 @@ class Site {
 
 	createAsync(body) {
 		let url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
-		const response = client.post(url, body)
-		console.log('createAsync.response=' + JSON.stringify(response))
-		return response
+		let bodyWithCredentials = this.addCredentials(body)
+		return client.post(url, bodyWithCredentials)
 	}
 
 	async create(body) {
 		const response = await this.createAsync(body)
 		console.log('create.response=' + JSON.stringify(response))
+		console.log(
+			'isPromise=' +
+				(typeof response === 'object' && typeof response.then === 'function'),
+		)
 		return response
 	}
 
-	delete() {}
+	addCredentials(body) {
+		let bodyWithCredentials = Object.assign({}, body)
+		bodyWithCredentials.partnerID = this.partnerId
+		bodyWithCredentials.userKey = this.userKey
+		bodyWithCredentials.secret = this.secret
+		return bodyWithCredentials
+	}
 }
 
 module.exports = Site

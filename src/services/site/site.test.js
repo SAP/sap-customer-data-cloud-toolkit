@@ -9,12 +9,12 @@ describe('Service Site test suite', () => {
 	const parent1SiteId = 'idP1'
 
 	const requestBody = {
-		BaseDomain: 'p1.com',
-		Description: 'parent 1 description',
-		DataCenter: 'us1',
-		IsChildSite: false,
-		Id: parent1SiteId,
-		ParentSiteId: '',
+		baseDomain: 'p1.com',
+		description: 'parent 1 description',
+		dataCenter: 'us1',
+		isChildSite: false,
+		id: parent1SiteId,
+		parentSiteId: '',
 	}
 
 	test('reference comparison', async () => {
@@ -25,7 +25,7 @@ describe('Service Site test suite', () => {
 
 		const siteService = new Site('partnerId', 'userKey', 'secret')
 		let response = await siteService.create(requestBody)
-		console.log('response=' + JSON.stringify(response))
+		console.log('test.response=' + JSON.stringify(response))
 		expect(response).toEqual(requestBody)
 	})
 
@@ -62,14 +62,68 @@ describe('Service Site test suite', () => {
 			TestData.expectedGigyaResponseNoSecret.ErrorMessage,
 		)
 	})
+
+	test('create site without partnerId', async () => {
+		// const response = createSites(
+		// 	TestData.createSingleParentRequest().Sites[0],
+		// 	TestData.expectedGigyaResponseNoPartnerId,
+		// 	{
+		// 		PartnerId: '',
+		// 		UserKey: 'userKey',
+		// 		Secret: 'secret',
+		// 	},
+		// )
+		const mockedResponse = { data: TestData.expectedGigyaResponseNoPartnerId }
+		axios.post.mockResolvedValue(mockedResponse)
+
+		const siteService = new Site('', 'userKey', 'secret')
+		let response = await siteService.create(
+			TestData.createSingleParentRequest().Sites[0],
+		)
+		console.log('response=' + JSON.stringify(response))
+
+		verifyResponseIsNotOk(
+			response,
+			TestData.expectedGigyaResponseNoPartnerId.ErrorMessage,
+		)
+	})
+
+	// test('create site real', async () => {
+	// 	const request = {
+	// 		Sites: [
+	// 			{
+	// 				baseDomain: 'bruno_js_p1',
+	// 				description: 'parent 1 description',
+	// 				dataCenter: 'us1',
+	// 			},
+	// 		],
+	// 		PartnerID: '79597568',
+	// 		UserKey: 'ANAduftBfnKP',
+	// 		Secret: 'n2c4vAt2GwEVLHrLCDwUpLbKJVhT3RC1',
+	// 	}
+	// 	const siteService = new Site(
+	// 		request.PartnerID,
+	// 		request.UserKey,
+	// 		request.Secret,
+	// 	)
+	// 	let response = await siteService.createAsync(request.Sites[0])
+	// 	console.log('response=' + JSON.stringify(response))
+
+	// 	//expect(response.ApiKey).toBeDefined()
+	// 	//expect(response.StatusCode).toEqual(TestData.HttpStatus.OK)
+	// })
 })
 
-async function createSites(request, expectedResponseFromServer) {
+function createSites(request, expectedResponseFromServer, siteParams) {
 	const mockedResponse = { data: expectedResponseFromServer }
 	axios.post.mockResolvedValue(expectedResponseFromServer)
 
-	const siteService = new Site('partnerId', 'userKey', '')
-	let response = await siteService.create(request)
+	const siteService = new Site(
+		siteParams.PartnerId,
+		siteParams.UserKey,
+		siteParams.Secret,
+	)
+	let response = siteService.create(request)
 	console.log('response=' + JSON.stringify(response))
 	return response
 }

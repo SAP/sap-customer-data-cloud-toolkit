@@ -2,24 +2,18 @@
 const axios = require('axios').default
 
 const client = {
-	get: async function (url) {
-		try {
-			const response = await axios.get(url)
-			console.log(JSON.stringify(response))
-			return response.data
-		} catch (error) {
-			console.log(JSON.stringify(error))
+	post: function (url, body) {
+		console.log(
+			'Sending request to ' + url + '\n With body=' + JSON.stringify(body),
+		)
+
+		let requestOptions = {
+			method: 'POST',
+			url: url,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			data: new URLSearchParams(body),
 		}
-	},
-	post: async function (url, body) {
-		try {
-			const response = await axios.post(url, body)
-			console.log('response=' + JSON.stringify(response))
-			return response.data
-			//return axios.post(url, body).then((resp) => resp.data)
-		} catch (error) {
-			console.log(JSON.stringify(error))
-		}
+		return axios(requestOptions)
 	},
 }
 

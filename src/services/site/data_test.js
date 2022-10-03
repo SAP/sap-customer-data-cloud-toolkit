@@ -110,25 +110,25 @@ const expectedErrorAPIAlreadyDeleted = {
 const multipleParentWithMultipleChildrenRequest = {
 	Sites: [
 		{
-			BaseDomain: 'p1.com',
-			Description: 'parent 1 description',
-			DataCenter: 'us1',
+			baseDomain: 'p1.com',
+			description: 'parent 1 description',
+			dataCenter: 'us1',
 			IsChildSite: false,
 			Id: parent1SiteId,
 			ParentSiteId: '',
 			ChildSites: [
 				{
-					BaseDomain: 'p1.c1.com',
-					Description: 'parent 1 child 1 description',
-					DataCenter: 'us1',
+					baseDomain: 'p1.c1.com',
+					description: 'parent 1 child 1 description',
+					dataCenter: 'us1',
 					IsChildSite: true,
 					Id: parent1SiteId + child1SiteId,
 					ParentSiteId: parent1SiteId,
 				},
 				{
-					BaseDomain: 'p1.c2.com',
-					Description: 'parent 1 child 2 description',
-					DataCenter: 'us1',
+					baseDomain: 'p1.c2.com',
+					description: 'parent 1 child 2 description',
+					dataCenter: 'us1',
 					IsChildSite: true,
 					Id: parent1SiteId + child2SiteId,
 					ParentSiteId: parent1SiteId,
@@ -136,25 +136,25 @@ const multipleParentWithMultipleChildrenRequest = {
 			],
 		},
 		{
-			BaseDomain: 'p2.com',
-			Description: 'parent 2 description',
-			DataCenter: 'au1',
+			baseDomain: 'p2.com',
+			description: 'parent 2 description',
+			dataCenter: 'au1',
 			IsChildSite: false,
 			Id: parent2SiteId,
 			ParentSiteId: '',
 			ChildSites: [
 				{
-					BaseDomain: 'p2.c1.com',
-					Description: 'parent 2 child 1 description',
-					DataCenter: 'au1',
+					baseDomain: 'p2.c1.com',
+					description: 'parent 2 child 1 description',
+					dataCenter: 'au1',
 					IsChildSite: true,
 					Id: parent2SiteId + child1SiteId,
 					ParentSiteId: parent2SiteId,
 				},
 				{
-					BaseDomain: 'p2.c2.com',
-					Description: 'parent 2 child 2 description',
-					DataCenter: 'au1',
+					baseDomain: 'p2.c2.com',
+					description: 'parent 2 child 2 description',
+					dataCenter: 'au1',
 					IsChildSite: true,
 					Id: parent2SiteId + child2SiteId,
 					ParentSiteId: parent2SiteId,
@@ -162,9 +162,9 @@ const multipleParentWithMultipleChildrenRequest = {
 			],
 		},
 	],
-	PartnerID: 'partnerId',
-	UserKey: 'userKey',
-	Secret: 'secret',
+	partnerID: 'partnerId',
+	userKey: 'userKey',
+	secret: 'secret',
 }
 
 function createMultipleParentWithMultipleChildrenRequest() {
@@ -196,6 +196,8 @@ module.exports = {
 	HttpStatus,
 	expectedGigyaResponseOk,
 	expectedGigyaResponseNoSecret,
+	expectedGigyaResponseNoUserKey,
+	expectedGigyaResponseNoPartnerId,
 	createSingleParentRequest,
 }
 
