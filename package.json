@@ -29,9 +29,6 @@
 		"eject": "react-scripts eject"
 	},
 	"jest": {
-		"snapshotSerializers": [
-			"enzyme-to-json/serializer"
-		],
 		"transformIgnorePatterns": [
 			"node_modules/(?!(@ui5|lit-html|@babel)).*\\.js$"
 		]
@@ -55,9 +52,6 @@
 		]
 	},
 	"devDependencies": {
-		"@wojtekmaj/enzyme-adapter-react-17": "^0.6.7",
-		"enzyme": "^3.11.0",
-		"enzyme-to-json": "^3.6.2",
 		"prettier": "2.7.1"
 	}
 }

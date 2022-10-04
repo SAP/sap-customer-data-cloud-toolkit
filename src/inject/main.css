@@ -1,23 +1,23 @@
 .cdc-tools-app {
-	/* background-color: #fff; */
-	background-color: var(--sapBackgroundColor, #f7f7f7);
-	z-index: 1;
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: calc(100% - 241px);
-	height: calc(100% - 72px);
+  /* background-color: #fff; */
+  background-color: var(--sapBackgroundColor, #f7f7f7);
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: calc(100% - 241px);
+  height: calc(100% - 72px);
 }
 
 .cdc-tools-app {
-	display: none;
+  display: none;
 }
 .cdc-tools-app.show-cdc-tools {
-	display: block;
+  display: block;
 }
 .cdc-tools-app-container {
-	display: none;
+  display: none;
 }
 .cdc-tools-app-container.show-cdc-tools-app-container {
-	display: block;
+  display: block;
 }

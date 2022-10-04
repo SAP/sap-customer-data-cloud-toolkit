@@ -1,11 +1,11 @@
 chrome.storage.local.get(['userKey', 'secretKey'], ({ userKey, secretKey }) => {
-	document.querySelector('#userKey').value = userKey || ''
-	document.querySelector('#secretKey').value = secretKey || ''
+  document.querySelector('#userKey').value = userKey || ''
+  document.querySelector('#secretKey').value = secretKey || ''
 })
 
 const saveFieldValue = (e) => {
-	let { name, value } = e.target
-	chrome.storage.local.set({ [name]: value })
+  let { name, value } = e.target
+  chrome.storage.local.set({ [name]: value })
 }
 
 let inputUserKey = document.querySelector('#userKey')
