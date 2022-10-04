@@ -3,6 +3,6 @@ import sitesReducer from './siteSlice'
 
 export default configureStore({
   reducer: {
-    sites: sitesReducer
+    sites: sitesReducer,
   },
 })

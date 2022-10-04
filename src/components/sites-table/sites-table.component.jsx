@@ -1,23 +1,18 @@
-import { Fragment } from 'react';
-import {
-  Label,
-  Button,
-  Table,
-  TableColumn
-} from '@ui5/webcomponents-react';
-import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js';
-import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js';
-import '@ui5/webcomponents-icons/dist/add.js';
-import '@ui5/webcomponents-icons/dist/decline.js';
-import '@ui5/webcomponents-icons/dist/overflow.js';
+import { Fragment } from 'react'
+import { Label, Button, Table, TableColumn } from '@ui5/webcomponents-react'
+import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
+import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
+import '@ui5/webcomponents-icons/dist/add.js'
+import '@ui5/webcomponents-icons/dist/decline.js'
+import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row';
+import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParent } from '../../redux/siteSlice';
+import { addParent } from '../../redux/siteSlice'
 
 const SitesTable = () => {
-  const sitesStructure = useSelector(state => state.sites.sites)
+  const sitesStructure = useSelector((state) => state.sites.sites)
 
   const dispatch = useDispatch()
 
@@ -78,8 +73,7 @@ const SitesTable = () => {
         </Button>
       </div>
     </Fragment>
-  );
-};
+  )
+}
 
-export default SitesTable;
-
+export default SitesTable
