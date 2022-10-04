@@ -17,16 +17,24 @@ class SiteManager {
 		let responses = []
 		try {
 			for (let i = 0; i < siteHierarchy.sites.length; ++i) {
-				responses.push(await this.createParent(siteHierarchy.sites[i]))
-				let childSites = siteHierarchy.sites[i].childSites
-				if (childSites && childSites.length > 0) {
-					responses = responses.concat(
-						await this.createChildren(siteHierarchy.sites[i].childSites),
-					)
-				}
+				responses = responses.concat(
+					await this.createSiteHierarchy(siteHierarchy.sites[i]),
+				)
 			}
 			return responses
 		} catch (error) {}
+	}
+
+	async createSiteHierarchy(hierarchy) {
+		let responses = []
+		responses.push(await this.createParent(hierarchy))
+		let childSites = hierarchy.childSites
+		if (childSites && childSites.length > 0) {
+			responses = responses.concat(
+				await this.createChildren(hierarchy.childSites),
+			)
+		}
+		return responses
 	}
 
 	async createParent(parentSite) {
