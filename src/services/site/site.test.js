@@ -7,8 +7,6 @@ const client = require('../gigya/client')
 jest.mock('axios')
 
 describe('Service Site test suite', () => {
-	const parent1SiteId = 'idP1'
-
 	const credentials = {
 		partnerId: 'partnerId',
 		userKey: 'userKey',
@@ -17,27 +15,27 @@ describe('Service Site test suite', () => {
 
 	test('create site successfully', async () => {
 		const response = await createSites(
-			TestData.createSingleParentRequest().Sites[0],
+			TestData.createSingleParentRequest().sites[0],
 			TestData.expectedGigyaResponseOk,
 			credentials,
 		)
 
-		expect(response.ApiKey).toBeDefined()
-		expect(response.StatusCode).toEqual(TestData.HttpStatus.OK)
+		expect(response.apiKey).toBeDefined()
+		expect(response.statusCode).toEqual(TestData.HttpStatus.OK)
 	})
 
 	test('create site without secret', async () => {
 		let clone = Object.assign({}, credentials)
 		delete clone.secret
 		const response = await createSites(
-			TestData.createSingleParentRequest().Sites[0],
+			TestData.createSingleParentRequest().sites[0],
 			TestData.expectedGigyaResponseNoSecret,
 			clone,
 		)
 
 		verifyResponseIsNotOk(
 			response,
-			TestData.expectedGigyaResponseNoSecret.ErrorMessage,
+			TestData.expectedGigyaResponseNoSecret.errorMessage,
 		)
 	})
 
@@ -45,14 +43,14 @@ describe('Service Site test suite', () => {
 		let clone = Object.assign({}, credentials)
 		delete clone.partnerId
 		const response = await createSites(
-			TestData.createSingleParentRequest().Sites[0],
+			TestData.createSingleParentRequest().sites[0],
 			TestData.expectedGigyaResponseNoPartnerId,
 			clone,
 		)
 
 		verifyResponseIsNotOk(
 			response,
-			TestData.expectedGigyaResponseNoPartnerId.ErrorMessage,
+			TestData.expectedGigyaResponseNoPartnerId.errorMessage,
 		)
 	})
 
@@ -60,34 +58,34 @@ describe('Service Site test suite', () => {
 		let clone = Object.assign({}, credentials)
 		delete clone.userKey
 		const response = await createSites(
-			TestData.createSingleParentRequest().Sites[0],
+			TestData.createSingleParentRequest().sites[0],
 			TestData.expectedGigyaResponseNoUserKey,
 			clone,
 		)
 
 		verifyResponseIsNotOk(
 			response,
-			TestData.expectedGigyaResponseNoUserKey.ErrorMessage,
+			TestData.expectedGigyaResponseNoUserKey.errorMessage,
 		)
 	})
 
 	test('create site without baseDomain', async () => {
-		let request = TestData.createSingleParentRequest().Sites[0]
+		let request = TestData.createSingleParentRequest().sites[0]
 		delete request.baseDomain
 		const response = await createSites(
-			TestData.createSingleParentRequest().Sites[0],
+			request,
 			TestData.expectedGigyaResponseNoBaseDomain,
 			credentials,
 		)
 
 		verifyResponseIsNotOk(
 			response,
-			TestData.expectedGigyaResponseNoBaseDomain.ErrorMessage,
+			TestData.expectedGigyaResponseNoBaseDomain.errorMessage,
 		)
 	})
 
 	test('create site with invalid data center', async () => {
-		let request = TestData.createSingleParentRequest().Sites[0]
+		let request = TestData.createSingleParentRequest().sites[0]
 		request.dataCenter = 'INVALID_DATA_CENTER'
 		const response = await createSites(
 			request,
@@ -97,8 +95,29 @@ describe('Service Site test suite', () => {
 
 		verifyResponseIsNotOk(
 			response,
-			TestData.expectedGigyaResponseInvalidDataCenter.ErrorMessage,
+			TestData.expectedGigyaResponseInvalidDataCenter.errorMessage,
 		)
+	})
+
+	test('send request to invalid url', async () => {
+		axios.mockImplementation(() => {
+			let err = {}
+			err.code = 'ENOTFOUND'
+			err.details = 'getaddrinfo ENOTFOUND xadmin.us1.gigya.com'
+			err.message = 'Error creating site'
+			err.time = Date.now()
+			throw err
+		})
+
+		const siteService = new Site(credentials)
+		let response = await siteService.create(
+			TestData.createSingleParentRequest().sites[0],
+		)
+		console.log('response=' + JSON.stringify(response))
+
+		expect(response.errorCode).toEqual('ENOTFOUND')
+		expect(response.errorMessage).toEqual('Error creating site')
+		expect(response.time).toBeDefined()
 	})
 
 	// test('create site real', async () => {
@@ -116,7 +135,7 @@ describe('Service Site test suite', () => {
 	// 	}
 	// 	const siteService = new Site(
 	// 		request.PartnerID,
-	// 		request.UserKey,
+	// 		'', //request.UserKey,
 	// 		request.Secret,
 	// 	)
 	// 	let response = await siteService.create(request.Sites[0])
@@ -142,9 +161,8 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
 }
 
 function verifyResponseIsNotOk(response, message) {
-	expect(response.ApiKey).toBeUndefined()
-	expect(response.StatusCode).toBeDefined()
-	expect(response.StatusCode).not.toEqual(TestData.HttpStatus.OK)
-	//expect(response.SiteUid).toBeDefined()
-	expect(response.ErrorMessage).toEqual(message)
+	expect(response.apiKey).toBeUndefined()
+	expect(response.statusCode).toBeDefined()
+	expect(response.statusCode).not.toEqual(TestData.HttpStatus.OK)
+	expect(response.errorMessage).toEqual(message)
 }

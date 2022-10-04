@@ -19,7 +19,9 @@ class Site {
 	}
 
 	async create(body) {
-		const response = await this.createAsync(body)
+		const response = await this.createAsync(body).catch(function (error) {
+			return Site.generateErrorResponse(error)
+		})
 		//console.log('create.response=' + JSON.stringify(response))
 		// console.log(
 		// 	'isPromise=' +
@@ -34,6 +36,15 @@ class Site {
 		bodyWithCredentials.userKey = this.userKey
 		bodyWithCredentials.secret = this.secret
 		return bodyWithCredentials
+	}
+
+	static generateErrorResponse(error) {
+		let resp = { data: {} }
+		resp.data.errorCode = error.code
+		resp.data.errorDetails = error.details
+		resp.data.errorMessage = 'Error creating site'
+		resp.data.time = Date.now()
+		return resp
 	}
 }
 

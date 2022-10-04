@@ -2,7 +2,7 @@
 const axios = require('axios').default
 
 const client = {
-	post: function (url, body) {
+	post: async function (url, body) {
 		console.log(
 			'Sending request to ' + url + '\n With body=' + JSON.stringify(body),
 		)

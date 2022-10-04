@@ -2,136 +2,133 @@ const HttpStatus = {
 	OK: 200,
 }
 
-// const URL = 'https://admin.us1.gigya.com'
-// const CREATE_SITE_ENDPOINT = URL + CREATE_SITE
-// const SET_SITE_CONFIG_ENDPOINT = URL + SET_SITE_CONFIG
-
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
 const child1SiteId = 'C1'
 const child2SiteId = 'C2'
 
 const expectedGigyaResponseOk = {
-	ApiKey: 'apiKey',
-	StatusCode: 200,
-	ErrorCode: 0,
-	StatusReason: 'OK',
-	CallID: 'callId',
-	ApiVersion: 2,
+	apiKey: 'apiKey',
+	statusCode: 200,
+	errorCode: 0,
+	statusReason: 'OK',
+	callId: 'callId',
+	apiVersion: 2,
+	time: Date.now(),
 }
 
 const expectedGigyaResponseNoSecret = {
-	ErrorMessage: 'Permission denied',
-	ErrorDetails:
+	errorMessage: 'Permission denied',
+	errorDetails:
 		'Invalid namespace &#39;admin&#39; or method &#39;createSite&#39; or you do not have the required permissions to call it. ',
-	StatusCode: 403,
-	ErrorCode: 403007,
-	StatusReason: 'Forbidden',
-	CallID: 'ed5c54bfe321478b8db4298c2539265a',
-	ApiVersion: 2,
-	Time: '',
+	statusCode: 403,
+	errorCode: 403007,
+	statusReason: 'Forbidden',
+	callId: 'ed5c54bfe321478b8db4298c2539265a',
+	apiVersion: 2,
+	time: '',
 }
 
 const expectedGigyaResponseNoUserKey = expectedGigyaResponseNoSecret
 
 const expectedGigyaResponseNoPartnerId = {
-	CallID: '719a94d3fecc4159a748345c757a49a3',
-	ErrorCode: 400002,
-	ErrorDetails: 'Missing required parameter : partnerID',
-	ErrorMessage: 'Missing required parameter',
-	StatusCode: 400,
-	StatusReason: 'Bad Request',
-	ApiVersion: 2,
+	callId: '719a94d3fecc4159a748345c757a49a3',
+	errorCode: 400002,
+	errorDetails: 'Missing required parameter : partnerID',
+	errorMessage: 'Missing required parameter',
+	statusCode: 400,
+	statusReason: 'Bad Request',
+	apiVersion: 2,
 }
 
 const expectedGigyaResponseNoBaseDomain = {
-	CallID: '719a94d3fecc4159a748345c757a49a3',
-	ErrorCode: 400002,
-	ErrorDetails: 'Missing required parameter : baseDomain',
-	ErrorMessage: 'Missing required parameter',
-	StatusCode: 400,
-	StatusReason: 'Bad Request',
-	ApiVersion: 2,
+	callId: '719a94d3fecc4159a748345c757a49a3',
+	errorCode: 400002,
+	errorDetails: 'Missing required parameter : baseDomain',
+	errorMessage: 'Missing required parameter',
+	statusCode: 400,
+	statusReason: 'Bad Request',
+	apiVersion: 2,
 }
 
 const expectedGigyaResponseInvalidDataCenter = {
-	CallID: '75f069be75f742f4a82d5bdf75bdd475',
-	ErrorCode: 500001,
-	ErrorDetails: 'Datacenter is invalid',
-	ErrorMessage: 'General Server Error',
-	ApiVersion: 2,
-	StatusCode: 500,
-	StatusReason: 'Internal Server Error',
-	Deleted: false,
+	callId: '75f069be75f742f4a82d5bdf75bdd475',
+	errorCode: 500001,
+	errorDetails: 'Datacenter is invalid',
+	errorMessage: 'General Server Error',
+	apiVersion: 2,
+	statusCode: 500,
+	statusReason: 'Internal Server Error',
+	deleted: false,
 }
 const expectedGigyaResponseWithDifferentDataCenter = {
-	ErrorMessage: 'Database error',
-	StatusCode: 500,
-	ErrorCode: 500028,
-	StatusReason: 'Internal Server Error',
-	CallID: '5bb29720dc404dad94b5b6d4ac82c68d',
+	errorMessage: 'Database error',
+	statusCode: 500,
+	errorCode: 500028,
+	statusReason: 'Internal Server Error',
+	callId: '5bb29720dc404dad94b5b6d4ac82c68d',
 }
 const expectedDeletedSiteSuccesfully = {
-	ErrorMessage: '',
-	ErrorDetails: '',
-	StatusCode: 200,
-	ErrorCode: 0,
-	StatusReason: 'OK',
-	CallID: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-	APIKey: 'apiKey',
-	ApiVersion: 0,
-	SiteUiId: '',
-	Deleted: true,
+	errorMessage: '',
+	errorDetails: '',
+	statusCode: 200,
+	errorCode: 0,
+	statusReason: 'OK',
+	callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
+	aPIKey: 'apiKey',
+	apiVersion: 0,
+	siteUiId: '',
+	deleted: true,
 }
 const expectedErrorInvalidAPI = {
-	ErrorMessage: 'Invalid ApiKey parameter',
-	ErrorDetails: '',
-	StatusCode: 400,
-	ErrorCode: 400093,
-	StatusReason: 'Bad Request',
-	CallID: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-	APIKey: 'asjdshds',
-	ApiVersion: 0,
-	SiteUiId: '',
-	Deleted: false,
+	errorMessage: 'Invalid ApiKey parameter',
+	errorDetails: '',
+	statusCode: 400,
+	errorCode: 400093,
+	statusReason: 'Bad Request',
+	callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
+	aPIKey: 'asjdshds',
+	apiVersion: 0,
+	siteUiId: '',
+	deleted: false,
 }
 const expectedErrorAPIAlreadyDeleted = {
-	ErrorMessage: 'Permission denied',
-	ErrorDetails: 'Site was deleted',
-	StatusCode: 400,
-	ErrorCode: 403007,
-	StatusReason: 'Forbidden',
-	CallID: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-	APIKey: 'apiKey',
-	ApiVersion: 0,
-	SiteUiId: '',
-	Deleted: false,
+	errorMessage: 'Permission denied',
+	errorDetails: 'Site was deleted',
+	statusCode: 400,
+	errorCode: 403007,
+	statusReason: 'Forbidden',
+	callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
+	aPIKey: 'apiKey',
+	apiVersion: 0,
+	siteUiId: '',
+	deleted: false,
 }
 const multipleParentWithMultipleChildrenRequest = {
-	Sites: [
+	sites: [
 		{
 			baseDomain: 'p1.com',
 			description: 'parent 1 description',
 			dataCenter: 'us1',
-			IsChildSite: false,
-			Id: parent1SiteId,
-			ParentSiteId: '',
-			ChildSites: [
+			isChildSite: false,
+			id: parent1SiteId,
+			parentSiteId: '',
+			childSites: [
 				{
 					baseDomain: 'p1.c1.com',
 					description: 'parent 1 child 1 description',
 					dataCenter: 'us1',
-					IsChildSite: true,
-					Id: parent1SiteId + child1SiteId,
-					ParentSiteId: parent1SiteId,
+					isChildSite: true,
+					id: parent1SiteId + child1SiteId,
+					parentSiteId: parent1SiteId,
 				},
 				{
 					baseDomain: 'p1.c2.com',
 					description: 'parent 1 child 2 description',
 					dataCenter: 'us1',
-					IsChildSite: true,
-					Id: parent1SiteId + child2SiteId,
-					ParentSiteId: parent1SiteId,
+					isChildSite: true,
+					id: parent1SiteId + child2SiteId,
+					parentSiteId: parent1SiteId,
 				},
 			],
 		},
@@ -139,25 +136,25 @@ const multipleParentWithMultipleChildrenRequest = {
 			baseDomain: 'p2.com',
 			description: 'parent 2 description',
 			dataCenter: 'au1',
-			IsChildSite: false,
-			Id: parent2SiteId,
-			ParentSiteId: '',
-			ChildSites: [
+			isChildSite: false,
+			id: parent2SiteId,
+			parentSiteId: '',
+			childSites: [
 				{
 					baseDomain: 'p2.c1.com',
 					description: 'parent 2 child 1 description',
 					dataCenter: 'au1',
-					IsChildSite: true,
-					Id: parent2SiteId + child1SiteId,
-					ParentSiteId: parent2SiteId,
+					isChildSite: true,
+					id: parent2SiteId + child1SiteId,
+					parentSiteId: parent2SiteId,
 				},
 				{
 					baseDomain: 'p2.c2.com',
 					description: 'parent 2 child 2 description',
 					dataCenter: 'au1',
-					IsChildSite: true,
-					Id: parent2SiteId + child2SiteId,
-					ParentSiteId: parent2SiteId,
+					isChildSite: true,
+					id: parent2SiteId + child2SiteId,
+					parentSiteId: parent2SiteId,
 				},
 			],
 		},
@@ -168,27 +165,32 @@ const multipleParentWithMultipleChildrenRequest = {
 }
 
 function createMultipleParentWithMultipleChildrenRequest() {
-	//return JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
-	return Object.assign({}, multipleParentWithMultipleChildrenRequest)
+	return JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
 }
 
 function createSingleParentRequest() {
-	let clone = Object.assign({}, multipleParentWithMultipleChildrenRequest)
-	delete clone.Sites[1]
-	delete clone.Sites[0].ChildSites
+	let clone = JSON.parse(
+		JSON.stringify(multipleParentWithMultipleChildrenRequest),
+	)
+	clone.sites.splice(1, 1)
+	clone.sites[0].childSites.splice(0, clone.sites[0].childSites.length)
 	return clone
 }
 
 function createParentWithOneChildRequest() {
-	let clone = Object.assign({}, multipleParentWithMultipleChildrenRequest)
-	delete clone.Sites[1]
-	delete clone.Sites[0].ChildSites[1]
+	let clone = JSON.parse(
+		JSON.stringify(multipleParentWithMultipleChildrenRequest),
+	)
+	clone.sites.splice(1, 1)
+	clone.sites[0].childSites.splice(1, 1)
 	return clone
 }
 
 function createParentWithTwoChildRequest() {
-	let clone = Object.assign({}, multipleParentWithMultipleChildrenRequest)
-	delete clone.Sites[1]
+	let clone = JSON.parse(
+		JSON.stringify(multipleParentWithMultipleChildrenRequest),
+	)
+	clone.sites.splice(1, 1)
 	return clone
 }
 
@@ -200,24 +202,8 @@ module.exports = {
 	expectedGigyaResponseNoPartnerId,
 	expectedGigyaResponseNoBaseDomain,
 	expectedGigyaResponseInvalidDataCenter,
+	expectedGigyaResponseWithDifferentDataCenter,
 	createSingleParentRequest,
 	createParentWithOneChildRequest,
 	createParentWithTwoChildRequest,
 }
-
-/*
-    const object = {
-  a: 'a',
-  b: 'b',
-  c: 'c',
-  d: 'd',
-}
-
-// Remove "c" and "d" fields from original object:
-const {c, d, ...partialObject} = object;
-const subset = {c, d};
-
-console.log(partialObject) // => { a: 'a', b: 'b'}
-console.log(subset) // => { c: 'c', d: 'd'};
-    */
-//const object = { a: 5, b: 6, c: 7  };const subset = (({ a, c }) => ({ a, c }))(object);console.log(subset); // { a: 5, c: 7
