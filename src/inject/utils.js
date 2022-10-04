@@ -72,7 +72,7 @@ export const onHashChange = (onChange, prevHash) => {
   setTimeout(() => onHashChange(onChange, prevHash), 75)
 }
 
-// Console.log styles
+// Console.log styles, ex: console.log('CDC Toolbox - %cLoaded', logStyles.green)
 export const logStyles = {
   green: ['color: #fff', 'background-color: green', 'padding: 2px 4px', 'border-radius: 2px'].join(';'),
   gray: ['color: #fff', 'background-color: #444', 'padding: 2px 4px', 'border-radius: 2px'].join(';'),
