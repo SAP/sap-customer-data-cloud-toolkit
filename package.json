@@ -24,8 +24,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
     "postbuild": "node ./scripts/postbuild.js",
-    "test": " react-scripts test --collect-coverage --watch=all --silent",
+    "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
     "eject": "react-scripts eject"
   },
   "jest": {

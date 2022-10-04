@@ -10,9 +10,15 @@ node() {
         sh 'env'
     }
     
-    stage ('build') {
+    stage ('test') {
         npmExecuteScripts script:this, 
                           runScripts: ["test"],
+                          verbose: true
+    }
+
+    stage ('cypress') {
+        npmExecuteScripts script:this, 
+                          runScripts: ["cypress:run"],
                           verbose: true
     }
 
