@@ -17,9 +17,11 @@ node() {
     }
 
     stage ('cypress') {
+        withEnv("CYPRESS_CACHE_FOLDER=${WORKSPACE}/app/.cache") {
         npmExecuteScripts script:this, 
                           runScripts: ["cypress:run"],
                           verbose: true
+        }
     }
 
     stage('SonarQube report') {
