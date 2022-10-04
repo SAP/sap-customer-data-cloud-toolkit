@@ -6,14 +6,14 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 import './App.css'
 
 function App() {
-	return (
-		<ThemeProvider>
-			<div className="App">
-				<SiteDeployer />
-				<CopyConfigurationExtended />
-			</div>
-		</ThemeProvider>
-	)
+  return (
+    <ThemeProvider>
+      <div className="App">
+        <SiteDeployer />
+        <CopyConfigurationExtended />
+      </div>
+    </ThemeProvider>
+  )
 }
 
 export default App
