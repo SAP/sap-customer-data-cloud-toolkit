@@ -23,8 +23,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "cypress:open": "cypress open",
     "postbuild": "node ./scripts/postbuild.js",
-    "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
+    "test": " react-scripts test --collect-coverage --watch=all --silent",
     "eject": "react-scripts eject"
   },
   "jest": {
@@ -51,6 +52,10 @@
     ]
   },
   "devDependencies": {
-    "prettier": "2.7.1"
+    "@cypress/code-coverage": "^3.10.0",
+    "@cypress/instrument-cra": "^1.4.0",
+    "prettier": "2.7.1",
+    "babel-plugin-istanbul": "^6.1.1",
+    "cypress": "^10.9.0"
   }
 }
