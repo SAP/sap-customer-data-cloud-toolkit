@@ -16,8 +16,7 @@ describe('Service Site test suite', () => {
   test('create site successfully', async () => {
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseOk, credentials)
 
-    expect(response.apiKey).toBeDefined()
-    expect(response.statusCode).toEqual(TestData.HttpStatus.OK)
+    verifyResponseIsOk(response)
   })
 
   test('create site without secret', async () => {
@@ -25,7 +24,7 @@ describe('Service Site test suite', () => {
     delete clone.secret
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoSecret, clone)
 
-    verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoSecret.errorMessage)
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoSecret)
   })
 
   test('create site without partnerId', async () => {
@@ -33,7 +32,7 @@ describe('Service Site test suite', () => {
     delete clone.partnerId
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoPartnerId, clone)
 
-    verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoPartnerId.errorMessage)
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoPartnerId)
   })
 
   test('create site without user key', async () => {
@@ -41,7 +40,7 @@ describe('Service Site test suite', () => {
     delete clone.userKey
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoUserKey, clone)
 
-    verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoUserKey.errorMessage)
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoUserKey)
   })
 
   test('create site without baseDomain', async () => {
@@ -49,7 +48,7 @@ describe('Service Site test suite', () => {
     delete request.baseDomain
     const response = await createSites(request, TestData.expectedGigyaResponseNoBaseDomain, credentials)
 
-    verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoBaseDomain.errorMessage)
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoBaseDomain)
   })
 
   test('create site with invalid data center', async () => {
@@ -57,7 +56,7 @@ describe('Service Site test suite', () => {
     request.dataCenter = 'INVALID_DATA_CENTER'
     const response = await createSites(request, TestData.expectedGigyaResponseInvalidDataCenter, credentials)
 
-    verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidDataCenter.errorMessage)
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidDataCenter)
   })
 
   test('send request to invalid url', async () => {
@@ -115,9 +114,8 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
   return response
 }
 
-function verifyResponseIsNotOk(response, message) {
-  expect(response.apiKey).toBeUndefined()
-  expect(response.statusCode).toBeDefined()
-  expect(response.statusCode).not.toEqual(TestData.HttpStatus.OK)
-  expect(response.errorMessage).toEqual(message)
+function verifyResponseIsOk(response) {
+  TestData.verifyResponseIsOk(response)
+  expect(response.apiKey).toBeDefined()
+  expect(response.apiVersion).toBeDefined()
 }

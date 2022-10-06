@@ -53,6 +53,62 @@ describe('Site manager test suite', () => {
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
   })
+
+  test('create site successfully - two parent with two children', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+
+    let request = TestData.createMultipleParentWithMultipleChildrenRequest()
+    const siteManager = new SiteManager(credentials)
+    let response = await siteManager.create(request)
+
+    expect(response.length).toEqual(6)
+    verifyAllResponsesAreOk(response)
+  })
+
+  test('create site unsuccessfully - different data centers', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseWithDifferentDataCenter })
+
+    let request = TestData.createParentWithOneChildRequest()
+    const siteManager = new SiteManager(credentials)
+    let response = await siteManager.create(request)
+
+    expect(response.length).toEqual(2)
+    verifyResponseIsOk(response[0])
+    TestData.verifyResponseIsNotOk(response[1], TestData.expectedGigyaResponseWithDifferentDataCenter)
+    expect(response[1].apiKey).toBeDefined()
+  })
+
+  test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
+
+    let request = TestData.createParentWithTwoChildRequest()
+    const siteManager = new SiteManager(credentials)
+    let response = await siteManager.create(request)
+
+    expect(response.length).toEqual(3)
+    verifyResponseIsOk(response[0])
+    verifyResponseIsOk(response[1])
+    TestData.verifyResponseIsNotOk(response[2], TestData.expectedGigyaResponseInvalidDataCenter)
+    expect(response[2].apiKey).toBeDefined()
+  })
 })
 
 function verifyAllResponsesAreOk(responses) {
@@ -60,17 +116,9 @@ function verifyAllResponsesAreOk(responses) {
 }
 
 function verifyResponseIsOk(response) {
+  TestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
-  expect(response.statusCode).toBeDefined()
-  expect(response.statusCode).toEqual(TestData.HttpStatus.OK)
-  expect(response.statusReason).toEqual('OK')
-  expect(response.siteUiId).toBeDefined()
-  expect(response.callId).toBeDefined()
-  expect(response.time).toBeDefined()
   expect(response.apiVersion).toBeDefined()
-  // error case
+  expect(response.siteUiId).toBeDefined()
   expect(response.deleted).toEqual(false)
-  expect(response.errorMessage).toBeUndefined()
-  expect(response.errorCode).toEqual(0)
-  expect(response.errorDetails).toBeUndefined()
 }

@@ -44,9 +44,12 @@ class SiteManager {
     for (let i = 0; i < childSites.length; ++i) {
       let childResponse = await this.createSite(childSites[i])
       if (this.isSuccessful(childResponse)) {
-        let csResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
-        this.isSuccessful(csResponse) ? responses.push(childResponse) : responses.push(csResponse)
+        let scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
+        if (!this.isSuccessful(scResponse)) {
+          childResponse = this.mergeErrorResponse(childResponse, scResponse)
+        }
       }
+      responses.push(childResponse)
     }
     return responses
   }
@@ -70,6 +73,16 @@ class SiteManager {
 
   async connectSite(parentApiKey, childApiKey) {
     return await this.siteConfigurator.connect(parentApiKey, childApiKey)
+  }
+  mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
+    let response = siteResponse
+    response.statusCode = siteConfiguratorResponse.statusCode
+    response.statusReason = siteConfiguratorResponse.statusReason
+    response.errorCode = siteConfiguratorResponse.errorCode
+    response.errorMessage = siteConfiguratorResponse.errorMessage
+    response.errorDetails = siteConfiguratorResponse.errorDetails
+    response.time = siteConfiguratorResponse.time
+    return response
   }
 }
 
