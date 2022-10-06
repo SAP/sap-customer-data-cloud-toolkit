@@ -4,13 +4,17 @@ const Site = require('./site')
 const SiteConfigurator = require('./siteConfigurator')
 
 class SiteManager {
+  constructor(credentials) {
+    this.credentials = credentials
+  }
+
   async create(siteHierarchy) {
     // site hierarchy cannot be empty
     // if (siteHierarchy.sites.length == 0) {
     // 	return {}
     // }
-    this.siteService = new Site(siteHierarchy.partnerID, siteHierarchy.userKey, siteHierarchy.secret)
-    this.siteConfigurator = new SiteConfigurator(siteHierarchy.userKey, siteHierarchy.secret, siteHierarchy.sites[0].dataCenter)
+    this.siteService = new Site(this.credentials.partnerID, this.credentials.userKey, this.credentials.secret)
+    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, siteHierarchy.sites[0].dataCenter)
 
     let responses = []
     for (let i = 0; i < siteHierarchy.sites.length; ++i) {

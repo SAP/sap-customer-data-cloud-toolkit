@@ -2,50 +2,41 @@
 const client = require('../gigya/client')
 
 class Site {
-	constructor(partnerId, userKey, secret) {
-		this.partnerId = partnerId
-		this.userKey = userKey
-		this.secret = secret
-	}
+  constructor(partnerId, userKey, secret) {
+    this.partnerId = partnerId
+    this.userKey = userKey
+    this.secret = secret
+  }
 
-	get site() {
-		return this.data
-	}
+  createAsync(body) {
+    let url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
+    let bodyWithCredentials = this.addCredentials(body)
+    return client.post(url, bodyWithCredentials)
+  }
 
-	createAsync(body) {
-		let url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
-		let bodyWithCredentials = this.addCredentials(body)
-		return client.post(url, bodyWithCredentials)
-	}
+  async create(body) {
+    const response = await this.createAsync(body).catch(function (error) {
+      return Site.generateErrorResponse(error)
+    })
+    return response.data
+  }
 
-	async create(body) {
-		const response = await this.createAsync(body).catch(function (error) {
-			return Site.generateErrorResponse(error)
-		})
-		//console.log('create.response=' + JSON.stringify(response))
-		// console.log(
-		// 	'isPromise=' +
-		// 		(typeof response === 'object' && typeof response.then === 'function'),
-		// )
-		return response.data
-	}
+  addCredentials(body) {
+    let bodyWithCredentials = Object.assign({}, body)
+    bodyWithCredentials.partnerID = this.partnerId
+    bodyWithCredentials.userKey = this.userKey
+    bodyWithCredentials.secret = this.secret
+    return bodyWithCredentials
+  }
 
-	addCredentials(body) {
-		let bodyWithCredentials = Object.assign({}, body)
-		bodyWithCredentials.partnerID = this.partnerId
-		bodyWithCredentials.userKey = this.userKey
-		bodyWithCredentials.secret = this.secret
-		return bodyWithCredentials
-	}
-
-	static generateErrorResponse(error) {
-		let resp = { data: {} }
-		resp.data.errorCode = error.code
-		resp.data.errorDetails = error.details
-		resp.data.errorMessage = 'Error creating site'
-		resp.data.time = Date.now()
-		return resp
-	}
+  static generateErrorResponse(error) {
+    let resp = { data: {} }
+    resp.data.errorCode = error.code
+    resp.data.errorDetails = error.details
+    resp.data.errorMessage = 'Error creating site'
+    resp.data.time = Date.now()
+    return resp
+  }
 }
 
 module.exports = Site
