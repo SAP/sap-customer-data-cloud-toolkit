@@ -17,9 +17,10 @@ node() {
     }
 
     stage ('cypress') {
-        withEnv("CYPRESS_CACHE_FOLDER=${WORKSPACE}/app/.cache") {
+        withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache"]) {
+        sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
         npmExecuteScripts script:this, 
-                          runScripts: ["cypress:run"],
+                          runScripts: ["cypress:ci"],
                           verbose: true
         }
     }
