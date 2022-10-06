@@ -1,66 +1,72 @@
 'use strict'
 
 const Site = require('./site')
+const SiteConfigurator = require('./siteConfigurator')
 
 class SiteManager {
-	async create(siteHierarchy) {
-		// site hierarchy cannot be empty
-		// if (siteHierarchy.sites.length == 0) {
-		// 	return {}
-		// }
-		this.siteService = new Site(
-			siteHierarchy.partnerID,
-			siteHierarchy.userKey,
-			siteHierarchy.secret,
-		)
+  async create(siteHierarchy) {
+    // site hierarchy cannot be empty
+    // if (siteHierarchy.sites.length == 0) {
+    // 	return {}
+    // }
+    this.siteService = new Site(siteHierarchy.partnerID, siteHierarchy.userKey, siteHierarchy.secret)
+    this.siteConfigurator = new SiteConfigurator(siteHierarchy.userKey, siteHierarchy.secret, siteHierarchy.sites[0].dataCenter)
 
-		let responses = []
-		try {
-			for (let i = 0; i < siteHierarchy.sites.length; ++i) {
-				responses = responses.concat(
-					await this.createSiteHierarchy(siteHierarchy.sites[i]),
-				)
-			}
-			return responses
-		} catch (error) {}
-	}
+    let responses = []
+    for (let i = 0; i < siteHierarchy.sites.length; ++i) {
+      responses = responses.concat(await this.createSiteHierarchy(siteHierarchy.sites[i]))
+    }
+    return responses
+  }
 
-	async createSiteHierarchy(hierarchy) {
-		let responses = []
-		responses.push(await this.createParent(hierarchy))
-		let childSites = hierarchy.childSites
-		if (childSites && childSites.length > 0) {
-			responses = responses.concat(
-				await this.createChildren(hierarchy.childSites),
-			)
-		}
-		return responses
-	}
+  async createSiteHierarchy(hierarchy) {
+    let responses = []
+    let response = await this.createParent(hierarchy)
+    responses.push(response)
 
-	async createParent(parentSite) {
-		return await this.createSite(parentSite)
-	}
+    let childSites = hierarchy.childSites
+    if (childSites && childSites.length > 0) {
+      responses = responses.concat(await this.createChildren(hierarchy.childSites, response.apiKey))
+    }
+    return responses
+  }
 
-	async createChildren(childSites) {
-		let responses = []
-		for (let i = 0; i < childSites.length; ++i) {
-			responses.push(await this.createSite(childSites[i]))
-		}
-		return responses
-	}
+  async createParent(parentSite) {
+    return await this.createSite(parentSite)
+  }
 
-	async createSite(site) {
-		let response = await this.siteService.create(site)
-		console.log('createSite.response=' + JSON.stringify(response))
-		return this.enrichResponse(response, site.id)
-	}
+  async createChildren(childSites, parentApiKey) {
+    let responses = []
+    for (let i = 0; i < childSites.length; ++i) {
+      let childResponse = await this.createSite(childSites[i])
+      if (this.isSuccessful(childResponse)) {
+        let csResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
+        this.isSuccessful(csResponse) ? responses.push(childResponse) : responses.push(csResponse)
+      }
+    }
+    return responses
+  }
 
-	enrichResponse(response, id) {
-		let resp = Object.assign({}, response)
-		resp.siteUiId = id
-		resp.deleted = false
-		return resp
-	}
+  async createSite(site) {
+    let response = await this.siteService.create(site)
+    console.log('createSite.response=' + JSON.stringify(response))
+    return this.enrichResponse(response, site.id)
+  }
+
+  enrichResponse(response, id) {
+    let resp = Object.assign({}, response)
+    resp.siteUiId = id
+    resp.deleted = false
+    return resp
+  }
+
+  isSuccessful(response) {
+    return response.statusCode == 200
+  }
+
+  async connectSite(parentApiKey, childApiKey) {
+    return await this.siteConfigurator.connect(parentApiKey, childApiKey)
+  }
 }
 
 module.exports = SiteManager
