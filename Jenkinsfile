@@ -10,20 +10,20 @@ node() {
         sh 'env'
     }
     
-    stage ('test') {
-        npmExecuteScripts script:this, 
-                          runScripts: ["test"],
-                          verbose: true
-    }
-
     stage ('cypress') {
-        withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache"]) {
+        withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache", "BROWSER=none"]) {
         sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
         npmExecuteScripts script:this, 
                           runScripts: ["cypress:ci"],
                           verbose: true
         }
     }
+
+    // stage ('test') {
+    //     npmExecuteScripts script:this, 
+    //                       runScripts: ["test"],
+    //                       verbose: true
+    // }
 
     stage('SonarQube report') {
         def scannerHome = tool 'cdctoolbox';
