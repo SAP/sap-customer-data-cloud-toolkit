@@ -15,10 +15,7 @@ import { logStyles } from './inject/utils'
 import { initChromeStorage } from './inject/chromeStorage'
 import { initNavigation } from './inject/navigation'
 import { injectMenu } from './inject/injectMenu'
-import {
-	injectAppContainer,
-	CDC_TOOLS_APP_CLASS,
-} from './inject/injectAppContainer'
+import { injectAppContainer, MAIN_CONTAINER_CLASS } from './inject/injectAppContainer'
 import './inject/main.css'
 
 import store from './redux/store'
@@ -26,21 +23,24 @@ import { Provider } from 'react-redux'
 
 initChromeStorage()
 initNavigation()
-injectMenu()
+injectMenu([
+  { name: 'Site Deployer', tabName: 'site-deployer', appendAfterText: 'Site Settings' },
+  // { name: 'Copy Config. Extended', tabName: 'copy-configuration-extended', appendAfterText: 'Copy Configuration' },
+])
 injectAppContainer(() => {
-	ReactDOM.render(
-		<React.StrictMode>
-			<Provider store={store}>
-				<App />
-			</Provider>
-		</React.StrictMode>,
-		document.querySelector(`.${CDC_TOOLS_APP_CLASS}`),
-	)
+  ReactDOM.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </React.StrictMode>,
+    document.querySelector(`.${MAIN_CONTAINER_CLASS}`)
+  )
 
-	console.log('SAP CDC Toolbox :: %cLoaded', logStyles.green)
+  console.log('SAP CDC Toolbox :: %cv0.1', logStyles.lightGreenBold)
 
-	// If you want to start measuring performance in your app, pass a function
-	// to log results (for example: reportWebVitals(console.log))
-	// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-	reportWebVitals()
+  // If you want to start measuring performance in your app, pass a function
+  // to log results (for example: reportWebVitals(console.log))
+  // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+  reportWebVitals()
 })
