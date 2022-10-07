@@ -34,7 +34,7 @@ describe('Site configurator test suite', () => {
   })
 
   test('configure site unsuccessfully - data centers are different', async () => {
-    const expectedResponse = TestData.expectedGigyaResponseWithDifferentDataCenter
+    const expectedResponse = TestData.scExpectedGigyaResponseWithDifferentDataCenter
     axios.mockResolvedValue({ data: expectedResponse })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')

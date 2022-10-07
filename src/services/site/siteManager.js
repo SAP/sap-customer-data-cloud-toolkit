@@ -17,10 +17,15 @@ class SiteManager {
     this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, siteHierarchy.sites[0].dataCenter)
 
     let responses = []
+    let error = false
     for (let i = 0; i < siteHierarchy.sites.length; ++i) {
       responses = responses.concat(await this.createSiteHierarchy(siteHierarchy.sites[i]))
+      if (this.isAnyResponseError(responses)) {
+        error = true
+        break
+      }
     }
-    if (this.isAnyResponseError(responses)) {
+    if (error) {
       this.rollbackCreatedSites(responses)
     }
     return responses
@@ -77,7 +82,6 @@ class SiteManager {
 
   isSuccessful(response) {
     return response.errorCode === 0
-    //return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
   }
 
   shouldBeRollbacked(response) {

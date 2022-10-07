@@ -70,7 +70,7 @@ const expectedGigyaResponseInvalidDataCenter = {
   deleted: false,
   time: Date.now(),
 }
-const expectedGigyaResponseWithDifferentDataCenter = {
+const scExpectedGigyaResponseWithDifferentDataCenter = {
   errorMessage: 'Database error',
   statusCode: 500,
   errorCode: 500028,
@@ -79,42 +79,6 @@ const expectedGigyaResponseWithDifferentDataCenter = {
   time: Date.now(),
 }
 
-const expectedDeletedSiteSuccesfully = {
-  errorMessage: '',
-  errorDetails: '',
-  statusCode: 200,
-  errorCode: 0,
-  statusReason: 'OK',
-  callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-  aPIKey: 'apiKey',
-  apiVersion: 0,
-  siteUiId: '',
-  deleted: true,
-}
-const expectedErrorInvalidAPI = {
-  errorMessage: 'Invalid ApiKey parameter',
-  errorDetails: '',
-  statusCode: 400,
-  errorCode: 400093,
-  statusReason: 'Bad Request',
-  callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-  // aPIKey: 'asjdshds',
-  // apiVersion: 0,
-  // siteUiId: '',
-  // deleted: false,
-}
-const expectedErrorAPIAlreadyDeleted = {
-  errorMessage: 'Permission denied',
-  errorDetails: 'Site was deleted',
-  statusCode: 400,
-  errorCode: 403007,
-  statusReason: 'Forbidden',
-  callId: '5cf4f900dc1c4b4f86c2f99ccb2c5250',
-  // aPIKey: 'apiKey',
-  // apiVersion: 0,
-  // siteUiId: '',
-  // deleted: false,
-}
 const scExpectedGigyaResponseOk = {
   statusCode: 200,
   errorCode: 0,
@@ -248,7 +212,7 @@ module.exports = {
   expectedGigyaResponseNoPartnerId,
   expectedGigyaResponseNoBaseDomain,
   expectedGigyaResponseInvalidDataCenter,
-  expectedGigyaResponseWithDifferentDataCenter,
+  scExpectedGigyaResponseWithDifferentDataCenter,
   scExpectedGigyaResponseOk,
   scExpectedGigyaResponseNotOk,
   createSingleParentRequest,
