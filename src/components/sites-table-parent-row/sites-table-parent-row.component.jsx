@@ -15,7 +15,7 @@ import { deleteParent, updateParentBaseDomain, updateParentDescription, updatePa
 
 const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
-  const [isChildListOpen, setChildListOpen] = useState(false)
+  const [isChildListOpen, setChildListOpen] = useState(true)
 
   const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters]
 

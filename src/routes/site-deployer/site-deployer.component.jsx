@@ -30,7 +30,7 @@ import dataCenters from '../../dataCenters.json'
 import structures from '../../sitesStructures.json'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParent, clearSites } from '../../redux/siteSlice'
+import { addParentFromStructure, clearSites } from '../../redux/siteSlice'
 
 const BarStart = (props) => (
   <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
@@ -66,15 +66,16 @@ const SiteDeployer = () => {
 
   const onCreateHandler = () => {
     const selectedDataCenters = getSelectedDataCenters()
-    const selectedtructure = getSelectedStructure()
+    const selectedStructure = getSelectedStructure()
 
     dispatch(clearSites())
 
     selectedDataCenters.forEach((dataCenter) => {
-      selectedtructure.data.forEach((structure) => {
+      selectedStructure.data.forEach((structure) => {
         dispatch(
-          addParent({
-            baseDomain: tryGetBaseDomainFromStructure(structure),
+          addParentFromStructure({
+            rootBaseDomain: baseDomain,
+            baseDomain: structure.baseDomain,
             description: structure.description,
             dataCenter: dataCenter,
             childSites: structure.childSites,
@@ -82,10 +83,6 @@ const SiteDeployer = () => {
         )
       })
     })
-  }
-
-  const tryGetBaseDomainFromStructure = (structure) => {
-    return baseDomain !== '' ? baseDomain : structure.baseDomain
   }
 
   const getSelectedStructure = () => {
@@ -115,6 +112,17 @@ const SiteDeployer = () => {
       )
     }
     return <Bar></Bar>
+  }
+
+  const checkRequiredFields = () => {
+    return !(
+      baseDomain !== '' &&
+      baseDomain !== null &&
+      baseDomain !== undefined &&
+      selectedStructureId !== '' &&
+      selectedStructureId !== null &&
+      selectedStructureId !== undefined
+    )
   }
 
   return (
@@ -189,7 +197,7 @@ const SiteDeployer = () => {
                 </Select>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <Button onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
+                <Button disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
                   Create
                 </Button>
               </div>

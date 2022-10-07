@@ -11,10 +11,11 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
+import { logStyles } from './inject/utils'
 import { initChromeStorage } from './inject/chromeStorage'
 import { initNavigation } from './inject/navigation'
 import { injectMenu } from './inject/injectMenu'
-import { injectAppContainer } from './inject/injectAppContainer'
+import { injectAppContainer, MAIN_CONTAINER_CLASS } from './inject/injectAppContainer'
 import './inject/main.css'
 
 import store from './redux/store'
@@ -22,7 +23,10 @@ import { Provider } from 'react-redux'
 
 initChromeStorage()
 initNavigation()
-injectMenu()
+injectMenu([
+  { name: 'Site Deployer', tabName: 'site-deployer', appendAfterText: 'Site Settings' },
+  // { name: 'Copy Config. Extended', tabName: 'copy-configuration-extended', appendAfterText: 'Copy Configuration' },
+])
 injectAppContainer(() => {
   ReactDOM.render(
     <React.StrictMode>
@@ -30,8 +34,10 @@ injectAppContainer(() => {
         <App />
       </Provider>
     </React.StrictMode>,
-    document.querySelector('.cdc-tools-app')
+    document.querySelector(`.${MAIN_CONTAINER_CLASS}`)
   )
+
+  console.log('SAP CDC Toolbox :: %cv0.1', logStyles.lightGreenBold)
 
   // If you want to start measuring performance in your app, pass a function
   // to log results (for example: reportWebVitals(console.log))
