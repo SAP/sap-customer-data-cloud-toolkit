@@ -21,10 +21,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts -r @cypress/instrument-cra start",
     "build": "react-scripts build",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
+    "cypress:ci": "concurrently \"cypress run\" --kill-others \"react-scripts start\" --success first",
     "postbuild": "node ./scripts/postbuild.js",
     "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
     "eject": "react-scripts eject"
@@ -55,8 +56,9 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
-    "prettier": "2.7.1",
     "babel-plugin-istanbul": "^6.1.1",
-    "cypress": "^10.9.0"
+    "concurrently": "^7.4.0",
+    "cypress": "^10.9.0",
+    "prettier": "2.7.1"
   }
 }
