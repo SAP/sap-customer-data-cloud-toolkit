@@ -4,6 +4,11 @@ const HttpStatus = {
   //   INTERNAL_SERVER_ERROR: 500,
 }
 
+const Endpoints = {
+  SITE_CREATE: 'admin.createSite',
+  SITE_CONFIG: 'admin.setSiteConfig',
+}
+
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
 const child1SiteId = 'C1'

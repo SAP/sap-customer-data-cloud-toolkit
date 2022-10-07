@@ -37,6 +37,18 @@ class Site {
     resp.data.time = Date.now()
     return resp
   }
+
+  delete(apiKey) {
+    return {
+      apiKey: 'apiKey',
+      statusCode: 200,
+      errorCode: 0,
+      statusReason: 'OK',
+      callId: 'callId',
+      apiVersion: 2,
+      time: Date.now(),
+    }
+  }
 }
 
 module.exports = Site

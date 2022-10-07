@@ -20,6 +20,9 @@ class SiteManager {
     for (let i = 0; i < siteHierarchy.sites.length; ++i) {
       responses = responses.concat(await this.createSiteHierarchy(siteHierarchy.sites[i]))
     }
+    if (this.isAnyResponseError(responses)) {
+      this.rollbackCreatedSites(responses)
+    }
     return responses
   }
 
@@ -28,9 +31,11 @@ class SiteManager {
     let response = await this.createParent(hierarchy)
     responses.push(response)
 
-    let childSites = hierarchy.childSites
-    if (childSites && childSites.length > 0) {
-      responses = responses.concat(await this.createChildren(hierarchy.childSites, response.apiKey))
+    if (this.isSuccessful(response)) {
+      let childSites = hierarchy.childSites
+      if (childSites && childSites.length > 0) {
+        responses = responses.concat(await this.createChildren(hierarchy.childSites, response.apiKey))
+      }
     }
     return responses
   }
@@ -50,6 +55,9 @@ class SiteManager {
         }
       }
       responses.push(childResponse)
+      if (!this.isSuccessful(childResponse)) {
+        break
+      }
     }
     return responses
   }
@@ -68,14 +76,20 @@ class SiteManager {
   }
 
   isSuccessful(response) {
-    return response.statusCode == 200
+    return response.errorCode === 0
+    //return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
+  }
+
+  shouldBeRollbacked(response) {
+    return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
   }
 
   async connectSite(parentApiKey, childApiKey) {
     return await this.siteConfigurator.connect(parentApiKey, childApiKey)
   }
+
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
-    let response = siteResponse
+    let response = Object.assign({}, siteResponse)
     response.statusCode = siteConfiguratorResponse.statusCode
     response.statusReason = siteConfiguratorResponse.statusReason
     response.errorCode = siteConfiguratorResponse.errorCode
@@ -83,6 +97,35 @@ class SiteManager {
     response.errorDetails = siteConfiguratorResponse.errorDetails
     response.time = siteConfiguratorResponse.time
     return response
+  }
+
+  isAnyResponseError(responses) {
+    for (let i = 0; i < responses.length; ++i) {
+      if (!this.isSuccessful(responses[i])) {
+        return true
+      }
+    }
+    return false
+  }
+
+  rollbackCreatedSites(responses) {
+    let apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
+    for (let i = 0; i < apiKeys.length; ++i) {
+      let response = this.siteService.delete(apiKeys[i])
+      if (this.isSuccessful(response)) {
+        responses[i].deleted = true
+      }
+    }
+  }
+
+  getApiKeysCreatedInReverseOrder(responses) {
+    let apiKeysCreated = []
+    for (let i = responses.length - 1; i >= 0; --i) {
+      if (this.shouldBeRollbacked(responses[i])) {
+        apiKeysCreated.push(responses[i].apiKey)
+      }
+    }
+    return apiKeysCreated
   }
 }
 
