@@ -9,7 +9,7 @@ import '@ui5/webcomponents-icons/dist/overflow.js'
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParent } from '../../redux/siteSlice'
+import { addNewParent } from '../../redux/siteSlice'
 
 const SitesTable = () => {
   const sitesStructure = useSelector((state) => state.sites.sites)
@@ -17,7 +17,7 @@ const SitesTable = () => {
   const dispatch = useDispatch()
 
   const onAddParentSiteHandler = () => {
-    dispatch(addParent())
+    dispatch(addNewParent())
   }
 
   return (

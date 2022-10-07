@@ -70,7 +70,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
           </Text>
         </TableCell>
 
-        <TableCell>
+        <TableCell style={{ textAlign: 'right' }}>
           <div style={{ position: 'relative' }}>
             <>
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>

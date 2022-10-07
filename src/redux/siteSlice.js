@@ -2,13 +2,14 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { generateUUID } from '../utils/generateUUID'
 
-const addChildsFromStructure = (parentSiteTempId, dataCenter, structureChildSites) => {
+const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites) => {
   const childSites = []
+  const importedRootBaseDomain = rootBaseDomain
   structureChildSites.forEach((structureChildSite) => {
     childSites.push({
       parentSiteTempId: parentSiteTempId,
       tempId: generateUUID(),
-      baseDomain: structureChildSite.baseDomain,
+      baseDomain: `${structureChildSite.baseDomain}.${importedRootBaseDomain}`,
       description: structureChildSite.description,
       dataCenter: dataCenter,
       isChildSite: true,
@@ -22,10 +23,10 @@ const getParentFromStructure = (structure) => {
   return {
     parentSiteTempId: '',
     tempId: tempId,
-    baseDomain: structure.baseDomain,
+    baseDomain: `${structure.baseDomain}.${structure.rootBaseDomain}`,
     description: structure.description,
     dataCenter: structure.dataCenter,
-    childSites: addChildsFromStructure(tempId, structure.dataCenter, structure.childSites),
+    childSites: addChildsFromStructure(tempId, structure.rootBaseDomain, structure.dataCenter, structure.childSites),
     isChildSite: false,
   }
 }
@@ -63,11 +64,12 @@ export const siteSlice = createSlice({
     sites: [],
   },
   reducers: {
-    addParent: (state, action) => {
+    addNewParent: (state) => {
+      state.sites.push(getNewParent())
+    },
+    addParentFromStructure: (state, action) => {
       if (action.payload) {
         state.sites.push(getParentFromStructure(action.payload))
-      } else {
-        state.sites.push(getNewParent())
       }
     },
     deleteParent: (state, action) => {
@@ -128,7 +130,8 @@ export const siteSlice = createSlice({
 })
 
 export const {
-  addParent,
+  addNewParent,
+  addParentFromStructure,
   deleteParent,
   updateParentBaseDomain,
   updateParentDescription,
