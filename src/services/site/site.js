@@ -9,8 +9,8 @@ class Site {
   }
 
   createAsync(body) {
-    let url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
-    let bodyWithCredentials = this.addCredentials(body)
+    const url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
+    const bodyWithCredentials = this.addCredentials(body)
     return client.post(url, bodyWithCredentials)
   }
 
@@ -22,7 +22,7 @@ class Site {
   }
 
   addCredentials(body) {
-    let bodyWithCredentials = Object.assign({}, body)
+    const bodyWithCredentials = Object.assign({}, body)
     bodyWithCredentials.partnerID = this.partnerId
     bodyWithCredentials.userKey = this.userKey
     bodyWithCredentials.secret = this.secret
@@ -30,7 +30,7 @@ class Site {
   }
 
   static generateErrorResponse(error) {
-    let resp = { data: {} }
+    const resp = { data: {} }
     resp.data.errorCode = error.code
     resp.data.errorDetails = error.details
     resp.data.errorMessage = 'Error creating site'

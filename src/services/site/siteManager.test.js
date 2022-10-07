@@ -16,9 +16,9 @@ describe('Site manager test suite', () => {
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios.mockResolvedValue(mockedResponse)
 
-    let request = TestData.createSingleParentRequest()
+    const request = TestData.createSingleParentRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(1)
     verifyAllResponsesAreOk(response)
@@ -30,9 +30,9 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
 
-    let request = TestData.createParentWithOneChildRequest()
+    const request = TestData.createParentWithOneChildRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(2)
     verifyAllResponsesAreOk(response)
@@ -46,9 +46,9 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
 
-    let request = TestData.createParentWithTwoChildRequest()
+    const request = TestData.createParentWithTwoChildRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
@@ -67,12 +67,25 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
 
-    let request = TestData.createMultipleParentWithMultipleChildrenRequest()
+    const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(6)
     verifyAllResponsesAreOk(response)
+  })
+
+  test('create site unsuccessfully - error on parent', async () => {
+    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
+
+    const request = TestData.createParentWithOneChildRequest()
+    const siteManager = new SiteManager(credentials)
+    const response = await siteManager.create(request)
+
+    expect(response.length).toEqual(1)
+    verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain)
+    expect(response[0].deleted).toEqual(false)
+    expect(response[0].apiKey).toBeUndefined()
   })
 
   test('create site unsuccessfully - different data centers', async () => {
@@ -81,9 +94,9 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
 
-    let request = TestData.createParentWithOneChildRequest()
+    const request = TestData.createParentWithOneChildRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(2)
     verifyResponseIsOk(response[0])
@@ -97,12 +110,12 @@ describe('Site manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
 
-    let request = TestData.createParentWithTwoChildRequest()
+    const request = TestData.createParentWithTwoChildRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(3)
     verifyResponseIsOk(response[0])
@@ -125,9 +138,9 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
 
-    let request = TestData.createMultipleParentWithMultipleChildrenRequest()
+    const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(5)
     verifyResponseIsOk(response[0])
@@ -154,9 +167,9 @@ describe('Site manager test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
 
-    let request = TestData.createMultipleParentWithMultipleChildrenRequest()
+    const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const siteManager = new SiteManager(credentials)
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
 
     expect(response.length).toEqual(2)
     verifyResponseIsOk(response[0])

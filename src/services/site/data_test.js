@@ -9,6 +9,8 @@ const Endpoints = {
   SITE_CONFIG: 'admin.setSiteConfig',
 }
 
+const badRequest = 'Bad Request'
+
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
 const child1SiteId = 'C1'
@@ -43,7 +45,7 @@ const expectedGigyaResponseNoPartnerId = {
   errorDetails: 'Missing required parameter : partnerID',
   errorMessage: 'Missing required parameter',
   statusCode: 400,
-  statusReason: 'Bad Request',
+  statusReason: badRequest,
   apiVersion: 2,
   time: Date.now(),
 }
@@ -54,7 +56,7 @@ const expectedGigyaResponseNoBaseDomain = {
   errorDetails: 'Missing required parameter : baseDomain',
   errorMessage: 'Missing required parameter',
   statusCode: 400,
-  statusReason: 'Bad Request',
+  statusReason: badRequest,
   apiVersion: 2,
   time: Date.now(),
 }
@@ -92,7 +94,7 @@ const scExpectedGigyaResponseNotOk = {
   errorDetails: 'GSKeyBase is invalid, no version: apiKey',
   statusCode: 400,
   errorCode: 400093,
-  statusReason: 'Bad Request',
+  statusReason: badRequest,
   callId: 'f659eb2a4590410c90cd55c25c8defa1',
   time: Date.now(),
 }
@@ -162,21 +164,21 @@ function createMultipleParentWithMultipleChildrenRequest() {
 }
 
 function createSingleParentRequest() {
-  let clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
+  const clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
   clone.sites.splice(1, 1)
   clone.sites[0].childSites.splice(0, clone.sites[0].childSites.length)
   return clone
 }
 
 function createParentWithOneChildRequest() {
-  let clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
+  const clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
   clone.sites.splice(1, 1)
   clone.sites[0].childSites.splice(1, 1)
   return clone
 }
 
 function createParentWithTwoChildRequest() {
-  let clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
+  const clone = JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
   clone.sites.splice(1, 1)
   return clone
 }

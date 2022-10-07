@@ -9,8 +9,8 @@ class SiteConfigurator {
   }
 
   connectAsync(parentApiKey, childApiKey) {
-    let url = 'https://admin.' + this.dataCenter + '.gigya.com/admin.setSiteConfig'
-    let body = this.createRequestBody(parentApiKey, childApiKey)
+    const url = 'https://admin.' + this.dataCenter + '.gigya.com/admin.setSiteConfig'
+    const body = this.createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body)
   }
 
@@ -22,7 +22,7 @@ class SiteConfigurator {
   }
 
   createRequestBody(parentApiKey, childApiKey) {
-    let body = {}
+    const body = {}
     body.apiKey = childApiKey
     body.siteGroupOwner = parentApiKey
     body.userKey = this.userKey
@@ -31,7 +31,7 @@ class SiteConfigurator {
   }
 
   static generateErrorResponse(error) {
-    let resp = { data: {} }
+    const resp = { data: {} }
     resp.data.errorCode = error.code
     resp.data.errorDetails = error.details
     resp.data.errorMessage = 'Error configuring site'

@@ -33,11 +33,11 @@ class SiteManager {
 
   async createSiteHierarchy(hierarchy) {
     let responses = []
-    let response = await this.createParent(hierarchy)
+    const response = await this.createParent(hierarchy)
     responses.push(response)
 
     if (this.isSuccessful(response)) {
-      let childSites = hierarchy.childSites
+      const childSites = hierarchy.childSites
       if (childSites && childSites.length > 0) {
         responses = responses.concat(await this.createChildren(hierarchy.childSites, response.apiKey))
       }
@@ -50,11 +50,11 @@ class SiteManager {
   }
 
   async createChildren(childSites, parentApiKey) {
-    let responses = []
+    const responses = []
     for (let i = 0; i < childSites.length; ++i) {
       let childResponse = await this.createSite(childSites[i])
       if (this.isSuccessful(childResponse)) {
-        let scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
+        const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
           childResponse = this.mergeErrorResponse(childResponse, scResponse)
         }
@@ -68,13 +68,13 @@ class SiteManager {
   }
 
   async createSite(site) {
-    let response = await this.siteService.create(site)
+    const response = await this.siteService.create(site)
     console.log('createSite.response=' + JSON.stringify(response))
     return this.enrichResponse(response, site.id)
   }
 
   enrichResponse(response, id) {
-    let resp = Object.assign({}, response)
+    const resp = Object.assign({}, response)
     resp.siteUiId = id
     resp.deleted = false
     return resp
@@ -93,7 +93,7 @@ class SiteManager {
   }
 
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
-    let response = Object.assign({}, siteResponse)
+    const response = Object.assign({}, siteResponse)
     response.statusCode = siteConfiguratorResponse.statusCode
     response.statusReason = siteConfiguratorResponse.statusReason
     response.errorCode = siteConfiguratorResponse.errorCode
@@ -113,9 +113,9 @@ class SiteManager {
   }
 
   rollbackCreatedSites(responses) {
-    let apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
+    const apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
     for (let i = 0; i < apiKeys.length; ++i) {
-      let response = this.siteService.delete(apiKeys[i])
+      const response = this.siteService.delete(apiKeys[i])
       if (this.isSuccessful(response)) {
         responses[i].deleted = true
       }
@@ -123,7 +123,7 @@ class SiteManager {
   }
 
   getApiKeysCreatedInReverseOrder(responses) {
-    let apiKeysCreated = []
+    const apiKeysCreated = []
     for (let i = responses.length - 1; i >= 0; --i) {
       if (this.shouldBeRollbacked(responses[i])) {
         apiKeysCreated.push(responses[i].apiKey)

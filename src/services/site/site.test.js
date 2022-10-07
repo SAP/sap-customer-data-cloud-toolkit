@@ -20,7 +20,7 @@ describe('Service Site test suite', () => {
   })
 
   test('create site without secret', async () => {
-    let clone = Object.assign({}, credentials)
+    const clone = Object.assign({}, credentials)
     delete clone.secret
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoSecret, clone)
 
@@ -28,7 +28,7 @@ describe('Service Site test suite', () => {
   })
 
   test('create site without partnerId', async () => {
-    let clone = Object.assign({}, credentials)
+    const clone = Object.assign({}, credentials)
     delete clone.partnerId
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoPartnerId, clone)
 
@@ -36,7 +36,7 @@ describe('Service Site test suite', () => {
   })
 
   test('create site without user key', async () => {
-    let clone = Object.assign({}, credentials)
+    const clone = Object.assign({}, credentials)
     delete clone.userKey
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoUserKey, clone)
 
@@ -44,7 +44,7 @@ describe('Service Site test suite', () => {
   })
 
   test('create site without baseDomain', async () => {
-    let request = TestData.createSingleParentRequest().sites[0]
+    const request = TestData.createSingleParentRequest().sites[0]
     delete request.baseDomain
     const response = await createSites(request, TestData.expectedGigyaResponseNoBaseDomain, credentials)
 
@@ -52,7 +52,7 @@ describe('Service Site test suite', () => {
   })
 
   test('create site with invalid data center', async () => {
-    let request = TestData.createSingleParentRequest().sites[0]
+    const request = TestData.createSingleParentRequest().sites[0]
     request.dataCenter = 'INVALID_DATA_CENTER'
     const response = await createSites(request, TestData.expectedGigyaResponseInvalidDataCenter, credentials)
 
@@ -61,7 +61,7 @@ describe('Service Site test suite', () => {
 
   test('send request to invalid url', async () => {
     axios.mockImplementation(() => {
-      let err = {}
+      const err = {}
       err.code = 'ENOTFOUND'
       err.details = 'getaddrinfo ENOTFOUND xadmin.us1.gigya.com'
       err.message = 'Error creating site'
@@ -70,7 +70,7 @@ describe('Service Site test suite', () => {
     })
 
     const siteService = new Site(credentials)
-    let response = await siteService.create(TestData.createSingleParentRequest().sites[0])
+    const response = await siteService.create(TestData.createSingleParentRequest().sites[0])
     console.log('response=' + JSON.stringify(response))
 
     expect(response.errorCode).toEqual('ENOTFOUND')
@@ -96,7 +96,7 @@ describe('Service Site test suite', () => {
   // 		'', //request.UserKey,
   // 		request.Secret,
   // 	)
-  // 	let response = await siteService.create(request.Sites[0])
+  // 	const response = await siteService.create(request.Sites[0])
   // 	console.log('response=' + JSON.stringify(response))
 
   // 	//expect(response.ApiKey).toBeDefined()
@@ -109,7 +109,7 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
   axios.mockResolvedValue(mockedResponse)
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
-  let response = await siteService.create(request)
+  const response = await siteService.create(request)
   console.log('response=' + JSON.stringify(response))
   return response
 }
