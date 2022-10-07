@@ -18,7 +18,7 @@ class SiteManager {
 
     let responses = []
     let error = false
-    for (let site of siteHierarchy.sites) {
+    for (const site of siteHierarchy.sites) {
       responses = responses.concat(await this.createSiteHierarchy(site))
       if (this.isAnyResponseError(responses)) {
         error = true
@@ -51,7 +51,7 @@ class SiteManager {
 
   async createChildren(childSites, parentApiKey) {
     const responses = []
-    for (let site of childSites) {
+    for (const site of childSites) {
       let childResponse = await this.createSite(site)
       if (this.isSuccessful(childResponse)) {
         const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
@@ -104,7 +104,7 @@ class SiteManager {
   }
 
   isAnyResponseError(responses) {
-    for (let response of responses) {
+    for (const response of responses) {
       if (!this.isSuccessful(response)) {
         return true
       }
