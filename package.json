@@ -59,7 +59,6 @@
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^7.4.0",
     "cypress": "^10.9.0",
-    "prettier": "2.7.1",
-    "xvfb": "^0.4.0"
+    "prettier": "2.7.1"
   }
 }

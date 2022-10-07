@@ -9,21 +9,25 @@ node() {
     stage('environment info') {
         sh 'env'
     }
-    
-    stage ('cypress') {
+
+    stage ('test') {
         withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache", "BROWSER=none"]) {
         sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
         npmExecuteScripts script:this, 
-                          runScripts: ["cypress:ci"],
+                          runScripts: ["test"],
                           verbose: true
-        }
+                }
     }
-
-    // stage ('test') {
+    
+    // stage ('cypress') {
+    //     withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache", "BROWSER=none"]) {
+    //     sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
     //     npmExecuteScripts script:this, 
-    //                       runScripts: ["test"],
+    //                       runScripts: ["cypress:ci"],
     //                       verbose: true
+    //     }
     // }
+
 
     stage('SonarQube report') {
         def scannerHome = tool 'cdctoolbox';
