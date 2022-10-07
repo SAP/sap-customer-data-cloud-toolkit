@@ -9,6 +9,7 @@ class SiteManager {
   }
 
   async create(siteHierarchy) {
+    console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
     // site hierarchy cannot be empty
     // if (siteHierarchy.sites.length == 0) {
     // 	return {}
@@ -68,7 +69,12 @@ class SiteManager {
   }
 
   async createSite(site) {
-    const response = await this.siteService.create(site)
+    const body = {
+      baseDomain: site.baseDomain,
+      description: site.description,
+      dataCenter: site.dataCenter,
+    }
+    const response = await this.siteService.create(body)
     console.log('createSite.response=' + JSON.stringify(response))
     return this.enrichResponse(response, site.id)
   }
