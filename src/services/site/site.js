@@ -9,7 +9,7 @@ class Site {
   }
 
   createAsync(body) {
-    const url = 'https://admin.' + body.dataCenter + '.gigya.com/admin.createSite'
+    const url = `https://admin.${body.dataCenter}.gigya.com/admin.createSite`
     const bodyWithCredentials = this.addCredentials(body)
     return client.post(url, bodyWithCredentials)
   }

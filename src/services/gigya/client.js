@@ -3,7 +3,7 @@ const axios = require('axios').default
 
 const client = {
   post: async function (url, body) {
-    console.log('Sending request to ' + url + '\n With body=' + JSON.stringify(body))
+    console.log(`Sending request to ${url}\n With body=${JSON.stringify(body)}`)
 
     const requestOptions = {
       method: 'POST',

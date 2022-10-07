@@ -18,8 +18,8 @@ class SiteManager {
 
     let responses = []
     let error = false
-    for (let i = 0; i < siteHierarchy.sites.length; ++i) {
-      responses = responses.concat(await this.createSiteHierarchy(siteHierarchy.sites[i]))
+    for (let site of siteHierarchy.sites) {
+      responses = responses.concat(await this.createSiteHierarchy(site))
       if (this.isAnyResponseError(responses)) {
         error = true
         break
@@ -46,13 +46,13 @@ class SiteManager {
   }
 
   async createParent(parentSite) {
-    return await this.createSite(parentSite)
+    return this.createSite(parentSite)
   }
 
   async createChildren(childSites, parentApiKey) {
     const responses = []
-    for (let i = 0; i < childSites.length; ++i) {
-      let childResponse = await this.createSite(childSites[i])
+    for (let site of childSites) {
+      let childResponse = await this.createSite(site)
       if (this.isSuccessful(childResponse)) {
         const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
@@ -89,7 +89,7 @@ class SiteManager {
   }
 
   async connectSite(parentApiKey, childApiKey) {
-    return await this.siteConfigurator.connect(parentApiKey, childApiKey)
+    return this.siteConfigurator.connect(parentApiKey, childApiKey)
   }
 
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
@@ -104,8 +104,8 @@ class SiteManager {
   }
 
   isAnyResponseError(responses) {
-    for (let i = 0; i < responses.length; ++i) {
-      if (!this.isSuccessful(responses[i])) {
+    for (let response of responses) {
+      if (!this.isSuccessful(response)) {
         return true
       }
     }
