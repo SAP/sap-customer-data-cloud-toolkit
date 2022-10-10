@@ -40,8 +40,35 @@ const BarStart = (props) => (
 
 const getSelectedDataCenters = () => {
   const dataCenterHTMLCollection = document.getElementById('cdctools-dataCenter').children
-
   return [...dataCenterHTMLCollection].filter((item) => item._state.selected === true).map((item) => item._state.text)
+}
+
+const checkSitesExist = (sites) => {
+  if (sites.length === 0) {
+    return false
+  }
+  return true
+}
+
+const checkSitesRequiredFields = (sites) => {
+  let requiredFieldsExist = true
+  if (!checkSitesExist(sites)) {
+    return true
+  }
+
+  sites.forEach((site) => {
+    if (site.baseDomain === '' || site.dataCenter === '') {
+      requiredFieldsExist = false
+    }
+    if (site.childSites) {
+      site.childSites.forEach((childSite) => {
+        if (childSite.baseDomain === '') {
+          requiredFieldsExist = false
+        }
+      })
+    }
+  })
+  return !requiredFieldsExist
 }
 
 const SiteDeployer = () => {
@@ -51,6 +78,7 @@ const SiteDeployer = () => {
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState()
+  const [areDataCentersSelected, setDataCentersSelected] = useState(true)
 
   const onSaveHandler = () => {
     console.log(sites)
@@ -85,6 +113,14 @@ const SiteDeployer = () => {
     })
   }
 
+  const checkDataCentersSelected = (event) => {
+    if (event.detail.items.length) {
+      setDataCentersSelected(true)
+    } else {
+      setDataCentersSelected(false)
+    }
+  }
+
   const getSelectedStructure = () => {
     return structures.filter((siteStructure) => siteStructure._id === selectedStructureId)[0]
   }
@@ -93,25 +129,29 @@ const SiteDeployer = () => {
     setBaseDomain(event.target.value)
   }
 
-  const showHideSaveCancelButtons = () => {
-    if (sites.length) {
-      return (
-        <Bar
-          design="FloatingFooter"
-          endContent={
-            <div>
-              <button type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
-                Save
-              </button>
-              <button type="button" fd-button="" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
-                Cancel
-              </button>
-            </div>
-          }
-        ></Bar>
-      )
-    }
-    return <Bar></Bar>
+  const showSaveCancelButtons = () => {
+    return (
+      <Bar
+        design="FloatingFooter"
+        endContent={
+          <div>
+            <button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
+              Save
+            </button>
+            <button
+              disabled={!checkSitesExist(sites)}
+              type="button"
+              fd-button=""
+              id="cancel-main"
+              className="fd-button fd-button--transparent fd-button--compact"
+              onClick={onCancelHandler}
+            >
+              Cancel
+            </button>
+          </div>
+        }
+      ></Bar>
+    )
   }
 
   const checkRequiredFields = () => {
@@ -121,7 +161,8 @@ const SiteDeployer = () => {
       baseDomain !== undefined &&
       selectedStructureId !== '' &&
       selectedStructureId !== null &&
-      selectedStructureId !== undefined
+      selectedStructureId !== undefined &&
+      areDataCentersSelected
     )
   }
 
@@ -168,7 +209,7 @@ const SiteDeployer = () => {
                   <Label for="cdctools-dataCenter" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
                     Choose Data Centers: *
                   </Label>
-                  <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }}>
+                  <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }} onSelectionChange={(event) => checkDataCentersSelected(event)}>
                     {dataCenters.map(({ value }) => (
                       <MultiComboBoxItem key={value} text={value} selected />
                     ))}
@@ -221,7 +262,7 @@ const SiteDeployer = () => {
         </div>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
-            <Card>{showHideSaveCancelButtons()}</Card>
+            <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
       </div>

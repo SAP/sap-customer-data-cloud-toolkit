@@ -73,8 +73,10 @@ export const onHashChange = (onChange, prevHash) => {
 }
 
 // Console.log styles, ex: console.log('CDC Toolbox - %cLoaded', logStyles.green)
+const padding = 'padding: 2px 4px'
+const borderRadius = 'border-radius: 4px'
 export const logStyles = {
-  lightGreenBold: ['color: #000', 'background-color: #50e591', 'padding: 2px 4px', 'border-radius: 4px', 'font-weight: bold'].join(';'),
-  green: ['color: #fff', 'background-color: green', 'padding: 2px 4px', 'border-radius: 4px'].join(';'),
-  gray: ['color: #fff', 'background-color: #444', 'padding: 2px 4px', 'border-radius: 4px'].join(';'),
+  lightGreenBold: ['color: #000', 'background-color: #50e591', padding, borderRadius, 'font-weight: bold'].join(';'),
+  green: ['color: #fff', 'background-color: green', padding, borderRadius].join(';'),
+  gray: ['color: #fff', 'background-color: #444', padding, borderRadius].join(';'),
 }
