@@ -1,14 +1,14 @@
 [
-  {
-    "value": "AU",
-    "label": "AU"
-  },
-  {
-    "value": "EU",
-    "label": "EU"
-  },
-  {
-    "value": "US",
-    "label": "US"
-  }
+    {
+        "value": "AU",
+        "label": "AU"
+    },
+    {
+        "value": "EU",
+        "label": "EU"
+    },
+    {
+        "value": "US",
+        "label": "US"
+    }
 ]

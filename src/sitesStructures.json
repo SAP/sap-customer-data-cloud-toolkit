@@ -1,35 +1,35 @@
 [
-  {
-    "_id": "1",
-    "name": "Structure 1",
-    "data": [
-      {
-        "baseDomain": "a.com",
-        "description": "",
-        "dataCenter": "",
-        "childSites": [
-          {
-            "baseDomain": "dev.a.com",
-            "description": "",
-            "dataCenter": ""
-          }
+    {
+        "_id": "1",
+        "name": "Structure 1",
+        "data": [
+            {
+                "siteDomain": "a.com",
+                "description": "",
+                "dataCenter": "",
+                "childSites": [
+                    {
+                        "siteDomain": "dev.a.com",
+                        "description": "",
+                        "dataCenter": ""
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  },
-  {
-    "_id": "2",
-    "name": "Structure 2",
-    "data": []
-  },
-  {
-    "_id": "3",
-    "name": "Structure 3",
-    "data": []
-  },
-  {
-    "_id": "4",
-    "name": "Structure 4",
-    "data": []
-  }
+    },
+    {
+        "_id": "2",
+        "name": "Structure 2",
+        "data": []
+    },
+    {
+        "_id": "3",
+        "name": "Structure 3",
+        "data": []
+    },
+    {
+        "_id": "4",
+        "name": "Structure 4",
+        "data": []
+    }
 ]
