@@ -30,7 +30,7 @@ import dataCenters from '../../dataCenters.json'
 import structures from '../../sitesStructures.json'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParent, clearSites } from '../../redux/siteSlice'
+import { addParentFromStructure, clearSites } from '../../redux/siteSlice'
 
 const BarStart = (props) => (
   <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
@@ -40,8 +40,35 @@ const BarStart = (props) => (
 
 const getSelectedDataCenters = () => {
   const dataCenterHTMLCollection = document.getElementById('cdctools-dataCenter').children
-
   return [...dataCenterHTMLCollection].filter((item) => item._state.selected === true).map((item) => item._state.text)
+}
+
+const checkSitesExist = (sites) => {
+  if (sites.length === 0) {
+    return false
+  }
+  return true
+}
+
+const checkSitesRequiredFields = (sites) => {
+  let requiredFieldsExist = true
+  if (!checkSitesExist(sites)) {
+    return true
+  }
+
+  sites.forEach((site) => {
+    if (site.baseDomain === '' || site.dataCenter === '') {
+      requiredFieldsExist = false
+    }
+    if (site.childSites) {
+      site.childSites.forEach((childSite) => {
+        if (childSite.baseDomain === '') {
+          requiredFieldsExist = false
+        }
+      })
+    }
+  })
+  return !requiredFieldsExist
 }
 
 const SiteDeployer = () => {
@@ -51,6 +78,7 @@ const SiteDeployer = () => {
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState()
+  const [areDataCentersSelected, setDataCentersSelected] = useState(true)
 
   const onSaveHandler = () => {
     console.log(sites)
@@ -66,15 +94,16 @@ const SiteDeployer = () => {
 
   const onCreateHandler = () => {
     const selectedDataCenters = getSelectedDataCenters()
-    const selectedtructure = getSelectedStructure()
+    const selectedStructure = getSelectedStructure()
 
     dispatch(clearSites())
 
     selectedDataCenters.forEach((dataCenter) => {
-      selectedtructure.data.forEach((structure) => {
+      selectedStructure.data.forEach((structure) => {
         dispatch(
-          addParent({
-            baseDomain: tryGetBaseDomainFromStructure(structure),
+          addParentFromStructure({
+            rootBaseDomain: baseDomain,
+            baseDomain: structure.baseDomain,
             description: structure.description,
             dataCenter: dataCenter,
             childSites: structure.childSites,
@@ -84,8 +113,12 @@ const SiteDeployer = () => {
     })
   }
 
-  const tryGetBaseDomainFromStructure = (structure) => {
-    return baseDomain !== '' ? baseDomain : structure.baseDomain
+  const checkDataCentersSelected = (event) => {
+    if (event.detail.items.length) {
+      setDataCentersSelected(true)
+    } else {
+      setDataCentersSelected(false)
+    }
   }
 
   const getSelectedStructure = () => {
@@ -96,25 +129,41 @@ const SiteDeployer = () => {
     setBaseDomain(event.target.value)
   }
 
-  const showHideSaveCancelButtons = () => {
-    if (sites.length) {
-      return (
-        <Bar
-          design="FloatingFooter"
-          endContent={
-            <div>
-              <button type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
-                Save
-              </button>
-              <button type="button" fd-button="" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
-                Cancel
-              </button>
-            </div>
-          }
-        ></Bar>
-      )
-    }
-    return <Bar></Bar>
+  const showSaveCancelButtons = () => {
+    return (
+      <Bar
+        design="FloatingFooter"
+        endContent={
+          <div>
+            <button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
+              Save
+            </button>
+            <button
+              disabled={!checkSitesExist(sites)}
+              type="button"
+              fd-button=""
+              id="cancel-main"
+              className="fd-button fd-button--transparent fd-button--compact"
+              onClick={onCancelHandler}
+            >
+              Cancel
+            </button>
+          </div>
+        }
+      ></Bar>
+    )
+  }
+
+  const checkRequiredFields = () => {
+    return !(
+      baseDomain !== '' &&
+      baseDomain !== null &&
+      baseDomain !== undefined &&
+      selectedStructureId !== '' &&
+      selectedStructureId !== null &&
+      selectedStructureId !== undefined &&
+      areDataCentersSelected
+    )
   }
 
   return (
@@ -160,7 +209,7 @@ const SiteDeployer = () => {
                   <Label for="cdctools-dataCenter" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
                     Choose Data Centers: *
                   </Label>
-                  <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }}>
+                  <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }} onSelectionChange={(event) => checkDataCentersSelected(event)}>
                     {dataCenters.map(({ value }) => (
                       <MultiComboBoxItem key={value} text={value} selected />
                     ))}
@@ -189,7 +238,7 @@ const SiteDeployer = () => {
                 </Select>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <Button onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
+                <Button disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
                   Create
                 </Button>
               </div>
@@ -213,7 +262,7 @@ const SiteDeployer = () => {
         </div>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
-            <Card>{showHideSaveCancelButtons()}</Card>
+            <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
       </div>

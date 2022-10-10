@@ -1,57 +1,65 @@
 {
-	"name": "react-content-script",
-	"version": "0.1.0",
-	"private": true,
-	"dependencies": {
-		"@reduxjs/toolkit": "^1.8.5",
-		"@testing-library/jest-dom": "^5.16.1",
-		"@testing-library/react": "^12.1.2",
-		"@testing-library/user-event": "^13.5.0",
-		"@ui5/webcomponents": "^1.6.0",
-		"@ui5/webcomponents-fiori": "^1.6.0",
-		"@ui5/webcomponents-icons": "^1.6.0",
-		"@ui5/webcomponents-react": "^0.27.4",
-		"@webcomponents/custom-elements": "^1.5.0",
-		"axios": "^0.27.2",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
-		"react-redux": "^8.0.2",
-		"react-scripts": "5.0.0",
-		"redux": "^4.2.0",
-		"sass": "^1.52.1",
-		"web-vitals": "^2.1.4"
-	},
-	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"postbuild": "node ./scripts/postbuild.js",
-		"test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
-		"eject": "react-scripts eject"
-	},
-	"jest": {
-		"transformIgnorePatterns": [
-			"node_modules/(?!(@ui5|lit-html|@babel)).*\\.js$"
-		]
-	},
-	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
-	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
-	"devDependencies": {
-		"prettier": "2.7.1"
-	}
+  "name": "react-content-script",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.8.5",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@ui5/webcomponents": "^1.7.1",
+    "@ui5/webcomponents-fiori": "^1.7.1",
+    "@ui5/webcomponents-icons": "^1.7.1",
+    "@ui5/webcomponents-react": "^1.0.1",
+    "@webcomponents/custom-elements": "^1.5.0",
+    "axios": "^0.27.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^8.0.2",
+    "react-scripts": "5.0.0",
+    "redux": "^4.2.0",
+    "sass": "^1.52.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts -r @cypress/instrument-cra start",
+    "build": "react-scripts build",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:ci": "concurrently \"cypress run\" --kill-others \"react-scripts start\" --success first",
+    "postbuild": "node ./scripts/postbuild.js",
+    "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
+    "eject": "react-scripts eject"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@ui5|lit-html|@babel)).*\\.js$"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@cypress/code-coverage": "^3.10.0",
+    "@cypress/instrument-cra": "^1.4.0",
+    "babel-plugin-istanbul": "^6.1.1",
+    "concurrently": "^7.4.0",
+    "cypress": "^10.9.0",
+    "prettier": "2.7.1"
+  }
 }

@@ -1,5 +1,6 @@
 import sitesReducer, {
-  addParent,
+  addNewParent,
+  addParentFromStructure,
   deleteParent,
   updateParentBaseDomain,
   updateParentDescription,
@@ -55,6 +56,7 @@ const structure = {
   name: 'Structure 1',
   data: [
     {
+      rootBaseDomain: 'test',
       baseDomain: 'a.com',
       description: 'test parent from strucure',
       dataCenter: 'AU',
@@ -88,7 +90,7 @@ test('should return initial state', () => {
 })
 
 test('should add a new Parent site', () => {
-  const newState = sitesReducer(initialState, addParent())
+  const newState = sitesReducer(initialState, addNewParent())
   expect(newState.sites.length).toEqual(1)
 
   const newParent = newState.sites[0]
@@ -103,14 +105,14 @@ test('should add a new Parent site', () => {
 })
 
 test('should add a Parent site with a child from a Structure', () => {
-  const newState = sitesReducer(initialState, addParent(structure.data[0]))
+  const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
   expect(newState.sites.length).toEqual(1)
 
   const newParent = newState.sites[0]
   expect(newState.sites.length).toEqual(1)
   expect(newParent.parentSiteTempId).toEqual('')
   expect(newParent.tempId).not.toEqual('')
-  expect(newParent.baseDomain).toEqual('a.com')
+  expect(newParent.baseDomain).toEqual('a.com.test')
   expect(newParent.description).toEqual('test parent from strucure')
   expect(newParent.dataCenter).toEqual('AU')
   expect(newParent.childSites.length).toEqual(1)
@@ -119,7 +121,7 @@ test('should add a Parent site with a child from a Structure', () => {
   const newChild = newParent.childSites[0]
   expect(newChild.parentSiteTempId).toEqual(newParent.tempId)
   expect(newChild.tempId).not.toEqual('')
-  expect(newChild.baseDomain).toEqual('dev.a.com')
+  expect(newChild.baseDomain).toEqual('dev.a.com.test')
   expect(newChild.description).toEqual('test child from strucure')
   expect(newChild.dataCenter).toEqual('AU')
   expect(newChild.isChildSite).toEqual(true)
