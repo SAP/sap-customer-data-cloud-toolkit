@@ -34,7 +34,7 @@ const expectedGigyaResponseNoSecret = {
   statusReason: 'Forbidden',
   callId: 'ed5c54bfe321478b8db4298c2539265a',
   apiVersion: 2,
-  time: '',
+  time: Date.now(),
 }
 
 const expectedGigyaResponseNoUserKey = expectedGigyaResponseNoSecret
@@ -106,7 +106,7 @@ const multipleParentWithMultipleChildrenRequest = {
       description: 'parent 1 description',
       dataCenter: 'us1',
       isChildSite: false,
-      id: parent1SiteId,
+      tempId: parent1SiteId,
       parentSiteId: '',
       childSites: [
         {
@@ -114,7 +114,7 @@ const multipleParentWithMultipleChildrenRequest = {
           description: 'parent 1 child 1 description',
           dataCenter: 'us1',
           isChildSite: true,
-          id: parent1SiteId + child1SiteId,
+          tempId: parent1SiteId + child1SiteId,
           parentSiteId: parent1SiteId,
         },
         {
@@ -122,7 +122,7 @@ const multipleParentWithMultipleChildrenRequest = {
           description: 'parent 1 child 2 description',
           dataCenter: 'us1',
           isChildSite: true,
-          id: parent1SiteId + child2SiteId,
+          tempId: parent1SiteId + child2SiteId,
           parentSiteId: parent1SiteId,
         },
       ],
@@ -132,7 +132,7 @@ const multipleParentWithMultipleChildrenRequest = {
       description: 'parent 2 description',
       dataCenter: 'au1',
       isChildSite: false,
-      id: parent2SiteId,
+      tempId: parent2SiteId,
       parentSiteId: '',
       childSites: [
         {
@@ -140,7 +140,7 @@ const multipleParentWithMultipleChildrenRequest = {
           description: 'parent 2 child 1 description',
           dataCenter: 'au1',
           isChildSite: true,
-          id: parent2SiteId + child1SiteId,
+          tempId: parent2SiteId + child1SiteId,
           parentSiteId: parent2SiteId,
         },
         {
@@ -148,7 +148,7 @@ const multipleParentWithMultipleChildrenRequest = {
           description: 'parent 2 child 2 description',
           dataCenter: 'au1',
           isChildSite: true,
-          id: parent2SiteId + child2SiteId,
+          tempId: parent2SiteId + child2SiteId,
           parentSiteId: parent2SiteId,
         },
       ],

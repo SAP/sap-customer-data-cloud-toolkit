@@ -76,7 +76,7 @@ class SiteManager {
     }
     const response = await this.siteService.create(body)
     console.log('createSite.response=' + JSON.stringify(response))
-    return this.enrichResponse(response, site.id)
+    return this.enrichResponse(response, site.tempId)
   }
 
   enrichResponse(response, id) {

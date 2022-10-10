@@ -77,31 +77,6 @@ describe('Service Site test suite', () => {
     expect(response.errorMessage).toEqual('Error creating site')
     expect(response.time).toBeDefined()
   })
-
-  // test('create site real', async () => {
-  // 	const request = {
-  // 		Sites: [
-  // 			{
-  // 				baseDomain: 'bruno_js_p1',
-  // 				description: 'parent 1 description',
-  // 				dataCenter: 'us1',
-  // 			},
-  // 		],
-  // 		PartnerID: '79597568',
-  // 		UserKey: 'ANAduftBfnKP',
-  // 		Secret: 'n2c4vAt2GwEVLHrLCDwUpLbKJVhT3RC1',
-  // 	}
-  // 	const siteService = new Site(
-  // 		request.PartnerID,
-  // 		'', //request.UserKey,
-  // 		request.Secret,
-  // 	)
-  // 	const response = await siteService.create(request.Sites[0])
-  // 	console.log('response=' + JSON.stringify(response))
-
-  // 	//expect(response.ApiKey).toBeDefined()
-  // 	//expect(response.StatusCode).toEqual(TestData.HttpStatus.OK)
-  // })
 })
 
 async function createSites(request, expectedResponseFromServer, siteParams) {
