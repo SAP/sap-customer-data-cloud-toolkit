@@ -1,76 +1,88 @@
-import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppContainer'
-import { MENU_ELEMENT_CLASS } from './injectMenu'
-import { state } from './chromeStorage'
-
-export const ROUTE_CONTAINER_CLASS = 'cdc-tools-app-container'
-export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
-const IS_SELECTED_CLASS = 'is-selected'
+import {
+  onHashChange,
+  querySelectorAllShadows,
+  watchElement,
+  logStyles,
+} from './utils';
+import { state } from './chromeStorage';
 
 const init = () => {
-  onHashChange(() => processHashChange())
-  setTimeout(() => processHashChange(), 50)
-}
+  onHashChange(() => processHashChange());
+  setTimeout(() => processHashChange(), 50);
+};
 
 const processHashChange = () => {
-  const hash = window.location.hash.split('/')
-  if (hash.length !== 5 || hash[3] !== 'cdc-tools') {
-    hideTool()
-  } else {
-    const [, partnerId, apiKey, , tabName] = hash
+  const hash = window.location.hash.split('/');
+  if (hash.length !== 5 || hash[3] !== 'cdc-tools') return hideTool();
 
-    state.partnerId = partnerId
-    state.apiKey = apiKey
+  const [, partnerId, apiKey, , tabName] = hash;
 
-    showTool({ partnerId, apiKey, tabName })
-  }
-}
+  state.partnerId = partnerId;
+  state.apiKey = apiKey;
+
+  showTool({ partnerId, apiKey, tabName });
+};
 
 const showTool = ({ partnerId, apiKey, tabName }) => {
-  if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length || !document.querySelector(`.${ROUTE_CONTAINER_CLASS}[name="${tabName}"]`)) {
-    return
-  }
+  if (
+    !document.querySelectorAll('.cdc-tools-app-container').length ||
+    !document.querySelector(`.cdc-tools-app-container[name="${tabName}"]`)
+  )
+    return;
 
-  hideTool()
+  hideTool();
 
   // Remove is-selected from all menu links
-  querySelectorAllShadows('.fd-nested-list__link, .fd-nested-list__content').forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
+  querySelectorAllShadows(
+    '.fd-nested-list__link, .fd-nested-list__content',
+  ).forEach((el) => el.classList.remove('is-selected'));
 
   // Show containers
-  document.querySelector(`.${ROUTE_CONTAINER_CLASS}[name="${tabName}"]`).classList.add(ROUTE_CONTAINER_SHOW_CLASS)
-  document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.add(MAIN_CONTAINER_SHOW_CLASS)
+  document
+    .querySelector(`.cdc-tools-app-container[name="${tabName}"]`)
+    .classList.add('show-cdc-tools-app-container');
+  document.querySelector('.cdc-tools-app').classList.add('show-cdc-tools');
 
   // Set menu link as selected
-  querySelectorAllShadows(`.${MENU_ELEMENT_CLASS} .fd-nested-list__link[name="${tabName}"]`).forEach((el) => {
-    el.classList.add(IS_SELECTED_CLASS)
+  querySelectorAllShadows(
+    `.cdc-tools--menu-item .fd-nested-list__link[name="${tabName}"]`,
+  ).forEach((el) => {
+    el.classList.add('is-selected');
     // Set dropdown list selector as is-selected
-    const menuParentElem = el.parentElement.parentElement.closest('.fd-nested-list__item')
-    if (menuParentElem) {
-      menuParentElem.querySelector('.fd-nested-list__content').classList.add(IS_SELECTED_CLASS)
-    }
-  })
-}
+    let menuParentElem = el.parentElement.parentElement.closest(
+      '.fd-nested-list__item',
+    );
+    if (menuParentElem)
+      menuParentElem
+        .querySelector('.fd-nested-list__content')
+        .classList.add('is-selected');
+  });
+};
 
 const hideTool = () => {
-  if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
-    return
-  }
+  if (!document.querySelectorAll('.cdc-tools-app-container').length) return;
 
   // Hide cdc-tools wrap container
-  document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.remove(MAIN_CONTAINER_SHOW_CLASS)
+  document.querySelector('.cdc-tools-app').classList.remove('show-cdc-tools');
 
   // Hide cdc-tools containers
-  document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
+  document
+    .querySelectorAll('.cdc-tools-app-container')
+    .forEach((el) => el.classList.remove('show-cdc-tools-app-container'));
 
   // Remove is-selected from all cdc-tools links
-  querySelectorAllShadows(`.${MENU_ELEMENT_CLASS} .fd-nested-list__link`).forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
-}
+  querySelectorAllShadows(
+    '.cdc-tools--menu-item .fd-nested-list__link',
+  ).forEach((el) => el.classList.remove('is-selected'));
+};
 
 export const initNavigation = () => {
   watchElement({
-    elemSelector: `.${ROUTE_CONTAINER_CLASS}`, // CDC Toolbox container
+    // elemSelector: '.fd-info-label__text', // Tenant ID
+    elemSelector: '.cdc-tools-app-container', // CDC Toolbox container
     onCreated: () => {
-      init()
+      init();
+      console.log('CDC Toolbox Navigation - %cLoaded', logStyles.green);
     },
-  })
-}
+  });
+};
