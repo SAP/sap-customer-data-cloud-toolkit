@@ -1,0 +1,9 @@
+_schema-version: 2.1.0
+ID: com.sap.cxautomation.cdc-tools-chrome-extension
+version: 1.0.0
+description: A CDC tools chrome extension
+provider: SAP Sample generator
+modules:
+  - name: cdc-tools-chrome-extension
+    type: nodejs
+    path: .

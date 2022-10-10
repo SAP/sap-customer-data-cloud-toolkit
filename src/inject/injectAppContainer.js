@@ -1,35 +1,17 @@
-import { onElementExists, htmlToElem, logStyles } from './utils';
+import { onElementExists, htmlToElem } from './utils'
 
-// Menu elements
-export const appContainers = [
-  {
-    tabName: 'site-deployer',
-    html: `<div class="cdc-tools-app-container" name="site-deployer"><h1 style="text-align: center;">site-deployer</h1></div>`,
-  },
-  {
-    tabName: 'copy-configuration-extended',
-    html: `<div class="cdc-tools-app-container" name="copy-configuration-extended"><h1 style="text-align: center;">copy-configuration-extended</h1></div>`,
-  },
-];
+export const TENANT_ID_CLASS = 'fd-info-label__text'
+export const MAIN_CONTAINER_CLASS = 'cdc-tools-app'
+export const MAIN_CONTAINER_SHOW_CLASS = 'show-cdc-tools'
 
 export const initAppContainer = (onCreated) => {
-  const tabList = appContainers.map((container) => container.html).join('');
+  document.querySelector('body').append(htmlToElem(`<div class="${MAIN_CONTAINER_CLASS}"></div>`))
 
-  document
-    .querySelector('body')
-    .append(htmlToElem(`<div class="cdc-tools-app">${tabList}</div>`));
+  if (typeof onCreated == 'function') {
+    onCreated()
+  }
+}
 
-  console.log('CDC Toolbox App - %cLoaded', logStyles.green);
+export const destroyAppContainer = () => document.querySelector(`.${MAIN_CONTAINER_CLASS}`).remove()
 
-  if (typeof onCreated == 'function') onCreated();
-};
-
-export const destroyAppContainer = () => {
-  document.querySelector('.cdc-tools-app').remove();
-  console.log('CDC Toolbox App - %cRemoved', logStyles.gray);
-};
-
-export const injectAppContainer = (onCreated) => {
-  // use Tenant ID
-  onElementExists('.fd-info-label__text', () => initAppContainer(onCreated));
-};
+export const injectAppContainer = (onCreated) => onElementExists(`.${TENANT_ID_CLASS}`, () => initAppContainer(onCreated))
