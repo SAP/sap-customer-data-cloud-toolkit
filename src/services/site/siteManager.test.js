@@ -82,8 +82,7 @@ describe('Site manager test suite', () => {
     const response = await siteManager.create(request)
 
     expect(response.length).toEqual(1)
-    verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain)
-    expect(response[0].deleted).toEqual(false)
+    expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain, false, TestData.Endpoints.SITE_CREATE)
     expect(response[0].apiKey).toBeUndefined()
   })
 
@@ -98,11 +97,9 @@ describe('Site manager test suite', () => {
     const response = await siteManager.create(request)
 
     expect(response.length).toEqual(2)
-    verifyResponseIsOk(response[0])
-    verifyResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter)
-    expect(response[0].deleted).toEqual(true)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
-    expect(response[1].deleted).toEqual(true)
   })
 
   test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
@@ -117,12 +114,9 @@ describe('Site manager test suite', () => {
     const response = await siteManager.create(request)
 
     expect(response.length).toEqual(3)
-    verifyResponseIsOk(response[0])
-    verifyResponseIsOk(response[1])
-    verifyResponseIsNotOk(response[2], TestData.expectedGigyaResponseInvalidDataCenter)
-    expect(response[0].deleted).toEqual(true)
-    expect(response[1].deleted).toEqual(true)
-    expect(response[2].deleted).toEqual(false)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsOk(response[1], true)
+    expectResponseIsNotOk(response[2], TestData.expectedGigyaResponseInvalidDataCenter, false, TestData.Endpoints.SITE_CREATE)
     expect(response[2].apiKey).toBeUndefined()
   })
 
@@ -142,16 +136,11 @@ describe('Site manager test suite', () => {
     const response = await siteManager.create(request)
 
     expect(response.length).toEqual(5)
-    verifyResponseIsOk(response[0])
-    verifyResponseIsOk(response[1])
-    verifyResponseIsOk(response[2])
-    verifyResponseIsOk(response[3])
-    verifyResponseIsNotOk(response[4], TestData.scExpectedGigyaResponseWithDifferentDataCenter)
-    expect(response[0].deleted).toEqual(true)
-    expect(response[1].deleted).toEqual(true)
-    expect(response[2].deleted).toEqual(true)
-    expect(response[3].deleted).toEqual(true)
-    expect(response[4].deleted).toEqual(true)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsOk(response[1], true)
+    expectResponseIsOk(response[2], true)
+    expectResponseIsOk(response[3], true)
+    expectResponseIsNotOk(response[4], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[4].apiKey).toBeDefined()
   })
 
@@ -171,10 +160,8 @@ describe('Site manager test suite', () => {
     const response = await siteManager.create(request)
 
     expect(response.length).toEqual(2)
-    verifyResponseIsOk(response[0])
-    verifyResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter)
-    expect(response[0].deleted).toEqual(true)
-    expect(response[1].deleted).toEqual(true)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
   })
 
@@ -264,9 +251,21 @@ function verifyResponseIsOk(response) {
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
   expect(response.siteUiId).toBeDefined()
+  expect(response.endpoint).toEqual(TestData.Endpoints.SITE_CREATE)
+}
+
+function expectResponseIsOk(response, deleted) {
+  verifyResponseIsOk(response)
+  expect(response.deleted).toEqual(deleted)
 }
 
 function verifyResponseIsNotOk(response, expectedResponse) {
   TestData.verifyResponseIsNotOk(response, expectedResponse)
   expect(response.siteUiId).toBeDefined()
+}
+
+function expectResponseIsNotOk(response, expectedResponse, deleted, endpoint) {
+  verifyResponseIsNotOk(response, expectedResponse)
+  expect(response.deleted).toEqual(deleted)
+  expect(response.endpoint).toEqual(endpoint)
 }

@@ -319,6 +319,7 @@ function verifyResponseIsNotOk(response, expectedResponse) {
 
 module.exports = {
   HttpStatus,
+  Endpoints,
   expectedGigyaResponseOk,
   expectedGigyaResponseNoSecret,
   expectedGigyaResponseNoUserKey,

@@ -9,9 +9,7 @@ class SiteManager {
   async create(siteHierarchy) {
     console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
     // site hierarchy cannot be empty
-    // if (siteHierarchy.sites.length == 0) {
-    // 	return {}
-    // }
+
     this.siteService = new Site(this.credentials.partnerID, this.credentials.userKey, this.credentials.secret)
     this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, siteHierarchy.sites[0].dataCenter)
 
@@ -52,7 +50,6 @@ class SiteManager {
     const responses = []
     for (const site of childSites) {
       let childResponse = await this.createSite(site)
-      childResponse.endpoint = Site.getEndpoint()
       if (this.isSuccessful(childResponse)) {
         const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
@@ -83,6 +80,7 @@ class SiteManager {
     const resp = Object.assign({}, response)
     resp.siteUiId = id
     resp.deleted = false
+    resp.endpoint = Site.getCreateEndpoint()
     return resp
   }
 
@@ -155,6 +153,7 @@ class SiteManager {
     response.errorMessage = siteConfiguratorResponse.errorMessage
     response.errorDetails = siteConfiguratorResponse.errorDetails
     response.time = siteConfiguratorResponse.time
+    response.endpoint = SiteConfigurator.getSetEndpoint()
     return response
   }
 

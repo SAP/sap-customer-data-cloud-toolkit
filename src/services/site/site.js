@@ -8,7 +8,7 @@ class Site {
   }
 
   createAsync(body) {
-    const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getEndpoint()}`
+    const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
     const bodyWithCredentials = this.addCredentials(body)
     return client.post(url, bodyWithCredentials)
   }
@@ -20,8 +20,12 @@ class Site {
     return response.data
   }
 
-  static getEndpoint() {
+  static getCreateEndpoint() {
     return 'admin.createSite'
+  }
+
+  static getDeleteEndpoint() {
+    return 'admin.deleteSite'
   }
 
   addCredentials(body) {
@@ -42,7 +46,7 @@ class Site {
   }
 
   async executeDelete(site, dataCenter) {
-    const url = `https://admin.${dataCenter}.gigya.com/admin.deleteSite`
+    const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
 
     // GET TOKEN
     const getDeleteTokenRes = (await client.post(url, this.deleteSiteParameters(site))).data
