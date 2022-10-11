@@ -8,7 +8,7 @@ class Site {
   }
 
   createAsync(body) {
-    const url = `https://admin.${body.dataCenter}.gigya.com/admin.createSite`
+    const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
     const bodyWithCredentials = this.addCredentials(body)
     return client.post(url, bodyWithCredentials)
   }
@@ -18,6 +18,14 @@ class Site {
       return Site.generateErrorResponse(error)
     })
     return response.data
+  }
+
+  static getCreateEndpoint() {
+    return 'admin.createSite'
+  }
+
+  static getDeleteEndpoint() {
+    return 'admin.deleteSite'
   }
 
   addCredentials(body) {
@@ -37,8 +45,8 @@ class Site {
     return resp
   }
 
-  async executeDelete(site, dataCenter) {
-    const url = `https://admin.${dataCenter}.gigya.com/admin.deleteSite`
+  async delete(site, dataCenter) {
+    const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
 
     // GET TOKEN
     const getDeleteTokenRes = (await client.post(url, this.deleteSiteParameters(site))).data
@@ -60,18 +68,6 @@ class Site {
       parameters.deleteToken = deleteToken
     }
     return parameters
-  }
-
-  delete(apiKey) {
-    return {
-      apiKey: 'apiKey',
-      statusCode: 200,
-      errorCode: 0,
-      statusReason: 'OK',
-      callId: 'callId',
-      apiVersion: 2,
-      time: Date.now(),
-    }
   }
 }
 

@@ -4,28 +4,19 @@ const SiteConfigurator = require('./siteConfigurator')
 class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
+    this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
   }
 
   async create(siteHierarchy) {
     console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
-    // site hierarchy cannot be empty
-    // if (siteHierarchy.sites.length == 0) {
-    // 	return {}
-    // }
-    this.siteService = new Site(this.credentials.partnerID, this.credentials.userKey, this.credentials.secret)
-    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, siteHierarchy.sites[0].dataCenter)
 
     let responses = []
-    let error = false
     for (const site of siteHierarchy.sites) {
       responses = responses.concat(await this.createSiteHierarchy(site))
       if (this.isAnyResponseError(responses)) {
-        error = true
+        await this.rollbackCreatedSites(responses, site.dataCenter)
         break
       }
-    }
-    if (error) {
-      this.rollbackCreatedSites(responses)
     }
     return responses
   }
@@ -49,11 +40,12 @@ class SiteManager {
   }
 
   async createChildren(childSites, parentApiKey) {
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
     const responses = []
     for (const site of childSites) {
       let childResponse = await this.createSite(site)
       if (this.isSuccessful(childResponse)) {
-        const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
+        const scResponse = await siteConfigurator.connect(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
           childResponse = this.mergeErrorResponse(childResponse, scResponse)
         }
@@ -72,6 +64,7 @@ class SiteManager {
       description: site.description,
       dataCenter: site.dataCenter,
     }
+    console.log(`Creating site ${site.baseDomain}`)
     const response = await this.siteService.create(body)
     console.log('createSite.response=' + JSON.stringify(response))
     return this.enrichResponse(response, site.tempId)
@@ -81,6 +74,7 @@ class SiteManager {
     const resp = Object.assign({}, response)
     resp.siteUiId = id
     resp.deleted = false
+    resp.endpoint = Site.getCreateEndpoint()
     return resp
   }
 
@@ -92,22 +86,17 @@ class SiteManager {
     return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
   }
 
-  async connectSite(parentApiKey, childApiKey) {
-    return this.siteConfigurator.connect(parentApiKey, childApiKey)
-  }
-
   async deleteSites(targetApiKeys) {
     const responses = []
-    this.siteService = new Site(undefined, this.credentials.userKey, this.credentials.secret)
-    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
 
     for (const site of targetApiKeys) {
-      const siteConfig = await this.siteConfigurator.getSiteConfig(site)
+      const siteConfig = await siteConfigurator.getSiteConfig(site)
       if (this.isSiteAlreadyDeleted(siteConfig)) {
         continue
       }
 
-      if (this.isInvalidAPI(siteConfig)) {
+      if (!this.isSuccessful(siteConfig)) {
         responses.push(siteConfig)
         continue
       }
@@ -117,21 +106,21 @@ class SiteManager {
 
       // Delete site members
       if (siteMembers.length > 0) {
-        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter, this.siteService)
+        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter)
         responses.push(...memberResponses)
       }
 
       // Delete parent site
-      const response = await this.siteService.executeDelete(site, dataCenter)
+      const response = await this.siteService.delete(site, dataCenter)
       responses.push(response)
     }
     return responses
   }
 
-  async siteMembersDeleter(siteMembers, dataCenter, siteService) {
+  async siteMembersDeleter(siteMembers, dataCenter) {
     const responses = []
     for (const site of siteMembers) {
-      const response = await siteService.executeDelete(site, dataCenter)
+      const response = await this.siteService.delete(site, dataCenter)
       responses.push(response)
     }
     return responses
@@ -139,10 +128,6 @@ class SiteManager {
 
   isSiteAlreadyDeleted(res) {
     return res.errorDetails === 'Site was deleted' && res.statusCode === 403
-  }
-
-  isInvalidAPI(res) {
-    return res.errorCode !== 0
   }
 
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
@@ -153,6 +138,7 @@ class SiteManager {
     response.errorMessage = siteConfiguratorResponse.errorMessage
     response.errorDetails = siteConfiguratorResponse.errorDetails
     response.time = siteConfiguratorResponse.time
+    response.endpoint = SiteConfigurator.getSetEndpoint()
     return response
   }
 
@@ -165,10 +151,10 @@ class SiteManager {
     return false
   }
 
-  rollbackCreatedSites(responses) {
+  async rollbackCreatedSites(responses, dataCenter) {
     const apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
     for (let i = 0; i < apiKeys.length; ++i) {
-      const response = this.siteService.delete(apiKeys[i])
+      const response = await this.siteService.delete(apiKeys[i], dataCenter)
       if (this.isSuccessful(response)) {
         responses[i].deleted = true
       }
