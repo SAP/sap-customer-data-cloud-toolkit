@@ -1,4 +1,3 @@
-'use strict'
 const SiteConfigurator = require('./siteConfigurator.js')
 const axios = require('axios').default
 const TestData = require('./data_test.js')
@@ -42,6 +41,16 @@ describe('Site configurator test suite', () => {
     console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response, expectedResponse)
+  })
+
+  test('get site config successfully', async () => {
+    const expectedResponse = TestData.scGetSiteConfigSuccessfully
+    axios.mockResolvedValue({ data: expectedResponse })
+
+    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
+    let response = await siteConfigurator.getSiteConfig('#######')
+
+    TestData.verifyResponseIsOk(response)
   })
 
   test('send request to invalid url', async () => {

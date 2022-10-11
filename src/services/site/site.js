@@ -1,4 +1,3 @@
-'use strict'
 const client = require('../gigya/client')
 
 class Site {
@@ -36,6 +35,31 @@ class Site {
     resp.data.errorMessage = 'Error creating site'
     resp.data.time = Date.now()
     return resp
+  }
+
+  async executeDelete(site, dataCenter) {
+    const url = `https://admin.${dataCenter}.gigya.com/admin.deleteSite`
+
+    // GET TOKEN
+    const getDeleteTokenRes = (await client.post(url, this.deleteSiteParameters(site))).data
+    if (getDeleteTokenRes.errorCode !== 0) {
+      return getDeleteTokenRes
+    }
+
+    // DELETE SITE
+    return (await client.post(url, this.deleteSiteParameters(site, getDeleteTokenRes.deleteToken))).data
+  }
+
+  deleteSiteParameters(apiKey, deleteToken) {
+    const parameters = Object.assign({})
+    parameters.apiKey = apiKey
+    parameters.userKey = this.userKey
+    parameters.secret = this.secret
+
+    if (deleteToken !== undefined) {
+      parameters.deleteToken = deleteToken
+    }
+    return parameters
   }
 
   delete(apiKey) {

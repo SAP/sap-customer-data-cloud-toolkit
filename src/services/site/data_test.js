@@ -10,6 +10,7 @@ const Endpoints = {
 }
 
 const badRequest = 'Bad Request'
+const invalidApiParam = 'Invalid ApiKey parameter'
 
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
@@ -90,7 +91,7 @@ const scExpectedGigyaResponseOk = {
 }
 
 const scExpectedGigyaResponseNotOk = {
-  errorMessage: 'Invalid ApiKey parameter',
+  errorMessage: invalidApiParam,
   errorDetails: 'GSKeyBase is invalid, no version: apiKey',
   statusCode: 400,
   errorCode: 400093,
@@ -159,6 +160,116 @@ const multipleParentWithMultipleChildrenRequest = {
   secret: 'secret',
 }
 
+const sdExpectedDeleteTokenSuccessfully = {
+  statusCode: 200,
+  errorCode: 0,
+  statusReason: 'OK',
+  callId: 'callId',
+  time: Date.now(),
+  deleteToken: 'token',
+}
+const sdExpectedGigyaResponseDeletedSite = {
+  statusCode: 200,
+  errorCode: 0,
+  statusReason: 'OK',
+  callId: 'callId',
+  time: Date.now(),
+}
+
+const expectedGigyaResponseInvalidAPI = {
+  callId: 'callId',
+  errorCode: 400093,
+  errorDetails: invalidApiParam,
+  errorMessage: invalidApiParam,
+  apiVersion: 2,
+  statusCode: 400,
+  statusReason: badRequest,
+  time: Date.now(),
+}
+
+const scGetSiteConfigSuccessfully = {
+  callId: 'callId',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: Date.now(),
+  baseDomain: 'a_b_c_',
+  dataCenter: 'au1',
+  trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
+  tags: [],
+  description: 'site',
+  captchaProvider: 'Google',
+  settings: {
+    CNAME: '',
+    shortURLDomain: '',
+    shortURLRedirMethod: 'js',
+    encryptPII: true,
+  },
+  siteGroupConfig: {
+    members: [],
+    enableSSO: false,
+  },
+  trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
+  enableDataSharing: true,
+  isCDP: false,
+  invisibleRecaptcha: {},
+  recaptchaV2: {},
+  funCaptcha: {},
+}
+
+const scGetSiteConfigSuccessfullyMultipleMember = {
+  callId: 'callId',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: Date.now(),
+  baseDomain: 'a_b_c_',
+  dataCenter: 'au1',
+  trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
+  tags: [],
+  description: 'site',
+  captchaProvider: 'Google',
+  settings: {
+    CNAME: '',
+    shortURLDomain: '',
+    shortURLRedirMethod: 'js',
+    encryptPII: true,
+  },
+  siteGroupConfig: {
+    members: ['member1'],
+    enableSSO: false,
+  },
+  trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
+  enableDataSharing: true,
+  isCDP: false,
+  invisibleRecaptcha: {},
+  recaptchaV2: {},
+  funCaptcha: {},
+}
+
+const sdSiteAlreadyDeleted = {
+  callId: 'callId',
+  errorCode: 403007,
+  errorDetails: 'Site was deleted',
+  errorMessage: 'Permission denied',
+  apiVersion: 2,
+  statusCode: 403,
+  statusReason: 'Forbidden',
+  time: Date.now(),
+}
+
+const sdDeleteGroupSitesFirst = {
+  errorMessage: 'No user permission',
+  errorDetails: "You can't delete this site because it's a group site. Please delete it's member sites first.",
+  statusCode: 403,
+  errorCode: 403023,
+  statusReason: 'Forbidden',
+  callId: 'callId',
+  time: Date.now(),
+}
+
 function createMultipleParentWithMultipleChildrenRequest() {
   return JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
 }
@@ -217,6 +328,14 @@ module.exports = {
   scExpectedGigyaResponseWithDifferentDataCenter,
   scExpectedGigyaResponseOk,
   scExpectedGigyaResponseNotOk,
+  sdExpectedGigyaResponseDeletedSite,
+  expectedGigyaResponseInvalidAPI,
+  scGetSiteConfigSuccessfully,
+  sdExpectedDeleteTokenSuccessfully,
+  scGetSiteConfigSuccessfullyMultipleMember,
+  sdSiteAlreadyDeleted,
+  sdDeleteGroupSitesFirst,
+  invalidApiParam,
   createSingleParentRequest,
   createParentWithOneChildRequest,
   createParentWithTwoChildRequest,

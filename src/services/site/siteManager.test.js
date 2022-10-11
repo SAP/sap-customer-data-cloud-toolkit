@@ -1,4 +1,3 @@
-'use strict'
 const axios = require('axios').default
 const TestData = require('./data_test.js')
 const SiteManager = require('./siteManager.js')
@@ -177,6 +176,79 @@ describe('Site manager test suite', () => {
     expect(response[0].deleted).toEqual(true)
     expect(response[1].deleted).toEqual(true)
     expect(response[1].apiKey).toBeDefined()
+  })
+
+  test('delete single site with site manager', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+
+    const siteManager = new SiteManager(credentials)
+    let response = await siteManager.deleteSites(['####'])
+
+    expect(response.length).toBe(1)
+    expect(response[0]).toBeDefined()
+    expect(response[0].statusCode).toBe(200)
+  })
+
+  test('delete site with site members', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+
+    const siteManager = new SiteManager(credentials)
+    let response = await siteManager.deleteSites(['####'])
+
+    expect(response.length).toBe(2)
+    expect(response[0]).toBeDefined()
+    expect(response[0].statusCode).toBe(200)
+    expect(response[1]).toBeDefined()
+    expect(response[1].statusCode).toBe(200)
+  })
+
+  test('delete site already deleted', async () => {
+    axios.mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
+    const siteManager = new SiteManager(credentials)
+
+    let response = await siteManager.deleteSites(['####'])
+    expect(response.length).toBe(0)
+  })
+
+  test('delete 3 sites: 2 sites with multiple members and 1 site already deleted', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
+
+    const siteManager = new SiteManager(credentials)
+
+    let response = await siteManager.deleteSites(['####', '####2', '####3'])
+    expect(response.length).toBe(4)
+    expect(response[0].statusCode).toBe(200)
+    expect(response[1].statusCode).toBe(200)
+    expect(response[2].statusCode).toBe(200)
+    expect(response[3].statusCode).toBe(200)
+  })
+
+  test('delete site invalid API', async () => {
+    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidAPI })
+    const siteManager = new SiteManager(credentials)
+
+    let response = await siteManager.deleteSites(['####'])
+    expect(response[0].statusCode).toBe(400)
+    expect(response[0].errorMessage).toBe(TestData.invalidApiParam)
   })
 })
 

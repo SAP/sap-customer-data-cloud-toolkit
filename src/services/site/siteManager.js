@@ -1,5 +1,3 @@
-'use strict'
-
 const Site = require('./site')
 const SiteConfigurator = require('./siteConfigurator')
 
@@ -96,6 +94,55 @@ class SiteManager {
 
   async connectSite(parentApiKey, childApiKey) {
     return this.siteConfigurator.connect(parentApiKey, childApiKey)
+  }
+
+  async deleteSites(targetApiKeys) {
+    const responses = []
+    this.siteService = new Site(undefined, this.credentials.userKey, this.credentials.secret)
+    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
+
+    for (const site of targetApiKeys) {
+      const siteConfig = await this.siteConfigurator.getSiteConfig(site)
+      if (this.isSiteAlreadyDeleted(siteConfig)) {
+        continue
+      }
+
+      if (this.isInvalidAPI(siteConfig)) {
+        responses.push(siteConfig)
+        continue
+      }
+
+      const dataCenter = siteConfig.dataCenter
+      const siteMembers = siteConfig.siteGroupConfig.members
+
+      // Delete site members
+      if (siteMembers.length > 0) {
+        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter, this.siteService)
+        responses.push(...memberResponses)
+      }
+
+      // Delete parent site
+      const response = await this.siteService.executeDelete(site, dataCenter)
+      responses.push(response)
+    }
+    return responses
+  }
+
+  async siteMembersDeleter(siteMembers, dataCenter, siteService) {
+    const responses = []
+    for (const site of siteMembers) {
+      const response = await siteService.executeDelete(site, dataCenter)
+      responses.push(response)
+    }
+    return responses
+  }
+
+  isSiteAlreadyDeleted(res) {
+    return res.errorDetails === 'Site was deleted' && res.statusCode === 403
+  }
+
+  isInvalidAPI(res) {
+    return res.errorCode !== 0
   }
 
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
