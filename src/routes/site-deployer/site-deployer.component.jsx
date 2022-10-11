@@ -138,14 +138,7 @@ const SiteDeployer = () => {
             <button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
               Save
             </button>
-            <button
-              disabled={!checkSitesExist(sites)}
-              type="button"
-              fd-button=""
-              id="cancel-main"
-              className="fd-button fd-button--transparent fd-button--compact"
-              onClick={onCancelHandler}
-            >
+            <button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
               Cancel
             </button>
           </div>
@@ -238,7 +231,7 @@ const SiteDeployer = () => {
                 </Select>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <Button disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
+                <Button id="createButton" disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
                   Create
                 </Button>
               </div>
