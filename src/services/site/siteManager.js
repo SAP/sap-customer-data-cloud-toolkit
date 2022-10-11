@@ -11,16 +11,12 @@ class SiteManager {
     console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
 
     let responses = []
-    let error = false
     for (const site of siteHierarchy.sites) {
       responses = responses.concat(await this.createSiteHierarchy(site))
       if (this.isAnyResponseError(responses)) {
-        error = true
+        await this.rollbackCreatedSites(responses, site.dataCenter)
         break
       }
-    }
-    if (error) {
-      this.rollbackCreatedSites(responses)
     }
     return responses
   }
@@ -100,7 +96,7 @@ class SiteManager {
         continue
       }
 
-      if (this.isInvalidAPI(siteConfig)) {
+      if (!this.isSuccessful(siteConfig)) {
         responses.push(siteConfig)
         continue
       }
@@ -115,7 +111,7 @@ class SiteManager {
       }
 
       // Delete parent site
-      const response = await this.siteService.executeDelete(site, dataCenter)
+      const response = await this.siteService.delete(site, dataCenter)
       responses.push(response)
     }
     return responses
@@ -124,7 +120,7 @@ class SiteManager {
   async siteMembersDeleter(siteMembers, dataCenter) {
     const responses = []
     for (const site of siteMembers) {
-      const response = await this.siteService.executeDelete(site, dataCenter)
+      const response = await this.siteService.delete(site, dataCenter)
       responses.push(response)
     }
     return responses
@@ -132,10 +128,6 @@ class SiteManager {
 
   isSiteAlreadyDeleted(res) {
     return res.errorDetails === 'Site was deleted' && res.statusCode === 403
-  }
-
-  isInvalidAPI(res) {
-    return res.errorCode !== 0
   }
 
   mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
@@ -159,10 +151,10 @@ class SiteManager {
     return false
   }
 
-  rollbackCreatedSites(responses) {
+  async rollbackCreatedSites(responses, dataCenter) {
     const apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
     for (let i = 0; i < apiKeys.length; ++i) {
-      const response = this.siteService.delete(apiKeys[i])
+      const response = await this.siteService.delete(apiKeys[i], dataCenter)
       if (this.isSuccessful(response)) {
         responses[i].deleted = true
       }

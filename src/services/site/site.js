@@ -45,7 +45,7 @@ class Site {
     return resp
   }
 
-  async executeDelete(site, dataCenter) {
+  async delete(site, dataCenter) {
     const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
 
     // GET TOKEN
@@ -68,18 +68,6 @@ class Site {
       parameters.deleteToken = deleteToken
     }
     return parameters
-  }
-
-  delete(apiKey) {
-    return {
-      apiKey: 'apiKey',
-      statusCode: 200,
-      errorCode: 0,
-      statusReason: 'OK',
-      callId: 'callId',
-      apiVersion: 2,
-      time: Date.now(),
-    }
   }
 }
 

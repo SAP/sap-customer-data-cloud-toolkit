@@ -39,18 +39,14 @@ node() {
         }
     }
 
-    stage("Check sonarQube result") {
-        timeout(time: 30, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: true
-        }
-    }
+    // stage("Check sonarQube result") {
+    //     timeout(time: 30, unit: 'MINUTES') {
+    //       waitForQualityGate abortPipeline: true
+    //     }
+    // }
 
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
-
-    //stage('deploy') {
-    //    cloudFoundryDeploy script: this
-    //}
 }
 

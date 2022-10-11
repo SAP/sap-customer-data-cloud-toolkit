@@ -88,7 +88,7 @@ describe('Service Site test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
-    let response = await siteService.executeDelete('####')
+    let response = await siteService.delete('####')
 
     expect(response).toBeDefined()
     expect(response.statusCode).toBe(200)
@@ -98,7 +98,7 @@ describe('Service Site test suite', () => {
     axios.mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
 
     const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
-    let response = await siteService.executeDelete('####')
+    let response = await siteService.delete('####')
 
     TestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
   })
@@ -125,6 +125,6 @@ async function deleteSite(site, dataCenter, expectedResponseFromServer, sitePara
   axios.mockResolvedValue(mockedResponse)
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
-  let response = await siteService.executeDelete(site, dataCenter)
+  let response = await siteService.delete(site, dataCenter)
   return response
 }
