@@ -68,7 +68,7 @@ const SitesTable = () => {
         ))}
       </Table>
       <div style={{ textAlign: 'center' }}>
-        <Button onClick={onAddParentSiteHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
+        <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
           Add Parent Site
         </Button>
       </div>

@@ -91,12 +91,20 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
               }}
             ></Button>
           )}
-          <Input type={InputType.Text} style={{ width: 'calc(100% - 40px)' }} value={baseDomain} onInput={(event) => onChangeParentDomain(event)} required="true" />
+          <Input
+            id="baseDomainInput"
+            type={InputType.Text}
+            style={{ width: 'calc(100% - 40px)' }}
+            value={baseDomain}
+            onInput={(event) => onChangeParentDomain(event)}
+            required="true"
+          />
         </Fragment>
       )
     } else {
       return (
         <Input
+          id="baseDomainInput"
           type={InputType.Text}
           style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
           value={baseDomain}
@@ -124,7 +132,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         </TableCell>
 
         <TableCell>
-          <Select style={{ width: '100%' }} onChange={onChangeDataCenter}>
+          <Select id="dataCenterSelect" style={{ width: '100%' }} onChange={onChangeDataCenter}>
             {dataCentersSelect.map(({ value }) => (
               <Option key={value} data-value={value} selected={value === dataCenter}>
                 {value}
