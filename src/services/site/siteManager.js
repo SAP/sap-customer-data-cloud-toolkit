@@ -4,14 +4,11 @@ const SiteConfigurator = require('./siteConfigurator')
 class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
+    this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
   }
 
   async create(siteHierarchy) {
     console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
-    // site hierarchy cannot be empty
-
-    this.siteService = new Site(this.credentials.partnerID, this.credentials.userKey, this.credentials.secret)
-    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, siteHierarchy.sites[0].dataCenter)
 
     let responses = []
     let error = false
@@ -47,11 +44,12 @@ class SiteManager {
   }
 
   async createChildren(childSites, parentApiKey) {
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
     const responses = []
     for (const site of childSites) {
       let childResponse = await this.createSite(site)
       if (this.isSuccessful(childResponse)) {
-        const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
+        const scResponse = await siteConfigurator.connect(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
           childResponse = this.mergeErrorResponse(childResponse, scResponse)
         }
@@ -92,17 +90,12 @@ class SiteManager {
     return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
   }
 
-  async connectSite(parentApiKey, childApiKey) {
-    return this.siteConfigurator.connect(parentApiKey, childApiKey)
-  }
-
   async deleteSites(targetApiKeys) {
     const responses = []
-    this.siteService = new Site(undefined, this.credentials.userKey, this.credentials.secret)
-    this.siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
 
     for (const site of targetApiKeys) {
-      const siteConfig = await this.siteConfigurator.getSiteConfig(site)
+      const siteConfig = await siteConfigurator.getSiteConfig(site)
       if (this.isSiteAlreadyDeleted(siteConfig)) {
         continue
       }
@@ -117,7 +110,7 @@ class SiteManager {
 
       // Delete site members
       if (siteMembers.length > 0) {
-        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter, this.siteService)
+        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter)
         responses.push(...memberResponses)
       }
 
@@ -128,10 +121,10 @@ class SiteManager {
     return responses
   }
 
-  async siteMembersDeleter(siteMembers, dataCenter, siteService) {
+  async siteMembersDeleter(siteMembers, dataCenter) {
     const responses = []
     for (const site of siteMembers) {
-      const response = await siteService.executeDelete(site, dataCenter)
+      const response = await this.siteService.executeDelete(site, dataCenter)
       responses.push(response)
     }
     return responses
