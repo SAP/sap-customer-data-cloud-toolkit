@@ -1,4 +1,3 @@
-'use strict'
 const client = require('../gigya/client')
 
 class SiteConfigurator {
@@ -40,6 +39,21 @@ class SiteConfigurator {
         time: Date.now(),
       },
     }
+  }
+
+  async getSiteConfig(apiKey) {
+    const url = 'https://admin.us1.gigya.com/admin.getSiteConfig'
+
+    return (await client.post(url, this.siteConfigParameters(apiKey, this.userKey, this.secret))).data
+  }
+
+  siteConfigParameters(apiKey, userKey, secret) {
+    const parameters = Object.assign({})
+    parameters.apiKey = apiKey
+    parameters.userKey = userKey
+    parameters.secret = secret
+    parameters.siteConfigParameters = 'true'
+    return parameters
   }
 }
 

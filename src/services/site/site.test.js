@@ -1,8 +1,6 @@
-'use strict'
 const Site = require('./site.js')
 const axios = require('axios').default
 const TestData = require('./data_test.js')
-const client = require('../gigya/client')
 
 jest.mock('axios')
 
@@ -77,6 +75,33 @@ describe('Service Site test suite', () => {
     expect(response.errorMessage).toEqual('Error creating site')
     expect(response.time).toBeDefined()
   })
+
+  test('delete site unsuccessfully', async () => {
+    const response = await deleteSite('######', 'us1', TestData.expectedGigyaResponseInvalidAPI, credentials)
+
+    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
+  })
+  test('delete single site', async () => {
+    axios
+      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+
+    const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
+    let response = await siteService.executeDelete('####')
+
+    expect(response).toBeDefined()
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('delete site unsuccessfully: delete group site first', async () => {
+    axios.mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
+
+    const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
+    let response = await siteService.executeDelete('####')
+
+    TestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
+  })
 })
 
 async function createSites(request, expectedResponseFromServer, siteParams) {
@@ -93,4 +118,13 @@ function verifyResponseIsOk(response) {
   TestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
+}
+
+async function deleteSite(site, dataCenter, expectedResponseFromServer, siteParams) {
+  const mockedResponse = { data: expectedResponseFromServer }
+  axios.mockResolvedValue(mockedResponse)
+
+  const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
+  let response = await siteService.executeDelete(site, dataCenter)
+  return response
 }
