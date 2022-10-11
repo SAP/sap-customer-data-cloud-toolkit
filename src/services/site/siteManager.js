@@ -54,6 +54,7 @@ class SiteManager {
     const responses = []
     for (const site of childSites) {
       let childResponse = await this.createSite(site)
+      childResponse.endpoint = Site.getEndpoint()
       if (this.isSuccessful(childResponse)) {
         const scResponse = await this.connectSite(parentApiKey, childResponse.apiKey)
         if (!this.isSuccessful(scResponse)) {
@@ -74,6 +75,7 @@ class SiteManager {
       description: site.description,
       dataCenter: site.dataCenter,
     }
+    console.log(`Creating site ${site.baseDomain}`)
     const response = await this.siteService.create(body)
     console.log('createSite.response=' + JSON.stringify(response))
     return this.enrichResponse(response, site.tempId)
