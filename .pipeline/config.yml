@@ -6,7 +6,7 @@ steps:
     projectName: cdc-tools-chrome-extension
     checkmarxCredentialsId: f262c01d-ba51-4591-afcb-8c5c77e9d4c2
     excludeFolders: ''
-    filterPattern: '!**/node_modules/**,!**/coverage/**,!**/build/**'
+    filterPattern: '!**/node_modules/**,!**/coverage/**,!**/build/**,**/src/**,**/cypress/**,**/public/**,**/scripts/**'
     failBuildOnNewResults: false
     failBuildOnNewSeverity: 'MEDIUM'
     fullScanCycle: 5
