@@ -5,7 +5,8 @@ steps:
     avoidDuplicateProjectScans: false
     projectName: cdc-tools-chrome-extension
     checkmarxCredentialsId: f262c01d-ba51-4591-afcb-8c5c77e9d4c2
-    excludeFolders: 'coverage,build,node_modules'
+    excludeFolders: ''
+    filterPattern: '!**/node_modules/**,!**/coverage/**,!**/build/**'
     failBuildOnNewResults: false
     failBuildOnNewSeverity: 'MEDIUM'
     fullScanCycle: 5
