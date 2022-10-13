@@ -14,6 +14,7 @@ import {
   TitleLevel,
   FlexBox,
   Button,
+  BusyIndicator,
 } from '@ui5/webcomponents-react'
 import { spacing } from '@ui5/webcomponents-react-base'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
@@ -31,6 +32,7 @@ import structures from '../../sitesStructures.json'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addParentFromStructure, clearSites } from '../../redux/siteSlice'
+import { createSitesThunk } from '../../redux/siteSlice'
 
 const BarStart = (props) => (
   <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
@@ -75,13 +77,15 @@ const SiteDeployer = () => {
   const dispatch = useDispatch()
 
   const sites = useSelector((state) => state.sites.sites)
+  const isLoading = useSelector((state) => state.sites.isLoading)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState()
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
 
   const onSaveHandler = () => {
-    console.log(sites)
+    dispatch(createSitesThunk(sites))
+    dispatch(clearSites())
   }
 
   const onCancelHandler = () => {
@@ -249,7 +253,7 @@ const SiteDeployer = () => {
                 ></CardHeader>
               }
             >
-              <SitesTable />
+              {isLoading ? <BusyIndicator active delay="1" style={{ width: '100%' }} /> : <SitesTable />}
             </Card>
           </div>
         </div>

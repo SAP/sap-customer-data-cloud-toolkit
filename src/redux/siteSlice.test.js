@@ -12,7 +12,7 @@ import sitesReducer, {
   clearSites,
 } from './siteSlice'
 
-const initialState = { sites: [] }
+const initialState = { sites: [], isLoading: false }
 
 const stateWithParentWithNoChild = {
   sites: [
@@ -26,6 +26,7 @@ const stateWithParentWithNoChild = {
       isChildSite: false,
     },
   ],
+  isLoading: false,
 }
 
 const stateWithParentWithChild = {
@@ -49,6 +50,7 @@ const stateWithParentWithChild = {
       isChildSite: false,
     },
   ],
+  isLoading: false,
 }
 
 const structure = {

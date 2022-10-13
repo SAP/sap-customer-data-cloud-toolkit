@@ -1,6 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import SiteManager from '../services/site/siteManager'
 
 import { generateUUID } from '../utils/generateUUID'
+
+import { state } from '../inject/chromeStorage'
 
 const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites) => {
   const childSites = []
@@ -58,10 +61,31 @@ const getSiteById = (sites, tempId) => {
   return sites.filter((site) => site.tempId === tempId)[0]
 }
 
+export const createSitesThunk = createAsyncThunk('service/createSites', async (sites) => {
+  console.log('createSitesThunk')
+  try {
+    const response = await new SiteManager({
+      partnerID: '79597568',
+      userKey: state.userKey,
+      secret: state.secretKey,
+    }).create({
+      sites,
+    })
+    console.log('response')
+    console.log(response)
+    return response
+  } catch (error) {
+    console.log('error')
+    console.log(error)
+    return error
+  }
+})
+
 export const siteSlice = createSlice({
   name: 'sites',
   initialState: {
     sites: [],
+    isLoading: false,
   },
   reducers: {
     addNewParent: (state) => {
@@ -126,6 +150,20 @@ export const siteSlice = createSlice({
     clearSites: (state) => {
       state.sites = []
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createSitesThunk.pending, (state) => {
+      console.log('pending')
+      state.isLoading = true
+    })
+    builder.addCase(createSitesThunk.fulfilled, (state) => {
+      console.log('fullfiled')
+      state.isLoading = false
+    })
+    builder.addCase(createSitesThunk.rejected, (state) => {
+      console.log('rejected')
+      state.isLoading = false
+    })
   },
 })
 
