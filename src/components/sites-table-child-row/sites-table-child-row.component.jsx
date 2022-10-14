@@ -1,12 +1,20 @@
 import { Fragment, useState } from 'react'
 import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { deleteChild, updateChildBaseDomain, updateChildDescription } from '../../redux/siteSlice'
 
 const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const dispatch = useDispatch()
+  const dataCenters = useSelector((state) => state.sites.dataCenters)
+
+  const getDataCenterLabel = (dataCenterValue) => {
+    if (dataCenter === '') {
+      return dataCenter
+    }
+    return dataCenters.filter((dataCenter) => dataCenter.value === dataCenterValue)[0].label
+  }
 
   const onChangeChildDomain = (event) => {
     const newBaseDomain = event.target.value
@@ -66,7 +74,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
               textAlign: 'left',
             }}
           >
-            {dataCenter}
+            {getDataCenterLabel(dataCenter)}
           </Text>
         </TableCell>
 

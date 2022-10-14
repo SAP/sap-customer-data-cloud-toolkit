@@ -1,11 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import SiteManager from '../services/site/siteManager'
 
 import { generateUUID } from '../utils/generateUUID'
-
 import { state } from '../inject/chromeStorage'
+import dataCenters from '../dataCenters.json'
+import SiteManager from '../services/site/siteManager'
 
-const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites) => {
+const getDataCenterValue = (dataCenters, dataCenterLabel) => {
+  return dataCenters.filter((dataCenter) => dataCenter.label === dataCenterLabel)[0].value
+}
+
+const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites, dataCenters) => {
   const childSites = []
   const importedRootBaseDomain = rootBaseDomain
   structureChildSites.forEach((structureChildSite) => {
@@ -14,22 +18,22 @@ const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, st
       tempId: generateUUID(),
       baseDomain: `${structureChildSite.baseDomain}.${importedRootBaseDomain}`,
       description: structureChildSite.description,
-      dataCenter: dataCenter,
+      dataCenter: getDataCenterValue(dataCenters, dataCenter),
       isChildSite: true,
     })
   })
   return childSites
 }
 
-const getParentFromStructure = (structure) => {
+const getParentFromStructure = (structure, dataCenters) => {
   const tempId = generateUUID()
   return {
     parentSiteTempId: '',
     tempId: tempId,
     baseDomain: `${structure.baseDomain}.${structure.rootBaseDomain}`,
     description: structure.description,
-    dataCenter: structure.dataCenter,
-    childSites: addChildsFromStructure(tempId, structure.rootBaseDomain, structure.dataCenter, structure.childSites),
+    dataCenter: getDataCenterValue(dataCenters, structure.dataCenter),
+    childSites: addChildsFromStructure(tempId, structure.rootBaseDomain, structure.dataCenter, structure.childSites, dataCenters),
     isChildSite: false,
   }
 }
@@ -65,27 +69,32 @@ export const createSitesThunk = createAsyncThunk('service/createSites', async (s
   console.log('createSitesThunk')
   try {
     const response = await new SiteManager({
-      partnerID: '79597568',
+      partnerID: '79597568', // TODO: should be obtained from URL
       userKey: state.userKey,
       secret: state.secretKey,
     }).create({
       sites,
     })
-    console.log('response')
-    console.log(response)
+    console.log(`response: ${response}`)
     return response
   } catch (error) {
-    console.log('error')
-    console.log(error)
+    console.log(`error: ${error}`)
     return error
   }
 })
+
+const host = window.location.hostname
+
+const getDataCenters = (host) => {
+  return dataCenters.filter((dataCenter) => dataCenter.console === host)[0].datacenters
+}
 
 export const siteSlice = createSlice({
   name: 'sites',
   initialState: {
     sites: [],
     isLoading: false,
+    dataCenters: getDataCenters(host),
   },
   reducers: {
     addNewParent: (state) => {
@@ -93,7 +102,7 @@ export const siteSlice = createSlice({
     },
     addParentFromStructure: (state, action) => {
       if (action.payload) {
-        state.sites.push(getParentFromStructure(action.payload))
+        state.sites.push(getParentFromStructure(action.payload, state.dataCenters))
       }
     },
     deleteParent: (state, action) => {

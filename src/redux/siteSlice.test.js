@@ -12,7 +12,24 @@ import sitesReducer, {
   clearSites,
 } from './siteSlice'
 
-const initialState = { sites: [], isLoading: false }
+const initialState = {
+  sites: [],
+  isLoading: false,
+  dataCenters: [
+    {
+      label: 'AU',
+      value: 'au1',
+    },
+    {
+      label: 'EU',
+      value: 'eu1',
+    },
+    {
+      label: 'US',
+      value: 'us1',
+    },
+  ],
+}
 
 const stateWithParentWithNoChild = {
   sites: [
@@ -116,7 +133,7 @@ test('should add a Parent site with a child from a Structure', () => {
   expect(newParent.tempId).not.toEqual('')
   expect(newParent.baseDomain).toEqual('a.com.test')
   expect(newParent.description).toEqual('test parent from strucure')
-  expect(newParent.dataCenter).toEqual('AU')
+  expect(newParent.dataCenter).toEqual('au1')
   expect(newParent.childSites.length).toEqual(1)
   expect(newParent.isChildSite).toEqual(false)
 
@@ -125,7 +142,7 @@ test('should add a Parent site with a child from a Structure', () => {
   expect(newChild.tempId).not.toEqual('')
   expect(newChild.baseDomain).toEqual('dev.a.com.test')
   expect(newChild.description).toEqual('test child from strucure')
-  expect(newChild.dataCenter).toEqual('AU')
+  expect(newChild.dataCenter).toEqual('au1')
   expect(newChild.isChildSite).toEqual(true)
 })
 

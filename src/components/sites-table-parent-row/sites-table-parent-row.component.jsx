@@ -8,18 +8,17 @@ import '@ui5/webcomponents-icons/dist/overflow.js'
 
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 
-import dataCenters from '../../dataCenters.json'
-
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild } from '../../redux/siteSlice'
 
 const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const [isChildListOpen, setChildListOpen] = useState(true)
 
-  const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters]
-
   const dispatch = useDispatch()
+  const dataCenters = useSelector((state) => state.sites.dataCenters)
+
+  const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters]
 
   const onChangeDataCenter = (event) => {
     const newDataCenter = event.detail.selectedOption.dataset.value
@@ -133,9 +132,9 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
 
         <TableCell>
           <Select id="dataCenterSelect" style={{ width: '100%' }} onChange={onChangeDataCenter}>
-            {dataCentersSelect.map(({ value }) => (
-              <Option key={value} data-value={value} selected={value === dataCenter}>
-                {value}
+            {dataCentersSelect.map(({ label, value }) => (
+              <Option key={label} data-value={value} selected={label === dataCenter || value === dataCenter}>
+                {label}
               </Option>
             ))}
           </Select>

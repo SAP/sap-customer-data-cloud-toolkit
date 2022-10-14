@@ -27,7 +27,6 @@ import { useState } from 'react'
 
 import SitesTable from '../../components/sites-table/sites-table.component'
 
-import dataCenters from '../../dataCenters.json'
 import structures from '../../sitesStructures.json'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -78,12 +77,14 @@ const SiteDeployer = () => {
 
   const sites = useSelector((state) => state.sites.sites)
   const isLoading = useSelector((state) => state.sites.isLoading)
+  const dataCenters = useSelector((state) => state.sites.dataCenters)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState()
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
 
   const onSaveHandler = () => {
+    console.log(sites)
     dispatch(createSitesThunk(sites))
     dispatch(clearSites())
   }
@@ -101,7 +102,6 @@ const SiteDeployer = () => {
     const selectedStructure = getSelectedStructure()
 
     dispatch(clearSites())
-
     selectedDataCenters.forEach((dataCenter) => {
       selectedStructure.data.forEach((structure) => {
         dispatch(
@@ -152,15 +152,7 @@ const SiteDeployer = () => {
   }
 
   const checkRequiredFields = () => {
-    return !(
-      baseDomain !== '' &&
-      baseDomain !== null &&
-      baseDomain !== undefined &&
-      selectedStructureId !== '' &&
-      selectedStructureId !== null &&
-      selectedStructureId !== undefined &&
-      areDataCentersSelected
-    )
+    return !(baseDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
   }
 
   return (
@@ -207,8 +199,8 @@ const SiteDeployer = () => {
                     Choose Data Centers: *
                   </Label>
                   <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }} onSelectionChange={(event) => checkDataCentersSelected(event)}>
-                    {dataCenters.map(({ value }) => (
-                      <MultiComboBoxItem key={value} text={value} selected />
+                    {dataCenters.map(({ label }) => (
+                      <MultiComboBoxItem key={label} text={label} selected />
                     ))}
                   </MultiComboBox>
                 </div>
