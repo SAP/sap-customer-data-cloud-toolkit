@@ -1,7 +1,7 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
 import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppContainer'
 import { MENU_ELEMENT_CLASS } from './injectMenu'
-import { state } from './chromeStorage'
+import { chromeStorageState } from './chromeStorage'
 
 export const ROUTE_CONTAINER_CLASS = 'cdc-tools-app-container'
 export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
@@ -19,8 +19,8 @@ const processHashChange = () => {
   } else {
     const [, partnerId, apiKey, , tabName] = hash
 
-    state.partnerId = partnerId
-    state.apiKey = apiKey
+    chromeStorageState.partnerId = partnerId
+    chromeStorageState.apiKey = apiKey
 
     showTool({ partnerId, apiKey, tabName })
   }

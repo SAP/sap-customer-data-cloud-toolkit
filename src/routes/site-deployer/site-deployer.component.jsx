@@ -30,8 +30,7 @@ import SitesTable from '../../components/sites-table/sites-table.component'
 import structures from '../../sitesStructures.json'
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addParentFromStructure, clearSites } from '../../redux/siteSlice'
-import { createSitesThunk } from '../../redux/siteSlice'
+import { addParentFromStructure, clearSites, createSitesThunk } from '../../redux/siteSlice'
 
 const BarStart = (props) => (
   <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>

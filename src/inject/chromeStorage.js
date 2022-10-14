@@ -1,5 +1,5 @@
 // Watch for changes to the user's options & apply them
-export let state = {
+export let chromeStorageState = {
   userKey: '',
   secretKey: '',
   partnerId: '',
@@ -12,15 +12,15 @@ export const initChromeStorage = () => {
     return
   }
 
-  window.chrome.storage.local.get(['userKey', 'secretKey'], ({ userKey, secretKey }) => (state = { userKey, secretKey }))
+  window.chrome.storage.local.get(['userKey', 'secretKey'], ({ userKey, secretKey }) => (chromeStorageState = { userKey, secretKey }))
 
   window.chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {
       if (changes.userKey) {
-        state.userKey = changes.userKey.newValue
+        chromeStorageState.userKey = changes.userKey.newValue
       }
       if (changes.secretKey) {
-        state.secretKey = changes.secretKey.newValue
+        chromeStorageState.secretKey = changes.secretKey.newValue
       }
     }
   })

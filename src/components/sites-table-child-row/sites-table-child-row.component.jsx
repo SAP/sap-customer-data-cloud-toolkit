@@ -13,7 +13,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
     if (dataCenter === '') {
       return dataCenter
     }
-    return dataCenters.filter((dataCenter) => dataCenter.value === dataCenterValue)[0].label
+    return dataCenters.filter((dataCenterentry) => dataCenterentry.value === dataCenterValue)[0].label
   }
 
   const onChangeChildDomain = (event) => {
