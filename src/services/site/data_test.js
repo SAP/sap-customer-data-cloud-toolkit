@@ -317,7 +317,7 @@ function verifyResponseIsNotOk(response, expectedResponse) {
   expect(response.errorDetails).toEqual(expectedResponse.errorDetails)
 }
 
-module.exports = {
+export {
   HttpStatus,
   Endpoints,
   expectedGigyaResponseOk,

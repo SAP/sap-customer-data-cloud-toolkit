@@ -1,6 +1,6 @@
-const SiteConfigurator = require('./siteConfigurator.js')
-const axios = require('axios').default
-const TestData = require('./data_test.js')
+import SiteConfigurator from './siteConfigurator'
+import * as TestData from './data_test'
+import axios from 'axios'
 
 jest.mock('axios')
 

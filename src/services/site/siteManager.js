@@ -1,5 +1,5 @@
-const Site = require('./site')
-const SiteConfigurator = require('./siteConfigurator')
+import Site from './site'
+import SiteConfigurator from './siteConfigurator'
 
 class SiteManager {
   constructor(credentials) {
@@ -12,53 +12,53 @@ class SiteManager {
 
     let responses = []
     for (const site of siteHierarchy.sites) {
-      responses = responses.concat(await this.createSiteHierarchy(site))
-      if (this.isAnyResponseError(responses)) {
-        await this.rollbackCreatedSites(responses, site.dataCenter)
+      responses = responses.concat(await this.#createSiteHierarchy(site))
+      if (this.#isAnyResponseError(responses)) {
+        await this.#rollbackCreatedSites(responses, site.dataCenter)
         break
       }
     }
     return responses
   }
 
-  async createSiteHierarchy(hierarchy) {
+  async #createSiteHierarchy(hierarchy) {
     let responses = []
-    const response = await this.createParent(hierarchy)
+    const response = await this.#createParent(hierarchy)
     responses.push(response)
 
-    if (this.isSuccessful(response)) {
+    if (this.#isSuccessful(response)) {
       const childSites = hierarchy.childSites
       if (childSites && childSites.length > 0) {
-        responses = responses.concat(await this.createChildren(hierarchy.childSites, response.apiKey))
+        responses = responses.concat(await this.#createChildren(hierarchy.childSites, response.apiKey))
       }
     }
     return responses
   }
 
-  async createParent(parentSite) {
-    return this.createSite(parentSite)
+  async #createParent(parentSite) {
+    return this.#createSite(parentSite)
   }
 
-  async createChildren(childSites, parentApiKey) {
+  async #createChildren(childSites, parentApiKey) {
     const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
     const responses = []
     for (const site of childSites) {
-      let childResponse = await this.createSite(site)
-      if (this.isSuccessful(childResponse)) {
+      let childResponse = await this.#createSite(site)
+      if (this.#isSuccessful(childResponse)) {
         const scResponse = await siteConfigurator.connect(parentApiKey, childResponse.apiKey)
-        if (!this.isSuccessful(scResponse)) {
-          childResponse = this.mergeErrorResponse(childResponse, scResponse)
+        if (!this.#isSuccessful(scResponse)) {
+          childResponse = this.#mergeErrorResponse(childResponse, scResponse)
         }
       }
       responses.push(childResponse)
-      if (!this.isSuccessful(childResponse)) {
+      if (!this.#isSuccessful(childResponse)) {
         break
       }
     }
     return responses
   }
 
-  async createSite(site) {
+  async #createSite(site) {
     const body = {
       baseDomain: site.baseDomain,
       description: site.description,
@@ -67,10 +67,10 @@ class SiteManager {
     console.log(`Creating site ${site.baseDomain}`)
     const response = await this.siteService.create(body)
     console.log('createSite.response=' + JSON.stringify(response))
-    return this.enrichResponse(response, site.tempId)
+    return this.#enrichResponse(response, site.tempId)
   }
 
-  enrichResponse(response, id) {
+  #enrichResponse(response, id) {
     const resp = Object.assign({}, response)
     resp.siteUiId = id
     resp.deleted = false
@@ -78,11 +78,11 @@ class SiteManager {
     return resp
   }
 
-  isSuccessful(response) {
+  #isSuccessful(response) {
     return response.errorCode === 0
   }
 
-  shouldBeRollbacked(response) {
+  #shouldBeRollbacked(response) {
     return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
   }
 
@@ -92,11 +92,11 @@ class SiteManager {
 
     for (const site of targetApiKeys) {
       const siteConfig = await siteConfigurator.getSiteConfig(site)
-      if (this.isSiteAlreadyDeleted(siteConfig)) {
+      if (this.#isSiteAlreadyDeleted(siteConfig)) {
         continue
       }
 
-      if (!this.isSuccessful(siteConfig)) {
+      if (!this.#isSuccessful(siteConfig)) {
         responses.push(siteConfig)
         continue
       }
@@ -106,7 +106,7 @@ class SiteManager {
 
       // Delete site members
       if (siteMembers.length > 0) {
-        const memberResponses = await this.siteMembersDeleter(siteMembers, dataCenter)
+        const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
         responses.push(...memberResponses)
       }
 
@@ -117,7 +117,7 @@ class SiteManager {
     return responses
   }
 
-  async siteMembersDeleter(siteMembers, dataCenter) {
+  async #siteMembersDeleter(siteMembers, dataCenter) {
     const responses = []
     for (const site of siteMembers) {
       const response = await this.siteService.delete(site, dataCenter)
@@ -126,11 +126,11 @@ class SiteManager {
     return responses
   }
 
-  isSiteAlreadyDeleted(res) {
+  #isSiteAlreadyDeleted(res) {
     return res.errorDetails === 'Site was deleted' && res.statusCode === 403
   }
 
-  mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
+  #mergeErrorResponse(siteResponse, siteConfiguratorResponse) {
     const response = Object.assign({}, siteResponse)
     response.statusCode = siteConfiguratorResponse.statusCode
     response.statusReason = siteConfiguratorResponse.statusReason
@@ -142,29 +142,29 @@ class SiteManager {
     return response
   }
 
-  isAnyResponseError(responses) {
+  #isAnyResponseError(responses) {
     for (const response of responses) {
-      if (!this.isSuccessful(response)) {
+      if (!this.#isSuccessful(response)) {
         return true
       }
     }
     return false
   }
 
-  async rollbackCreatedSites(responses, dataCenter) {
-    const apiKeys = this.getApiKeysCreatedInReverseOrder(responses)
+  async #rollbackCreatedSites(responses, dataCenter) {
+    const apiKeys = this.#getApiKeysCreatedInReverseOrder(responses)
     for (let i = 0; i < apiKeys.length; ++i) {
       const response = await this.siteService.delete(apiKeys[i], dataCenter)
-      if (this.isSuccessful(response)) {
+      if (this.#isSuccessful(response)) {
         responses[i].deleted = true
       }
     }
   }
 
-  getApiKeysCreatedInReverseOrder(responses) {
+  #getApiKeysCreatedInReverseOrder(responses) {
     const apiKeysCreated = []
     for (let i = responses.length - 1; i >= 0; --i) {
-      if (this.shouldBeRollbacked(responses[i])) {
+      if (this.#shouldBeRollbacked(responses[i])) {
         apiKeysCreated.push(responses[i].apiKey)
       }
     }
@@ -172,4 +172,4 @@ class SiteManager {
   }
 }
 
-module.exports = SiteManager
+export default SiteManager

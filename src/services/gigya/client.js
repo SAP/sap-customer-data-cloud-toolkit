@@ -1,5 +1,4 @@
-'use strict'
-const axios = require('axios').default
+import axios from 'axios'
 
 const client = {
   post: async function (url, body) {
@@ -15,4 +14,4 @@ const client = {
   },
 }
 
-module.exports = client
+export default client

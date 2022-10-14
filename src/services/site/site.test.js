@@ -1,6 +1,6 @@
-const Site = require('./site.js')
-const axios = require('axios').default
-const TestData = require('./data_test.js')
+import Site from './site'
+import * as TestData from './data_test'
+import axios from 'axios'
 
 jest.mock('axios')
 
@@ -82,10 +82,7 @@ describe('Service Site test suite', () => {
     TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
   })
   test('delete single site', async () => {
-    axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+    axios.mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully }).mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
     let response = await siteService.delete('####')

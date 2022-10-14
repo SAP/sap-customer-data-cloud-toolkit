@@ -1,6 +1,6 @@
-const axios = require('axios').default
-const TestData = require('./data_test.js')
-const SiteManager = require('./siteManager.js')
+import SiteManager from './siteManager'
+import * as TestData from './data_test'
+import axios from 'axios'
 
 jest.mock('axios')
 

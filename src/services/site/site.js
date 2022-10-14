@@ -1,4 +1,4 @@
-const client = require('../gigya/client')
+import client from '../gigya/client'
 
 class Site {
   constructor(partnerId, userKey, secret) {
@@ -9,13 +9,13 @@ class Site {
 
   createAsync(body) {
     const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
-    const bodyWithCredentials = this.addCredentials(body)
+    const bodyWithCredentials = this.#addCredentials(body)
     return client.post(url, bodyWithCredentials)
   }
 
   async create(body) {
     const response = await this.createAsync(body).catch(function (error) {
-      return Site.generateErrorResponse(error)
+      return Site.#generateErrorResponse(error)
     })
     return response.data
   }
@@ -28,7 +28,7 @@ class Site {
     return 'admin.deleteSite'
   }
 
-  addCredentials(body) {
+  #addCredentials(body) {
     const bodyWithCredentials = Object.assign({}, body)
     bodyWithCredentials.partnerID = this.partnerId
     bodyWithCredentials.userKey = this.userKey
@@ -36,7 +36,7 @@ class Site {
     return bodyWithCredentials
   }
 
-  static generateErrorResponse(error) {
+  static #generateErrorResponse(error) {
     const resp = { data: {} }
     resp.data.errorCode = error.code
     resp.data.errorDetails = error.details
@@ -49,16 +49,16 @@ class Site {
     const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
 
     // GET TOKEN
-    const getDeleteTokenRes = (await client.post(url, this.deleteSiteParameters(site))).data
+    const getDeleteTokenRes = (await client.post(url, this.#deleteSiteParameters(site))).data
     if (getDeleteTokenRes.errorCode !== 0) {
       return getDeleteTokenRes
     }
 
     // DELETE SITE
-    return (await client.post(url, this.deleteSiteParameters(site, getDeleteTokenRes.deleteToken))).data
+    return (await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.deleteToken))).data
   }
 
-  deleteSiteParameters(apiKey, deleteToken) {
+  #deleteSiteParameters(apiKey, deleteToken) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
@@ -71,4 +71,4 @@ class Site {
   }
 }
 
-module.exports = Site
+export default Site
