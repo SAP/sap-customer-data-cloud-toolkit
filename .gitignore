@@ -28,7 +28,7 @@ yarn-error.log*
 
 # testing
 /coverage
-
+/.nyc_output
 # production
 /build
 
@@ -44,3 +44,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .log
+
+.vscode
