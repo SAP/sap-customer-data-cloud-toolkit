@@ -20,7 +20,8 @@ node() {
         npmExecuteScripts script:this, 
                           runScripts: ["test"],
                           verbose: true
-                }
+        }
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Test coverage report'])
     }
     
     // stage ('cypress') {
@@ -32,7 +33,6 @@ node() {
     //     }
     // }
 
-
     stage('SonarQube report') {
         def scannerHome = tool 'cdc-tools-chrome-extension';
         def nodeHome = tool 'nodejs16';
@@ -43,7 +43,7 @@ node() {
         }
     }
 
-    stage("Check sonarQube result") {
+    stage("SonarQube result") {
         timeout(time: 30, unit: 'MINUTES') {
           waitForQualityGate abortPipeline: true,
             credentialsId:"cdc-tools-chrome-extension-sonar"
@@ -53,5 +53,7 @@ node() {
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
+
+    //archive (includes: 'build/static/**/main.*')
 }
 
