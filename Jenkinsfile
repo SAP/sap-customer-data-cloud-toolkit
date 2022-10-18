@@ -1,5 +1,9 @@
 @Library(['piper-lib-os']) _
 node() {
+    options {
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '10', daysToKeepStr: '', numToKeepStr: '10')
+    }
+
     stage('prepare') {
         deleteDir()
         checkout scm
@@ -30,20 +34,21 @@ node() {
 
 
     stage('SonarQube report') {
-        def scannerHome = tool 'cdctoolbox';
+        def scannerHome = tool 'cdc-tools-chrome-extension';
         def nodeHome = tool 'nodejs16';
-        withEnv(["JAVA_HOME=${JAVA_HOME}/jdk-11", "PATH=${nodeHome}/bin:${PATH}"]) {
-            withSonarQubeEnv('SAP SonarQube Enterprise') {
+        withEnv(["PATH=${nodeHome}/bin:${PATH}"]) {
+            withSonarQubeEnv('cdc-tools-chrome-extension') {
                 sh "${scannerHome}/bin/sonar-scanner"
             }
         }
     }
 
-    // stage("Check sonarQube result") {
-    //     timeout(time: 30, unit: 'MINUTES') {
-    //       waitForQualityGate abortPipeline: true
-    //     }
-    // }
+    stage("Check sonarQube result") {
+        timeout(time: 30, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true,
+            credentialsId:"cdc-tools-chrome-extension-sonar"
+        }
+    }
 
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
