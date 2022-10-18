@@ -1,8 +1,6 @@
 @Library(['piper-lib-os']) _
 node() {
-    options {
-        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '10', daysToKeepStr: '', numToKeepStr: '10')
-    }
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '10', daysToKeepStr: '', numToKeepStr: '10']]]);
 
     stage('prepare') {
         deleteDir()
@@ -21,6 +19,7 @@ node() {
                           runScripts: ["test"],
                           verbose: true
         }
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Test coverage report'])
     }
     
     // stage ('cypress') {
@@ -31,9 +30,6 @@ node() {
     //                       verbose: true
     //     }
     // }
-    stage(' publish tests') {
-        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Test coverage report'])
-    }
 
     stage('SonarQube report') {
         def scannerHome = tool 'cdc-tools-chrome-extension';
@@ -58,4 +54,3 @@ node() {
 
     //archive (includes: 'build/static/**/main.*')
 }
-
