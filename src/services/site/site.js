@@ -10,7 +10,9 @@ class Site {
   createAsync(body) {
     const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
     const bodyWithCredentials = this.#addCredentials(body)
-    return client.post(url, bodyWithCredentials)
+    return client.post(url, bodyWithCredentials).catch(function (error) {
+      return Site.#generateErrorResponse(error)
+    })
   }
 
   async create(body) {
