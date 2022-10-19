@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import sitesReducer, {
   addNewParent,
   addParentFromStructure,
@@ -10,6 +14,7 @@ import sitesReducer, {
   addChild,
   deleteChild,
   clearSites,
+  getPartnerId,
 } from './siteSlice'
 
 const initialState = {
@@ -104,112 +109,132 @@ const childToUpdate = {
   newDescription: 'updated description',
 }
 
-test('should return initial state', () => {
-  expect(sitesReducer(undefined, { type: undefined })).toEqual(initialState)
-})
-
-test('should add a new Parent site', () => {
-  const newState = sitesReducer(initialState, addNewParent())
-  expect(newState.sites.length).toEqual(1)
-
-  const newParent = newState.sites[0]
-  expect(newState.sites.length).toEqual(1)
-  expect(newParent.parentSiteTempId).toEqual('')
-  expect(newParent.tempId).not.toEqual('')
-  expect(newParent.baseDomain).toEqual('')
-  expect(newParent.description).toEqual('')
-  expect(newParent.dataCenter).toEqual('')
-  expect(newParent.childSites.length).toEqual(0)
-  expect(newParent.isChildSite).toEqual(false)
-})
-
-test('should add a Parent site with a child from a Structure', () => {
-  const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
-  expect(newState.sites.length).toEqual(1)
-
-  const newParent = newState.sites[0]
-  expect(newState.sites.length).toEqual(1)
-  expect(newParent.parentSiteTempId).toEqual('')
-  expect(newParent.tempId).not.toEqual('')
-  expect(newParent.baseDomain).toEqual('a.com.test')
-  expect(newParent.description).toEqual('test parent from strucure')
-  expect(newParent.dataCenter).toEqual('au1')
-  expect(newParent.childSites.length).toEqual(1)
-  expect(newParent.isChildSite).toEqual(false)
-
-  const newChild = newParent.childSites[0]
-  expect(newChild.parentSiteTempId).toEqual(newParent.tempId)
-  expect(newChild.tempId).not.toEqual('')
-  expect(newChild.baseDomain).toEqual('dev.a.com.test')
-  expect(newChild.description).toEqual('test child from strucure')
-  expect(newChild.dataCenter).toEqual('au1')
-  expect(newChild.isChildSite).toEqual(true)
-})
-
-test('should add a new child site', () => {
-  const parent = stateWithParentWithNoChild.sites[0]
-  const newState = sitesReducer(stateWithParentWithNoChild, addChild({ tempId: parent.tempId }))
-  expect(newState.sites[0].childSites.length).toEqual(1)
-
-  const newChild = newState.sites[0].childSites[0]
-  expect(newChild.parentSiteTempId).toEqual('1234')
-  expect(newChild.tempId).not.toEqual('')
-  expect(newChild.baseDomain).toEqual('')
-  expect(newChild.description).toEqual('')
-  expect(newChild.dataCenter).toEqual('test data center')
-  expect(newChild.isChildSite).toEqual(true)
-})
-
-test('should update parent site Base Domain', () => {
-  const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentBaseDomain(parentToUpdate)).sites[0]
-  expect(updatedParent.baseDomain).toEqual(parentToUpdate.newBaseDomain)
-})
-
-test('should update parent site Description', () => {
-  const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDescription(parentToUpdate)).sites[0]
-  expect(updatedParent.description).toEqual(parentToUpdate.newDescription)
-})
-
-test('should update parent site Data Center', () => {
-  const updatedParent = sitesReducer(stateWithParentWithChild, updateParentDataCenter(parentToUpdate)).sites[0]
-  expect(updatedParent.dataCenter).toEqual(parentToUpdate.newDataCenter)
-  updatedParent.childSites.forEach((childSite) => {
-    expect(childSite.dataCenter).toEqual(parentToUpdate.newDataCenter)
+describe('Site slice test suite', () => {
+  test('should return initial state', () => {
+    expect(sitesReducer(undefined, { type: undefined })).toEqual(initialState)
   })
-})
 
-test('should update child site Base Domain', () => {
-  const updatedChild = sitesReducer(stateWithParentWithChild, updateChildBaseDomain(childToUpdate)).sites[0].childSites[0]
-  expect(updatedChild.baseDomain).toEqual(childToUpdate.newBaseDomain)
-})
+  test('should add a new Parent site', () => {
+    const newState = sitesReducer(initialState, addNewParent())
+    expect(newState.sites.length).toEqual(1)
 
-test('should update child site Description', () => {
-  const updatedChild = sitesReducer(stateWithParentWithChild, updateChildDescription(childToUpdate)).sites[0].childSites[0]
-  expect(updatedChild.description).toEqual(childToUpdate.newDescription)
-})
+    const newParent = newState.sites[0]
+    expect(newState.sites.length).toEqual(1)
+    expect(newParent.parentSiteTempId).toEqual('')
+    expect(newParent.tempId).not.toEqual('')
+    expect(newParent.baseDomain).toEqual('')
+    expect(newParent.description).toEqual('')
+    expect(newParent.dataCenter).toEqual('')
+    expect(newParent.childSites.length).toEqual(0)
+    expect(newParent.isChildSite).toEqual(false)
+  })
 
-test('should delete child site', () => {
-  const newState = sitesReducer(
-    stateWithParentWithChild,
-    deleteChild({
-      parentSiteTempId: '1234',
-      tempId: '5678',
+  test('should add a Parent site with a child from a Structure', () => {
+    const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
+    expect(newState.sites.length).toEqual(1)
+
+    const newParent = newState.sites[0]
+    expect(newState.sites.length).toEqual(1)
+    expect(newParent.parentSiteTempId).toEqual('')
+    expect(newParent.tempId).not.toEqual('')
+    expect(newParent.baseDomain).toEqual('a.com.test')
+    expect(newParent.description).toEqual('test parent from strucure')
+    expect(newParent.dataCenter).toEqual('au1')
+    expect(newParent.childSites.length).toEqual(1)
+    expect(newParent.isChildSite).toEqual(false)
+
+    const newChild = newParent.childSites[0]
+    expect(newChild.parentSiteTempId).toEqual(newParent.tempId)
+    expect(newChild.tempId).not.toEqual('')
+    expect(newChild.baseDomain).toEqual('dev.a.com.test')
+    expect(newChild.description).toEqual('test child from strucure')
+    expect(newChild.dataCenter).toEqual('au1')
+    expect(newChild.isChildSite).toEqual(true)
+  })
+
+  test('should add a new child site', () => {
+    const parent = stateWithParentWithNoChild.sites[0]
+    const newState = sitesReducer(stateWithParentWithNoChild, addChild({ tempId: parent.tempId }))
+    expect(newState.sites[0].childSites.length).toEqual(1)
+
+    const newChild = newState.sites[0].childSites[0]
+    expect(newChild.parentSiteTempId).toEqual('1234')
+    expect(newChild.tempId).not.toEqual('')
+    expect(newChild.baseDomain).toEqual('')
+    expect(newChild.description).toEqual('')
+    expect(newChild.dataCenter).toEqual('test data center')
+    expect(newChild.isChildSite).toEqual(true)
+  })
+
+  test('should update parent site Base Domain', () => {
+    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentBaseDomain(parentToUpdate)).sites[0]
+    expect(updatedParent.baseDomain).toEqual(parentToUpdate.newBaseDomain)
+  })
+
+  test('should update parent site Description', () => {
+    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDescription(parentToUpdate)).sites[0]
+    expect(updatedParent.description).toEqual(parentToUpdate.newDescription)
+  })
+
+  test('should update parent site Data Center', () => {
+    const updatedParent = sitesReducer(stateWithParentWithChild, updateParentDataCenter(parentToUpdate)).sites[0]
+    expect(updatedParent.dataCenter).toEqual(parentToUpdate.newDataCenter)
+    updatedParent.childSites.forEach((childSite) => {
+      expect(childSite.dataCenter).toEqual(parentToUpdate.newDataCenter)
     })
-  )
-  expect(newState.sites[0].childSites.length).toEqual(0)
-})
+  })
 
-test('should delete parent site', () => {
-  const newState = sitesReducer(
-    stateWithParentWithChild,
-    deleteParent({
-      tempId: '1234',
-    })
-  )
-  expect(newState.sites.length).toEqual(0)
-})
+  test('should update child site Base Domain', () => {
+    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildBaseDomain(childToUpdate)).sites[0].childSites[0]
+    expect(updatedChild.baseDomain).toEqual(childToUpdate.newBaseDomain)
+  })
 
-test('should clear all sites', () => {
-  const newState = sitesReducer(stateWithParentWithChild, clearSites())
-  expect(newState.sites.length).toEqual(0)
+  test('should update child site Description', () => {
+    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildDescription(childToUpdate)).sites[0].childSites[0]
+    expect(updatedChild.description).toEqual(childToUpdate.newDescription)
+  })
+
+  test('should delete child site', () => {
+    const newState = sitesReducer(
+      stateWithParentWithChild,
+      deleteChild({
+        parentSiteTempId: '1234',
+        tempId: '5678',
+      })
+    )
+    expect(newState.sites[0].childSites.length).toEqual(0)
+  })
+
+  test('should delete parent site', () => {
+    const newState = sitesReducer(
+      stateWithParentWithChild,
+      deleteParent({
+        tempId: '1234',
+      })
+    )
+    expect(newState.sites.length).toEqual(0)
+  })
+
+  test('should clear all sites', () => {
+    const newState = sitesReducer(stateWithParentWithChild, clearSites())
+    expect(newState.sites.length).toEqual(0)
+  })
+
+  test('get partner id successfull', () => {
+    const expectedPartnerId = '12345678'
+    const hash = `#/${expectedPartnerId}/3_oAyqEurF4Kk/sites/site-selector`
+    expect(getPartnerId(hash)).toEqual(expectedPartnerId)
+  })
+
+  test('get partner id empty', () => {
+    const expectedPartnerId = ''
+    const hash = `#/`
+    expect(getPartnerId(hash)).toEqual(expectedPartnerId)
+  })
+
+  test('get partner id undefined', () => {
+    const expectedPartnerId = ''
+    const hash = ''
+    expect(getPartnerId(hash)).toEqual(expectedPartnerId)
+  })
 })

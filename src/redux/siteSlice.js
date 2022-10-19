@@ -69,7 +69,8 @@ export const createSitesThunk = createAsyncThunk('service/createSites', async (s
   console.log('createSitesThunk')
   try {
     const response = await new SiteManager({
-      partnerID: '79597568', // TODO: should be obtained from URL
+      // window.location.hash starts with #/<partnerId>/...
+      partnerID: getPartnerId(window.location.hash),
       userKey: chromeStorageState.userKey,
       secret: chromeStorageState.secretKey,
     }).create({
@@ -82,6 +83,11 @@ export const createSitesThunk = createAsyncThunk('service/createSites', async (s
     return error
   }
 })
+
+export const getPartnerId = (hash) => {
+  const [, partnerId] = hash.split('/')
+  return partnerId !== undefined ? partnerId : ''
+}
 
 const getDataCenters = () => {
   const host = window.location.hostname
