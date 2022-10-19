@@ -4,7 +4,7 @@ import SiteConfigurator from './siteConfigurator'
 class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
-    this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
+    this.siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
   }
 
   async create(siteHierarchy) {
@@ -40,22 +40,27 @@ class SiteManager {
   }
 
   async #createChildren(childSites, parentApiKey) {
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
     const responses = []
     for (const site of childSites) {
-      let childResponse = await this.#createSite(site)
-      if (this.#isSuccessful(childResponse)) {
-        const scResponse = await siteConfigurator.connect(parentApiKey, childResponse.apiKey)
-        if (!this.#isSuccessful(scResponse)) {
-          childResponse = this.#mergeErrorResponse(childResponse, scResponse)
-        }
-      }
+      const childResponse = await this.#createSiteAndConnect(site, parentApiKey)
       responses.push(childResponse)
       if (!this.#isSuccessful(childResponse)) {
         break
       }
     }
     return responses
+  }
+
+  async #createSiteAndConnect(site, parentApiKey) {
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, site.dataCenter)
+    let childResponse = await this.#createSite(site)
+    if (this.#isSuccessful(childResponse)) {
+      const scResponse = await siteConfigurator.connect(parentApiKey, childResponse.apiKey)
+      if (!this.#isSuccessful(scResponse)) {
+        childResponse = this.#mergeErrorResponse(childResponse, scResponse)
+      }
+    }
+    return childResponse
   }
 
   async #createSite(site) {

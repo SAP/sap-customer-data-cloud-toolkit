@@ -47,95 +47,141 @@ class SiteManagerAsync {
         // })
         .catch((values) => {
           console.log(`SiteManagerAsync.create catch ${JSON.stringify(values)}`)
-          responses.push(values.data)
-          return responses
+          //responses.push(values)
+          return values
         })
     )
   }
 
   async #createSiteHierarchy(hierarchy) {
     let responses = []
-    return this.#createParent(hierarchy).then((response) => {
-      console.log(`SiteManagerAsync.createSiteHierarchy then ${JSON.stringify(response)}`)
-      const responseData = this.#enrichResponse(response.data, hierarchy.tempId)
-      responses.push(responseData)
-      if (this.#isSuccessful(responseData)) {
-        const childSites = hierarchy.childSites
-        if (childSites && childSites.length > 0) {
-          return this.#createChildren(hierarchy.childSites, responseData.apiKey).then((response) => {
-            console.log(`SiteManagerAsync.createChildren then ${JSON.stringify(response)}`)
-            return responses.concat(response.data)
+    let response = await this.#createParent(hierarchy)
+    response = this.#enrichResponse(response.data, hierarchy.tempId)
+    responses.push(response)
+    let promises = []
+
+    if (this.#isSuccessful(response)) {
+      const childSites = hierarchy.childSites
+      if (childSites && childSites.length > 0) {
+        //responses = responses.concat(await this.#createChildren(hierarchy.childSites, response.apiKey))
+        promises = this.#createChildren(hierarchy.childSites, response.apiKey)
+        console.log(`SiteManagerAsync.createSiteHierarchy0 ${JSON.stringify(promises)}`)
+        return Promise.all(promises)
+          .then((values) => {
+            console.log(`SiteManagerAsync.createSiteHierarchy then ${JSON.stringify(values)}`)
+            responses.push(...values)
+            console.log(`SiteManagerAsync.createSiteHierarchy2 then ${JSON.stringify(responses)}`)
+            return responses
           })
-        }
+          .catch((values) => {
+            console.log(`SiteManagerAsync.create catch ${JSON.stringify(values)}`)
+          })
       }
-      console.log(`SiteManagerAsync.createSiteHierarchy2 then ${JSON.stringify(responses)}`)
-      return responses
-    })
-
-    // const response = await this.#createParent(hierarchy)
-    // responses.push(response)
-
-    // if (this.#isSuccessful(response)) {
-    //   const childSites = hierarchy.childSites
-    //   if (childSites && childSites.length > 0) {
-    //     responses = responses.concat(await this.#createChildren(hierarchy.childSites, response.apiKey))
-    //   }
-    // }
-    // return responses
+    }
+    console.log(`SiteManagerAsync.createSiteHierarchy3 ${JSON.stringify(responses)}`)
+    console.log(`SiteManagerAsync.createSiteHierarchy4 ${promises.length}`)
+    return promises.length === 0 ? Promise.resolve(responses) : Promise.all(response, ...promises)
   }
+
+  // async #createSiteHierarchy(hierarchy) {
+  //   let responses = []
+  //   return this.#createParent(hierarchy).then((response) => {
+  //     console.log(`SiteManagerAsync.createSiteHierarchy then ${JSON.stringify(response)}`)
+  //     const responseData = this.#enrichResponse(response.data, hierarchy.tempId)
+  //     responses.push(responseData)
+  //     if (this.#isSuccessful(responseData)) {
+  //       const childSites = hierarchy.childSites
+  //       if (childSites && childSites.length > 0) {
+  //         return this.#createChildren(hierarchy.childSites, responseData.apiKey).then((response) => {
+  //           console.log(`SiteManagerAsync.createChildren then ${JSON.stringify(response)}`)
+  //           return responses.concat(response.data)
+  //         })
+  //       }
+  //     }
+  //     console.log(`SiteManagerAsync.createSiteHierarchy2 then ${JSON.stringify(responses)}`)
+  //     return responses
+  //   })
+  //}
 
   async #createParent(parentSite) {
     return this.#createSite(parentSite)
   }
 
   #createChildren(childSites, parentApiKey) {
-    console.log(`Creating children ${JSON.stringify(childSites)} for parentApiKey=${parentApiKey}`)
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
-    const responses = []
-    let promises = []
-    for (let i = 0; i < childSites.length; ++i) {
-      const site = childSites[i]
-      promises[i] = this.#createSite(site)
-        .then((childResponse) => {
-          console.log(`SiteManagerAsync.createSite then ${JSON.stringify(childResponse)}`)
-          //console.log('createSite.response=' + JSON.stringify(childResponse))
-          const childResponseData = this.#enrichResponse(childResponse.data, site.tempId)
-          if (this.#isSuccessful(childResponseData)) {
-            return Promise.all([siteConfigurator.connectAsync(parentApiKey, childResponseData.apiKey), childResponseData])
-          }
-        })
-        .then((value) => {
-          console.log(`SiteManagerAsync.connectAsync then ${JSON.stringify(value)}`)
-          const scResponse = value[0].data
-          let childResponseData = value[1]
-          // console.log(`SiteManagerAsync.connectAsync1 then ${JSON.stringify(scResponse)}`)
-          // console.log(`SiteManagerAsync.connectAsync2 then ${JSON.stringify(childResponseData)}`)
-          if (!this.#isSuccessful(scResponse)) {
-            childResponseData = this.#mergeErrorResponse(childResponseData, scResponse)
-            //responses.push(childResponseData)
-          }
-          return childResponseData
-        })
-
-      // let childResponse = await this.#createSite(site)
-      // if (this.#isSuccessful(childResponse)) {
-      //   const scResponse = await siteConfigurator.connectAsync(parentApiKey, childResponse.apiKey)
-      //   if (!this.#isSuccessful(scResponse.data)) {
-      //     childResponse = this.#mergeErrorResponse(childResponse, scResponse.data)
-      //   }
-      // }
+    const promises = []
+    for (const site of childSites) {
+      promises.push(this.#createSiteAndConnect(site, parentApiKey))
       // responses.push(childResponse)
       // if (!this.#isSuccessful(childResponse)) {
       //   break
       // }
     }
-    return Promise.all(promises).then((values) => {
-      console.log(`SiteManagerAsync.createChildren all ${JSON.stringify(values)}`)
-      //responses.push(values)
-      return values
-    })
-    //return responses
+    console.log(`SiteManagerAsync.createChildren then ${JSON.stringify(promises)}`)
+    return promises
   }
+
+  async #createSiteAndConnect(site, parentApiKey) {
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, site.dataCenter)
+    let childResponse = (await this.#createSite(site)).data
+    childResponse = this.#enrichResponse(childResponse, site.tempId)
+    if (this.#isSuccessful(childResponse)) {
+      const scResponse = (await siteConfigurator.connectAsync(parentApiKey, childResponse.apiKey)).data
+      if (!this.#isSuccessful(scResponse)) {
+        childResponse = this.#mergeErrorResponse(childResponse, scResponse)
+      }
+    }
+    console.log(`SiteManagerAsync.createSiteAndConnect then ${JSON.stringify(childResponse)}`)
+    return childResponse
+  }
+
+  // #createChildren(childSites, parentApiKey) {
+  //   console.log(`Creating children ${JSON.stringify(childSites)} for parentApiKey=${parentApiKey}`)
+  //   const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, childSites[0].dataCenter)
+  //   const responses = []
+  //   let promises = []
+  //   for (let i = 0; i < childSites.length; ++i) {
+  //     const site = childSites[i]
+  //     promises[i] = this.#createSite(site)
+  //       .then((childResponse) => {
+  //         console.log(`SiteManagerAsync.createSite then ${JSON.stringify(childResponse)}`)
+  //         //console.log('createSite.response=' + JSON.stringify(childResponse))
+  //         const childResponseData = this.#enrichResponse(childResponse.data, site.tempId)
+  //         if (this.#isSuccessful(childResponseData)) {
+  //           return Promise.all([siteConfigurator.connectAsync(parentApiKey, childResponseData.apiKey), childResponseData])
+  //         }
+  //       })
+  //       .then((value) => {
+  //         console.log(`SiteManagerAsync.connectAsync then ${JSON.stringify(value)}`)
+  //         const scResponse = value[0].data
+  //         let childResponseData = value[1]
+  //         // console.log(`SiteManagerAsync.connectAsync1 then ${JSON.stringify(scResponse)}`)
+  //         // console.log(`SiteManagerAsync.connectAsync2 then ${JSON.stringify(childResponseData)}`)
+  //         if (!this.#isSuccessful(scResponse)) {
+  //           childResponseData = this.#mergeErrorResponse(childResponseData, scResponse)
+  //           //responses.push(childResponseData)
+  //         }
+  //         return childResponseData
+  //       })
+
+  //     // let childResponse = await this.#createSite(site)
+  //     // if (this.#isSuccessful(childResponse)) {
+  //     //   const scResponse = await siteConfigurator.connectAsync(parentApiKey, childResponse.apiKey)
+  //     //   if (!this.#isSuccessful(scResponse.data)) {
+  //     //     childResponse = this.#mergeErrorResponse(childResponse, scResponse.data)
+  //     //   }
+  //     // }
+  //     // responses.push(childResponse)
+  //     // if (!this.#isSuccessful(childResponse)) {
+  //     //   break
+  //     // }
+  //   }
+  //   return Promise.all(promises).then((values) => {
+  //     console.log(`SiteManagerAsync.createChildren all ${JSON.stringify(values)}`)
+  //     //responses.push(values)
+  //     return values
+  //   })
+  //   //return responses
+  // }
 
   #createSite(site) {
     const body = {
