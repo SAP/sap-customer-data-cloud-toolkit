@@ -52,12 +52,15 @@ class Site {
 
     // GET TOKEN
     const getDeleteTokenRes = (await client.post(url, this.#deleteSiteParameters(site))).data
+    console.log(`Site.delete(getToken) ${JSON.stringify(getDeleteTokenRes)}`)
     if (getDeleteTokenRes.errorCode !== 0) {
       return getDeleteTokenRes
     }
 
     // DELETE SITE
-    return (await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.deleteToken))).data
+    const response = await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.deleteToken))
+    console.log(`Site.delete(delete) ${JSON.stringify(response)}`)
+    return response.data
   }
 
   #deleteSiteParameters(apiKey, deleteToken) {
