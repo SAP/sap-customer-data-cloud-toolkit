@@ -1,13 +1,16 @@
 import { Fragment, useState } from 'react'
-import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
-
 import { useSelector, useDispatch } from 'react-redux'
-import { deleteChild, updateChildBaseDomain, updateChildDescription } from '../../redux/siteSlice'
+import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/siteSlice'
+
+import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
+import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 
 const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const dispatch = useDispatch()
   const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const errorList = useSelector((state) => selectErrors(state))
+  const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
 
   const getDataCenterLabel = (dataCenterValue) => {
     if (dataCenter === '') {
@@ -50,9 +53,17 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
     dispatch(deleteChild({ parentSiteTempId, tempId }))
   }
 
+  const showErrorTableCell = (messages, message) => {
+    if (!messages.length) {
+      return ''
+    }
+    return <TableCell style={{ width: 0 }}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
+  }
+
   return (
     <Fragment>
       <TableRow>
+        {showErrorTableCell(errorList, error)}
         <TableCell>
           <Input
             type={InputType.Text}

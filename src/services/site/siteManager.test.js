@@ -284,7 +284,7 @@ function verifyResponseIsOk(response) {
   TestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
-  expect(response.siteUiId).toBeDefined()
+  expect(response.tempId).toBeDefined()
   expect(response.endpoint).toEqual(TestData.Endpoints.SITE_CREATE)
 }
 
@@ -295,7 +295,7 @@ function expectResponseIsOk(response, deleted) {
 
 function verifyResponseIsNotOk(response, expectedResponse) {
   TestData.verifyResponseIsNotOk(response, expectedResponse)
-  expect(response.siteUiId).toBeDefined()
+  expect(response.tempId).toBeDefined()
 }
 
 function expectResponseIsNotOk(response, expectedResponse, deleted, endpoint) {

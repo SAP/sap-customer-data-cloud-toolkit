@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { addParentFromStructure, clearSites, createSites, selectErrors, selectShowSuccessDialog } from '../../redux/siteSlice'
+
 import {
   Card,
   CardHeader,
@@ -15,6 +19,7 @@ import {
   FlexBox,
   Button,
   BusyIndicator,
+  ValueState,
 } from '@ui5/webcomponents-react'
 import { spacing } from '@ui5/webcomponents-react-base'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
@@ -23,14 +28,11 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import { useState } from 'react'
-
 import SitesTable from '../../components/sites-table/sites-table.component'
+import MessageList from '../../components/message-list/message-list.component'
+import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 
 import structures from '../../sitesStructures.json'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { addParentFromStructure, clearSites, createSitesThunk } from '../../redux/siteSlice'
 
 const BarStart = (props) => (
   <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
@@ -77,15 +79,15 @@ const SiteDeployer = () => {
   const sites = useSelector((state) => state.sites.sites)
   const isLoading = useSelector((state) => state.sites.isLoading)
   const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const errors = useSelector(selectErrors)
+  const showSuccessDialog = useSelector(selectShowSuccessDialog)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
-  const [baseDomain, setBaseDomain] = useState()
+  const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
 
   const onSaveHandler = () => {
-    console.log(sites)
-    dispatch(createSitesThunk(sites))
-    dispatch(clearSites())
+    dispatch(createSites(sites))
   }
 
   const onCancelHandler = () => {
@@ -153,6 +155,19 @@ const SiteDeployer = () => {
   const checkRequiredFields = () => {
     return !(baseDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
   }
+
+  const showErrorsList = (messages) =>
+    !messages.length ? (
+      ''
+    ) : (
+      <div style={spacing.sapUiSmallMargin}>
+        <div style={spacing.sapUiTinyMargin}>
+          <Card>
+            <MessageList messages={messages} />
+          </Card>
+        </div>
+      </div>
+    )
 
   return (
     <div className="cdc-tools-app-container" name="site-deployer">
@@ -226,9 +241,18 @@ const SiteDeployer = () => {
                 </Select>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <Button id="createButton" disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
-                  Create
-                </Button>
+                <Bar design="Footer" style={{ display: 'block', position: 'relative', margin: '0 0px -3px 0' }}>
+                  <Button
+                    id="createButton"
+                    disabled={checkRequiredFields()}
+                    onClick={onCreateHandler}
+                    icon="add"
+                    design="Transparent"
+                    style={{ display: 'block', position: 'absolute', left: 0, right: 0, margin: 0 }}
+                  >
+                    Create Structure
+                  </Button>
+                </Bar>
               </div>
             </Card>
           </div>
@@ -244,15 +268,26 @@ const SiteDeployer = () => {
                 ></CardHeader>
               }
             >
-              {isLoading ? <BusyIndicator active delay="1" style={{ width: '100%' }} /> : <SitesTable />}
+              {isLoading ? <BusyIndicator active delay="1" style={{ width: '100%', padding: '100px 0' }} /> : <SitesTable />}
             </Card>
           </div>
         </div>
+
+        {showErrorsList(errors)}
+
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
             <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
+
+        {showSuccessDialog ? (
+          <DialogMessage open={showSuccessDialog} headerText="Success" state={ValueState.Success} closeButtonContent="Ok" onAfterClose={() => document.location.reload()}>
+            All sites have been created successfully
+          </DialogMessage>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   )

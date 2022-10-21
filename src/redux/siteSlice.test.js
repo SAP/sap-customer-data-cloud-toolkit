@@ -34,6 +34,8 @@ const initialState = {
       value: 'us1',
     },
   ],
+  errors: [],
+  showSuccessDialog: false,
 }
 
 const stateWithParentWithNoChild = {

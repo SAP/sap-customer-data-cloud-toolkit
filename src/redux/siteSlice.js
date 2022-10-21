@@ -65,25 +65,6 @@ const getSiteById = (sites, tempId) => {
   return sites.filter((site) => site.tempId === tempId)[0]
 }
 
-export const createSitesThunk = createAsyncThunk('service/createSites', async (sites) => {
-  console.log('createSitesThunk')
-  try {
-    const response = await new SiteManager({
-      // window.location.hash starts with #/<partnerId>/...
-      partnerID: getPartnerId(window.location.hash),
-      userKey: chromeStorageState.userKey,
-      secret: chromeStorageState.secretKey,
-    }).create({
-      sites,
-    })
-    console.log(`response: ${response}`)
-    return response
-  } catch (error) {
-    console.log(`error: ${error}`)
-    return error
-  }
-})
-
 export const getPartnerId = (hash) => {
   const [, partnerId] = hash.split('/')
   return partnerId !== undefined ? partnerId : ''
@@ -100,6 +81,8 @@ export const siteSlice = createSlice({
     sites: [],
     isLoading: false,
     dataCenters: getDataCenters(),
+    errors: [],
+    showSuccessDialog: false,
   },
   reducers: {
     addNewParent: (state) => {
@@ -164,18 +147,38 @@ export const siteSlice = createSlice({
     clearSites: (state) => {
       state.sites = []
     },
+    setShowSuccessDialog: (state, action) => {
+      state.showSuccessDialog = action.payload
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(createSitesThunk.pending, (state) => {
-      console.log('pending')
+    builder.addCase(createSites.pending, (state) => {
+      state.errors = []
       state.isLoading = true
+      state.showSuccessDialog = false
     })
-    builder.addCase(createSitesThunk.fulfilled, (state) => {
-      console.log('fullfiled')
+    builder.addCase(createSites.fulfilled, (state, action) => {
       state.isLoading = false
+
+      // Check if has any error
+      const errors = action.payload.filter(({ errorCode }) => errorCode !== 0)
+      if (errors.length) {
+        // Enrich errors w/ site information
+        state.errors = errors.map((error) => {
+          error = { ...error, site: { ...selectSiteById({ sites: state }, error.tempId) } }
+          delete error.tempId
+          delete error.site.childSites
+          return error
+        })
+      }
+      // Success
+      else {
+        state.showSuccessDialog = true
+        state.sites = []
+      }
     })
-    builder.addCase(createSitesThunk.rejected, (state) => {
-      console.log('rejected')
+    builder.addCase(createSites.rejected, (state, action) => {
+      console.log('createSites.rejected', { action })
       state.isLoading = false
     })
   },
@@ -194,6 +197,49 @@ export const {
   addChild,
   deleteChild,
   clearSites,
+  setShowSuccessDialog,
 } = siteSlice.actions
 
 export default siteSlice.reducer
+
+export const createSites = createAsyncThunk('service/createSites', async (sites) => {
+  try {
+    return await new SiteManager({
+      // window.location.hash starts with #/<partnerId>/...
+      partnerID: getPartnerId(window.location.hash),
+      userKey: chromeStorageState.userKey,
+      secret: chromeStorageState.secretKey,
+    }).create({
+      sites,
+    })
+  } catch (error) {
+    return error
+  }
+})
+
+export const selectSites = (state) => state.sites.sites
+
+export const selectSiteById = (state, tempId) => {
+  const sites = selectSites(state)
+
+  for (const parentSite of sites) {
+    if (parentSite.tempId === tempId) {
+      return parentSite
+    }
+    if (parentSite.childSites && parentSite.childSites.length) {
+      for (const childSite of parentSite.childSites) {
+        if (childSite.tempId === tempId) {
+          return childSite
+        }
+      }
+    }
+  }
+
+  return undefined
+}
+
+export const selectErrors = (state) => state.sites.errors
+
+export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
+
+export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog

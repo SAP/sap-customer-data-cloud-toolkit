@@ -72,7 +72,7 @@ class SiteManager {
 
   #enrichResponse(response, id) {
     const resp = Object.assign({}, response)
-    resp.siteUiId = id
+    resp.tempId = id
     resp.deleted = false
     resp.endpoint = Site.getCreateEndpoint()
     return resp
@@ -83,7 +83,7 @@ class SiteManager {
   }
 
   #shouldBeRollbacked(response) {
-    return response.errorCode === 0 || (response.errorCode !== 0 && response.siteUiId && response.apiKey && response.apiKey.length > 0)
+    return response.errorCode === 0 || (response.errorCode !== 0 && response.tempId && response.apiKey && response.apiKey.length > 0)
   }
 
   async deleteSites(targetApiKeys) {

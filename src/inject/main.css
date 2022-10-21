@@ -1,7 +1,5 @@
 .cdc-tools-app {
-  /* background-color: #fff; */
   background-color: var(--sapBackgroundColor, #f7f7f7);
-  z-index: 1;
   position: absolute;
   bottom: 0;
   right: 0;

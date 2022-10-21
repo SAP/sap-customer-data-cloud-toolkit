@@ -1,4 +1,7 @@
 import { Fragment } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { addNewParent, selectSites, selectErrors } from '../../redux/siteSlice'
+
 import { Label, Button, Table, TableColumn, IllustratedMessage, Bar } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
@@ -9,11 +12,9 @@ import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
 
-import { useSelector, useDispatch } from 'react-redux'
-import { addNewParent } from '../../redux/siteSlice'
-
 const SitesTable = () => {
-  const sitesStructure = useSelector((state) => state.sites.sites)
+  const sitesStructure = useSelector(selectSites)
+  const errorList = useSelector((state) => selectErrors(state))
 
   const dispatch = useDispatch()
 
@@ -21,12 +22,15 @@ const SitesTable = () => {
     dispatch(addNewParent())
   }
 
+  const showErrorTableColumn = (list) => (list.length ? <TableColumn style={{ width: 0 }}></TableColumn> : '')
+
   return (
     <Fragment>
       {sitesStructure.length ? (
         <Table
           columns={
             <>
+              {showErrorTableColumn(errorList)}
               <TableColumn
               // style={{
               //   width: '12rem',
