@@ -1,9 +1,7 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppContainer'
-import { MENU_ELEMENT_CLASS, COMMON_URL_PART } from './injectMenu'
+import { MENU_ELEMENT_CLASS, COMMON_URL_PART, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-export const ROUTE_CONTAINER_CLASS = 'cdc-tools-app-container'
 export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
 export const IS_SELECTED_CLASS = 'is-selected'
 

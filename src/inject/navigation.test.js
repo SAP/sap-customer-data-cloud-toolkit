@@ -4,7 +4,7 @@
 
 import { processHashChange, ROUTE_CONTAINER_CLASS, ROUTE_CONTAINER_SHOW_CLASS, IS_SELECTED_CLASS } from './navigation'
 import { chromeStorageState } from './chromeStorage'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, TAB_NAME } from './injectAppContainer'
+import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, TAB_SITE_DEPLOYER } from './injectAppContainer'
 import { MENU_ELEMENT_CLASS } from './injectMenu'
 
 describe('Navigation test suite', () => {
@@ -18,14 +18,14 @@ describe('Navigation test suite', () => {
   })
 
   test('Process Hash Change Show container', () => {
-    executeTest(`#/${expectedPartnerId}/${expectedApiKey}/cdc-tools/${TAB_NAME}`, true)
+    executeTest(`#/${expectedPartnerId}/${expectedApiKey}/cdc-tools/${TAB_SITE_DEPLOYER}`, true)
 
     expect(chromeStorageState.partnerId).toEqual(expectedPartnerId)
     expect(chromeStorageState.apiKey).toEqual(expectedApiKey)
   })
 
   test('Process Hash Change Hide container', () => {
-    executeTest(`#/${expectedPartnerId}/${expectedApiKey}/${TAB_NAME}`, false)
+    executeTest(`#/${expectedPartnerId}/${expectedApiKey}/${TAB_SITE_DEPLOYER}`, false)
 
     expect(chromeStorageState.partnerId).toEqual('')
     expect(chromeStorageState.apiKey).toEqual('')
@@ -63,11 +63,11 @@ function createDocument() {
     demoEnviromentList.getElementsByTagName('li')[0],
     'demoEnviromentListAnchor'
   )
-  demoEnviromentListAnchor.setAttribute('name', TAB_NAME)
+  demoEnviromentListAnchor.setAttribute('name', TAB_SITE_DEPLOYER)
   const divCdcToolsApp = createElementWithClasses('div', [MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS], document.body, 'divCdcToolsApp')
   const divApp = createElementWithClasses('div', ['App'], divCdcToolsApp, 'divApp')
   const divCdcToolsAppContainer = createElementWithClasses('div', [ROUTE_CONTAINER_CLASS, ROUTE_CONTAINER_SHOW_CLASS], divApp, 'divCdcToolsAppContainer')
-  divCdcToolsAppContainer.setAttribute('name', TAB_NAME)
+  divCdcToolsAppContainer.setAttribute('name', TAB_SITE_DEPLOYER)
   return document
 }
 function createList(parentNode, id) {

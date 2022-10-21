@@ -1,10 +1,5 @@
 import { querySelectorAllShadows, watchElement, htmlToElem, getInnerText } from './utils'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppContainer'
-
-export const ADMIN_BUTTON_SELECTOR = '.fd-nested-list__icon.sap-icon--action-settings'
-export const ADMIN_BUTTON_CLASSES = 'fd-nested-list__icon sap-icon--action-settings'
-export const MENU_ELEMENT_CLASS = 'cdc-tools--menu-item'
-export const COMMON_URL_PART = 'cdc-tools'
+import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS, COMMON_URL_PART } from './constants'
 
 export const menuElementHtml = `\
 <li fd-nested-list-item="" class="fd-nested-list__item ${MENU_ELEMENT_CLASS}">\

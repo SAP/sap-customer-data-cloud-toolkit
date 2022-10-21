@@ -170,7 +170,7 @@ const SiteDeployer = () => {
     )
 
   return (
-    <div className="cdc-tools-app-container" name="site-deployer">
+    <>
       <Bar design="Header" startContent={<BarStart />}></Bar>
       <div style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
         <div style={spacing.sapUiSmallMargin}>
@@ -289,7 +289,7 @@ const SiteDeployer = () => {
           ''
         )}
       </div>
-    </div>
+    </>
   )
 }
 
