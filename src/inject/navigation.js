@@ -1,37 +1,37 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
 import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppContainer'
-import { MENU_ELEMENT_CLASS } from './injectMenu'
+import { MENU_ELEMENT_CLASS, COMMON_URL_PART } from './injectMenu'
 import { chromeStorageState } from './chromeStorage'
 
 export const ROUTE_CONTAINER_CLASS = 'cdc-tools-app-container'
 export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
-const IS_SELECTED_CLASS = 'is-selected'
+export const IS_SELECTED_CLASS = 'is-selected'
 
 const init = () => {
-  onHashChange(() => processHashChange())
-  setTimeout(() => processHashChange(), 50)
+  onHashChange(() => processHashChange(window.location.hash))
+  setTimeout(() => processHashChange(window.location.hash), 50)
 }
 
-const processHashChange = () => {
-  const hash = window.location.hash.split('/')
-  if (hash.length !== 5 || hash[3] !== 'cdc-tools') {
-    hideTool()
+export const processHashChange = (locationHash) => {
+  const hash = locationHash.split('/')
+  if (hash.length !== 5 || hash[3] !== COMMON_URL_PART) {
+    hideContainer()
   } else {
     const [, partnerId, apiKey, , tabName] = hash
 
     chromeStorageState.partnerId = partnerId
     chromeStorageState.apiKey = apiKey
 
-    showTool({ partnerId, apiKey, tabName })
+    showContainer({ tabName })
   }
 }
 
-const showTool = ({ partnerId, apiKey, tabName }) => {
+const showContainer = ({ tabName }) => {
   if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length || !document.querySelector(`.${ROUTE_CONTAINER_CLASS}[name="${tabName}"]`)) {
     return
   }
 
-  hideTool()
+  hideContainer()
 
   // Remove is-selected from all menu links
   querySelectorAllShadows('.fd-nested-list__link, .fd-nested-list__content').forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
@@ -51,7 +51,7 @@ const showTool = ({ partnerId, apiKey, tabName }) => {
   })
 }
 
-const hideTool = () => {
+const hideContainer = () => {
   if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
     return
   }

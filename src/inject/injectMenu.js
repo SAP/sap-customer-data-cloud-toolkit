@@ -4,10 +4,11 @@ import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './injectAppCont
 export const ADMIN_BUTTON_SELECTOR = '.fd-nested-list__icon.sap-icon--action-settings'
 export const ADMIN_BUTTON_CLASSES = 'fd-nested-list__icon sap-icon--action-settings'
 export const MENU_ELEMENT_CLASS = 'cdc-tools--menu-item'
+export const COMMON_URL_PART = 'cdc-tools'
 
 export const menuElementHtml = `\
 <li fd-nested-list-item="" class="fd-nested-list__item ${MENU_ELEMENT_CLASS}">\
-  <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/cdc-tools/{{tabName}}" tabindex="0" 
+  <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/${COMMON_URL_PART}/{{tabName}}" tabindex="0" 
 class="fd-nested-list__link" name="{{tabName}}">\
     <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--product" role="presentation"></span>-->\
     <span fd-nested-list-title="" class="fd-nested-list__title">\
