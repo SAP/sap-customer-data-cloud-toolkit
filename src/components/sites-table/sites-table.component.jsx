@@ -11,7 +11,7 @@ import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row
 import { useSelector, useDispatch } from 'react-redux'
 import { addNewParent } from '../../redux/siteSlice'
 
-const SitesTable = () => {
+export const SitesTable = () => {
   const sitesStructure = useSelector((state) => state.sites.sites)
 
   const dispatch = useDispatch()
