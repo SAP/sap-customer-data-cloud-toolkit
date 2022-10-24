@@ -1,15 +1,39 @@
 [
   {
     "_id": "1",
-    "name": "Structure 1",
+    "name": "Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)",
     "data": [
       {
-        "baseDomain": "a.com",
+        "baseDomain": "dev.{{dataCenter}}.parent.{{siteDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "baseDomain": "dev.a.com",
+            "baseDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "stag.{{dataCenter}}.parent.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "stag.{{dataCenter}}.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "prod.{{dataCenter}}.parent.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "prod.{{dataCenter}}.{{siteDomain}}",
             "description": "",
             "dataCenter": ""
           }
@@ -19,17 +43,146 @@
   },
   {
     "_id": "2",
-    "name": "Structure 2",
-    "data": []
+    "name": "Dev, Stag, Prod separated with Parent and Child without mentioning Datacenter (ex: dev.parent.siteDomain, dev.siteDomain)",
+    "data": [
+      {
+        "baseDomain": "dev.parent.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "dev.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "stag.parent.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "stag.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "prod.parent.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "prod.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "_id": "3",
-    "name": "Structure 3",
-    "data": []
+    "name": "Dev, Stag, Prod separated with Parent and Child using the Site Domain for the child (ex: dev.eu.siteDomain, siteDomain)",
+    "data": [
+      {
+        "baseDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "stag.{{dataCenter}}.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "prod.{{dataCenter}}.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      }
+    ]
   },
   {
     "_id": "4",
-    "name": "Structure 4",
-    "data": []
-  }
+    "name": "Dev, Stag, Prod separated with Parent and Child using the Site Domain for the child without mentioning Datacenter (ex: dev.siteDomain, siteDomain)",
+    "data": [
+      {
+        "baseDomain": "dev.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "stag.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      },
+      {
+        "baseDomain": "prod.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "999",
+    "name": "Test Structure",
+    "data": [
+      {
+        "baseDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "baseDomain": "dev.{{dataCenter}}.{{country}}.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      }
+    ]
+  },
 ]
