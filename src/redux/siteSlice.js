@@ -118,6 +118,10 @@ export const siteSlice = createSlice({
     },
     clearSites: (state) => {
       state.sites = []
+      state.errors = []
+    },
+    clearErrors: (state) => {
+      state.errors = []
     },
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
@@ -169,6 +173,7 @@ export const {
   addChild,
   deleteChild,
   clearSites,
+  clearErrors,
   setShowSuccessDialog,
 } = siteSlice.actions
 
