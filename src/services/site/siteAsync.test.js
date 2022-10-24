@@ -73,7 +73,7 @@ describe('Service Site test suite', () => {
 
     expect(response.data.errorCode).toEqual('ENOTFOUND')
     expect(response.data.errorMessage).toEqual('Error creating site')
-    expect(response.data0.time).toBeDefined()
+    expect(response.data.time).toBeDefined()
   })
 
   test('delete site unsuccessfully', async () => {

@@ -52,14 +52,14 @@ class Site {
 
     // GET TOKEN
     const getDeleteTokenRes = (await client.post(url, this.#deleteSiteParameters(site))).data
-    console.log(`Site.delete(getToken) ${JSON.stringify(getDeleteTokenRes)}`)
+    //console.log(`Site.delete(getToken) ${JSON.stringify(getDeleteTokenRes)}`)
     if (getDeleteTokenRes.errorCode !== 0) {
       return getDeleteTokenRes
     }
 
     // DELETE SITE
     const response = await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.deleteToken))
-    console.log(`Site.delete(delete) ${JSON.stringify(response)}`)
+    //console.log(`Site.delete(delete) ${JSON.stringify(response)}`)
     return response.data
   }
 
