@@ -5,61 +5,36 @@ import { chromeStorageState } from '../inject/chromeStorage'
 import dataCenters from '../dataCenters.json'
 import SiteManager from '../services/site/siteManager'
 
-const getDataCenterValue = (dataCentersToGetValueFrom, dataCenterLabel) => {
-  return dataCentersToGetValueFrom.filter((dataCenter) => dataCenter.label === dataCenterLabel)[0].value
-}
+const getDataCenterValue = (dataCentersToGetValueFrom, dataCenterLabel) => dataCentersToGetValueFrom.find((dataCenter) => dataCenter.label === dataCenterLabel).value
 
-const addChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites, sourceDataCenters) => {
-  const childSites = []
-  const importedRootBaseDomain = rootBaseDomain
-  structureChildSites.forEach((structureChildSite) => {
-    childSites.push({
-      parentSiteTempId: parentSiteTempId,
-      tempId: generateUUID(),
-      baseDomain: `${structureChildSite.baseDomain}.${importedRootBaseDomain}`,
-      description: structureChildSite.description,
-      dataCenter: getDataCenterValue(sourceDataCenters, dataCenter),
-      isChildSite: true,
-    })
-  })
-  return childSites
-}
+const generateBaseDomain = (source, { dataCenter, baseDomain }) => source.replaceAll('{{dataCenter}}', dataCenter.toLowerCase()).replaceAll('{{baseDomain}}', baseDomain)
 
-const getParentFromStructure = (structure, sourceDataCenters) => {
+const getChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites, sourceDataCenters) =>
+  structureChildSites.map(({ baseDomain, description }) =>
+    getSiteFromStructure({ parentSiteTempId, rootBaseDomain, baseDomain, dataCenter, description, isChildSite: true }, sourceDataCenters)
+  )
+
+const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite = false, rootBaseDomain, baseDomain, dataCenter, description }, sourceDataCenters) => {
   const tempId = generateUUID()
-  return {
-    parentSiteTempId: '',
-    tempId: tempId,
-    baseDomain: `${structure.baseDomain}.${structure.rootBaseDomain}`,
-    description: structure.description,
-    dataCenter: getDataCenterValue(sourceDataCenters, structure.dataCenter),
-    childSites: addChildsFromStructure(tempId, structure.rootBaseDomain, structure.dataCenter, structure.childSites, sourceDataCenters),
-    isChildSite: false,
+  const dataCenterValue = getDataCenterValue(sourceDataCenters, dataCenter)
+  baseDomain = generateBaseDomain(baseDomain, { dataCenter, baseDomain: rootBaseDomain })
+
+  const site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
+  if (isChildSite) {
+    return site
   }
+  return { ...site, childSites: getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters) }
 }
 
-const getNewParent = () => {
-  return {
-    parentSiteTempId: '',
-    tempId: generateUUID(),
-    baseDomain: '',
-    description: '',
-    dataCenter: '',
-    childSites: [],
-    isChildSite: false,
+const getNewSite = ({ parentSiteTempId = '', dataCenter = '', isChildSite = false } = {}) => {
+  const site = { parentSiteTempId, tempId: generateUUID(), baseDomain: '', description: '', dataCenter, isChildSite }
+  if (isChildSite) {
+    return site
   }
+  return { ...site, childSites: [] }
 }
 
-const getNewChild = (parentSiteTempId, dataCenter) => {
-  return {
-    parentSiteTempId: parentSiteTempId,
-    tempId: generateUUID(),
-    baseDomain: '',
-    description: '',
-    dataCenter: dataCenter,
-    isChildSite: true,
-  }
-}
+const getNewSiteChild = (parentSiteTempId, dataCenter) => getNewSite({ parentSiteTempId, dataCenter, isChildSite: true })
 
 const getSiteById = (sites, tempId) => {
   return sites.filter((site) => site.tempId === tempId)[0]
@@ -86,11 +61,11 @@ export const siteSlice = createSlice({
   },
   reducers: {
     addNewParent: (state) => {
-      state.sites.push(getNewParent())
+      state.sites.push(getNewSite())
     },
     addParentFromStructure: (state, action) => {
       if (action.payload) {
-        state.sites.push(getParentFromStructure(action.payload, state.dataCenters))
+        state.sites.push(getSiteFromStructure(action.payload, state.dataCenters))
       }
     },
     deleteParent: (state, action) => {
@@ -120,7 +95,7 @@ export const siteSlice = createSlice({
       const parentSiteTempId = action.payload.tempId
       const parentSite = getSiteById(state.sites, parentSiteTempId)
       const childSites = parentSite.childSites
-      childSites.push(getNewChild(parentSiteTempId, parentSite.dataCenter))
+      childSites.push(getNewSiteChild(parentSiteTempId, parentSite.dataCenter))
     },
     deleteChild: (state, action) => {
       const parentSiteTempId = action.payload.parentSiteTempId
@@ -146,6 +121,10 @@ export const siteSlice = createSlice({
     },
     clearSites: (state) => {
       state.sites = []
+      state.errors = []
+    },
+    clearErrors: (state) => {
+      state.errors = []
     },
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
@@ -197,6 +176,7 @@ export const {
   addChild,
   deleteChild,
   clearSites,
+  clearErrors,
   setShowSuccessDialog,
 } = siteSlice.actions
 

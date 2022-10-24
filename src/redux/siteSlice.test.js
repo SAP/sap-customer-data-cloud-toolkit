@@ -83,12 +83,12 @@ const structure = {
   data: [
     {
       rootBaseDomain: 'test',
-      baseDomain: 'a.com',
+      baseDomain: 'dev.parent.{{dataCenter}}.{{baseDomain}}',
       description: 'test parent from strucure',
       dataCenter: 'AU',
       childSites: [
         {
-          baseDomain: 'dev.a.com',
+          baseDomain: 'dev.{{dataCenter}}.{{baseDomain}}',
           description: 'test child from strucure',
           dataCenter: 'AU',
         },
@@ -133,13 +133,14 @@ describe('Site slice test suite', () => {
 
   test('should add a Parent site with a child from a Structure', () => {
     const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
+    // console.log({ newState })
     expect(newState.sites.length).toEqual(1)
 
     const newParent = newState.sites[0]
     expect(newState.sites.length).toEqual(1)
     expect(newParent.parentSiteTempId).toEqual('')
     expect(newParent.tempId).not.toEqual('')
-    expect(newParent.baseDomain).toEqual('a.com.test')
+    expect(newParent.baseDomain).toEqual('dev.parent.au.test')
     expect(newParent.description).toEqual('test parent from strucure')
     expect(newParent.dataCenter).toEqual('au1')
     expect(newParent.childSites.length).toEqual(1)
@@ -148,7 +149,7 @@ describe('Site slice test suite', () => {
     const newChild = newParent.childSites[0]
     expect(newChild.parentSiteTempId).toEqual(newParent.tempId)
     expect(newChild.tempId).not.toEqual('')
-    expect(newChild.baseDomain).toEqual('dev.a.com.test')
+    expect(newChild.baseDomain).toEqual('dev.au.test')
     expect(newChild.description).toEqual('test child from strucure')
     expect(newChild.dataCenter).toEqual('au1')
     expect(newChild.isChildSite).toEqual(true)
