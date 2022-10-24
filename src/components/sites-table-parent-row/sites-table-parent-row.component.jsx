@@ -1,4 +1,7 @@
 import { Fragment, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/siteSlice'
+
 import { Input, InputType, Select, Option, Button, TableRow, TableCell, ActionSheet } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
@@ -7,9 +10,7 @@ import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild } from '../../redux/siteSlice'
+import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 
 const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
@@ -17,6 +18,8 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
 
   const dispatch = useDispatch()
   const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const errorList = useSelector((state) => selectErrors(state))
+  const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
 
   const dataCentersSelect = [{ value: '', label: '' }, ...dataCenters]
 
@@ -121,9 +124,17 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
     return <div></div>
   }
 
+  const showErrorTableCell = (messages, message) => {
+    if (!messages.length) {
+      return ''
+    }
+    return <TableCell style={{ width: 0 }}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
+  }
+
   return (
     <Fragment>
       <TableRow>
+        {showErrorTableCell(errorList, error)}
         <TableCell>{checkChildSitesView()}</TableCell>
 
         <TableCell>

@@ -1,8 +1,7 @@
 import { onElementExists, htmlToElem } from './utils'
+import { MAIN_CONTAINER_CLASS } from './constants'
 
 export const TENANT_ID_CLASS = 'fd-info-label__text'
-export const MAIN_CONTAINER_CLASS = 'cdc-tools-app'
-export const MAIN_CONTAINER_SHOW_CLASS = 'show-cdc-tools'
 
 export const initAppContainer = (onCreated) => {
   document.querySelector('body').append(htmlToElem(`<div class="${MAIN_CONTAINER_CLASS}"></div>`))
