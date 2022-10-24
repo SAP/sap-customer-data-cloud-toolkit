@@ -2,10 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { processHashChange, ROUTE_CONTAINER_CLASS, ROUTE_CONTAINER_SHOW_CLASS, IS_SELECTED_CLASS } from './navigation'
+import { processHashChange, ROUTE_CONTAINER_SHOW_CLASS, IS_SELECTED_CLASS } from './navigation'
 import { chromeStorageState } from './chromeStorage'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, TAB_SITE_DEPLOYER } from './injectAppContainer'
-import { MENU_ELEMENT_CLASS } from './injectMenu'
+import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, TAB_SITE_DEPLOYER, MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
 
 describe('Navigation test suite', () => {
   const expectedPartnerId = 'partnerId'
