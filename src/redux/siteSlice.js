@@ -18,17 +18,20 @@ const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite =
   const tempId = generateUUID()
   const dataCenterValue = getDataCenterValue(sourceDataCenters, dataCenter)
   baseDomain = generateBaseDomain(baseDomain, { dataCenter, baseDomain: rootBaseDomain })
-  let site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, childSites, isChildSite }
-  if (!isChildSite) {
-    site.childSites = getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters)
+
+  const site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
+  if (isChildSite) {
+    return site
   }
-  return site
+  return { ...site, childSites: getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters) }
 }
 
 const getNewSite = ({ parentSiteTempId = '', dataCenter = '', isChildSite = false } = {}) => {
-  let site = { parentSiteTempId, tempId: generateUUID(), baseDomain: '', description: '', dataCenter, isChildSite }
-  if (!isChildSite) site.childSites = []
-  return site
+  const site = { parentSiteTempId, tempId: generateUUID(), baseDomain: '', description: '', dataCenter, isChildSite }
+  if (isChildSite) {
+    return site
+  }
+  return { ...site, childSites: [] }
 }
 
 const getNewSiteChild = (parentSiteTempId, dataCenter) => getNewSite({ parentSiteTempId, dataCenter, isChildSite: true })
