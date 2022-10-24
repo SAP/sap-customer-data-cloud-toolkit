@@ -5,7 +5,8 @@
 import fs from 'fs'
 import path from 'path'
 import { getInnerText, htmlToElem } from './utils'
-import { initMenuExtension, destroyMenuExtension, injectMenu, MENU_ELEMENT_CLASS, ADMIN_BUTTON_SELECTOR, ADMIN_BUTTON_CLASSES } from './injectMenu'
+import { initMenuExtension, destroyMenuExtension, injectMenu } from './injectMenu'
+import { MENU_ELEMENT_CLASS, ADMIN_BUTTON_SELECTOR, ADMIN_BUTTON_CLASSES } from './constants'
 
 const html = fs.readFileSync(path.resolve(__dirname, '../../public/index.html'), 'utf8')
 jest.dontMock('fs')
