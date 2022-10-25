@@ -15,6 +15,10 @@ import sitesReducer, {
   deleteChild,
   clearSites,
   getPartnerId,
+  createSites,
+  clearErrors,
+  setShowSuccessDialog,
+  selectSiteById,
 } from './siteSlice'
 
 const initialState = {
@@ -77,6 +81,14 @@ const stateWithParentWithChild = {
   isLoading: false,
 }
 
+const stateWithError = {
+  sites: [],
+  isLoading: false,
+  dataCenters: [],
+  errors: [{ error: 'I am a dummy error!' }],
+  showSuccessDialog: false,
+}
+
 const structure = {
   _id: '1',
   name: 'Structure 1',
@@ -133,7 +145,6 @@ describe('Site slice test suite', () => {
 
   test('should add a Parent site with a child from a Structure', () => {
     const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
-    // console.log({ newState })
     expect(newState.sites.length).toEqual(1)
 
     const newParent = newState.sites[0]
@@ -239,5 +250,57 @@ describe('Site slice test suite', () => {
     const expectedPartnerId = ''
     const hash = ''
     expect(getPartnerId(hash)).toEqual(expectedPartnerId)
+  })
+
+  test('should set isLoading to true while createSites is pending', () => {
+    const newState = sitesReducer(initialState, { type: createSites.pending.type })
+    expect(newState.isLoading).toEqual(true)
+    expect(newState.errors.length).toEqual(0)
+    expect(newState.showSuccessDialog).toEqual(false)
+  })
+
+  test('should set isLoading to false when createSites is rejected', () => {
+    const newState = sitesReducer(initialState, { type: createSites.rejected.type })
+    expect(newState.isLoading).toEqual(false)
+  })
+
+  test('should clear errors', () => {
+    const newState = sitesReducer(stateWithError, clearErrors())
+    expect(newState.errors.length).toEqual(0)
+  })
+
+  test('should set showSuccessDialog to true', () => {
+    const newState = sitesReducer(initialState, setShowSuccessDialog(true))
+    expect(newState.showSuccessDialog).toEqual(true)
+  })
+
+  test('should have fulfilled createSites without errors', () => {
+    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [] })
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.showSuccessDialog).toEqual(true)
+  })
+
+  test('should have fulfilled createSites with errors', () => {
+    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.errors.length).toEqual(1)
+    expect(newState.showSuccessDialog).toEqual(false)
+  })
+
+  test('should select a Parent site by id', () => {
+    const parentSite = selectSiteById({ sites: stateWithParentWithChild }, '1234')
+    expect(parentSite).not.toBe(undefined)
+  })
+
+  test('should select a Child site by id', () => {
+    const childSite = selectSiteById({ sites: stateWithParentWithChild }, '5678')
+    expect(childSite).not.toBe(undefined)
+  })
+
+  test('should return undefiend on getting site by unexisting id', () => {
+    const site = selectSiteById({ sites: stateWithParentWithChild }, 'abc')
+    expect(site).toBe(undefined)
   })
 })
