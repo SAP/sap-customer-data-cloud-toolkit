@@ -35,7 +35,7 @@ export const getPartnerId = (hash) => {
   return partnerId !== undefined ? partnerId : ''
 }
 
-const getDataCenters = () => dataCenters.filter((dataCenter) => dataCenter.console === window.location.hostname)[0].datacenters
+const getDataCenters = (host = window.location.hostname) => dataCenters.filter((dataCenter) => dataCenter.console === host)[0].datacenters
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
