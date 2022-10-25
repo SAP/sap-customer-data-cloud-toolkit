@@ -20,35 +20,24 @@ const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite =
   baseDomain = generateBaseDomain(baseDomain, { dataCenter, baseDomain: rootBaseDomain })
 
   const site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
-  if (isChildSite) {
-    return site
-  }
-  return { ...site, childSites: getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters) }
+  return isChildSite ? site : { ...site, childSites: getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters) }
 }
 
 const getNewSite = ({ parentSiteTempId = '', dataCenter = '', isChildSite = false } = {}) => {
   const site = { parentSiteTempId, tempId: generateUUID(), baseDomain: '', description: '', dataCenter, isChildSite }
-  if (isChildSite) {
-    return site
-  }
-  return { ...site, childSites: [] }
+  return isChildSite ? site : { ...site, childSites: [] }
 }
 
 const getNewSiteChild = (parentSiteTempId, dataCenter) => getNewSite({ parentSiteTempId, dataCenter, isChildSite: true })
-
-const getSiteById = (sites, tempId) => {
-  return sites.filter((site) => site.tempId === tempId)[0]
-}
 
 export const getPartnerId = (hash) => {
   const [, partnerId] = hash.split('/')
   return partnerId !== undefined ? partnerId : ''
 }
 
-const getDataCenters = () => {
-  const host = window.location.hostname
-  return dataCenters.filter((dataCenter) => dataCenter.console === host)[0].datacenters
-}
+const getDataCenters = () => dataCenters.filter((dataCenter) => dataCenter.console === window.location.hostname)[0].datacenters
+
+const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
 export const siteSlice = createSlice({
   name: 'sites',
