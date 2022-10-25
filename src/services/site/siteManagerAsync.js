@@ -7,20 +7,6 @@ class SiteManagerAsync {
     this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
   }
 
-  // async create(siteHierarchy) {
-  //   console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
-
-  //   let responses = []
-  //   for (const site of siteHierarchy.sites) {
-  //     responses = responses.concat(await this.#createSiteHierarchy(site))
-  //     if (this.#isAnyResponseError(responses)) {
-  //       await this.#rollbackCreatedSites(responses, site.dataCenter)
-  //       break
-  //     }
-  //   }
-  //   return responses
-  // }
-
   create(siteHierarchy) {
     console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
 
@@ -31,34 +17,22 @@ class SiteManagerAsync {
       promises[i] = this.#createSiteHierarchy(site)
     }
     return Promise.all(promises)
-      .then((values) => {
-        console.log(`SiteManagerAsync.create then ${JSON.stringify(values)}`)
-        // responses.push(values.data)
-        // console.log(`SiteManagerAsync.create2 then ${JSON.stringify(responses)}`)
-        // console.log(`size2=${responses.length}`)
-        // return responses
-        return values
-      })
-      .then(async (responses) => {
-        console.log('SiteManagerAsync.then rollback')
-        if (this.#isAnyResponseError(responses)) {
-          //await this.#rollbackCreatedSites(responses, site.dataCenter)
-          console.log(`SiteManagerAsync.before rollbackHierarchies ${JSON.stringify(responses)}`)
-          //responses = await this.#rollbackHierarchies(responses)
-          return this.#rollbackHierarchies(responses)
-          //await this.#rollbackCreatedSites(responses[0], 'us1')
+      .then((siteHierarchyCreatedResponses) => {
+        console.log(`SiteManagerAsync.create then ${JSON.stringify(siteHierarchyCreatedResponses)}`)
+        if (this.#isAnyResponseError(siteHierarchyCreatedResponses)) {
+          console.log(`SiteManagerAsync.before rollbackHierarchies ${JSON.stringify(siteHierarchyCreatedResponses)}`)
+          return this.#rollbackHierarchies(siteHierarchyCreatedResponses)
         }
-        return responses
+        return siteHierarchyCreatedResponses
       })
-      .then((values) => {
-        console.log(`SiteManagerAsync.after rollbackHierarchies ${JSON.stringify(values)}`)
+      .then((rollbackHierarchiesResponses) => {
+        console.log(`SiteManagerAsync.after rollbackHierarchies ${JSON.stringify(rollbackHierarchiesResponses)}`)
         // nothing to do, just making sure that rollback was finished
-        return values
+        return rollbackHierarchiesResponses
       })
-      .catch((values) => {
-        console.log(`SiteManagerAsync.create catch ${JSON.stringify(values)}`)
-        //responses.push(values)
-        return values
+      .catch((error) => {
+        console.log(`SiteManagerAsync.create catch ${error}`)
+        return error
       })
   }
 
@@ -74,15 +48,15 @@ class SiteManagerAsync {
       if (childSites && childSites.length > 0) {
         promises = this.#createChildren(hierarchy.childSites, response.apiKey)
         return Promise.all(promises)
-          .then((values) => {
-            console.log(`SiteManagerAsync.createSiteHierarchy then ${JSON.stringify(values)}`)
-            responses.push(...values)
+          .then((childrenCreatedResponses) => {
+            console.log(`SiteManagerAsync.createSiteHierarchy then ${JSON.stringify(childrenCreatedResponses)}`)
+            responses.push(...childrenCreatedResponses)
             console.log(`SiteManagerAsync.createSiteHierarchy2 then ${JSON.stringify(responses)}`)
             return responses
           })
-          .catch((values) => {
-            console.log(`SiteManagerAsync.create catch ${JSON.stringify(values)}`)
-            return values
+          .catch((error) => {
+            console.log(`SiteManagerAsync.create catch ${error}`)
+            return error
           })
       }
     }
@@ -221,9 +195,9 @@ class SiteManagerAsync {
         console.log(`SiteManagerAsync.rollbackHierarchies then ${JSON.stringify(responses)}`)
         return responses
       })
-      .catch((values) => {
-        console.log(`SiteManagerAsync.rollbackHierarchies catch ${JSON.stringify(values)}`)
-        return values
+      .catch((error) => {
+        console.log(`SiteManagerAsync.rollbackHierarchies catch ${error}`)
+        return error
       })
   }
   async #rollbackCreatedSites(responses, dataCenter) {

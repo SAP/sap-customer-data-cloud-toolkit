@@ -294,6 +294,43 @@ function createParentWithTwoChildRequest() {
   return clone
 }
 
+function createObject(numberOfParents, numberOfChildrenPerParent) {
+  let obj = { sites: [], partnerID: 'partnerId', userKey: 'userKey', secret: 'secret' }
+  for (let p = 0; p < numberOfParents; ++p) {
+    const parent = createParent(p)
+    obj.sites.push(parent)
+    for (let c = 0; c < numberOfChildrenPerParent; ++c) {
+      const child = createChild(parent, c)
+      parent.childSites.push(child)
+    }
+  }
+  console.log(`Created Object ${JSON.stringify(obj)}`)
+  return obj
+}
+
+function createParent(id) {
+  return {
+    baseDomain: `p${id}.com`,
+    description: `parent ${id} description`,
+    dataCenter: 'us1',
+    isChildSite: false,
+    tempId: `p${id}`,
+    parentSiteId: '',
+    childSites: [],
+  }
+}
+
+function createChild(parent, id) {
+  return {
+    baseDomain: `${parent.tempId}.c${id}.com`,
+    description: `${parent.tempId} child ${id} description`,
+    dataCenter: `${parent.dataCenter}`,
+    isChildSite: true,
+    tempId: `${parent.tempId}c${id}`,
+    parentSiteId: `p${id}`,
+  }
+}
+
 function verifyResponseIsOk(response) {
   expect(response.statusCode).toBeDefined()
   expect(response.statusCode).toEqual(HttpStatus.OK)
@@ -341,6 +378,7 @@ export {
   createParentWithOneChildRequest,
   createParentWithTwoChildRequest,
   createMultipleParentWithMultipleChildrenRequest,
+  createObject,
   verifyResponseIsOk,
   verifyResponseIsNotOk,
 }
