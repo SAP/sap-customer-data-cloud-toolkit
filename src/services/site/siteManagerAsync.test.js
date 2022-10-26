@@ -99,6 +99,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -121,6 +122,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -150,6 +152,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -189,6 +193,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -220,6 +226,7 @@ describe('Site manager async test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
@@ -236,7 +243,7 @@ describe('Site manager async test suite', () => {
 
   test('delete single site with site manager', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
@@ -249,7 +256,7 @@ describe('Site manager async test suite', () => {
 
   test('delete site with site members', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -258,27 +265,26 @@ describe('Site manager async test suite', () => {
     let response = await siteManager.deleteSites(['####'])
 
     expect(response.length).toBe(2)
-    expect(response[0]).toBeDefined()
-    expect(response[0].statusCode).toBe(200)
-    expect(response[1]).toBeDefined()
-    expect(response[1].statusCode).toBe(200)
+    TestData.verifyResponseIsOk(response[0], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[1], TestData.sdExpectedGigyaResponseDeletedSite)
   })
 
   test('delete site already deleted', async () => {
     axios.mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
     let response = await siteManager.deleteSites(['####'])
-    expect(response.length).toBe(0)
+    expect(response.length).toBe(1)
+    TestData.verifyResponseIsNotOk(response[0], TestData.sdSiteAlreadyDeleted)
   })
 
   test('delete 3 sites: 2 sites with multiple members and 1 site already deleted', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -286,19 +292,19 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
     let response = await siteManager.deleteSites(['####', '####2', '####3'])
-    expect(response.length).toBe(4)
-    expect(response[0].statusCode).toBe(200)
-    expect(response[1].statusCode).toBe(200)
-    expect(response[2].statusCode).toBe(200)
-    expect(response[3].statusCode).toBe(200)
+    expect(response.length).toBe(5)
+    TestData.verifyResponseIsOk(response[0], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[1], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[2], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[3], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsNotOk(response[4], TestData.sdSiteAlreadyDeleted)
   })
 
   test('delete site invalid API', async () => {
     axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidAPI })
 
     let response = await siteManager.deleteSites(['####'])
-    expect(response[0].statusCode).toBe(400)
-    expect(response[0].errorMessage).toBe(TestData.invalidApiParam)
+    TestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
   })
 })
 

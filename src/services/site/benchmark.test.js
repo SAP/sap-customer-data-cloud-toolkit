@@ -90,6 +90,10 @@ describe('Benchmark test suite', () => {
         const response = { data: TestData.scExpectedGigyaResponseNotOk }
         console.log(`server response=${JSON.stringify(response)}`)
         return response
+      } else if (axiosConfig.data.has('siteConfigParameters')) {
+        const response = { data: TestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildrenPerParent) }
+        console.log(`server response=${JSON.stringify(response)}`)
+        return response
       } else {
         const response = { data: TestData.expectedGigyaResponseOk }
         console.log(`server response=${JSON.stringify(response)}`)

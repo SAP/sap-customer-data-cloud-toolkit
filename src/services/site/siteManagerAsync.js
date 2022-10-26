@@ -40,6 +40,7 @@ class SiteManagerAsync {
     let responses = []
     let response = await this.#createParent(hierarchy)
     response = this.#enrichResponse(response.data, hierarchy.tempId)
+    this.#addIsChildSiteToResponse(response, false)
     responses.push(response)
     let promises = []
 
@@ -80,6 +81,7 @@ class SiteManagerAsync {
     const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, site.dataCenter)
     let childResponse = (await this.#createSite(site)).data
     childResponse = this.#enrichResponse(childResponse, site.tempId)
+    this.#addIsChildSiteToResponse(childResponse, true)
     console.log(`SiteManagerAsync.createSiteAndConnect siteCreated ${JSON.stringify(childResponse)}`)
     if (this.#isSuccessful(childResponse)) {
       const scResponse = (await siteConfigurator.connectAsync(parentApiKey, childResponse.apiKey)).data
@@ -110,6 +112,16 @@ class SiteManagerAsync {
     return resp
   }
 
+  #addApiKeyToResponse(response, apiKey) {
+    response.apiKey = apiKey
+  }
+
+  // The function addIsChildSiteToResponse is used to set in the response if it belongs to a parent or child site.
+  // It will be useful to speed up the sites rollback, passing only the parent apiKey to deleteSites method
+  #addIsChildSiteToResponse(response, isChild) {
+    response.isChildSite = isChild
+  }
+
   #isSuccessful(response) {
     return response.errorCode === 0
   }
@@ -124,11 +136,8 @@ class SiteManagerAsync {
 
     for (const site of targetApiKeys) {
       const siteConfig = await siteConfigurator.getSiteConfig(site)
-      if (this.#isSiteAlreadyDeleted(siteConfig)) {
-        continue
-      }
-
-      if (!this.#isSuccessful(siteConfig)) {
+      if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
+        this.#addApiKeyToResponse(siteConfig, site.apiKey)
         responses.push(siteConfig)
         continue
       }
@@ -138,12 +147,14 @@ class SiteManagerAsync {
 
       // Delete site members
       if (siteMembers.length > 0) {
+        console.log(`ApiKey ${site} contains ${siteMembers.length} site members`)
         const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
         responses.push(...memberResponses)
       }
 
       // Delete parent site
       const response = await this.siteService.delete(site, dataCenter)
+      this.#addApiKeyToResponse(response, site)
       responses.push(response)
     }
     return responses
@@ -153,6 +164,7 @@ class SiteManagerAsync {
     const responses = []
     for (const site of siteMembers) {
       const response = await this.siteService.delete(site, dataCenter)
+      this.#addApiKeyToResponse(response, site)
       responses.push(response)
     }
     return responses
@@ -188,7 +200,7 @@ class SiteManagerAsync {
   async #rollbackHierarchies(hierarchiesResponses) {
     let promises = []
     for (let i = 0; i < hierarchiesResponses.length; ++i) {
-      promises[i] = this.#rollbackCreatedSites(hierarchiesResponses[i], 'us1')
+      promises[i] = this.#rollbackCreatedSites(hierarchiesResponses[i])
     }
     return Promise.all(promises)
       .then((responses) => {
@@ -200,27 +212,31 @@ class SiteManagerAsync {
         return error
       })
   }
-  async #rollbackCreatedSites(responses, dataCenter) {
+
+  async #rollbackCreatedSites(responses) {
     console.log(`SiteManagerAsync.rollbackCreatedSites ${JSON.stringify(responses)}`)
-    const apiKeys = this.#getApiKeysCreatedInReverseOrder(responses)
-    for (let i = 0; i < apiKeys.length; ++i) {
-      const response = await this.siteService.delete(apiKeys[i], dataCenter)
-      //console.log(`SiteManagerAsync.rollbackCreatedSites deleted response ${JSON.stringify(response)}`)
-      if (this.#isSuccessful(response)) {
-        responses[i].deleted = true
+    const parentSiteResponse = responses.find((response) => {
+      return response.isChildSite === false
+    })
+    if (this.#shouldBeRollbacked(parentSiteResponse)) {
+      const deleteResponses = await this.deleteSites([parentSiteResponse.apiKey])
+      for (const response of deleteResponses) {
+        //console.log(`SiteManagerAsync.rollbackCreatedSites deleted response ${JSON.stringify(response)}`)
+        if (this.#isSuccessful(response)) {
+          this.#findSiteInResponsesAndMarkItAsDeleted(responses, response.apiKey)
+        }
       }
     }
     return responses
   }
 
-  #getApiKeysCreatedInReverseOrder(responses) {
-    const apiKeysCreated = []
-    for (let i = responses.length - 1; i >= 0; --i) {
-      if (this.#shouldBeRollbacked(responses[i])) {
-        apiKeysCreated.push(responses[i].apiKey)
-      }
+  #findSiteInResponsesAndMarkItAsDeleted(responses, apiKey) {
+    const response = responses.find((response) => {
+      return response.apiKey === apiKey && response.deleted === false
+    })
+    if (response) {
+      response.deleted = true
     }
-    return apiKeysCreated
   }
 }
 

@@ -16,9 +16,10 @@ const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
 const child1SiteId = 'C1'
 const child2SiteId = 'C2'
+const apiKey = 'apiKey'
 
 const expectedGigyaResponseOk = {
-  apiKey: 'apiKey',
+  apiKey: apiKey,
   statusCode: 200,
   errorCode: 0,
   statusReason: 'OK',
@@ -187,6 +188,7 @@ const expectedGigyaResponseInvalidAPI = {
   time: Date.now(),
 }
 
+// this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
 const scGetSiteConfigSuccessfully = {
   callId: 'callId',
   errorCode: 0,
@@ -218,6 +220,7 @@ const scGetSiteConfigSuccessfully = {
   funCaptcha: {},
 }
 
+// this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
 const scGetSiteConfigSuccessfullyMultipleMember = {
   callId: 'callId',
   errorCode: 0,
@@ -238,7 +241,7 @@ const scGetSiteConfigSuccessfullyMultipleMember = {
     encryptPII: true,
   },
   siteGroupConfig: {
-    members: ['member1'],
+    members: [apiKey],
     enableSSO: false,
   },
   trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
@@ -331,6 +334,43 @@ function createChild(parent, id) {
   }
 }
 
+function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
+  const getSiteConfig = {
+    callId: 'callId',
+    errorCode: 0,
+    apiVersion: 2,
+    statusCode: 200,
+    statusReason: 'OK',
+    time: Date.now(),
+    baseDomain: 'a_b_c_',
+    dataCenter: 'au1',
+    trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
+    tags: [],
+    description: 'site',
+    captchaProvider: 'Google',
+    settings: {
+      CNAME: '',
+      shortURLDomain: '',
+      shortURLRedirMethod: 'js',
+      encryptPII: true,
+    },
+    siteGroupConfig: {
+      members: [],
+      enableSSO: false,
+    },
+    trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
+    enableDataSharing: true,
+    isCDP: false,
+    invisibleRecaptcha: {},
+    recaptchaV2: {},
+    funCaptcha: {},
+  }
+  for (let i = 0; i < numberOfMembers; ++i) {
+    getSiteConfig.siteGroupConfig.members.push(apiKey)
+  }
+  return getSiteConfig
+}
+
 function verifyResponseIsOk(response) {
   expect(response.statusCode).toBeDefined()
   expect(response.statusCode).toEqual(HttpStatus.OK)
@@ -345,6 +385,7 @@ function verifyResponseIsOk(response) {
 
 function verifyResponseIsNotOk(response, expectedResponse) {
   expect(response.statusCode).toEqual(expectedResponse.statusCode)
+  expect(response.statusCode).not.toBe(HttpStatus.OK)
   expect(response.statusReason).toEqual(expectedResponse.statusReason)
   expect(response.callId).toBeDefined()
   expect(response.time).toBeDefined()
@@ -368,9 +409,9 @@ export {
   scExpectedGigyaResponseNotOk,
   sdExpectedGigyaResponseDeletedSite,
   expectedGigyaResponseInvalidAPI,
-  scGetSiteConfigSuccessfully,
+  scGetSiteConfigSuccessfully, // this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
   sdExpectedDeleteTokenSuccessfully,
-  scGetSiteConfigSuccessfullyMultipleMember,
+  scGetSiteConfigSuccessfullyMultipleMember, // this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
   sdSiteAlreadyDeleted,
   sdDeleteGroupSitesFirst,
   invalidApiParam,
@@ -379,6 +420,7 @@ export {
   createParentWithTwoChildRequest,
   createMultipleParentWithMultipleChildrenRequest,
   createObject,
+  getSiteConfigSuccessfullyMultipleMember,
   verifyResponseIsOk,
   verifyResponseIsNotOk,
 }
