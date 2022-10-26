@@ -1,10 +1,17 @@
 .cdc-tools-app {
-  background-color: var(--sapBackgroundColor, #f7f7f7);
   position: absolute;
-  bottom: 0;
-  right: 0;
+  top: 72px;
+  right: 0px;
+  height: 0;
   width: calc(100% - 241px);
-  height: calc(100% - 72px);
+}
+
+.cdc-tools-app-container {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: auto;
+  width: 100%;
 }
 
 .cdc-tools-app {
@@ -18,4 +25,8 @@
 }
 .cdc-tools-app-container.show-cdc-tools-app-container {
   display: block;
+}
+
+.cdc-tools-background {
+  background-color: var(--sapBackgroundColor, #f7f7f7);
 }

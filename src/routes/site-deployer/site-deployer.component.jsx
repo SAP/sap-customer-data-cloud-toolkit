@@ -173,7 +173,7 @@ const SiteDeployer = () => {
   return (
     <>
       <Bar design="Header" startContent={<BarStart />}></Bar>
-      <div style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
+      <div className="cdc-tools-background" style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
             <FlexBox style={spacing.sapUiSmallMarginBottom}>

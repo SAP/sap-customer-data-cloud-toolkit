@@ -303,10 +303,12 @@
                               </li>
                               <li fd-nested-list-item=""
                                 class="fd-nested-list__item cdc-tools--menu-item cdc-tools--mock">
-                                <!-- <a fd-nested-list-link="" href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/email-templates" -->
                                 <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/email-templates"
+                                  class="fd-nested-list__link">
+                                  <!-- <a fd-nested-list-link=""
                                   href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/cdc-tools/mock-email-templates" tabindex="0"
-                                  class="fd-nested-list__link" name="mock-email-templates">
+                                  class="fd-nested-list__link" name="mock-email-templates"> -->
                                   <span fd-nested-list-title="" class="fd-nested-list__title">Email Templates</span>
                                 </a>
                               </li>
@@ -606,7 +608,8 @@
     <!--
       E-mail Templates
     -->
-    <email-templates-web-app name="mock-email-templates">
+    <email-templates-web-app name="mock-email-templates" route="/user-interfacing/email-templates"
+      style="background-color: var(--sapBackgroundColor, #f7f7f7);">
       <div cdkscrollable="" class="content">
         <router-outlet></router-outlet>
         <email-templates-container _nghost-yea-c103="">
