@@ -1,8 +1,9 @@
 import { ThemeProvider } from '@ui5/webcomponents-react'
 
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
+import EmailTemplates from './routes/email-templates/email-templates.component'
 import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
-import { ROUTE_CONTAINER_CLASS, TAB_SITE_DEPLOYER } from './inject/constants'
+import { ROUTE_CONTAINER_CLASS, ROUTE_SITE_DEPLOYER, ROUTE_EMAIL_TEMPLATES, ROUTE_COPY_CONFIG_EXTENDED } from './inject/constants'
 
 import './App.css'
 
@@ -10,10 +11,15 @@ function App() {
   return (
     <ThemeProvider>
       <div className="App">
-        <div className={ROUTE_CONTAINER_CLASS} name={TAB_SITE_DEPLOYER}>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_SITE_DEPLOYER}>
           <SiteDeployer />
         </div>
-        <CopyConfigurationExtended />
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_EMAIL_TEMPLATES}>
+          <EmailTemplates />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_COPY_CONFIG_EXTENDED}>
+          <CopyConfigurationExtended />
+        </div>
       </div>
     </ThemeProvider>
   )

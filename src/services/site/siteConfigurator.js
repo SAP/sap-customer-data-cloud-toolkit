@@ -14,7 +14,7 @@ class SiteConfigurator {
   }
 
   async connect(parentApiKey, childApiKey) {
-    console.log(`Connecting site ${childApiKey} to ${parentApiKey}`)
+    // console.log(`Connecting site ${childApiKey} to ${parentApiKey}`)
     const response = await this.connectAsync(parentApiKey, childApiKey).catch(function (error) {
       return SiteConfigurator.#generateErrorResponse(error)
     })

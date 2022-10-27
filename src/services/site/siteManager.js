@@ -8,7 +8,7 @@ class SiteManager {
   }
 
   async create(siteHierarchy) {
-    console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
+    // console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
 
     let responses = []
     for (const site of siteHierarchy.sites) {
@@ -64,9 +64,9 @@ class SiteManager {
       description: site.description,
       dataCenter: site.dataCenter,
     }
-    console.log(`Creating site ${site.baseDomain}`)
+    // console.log(`Creating site ${site.baseDomain}`)
     const response = await this.siteService.create(body)
-    console.log('createSite.response=' + JSON.stringify(response))
+    // console.log('createSite.response=' + JSON.stringify(response))
     return this.#enrichResponse(response, site.tempId)
   }
 

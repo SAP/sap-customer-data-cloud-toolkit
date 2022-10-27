@@ -1,10 +1,10 @@
 import { querySelectorAllShadows, watchElement, htmlToElem, getInnerText } from './utils'
-import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS, COMMON_URL_PART } from './constants'
+import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS } from './constants'
 
 export const menuElementHtml = `\
 <li fd-nested-list-item="" class="fd-nested-list__item ${MENU_ELEMENT_CLASS}">\
-  <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}/${COMMON_URL_PART}/{{tabName}}" tabindex="0" 
-class="fd-nested-list__link" name="{{tabName}}">\
+  <a fd-nested-linklist-="" href="#/{{partnerId}}/{{apiKey}}{{route}}" tabindex="0" 
+class="fd-nested-list__link">\
     <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--product" role="presentation"></span>-->\
     <span fd-nested-list-title="" class="fd-nested-list__title">\
       {{name}}\
@@ -28,11 +28,11 @@ export const initMenuExtension = (menuElements = []) => {
     const elem = menuElements.filter((el) => el.appendAfterText === getInnerText(li.querySelector('.fd-nested-list__title')))
 
     if (elem.length) {
-      const { tabName, name } = elem[0]
+      const { route, name } = elem[0]
       let elemHtml = menuElementHtml
       elemHtml = elemHtml.replaceAll('{{partnerId}}', partnerId)
       elemHtml = elemHtml.replaceAll('{{apiKey}}', apiKey)
-      elemHtml = elemHtml.replaceAll('{{tabName}}', tabName)
+      elemHtml = elemHtml.replaceAll('{{route}}', route)
       elemHtml = elemHtml.replaceAll('{{name}}', name)
 
       const newElem = htmlToElem(elemHtml)

@@ -24,10 +24,32 @@
     -->
   <title>CDC Automation Tools</title>
 
+  <!-- General mock styles -->
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-variables.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-0.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-1.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/demo-environment-2.css">
+
+  <!-- E-mail templates mock styles -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/1.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/2.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/3.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/4.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/5.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/6.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/7.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/8.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/9.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/10.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/11.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/12.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/13.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/14.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/15.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/16.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/17.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/18.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/19.css">
 </head>
 
 <body>
@@ -279,20 +301,22 @@
                                   <span fd-nested-list-title="" class="fd-nested-list__title">Flow Builder</span>
                                 </a>
                               </li>
-                              <li fd-nested-list-item="" class="fd-nested-list__item">
+                              <li fd-nested-list-item=""
+                                class="fd-nested-list__item cdc-tools--menu-item cdc-tools--mock">
                                 <a fd-nested-list-link=""
                                   href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/email-templates"
-                                  tabindex="0" class="fd-nested-list__link">
-                                  <span fd-nested-list-title="" class="fd-nested-list__title">Email
-                                    Templates</span>
+                                  class="fd-nested-list__link">
+                                  <!-- <a fd-nested-list-link=""
+                                  href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/cdc-tools/mock-email-templates" tabindex="0"
+                                  class="fd-nested-list__link" name="mock-email-templates"> -->
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">Email Templates</span>
                                 </a>
                               </li>
                               <li fd-nested-list-item="" class="fd-nested-list__item">
                                 <a fd-nested-list-link=""
                                   href="#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/sms-templates" tabindex="0"
                                   class="fd-nested-list__link">
-                                  <span fd-nested-list-title="" class="fd-nested-list__title">SMS
-                                    Templates</span>
+                                  <span fd-nested-list-title="" class="fd-nested-list__title">SMS Templates</span>
                                 </a>
                               </li>
                               <li fd-nested-list-item="" class="fd-nested-list__item">
@@ -563,27 +587,159 @@
               </fd-breadcrumb>
             </bread-crumbs>
             <router-outlet _ngcontent-kye-c103=""></router-outlet>
-            <app-not-found _nghost-kye-c102="">
-              <h2 _ngcontent-kye-c102="">Page not available</h2>
+            <app-not-found _nghost-kye-c102="" style="background: none;">
+              <h2 _ngcontent-kye-c102="">Development Environment</h2>
               <div _ngcontent-kye-c102="" class="not-found-msg">
-                This is a development environment only for CDC Automation Tools.
+                Only necessary elements and pages are available for development
               </div>
-              <!-- <div _ngcontent-kye-c102="" class="not-found-msg">
-                The currently active partner or site does not have access to
-                this page.
-              </div> -->
-              <!-- <div _ngcontent-kye-c102="" class="not-found-msg">
-                Please select another page from the left-hand menu, or choose
-                a different parter/site from the Site Selector at the top of
-                the page.
-              </div> -->
+
             </app-not-found>
+
           </div>
         </div>
       </fd-busy-indicator>
     </app-root>
   </div>
   <div id="root"></div>
+
+
+
+  <mock-container-templates>
+    <!--
+      E-mail Templates
+    -->
+    <email-templates-web-app name="mock-email-templates" route="/user-interfacing/email-templates"
+      style="background-color: var(--sapBackgroundColor, #f7f7f7);">
+      <div cdkscrollable="" class="content">
+        <router-outlet></router-outlet>
+        <email-templates-container _nghost-yea-c103="">
+          <div _ngcontent-yea-c103="" fd-action-bar="" class="fd-action-bar">
+            <div _ngcontent-yea-c103="" fd-action-bar-header="" class="fd-action-bar__header">
+              <!-- <h2 _ngcontent-yea-c103="" fd-action-bar-title="" class="fd-action-bar__title">
+                  <h2 class="fd-title fd-title--h3">Email Templates</h2>
+                </h2> -->
+              <h2 class="fd-title fd-title--h3">Email Templates</h2>
+              <div _ngcontent-yea-c103="" fd-action-bar-actions="" class="fd-action-bar__actions"></div>
+            </div>
+          </div>
+          <div _ngcontent-yea-c103="" class="email-templates-page">
+            <div _ngcontent-yea-c103="" class="email-templates-page__content">
+              <fd-busy-indicator _ngcontent-yea-c103="" arialabel="loading" role="presentation" tabindex="-1"
+                aria-busy="false" aria-live="polite" aria-label="loading"
+                class="fd-busy-indicator__container fd-busy-indicator__container--inline">
+                <email-templates _ngcontent-yea-c103="" _nghost-yea-c102="">
+                  <p _ngcontent-yea-c102="" class="title-emails"> Use the Email Templates Information
+                    published on non-SAP site page in the Console to design the emails that are sent out to
+                    users as part of their site journey.
+                  </p>
+                  <fd-card _ngcontent-yea-c102="" class="fd-card fd-card--standard" id="fd-card-id-4" role="region">
+                    <fd-card-header _ngcontent-yea-c102="" class="fd-card__header" tabindex="0">
+                      <div class="fd-card__header-text">
+                        <div class="fd-card__title-area">
+                          <h2 _ngcontent-yea-c102="" fd-card-title="" class="fd-card__title">Templates</h2>
+                        </div>
+                      </div>
+                    </fd-card-header>
+                    <fd-card-content _ngcontent-yea-c102="" class="fd-card__content">
+                      <div _ngcontent-yea-c102="" fd-form-item="" class="email-card-content fd-form-item">
+                        <label _ngcontent-yea-c102="" fd-form-label=""
+                          class="select-template fd-form-label__wrapper fd-form-label__wrapper--inline-help fd-form-label__wrapper--inline-help--after"><span
+                            class="fd-form-label">Select email templates:
+                          </span>
+                        </label>
+                        <fd-select _ngcontent-yea-c102="" placeholder="Select email templates"
+                          class="full-width fd-select-custom-class">
+                          <div class="fd-select">
+                            <fd-popover additionalbodyclass="fd-popover-custom-list" fillcontrolmode="at-least"
+                              id="fd-popover-4" class="fd-popover-custom">
+                              <div cdkoverlayorigin="" class="fd-popover__control">
+                                <fd-popover-control>
+                                  <div role="list" aria-live="polite" class="fd-select__control" tabindex="0"
+                                    id="fd-select-4" aria-active="false" aria-expanded="false" aria-disabled="false"
+                                    aria-readonly="false" aria-controls="fd-select-4-list-box" aria-haspopup="true"
+                                    aria-required="false" title="Account Deletion Confirmation"
+                                    aria-label="Select email templates" aria-labelledby="Select email templates"
+                                    aria-selected="true">
+                                    <div role="listitem" class="fd-select__text-content"
+                                      aria-label="Account Deletion Confirmation"> Account Deletion
+                                      Confirmation
+                                    </div><button fd-button="" tabindex="-1"
+                                      class="fd-button fd-button--standard fd-button--transparent fd-select__button"
+                                      type="button">
+                                      <fd-icon role="presentation" class="sap-icon--slim-arrow-down">
+                                      </fd-icon>
+                                    </button>
+                                  </div>
+                                </fd-popover-control>
+                              </div>
+                            </fd-popover>
+                          </div>
+                        </fd-select>
+                        <div _ngcontent-yea-c102="" class="email-type-subtitle">Define the account deletion
+                          confirmation email settings and templates.</div>
+                      </div>
+                    </fd-card-content>
+                  </fd-card>
+                  <fd-layout-grid _ngcontent-yea-c102="" class="fd-container email-template-content-wrapper">
+                    <div _ngcontent-yea-c102="" fdlayoutgridcol="12" colmd="12" collg="4" colxl="5"
+                      class="fd-col fd-col--12 fd-col-md--12 fd-col-lg--4 fd-col-xl--5"> Account Deletion
+                      Confirmation: <div _ngcontent-yea-c102="" class="locales-content">
+                        <languages-list _ngcontent-yea-c102="" _nghost-yea-c98="">
+                          <div _ngcontent-yea-c98="" class="locale-create"><button _ngcontent-yea-c98=""
+                              id="create-locale-btn" fd-button="" label="Create New Locale"
+                              class="fd-button fd-button--standard" type="button"><span class="fd-button__text">
+                                Create New Locale
+                              </span>
+                            </button></div>
+                        </languages-list>
+                      </div>
+                    </div>
+                    <div _ngcontent-yea-c102="" fdlayoutgridcol="12" colmd="12" collg="8" colxl="7"
+                      class="fd-col fd-col--12 fd-col-md--12 fd-col-lg--8 fd-col-xl--7">
+                      <div _ngcontent-yea-c102="" class="template-content">
+                        <email-template-form _ngcontent-yea-c102="" _nghost-yea-c101="">
+                          <div _ngcontent-yea-c101="" class="empty-locales">
+                            <figure _ngcontent-yea-c101="" class="figure"><img _ngcontent-yea-c101=""
+                                src="/images/console-mock/arrow.svg" alt="pointer image"
+                                class="figure__img figure__img_side"><img _ngcontent-yea-c101=""
+                                src="/images/console-mock/empty-list.svg" alt="empty list image" class="figure__img">
+                              <figcaption _ngcontent-yea-c101="">
+                                <h3 _ngcontent-yea-c101="" class="figure__title">Press “Create New Locale” to
+                                  begin.</h3>
+                                <p _ngcontent-yea-c101="" class="figure__description"> Create a locale to open
+                                  the HTML field. </p>
+                              </figcaption>
+                            </figure>
+                          </div>
+                        </email-template-form>
+                      </div>
+                    </div>
+                  </fd-layout-grid>
+                </email-templates>
+              </fd-busy-indicator>
+            </div>
+            <div _ngcontent-yea-c103="" class="sticky-footer">
+              <fd-layout-panel _ngcontent-yea-c103="" class="fd-has-display-block fd-layout-panel">
+                <fd-layout-panel-header _ngcontent-yea-c103="" class="fd-layout-panel__header">
+                  <fd-layout-panel-actions _ngcontent-yea-c103="" class="fd-layout-panel__actions"><button
+                      _ngcontent-yea-c103="" fd-button="" type="submit" id="save-main"
+                      class="fd-button fd-button--emphasized fd-button--compact is-disabled" disabled="true">
+                      Save
+                    </button><button _ngcontent-yea-c103="" type="button" fd-button="" id="cancel-main"
+                      class="fd-button fd-button--transparent fd-button--compact"> Cancel
+                    </button></fd-layout-panel-actions>
+                </fd-layout-panel-header>
+              </fd-layout-panel>
+            </div>
+          </div>
+        </email-templates-container>
+      </div>
+
+    </email-templates-web-app>
+
+  </mock-container-templates>
+  <script src="scripts/mock-container-templates/mock-nav-utils.js"></script>
+  <script src="scripts/mock-container-templates/mock-nav.js"></script>
 </body>
 
 </html>
