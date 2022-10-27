@@ -11,7 +11,12 @@ const init = () => {
 
   // Overwrite .is-selected management behaviour for menu buttons in CDC Console (fix behaviour when user selects an extension tab and goes back to the previous tab)
   const menuElements = querySelectorAllShadows('.fd-nested-list__link, .fd-nested-list__content')
-  menuElements.forEach((element) => element.addEventListener('click', (e) => setSelectedMenuElement(e.currentTarget)))
+  menuElements.forEach((element) =>
+    element.addEventListener('click', (e) => {
+      clearSelectionMenuLinks()
+      setSelectedMenuElement(e.currentTarget)
+    })
+  )
 }
 
 export const getRouteFromHash = (locationHash = window.location.hash) =>

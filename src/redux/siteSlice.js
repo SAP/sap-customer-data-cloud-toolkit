@@ -146,8 +146,8 @@ export const siteSlice = createSlice({
       }
     })
     builder.addCase(createSites.rejected, (state, action) => {
-      console.log('createSites.rejected', { action })
       state.isLoading = false
+      state.errors = [action]
     })
   },
 })
