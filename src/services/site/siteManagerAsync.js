@@ -130,45 +130,136 @@ class SiteManagerAsync {
     return response.errorCode === 0 || (response.errorCode !== 0 && response.tempId && response.apiKey && response.apiKey.length > 0)
   }
 
+  // async deleteSites(targetApiKeys) {
+  //   const responses = []
+  //   const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
+
+  //   for (const site of targetApiKeys) {
+  //     const siteConfig = await siteConfigurator.getSiteConfig(site)
+  //     if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
+  //       this.#addApiKeyToResponse(siteConfig, site.apiKey)
+  //       responses.push(siteConfig)
+  //       continue
+  //     }
+
+  //     const dataCenter = siteConfig.dataCenter
+  //     const siteMembers = siteConfig.siteGroupConfig.members
+
+  //     // Delete site members
+  //     if (siteMembers.length > 0) {
+  //       console.log(`ApiKey ${site} contains ${siteMembers.length} site members`)
+  //       const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
+  //       responses.push(...memberResponses)
+  //     }
+
+  //     // Delete parent site
+  //     const response = await this.siteService.delete(site, dataCenter)
+  //     this.#addApiKeyToResponse(response, site)
+  //     responses.push(response)
+  //   }
+  //   return responses
+  // }
+
   async deleteSites(targetApiKeys) {
+    const responses = []
+    for (const site of targetApiKeys) {
+      responses.push(this.#deleteSite(site))
+    }
+    //return Promise.all(responses)
+    //return responses
+
+    return Promise.all(responses.flat())
+      .then((deleteResponses) => {
+        console.log(`SiteManagerAsync.deleteSites then ${deleteResponses}`)
+        return deleteResponses.flat()
+      })
+      .catch((error) => {
+        console.log(`SiteManagerAsync.deleteSites catch ${error}`)
+        return error
+      })
+  }
+
+  async #deleteSite(targetApiKey) {
+    console.log(`SiteManagerAsync.#deleteSite Deleting ${targetApiKey}`)
     const responses = []
     const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
 
-    for (const site of targetApiKeys) {
-      const siteConfig = await siteConfigurator.getSiteConfig(site)
-      if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
-        this.#addApiKeyToResponse(siteConfig, site.apiKey)
-        responses.push(siteConfig)
-        continue
-      }
-
-      const dataCenter = siteConfig.dataCenter
-      const siteMembers = siteConfig.siteGroupConfig.members
-
-      // Delete site members
-      if (siteMembers.length > 0) {
-        console.log(`ApiKey ${site} contains ${siteMembers.length} site members`)
-        const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
-        responses.push(...memberResponses)
-      }
-
-      // Delete parent site
-      const response = await this.siteService.delete(site, dataCenter)
-      this.#addApiKeyToResponse(response, site)
-      responses.push(response)
+    let siteConfig = await siteConfigurator.getSiteConfig(targetApiKey)
+    console.log(`SiteManagerAsync.#deleteSite siteConfig response ${JSON.stringify(siteConfig)}`)
+    //siteConfig = siteConfig.data
+    if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
+      this.#addApiKeyToResponse(siteConfig, targetApiKey)
+      responses.push(siteConfig)
+      //return responses
+      return Promise.resolve(responses)
     }
+
+    const dataCenter = siteConfig.dataCenter
+    const siteMembers = siteConfig.siteGroupConfig.members
+
+    // return Promise.all(this.#siteMembersDeleter(siteMembers, dataCenter))
+    //   .then((memberResponses) => {
+    //     console.log(`SiteManagerAsync.#siteMembersDeleter then ${JSON.stringify(memberResponses)}`)
+    //     if (memberResponses.length > 0) {
+    //       responses.push(...memberResponses)
+    //     }
+    //     return this.siteService.delete(targetApiKey, dataCenter)
+    //   })
+    //   .then((parentResponse) => {
+    //     console.log(`SiteManagerAsync.#deleteParent then ${JSON.stringify(parentResponse)}`)
+    //     this.#addApiKeyToResponse(parentResponse, targetApiKey)
+    //     responses.push(parentResponse)
+    //     return responses
+    //   })
+    //   .catch((error) => {
+    //     console.log(`SiteManagerAsync.siteMembersDeleter catch ${error}`)
+    //     return error
+    //   })
+
+    // Delete site members
+    if (siteMembers.length > 0) {
+      console.log(`ApiKey ${targetApiKey} contains ${siteMembers.length} site members`)
+      const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
+      console.log(`SiteManagerAsync.#deleteSite siteMembersDeleter response ${JSON.stringify(memberResponses)}`)
+      responses.push(...memberResponses)
+    }
+
+    // Delete parent site
+    const response = await this.siteService.delete(targetApiKey, dataCenter)
+    console.log(`SiteManagerAsync.#deleteSite parent response ${JSON.stringify(response)}`)
+    this.#addApiKeyToResponse(response, targetApiKey)
+    responses.push(response)
+    console.log(`SiteManagerAsync.#deleteSite all responses ${JSON.stringify(responses)}`)
     return responses
+    //return Promise.resolve(responses)
   }
 
   async #siteMembersDeleter(siteMembers, dataCenter) {
     const responses = []
     for (const site of siteMembers) {
+      //const response = (await this.siteService.delete(site, dataCenter)).data
       const response = await this.siteService.delete(site, dataCenter)
+      console.log(`SiteManagerAsync.#siteMembersDeleter delete ${JSON.stringify(response)}`)
       this.#addApiKeyToResponse(response, site)
       responses.push(response)
     }
     return responses
   }
+
+  // async #siteMembersDeleter(siteMembers, dataCenter) {
+  //   const responses = []
+  //   let promises = []
+  //   for (let i = 0; i < siteMembers.length; ++i) {
+  //     const site = siteMembers[i]
+  //     promises[i] = { apiKey: site, response: this.siteService.delete(site, dataCenter) }
+  //   }
+  //   return Promise.all(promises).then((apiKey, response) => {
+  //     console.log(`SiteManagerAsync.#delete then ${JSON.stringify(response)}`)
+  //     this.#addApiKeyToResponse(response, apiKey)
+  //     responses.push(response)
+  //     return responses
+  //   })
+  // }
 
   #isSiteAlreadyDeleted(res) {
     return res.errorDetails === 'Site was deleted' && res.statusCode === 403
@@ -219,21 +310,25 @@ class SiteManagerAsync {
       return response.isChildSite === false
     })
     if (this.#shouldBeRollbacked(parentSiteResponse)) {
+      //return Promise.all(this.deleteSites([parentSiteResponse.apiKey]))
       const deleteResponses = await this.deleteSites([parentSiteResponse.apiKey])
-      for (const response of deleteResponses) {
-        //console.log(`SiteManagerAsync.rollbackCreatedSites deleted response ${JSON.stringify(response)}`)
+      console.log(`SiteManagerAsync.rollbackCreatedSites deleted responses ${JSON.stringify(deleteResponses)}`)
+      for (const response of deleteResponses.flat()) {
         if (this.#isSuccessful(response)) {
           this.#findSiteInResponsesAndMarkItAsDeleted(responses, response.apiKey)
         }
       }
     }
     return responses
+    //return Promise.resolve([])
   }
 
   #findSiteInResponsesAndMarkItAsDeleted(responses, apiKey) {
+    console.log(`SiteManagerAsync.findSiteInResponsesAndMarkItAsDeleted responses ${JSON.stringify(responses)}`)
     const response = responses.find((response) => {
       return response.apiKey === apiKey && response.deleted === false
     })
+    console.log(`SiteManagerAsync.findSiteInResponsesAndMarkItAsDeleted response ${JSON.stringify(response)}`)
     if (response) {
       response.deleted = true
     }

@@ -248,10 +248,10 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     let response = await siteManager.deleteSites(['####'])
+    console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(1)
-    expect(response[0]).toBeDefined()
-    expect(response[0].statusCode).toBe(200)
+    TestData.verifyResponseIsOk(response[0])
   })
 
   test('delete site with site members', async () => {
@@ -263,16 +263,19 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     let response = await siteManager.deleteSites(['####'])
+    console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(2)
-    TestData.verifyResponseIsOk(response[0], TestData.sdExpectedGigyaResponseDeletedSite)
-    TestData.verifyResponseIsOk(response[1], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[0])
+    TestData.verifyResponseIsOk(response[1])
   })
 
   test('delete site already deleted', async () => {
     axios.mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
     let response = await siteManager.deleteSites(['####'])
+    console.log(`test.response=${JSON.stringify(response)}`)
+
     expect(response.length).toBe(1)
     TestData.verifyResponseIsNotOk(response[0], TestData.sdSiteAlreadyDeleted)
   })
@@ -280,30 +283,33 @@ describe('Site manager async test suite', () => {
   test('delete 3 sites: 2 sites with multiple members and 1 site already deleted', async () => {
     axios
       .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
-      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
 
     let response = await siteManager.deleteSites(['####', '####2', '####3'])
+    console.log(`test.response=${JSON.stringify(response)}`)
+
     expect(response.length).toBe(5)
-    TestData.verifyResponseIsOk(response[0], TestData.sdExpectedGigyaResponseDeletedSite)
-    TestData.verifyResponseIsOk(response[1], TestData.sdExpectedGigyaResponseDeletedSite)
-    TestData.verifyResponseIsOk(response[2], TestData.sdExpectedGigyaResponseDeletedSite)
-    TestData.verifyResponseIsOk(response[3], TestData.sdExpectedGigyaResponseDeletedSite)
+    TestData.verifyResponseIsOk(response[0])
+    TestData.verifyResponseIsOk(response[1])
+    TestData.verifyResponseIsOk(response[2])
+    TestData.verifyResponseIsOk(response[3])
     TestData.verifyResponseIsNotOk(response[4], TestData.sdSiteAlreadyDeleted)
   })
 
   test('delete site invalid API', async () => {
     axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidAPI })
 
-    let response = await siteManager.deleteSites(['####'])
+    const response = await siteManager.deleteSites(['####'])
+    console.log(`test.response=${JSON.stringify(response)}`)
     TestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
   })
 })
