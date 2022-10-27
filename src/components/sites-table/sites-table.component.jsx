@@ -12,7 +12,7 @@ import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
 
-const SitesTable = () => {
+export const SitesTable = () => {
   const sitesStructure = useSelector(selectSites)
   const errorList = useSelector((state) => selectErrors(state))
 
