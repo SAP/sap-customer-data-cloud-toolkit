@@ -189,7 +189,7 @@ export const createSites = createAsyncThunk('service/createSites', async (sites,
       // window.location.hash starts with #/<partnerId>/...
       partnerID: getPartnerId(window.location.hash),
       userKey: state.sites.credentials.userKey,
-      secret: state.sites.credentials.secretKey,
+      secret: state.sites.credentials.userSecret,
     }).create({
       sites,
     })
