@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { generateUUID } from '../utils/generateUUID'
-import { chromeStorageState } from '../inject/chromeStorage'
 import dataCenters from '../dataCenters.json'
 import SiteManager from '../services/site/siteManager'
 
@@ -47,6 +46,10 @@ export const siteSlice = createSlice({
     dataCenters: getDataCenters(),
     errors: [],
     showSuccessDialog: false,
+    credentials: {
+      userKey: '',
+      userSecret: '',
+    },
   },
   reducers: {
     addNewParent: (state) => {
@@ -118,6 +121,12 @@ export const siteSlice = createSlice({
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
     },
+    setUserKey: (state, action) => {
+      state.credentials.userKey = action.payload
+    },
+    setUserSecret: (state, action) => {
+      state.credentials.userSecret = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createSites.pending, (state) => {
@@ -167,17 +176,20 @@ export const {
   clearSites,
   clearErrors,
   setShowSuccessDialog,
+  setUserKey,
+  setUserSecret,
 } = siteSlice.actions
 
 export default siteSlice.reducer
 
-export const createSites = createAsyncThunk('service/createSites', async (sites) => {
+export const createSites = createAsyncThunk('service/createSites', async (sites, { getState }) => {
   try {
+    const state = getState()
     return await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: getPartnerId(window.location.hash),
-      userKey: chromeStorageState.userKey,
-      secret: chromeStorageState.secretKey,
+      userKey: state.credentials.userKey,
+      secret: state.credentials.secretKey,
     }).create({
       sites,
     })
