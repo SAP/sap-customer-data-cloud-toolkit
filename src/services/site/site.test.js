@@ -69,7 +69,6 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(credentials)
     const response = await siteService.create(TestData.createSingleParentRequest().sites[0])
-    // console.log('response=' + JSON.stringify(response))
 
     expect(response.errorCode).toEqual('ENOTFOUND')
     expect(response.errorMessage).toEqual('Error creating site')
@@ -92,7 +91,7 @@ describe('Service Site test suite', () => {
   })
 
   test('delete site unsuccessfully: delete group site first', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
+    axios.mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
 
     const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
     let response = await siteService.delete('####')
@@ -107,7 +106,7 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
   const response = await siteService.create(request)
-  // console.log('response=' + JSON.stringify(response))
+  console.log('response=' + JSON.stringify(response))
   return response
 }
 

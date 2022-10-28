@@ -201,7 +201,7 @@ describe('Site manager test suite', () => {
 
   test('delete single site with site manager', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
@@ -215,7 +215,7 @@ describe('Site manager test suite', () => {
 
   test('delete site with site members', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -241,12 +241,12 @@ describe('Site manager test suite', () => {
 
   test('delete 3 sites: 2 sites with multiple members and 1 site already deleted', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
-      .mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })

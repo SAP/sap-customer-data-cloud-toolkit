@@ -92,7 +92,7 @@ describe('Service Site test suite', () => {
   })
 
   test('delete site unsuccessfully: delete group site first', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
+    axios.mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
 
     const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')

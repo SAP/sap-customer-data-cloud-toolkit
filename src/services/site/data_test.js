@@ -188,70 +188,6 @@ const expectedGigyaResponseInvalidAPI = {
   time: Date.now(),
 }
 
-// this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
-const scGetSiteConfigSuccessfully = {
-  callId: 'callId',
-  errorCode: 0,
-  apiVersion: 2,
-  statusCode: 200,
-  statusReason: 'OK',
-  time: Date.now(),
-  baseDomain: 'a_b_c_',
-  dataCenter: 'au1',
-  trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
-  tags: [],
-  description: 'site',
-  captchaProvider: 'Google',
-  settings: {
-    CNAME: '',
-    shortURLDomain: '',
-    shortURLRedirMethod: 'js',
-    encryptPII: true,
-  },
-  siteGroupConfig: {
-    members: [],
-    enableSSO: false,
-  },
-  trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
-  enableDataSharing: true,
-  isCDP: false,
-  invisibleRecaptcha: {},
-  recaptchaV2: {},
-  funCaptcha: {},
-}
-
-// this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
-const scGetSiteConfigSuccessfullyMultipleMember = {
-  callId: 'callId',
-  errorCode: 0,
-  apiVersion: 2,
-  statusCode: 200,
-  statusReason: 'OK',
-  time: Date.now(),
-  baseDomain: 'a_b_c_',
-  dataCenter: 'au1',
-  trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
-  tags: [],
-  description: 'site',
-  captchaProvider: 'Google',
-  settings: {
-    CNAME: '',
-    shortURLDomain: '',
-    shortURLRedirMethod: 'js',
-    encryptPII: true,
-  },
-  siteGroupConfig: {
-    members: [apiKey],
-    enableSSO: false,
-  },
-  trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
-  enableDataSharing: true,
-  isCDP: false,
-  invisibleRecaptcha: {},
-  recaptchaV2: {},
-  funCaptcha: {},
-}
-
 const sdSiteAlreadyDeleted = {
   callId: 'callId',
   errorCode: 403007,
@@ -298,7 +234,7 @@ function createParentWithTwoChildRequest() {
 }
 
 function createObject(numberOfParents, numberOfChildrenPerParent) {
-  let obj = { sites: [], partnerID: 'partnerId', userKey: 'userKey', secret: 'secret' }
+  const obj = { sites: [], partnerID: 'partnerId', userKey: 'userKey', secret: 'secret' }
   for (let p = 0; p < numberOfParents; ++p) {
     const parent = createParent(p)
     obj.sites.push(parent)
@@ -409,9 +345,7 @@ export {
   scExpectedGigyaResponseNotOk,
   sdExpectedGigyaResponseDeletedSite,
   expectedGigyaResponseInvalidAPI,
-  scGetSiteConfigSuccessfully, // this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
   sdExpectedDeleteTokenSuccessfully,
-  scGetSiteConfigSuccessfullyMultipleMember, // this can be deleted and use getSiteConfigSuccessfullyMultipleMember instead
   sdSiteAlreadyDeleted,
   sdDeleteGroupSitesFirst,
   invalidApiParam,

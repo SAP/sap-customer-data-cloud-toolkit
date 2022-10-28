@@ -44,7 +44,7 @@ describe('Site configurator test suite', () => {
   })
 
   test('get site config successfully', async () => {
-    const expectedResponse = TestData.scGetSiteConfigSuccessfully
+    const expectedResponse = TestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValue({ data: expectedResponse })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')

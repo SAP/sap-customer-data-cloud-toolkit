@@ -264,8 +264,8 @@ class SiteManagerAsync {
 
   #findSiteInResponsesAndMarkItAsDeleted(responses, apiKey) {
     console.log(`SiteManagerAsync.findSiteInResponsesAndMarkItAsDeleted responses ${JSON.stringify(responses)}`)
-    const response = responses.find((response) => {
-      return response.apiKey === apiKey && response.deleted === false
+    const response = responses.find((res) => {
+      return res.apiKey === apiKey && res.deleted === false
     })
     console.log(`SiteManagerAsync.findSiteInResponsesAndMarkItAsDeleted response ${JSON.stringify(response)}`)
     if (response) {
