@@ -1,10 +1,13 @@
 import { Input, InputType, Label } from '@ui5/webcomponents-react'
 
-import { useDispatch } from 'react-redux'
-import { setUserKey, setUserSecret } from '../../redux/siteSlice'
+import { useSelector, useDispatch } from 'react-redux'
+import { setUserKey, setUserSecret, selectCredentials } from '../../redux/siteSlice'
 
 const CredentialsPopup = ({ userKey, userSecret }) => {
   const dispatch = useDispatch()
+  const credentials = useSelector(selectCredentials)
+  userKey = credentials.userKey
+  userSecret = credentials.userSecret
 
   const onUserKeyValueChange = (event) => {
     const newUserKey = event.target.value

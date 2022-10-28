@@ -242,3 +242,5 @@ export const selectErrors = (state) => state.sites.errors
 export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
 
 export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
+
+export const selectCredentials = (state) => state.sites.credentials
