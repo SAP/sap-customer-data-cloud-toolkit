@@ -1,5 +1,4 @@
 import SiteManagerAsync from './siteManagerAsync'
-import SiteManager from './siteManager'
 import * as TestData from './data_test'
 import axios from 'axios'
 import { performance } from 'perf_hooks'
@@ -17,73 +16,41 @@ describe('Benchmark test suite', () => {
 
   const MEASURE_START_MARK = 'start'
   const MEASURE_NAME_ASYNC = 'Async'
-  const MEASURE_NAME_SYNC = 'Sync'
   const MEASURE_NAME_ASYNC_ROLLBACK = 'AsyncRollback'
-  const MEASURE_NAME_SYNC_ROLLBACK = 'SyncRollback'
 
   const numberOfRepetitions = 3
   const numberOfParents = 3
   const numberOfChildrenPerParent = 10
 
-  // afterAll(() => {
-  //   const asyncAverage = printResults(MEASURE_NAME_ASYNC)
-  //   const syncAverage = printResults(MEASURE_NAME_SYNC)
-  //   if (syncAverage && asyncAverage) {
-  //     console.log(`Async version is ${Math.round((syncAverage / asyncAverage) * 100) / 100} times faster`)
-  //   }
+  afterAll(() => {
+    printResults(MEASURE_NAME_ASYNC)
+    printResults(MEASURE_NAME_ASYNC_ROLLBACK)
+  })
 
-  //   const asyncRollbackAverage = printResults(MEASURE_NAME_ASYNC_ROLLBACK)
-  //   const syncRollbackAverage = printResults(MEASURE_NAME_SYNC_ROLLBACK)
-  //   if (syncRollbackAverage && asyncRollbackAverage) {
-  //     console.log(`Async rollback version is ${Math.round((syncRollbackAverage / asyncRollbackAverage) * 100) / 100} times faster`)
-  //   }
-  // })
+  test('Site manager create async', async () => {
+    axios.mockResolvedValue({ data: TestData.expectedGigyaResponseOk })
+    const request = TestData.createObject(numberOfParents, numberOfChildrenPerParent)
 
-  // test('Site manager create async', async () => {
-  //   axios.mockResolvedValue({ data: TestData.expectedGigyaResponseOk })
-  //   const request = TestData.createObject(numberOfParents, numberOfChildrenPerParent)
+    for (let i = 0; i < numberOfRepetitions; ++i) {
+      const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC)
+      expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
+      verifyAllArrayResponsesAreOk(response, false)
+    }
+  })
 
-  //   for (let i = 0; i < numberOfRepetitions; ++i) {
-  //     const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC)
-  //     expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-  //     verifyAllArrayResponsesAreOk(response, false)
-  //   }
-  // })
-
-  // test('Site manager create sync', async () => {
-  //   axios.mockResolvedValue({ data: TestData.expectedGigyaResponseOk })
-  //   const request = TestData.createObject(numberOfParents, numberOfChildrenPerParent)
-
-  //   for (let i = 0; i < numberOfRepetitions; ++i) {
-  //     const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_SYNC)
-  //     expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-  //     verifyAllResponsesAreOk(response, false)
-  //   }
-  // })
-
-  // test('Site manager rollback async', async () => {
-  //   const request = mockAxiosAndCreateRequest()
-  //   for (let i = 0; i < numberOfRepetitions; ++i) {
-  //     const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
-  //     expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-  //     for (let i = 0; i < numberOfParents - 1; ++i) {
-  //       verifyAllResponsesAreOk(response[i], true)
-  //     }
-  //     verifyAllResponsesAreOk(response[numberOfParents - 1].slice(0, -1), true)
-  //     TestData.verifyResponseIsNotOk(response[numberOfParents - 1].slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
-  //   }
-  // })
-
-  // test('Site manager rollback sync', async () => {
-  //   const request = mockAxiosAndCreateRequest()
-  //   for (let i = 0; i < numberOfRepetitions; ++i) {
-  //     const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_SYNC_ROLLBACK)
-  //     expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-  //     verifyAllResponsesAreOk(response.slice(0, -1), true)
-  //     TestData.verifyResponseIsNotOk(response.slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
-  //   }
-  // })
-  test('dummy', () => {})
+  test('Site manager rollback async', async () => {
+    const request = mockAxiosAndCreateRequest()
+    for (let i = 0; i < numberOfRepetitions; ++i) {
+      const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
+      expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
+      for (let i = 0; i < numberOfParents - 1; ++i) {
+        verifyAllResponsesAreOk(response[i], true)
+      }
+      verifyAllResponsesAreOk(response[numberOfParents - 1].slice(0, -1), true)
+      TestData.verifyResponseIsNotOk(response[numberOfParents - 1].slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
+      expect(response[numberOfParents - 1].slice(-1)[0].deleted).toEqual(false)
+    }
+  })
 
   function mockAxiosAndCreateRequest() {
     axios.mockImplementation((axiosConfig) => {

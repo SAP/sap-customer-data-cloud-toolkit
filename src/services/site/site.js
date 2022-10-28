@@ -19,13 +19,6 @@ class Site {
     })
   }
 
-  async create(body) {
-    const response = await this.createAsync(body).catch(function (error) {
-      return generateErrorResponse(error, Site.#ERROR_MSG_CREATE)
-    })
-    return response.data
-  }
-
   static getCreateEndpoint() {
     return 'admin.createSite'
   }

@@ -238,7 +238,9 @@ class SiteManagerAsync {
     const response = responses.find((res) => {
       return res.apiKey === apiKey && res.deleted === false
     })
-    response.deleted = true
+    if (response) {
+      response.deleted = true
+    }
   }
 }
 
