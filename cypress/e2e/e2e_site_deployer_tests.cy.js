@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
-describe('Site Deployer create multiple datacenters', () => {
+describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000')
 
     cy.contains('Site Deployer').click()
   })
 
-  it('Creating a parent with multiple datacenters', () => {
+  it('Creating 3 parent sites with different datacenters', () => {
     getSiteDomain('a_b_c_site_deployer_multiple_datacenters').should('have.value', 'a_b_c_site_deployer_multiple_datacenters')
 
     getSiteStructure(1).should('have.text', 'Structure 1')
@@ -15,7 +15,7 @@ describe('Site Deployer create multiple datacenters', () => {
     cy.get('ui5-table-row').should('have.length', '6')
   })
 
-  it('Create 1 parent site', () => {
+  it('Create 1 parent site with US datacenter', () => {
     const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
     cy.on('uncaught:exception', (err) => {
       if (resizeObserverLoopErrRe.test(err.message)) {
@@ -40,13 +40,26 @@ describe('Site Deployer create multiple datacenters', () => {
     cy.get('ui5-table-row').should('have.length', '0')
   })
 
-  it('Should add a Parent Site Manually and a Child site', () => {
+  it('Should add a single Parent Site Manually', () => {
     cy.get('#addParentButton').click()
 
-    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type('Manually add  parent site')
-    cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(2).shadow().find('[class = "ui5-input-inner"]').type('Manually added description')
-    cy.get('#dataCenterSelect').click()
-    cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(2).click()
+    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    getSaveButton().should('not.be.disabled')
+    getSaveButton().click()
+    cy.wait(500)
+    cy.get('.MessageView-container-0-2-28').eq(1).find('ui5-list').should('have.text', 'Unauthorized user (Manually add  parent site - eu1)The supplied userkey was not found')
+  })
+
+  it('Should add a Parent Site and a Child Site Manually', () => {
+    const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
+    cy.on('uncaught:exception', (err) => {
+      if (resizeObserverLoopErrRe.test(err.message)) {
+        return false
+      }
+    })
+    cy.get('#addParentButton').click()
+
+    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(3).click()
@@ -55,29 +68,8 @@ describe('Site Deployer create multiple datacenters', () => {
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Add Parent Site"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Add Parent Site"]').click()
-    cy.get('ui5-table-row')
-      .eq(1)
-      .shadow()
-      .get('ui5-table-cell')
-      .eq(4)
-      .shadow()
-      .get('ui5-input')
-      .eq(4)
-      .shadow()
-      .find('[class = "ui5-input-inner"]')
-      .type('Manually added description')
 
-    cy.get('ui5-table-row')
-      .eq(1)
-      .shadow()
-      .get('ui5-table-cell')
-      .eq(4)
-      .shadow()
-      .get('ui5-input')
-      .eq(3)
-      .shadow()
-      .find('[class = "ui5-input-inner"]')
-      .type('Manually added description')
+    writeChildrenSiteTable('Children site description', 'Children site domain')
     getSaveButton().should('not.be.disabled')
 
     cy.get('ui5-table-cell').eq(7).click()
@@ -88,9 +80,12 @@ describe('Site Deployer create multiple datacenters', () => {
       .find('[aria-label="Delete Item 1 of 1"]')
       .click({ force: true })
     cy.get('ui5-table-row').should('have.length', 1)
-    getSaveButton().click()
-    cy.wait(500)
-    cy.get('.MessageView-container-0-2-28').eq(1).find('ui5-list').should('have.text', 'Unauthorized user (Manually add  parent site - eu1)The supplied userkey was not found')
+    cy.get('ui5-table-cell').eq(3).click()
+    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
+    writeChildrenSiteTable('Children site description', 'Children site domain')
+    cy.get('ui5-table-cell').eq(3).click()
+    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
+    cy.get('ui5-table-row').should('have.length', 0)
   })
 
   function getDataCenters(dataCenter) {
@@ -109,7 +104,21 @@ describe('Site Deployer create multiple datacenters', () => {
   function getCreateButton() {
     return cy.get('body').find('#createButton').shadow().find('.ui5-button-root')
   }
+
   function getSaveButton() {
     return cy.get('body').find('#save-main')
+  }
+
+  function writeParentSiteTable(siteDomain, siteDescription, dataCenterOption) {
+    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain)
+    cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(2).shadow().find('[class = "ui5-input-inner"]').type(siteDescription)
+    cy.get('#dataCenterSelect').click()
+    cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
+  }
+
+  function writeChildrenSiteTable(childrenDomain, childrenDescription) {
+    cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(childrenDomain)
+
+    cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(3).shadow().find('[class = "ui5-input-inner"]').type(childrenDescription)
   }
 })
