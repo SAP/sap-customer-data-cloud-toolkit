@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { addParentFromStructure, clearSites, createSites, selectErrors, selectShowSuccessDialog } from '../../redux/siteSlice'
+import { addParentFromStructure, clearSites, clearErrors, createSites, selectErrors, selectShowSuccessDialog } from '../../redux/siteSlice'
 
 import {
   Card,
@@ -92,6 +92,7 @@ const SiteDeployer = () => {
 
   const onCancelHandler = () => {
     dispatch(clearSites())
+    dispatch(clearErrors())
   }
 
   const onChangeSiteStructure = (event) => {
@@ -172,7 +173,7 @@ const SiteDeployer = () => {
   return (
     <>
       <Bar design="Header" startContent={<BarStart />}></Bar>
-      <div style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
+      <div className="cdc-tools-background" style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
             <FlexBox style={spacing.sapUiSmallMarginBottom}>

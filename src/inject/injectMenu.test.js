@@ -6,15 +6,15 @@ import fs from 'fs'
 import path from 'path'
 import { getInnerText, htmlToElem } from './utils'
 import { initMenuExtension, destroyMenuExtension, injectMenu } from './injectMenu'
-import { MENU_ELEMENT_CLASS, ADMIN_BUTTON_SELECTOR, ADMIN_BUTTON_CLASSES } from './constants'
+import { MENU_ELEMENT_CLASS, MOCK_ELEMENT_CLASS, ADMIN_BUTTON_SELECTOR, ADMIN_BUTTON_CLASSES, ROUTE_SITE_DEPLOYER, ROUTE_COPY_CONFIG_EXTENDED } from './constants'
 
 const html = fs.readFileSync(path.resolve(__dirname, '../../public/index.html'), 'utf8')
 jest.dontMock('fs')
 
 describe('Inject menu test suite', () => {
   let menuElements = [
-    { name: 'Site Deployer', tabName: 'site-deployer', appendAfterText: 'Site Settings' },
-    { name: 'Copy Config. Extended', tabName: 'copy-configuration-extended', appendAfterText: 'Copy Configuration' },
+    { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
+    { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
   ]
 
   const adminButtonMock = `\
@@ -64,11 +64,11 @@ describe('Inject menu test suite', () => {
 
     let injectedButtons, adminButton, adminButtonParent
 
-    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}`)
+    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}:not(.${MOCK_ELEMENT_CLASS})`)
     expect(injectedButtons.length).toBe(0)
 
     injectMenu(menuElements)
-    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}`)
+    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}:not(.${MOCK_ELEMENT_CLASS})`)
     expect(injectedButtons.length).toBe(menuElements.length)
 
     // Remove admin button, the injected buttons should be removed
@@ -77,14 +77,14 @@ describe('Inject menu test suite', () => {
     adminButton.remove()
     jest.runOnlyPendingTimers()
 
-    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}`)
+    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}:not(.${MOCK_ELEMENT_CLASS})`)
     expect(injectedButtons.length).toBe(0)
 
     // Adding again the admin button, the buttons should be injected
     adminButtonParent.appendChild(htmlToElem(adminButtonMock))
     jest.runOnlyPendingTimers()
 
-    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}`)
+    injectedButtons = document.querySelectorAll(`.${MENU_ELEMENT_CLASS}:not(.${MOCK_ELEMENT_CLASS})`)
     expect(injectedButtons.length).toBe(menuElements.length)
   })
 })

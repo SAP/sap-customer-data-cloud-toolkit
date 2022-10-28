@@ -15,6 +15,10 @@ import sitesReducer, {
   deleteChild,
   clearSites,
   getPartnerId,
+  createSites,
+  clearErrors,
+  setShowSuccessDialog,
+  selectSiteById,
 } from './siteSlice'
 
 const initialState = {
@@ -77,18 +81,26 @@ const stateWithParentWithChild = {
   isLoading: false,
 }
 
+const stateWithError = {
+  sites: [],
+  isLoading: false,
+  dataCenters: [],
+  errors: [{ error: 'I am a dummy error!' }],
+  showSuccessDialog: false,
+}
+
 const structure = {
   _id: '1',
   name: 'Structure 1',
   data: [
     {
       rootBaseDomain: 'test',
-      baseDomain: 'a.com',
+      baseDomain: 'dev.parent.{{dataCenter}}.{{baseDomain}}',
       description: 'test parent from strucure',
       dataCenter: 'AU',
       childSites: [
         {
-          baseDomain: 'dev.a.com',
+          baseDomain: 'dev.{{dataCenter}}.{{baseDomain}}',
           description: 'test child from strucure',
           dataCenter: 'AU',
         },
@@ -139,7 +151,7 @@ describe('Site slice test suite', () => {
     expect(newState.sites.length).toEqual(1)
     expect(newParent.parentSiteTempId).toEqual('')
     expect(newParent.tempId).not.toEqual('')
-    expect(newParent.baseDomain).toEqual('a.com.test')
+    expect(newParent.baseDomain).toEqual('dev.parent.au.test')
     expect(newParent.description).toEqual('test parent from strucure')
     expect(newParent.dataCenter).toEqual('au1')
     expect(newParent.childSites.length).toEqual(1)
@@ -148,7 +160,7 @@ describe('Site slice test suite', () => {
     const newChild = newParent.childSites[0]
     expect(newChild.parentSiteTempId).toEqual(newParent.tempId)
     expect(newChild.tempId).not.toEqual('')
-    expect(newChild.baseDomain).toEqual('dev.a.com.test')
+    expect(newChild.baseDomain).toEqual('dev.au.test')
     expect(newChild.description).toEqual('test child from strucure')
     expect(newChild.dataCenter).toEqual('au1')
     expect(newChild.isChildSite).toEqual(true)
@@ -238,5 +250,57 @@ describe('Site slice test suite', () => {
     const expectedPartnerId = ''
     const hash = ''
     expect(getPartnerId(hash)).toEqual(expectedPartnerId)
+  })
+
+  test('should set isLoading to true while createSites is pending', () => {
+    const newState = sitesReducer(initialState, { type: createSites.pending.type })
+    expect(newState.isLoading).toEqual(true)
+    expect(newState.errors.length).toEqual(0)
+    expect(newState.showSuccessDialog).toEqual(false)
+  })
+
+  test('should set isLoading to false when createSites is rejected', () => {
+    const newState = sitesReducer(initialState, { type: createSites.rejected.type })
+    expect(newState.isLoading).toEqual(false)
+  })
+
+  test('should clear errors', () => {
+    const newState = sitesReducer(stateWithError, clearErrors())
+    expect(newState.errors.length).toEqual(0)
+  })
+
+  test('should set showSuccessDialog to true', () => {
+    const newState = sitesReducer(initialState, setShowSuccessDialog(true))
+    expect(newState.showSuccessDialog).toEqual(true)
+  })
+
+  test('should have fulfilled createSites without errors', () => {
+    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [] })
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.showSuccessDialog).toEqual(true)
+  })
+
+  test('should have fulfilled createSites with errors', () => {
+    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.errors.length).toEqual(1)
+    expect(newState.showSuccessDialog).toEqual(false)
+  })
+
+  test('should select a Parent site by id', () => {
+    const parentSite = selectSiteById({ sites: stateWithParentWithChild }, '1234')
+    expect(parentSite).not.toBe(undefined)
+  })
+
+  test('should select a Child site by id', () => {
+    const childSite = selectSiteById({ sites: stateWithParentWithChild }, '5678')
+    expect(childSite).not.toBe(undefined)
+  })
+
+  test('should return undefiend on getting site by unexisting id', () => {
+    const site = selectSiteById({ sites: stateWithParentWithChild }, 'abc')
+    expect(site).toBe(undefined)
   })
 })

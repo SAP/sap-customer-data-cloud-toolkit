@@ -69,7 +69,7 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(credentials)
     const response = await siteService.create(TestData.createSingleParentRequest().sites[0])
-    console.log('response=' + JSON.stringify(response))
+    // console.log('response=' + JSON.stringify(response))
 
     expect(response.errorCode).toEqual('ENOTFOUND')
     expect(response.errorMessage).toEqual('Error creating site')
@@ -107,7 +107,7 @@ async function createSites(request, expectedResponseFromServer, siteParams) {
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
   const response = await siteService.create(request)
-  console.log('response=' + JSON.stringify(response))
+  // console.log('response=' + JSON.stringify(response))
   return response
 }
 

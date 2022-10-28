@@ -16,19 +16,21 @@ import { initChromeStorage } from './inject/chromeStorage'
 import { initNavigation } from './inject/navigation'
 import { injectMenu } from './inject/injectMenu'
 import { injectAppContainer } from './inject/injectAppContainer'
-import { MAIN_CONTAINER_CLASS, TAB_SITE_DEPLOYER } from './inject/constants'
+import { MAIN_CONTAINER_CLASS, ROUTE_SITE_DEPLOYER, ROUTE_EMAIL_TEMPLATES } from './inject/constants'
 
 import './inject/main.css'
 
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
+const menuElements = [
+  { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
+  { name: 'Email Templates', route: ROUTE_EMAIL_TEMPLATES },
+  // { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
+]
 initChromeStorage()
 initNavigation()
-injectMenu([
-  { name: 'Site Deployer', tabName: TAB_SITE_DEPLOYER, appendAfterText: 'Site Settings' },
-  // { name: 'Copy Config. Extended', tabName: 'copy-configuration-extended', appendAfterText: 'Copy Configuration' },
-])
+injectMenu(menuElements)
 injectAppContainer(() => {
   ReactDOM.render(
     <React.StrictMode>

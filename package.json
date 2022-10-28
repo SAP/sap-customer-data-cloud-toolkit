@@ -27,7 +27,7 @@
     "cypress:run": "cypress run",
     "cypress:ci": "concurrently \"cypress run\" --kill-others \"react-scripts start\" --success first",
     "postbuild": "node ./scripts/postbuild.js",
-    "test": "CI=true react-scripts test --collect-coverage --watch=all --silent",
+    "test": "CI=true react-scripts test --collect-coverage --watch=all",
     "eject": "react-scripts eject"
   },
   "jest": {

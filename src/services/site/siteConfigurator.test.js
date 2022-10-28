@@ -16,7 +16,7 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    console.log('response=' + JSON.stringify(response))
+    // console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsOk(response)
   })
@@ -27,7 +27,7 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey_NOT_EXISTS')
-    console.log('response=' + JSON.stringify(response))
+    // console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response, expectedResponse)
   })
@@ -38,7 +38,7 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    console.log('response=' + JSON.stringify(response))
+    // console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response, expectedResponse)
   })
@@ -65,7 +65,7 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    console.log('response=' + JSON.stringify(response))
+    // console.log('response=' + JSON.stringify(response))
 
     expect(response.errorCode).toEqual('ENOTFOUND')
     expect(response.errorMessage).toEqual('Error configuring site')
