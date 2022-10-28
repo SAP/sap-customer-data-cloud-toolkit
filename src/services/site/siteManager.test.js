@@ -20,7 +20,6 @@ describe('Site manager async test suite', () => {
 
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(1)
     verifyAllResponsesAreOk(response)
@@ -35,7 +34,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(2)
     verifyAllResponsesAreOk(response)
@@ -52,7 +50,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
@@ -75,10 +72,8 @@ describe('Site manager async test suite', () => {
     const response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
 
-    expect(response[0].length).toEqual(3)
-    verifyAllResponsesAreOk(response[0])
-    expect(response[1].length).toEqual(3)
-    verifyAllResponsesAreOk(response[1])
+    expect(response.length).toEqual(6)
+    verifyAllResponsesAreOk(response)
   })
 
   test('create site unsuccessfully - error on parent', async () => {
@@ -87,7 +82,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(1)
     expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain, false, TestData.Endpoints.SITE_CREATE)
@@ -108,7 +102,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
@@ -131,7 +124,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(3)
     expectResponseIsOk(response[0], true)
@@ -171,14 +163,14 @@ describe('Site manager async test suite', () => {
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
 
-    expect(response[0].length + response[1].length).toEqual(6)
-    expectResponseIsOk(response[0][0], true)
-    expectResponseIsOk(response[0][1], true)
-    expectResponseIsOk(response[0][2], true)
-    expectResponseIsOk(response[1][0], true)
-    expectResponseIsOk(response[1][1], true)
-    expectResponseIsNotOk(response[1][2], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
-    expect(response[1][2].apiKey).toBeDefined()
+    expect(response.length).toEqual(6)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsOk(response[1], true)
+    expectResponseIsOk(response[2], true)
+    expectResponseIsOk(response[3], true)
+    expectResponseIsOk(response[4], true)
+    expectResponseIsNotOk(response[5], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expect(response[5].apiKey).toBeDefined()
   })
 
   test('create site unsuccessfully - error creating 1st hierarchy', async () => {
@@ -212,14 +204,14 @@ describe('Site manager async test suite', () => {
     const response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
 
-    expect(response[0].length + response[1].length).toEqual(6)
-    expectResponseIsOk(response[0][0], true)
-    expectResponseIsNotOk(response[0][1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
-    expectResponseIsOk(response[0][2], true)
-    expectResponseIsOk(response[1][0], true)
-    expectResponseIsOk(response[1][1], true)
-    expectResponseIsOk(response[1][2], true)
-    expect(response[0][1].apiKey).toBeDefined()
+    expect(response.length).toEqual(6)
+    expectResponseIsOk(response[0], true)
+    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expectResponseIsOk(response[2], true)
+    expectResponseIsOk(response[3], true)
+    expectResponseIsOk(response[4], true)
+    expectResponseIsOk(response[5], true)
+    expect(response[1].apiKey).toBeDefined()
   })
 
   test('create site unsuccessfully - error on rollback', async () => {
@@ -233,7 +225,6 @@ describe('Site manager async test suite', () => {
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
-    response = response[0]
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], false)

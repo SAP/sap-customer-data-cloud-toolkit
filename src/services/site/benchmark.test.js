@@ -34,7 +34,7 @@ describe('Benchmark test suite', () => {
     for (let i = 0; i < numberOfRepetitions; ++i) {
       const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-      verifyAllArrayResponsesAreOk(response, false)
+      verifyAllResponsesAreOk(response, false)
     }
   })
 
@@ -43,12 +43,10 @@ describe('Benchmark test suite', () => {
     for (let i = 0; i < numberOfRepetitions; ++i) {
       const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
-      for (let i = 0; i < numberOfParents - 1; ++i) {
-        verifyAllResponsesAreOk(response[i], true)
-      }
-      verifyAllResponsesAreOk(response[numberOfParents - 1].slice(0, -1), true)
-      TestData.verifyResponseIsNotOk(response[numberOfParents - 1].slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
-      expect(response[numberOfParents - 1].slice(-1)[0].deleted).toEqual(false)
+
+      verifyAllResponsesAreOk(response.slice(0, -1), true)
+      TestData.verifyResponseIsNotOk(response.slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
+      expect(response.slice(-1)[0].deleted).toEqual(false)
     }
   })
 
@@ -101,12 +99,6 @@ describe('Benchmark test suite', () => {
     return numberOfResponses
   }
 })
-
-function verifyAllArrayResponsesAreOk(responsesArray, deleted) {
-  responsesArray.forEach((response) => {
-    verifyAllResponsesAreOk(response, deleted)
-  })
-}
 
 function verifyAllResponsesAreOk(responses, deleted) {
   responses.forEach((response) => {

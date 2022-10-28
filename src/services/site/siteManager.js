@@ -19,7 +19,7 @@ class SiteManager {
         if (this.#isAnyResponseError(siteHierarchyCreatedResponses)) {
           return this.#rollbackHierarchies(siteHierarchyCreatedResponses)
         }
-        return siteHierarchyCreatedResponses
+        return siteHierarchyCreatedResponses.flat()
       })
       .then((rollbackHierarchiesResponses) => {
         // nothing to do, just making sure that rollback was finished
@@ -211,7 +211,7 @@ class SiteManager {
     return Promise.all(promises)
       .then((responses) => {
         console.log(`SiteManager.rollbackHierarchies then ${JSON.stringify(responses)}`)
-        return responses
+        return responses.flat()
       })
       .catch((error) => {
         console.log(`SiteManager.rollbackHierarchies catch ${error}`)
