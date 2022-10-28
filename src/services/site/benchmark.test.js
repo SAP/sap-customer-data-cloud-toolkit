@@ -6,7 +6,7 @@ import { performance } from 'perf_hooks'
 
 jest.mock('axios')
 jest.mock('../gigya/client')
-jest.setTimeout(40000)
+jest.setTimeout(60000)
 
 describe('Benchmark test suite', () => {
   const credentials = {
