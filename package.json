@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts -r @cypress/instrument-cra start",
-    "build": "react-scripts build",
+    "build": "CI=true react-scripts build",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "cypress:ci": "concurrently \"cypress run\" --kill-others \"react-scripts start\" --success first",

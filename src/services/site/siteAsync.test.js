@@ -69,47 +69,48 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(credentials)
     const response = await siteService.create(TestData.createSingleParentRequest().sites[0])
-    // console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
 
-    expect(response.errorCode).toEqual('ENOTFOUND')
-    expect(response.errorMessage).toEqual('Error creating site')
-    expect(response.time).toBeDefined()
+    expect(response.data.errorCode).toEqual('ENOTFOUND')
+    expect(response.data.errorMessage).toEqual('Error creating site')
+    expect(response.data.time).toBeDefined()
   })
 
-  test('delete site unsuccessfully', async () => {
+  test('error geting token to delete site', async () => {
     const response = await deleteSite('######', 'us1', TestData.expectedGigyaResponseInvalidAPI, credentials)
-
     TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
   })
+
   test('delete single site', async () => {
     axios.mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully }).mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
-    const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
+    const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')
+    console.log('response=' + JSON.stringify(response))
 
-    expect(response).toBeDefined()
-    expect(response.statusCode).toBe(200)
+    TestData.verifyResponseIsOk(response)
   })
 
   test('delete site unsuccessfully: delete group site first', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.scGetSiteConfigSuccessfully }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
+    axios.mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
 
-    const siteService = new Site(credentials.partnerId, createSites.userKey, credentials.secret)
+    const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')
+    console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
   })
+
+  async function createSites(request, expectedResponseFromServer, siteParams) {
+    const mockedResponse = { data: expectedResponseFromServer }
+    axios.mockResolvedValue(mockedResponse)
+
+    const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
+    const response = await siteService.create(request)
+    console.log('response=' + JSON.stringify(response))
+    return response.data
+  }
 })
-
-async function createSites(request, expectedResponseFromServer, siteParams) {
-  const mockedResponse = { data: expectedResponseFromServer }
-  axios.mockResolvedValue(mockedResponse)
-
-  const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
-  const response = await siteService.create(request)
-  // console.log('response=' + JSON.stringify(response))
-  return response
-}
 
 function verifyResponseIsOk(response) {
   TestData.verifyResponseIsOk(response)
@@ -123,5 +124,6 @@ async function deleteSite(site, dataCenter, expectedResponseFromServer, sitePara
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
   let response = await siteService.delete(site, dataCenter)
+  console.log('response=' + JSON.stringify(response))
   return response
 }
