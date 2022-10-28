@@ -22,13 +22,13 @@ describe('Site Deployer create multiple datacenters', () => {
         return false
       }
     })
-    getSiteStructure(1).should('have.text', 'Structure 1')
+    getSiteDomain('a_b_c_site_deployer_multiple_datacenters').should('have.value', 'a_b_c_site_deployer_multiple_datacenters')
     getDataCenters('AU').click()
     getDataCenters('EU').click()
     getDataCenters('US').shadow().find('[class="ui5-token--text"]').should('have.text', 'US')
     getCreateButton().should('be.disabled')
     getSaveButton().should('be.disabled')
-    getSiteDomain('a_b_c_site_deployer_multiple_datacenters').should('have.value', 'a_b_c_site_deployer_multiple_datacenters')
+    getSiteStructure(1).should('have.text', 'Structure 1')
 
     cy.get('ui5-table-row').should('have.length', '0')
     getCreateButton().should('not.be.disabled')
@@ -39,10 +39,10 @@ describe('Site Deployer create multiple datacenters', () => {
 
     cy.get('ui5-table-row').should('have.length', '0')
   })
+
   it('Should add a parent Site Manually and a ChildSite', () => {
     cy.get('#addParentButton').click()
 
-    // cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type('manually_add_parent_site')
     cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type('Manually add  parent site')
     cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(2).shadow().find('[class = "ui5-input-inner"]').type('Manually added description')
     cy.get('#dataCenterSelect').click()
