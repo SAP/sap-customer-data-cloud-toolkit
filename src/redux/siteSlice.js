@@ -38,6 +38,22 @@ const getDataCenters = (host = window.location.hostname) => dataCenters.filter((
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
+const getUserKeyFromLocalStorage = () => {
+  const userKeyFromLocalStorage = localStorage.getItem('userKey')
+  if (userKeyFromLocalStorage) {
+    return userKeyFromLocalStorage
+  }
+  return ''
+}
+
+const getUserSecretFromLocalStorage = () => {
+  const userSecretFromLocalStorage = localStorage.getItem('userSecret')
+  if (userSecretFromLocalStorage) {
+    return userSecretFromLocalStorage
+  }
+  return ''
+}
+
 export const siteSlice = createSlice({
   name: 'sites',
   initialState: {
@@ -47,8 +63,8 @@ export const siteSlice = createSlice({
     errors: [],
     showSuccessDialog: false,
     credentials: {
-      userKey: '',
-      userSecret: '',
+      userKey: getUserKeyFromLocalStorage(),
+      userSecret: getUserSecretFromLocalStorage(),
     },
   },
   reducers: {
@@ -123,9 +139,11 @@ export const siteSlice = createSlice({
     },
     setUserKey: (state, action) => {
       state.credentials.userKey = action.payload
+      localStorage.setItem('userKey', action.payload)
     },
     setUserSecret: (state, action) => {
       state.credentials.userSecret = action.payload
+      localStorage.setItem('userSecret', action.payload)
     },
   },
   extraReducers: (builder) => {
