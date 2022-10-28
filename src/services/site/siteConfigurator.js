@@ -1,5 +1,5 @@
 import client from '../gigya/client'
-import generateErrorResponse from './error'
+import generateErrorResponse from './generateErrorResponse'
 
 class SiteConfigurator {
   static #ERROR_MSG_CONFIG = 'Error configuring site'
@@ -19,7 +19,6 @@ class SiteConfigurator {
   }
 
   async connect(parentApiKey, childApiKey) {
-    // console.log(`Connecting site ${childApiKey} to ${parentApiKey}`)
     const response = await this.connectAsync(parentApiKey, childApiKey).catch(function (error) {
       return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
     })

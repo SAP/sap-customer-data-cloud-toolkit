@@ -1,5 +1,5 @@
 import client from '../gigya/client'
-import generateErrorResponse from './error'
+import generateErrorResponse from './generateErrorResponse'
 
 class Site {
   static #ERROR_MSG_CREATE = 'Error creating site'
@@ -49,7 +49,6 @@ class Site {
     const getDeleteTokenRes = await client.post(url, this.#deleteSiteParameters(site)).catch(function (error) {
       return generateErrorResponse(error, Site.#ERROR_MSG_DELETE)
     })
-    //console.log(`Site.delete(getToken) ${JSON.stringify(getDeleteTokenRes)}`)
     if (getDeleteTokenRes.data.errorCode !== 0) {
       return getDeleteTokenRes.data
     }
@@ -58,7 +57,6 @@ class Site {
     const response = await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.data.deleteToken)).catch(function (error) {
       return generateErrorResponse(error, Site.#ERROR_MSG_DELETE)
     })
-    //console.log(`Site.delete(delete) ${JSON.stringify(response)}`)
     return response.data
   }
 
