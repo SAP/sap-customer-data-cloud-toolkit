@@ -17,6 +17,7 @@ const parent2SiteId = 'idP2'
 const child1SiteId = 'C1'
 const child2SiteId = 'C2'
 const apiKey = 'apiKey'
+const DOMAIN_PREFIX = 'cdc.'
 
 const expectedGigyaResponseOk = {
   apiKey: apiKey,
@@ -104,7 +105,7 @@ const scExpectedGigyaResponseNotOk = {
 const multipleParentWithMultipleChildrenRequest = {
   sites: [
     {
-      baseDomain: 'p1.com',
+      baseDomain: `${DOMAIN_PREFIX}p1.com`,
       description: 'parent 1 description',
       dataCenter: 'us1',
       isChildSite: false,
@@ -112,7 +113,7 @@ const multipleParentWithMultipleChildrenRequest = {
       parentSiteId: '',
       childSites: [
         {
-          baseDomain: 'p1.c1.com',
+          baseDomain: `${DOMAIN_PREFIX}p1.c1.com`,
           description: 'parent 1 child 1 description',
           dataCenter: 'us1',
           isChildSite: true,
@@ -120,7 +121,7 @@ const multipleParentWithMultipleChildrenRequest = {
           parentSiteId: parent1SiteId,
         },
         {
-          baseDomain: 'p1.c2.com',
+          baseDomain: `${DOMAIN_PREFIX}p1.c2.com`,
           description: 'parent 1 child 2 description',
           dataCenter: 'us1',
           isChildSite: true,
@@ -130,7 +131,7 @@ const multipleParentWithMultipleChildrenRequest = {
       ],
     },
     {
-      baseDomain: 'p2.com',
+      baseDomain: `${DOMAIN_PREFIX}p2.com`,
       description: 'parent 2 description',
       dataCenter: 'au1',
       isChildSite: false,
@@ -138,7 +139,7 @@ const multipleParentWithMultipleChildrenRequest = {
       parentSiteId: '',
       childSites: [
         {
-          baseDomain: 'p2.c1.com',
+          baseDomain: `${DOMAIN_PREFIX}p2.c1.com`,
           description: 'parent 2 child 1 description',
           dataCenter: 'au1',
           isChildSite: true,
@@ -146,7 +147,7 @@ const multipleParentWithMultipleChildrenRequest = {
           parentSiteId: parent2SiteId,
         },
         {
-          baseDomain: 'p2.c2.com',
+          baseDomain: `${DOMAIN_PREFIX}p2.c2.com`,
           description: 'parent 2 child 2 description',
           dataCenter: 'au1',
           isChildSite: true,
@@ -249,7 +250,7 @@ function createObject(numberOfParents, numberOfChildrenPerParent) {
 
 function createParent(id) {
   return {
-    baseDomain: `p${id}.com`,
+    baseDomain: `${DOMAIN_PREFIX}p${id}.com`,
     description: `parent ${id} description`,
     dataCenter: 'us1',
     isChildSite: false,
@@ -261,7 +262,7 @@ function createParent(id) {
 
 function createChild(parent, id) {
   return {
-    baseDomain: `${parent.tempId}.c${id}.com`,
+    baseDomain: `${DOMAIN_PREFIX}${parent.tempId}.c${id}.com`,
     description: `${parent.tempId} child ${id} description`,
     dataCenter: `${parent.dataCenter}`,
     isChildSite: true,
@@ -291,7 +292,7 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
       encryptPII: true,
     },
     siteGroupConfig: {
-      members: [],
+      //      members: [],
       enableSSO: false,
     },
     trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
@@ -301,6 +302,7 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
     recaptchaV2: {},
     funCaptcha: {},
   }
+  if (numberOfMembers > 0) getSiteConfig.siteGroupConfig.members = []
   for (let i = 0; i < numberOfMembers; ++i) {
     getSiteConfig.siteGroupConfig.members.push(apiKey)
   }
@@ -334,6 +336,7 @@ function verifyResponseIsNotOk(response, expectedResponse) {
 export {
   HttpStatus,
   Endpoints,
+  DOMAIN_PREFIX,
   expectedGigyaResponseOk,
   expectedGigyaResponseNoSecret,
   expectedGigyaResponseNoUserKey,
