@@ -292,7 +292,6 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
       encryptPII: true,
     },
     siteGroupConfig: {
-      //      members: [],
       enableSSO: false,
     },
     trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
@@ -302,7 +301,9 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
     recaptchaV2: {},
     funCaptcha: {},
   }
-  if (numberOfMembers > 0) getSiteConfig.siteGroupConfig.members = []
+  if (numberOfMembers > 0) {
+    getSiteConfig.siteGroupConfig.members = []
+  }
   for (let i = 0; i < numberOfMembers; ++i) {
     getSiteConfig.siteGroupConfig.members.push(apiKey)
   }
