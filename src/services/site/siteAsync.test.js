@@ -68,7 +68,7 @@ describe('Service Site test suite', () => {
     })
 
     const siteService = new Site(credentials)
-    const response = await siteService.createAsync(TestData.createSingleParentRequest().sites[0])
+    const response = await siteService.create(TestData.createSingleParentRequest().sites[0])
     console.log('response=' + JSON.stringify(response))
 
     expect(response.data.errorCode).toEqual('ENOTFOUND')
@@ -106,7 +106,7 @@ describe('Service Site test suite', () => {
     axios.mockResolvedValue(mockedResponse)
 
     const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
-    const response = await siteService.createAsync(request)
+    const response = await siteService.create(request)
     console.log('response=' + JSON.stringify(response))
     return response.data
   }

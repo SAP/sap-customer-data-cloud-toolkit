@@ -10,7 +10,7 @@ class SiteConfigurator {
     this.dataCenter = dataCenter
   }
 
-  async connectAsync(parentApiKey, childApiKey) {
+  async connect(parentApiKey, childApiKey) {
     const url = `https://admin.${this.dataCenter}.gigya.com/${SiteConfigurator.getSetEndpoint()}`
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {

@@ -1,7 +1,7 @@
 import Site from './site'
 import SiteConfigurator from './siteConfigurator'
 
-class SiteManagerAsync {
+class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
     this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
@@ -26,7 +26,7 @@ class SiteManagerAsync {
         return rollbackHierarchiesResponses
       })
       .catch((error) => {
-        console.log(`SiteManagerAsync.create error ${error}`)
+        console.log(`SiteManager.create error ${error}`)
         return error
       })
   }
@@ -210,11 +210,11 @@ class SiteManagerAsync {
     }
     return Promise.all(promises)
       .then((responses) => {
-        console.log(`SiteManagerAsync.rollbackHierarchies then ${JSON.stringify(responses)}`)
+        console.log(`SiteManager.rollbackHierarchies then ${JSON.stringify(responses)}`)
         return responses
       })
       .catch((error) => {
-        console.log(`SiteManagerAsync.rollbackHierarchies catch ${error}`)
+        console.log(`SiteManager.rollbackHierarchies catch ${error}`)
         return error
       })
   }
@@ -244,4 +244,4 @@ class SiteManagerAsync {
   }
 }
 
-export default SiteManagerAsync
+export default SiteManager

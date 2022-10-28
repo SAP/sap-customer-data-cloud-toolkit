@@ -1,4 +1,4 @@
-import SiteManagerAsync from './siteManagerAsync'
+import SiteManager from './siteManager'
 import * as TestData from './data_test'
 import axios from 'axios'
 import { performance } from 'perf_hooks'
@@ -32,7 +32,7 @@ describe('Benchmark test suite', () => {
     const request = TestData.createObject(numberOfParents, numberOfChildrenPerParent)
 
     for (let i = 0; i < numberOfRepetitions; ++i) {
-      const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC)
+      const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
       verifyAllArrayResponsesAreOk(response, false)
     }
@@ -41,7 +41,7 @@ describe('Benchmark test suite', () => {
   test('Site manager rollback async', async () => {
     const request = mockAxiosAndCreateRequest()
     for (let i = 0; i < numberOfRepetitions; ++i) {
-      const response = await createTest(request, new SiteManagerAsync(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
+      const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
       for (let i = 0; i < numberOfParents - 1; ++i) {
         verifyAllResponsesAreOk(response[i], true)

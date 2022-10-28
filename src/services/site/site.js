@@ -11,7 +11,7 @@ class Site {
     this.secret = secret
   }
 
-  createAsync(body) {
+  async create(body) {
     const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
     const bodyWithCredentials = this.#addCredentials(body)
     return client.post(url, bodyWithCredentials).catch(function (error) {

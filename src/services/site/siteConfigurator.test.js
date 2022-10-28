@@ -15,7 +15,7 @@ describe('Site configurator test suite', () => {
     axios.mockResolvedValue(mockedResponse)
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
-    const response = await siteConfigurator.connectAsync('parentApiKey', 'childApiKey')
+    const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsOk(response.data)
@@ -26,7 +26,7 @@ describe('Site configurator test suite', () => {
     axios.mockResolvedValue({ data: expectedResponse })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
-    const response = await siteConfigurator.connectAsync('parentApiKey', 'childApiKey_NOT_EXISTS')
+    const response = await siteConfigurator.connect('parentApiKey', 'childApiKey_NOT_EXISTS')
     console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response.data, expectedResponse)
@@ -37,7 +37,7 @@ describe('Site configurator test suite', () => {
     axios.mockResolvedValue({ data: expectedResponse })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
-    const response = await siteConfigurator.connectAsync('parentApiKey', 'childApiKey')
+    const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     console.log('response=' + JSON.stringify(response))
 
     TestData.verifyResponseIsNotOk(response.data, expectedResponse)
@@ -64,7 +64,7 @@ describe('Site configurator test suite', () => {
     })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
-    const response = await siteConfigurator.connectAsync('parentApiKey', 'childApiKey')
+    const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     console.log('response=' + JSON.stringify(response))
 
     expect(response.data.errorCode).toEqual('ENOTFOUND')

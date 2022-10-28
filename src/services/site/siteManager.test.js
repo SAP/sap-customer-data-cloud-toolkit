@@ -1,4 +1,4 @@
-import SiteManagerAsync from './siteManagerAsync'
+import SiteManager from './siteManager'
 import * as TestData from './data_test'
 import axios from 'axios'
 
@@ -10,7 +10,7 @@ describe('Site manager async test suite', () => {
     userKey: 'userKey',
     secret: 'secret',
   }
-  const siteManager = new SiteManagerAsync(credentials)
+  const siteManager = new SiteManager(credentials)
 
   test('create site successfully - single parent', async () => {
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
