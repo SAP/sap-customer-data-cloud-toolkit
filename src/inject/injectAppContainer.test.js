@@ -1,11 +1,16 @@
-const fs = require('fs')
-const path = require('path')
+/**
+ * @jest-environment jsdom
+ */
+
+import fs from 'fs'
+import path from 'path'
+import { MAIN_CONTAINER_CLASS } from './constants'
+import { htmlToElem } from './utils'
+import { injectAppContainer, initAppContainer, destroyAppContainer, TENANT_ID_CLASS } from './injectAppContainer'
+
 const html = fs.readFileSync(path.resolve(__dirname, '../../public/index.html'), 'utf8')
 jest.dontMock('fs')
 jest.useFakeTimers()
-
-const { htmlToElem } = require('./utils')
-const { injectAppContainer, initAppContainer, destroyAppContainer, MAIN_CONTAINER_CLASS, TENANT_ID_CLASS } = require('./injectAppContainer')
 
 const tenantIdDivMock = `<span class="${TENANT_ID_CLASS}" title="Tenant ID">000000000999999999</span>`
 
