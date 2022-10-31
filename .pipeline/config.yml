@@ -25,4 +25,6 @@ steps:
     userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
     productName: cdc-tools-chrome-extension
     projectName: cdc-tools-chrome-extension
+    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.3'
+    agentUrl: 'https://sap.whitesourcesoftware.com/agent'
     verbose: true
