@@ -3,7 +3,7 @@ import * as TestData from './data_test'
 import axios from 'axios'
 
 jest.mock('axios')
-
+jest.setTimeout(10000)
 describe('Site configurator test suite', () => {
   const credentials = {
     userKey: 'userKey',
@@ -16,9 +16,9 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    // console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
 
-    TestData.verifyResponseIsOk(response)
+    TestData.verifyResponseIsOk(response.data)
   })
 
   test('configure site unsuccessfully - api key do not exists', async () => {
@@ -27,9 +27,9 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey_NOT_EXISTS')
-    // console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
 
-    TestData.verifyResponseIsNotOk(response, expectedResponse)
+    TestData.verifyResponseIsNotOk(response.data, expectedResponse)
   })
 
   test('configure site unsuccessfully - data centers are different', async () => {
@@ -38,13 +38,13 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    // console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
 
-    TestData.verifyResponseIsNotOk(response, expectedResponse)
+    TestData.verifyResponseIsNotOk(response.data, expectedResponse)
   })
 
   test('get site config successfully', async () => {
-    const expectedResponse = TestData.scGetSiteConfigSuccessfully
+    const expectedResponse = TestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValue({ data: expectedResponse })
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
@@ -65,10 +65,10 @@ describe('Site configurator test suite', () => {
 
     const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
-    // console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
 
-    expect(response.errorCode).toEqual('ENOTFOUND')
-    expect(response.errorMessage).toEqual('Error configuring site')
-    expect(response.time).toBeDefined()
+    expect(response.data.errorCode).toEqual('ENOTFOUND')
+    expect(response.data.errorMessage).toEqual('Error configuring site')
+    expect(response.data.time).toBeDefined()
   })
 })

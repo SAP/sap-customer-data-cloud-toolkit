@@ -1,23 +1,22 @@
 import client from '../gigya/client'
+import generateErrorResponse from './generateErrorResponse'
 
 class Site {
+  static #ERROR_MSG_CREATE = 'Error creating site'
+  static #ERROR_MSG_DELETE = 'Error deleting site'
+
   constructor(partnerId, userKey, secret) {
     this.partnerId = partnerId
     this.userKey = userKey
     this.secret = secret
   }
 
-  createAsync(body) {
+  async create(body) {
     const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
     const bodyWithCredentials = this.#addCredentials(body)
-    return client.post(url, bodyWithCredentials)
-  }
-
-  async create(body) {
-    const response = await this.createAsync(body).catch(function (error) {
-      return Site.#generateErrorResponse(error)
+    return client.post(url, bodyWithCredentials).catch(function (error) {
+      return generateErrorResponse(error, Site.#ERROR_MSG_CREATE)
     })
-    return response.data
   }
 
   static getCreateEndpoint() {
@@ -36,26 +35,22 @@ class Site {
     return bodyWithCredentials
   }
 
-  static #generateErrorResponse(error) {
-    const resp = { data: {} }
-    resp.data.errorCode = error.code
-    resp.data.errorDetails = error.details
-    resp.data.errorMessage = 'Error creating site'
-    resp.data.time = Date.now()
-    return resp
-  }
-
   async delete(site, dataCenter) {
     const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
 
     // GET TOKEN
-    const getDeleteTokenRes = (await client.post(url, this.#deleteSiteParameters(site))).data
-    if (getDeleteTokenRes.errorCode !== 0) {
-      return getDeleteTokenRes
+    const getDeleteTokenRes = await client.post(url, this.#deleteSiteParameters(site)).catch(function (error) {
+      return generateErrorResponse(error, Site.#ERROR_MSG_DELETE)
+    })
+    if (getDeleteTokenRes.data.errorCode !== 0) {
+      return getDeleteTokenRes.data
     }
 
     // DELETE SITE
-    return (await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.deleteToken))).data
+    const response = await client.post(url, this.#deleteSiteParameters(site, getDeleteTokenRes.data.deleteToken)).catch(function (error) {
+      return generateErrorResponse(error, Site.#ERROR_MSG_DELETE)
+    })
+    return response.data
   }
 
   #deleteSiteParameters(apiKey, deleteToken) {
