@@ -14,6 +14,7 @@ class SiteConfigurator {
     const url = `https://admin.${this.dataCenter}.gigya.com/${SiteConfigurator.getSetEndpoint()}`
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {
+      console.log(`error=${error}`)
       return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
     })
   }
@@ -35,6 +36,7 @@ class SiteConfigurator {
     const url = 'https://admin.us1.gigya.com/admin.getSiteConfig'
 
     const response = await client.post(url, this.#siteConfigParameters(apiKey, this.userKey, this.secret)).catch(function (error) {
+      console.log(`error=${error}`)
       return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
     })
     return response.data
@@ -45,7 +47,7 @@ class SiteConfigurator {
     parameters.apiKey = apiKey
     parameters.userKey = userKey
     parameters.secret = secret
-    parameters.siteConfigParameters = 'true'
+    parameters.includeSiteGroupConfig = true
     return parameters
   }
 }

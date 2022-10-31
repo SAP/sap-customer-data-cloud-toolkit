@@ -52,11 +52,11 @@ describe('Benchmark test suite', () => {
 
   function mockAxiosAndCreateRequest() {
     axios.mockImplementation((axiosConfig) => {
-      if (axiosConfig.data.has('baseDomain') && axiosConfig.data.get('baseDomain').includes(`p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
+      if (axiosConfig.data.has('baseDomain') && axiosConfig.data.get('baseDomain').includes(`${TestData.DOMAIN_PREFIX}p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
         const response = { data: TestData.scExpectedGigyaResponseNotOk }
         console.log(`server response=${JSON.stringify(response)}`)
         return response
-      } else if (axiosConfig.data.has('siteConfigParameters')) {
+      } else if (axiosConfig.data.has('includeSiteGroupConfig')) {
         const response = { data: TestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildrenPerParent) }
         console.log(`server response=${JSON.stringify(response)}`)
         return response

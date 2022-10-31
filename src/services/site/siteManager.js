@@ -145,7 +145,7 @@ class SiteManager {
     const siteMembers = siteConfig.siteGroupConfig.members
 
     // Delete site members
-    if (siteMembers.length > 0) {
+    if (siteMembers && siteMembers.length > 0) {
       const memberResponses = await this.#siteMembersDeleter(siteMembers, dataCenter)
       responses.push(...memberResponses.flat())
     }

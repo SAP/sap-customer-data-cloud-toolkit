@@ -2,7 +2,7 @@ function generateErrorResponse(error, message) {
   return {
     data: {
       errorCode: error.code,
-      errorDetails: error.details,
+      errorDetails: error,
       errorMessage: message,
       time: Date.now(),
     },
