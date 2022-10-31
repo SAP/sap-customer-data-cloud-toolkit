@@ -46,16 +46,27 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a single Parent Site Manually', () => {
+    cy.intercept('POST', 'admin.createSite', {
+      errorDetails: 'The supplied userkey was not found',
+      errorMessage: 'Unauthorized user',
+    })
+
     cy.get('#addParentButton').click()
 
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
-    cy.wait(500)
     cy.get('.MessageView-container-0-2-28').eq(1).find('ui5-list').should('have.text', 'Unauthorized user (Manually add  parent site - eu1)The supplied userkey was not found')
+
+    // TODO: validate error icon exists on sites table cell
+
+    // TODO: call cy.intercept with a success message
+
+    // TODO: validate success, pop up should exist
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
+    // TODO: validate child datacenter equals parent datacenter
     const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
     cy.on('uncaught:exception', (err) => {
       if (resizeObserverLoopErrRe.test(err.message)) {
