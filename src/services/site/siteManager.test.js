@@ -170,6 +170,7 @@ describe('Site manager async test suite', () => {
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
+    expect(spy.mock.calls.length).toBe(2)
     expect(response.length).toEqual(6)
     verifyAllResponsesAreOk(response)
   })
@@ -208,12 +209,15 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - different data centers - rate limit', async () => {
+
+    let spy = await jest.spyOn(client, 'wait')
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
       .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -228,6 +232,9 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[0], true)
     expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
+    expect(spy).toHaveBeenCalled()
+    expect(spy.mock.calls.length).toBe(3)
+
   })
 
   test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
