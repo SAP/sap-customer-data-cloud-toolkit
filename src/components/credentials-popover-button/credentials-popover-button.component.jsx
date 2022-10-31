@@ -11,8 +11,13 @@ const CredentialsPopoverButton = () => {
     <>
       <Button
         id="openPopoverButton"
-        onClick={(e) => {
-          ref.current.showAt(e.target)
+        onClick={(event) => {
+          const responsivePopover = ref.current
+          if (responsivePopover.isOpen()) {
+            responsivePopover.close()
+          } else {
+            responsivePopover.showAt(event.target)
+          }
         }}
         icon="fridge"
       />
