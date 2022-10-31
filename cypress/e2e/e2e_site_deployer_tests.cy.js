@@ -7,12 +7,15 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Creating 3 parent sites with different datacenters', () => {
-    getSiteDomain('a_b_c_site_deployer_multiple_datacenters').should('have.value', 'a_b_c_site_deployer_multiple_datacenters')
+    getSiteDomain('a_b_c_site_deployer').should('have.value', 'a_b_c_site_deployer')
 
-    getSiteStructure(1).should('have.text', 'Structure 1')
+    getSiteStructure(5).should('have.text', 'Test Structure')
 
     getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '6')
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', 'dev.au.a_b_c_site_deployer')
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(1).should('have.value', 'dev.eu.a_b_c_site_deployer')
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(2).should('have.value', 'dev.us.a_b_c_site_deployer')
   })
 
   it('Create 1 parent site with US datacenter', () => {
@@ -22,20 +25,22 @@ describe('Site Deployer Test Suite', () => {
         return false
       }
     })
-    getSiteDomain('a_b_c_site_deployer_multiple_datacenters').should('have.value', 'a_b_c_site_deployer_multiple_datacenters')
+    getSiteDomain('a_b_c_site_deployer').should('have.value', 'a_b_c_site_deployer')
     getDataCenters('AU').click()
     getDataCenters('EU').click()
     getDataCenters('US').shadow().find('[class="ui5-token--text"]').should('have.text', 'US')
     getCreateButton().should('be.disabled')
-    getSaveButton().should('be.disabled')
-    getSiteStructure(1).should('have.text', 'Structure 1')
+    getSiteStructure(5).should('have.text', 'Test Structure')
 
     cy.get('ui5-table-row').should('have.length', '0')
     getCreateButton().should('not.be.disabled')
     getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '2')
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', 'dev.us.a_b_c_site_deployer')
+
     getSaveButton().should('not.be.disabled')
-    cy.get('#cancel-main').click()
+
+    cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#cancel-main').click()
 
     cy.get('ui5-table-row').should('have.length', '0')
   })
@@ -106,7 +111,7 @@ describe('Site Deployer Test Suite', () => {
   }
 
   function getSaveButton() {
-    return cy.get('body').find('#save-main')
+    return cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#save-main')
   }
 
   function writeParentSiteTable(siteDomain, siteDescription, dataCenterOption) {
