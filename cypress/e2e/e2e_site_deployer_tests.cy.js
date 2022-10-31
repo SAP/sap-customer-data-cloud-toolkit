@@ -1,4 +1,15 @@
 /* eslint-disable no-undef */
+import * as TestData from '../../src/services/site/data_test'
+const expectedGigyaResponseNoUserKey = {
+  callId: '80312d051f1345cd931a71ac4db55890',
+  errorCode: 403005,
+  errorDetails: 'The supplied userkey was not found',
+  errorMessage: 'Unauthorized user',
+  apiVersion: 2,
+  statusCode: 403,
+  statusReason: 'Forbidden',
+  time: Date.now(),
+}
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000')
@@ -19,12 +30,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Create 1 parent site with US datacenter', () => {
-    const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
-    cy.on('uncaught:exception', (err) => {
-      if (resizeObserverLoopErrRe.test(err.message)) {
-        return false
-      }
-    })
+    resizeObserverLoopErrRe()
     getSiteDomain('a_b_c_site_deployer').should('have.value', 'a_b_c_site_deployer')
     getDataCenters('AU').click()
     getDataCenters('EU').click()
@@ -45,34 +51,31 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-row').should('have.length', '0')
   })
 
-  it('Should add a single Parent Site Manually', () => {
-    cy.intercept('POST', 'admin.createSite', {
-      errorDetails: 'The supplied userkey was not found',
-      errorMessage: 'Unauthorized user',
-    })
-
+  it('Should add a single Parent Site Manually with error message', () => {
+    verifyResponse(expectedGigyaResponseNoUserKey)
     cy.get('#addParentButton').click()
 
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
     cy.get('.MessageView-container-0-2-28').eq(1).find('ui5-list').should('have.text', 'Unauthorized user (Manually add  parent site - eu1)The supplied userkey was not found')
+    cy.get('.MessageViewButtonStyles-btn-0-2-27').should('be.visible')
+  })
+  it('Should add a single Parent Site Manually with sucess message', () => {
+    resizeObserverLoopErrRe()
+    verifyResponse(TestData.expectedGigyaResponseOk)
+    cy.get('#addParentButton').click()
 
-    // TODO: validate error icon exists on sites table cell
-
-    // TODO: call cy.intercept with a success message
-
-    // TODO: validate success, pop up should exist
+    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    getSaveButton().should('not.be.disabled')
+    getSaveButton().click()
+    cy.get('ui5-dialog').should('be.visible')
+    cy.get('ui5-dialog').should('have.text', 'OkAll sites have been created successfully')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
     // TODO: validate child datacenter equals parent datacenter
-    const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
-    cy.on('uncaught:exception', (err) => {
-      if (resizeObserverLoopErrRe.test(err.message)) {
-        return false
-      }
-    })
+    resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
 
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
@@ -99,6 +102,8 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-cell').eq(3).click()
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
     writeChildrenSiteTable('Children site description', 'Children site domain')
+    cy.get('#dataCenterSelect').shadow().find('[class ="ui5-select-root ui5-input-focusable-element"]').find('[class ="ui5-select-label-root"]').should('have.text', 'EU')
+    cy.get('ui5-table-cell').eq(6).should('have.text', 'EU')
     cy.get('ui5-table-cell').eq(3).click()
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 0)
@@ -136,5 +141,18 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(childrenDomain)
 
     cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(3).shadow().find('[class = "ui5-input-inner"]').type(childrenDescription)
+  }
+  function verifyResponse(response) {
+    cy.intercept('POST', 'admin.createSite', {
+      body: response,
+    })
+  }
+  function resizeObserverLoopErrRe() {
+    const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
+    cy.on('uncaught:exception', (err) => {
+      if (resizeObserverLoopErrRe.test(err.message)) {
+        return false
+      }
+    })
   }
 })
