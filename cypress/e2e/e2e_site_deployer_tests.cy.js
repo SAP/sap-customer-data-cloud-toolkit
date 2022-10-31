@@ -1,15 +1,6 @@
 /* eslint-disable no-undef */
 import * as TestData from '../../src/services/site/data_test'
-const expectedGigyaResponseNoUserKey = {
-  callId: '80312d051f1345cd931a71ac4db55890',
-  errorCode: 403005,
-  errorDetails: 'The supplied userkey was not found',
-  errorMessage: 'Unauthorized user',
-  apiVersion: 2,
-  statusCode: 403,
-  statusReason: 'Forbidden',
-  time: Date.now(),
-}
+
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000')
@@ -52,18 +43,22 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a single Parent Site Manually with error message', () => {
-    verifyResponse(expectedGigyaResponseNoUserKey)
+    mockResponse(TestData.expectedGigyaResponseNoPartnerId)
     cy.get('#addParentButton').click()
 
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
-    cy.get('.MessageView-container-0-2-28').eq(1).find('ui5-list').should('have.text', 'Unauthorized user (Manually add  parent site - eu1)The supplied userkey was not found')
+    cy.get('.MessageView-container-0-2-28')
+      .eq(1)
+      .find('ui5-list')
+      .should('have.text', 'Missing required parameter (Manually add  parent site - eu1)Missing required parameter : partnerID')
     cy.get('.MessageViewButtonStyles-btn-0-2-27').should('be.visible')
   })
+
   it('Should add a single Parent Site Manually with sucess message', () => {
     resizeObserverLoopErrRe()
-    verifyResponse(TestData.expectedGigyaResponseOk)
+    mockResponse(TestData.expectedGigyaResponseOk)
     cy.get('#addParentButton').click()
 
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
@@ -74,7 +69,6 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
-    // TODO: validate child datacenter equals parent datacenter
     resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
 
@@ -142,11 +136,13 @@ describe('Site Deployer Test Suite', () => {
 
     cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(3).shadow().find('[class = "ui5-input-inner"]').type(childrenDescription)
   }
-  function verifyResponse(response) {
+
+  function mockResponse(response) {
     cy.intercept('POST', 'admin.createSite', {
       body: response,
     })
   }
+
   function resizeObserverLoopErrRe() {
     const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
     cy.on('uncaught:exception', (err) => {
