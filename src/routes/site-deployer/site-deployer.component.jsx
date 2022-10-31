@@ -1,6 +1,17 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { addParentFromStructure, clearSites, clearErrors, createSites, selectErrors, selectShowSuccessDialog } from '../../redux/siteSlice'
+import {
+  addParentFromStructure,
+  clearSites,
+  clearErrors,
+  createSites,
+  selectSites,
+  selectDataCenters,
+  selectLoadingState,
+  selectErrors,
+  selectShowSuccessDialog,
+  selectCredentials,
+} from '../../redux/siteSlice'
 
 import {
   Card,
@@ -77,18 +88,28 @@ const checkSitesRequiredFields = (sites) => {
 const SiteDeployer = () => {
   const dispatch = useDispatch()
 
-  const sites = useSelector((state) => state.sites.sites)
-  const isLoading = useSelector((state) => state.sites.isLoading)
-  const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const sites = useSelector(selectSites)
+  const isLoading = useSelector(selectLoadingState)
+  const dataCenters = useSelector(selectDataCenters)
   const errors = useSelector(selectErrors)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const credentials = useSelector(selectCredentials)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
+  const [areCredentialsFilled, setCredentialsAreFilled] = useState(true)
+
+  const checkCredentialsAreFilled = () => {
+    const credentialsAreFilled = credentials.userKey !== '' && credentials.userSecret !== ''
+    setCredentialsAreFilled(credentialsAreFilled)
+    return credentialsAreFilled
+  }
 
   const onSaveHandler = () => {
-    dispatch(createSites(sites))
+    if (checkCredentialsAreFilled()) {
+      dispatch(createSites(sites))
+    }
   }
 
   const onCancelHandler = () => {
@@ -286,6 +307,14 @@ const SiteDeployer = () => {
         {showSuccessDialog ? (
           <DialogMessage open={showSuccessDialog} headerText="Success" state={ValueState.Success} closeButtonContent="Ok" onAfterClose={() => document.location.reload()}>
             All sites have been created successfully
+          </DialogMessage>
+        ) : (
+          ''
+        )}
+
+        {!areCredentialsFilled ? (
+          <DialogMessage open={!areCredentialsFilled} headerText="Error" state={ValueState.Error} closeButtonContent="Ok">
+            Please insert user key and secret key
           </DialogMessage>
         ) : (
           ''

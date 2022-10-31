@@ -244,3 +244,7 @@ export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).fi
 export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
 
 export const selectCredentials = (state) => state.sites.credentials
+
+export const selectDataCenters = (state) => state.sites.dataCenters
+
+export const selectLoadingState = (state) => state.sites.isLoading
