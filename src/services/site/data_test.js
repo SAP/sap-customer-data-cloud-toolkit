@@ -210,6 +210,25 @@ const sdDeleteGroupSitesFirst = {
   time: Date.now(),
 }
 
+const expectedGigyaErrorApiRateLimit = {
+  callId: 'callId',
+  errorCode: 403048,
+  errorDetails: 'Api Rate limit exceeded',
+  errorMessage: 'Api rate limit exceeded',
+  apiVersion: 2,
+  statusCode: 403,
+  statusReason: 'Forbidden',
+  time: Date.now(),
+}
+
+const expectedGigyaErrorETIMEDOUT = {
+  port: 443,
+  address: 'a.a.a.a.',
+  syscall: 'connect',
+  code: 'ETIMEDOUT',
+  errno: -60,
+}
+
 function createMultipleParentWithMultipleChildrenRequest() {
   return JSON.parse(JSON.stringify(multipleParentWithMultipleChildrenRequest))
 }
@@ -353,6 +372,8 @@ export {
   sdSiteAlreadyDeleted,
   sdDeleteGroupSitesFirst,
   invalidApiParam,
+  expectedGigyaErrorApiRateLimit,
+  expectedGigyaErrorETIMEDOUT,
   createSingleParentRequest,
   createParentWithOneChildRequest,
   createParentWithTwoChildRequest,

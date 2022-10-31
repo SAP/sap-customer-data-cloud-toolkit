@@ -3,7 +3,7 @@ import * as TestData from './data_test'
 import axios from 'axios'
 
 jest.mock('axios')
-
+jest.setTimeout(10000)
 describe('Site configurator test suite', () => {
   const credentials = {
     userKey: 'userKey',
