@@ -21,3 +21,8 @@ steps:
     teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program' # 502
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
+  whitesourceExecuteScan:
+    userTokenCredentialsId: 003682439bbc43a59cfa74df5fcc0843769c1df9d9e44f6591f9cc56aada9b2a
+    productName: cdc-tools-chrome-extension
+    projectName: cdc-tools-chrome-extension
+    verbose: true

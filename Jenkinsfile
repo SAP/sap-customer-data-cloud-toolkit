@@ -31,26 +31,30 @@ node() {
     //     }
     // }
 
-    stage('SonarQube report') {
-        def scannerHome = tool 'cdc-tools-chrome-extension';
-        def nodeHome = tool 'nodejs16';
-        withEnv(["PATH=${nodeHome}/bin:${PATH}"]) {
-            withSonarQubeEnv('cdc-tools-chrome-extension') {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
-        }
+    // stage('SonarQube report') {
+    //     def scannerHome = tool 'cdc-tools-chrome-extension';
+    //     def nodeHome = tool 'nodejs16';
+    //     withEnv(["PATH=${nodeHome}/bin:${PATH}"]) {
+    //         withSonarQubeEnv('cdc-tools-chrome-extension') {
+    //             sh "${scannerHome}/bin/sonar-scanner"
+    //         }
+    //     }
+    // }
+
+    // stage("SonarQube result") {
+    //     timeout(time: 30, unit: 'MINUTES') {
+    //       waitForQualityGate abortPipeline: true,
+    //         credentialsId:"cdc-tools-chrome-extension-sonar"
+    //     }
+    // }
+
+    stage('Mend/Whitesource report') {
+        whitesourceExecuteScan script: this
     }
 
-    stage("SonarQube result") {
-        timeout(time: 30, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: true,
-            credentialsId:"cdc-tools-chrome-extension-sonar"
-        }
-    }
-
-    stage('Checkmarx report') {
-        checkmarxExecuteScan script:this
-    }
+    // stage('Checkmarx report') {
+    //     checkmarxExecuteScan script:this
+    // }
 
     //archive (includes: 'build/static/**/main.*')
 }
