@@ -22,9 +22,13 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
+    buildTool: 'npm'
     userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
     productName: cdc-tools-chrome-extension
     projectName: cdc-tools-chrome-extension
     serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.3'
     agentUrl: 'https://sap.whitesourcesoftware.com/agent'
     verbose: true
+    agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
+    includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
+    excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
