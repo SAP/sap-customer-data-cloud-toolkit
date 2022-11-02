@@ -32,3 +32,4 @@ steps:
     agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
     includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
     excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
+    productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
