@@ -30,8 +30,8 @@ steps:
     agentUrl: 'https://sap.whitesourcesoftware.com/agent'
     verbose: true
     agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
-    includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
-    excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
+    #includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
+    #excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
     productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
     orgToken: '6971b2eec2d3420bad0caf173ec629f6a3c7d3ba63f3445ab99ffdbf1acfb1d0'
     projectToken: 'aa65be83b75e464cb441363781e142718d4ceb23867d49b6879a9dab070ce0cc'
