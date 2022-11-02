@@ -46,7 +46,7 @@ const CredentialsPopup = ({ userKey, userSecret }) => {
           </Label>
           <Input
             type={InputType.Password}
-            id="secretKey"
+            id="userSecret"
             placeholder=""
             className="fd-input ng-pristine ng-invalid ng-touched"
             value={userSecret}
