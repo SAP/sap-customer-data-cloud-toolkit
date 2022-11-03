@@ -48,6 +48,10 @@ node() {
         }
     }
 
+    stage('Mend/Whitesource report') {
+        whitesourceExecuteScan script: this
+    }
+
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
