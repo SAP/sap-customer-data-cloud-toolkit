@@ -1,5 +1,5 @@
 import client from '../gigya/client'
-import generateErrorResponse from './generateErrorResponse'
+import generateErrorResponse from '../errors/generateErrorResponse'
 
 class Site {
   static #ERROR_MSG_CREATE = 'Error creating site'
