@@ -78,7 +78,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <Button
               icon="navigation-down-arrow"
               design="Transparent"
-              tooltip="Add Parent Site"
+              tooltip="Hide Child Sites"
               onClick={() => {
                 setChildListOpen(false)
               }}
@@ -87,7 +87,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <Button
               icon="navigation-right-arrow"
               design="Transparent"
-              tooltip="Add Parent Site"
+              tooltip="Show Child Sites"
               onClick={() => {
                 setChildListOpen(true)
               }}

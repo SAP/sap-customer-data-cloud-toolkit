@@ -19,11 +19,17 @@ import sitesReducer, {
   clearErrors,
   setShowSuccessDialog,
   selectSiteById,
+  setUserKey,
+  setUserSecret,
 } from './siteSlice'
 
 const initialState = {
   sites: [],
   isLoading: false,
+  credentials: {
+    userKey: '',
+    userSecret: '',
+  },
   dataCenters: [
     {
       label: 'AU',
@@ -302,5 +308,17 @@ describe('Site slice test suite', () => {
   test('should return undefiend on getting site by unexisting id', () => {
     const site = selectSiteById({ sites: stateWithParentWithChild }, 'abc')
     expect(site).toBe(undefined)
+  })
+
+  test('should update credentials user key', () => {
+    const testUserKey = 'dummyUserKey'
+    const newState = sitesReducer(initialState, setUserKey(testUserKey))
+    expect(newState.credentials.userKey).toEqual(testUserKey)
+  })
+
+  test('should update credentials user secret', () => {
+    const testUserSecret = 'dummyUserSecret'
+    const newState = sitesReducer(initialState, setUserSecret(testUserSecret))
+    expect(newState.credentials.userSecret).toEqual(testUserSecret)
   })
 })

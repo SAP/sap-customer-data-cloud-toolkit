@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { generateUUID } from '../utils/generateUUID'
-import { chromeStorageState } from '../inject/chromeStorage'
 import dataCenters from '../dataCenters.json'
 import SiteManager from '../services/site/siteManager'
 
@@ -39,6 +38,22 @@ const getDataCenters = (host = window.location.hostname) => dataCenters.filter((
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
+const getUserKeyFromLocalStorage = () => {
+  const userKeyFromLocalStorage = localStorage.getItem('userKey')
+  if (userKeyFromLocalStorage) {
+    return userKeyFromLocalStorage
+  }
+  return ''
+}
+
+const getUserSecretFromLocalStorage = () => {
+  const userSecretFromLocalStorage = localStorage.getItem('userSecret')
+  if (userSecretFromLocalStorage) {
+    return userSecretFromLocalStorage
+  }
+  return ''
+}
+
 export const siteSlice = createSlice({
   name: 'sites',
   initialState: {
@@ -47,6 +62,10 @@ export const siteSlice = createSlice({
     dataCenters: getDataCenters(),
     errors: [],
     showSuccessDialog: false,
+    credentials: {
+      userKey: getUserKeyFromLocalStorage(),
+      userSecret: getUserSecretFromLocalStorage(),
+    },
   },
   reducers: {
     addNewParent: (state) => {
@@ -118,6 +137,14 @@ export const siteSlice = createSlice({
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
     },
+    setUserKey: (state, action) => {
+      state.credentials.userKey = action.payload
+      localStorage.setItem('userKey', action.payload)
+    },
+    setUserSecret: (state, action) => {
+      state.credentials.userSecret = action.payload
+      localStorage.setItem('userSecret', action.payload)
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createSites.pending, (state) => {
@@ -167,17 +194,20 @@ export const {
   clearSites,
   clearErrors,
   setShowSuccessDialog,
+  setUserKey,
+  setUserSecret,
 } = siteSlice.actions
 
 export default siteSlice.reducer
 
-export const createSites = createAsyncThunk('service/createSites', async (sites) => {
+export const createSites = createAsyncThunk('service/createSites', async (sites, { getState }) => {
   try {
+    const state = getState()
     return await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: getPartnerId(window.location.hash),
-      userKey: chromeStorageState.userKey,
-      secret: chromeStorageState.secretKey,
+      userKey: state.sites.credentials.userKey,
+      secret: state.sites.credentials.userSecret,
     }).create({
       sites,
     })
@@ -212,3 +242,9 @@ export const selectErrors = (state) => state.sites.errors
 export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
 
 export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
+
+export const selectCredentials = (state) => state.sites.credentials
+
+export const selectDataCenters = (state) => state.sites.dataCenters
+
+export const selectLoadingState = (state) => state.sites.isLoading

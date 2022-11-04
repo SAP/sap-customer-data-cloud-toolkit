@@ -4,8 +4,8 @@ import * as TestData from '../../src/services/site/data_test'
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000')
-
     cy.contains('Site Deployer').click()
+    writeCredentials()
   })
 
   it('Creating 3 parent sites with different datacenters', () => {
@@ -64,27 +64,25 @@ describe('Site Deployer Test Suite', () => {
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
-    cy.get('ui5-dialog').should('be.visible')
-    cy.get('ui5-dialog').should('have.text', 'OkAll sites have been created successfully')
+    const successPopup = cy.get('#successPopup')
+    successPopup.should('be.visible')
+    successPopup.should('have.text', 'OkAll sites have been created successfully')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
     resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
-
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(3).click()
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 2)
-    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Add Parent Site"]').click()
+    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Hide Child Sites"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
-    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Add Parent Site"]').click()
-
-    writeChildrenSiteTable('Children site description', 'Children site domain')
+    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
+    writeChildrenSiteTable('Children site domain', 'Children site description')
     getSaveButton().should('not.be.disabled')
-
     cy.get('ui5-table-cell').eq(7).click()
     cy.get('ui5-responsive-popover')
       .find('[data-component-name = "ActionSheetMobileContent"] ')
@@ -101,6 +99,19 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-cell').eq(3).click()
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 0)
+  })
+
+  it('should show pop error when credentials are empty', () => {
+    clearCredentials()
+    cy.get('#addParentButton').click()
+
+    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    getSaveButton().should('not.be.disabled')
+    getSaveButton().click()
+
+    const errorPopup = cy.get('#errorPopup')
+    errorPopup.should('be.visible')
+    errorPopup.should('have.text', 'OkPlease insert User and Secret Keys in the Credentials menu')
   })
 
   function getDataCenters(dataCenter) {
@@ -126,15 +137,14 @@ describe('Site Deployer Test Suite', () => {
 
   function writeParentSiteTable(siteDomain, siteDescription, dataCenterOption) {
     cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain)
-    cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(2).shadow().find('[class = "ui5-input-inner"]').type(siteDescription)
+    cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(siteDescription)
     cy.get('#dataCenterSelect').click()
     cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
   }
 
   function writeChildrenSiteTable(childrenDomain, childrenDescription) {
-    cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(childrenDomain)
-
-    cy.get('ui5-table-row').eq(1).shadow().get('ui5-table-cell').eq(4).shadow().get('ui5-input').eq(3).shadow().find('[class = "ui5-input-inner"]').type(childrenDescription)
+    cy.get('ui5-input').eq(5).shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
+    cy.get('ui5-input').eq(6).shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
   }
 
   function mockResponse(response) {
@@ -150,5 +160,23 @@ describe('Site Deployer Test Suite', () => {
         return false
       }
     })
+  }
+
+  function writeCredentials() {
+    resizeObserverLoopErrRe()
+    const openPopoverButton = cy.get('body').find('#openPopoverButton')
+    openPopoverButton.click()
+    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('dummyuserkey')
+    cy.get('#userSecret').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dummyusersecret', { force: true })
+    openPopoverButton.click()
+  }
+
+  function clearCredentials() {
+    resizeObserverLoopErrRe()
+    const openPopoverButton = cy.get('body').find('#openPopoverButton')
+    openPopoverButton.click()
+    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
+    cy.get('#userSecret').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
+    openPopoverButton.click()
   }
 })

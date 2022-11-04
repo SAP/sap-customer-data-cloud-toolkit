@@ -1,6 +1,17 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { addParentFromStructure, clearSites, clearErrors, createSites, selectErrors, selectShowSuccessDialog } from '../../redux/siteSlice'
+import {
+  addParentFromStructure,
+  clearSites,
+  clearErrors,
+  createSites,
+  selectSites,
+  selectDataCenters,
+  selectLoadingState,
+  selectErrors,
+  selectShowSuccessDialog,
+  selectCredentials,
+} from '../../redux/siteSlice'
 
 import {
   Card,
@@ -31,6 +42,7 @@ import '@ui5/webcomponents-icons/dist/overflow.js'
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import CredentialsPopoverButton from '../../components/credentials-popover-button/credentials-popover-button.component'
 
 import structures from '../../sitesStructures.json'
 
@@ -76,18 +88,29 @@ const checkSitesRequiredFields = (sites) => {
 const SiteDeployer = () => {
   const dispatch = useDispatch()
 
-  const sites = useSelector((state) => state.sites.sites)
-  const isLoading = useSelector((state) => state.sites.isLoading)
-  const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const sites = useSelector(selectSites)
+  const isLoading = useSelector(selectLoadingState)
+  const dataCenters = useSelector(selectDataCenters)
   const errors = useSelector(selectErrors)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const credentials = useSelector(selectCredentials)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
+
+  const checkCredentialsAreFilled = () => {
+    return credentials.userKey !== '' && credentials.userSecret !== ''
+  }
 
   const onSaveHandler = () => {
-    dispatch(createSites(sites))
+    if (checkCredentialsAreFilled()) {
+      setShowErrorDialog(false)
+      dispatch(createSites(sites))
+    } else {
+      setShowErrorDialog(true)
+    }
   }
 
   const onCancelHandler = () => {
@@ -141,12 +164,12 @@ const SiteDeployer = () => {
         design="FloatingFooter"
         endContent={
           <div>
-            <button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
+            <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
               Save
-            </button>
-            <button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
+            </Button>
+            <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
               Cancel
-            </button>
+            </Button>
           </div>
         }
       ></Bar>
@@ -172,7 +195,7 @@ const SiteDeployer = () => {
 
   return (
     <>
-      <Bar design="Header" startContent={<BarStart />}></Bar>
+      <Bar design="Header" startContent={<BarStart />} endContent={<CredentialsPopoverButton />}></Bar>
       <div className="cdc-tools-background" style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
@@ -283,12 +306,32 @@ const SiteDeployer = () => {
         </div>
 
         {showSuccessDialog ? (
-          <DialogMessage open={showSuccessDialog} headerText="Success" state={ValueState.Success} closeButtonContent="Ok" onAfterClose={() => document.location.reload()}>
+          <DialogMessage
+            open={showSuccessDialog}
+            headerText="Success"
+            state={ValueState.Success}
+            closeButtonContent="Ok"
+            onAfterClose={() => document.location.reload()}
+            id="successPopup"
+          >
             All sites have been created successfully
           </DialogMessage>
         ) : (
           ''
         )}
+
+        <DialogMessage
+          open={showErrorDialog}
+          headerText="Error"
+          state={ValueState.Error}
+          closeButtonContent="Ok"
+          onAfterClose={() => setShowErrorDialog(false)}
+          style={{ textAlign: 'center' }}
+          id="errorPopup"
+        >
+          Please insert User and Secret Keys <br />
+          in the Credentials menu
+        </DialogMessage>
       </div>
     </>
   )
