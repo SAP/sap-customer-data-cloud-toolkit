@@ -9,7 +9,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Creating 3 parent sites with different datacenters', () => {
-    getSiteDomain('a_b_c_site_deployer').should('have.value', 'a_b_c_site_deployer')
+    getSiteDomain('a_b_c_site_deployer')
 
     getSiteStructure(5).should('have.text', 'Test Structure')
 
@@ -22,10 +22,9 @@ describe('Site Deployer Test Suite', () => {
 
   it('Create 1 parent site with US datacenter', () => {
     resizeObserverLoopErrRe()
-    getSiteDomain('a_b_c_site_deployer').should('have.value', 'a_b_c_site_deployer')
-    getDataCenters('AU').click()
-    getDataCenters('EU').click()
-    getDataCenters('US').shadow().find('[class="ui5-token--text"]').should('have.text', 'US')
+    getSiteDomain('a_b_c_site_deployer')
+    getDataCenters('US', 'EU', 'AU')
+
     getCreateButton().should('be.disabled')
     getSiteStructure(5).should('have.text', 'Test Structure')
 
@@ -33,7 +32,7 @@ describe('Site Deployer Test Suite', () => {
     getCreateButton().should('not.be.disabled')
     getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '2')
-    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', 'dev.us.a_b_c_site_deployer')
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').should('have.value', 'dev.us.a_b_c_site_deployer')
 
     getSaveButton().should('not.be.disabled')
 
@@ -75,33 +74,22 @@ describe('Site Deployer Test Suite', () => {
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
-    cy.get('ui5-table-cell').eq(3).click()
-    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
+    createChild()
     cy.get('ui5-table-row').should('have.length', 2)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Hide Child Sites"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
     writeChildrenSiteTable('Children site domain', 'Children site description')
-    getSaveButton().should('not.be.disabled')
-    cy.get('ui5-table-cell').eq(7).click()
-    cy.get('ui5-responsive-popover')
-      .find('[data-component-name = "ActionSheetMobileContent"] ')
-      .find('[accessible-name="Delete Item 1 of 1"]')
-      .shadow()
-      .find('[aria-label="Delete Item 1 of 1"]')
-      .click({ force: true })
-    cy.get('ui5-table-row').should('have.length', 1)
-    cy.get('ui5-table-cell').eq(3).click()
-    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
-    writeChildrenSiteTable('Children site description', 'Children site domain')
     cy.get('#dataCenterSelect').shadow().find('[class ="ui5-select-root ui5-input-focusable-element"]').find('[class ="ui5-select-label-root"]').should('have.text', 'EU')
-    cy.get('ui5-table-cell').eq(6).should('have.text', 'EU')
-    cy.get('ui5-table-cell').eq(3).click()
+
+    getSaveButton().should('not.be.disabled')
+
+    getIcon(0)
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 0)
   })
 
-  it('should show pop error when credentials are empty', () => {
+  it('Should show error Popup when Credentials are empty', () => {
     clearCredentials()
     cy.get('#addParentButton').click()
 
@@ -114,8 +102,17 @@ describe('Site Deployer Test Suite', () => {
     errorPopup.should('have.text', 'OkPlease insert User and Secret Keys in the Credentials menu')
   })
 
-  function getDataCenters(dataCenter) {
-    return cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${dataCenter}]`)
+  function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
+    cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).click()
+    cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).click()
+    return cy
+      .get('#cdctools-dataCenter')
+      .shadow()
+      .find('.ui5-multi-combobox-tokenizer')
+      .find(`[text = ${chosenDataCenter}]`)
+      .shadow()
+      .find('[class="ui5-token--text"]')
+      .should('have.text', chosenDataCenter)
   }
 
   function getSiteStructure(optionNumber) {
@@ -124,7 +121,7 @@ describe('Site Deployer Test Suite', () => {
   }
 
   function getSiteDomain(siteDomain) {
-    return cy.get('#cdctools-siteDomain').shadow().find('[class = "ui5-input-inner"]').type(siteDomain)
+    return cy.get('#cdctools-siteDomain').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
   }
 
   function getCreateButton() {
@@ -136,8 +133,8 @@ describe('Site Deployer Test Suite', () => {
   }
 
   function writeParentSiteTable(siteDomain, siteDescription, dataCenterOption) {
-    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain)
-    cy.get('ui5-table-cell').eq(1).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(siteDescription)
+    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
+    getTableCell(1).shadow().get('ui5-input').eq(4).shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
     cy.get('#dataCenterSelect').click()
     cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
   }
@@ -178,5 +175,16 @@ describe('Site Deployer Test Suite', () => {
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
     cy.get('#userSecret').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
     openPopoverButton.click()
+  }
+  function getTableCell(cellNumber) {
+    return cy.get('ui5-table-cell').eq(cellNumber)
+  }
+
+  function createChild() {
+    getIcon(0)
+    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
+  }
+  function getIcon(iconNumber) {
+    return cy.get('[icon ="overflow"]').eq(iconNumber).click()
   }
 })
