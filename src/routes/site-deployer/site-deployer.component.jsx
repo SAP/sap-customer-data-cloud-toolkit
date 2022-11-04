@@ -98,17 +98,18 @@ const SiteDeployer = () => {
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
-  const [areCredentialsFilled, setCredentialsAreFilled] = useState(true)
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
 
   const checkCredentialsAreFilled = () => {
-    const credentialsAreFilled = credentials.userKey !== '' && credentials.userSecret !== ''
-    setCredentialsAreFilled(credentialsAreFilled)
-    return credentialsAreFilled
+    return credentials.userKey !== '' && credentials.userSecret !== ''
   }
 
   const onSaveHandler = () => {
     if (checkCredentialsAreFilled()) {
+      setShowErrorDialog(false)
       dispatch(createSites(sites))
+    } else {
+      setShowErrorDialog(true)
     }
   }
 
@@ -163,12 +164,12 @@ const SiteDeployer = () => {
         design="FloatingFooter"
         endContent={
           <div>
-            <button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
+            <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
               Save
-            </button>
-            <button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
+            </Button>
+            <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
               Cancel
-            </button>
+            </Button>
           </div>
         }
       ></Bar>
@@ -305,20 +306,32 @@ const SiteDeployer = () => {
         </div>
 
         {showSuccessDialog ? (
-          <DialogMessage open={showSuccessDialog} headerText="Success" state={ValueState.Success} closeButtonContent="Ok" onAfterClose={() => document.location.reload()}>
+          <DialogMessage
+            open={showSuccessDialog}
+            headerText="Success"
+            state={ValueState.Success}
+            closeButtonContent="Ok"
+            onAfterClose={() => document.location.reload()}
+            id="successPopup"
+          >
             All sites have been created successfully
           </DialogMessage>
         ) : (
           ''
         )}
 
-        {!areCredentialsFilled ? (
-          <DialogMessage open={!areCredentialsFilled} headerText="Error" state={ValueState.Error} closeButtonContent="Ok">
-            Please insert user key and secret key
-          </DialogMessage>
-        ) : (
-          ''
-        )}
+        <DialogMessage
+          open={showErrorDialog}
+          headerText="Error"
+          state={ValueState.Error}
+          closeButtonContent="Ok"
+          onAfterClose={() => setShowErrorDialog(false)}
+          style={{ textAlign: 'center' }}
+          id="errorPopup"
+        >
+          Please insert User and Secret Keys <br />
+          in the Credentials menu
+        </DialogMessage>
       </div>
     </>
   )

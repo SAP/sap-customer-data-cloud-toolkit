@@ -1,6 +1,8 @@
 import Site from './site'
 import * as TestData from './data_test'
 import axios from 'axios'
+import * as CommonTestData from '../servicesData_test'
+import * as ConfiguratorTestData from '../configurator/data_test'
 
 jest.mock('axios')
 jest.setTimeout(10000)
@@ -23,7 +25,7 @@ describe('Service Site test suite', () => {
     delete clone.secret
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoSecret, clone)
 
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoSecret)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoSecret)
   })
 
   test('create site without partnerId', async () => {
@@ -31,7 +33,7 @@ describe('Service Site test suite', () => {
     delete clone.partnerId
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoPartnerId, clone)
 
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoPartnerId)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoPartnerId)
   })
 
   test('create site without user key', async () => {
@@ -39,7 +41,7 @@ describe('Service Site test suite', () => {
     delete clone.userKey
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseNoUserKey, clone)
 
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoUserKey)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoUserKey)
   })
 
   test('create site without baseDomain', async () => {
@@ -47,7 +49,7 @@ describe('Service Site test suite', () => {
     delete request.baseDomain
     const response = await createSites(request, TestData.expectedGigyaResponseNoBaseDomain, credentials)
 
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoBaseDomain)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoBaseDomain)
   })
 
   test('create site with invalid data center', async () => {
@@ -55,7 +57,7 @@ describe('Service Site test suite', () => {
     request.dataCenter = 'INVALID_DATA_CENTER'
     const response = await createSites(request, TestData.expectedGigyaResponseInvalidDataCenter, credentials)
 
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidDataCenter)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidDataCenter)
   })
 
   test('send request to invalid url', async () => {
@@ -79,7 +81,7 @@ describe('Service Site test suite', () => {
 
   test('error geting token to delete site', async () => {
     const response = await deleteSite('######', 'us1', TestData.expectedGigyaResponseInvalidAPI, credentials)
-    TestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
   })
 
   test('delete single site', async () => {
@@ -89,17 +91,17 @@ describe('Service Site test suite', () => {
     let response = await siteService.delete('####')
     console.log('response=' + JSON.stringify(response))
 
-    TestData.verifyResponseIsOk(response)
+    CommonTestData.verifyResponseIsOk(response)
   })
 
   test('delete site unsuccessfully: delete group site first', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: TestData.sdDeleteGroupSitesFirst })
 
     const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')
     console.log('response=' + JSON.stringify(response))
 
-    TestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
   })
 
   async function createSites(request, expectedResponseFromServer, siteParams) {
@@ -114,7 +116,7 @@ describe('Service Site test suite', () => {
 })
 
 function verifyResponseIsOk(response) {
-  TestData.verifyResponseIsOk(response)
+  CommonTestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
 }

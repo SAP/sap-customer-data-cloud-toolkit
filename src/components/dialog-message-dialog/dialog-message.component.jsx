@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Dialog, Bar, Button, ValueState } from '@ui5/webcomponents-react'
 
 const DialogMessage = ({ children, open = true, state = ValueState.Error, closeButtonContent = 'Close', ...otherProps }) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(open)
+
+  useEffect(() => {
+    setDialogIsOpen(open)
+  }, [open])
 
   return (
     <>

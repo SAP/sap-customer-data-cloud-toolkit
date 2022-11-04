@@ -63,8 +63,9 @@ describe('Site Deployer Test Suite', () => {
     writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
-    cy.get('ui5-dialog').should('be.visible')
-    cy.get('ui5-dialog').should('have.text', 'OkAll sites have been created successfully')
+    const successPopup = cy.get('#successPopup')
+    successPopup.should('be.visible')
+    successPopup.should('have.text', 'OkAll sites have been created successfully')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
@@ -75,9 +76,9 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-row').should('have.length', 1)
     createChild()
     cy.get('ui5-table-row').should('have.length', 2)
-    getTableCell(0).find('[tooltip ="Add Parent Site"]').click()
+    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Hide Child Sites"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
-    getTableCell(0).find('[tooltip ="Add Parent Site"]').click()
+    cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
     writeChildrenSiteTable('Children site domain', 'Children site description')
     cy.get('#dataCenterSelect').shadow().find('[class ="ui5-select-root ui5-input-focusable-element"]').find('[class ="ui5-select-label-root"]').should('have.text', 'EU')
 
@@ -96,8 +97,9 @@ describe('Site Deployer Test Suite', () => {
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
 
-    cy.get('ui5-dialog').should('be.visible')
-    cy.get('ui5-dialog').should('have.text', 'OkPlease insert user key and secret key')
+    const errorPopup = cy.get('#errorPopup')
+    errorPopup.should('be.visible')
+    errorPopup.should('have.text', 'OkPlease insert User and Secret Keys in the Credentials menu')
   })
 
   function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {

@@ -2,6 +2,8 @@ import SiteManager from './siteManager'
 import * as TestData from './data_test'
 import client from '../gigya/client'
 import axios from 'axios'
+import * as CommonTestData from '../servicesData_test'
+import * as ConfiguratorTestData from '../configurator/data_test'
 
 jest.mock('axios')
 
@@ -12,6 +14,10 @@ describe('Site manager async test suite', () => {
     secret: 'secret',
   }
   const siteManager = new SiteManager(credentials)
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
   test('create site successfully - single parent', async () => {
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
@@ -45,7 +51,7 @@ describe('Site manager async test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
@@ -61,7 +67,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
@@ -83,14 +89,18 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
+      .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
+    expect(spy.mock.calls.length).toBe(5)
     expect(response.length).toEqual(2)
-    expectResponseIsOk(response[0], false)
+    expectResponseIsOk(response[0], true)
     verifyResponseIsNotOk(response[1], TestData.expectedGigyaErrorApiRateLimit)
   })
 
@@ -99,8 +109,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
@@ -109,6 +119,7 @@ describe('Site manager async test suite', () => {
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
   })
+
   test('create site successfully - parent with two children - rate limit', async () => {
     let spy = await jest.spyOn(client, 'wait')
     axios
@@ -116,8 +127,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
@@ -136,10 +147,10 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const response = await siteManager.create(request)
@@ -151,6 +162,7 @@ describe('Site manager async test suite', () => {
 
   test('create site successfully - two parent with two children - rate limit', async () => {
     let spy = await jest.spyOn(client, 'wait')
+
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
@@ -160,10 +172,10 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const response = await siteManager.create(request)
@@ -191,8 +203,8 @@ describe('Site manager async test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -204,19 +216,18 @@ describe('Site manager async test suite', () => {
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
-    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expectResponseIsNotOk(response[1], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
   })
 
   test('create site unsuccessfully - different data centers - rate limit', async () => {
-
     let spy = await jest.spyOn(client, 'wait')
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -230,11 +241,10 @@ describe('Site manager async test suite', () => {
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
-    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expectResponseIsNotOk(response[1], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
     expect(spy).toHaveBeenCalled()
     expect(spy.mock.calls.length).toBe(3)
-
   })
 
   test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
@@ -242,8 +252,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -268,12 +278,12 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(2) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -297,7 +307,7 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[2], true)
     expectResponseIsOk(response[3], true)
     expectResponseIsOk(response[4], true)
-    expectResponseIsNotOk(response[5], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expectResponseIsNotOk(response[5], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[5].apiKey).toBeDefined()
   })
 
@@ -309,12 +319,12 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseWithDifferentDataCenter })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(2) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(2) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -334,7 +344,7 @@ describe('Site manager async test suite', () => {
 
     expect(response.length).toEqual(6)
     expectResponseIsOk(response[0], true)
-    expectResponseIsNotOk(response[1], TestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
+    expectResponseIsNotOk(response[1], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expectResponseIsOk(response[2], true)
     expectResponseIsOk(response[3], true)
     expectResponseIsOk(response[4], true)
@@ -346,7 +356,7 @@ describe('Site manager async test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
@@ -362,7 +372,7 @@ describe('Site manager async test suite', () => {
 
   test('delete single site with site manager', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
@@ -370,12 +380,12 @@ describe('Site manager async test suite', () => {
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(1)
-    TestData.verifyResponseIsOk(response[0])
+    CommonTestData.verifyResponseIsOk(response[0])
   })
 
   test('delete site with site members', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -385,8 +395,8 @@ describe('Site manager async test suite', () => {
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(2)
-    TestData.verifyResponseIsOk(response[0])
-    TestData.verifyResponseIsOk(response[1])
+    CommonTestData.verifyResponseIsOk(response[0])
+    CommonTestData.verifyResponseIsOk(response[1])
   })
 
   test('delete site already deleted', async () => {
@@ -396,13 +406,13 @@ describe('Site manager async test suite', () => {
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(1)
-    TestData.verifyResponseIsNotOk(response[0], TestData.sdSiteAlreadyDeleted)
+    CommonTestData.verifyResponseIsNotOk(response[0], TestData.sdSiteAlreadyDeleted)
   })
 
   test('delete 3 sites: 2 sites with multiple members and 1 site already deleted', async () => {
     axios
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
-      .mockResolvedValueOnce({ data: TestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -417,11 +427,11 @@ describe('Site manager async test suite', () => {
     console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(5)
-    TestData.verifyResponseIsOk(response[0])
-    TestData.verifyResponseIsOk(response[1])
-    TestData.verifyResponseIsOk(response[2])
-    TestData.verifyResponseIsOk(response[3])
-    TestData.verifyResponseIsNotOk(response[4], TestData.sdSiteAlreadyDeleted)
+    CommonTestData.verifyResponseIsOk(response[0])
+    CommonTestData.verifyResponseIsOk(response[1])
+    CommonTestData.verifyResponseIsOk(response[2])
+    CommonTestData.verifyResponseIsOk(response[3])
+    CommonTestData.verifyResponseIsNotOk(response[4], TestData.sdSiteAlreadyDeleted)
   })
 
   test('delete site invalid API', async () => {
@@ -429,7 +439,7 @@ describe('Site manager async test suite', () => {
 
     const response = await siteManager.deleteSites(['####'])
     console.log(`test.response=${JSON.stringify(response)}`)
-    TestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
+    CommonTestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
   })
 })
 
@@ -441,7 +451,7 @@ function verifyAllResponsesAreOk(responses) {
 }
 
 function verifyResponseIsOk(response) {
-  TestData.verifyResponseIsOk(response)
+  CommonTestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
   expect(response.tempId).toBeDefined()
@@ -454,7 +464,7 @@ function expectResponseIsOk(response, deleted) {
 }
 
 function verifyResponseIsNotOk(response, expectedResponse) {
-  TestData.verifyResponseIsNotOk(response, expectedResponse)
+  CommonTestData.verifyResponseIsNotOk(response, expectedResponse)
   expect(response.tempId).toBeDefined()
 }
 

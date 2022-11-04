@@ -1,5 +1,5 @@
 import Site from './site'
-import SiteConfigurator from './siteConfigurator'
+import SiteConfigurator from '../configurator/siteConfigurator'
 
 class SiteManager {
   constructor(credentials) {

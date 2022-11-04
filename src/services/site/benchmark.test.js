@@ -1,5 +1,7 @@
 import SiteManager from './siteManager'
 import * as TestData from './data_test'
+import * as CommonTestData from '../servicesData_test'
+import * as ConfiguratorTestData from '../configurator/data_test'
 import axios from 'axios'
 import { performance } from 'perf_hooks'
 
@@ -45,7 +47,7 @@ describe('Benchmark test suite', () => {
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
 
       verifyAllResponsesAreOk(response.slice(0, -1), true)
-      TestData.verifyResponseIsNotOk(response.slice(-1)[0], TestData.scExpectedGigyaResponseNotOk)
+      CommonTestData.verifyResponseIsNotOk(response.slice(-1)[0], ConfiguratorTestData.scExpectedGigyaResponseNotOk)
       expect(response.slice(-1)[0].deleted).toEqual(false)
     }
   })
@@ -53,11 +55,11 @@ describe('Benchmark test suite', () => {
   function mockAxiosAndCreateRequest() {
     axios.mockImplementation((axiosConfig) => {
       if (axiosConfig.data.has('baseDomain') && axiosConfig.data.get('baseDomain').includes(`${TestData.DOMAIN_PREFIX}p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
-        const response = { data: TestData.scExpectedGigyaResponseNotOk }
+        const response = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
         console.log(`server response=${JSON.stringify(response)}`)
         return response
       } else if (axiosConfig.data.has('includeSiteGroupConfig')) {
-        const response = { data: TestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildrenPerParent) }
+        const response = { data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildrenPerParent) }
         console.log(`server response=${JSON.stringify(response)}`)
         return response
       } else {
@@ -108,7 +110,7 @@ function verifyAllResponsesAreOk(responses, deleted) {
 }
 
 function verifyResponseIsOk(response) {
-  TestData.verifyResponseIsOk(response)
+  CommonTestData.verifyResponseIsOk(response)
   expect(response.apiKey).toBeDefined()
   expect(response.apiVersion).toBeDefined()
   expect(response.tempId).toBeDefined()
