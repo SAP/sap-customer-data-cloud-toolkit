@@ -66,6 +66,7 @@ export const siteSlice = createSlice({
       userKey: getUserKeyFromLocalStorage(),
       userSecret: getUserSecretFromLocalStorage(),
     },
+    sitesToDeleteManually: [],
   },
   reducers: {
     addNewParent: (state) => {
@@ -134,6 +135,9 @@ export const siteSlice = createSlice({
     clearErrors: (state) => {
       state.errors = []
     },
+    clearSitesToDeleteManually: (state) => {
+      state.sitesToDeleteManually = []
+    },
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
     },
@@ -154,7 +158,6 @@ export const siteSlice = createSlice({
     })
     builder.addCase(createSites.fulfilled, (state, action) => {
       state.isLoading = false
-
       // Check if has any error
       const errors = action.payload.filter(({ errorCode }) => errorCode !== 0)
       if (errors.length) {
@@ -165,6 +168,8 @@ export const siteSlice = createSlice({
           delete error.site.childSites
           return error
         })
+
+        addRequiredManualRemovalInformation(state, action)
       }
       // Success
       else {
@@ -175,6 +180,7 @@ export const siteSlice = createSlice({
     builder.addCase(createSites.rejected, (state, action) => {
       state.isLoading = false
       state.errors = [action]
+      addRequiredManualRemovalInformation(state, action)
     })
   },
 })
@@ -196,6 +202,7 @@ export const {
   setShowSuccessDialog,
   setUserKey,
   setUserSecret,
+  clearSitesToDeleteManually,
 } = siteSlice.actions
 
 export default siteSlice.reducer
@@ -237,6 +244,26 @@ export const selectSiteById = (state, tempId) => {
   return undefined
 }
 
+const addRequiredManualRemovalInformation = (state, action) => {
+  if (action.payload) {
+    state.sitesToDeleteManually = action.payload
+      .filter((response) => {
+        return (
+          (response.statusCode === 200 && response.deleted === false) || (response.errorCode !== 0 && response.endpoint === 'admin.setSiteConfig' && response.deleted === false)
+        )
+      })
+      .map((siteToDeleteManually) => {
+        const siteToDeleteBaseDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).baseDomain
+        siteToDeleteManually = {
+          baseDomain: siteToDeleteBaseDomain,
+          siteId: siteToDeleteManually.siteID,
+          apiKey: siteToDeleteManually.apiKey,
+        }
+        return siteToDeleteManually
+      })
+  }
+}
+
 export const selectErrors = (state) => state.sites.errors
 
 export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
@@ -248,3 +275,5 @@ export const selectCredentials = (state) => state.sites.credentials
 export const selectDataCenters = (state) => state.sites.dataCenters
 
 export const selectLoadingState = (state) => state.sites.isLoading
+
+export const selectSitesToDeleteManually = (state) => state.sites.sitesToDeleteManually

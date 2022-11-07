@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import * as TestData from '../../src/services/site/data_test'
+import manualRemovalTestData from './manual-removal-test-data.json'
 
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
@@ -60,7 +61,7 @@ describe('Site Deployer Test Suite', () => {
     mockResponse(TestData.expectedGigyaResponseOk)
     cy.get('#addParentButton').click()
 
-    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    writeParentSiteTable('Manually add parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
     const successPopup = cy.get('#successPopup')
@@ -71,7 +72,7 @@ describe('Site Deployer Test Suite', () => {
   it('Should add a Parent Site and a Child Site Manually', () => {
     resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
-    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    writeParentSiteTable('Manually add parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
     createChild()
@@ -93,13 +94,27 @@ describe('Site Deployer Test Suite', () => {
     clearCredentials()
     cy.get('#addParentButton').click()
 
-    writeParentSiteTable('Manually add  parent site', 'Manually added description', 2)
+    writeParentSiteTable('Manually add parent site', 'Manually added description', 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
 
     const errorPopup = cy.get('#errorPopup')
     errorPopup.should('be.visible')
     errorPopup.should('have.text', 'OkPlease insert User and Secret Keys in the Credentials menu')
+  })
+
+  it('Should show Manual Removal Popup', () => {
+    resizeObserverLoopErrRe()
+    mockResponse(manualRemovalTestData.flat()[0])
+    cy.get('#addParentButton').click()
+    writeParentSiteTable('Manually add parent site', 'Manually added description', 2)
+    getSaveButton().click()
+    cy.get('#manualRemovalPopup').should('be.visible')
+    cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').shadow().find('.ui5-button-root').should('be.disabled')
+    cy.get('#manualRemovalPopup').find('#manualRemovalCheckbox').click()
+    cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').shadow().find('.ui5-button-root').should('not.be.disabled')
+    cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').click()
+    // cy.get('#manualRemovalPopup').should('not.be.visible')
   })
 
   function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
