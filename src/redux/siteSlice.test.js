@@ -46,6 +46,7 @@ const initialState = {
   ],
   errors: [],
   showSuccessDialog: false,
+  sitesToDeleteManually: [],
 }
 
 const stateWithParentWithNoChild = {
