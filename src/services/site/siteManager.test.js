@@ -26,7 +26,7 @@ describe('Site manager async test suite', () => {
     const request = TestData.createSingleParentRequest()
 
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
     verifyAllResponsesAreOk(response)
@@ -40,7 +40,7 @@ describe('Site manager async test suite', () => {
     const request = TestData.createSingleParentRequest()
 
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
     expect(spy).toHaveBeenCalled()
@@ -55,7 +55,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(2)
     verifyAllResponsesAreOk(response)
@@ -71,7 +71,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
     expect(response.length).toEqual(2)
@@ -95,7 +95,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
     expect(spy.mock.calls.length).toBe(5)
@@ -114,7 +114,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
@@ -132,7 +132,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
     expect(response.length).toEqual(3)
@@ -154,7 +154,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(6)
     verifyAllResponsesAreOk(response)
@@ -179,7 +179,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
     expect(spy.mock.calls.length).toBe(2)
@@ -192,7 +192,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
     expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain, false, TestData.Endpoints.SITE_CREATE)
@@ -212,7 +212,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
@@ -237,7 +237,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
@@ -261,7 +261,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithTwoChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(3)
     expectResponseIsOk(response[0], true)
@@ -299,7 +299,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(6)
     expectResponseIsOk(response[0], true)
@@ -340,7 +340,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createMultipleParentWithMultipleChildrenRequest()
     const response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(6)
     expectResponseIsOk(response[0], true)
@@ -362,7 +362,7 @@ describe('Site manager async test suite', () => {
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], false)
@@ -377,7 +377,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     let response = await siteManager.deleteSites(['####'])
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(1)
     CommonTestData.verifyResponseIsOk(response[0])
@@ -392,7 +392,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
     let response = await siteManager.deleteSites(['####'])
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(2)
     CommonTestData.verifyResponseIsOk(response[0])
@@ -403,7 +403,7 @@ describe('Site manager async test suite', () => {
     axios.mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
 
     let response = await siteManager.deleteSites(['####'])
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(1)
     CommonTestData.verifyResponseIsNotOk(response[0], TestData.sdSiteAlreadyDeleted)
@@ -424,7 +424,7 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
 
     let response = await siteManager.deleteSites(['####', '####2', '####3'])
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toBe(5)
     CommonTestData.verifyResponseIsOk(response[0])
@@ -438,7 +438,7 @@ describe('Site manager async test suite', () => {
     axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidAPI })
 
     const response = await siteManager.deleteSites(['####'])
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
     CommonTestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
   })
 })

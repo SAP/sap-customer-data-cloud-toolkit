@@ -13,7 +13,7 @@ describe('Emails Manager test suite', () => {
     axios.mockResolvedValue(mockedResponse)
 
     const emailTemplates = await emailManager.export('apiKey')
-    console.log(`test.response=${JSON.stringify(emailTemplates)}`)
+    //console.log(`test.response=${JSON.stringify(emailTemplates)}`)
     expect(emailTemplates).toEqual(EmailsTestData.expectedExportConfigurationFileContent)
   })
 
@@ -22,7 +22,7 @@ describe('Emails Manager test suite', () => {
     axios.mockResolvedValue(mockedResponse)
 
     const emailTemplates = await emailManager.export('apiKey')
-    console.log(`test.response=${JSON.stringify(emailTemplates)}`)
+    //console.log(`test.response=${JSON.stringify(emailTemplates)}`)
     expect(emailTemplates).toEqual(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates())
   })
 })

@@ -19,7 +19,7 @@ describe('Emails test suite', () => {
     const email = new Email(credentials.userKey, credentials.secret)
     const response = await email.getSiteEmails('apiKey')
 
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
     // Email template with 2 lang
@@ -33,12 +33,14 @@ describe('Emails test suite', () => {
   })
 
   test('get emails successfully - emailNotifications - no templates', async () => {
-    axios.mockResolvedValue({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember }).mockResolvedValue({ data: EmailsTestData.getEmailsExpectedResponse })
+    axios
+      .mockResolvedValue({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember })
+      .mockResolvedValue({ data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() })
 
     const email = new Email(credentials.userKey, credentials.secret)
     const response = await email.getSiteEmails('apiKey')
 
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
     // No Password Reset Confirmation template
