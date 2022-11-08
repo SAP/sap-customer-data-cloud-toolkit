@@ -24,3 +24,7 @@ App created to extend the existing functionality of the CDC Console.
 1. `git clone https://github.tools.sap/cx-hub-pt/cdc-tools-chrome-extension.git`
 1. `npm install`
 1. `npm run start`
+
+## Cypress End-to-End tests
+
+1. Run `npm run cypress:run`
