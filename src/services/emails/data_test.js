@@ -138,13 +138,33 @@ const getEmailsExpectedResponse = {
   },
 }
 
+function getEmailsExpectedResponseWithMinimumTemplates() {
+  const clone = JSON.parse(JSON.stringify(getEmailsExpectedResponse))
+  deleteContent(clone)
+  return clone
+}
+
+function getExpectedExportConfigurationFileContentWithMinimumTemplates() {
+  const clone = JSON.parse(JSON.stringify(expectedExportConfigurationFileContent))
+  deleteContent(clone)
+  return clone
+}
+
+function deleteContent(clone) {
+  delete clone.emailNotifications.accountDeletedEmailTemplates
+  delete clone.emailNotifications.confirmationEmailTemplates
+  //delete clone.emailNotifications.welcomeEmailTemplates
+  delete clone.emailVerification
+  delete clone.impossibleTraveler.emailTemplates
+}
+
 const expectedExportConfigurationFileContent = {
   callId: 'callId',
   errorCode: 0,
   apiVersion: 2,
   statusCode: 200,
   statusReason: 'OK',
-  time: Date.now(),
+  time: getEmailsExpectedResponse.time,
   magicLink: {
     defaultLanguage: 'en',
     urlPlaceHolder: '$url',
@@ -298,4 +318,13 @@ const credentials = {
   secret: 'secret',
 }
 
-export { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey, expectedGigyaInvalidSecret, getEmailsExpectedResponse, expectedExportConfigurationFileContent }
+export {
+  credentials,
+  expectedGigyaResponseInvalidAPI,
+  expectedGigyaInvalidUserKey,
+  expectedGigyaInvalidSecret,
+  getEmailsExpectedResponse,
+  getEmailsExpectedResponseWithMinimumTemplates,
+  expectedExportConfigurationFileContent,
+  getExpectedExportConfigurationFileContentWithMinimumTemplates,
+}
