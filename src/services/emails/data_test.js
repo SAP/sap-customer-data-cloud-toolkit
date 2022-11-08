@@ -57,6 +57,9 @@ const getEmailsExpectedResponse = {
       'pt-br': emailTemplate,
     },
     accountDeletedEmailDefaultLanguage: 'pt-br',
+    confirmationEmailTemplates: {
+      'pt-br': emailTemplate,
+    },
     confirmationEmailDefaultLanguage: 'en',
   },
   preferencesCenter: {
@@ -146,47 +149,50 @@ const expectedExportConfigurationFileContent = {
     defaultLanguage: 'en',
     urlPlaceHolder: '$url',
     emailTemplates: {
-      en: 'magicLink/en.html',
-      pt: 'magicLink/pt.html',
+      en: 'MagicLink/en.html',
+      pt: 'MagicLink/pt.html',
     },
   },
   codeVerification: {
     defaultLanguage: 'en',
     codePlaceHolder: '$code',
     emailTemplates: {
-      en: 'codeVerification/en.html',
+      en: 'CodeVerification/en.html',
     },
   },
   emailVerification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'emailVerification/en.html',
+      en: 'EmailVerification/en.html',
     },
     verificationEmailExpiration: 93600,
     autoLogin: true,
   },
   emailNotifications: {
     welcomeEmailTemplates: {
-      ar: 'welcomeEmailTemplates/ar.html',
+      ar: 'NewUserWelcome/ar.html',
     },
     welcomeEmailDefaultLanguage: 'ar',
     accountDeletedEmailTemplates: {
-      'pt-br': 'welcomeEmailDefaultLanguage/pt-br.html',
+      'pt-br': 'AccountDeletionConfirmation/pt-br.html',
     },
     accountDeletedEmailDefaultLanguage: 'pt-br',
+    confirmationEmailTemplates: {
+      'pt-br': 'PasswordResetConfirmation/pt-br.html',
+    },
     confirmationEmailDefaultLanguage: 'en',
   },
   preferencesCenter: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'preferencesCenter/en.html',
+      en: 'LitePreferencesCenter/en.html',
     },
     linkPlaceHolder: '$link',
   },
   doubleOptIn: {
     defaultLanguage: 'en',
     confirmationEmailTemplates: {
-      ar: 'doubleOptIn/ar.html',
+      ar: 'DoubleOptInConfirmation/ar.html',
     },
     nextURL: 'https://socialize.eu1.gigya.com/gs/confirmSubscriptions.aspx',
     nextExpiredURL: 'https://socialize.eu1.gigya.com/gs/LinkExpired.aspx',
@@ -195,7 +201,7 @@ const expectedExportConfigurationFileContent = {
   passwordReset: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'passwordReset/en.html',
+      en: 'PasswordReset/en.html',
     },
     requireSecurityCheck: false,
     resetURL: '',
@@ -227,7 +233,7 @@ const expectedExportConfigurationFileContent = {
     emailProvider: {
       defaultLanguage: 'en',
       emailTemplates: {
-        en: 'twoFactorAuth/en.html',
+        en: 'TFAEmailVerification/en.html',
       },
     },
     smsProvider: {},
@@ -235,19 +241,19 @@ const expectedExportConfigurationFileContent = {
   impossibleTraveler: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'impossibleTraveler/en.html',
+      en: 'ImpossibleTraveler/en.html',
     },
   },
   unknownLocationNotification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'unknownLocationNotification/en.html',
+      en: emailTemplate,
     },
   },
   passwordResetNotification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: 'passwordResetNotification/en.html',
+      en: emailTemplate,
     },
   },
 }
