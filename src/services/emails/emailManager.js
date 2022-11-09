@@ -12,19 +12,18 @@ class EmailManager {
   async export(site) {
     console.log(`Exporting email templates for site ${site}`)
     const emailTemplatesResponse = await this.emailService.getSiteEmails(site)
-    if (emailTemplatesResponse.errorCode !== 0) {
-      return emailTemplatesResponse
+    if (emailTemplatesResponse.errorCode === 0) {
+      const templates = this.#getEmailTemplates(emailTemplatesResponse)
+      this.#exportTemplates(templates)
+      // File.create("config_file.cfg", emailTemplatesResponse)
+      // File.zip()
     }
-    const templates = this.#getEmailTemplates(emailTemplatesResponse)
-    this.#exportTemplates(templates)
-    // File.create("config_file.cfg", emailTemplatesResponse)
-    // File.zip()
     return emailTemplatesResponse
   }
 
   #getEmailTemplates(response) {
     const responseProperties = this.#buildResponsePropertiesPath(response)
-    let templatePropertiesPath = responseProperties.filter((prop) => {
+    const templatePropertiesPath = responseProperties.filter((prop) => {
       return prop.includes(EmailManager.#EMAIL_TEMPLATE_IDENTIFIER)
     })
     return this.#getTemplates(templatePropertiesPath, response)
@@ -62,20 +61,22 @@ class EmailManager {
     return templateObjectsMap
   }
 
-  #buildResponsePropertiesPath(obj) {
+  #buildResponsePropertiesPath(propertiesPath) {
     const isObject = (val) => val && typeof val === 'object' && !Array.isArray(val)
 
     const addDelimiter = (a, b) => (a ? `${a}.${b}` : b)
 
     const paths = (obj = {}, head = '') => {
-      if (!isObject(obj)) return []
+      if (!isObject(obj)) {
+        return []
+      }
       return Object.entries(obj).reduce((product, [key, value]) => {
-        let fullPath = addDelimiter(head, key)
+        const fullPath = addDelimiter(head, key)
         return isObject(value) ? product.concat(paths(value, fullPath)) : product.concat(fullPath)
       }, [])
     }
 
-    return paths(obj)
+    return paths(propertiesPath)
   }
 
   // dummy function, to be removed
