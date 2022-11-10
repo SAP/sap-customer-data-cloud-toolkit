@@ -10,15 +10,17 @@ jest.setTimeout(10000)
 describe('files test suite', () => {
   const OS_TEMP_DIR_PATH = os.tmpdir()
   const DIR = `${OS_TEMP_DIR_PATH}/cdc-tools-chrome-extension`
+
+  const file = new FileManager('cdc-tools-chrome-extension')
   test('create file in temp dir', async () => {
-    const file = new FileManager('cdc-tools-chrome-extension')
-    file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
+    //const file = new FileManager('cdc-tools-chrome-extension')
+    const filePath = file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
 
     expect(fs.existsSync(DIR)).toBe(true)
   })
 
   test('check if 1 folder has 1 html file', async () => {
-    const file = new FileManager('cdc-tools-chrome-extension')
+    //const file = new FileManager('cdc-tools-chrome-extension')
     file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
 
     expect(await checkIfFileExists('es', DIR, 'emailVerification')).toBe(true)
@@ -28,7 +30,7 @@ describe('files test suite', () => {
     const langs = ['en', 'pt', 'es', 'fr']
     const templates = ['emailVerification']
 
-    createTemplates(templates, langs)
+    createTemplates(file, templates, langs)
 
     expect(await checkIfFileExists(langs[0], DIR, templates[0])).toBe(true)
     expect(await checkIfFileExists(langs[1], DIR, templates[0])).toBe(true)
@@ -40,7 +42,7 @@ describe('files test suite', () => {
     const langs = ['en', 'pt-br', 'es', 'fr']
     const templates = ['emailVerification', 'passwordReset']
 
-    createTemplates(templates, langs)
+    createTemplates(file, templates, langs)
 
     expect(await checkIfFileExists(langs[0], DIR, templates[0])).toBe(true)
     expect(await checkIfFileExists(langs[1], DIR, templates[0])).toBe(true)
@@ -55,7 +57,7 @@ describe('files test suite', () => {
   test('create .zip archive', async () => {
     let buffer
 
-    const file = new FileManager('cdc-tools-chrome-extension')
+    //const file = new FileManager('cdc-tools-chrome-extension')
     file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
     buffer = await file.createZipArchive()
 
@@ -69,7 +71,7 @@ describe('files test suite', () => {
   })
 
   test('check if folder and .zip is deleted after archive creation', async () => {
-    const file = new FileManager('cdc-tools-chrome-extension')
+    //const file = new FileManager('cdc-tools-chrome-extension')
     file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
     const buffer = await file.createZipArchive()
 
@@ -80,8 +82,8 @@ describe('files test suite', () => {
   })
 })
 
-function createTemplates(templates, langs) {
-  const file = new FileManager('cdc-tools-chrome-extension')
+function createTemplates(file, templates, langs) {
+  //const file = new FileManager('cdc-tools-chrome-extension')
   for (const t of templates) {
     for (const l of langs) {
       file.createFile(t, l, EmailsTestData.emailTemplate)

@@ -28,12 +28,20 @@ class FileManager {
     })
   }
 
-  createFile(template, lang, content) {
+  createFile(template, name, content) {
     const templatePath = this.#createTemplateDir(template)
-
-    const filePath = `${templatePath}/${lang}.html`
+    const filePath = `${templatePath}/${name}.html`
     this.#writeToFile(filePath, content)
-    return filePath
+
+    return `${template}/${name}.html`
+  }
+
+  create(name, content) {
+    try {
+      this.#writeToFile(`${this.#dir}/${name}`, content)
+    } catch (e) {
+      console.log(`Something went wrong creating file. ${e}`)
+    }
   }
 
   deleteWorkDir() {
@@ -49,7 +57,7 @@ class FileManager {
       zip.writeZip(outputFile)
       return zip.toBuffer()
     } catch (e) {
-      console.log(`Something went creating .zip archive. ${e}`)
+      console.log(`Something went wrong creating .zip archive. ${e}`)
     }
     return null
   }
