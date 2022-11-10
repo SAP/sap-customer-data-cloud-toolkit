@@ -2,6 +2,9 @@ import axios from 'axios'
 import * as EmailsTestData from './data_test'
 import EmailManager from './emailManager'
 import AdmZip from 'adm-zip'
+import os from 'os'
+import fs from 'fs'
+import pkg from '../../../package.json'
 
 jest.mock('axios')
 jest.setTimeout(10000)
@@ -13,7 +16,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponse }
     axios.mockResolvedValue(mockedResponse)
     const expectedZipEntries = [
-      'impexMetadata.json.html',
+      'impexMetadata.json',
       'MagicLink/en.html',
       'MagicLink/pt.html',
       'CodeVerification/en.html',
@@ -31,15 +34,15 @@ describe('Emails Manager test suite', () => {
     const zipContent = await emailManager.export('apiKey')
 
     const zip = new AdmZip(zipContent, null)
-    const entries = getZipEntries(zip)
-    expect(entries.sort()).toEqual(expectedZipEntries.sort())
+    expect(getZipEntries(zip).sort()).toEqual(expectedZipEntries.sort())
+    verifyWorkDirIsDeleted()
   })
 
-  test('export_with minimum templates', async () => {
+  test('_export with minimum templates', async () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValue(mockedResponse)
     const expectedZipEntries = [
-      'impexMetadata.json.html',
+      'impexMetadata.json',
       'MagicLink/en.html',
       'MagicLink/pt.html',
       'CodeVerification/en.html',
@@ -53,8 +56,8 @@ describe('Emails Manager test suite', () => {
     const zipContent = await emailManager.export('apiKey')
 
     const zip = new AdmZip(zipContent, null)
-    const entries = getZipEntries(zip)
-    expect(entries.sort()).toEqual(expectedZipEntries.sort())
+    expect(getZipEntries(zip).sort()).toEqual(expectedZipEntries.sort())
+    verifyWorkDirIsDeleted()
   })
 
   test('export templates', async () => {
@@ -66,7 +69,7 @@ describe('Emails Manager test suite', () => {
     expect(emailTemplates).toEqual(EmailsTestData.expectedExportConfigurationFileContent)
   })
 
-  test('export templates_with minimum templates', async () => {
+  test('_export templates with minimum templates', async () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValue(mockedResponse)
 
@@ -84,4 +87,8 @@ function getZipEntries(zip) {
     }
   }
   return entries
+}
+
+function verifyWorkDirIsDeleted() {
+  expect(fs.existsSync(`${os.tmpdir()}/${pkg.name}`)).toBe(false)
 }

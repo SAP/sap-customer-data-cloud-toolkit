@@ -1,6 +1,6 @@
 import EmailTemplateNameTranslator from '../gigya/emailTemplateNameTranslator'
 import Email from './email'
-import FileManager from "../file/fileManager";
+import FileManager from '../file/fileManager'
 import pkg from '../../../package.json'
 
 class EmailManager {
@@ -17,7 +17,7 @@ class EmailManager {
     const emailTemplatesResponse = await this.exportTemplates(site)
 
     const fileManager = new FileManager(pkg.name)
-    fileManager.createFile('', EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    fileManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
     const zipContent = await fileManager.createZipArchive()
     fileManager.deleteWorkDir()
     return zipContent

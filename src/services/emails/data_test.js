@@ -327,4 +327,5 @@ export {
   getEmailsExpectedResponseWithMinimumTemplates,
   expectedExportConfigurationFileContent,
   getExpectedExportConfigurationFileContentWithMinimumTemplates,
+  emailTemplate,
 }
