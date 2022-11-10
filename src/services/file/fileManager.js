@@ -1,14 +1,12 @@
 import os from 'os'
 import fs from 'fs'
 import AdmZip from 'adm-zip'
-
 class FileManager {
   static #OS_TEMP_DIR_PATH = os.tmpdir()
-  //static #DIR = `${File.#OS_TEMP_DIR_PATH}/cdc-tools-chrome-extension`
-
+  #dir
   constructor(dir) {
-    this.dir = `${FileManager.#OS_TEMP_DIR_PATH}/${dir}`
-    this.#createDir(this.dir)
+    this.#dir = `${FileManager.#OS_TEMP_DIR_PATH}/${dir}`
+    this.#createDir(this.#dir)
   }
 
   #createDir(dir) {
@@ -18,11 +16,11 @@ class FileManager {
   }
 
   #createTemplateDir(template) {
-    const path = `${this.dir}/${template}`
+    const path = `${this.#dir}/${template}`
     this.#createDir(path)
     return path
   }
-  #appendToFile(filePath, content) {
+  #writeToFile(filePath, content) {
     fs.writeFileSync(filePath, content, (err) => {
       if (err) {
         throw err
@@ -34,93 +32,29 @@ class FileManager {
     const templatePath = this.#createTemplateDir(template)
 
     const filePath = `${templatePath}/${lang}.html`
-    this.#appendToFile(filePath, content)
+    this.#writeToFile(filePath, content)
+    return filePath
   }
 
-  #deleteDir() {
-    fs.rmSync(this.dir, { recursive: true, force: true }, (err) => {
-      if (err) {
-        console.log('error occurred while deleting directory', err)
-      }
-    })
-  }
-  #deleteArchive() {
-    const zipFilePath = `${FileManager.#OS_TEMP_DIR_PATH}/emails_templates.zip`
-    try {
-      fs.unlinkSync(zipFilePath)
-      console.log(`${zipFilePath} was deleted successfully`)
-    } catch (e) {
-      console.log(e)
-    }
+  deleteWorkDir() {
+    fs.rmSync(this.#dir, { recursive: true, force: true })
   }
 
   async createZipArchive() {
     try {
       const zip = new AdmZip()
-
       const fileName = 'emails_templates'
-
-      const outputFile = `${FileManager.#OS_TEMP_DIR_PATH}/${fileName}.zip`
-      zip.addLocalFolder(this.dir)
+      const outputFile = `${this.#dir}/${fileName}.zip`
+      zip.addLocalFolder(this.#dir)
       zip.writeZip(outputFile)
-
-      const file = new File(fileName + '.zip', {
-        type: 'application/zip',
-      })
-
-      return file
+      return zip.toBuffer()
     } catch (e) {
-      console.log(`Something went wrong. ${e}`)
-    } finally {
-      this.#deleteDir()
-      this.#deleteArchive()
+      console.log(`Something went creating .zip archive. ${e}`)
     }
     return null
   }
 
-  // localFileData(path) {
-  //   this.arrayBuffer = (() => {
-  //     var buffer = fs.readFileSync(path)
-  //     var arrayBuffer = buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
-  //     return [arrayBuffer]
-  //   })()
-  // }
-
-  // constructNewFile(localFileData) {
-  //   return new File(localFileData.arrayBuffer, localFileData.name, { type: localFileData.type })
-  // }
-
-  // async createFile2(path, name) {
-  //   let buffer = fs.readFileSync(path)
-  //   // let response = await fetch(path)
-  //   // let data = await response.blob()
-  //   const parts = [
-  //     new Blob([path], {
-  //       type: 'application/zip',
-  //     }),
-  //     new Uint16Array([33]),
-  //   ]
-  //   let blob = new Blob([buffer])
-  //   let metadata = {
-  //     type: 'application/zip',
-  //   }
-  //   return new File(parts, name, metadata)
-  // }
-  // async compressFile(fileName, path) {
-  //   var zip = new JSZip()
-  //   let newFile
-  //   //zip.file(file.name, file)
-  //   zip.folder(path)
-
-  //   await zip.generateAsync({ type: 'nodebuffer' }).then((blob) => {
-  //     newFile = new File([blob], fileName + '.zip', {
-  //       //lastModified: file.lastModified,
-  //       type: 'application/zip',
-  //     })
-  //   })
-  //   return newFile
-  // }
-
+  /*
   // [2 FUNCTIONS BELOW USEFUL FOR IMPORT EMAILS FEATURE AND TESTING]
 
   // async extractArchive(filepath) {
@@ -148,6 +82,7 @@ class FileManager {
   //     //console.log(fileContent)
   //     return fileContent
   // }
+  */
 }
 
 export default FileManager

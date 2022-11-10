@@ -2,6 +2,8 @@ import FileManager from './fileManager'
 import os from 'os'
 import * as EmailsTestData from '../emails/data_test'
 import fs from 'fs'
+import AdmZip from 'adm-zip'
+
 jest.mock('axios')
 jest.setTimeout(10000)
 
@@ -51,20 +53,27 @@ describe('files test suite', () => {
   })
 
   test('create .zip archive', async () => {
+    let buffer
+
     const file = new FileManager('cdc-tools-chrome-extension')
     file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
-    const archiveFile = await file.createZipArchive()
+    buffer = await file.createZipArchive()
 
-    // expect(archiveFile).toBeDefined()
-    // expect(archiveFile.dir).toBe(`${OS_TEMP_DIR_PATH}/emails_templates.zip`)
+    const zip = new AdmZip(buffer)
+    const entries = zip.getEntries()
+    // entries.forEach((e) => {
+    //   console.log(e.toString())
+    // })
+    // expect(fs.existsSync(DIR)).toBe(false)
+    // expect(buffer).toBeDefined()
   })
 
   test('check if folder and .zip is deleted after archive creation', async () => {
     const file = new FileManager('cdc-tools-chrome-extension')
     file.createFile('emailVerification', 'es', EmailsTestData.emailTemplate)
-    const archiveFile = await file.createZipArchive()
+    const buffer = await file.createZipArchive()
 
-    // expect(archiveFile).toBeDefined()
+    // expect(buffer).toBeDefined()
     // expect(archiveFile.dir).toBe(`${OS_TEMP_DIR_PATH}/emails_templates.zip`)
     // expect(!fs.existsSync(DIR)).toBe(true)
     // expect(!fs.existsSync(`${OS_TEMP_DIR_PATH}/emails_templates.zip`)).toBe(true)
