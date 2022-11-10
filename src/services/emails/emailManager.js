@@ -1,8 +1,11 @@
 import EmailTemplateNameTranslator from '../gigya/emailTemplateNameTranslator'
 import Email from './email'
+import FileManager from "../file/fileManager";
+import pkg from '../../../package.json'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
+  static #IMPORT_EXPORT_METADATA_FILE_NAME = 'impexMetadata.json'
 
   constructor(credentials) {
     this.credentials = credentials
@@ -11,12 +14,20 @@ class EmailManager {
 
   async export(site) {
     console.log(`Exporting email templates for site ${site}`)
+    const emailTemplatesResponse = await this.exportTemplates(site)
+
+    const fileManager = new FileManager(pkg.name)
+    fileManager.createFile('', EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    const zipContent = await fileManager.createZipArchive()
+    fileManager.deleteWorkDir()
+    return zipContent
+  }
+
+  async exportTemplates(site) {
     const emailTemplatesResponse = await this.emailService.getSiteEmails(site)
     if (emailTemplatesResponse.errorCode === 0) {
       const templates = this.#getEmailTemplates(emailTemplatesResponse)
-      this.#exportTemplates(templates)
-      // File.create("config_file.cfg", emailTemplatesResponse)
-      // File.zip()
+      this.#exportEmailTemplates(templates)
     }
     return emailTemplatesResponse
   }
@@ -29,11 +40,12 @@ class EmailManager {
     return this.#getTemplates(templatePropertiesPath, response)
   }
 
-  #exportTemplates(templates) {
+  #exportEmailTemplates(templates) {
+    const fileManager = new FileManager(pkg.name)
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = EmailTemplateNameTranslator.translate(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = EmailManager.Filecreate(externalTemplateName, language, templateObject[language])
+        const filePath = fileManager.createFile(externalTemplateName, language, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -77,11 +89,6 @@ class EmailManager {
     }
 
     return paths(propertiesPath)
-  }
-
-  // dummy function, to be removed
-  static Filecreate(templateName, language, template) {
-    return `${templateName}/${language}.html`
   }
 }
 
