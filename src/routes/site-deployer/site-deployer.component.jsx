@@ -11,6 +11,7 @@ import {
   selectErrors,
   selectShowSuccessDialog,
   selectCredentials,
+  selectSitesToDeleteManually,
 } from '../../redux/siteSlice'
 
 import {
@@ -43,6 +44,7 @@ import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import CredentialsPopoverButton from '../../components/credentials-popover-button/credentials-popover-button.component'
+import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
 
 import structures from '../../sitesStructures.json'
 
@@ -94,6 +96,7 @@ const SiteDeployer = () => {
   const errors = useSelector(selectErrors)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
+  const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
@@ -332,6 +335,7 @@ const SiteDeployer = () => {
           Please insert User and Secret Keys <br />
           in the Credentials menu
         </DialogMessage>
+        {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
     </>
   )
