@@ -13,13 +13,11 @@ class Email {
   async getSiteEmails(site) {
     const siteConfigurator = new SiteConfigurator(this.userKey, this.secret, 'us1')
     const getConfigRes = await siteConfigurator.getSiteConfig(site)
-
     if (getConfigRes.errorCode !== 0) {
       return getConfigRes
     }
 
-    const url = `https://accounts.${getConfigRes.dataCenter}.gigya.com/${Email.getGetEmailsTemplatesEndpoint()}`
-
+    const url = this.#getUrl(getConfigRes.dataCenter, Email.getGetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_CONFIG)
@@ -39,6 +37,13 @@ class Email {
 
   static getGetEmailsTemplatesEndpoint() {
     return '/accounts.policies.emailTemplates.getConfig'
+  }
+
+  #getUrl(dataCenter, endpoint) {
+    const protocol = 'https'
+    const namespace = 'accounts'
+    const domain = 'gigya.com'
+    return `${protocol}://${namespace}.${dataCenter}.${domain}/${endpoint}`
   }
 }
 

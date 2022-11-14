@@ -12,7 +12,7 @@ class Site {
   }
 
   async create(body) {
-    const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
+    const url = this.#getUrl(body.dataCenter, Site.getCreateEndpoint())
     const bodyWithCredentials = this.#addCredentials(body)
     return client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, Site.#ERROR_MSG_CREATE)
@@ -36,7 +36,7 @@ class Site {
   }
 
   async delete(site, dataCenter) {
-    const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
+    const url = this.#getUrl(dataCenter, Site.getDeleteEndpoint())
 
     // GET TOKEN
     const getDeleteTokenRes = await client.post(url, this.#deleteSiteParameters(site)).catch(function (error) {
@@ -63,6 +63,13 @@ class Site {
       parameters.deleteToken = deleteToken
     }
     return parameters
+  }
+
+  #getUrl(dataCenter, endpoint) {
+    const protocol = 'https'
+    const namespace = 'admin'
+    const domain = 'gigya.com'
+    return `${protocol}://${namespace}.${dataCenter}.${domain}/${endpoint}`
   }
 }
 
