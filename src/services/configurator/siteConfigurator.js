@@ -1,8 +1,10 @@
 import client from '../gigya/client'
+import UrlBuilder from '../gigya/urlBuilder'
 import generateErrorResponse from '../errors/generateErrorResponse'
 
 class SiteConfigurator {
   static #ERROR_MSG_CONFIG = 'Error configuring site'
+  static #NAMESPACE = 'admin'
 
   constructor(userKey, secret, dataCenter) {
     this.userKey = userKey
@@ -11,7 +13,7 @@ class SiteConfigurator {
   }
 
   async connect(parentApiKey, childApiKey) {
-    const url = this.#getUrl(SiteConfigurator.getSetEndpoint())
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getSetEndpoint())
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {
       console.log(`error=${error}`)
@@ -37,7 +39,7 @@ class SiteConfigurator {
   }
 
   async getSiteConfig(apiKey) {
-    const url = this.#getUrl(SiteConfigurator.getGetEndpoint())
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getGetEndpoint())
 
     const response = await client.post(url, this.#siteConfigParameters(apiKey, this.userKey, this.secret)).catch(function (error) {
       console.log(`error=${error}`)
@@ -53,13 +55,6 @@ class SiteConfigurator {
     parameters.secret = secret
     parameters.includeSiteGroupConfig = true
     return parameters
-  }
-
-  #getUrl(endpoint) {
-    const protocol = 'https'
-    const namespace = 'admin'
-    const domain = 'gigya.com'
-    return `${protocol}://${namespace}.${this.dataCenter}.${domain}/${endpoint}`
   }
 }
 

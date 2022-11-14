@@ -1,9 +1,11 @@
 import client from '../gigya/client'
+import UrlBuilder from '../gigya/urlBuilder'
 import SiteConfigurator from '../configurator/siteConfigurator'
 import generateErrorResponse from '../errors/generateErrorResponse'
 
 class Email {
   static #ERROR_MSG_CONFIG = 'Error retriving email templates'
+  static #NAMESPACE = 'accounts'
 
   constructor(userKey, secret) {
     this.userKey = userKey
@@ -17,7 +19,7 @@ class Email {
       return getConfigRes
     }
 
-    const url = this.#getUrl(getConfigRes.dataCenter, Email.getGetEmailsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, getConfigRes.dataCenter, Email.getGetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_CONFIG)
@@ -37,13 +39,6 @@ class Email {
 
   static getGetEmailsTemplatesEndpoint() {
     return '/accounts.policies.emailTemplates.getConfig'
-  }
-
-  #getUrl(dataCenter, endpoint) {
-    const protocol = 'https'
-    const namespace = 'accounts'
-    const domain = 'gigya.com'
-    return `${protocol}://${namespace}.${dataCenter}.${domain}/${endpoint}`
   }
 }
 
