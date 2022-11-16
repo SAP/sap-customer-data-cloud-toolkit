@@ -20,46 +20,32 @@ class FileManager {
     this.#createDir(path)
     return path
   }
+
   #writeToFile(filePath, content) {
-    fs.writeFileSync(filePath, content, (err) => {
-      if (err) {
-        throw err
-      }
-    })
+    fs.writeFileSync(filePath, content)
   }
 
   createFile(template, name, content) {
     const templatePath = this.#createTemplateDir(template)
     const filePath = `${templatePath}/${name}.html`
     this.#writeToFile(filePath, content)
-
     return `${template}/${name}.html`
   }
 
   create(name, content) {
-    try {
-      this.#writeToFile(`${this.#dir}/${name}`, content)
-    } catch (e) {
-      console.log(`Something went wrong creating file. ${e}`)
-    }
+    this.#writeToFile(`${this.#dir}/${name}`, content)
   }
 
   deleteWorkDir() {
     fs.rmSync(this.#dir, { recursive: true, force: true })
   }
 
-  async createZipArchive() {
-    try {
-      const zip = new AdmZip()
-      const fileName = 'emails_templates'
-      const outputFile = `${this.#dir}/${fileName}.zip`
-      zip.addLocalFolder(this.#dir)
-      zip.writeZip(outputFile)
-      return zip.toBuffer()
-    } catch (e) {
-      console.log(`Something went wrong creating .zip archive. ${e}`)
-    }
-    return null
+  async createZipArchive(fileName) {
+    const zip = new AdmZip()
+    const outputFile = `${this.#dir}/${fileName}.zip`
+    zip.addLocalFolder(this.#dir)
+    zip.writeZip(outputFile)
+    return zip.toBuffer()
   }
 
   /*

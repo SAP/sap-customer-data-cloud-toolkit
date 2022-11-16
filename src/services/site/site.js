@@ -1,9 +1,11 @@
 import client from '../gigya/client'
+import UrlBuilder from '../gigya/urlBuilder'
 import generateErrorResponse from '../errors/generateErrorResponse'
 
 class Site {
   static #ERROR_MSG_CREATE = 'Error creating site'
   static #ERROR_MSG_DELETE = 'Error deleting site'
+  static #NAMESPACE = 'admin'
 
   constructor(partnerId, userKey, secret) {
     this.partnerId = partnerId
@@ -12,7 +14,7 @@ class Site {
   }
 
   async create(body) {
-    const url = `https://admin.${body.dataCenter}.gigya.com/${Site.getCreateEndpoint()}`
+    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, body.dataCenter, Site.getCreateEndpoint())
     const bodyWithCredentials = this.#addCredentials(body)
     return client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, Site.#ERROR_MSG_CREATE)
@@ -20,11 +22,11 @@ class Site {
   }
 
   static getCreateEndpoint() {
-    return 'admin.createSite'
+    return `${Site.#NAMESPACE}.createSite`
   }
 
   static getDeleteEndpoint() {
-    return 'admin.deleteSite'
+    return `${Site.#NAMESPACE}.deleteSite`
   }
 
   #addCredentials(body) {
@@ -36,7 +38,7 @@ class Site {
   }
 
   async delete(site, dataCenter) {
-    const url = `https://admin.${dataCenter}.gigya.com/${Site.getDeleteEndpoint()}`
+    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, dataCenter, Site.getDeleteEndpoint())
 
     // GET TOKEN
     const getDeleteTokenRes = await client.post(url, this.#deleteSiteParameters(site)).catch(function (error) {

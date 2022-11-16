@@ -18,7 +18,7 @@ class EmailManager {
 
     const fileManager = new FileManager(pkg.name)
     fileManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    const zipContent = await fileManager.createZipArchive()
+    const zipContent = await fileManager.createZipArchive('email_templates')
     fileManager.deleteWorkDir()
     return zipContent
   }
