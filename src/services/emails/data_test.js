@@ -163,4 +163,4 @@ const expectedGigyaInvalidSecret = {
   statusReason: 'Forbidden',
   time: Date.now(),
 }
-export { expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey, expectedGigyaInvalidSecret, getEmailsExpectedResponse }
+export { expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey, expectedGigyaInvalidSecret, getEmailsExpectedResponse, emailTemplate }
