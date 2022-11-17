@@ -1,7 +1,7 @@
 import EmailTemplateNameTranslator from '../gigya/emailTemplateNameTranslator'
 import Email from './email'
-import FileManager from '../file/fileManager'
-import pkg from '../../../package.json'
+import ZipManager from '../file/ZipManager'
+//import pkg from '../../../package.json'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
@@ -16,10 +16,11 @@ class EmailManager {
     console.log(`Exporting email templates for site ${site}`)
     const emailTemplatesResponse = await this.exportTemplates(site)
 
-    const fileManager = new FileManager(pkg.name)
-    fileManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    const zipContent = await fileManager.createZipArchive('email_templates')
-    fileManager.deleteWorkDir()
+    const zipManager = ZipManager.getInstance()
+    zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    const zipContent = zipManager.createZipArchive()
+    //await fileManager.listDir('/var/folders/3b/gnvgvfy91yzc2_4r25ks1c8c0000gn/T/cdc-tools-chrome-extension')
+    //fileManager.deleteWorkDir()
     return zipContent
   }
 
@@ -41,11 +42,12 @@ class EmailManager {
   }
 
   #exportEmailTemplates(templates) {
-    const fileManager = new FileManager(pkg.name)
+    //const fileManager = new FileManager(pkg.name)
+    const zipManager = ZipManager.getInstance()
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = EmailTemplateNameTranslator.translate(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = fileManager.createFile(externalTemplateName, language, templateObject[language])
+        const filePath = zipManager.createFile(externalTemplateName, language, templateObject[language])
         templateObject[language] = filePath
       }
     }
