@@ -22,12 +22,12 @@ class ZipManager {
   }
 
   async read(zipContent) {
-    const new_zip = new JSZip()
-    const contents = await new_zip.loadAsync(zipContent)
+    const zip = new JSZip()
+    const contents = await zip.loadAsync(zipContent)
 
     const promises = []
     Object.keys(contents.files).forEach(function (filename) {
-      const entry = new_zip.files[filename]
+      const entry = zip.files[filename]
       if (!entry.dir) {
         promises.push(filename)
         promises.push(entry.async('string')) // get entry file content

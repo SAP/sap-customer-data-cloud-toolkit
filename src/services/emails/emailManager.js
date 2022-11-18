@@ -17,8 +17,7 @@ class EmailManager {
     const emailTemplatesResponse = await this.exportTemplates(site)
 
     this.zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    const zipContent = this.zipManager.createZipArchive()
-    return zipContent
+    return this.zipManager.createZipArchive()
   }
 
   async exportTemplates(site) {
