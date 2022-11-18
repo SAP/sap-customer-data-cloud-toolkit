@@ -8,7 +8,7 @@ class SiteManager {
   }
 
   async create(siteHierarchy) {
-    console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
+    //console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
 
     const promises = []
     for (let i = 0; i < siteHierarchy.sites.length; ++i) {

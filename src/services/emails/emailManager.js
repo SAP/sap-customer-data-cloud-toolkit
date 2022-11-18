@@ -9,16 +9,15 @@ class EmailManager {
   constructor(credentials) {
     this.credentials = credentials
     this.emailService = new Email(credentials.userKey, credentials.secret)
+    this.zipManager = new ZipManager()
   }
 
   async export(site) {
     console.log(`Exporting email templates for site ${site}`)
     const emailTemplatesResponse = await this.exportTemplates(site)
 
-    const zipManager = new ZipManager()
-    zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    const zipContent = zipManager.createZipArchive()
-    zipManager.clear()
+    this.zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    const zipContent = this.zipManager.createZipArchive()
     return zipContent
   }
 
@@ -40,11 +39,10 @@ class EmailManager {
   }
 
   #exportEmailTemplates(templates) {
-    const zipManager = new ZipManager()
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = EmailTemplateNameTranslator.translate(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = zipManager.createFile(externalTemplateName, language, templateObject[language])
+        const filePath = this.zipManager.createFile(externalTemplateName, language, templateObject[language])
         templateObject[language] = filePath
       }
     }

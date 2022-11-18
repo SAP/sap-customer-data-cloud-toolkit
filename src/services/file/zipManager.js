@@ -1,30 +1,24 @@
 import JSZip from 'jszip'
 
 class ZipManager {
-  static #zipFile
+  #zipFile
 
   constructor() {
-    if (ZipManager.#zipFile === undefined) {
-      ZipManager.#zipFile = new JSZip()
-    }
+    this.#zipFile = new JSZip()
   }
 
   createFile(template, name, content) {
-    ZipManager.#zipFile.file(`${template}/${name}.html`, Buffer.from(content, 'utf8'))
+    this.#zipFile.file(`${template}/${name}.html`, Buffer.from(content, 'utf8'))
     return `${template}/${name}.html`
   }
 
   create(name, content) {
-    ZipManager.#zipFile.file(`${name}`, Buffer.from(content, 'utf8'))
+    this.#zipFile.file(`${name}`, Buffer.from(content, 'utf8'))
     return `${name}`
   }
 
   createZipArchive() {
-    return ZipManager.#zipFile.generateAsync({ type: 'string' })
-  }
-
-  clear() {
-    ZipManager.#zipFile = undefined
+    return this.#zipFile.generateAsync({ type: 'string' })
   }
 
   async read(zipContent) {

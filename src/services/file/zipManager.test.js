@@ -1,16 +1,13 @@
 import ZipManager from './zipManager'
 
 describe('files test suite', () => {
-  const expectedZipEntries = new Map()
-
-  beforeEach(() => {
+  test('create', async () => {
+    const expectedZipEntries = new Map()
     expectedZipEntries.set('template/name.html', 'content')
     expectedZipEntries.set('template/name2.html', 'content2')
     expectedZipEntries.set('template2/name3.html', 'content3')
     expectedZipEntries.set('name4', 'content4')
-  })
 
-  test('create', async () => {
     const zipManager = new ZipManager()
     const path = zipManager.createFile('template', 'name', 'content')
     expect(path).toBe('template/name.html')
@@ -22,13 +19,21 @@ describe('files test suite', () => {
     expect(filesContent).toEqual(expectedZipEntries)
   })
 
-  test('clear', async () => {
-    let zipManager = new ZipManager()
+  test('strange characters', async () => {
+    const expectedZipEntries = new Map()
+    expectedZipEntries.set('.../?.html', 'content')
+    expectedZipEntries.set('.../*.html', 'content2')
+    expectedZipEntries.set('?/|.html', 'content3')
+    expectedZipEntries.set('#', 'content4')
+
+    const zipManager = new ZipManager()
+    const path = zipManager.createFile('...', '?', 'content')
+    expect(path).toBe('.../?.html')
+    zipManager.createFile('...', '*', 'content2')
+    zipManager.createFile('?', '|', 'content3')
+    zipManager.create('#', 'content4')
+
     const filesContent = await zipManager.read(zipManager.createZipArchive())
     expect(filesContent).toEqual(expectedZipEntries)
-
-    zipManager.clear()
-    zipManager = new ZipManager()
-    expect(await zipManager.read(zipManager.createZipArchive())).toEqual(new Map())
   })
 })
