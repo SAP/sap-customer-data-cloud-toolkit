@@ -1,6 +1,6 @@
 import EmailTemplateNameTranslator from './emailTemplateNameTranslator'
 import Email from './email'
-import ZipManager from '../zip/ZipManager'
+import ZipManager from '../zip/zipManager'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'

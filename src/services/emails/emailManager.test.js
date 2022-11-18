@@ -1,7 +1,7 @@
 import axios from 'axios'
 import * as EmailsTestData from './data_test'
 import EmailManager from './emailManager'
-import ZipManager from '../zip/ZipManager'
+import ZipManager from '../zip/zipManager'
 
 jest.mock('axios')
 jest.setTimeout(30000)
