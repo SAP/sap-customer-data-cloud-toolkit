@@ -1,6 +1,6 @@
-import EmailTemplateNameTranslator from '../gigya/emailTemplateNameTranslator'
+import EmailTemplateNameTranslator from './emailTemplateNameTranslator'
 import Email from './email'
-import ZipManager from '../file/ZipManager'
+import ZipManager from '../zip/ZipManager'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
