@@ -49,8 +49,17 @@ const getEmailsExpectedResponse = {
     autoLogin: true,
   },
   emailNotifications: {
-    welcomeEmailDefaultLanguage: 'en',
-    accountDeletedEmailDefaultLanguage: 'en',
+    welcomeEmailTemplates: {
+      ar: emailTemplate,
+    },
+    welcomeEmailDefaultLanguage: 'ar',
+    accountDeletedEmailTemplates: {
+      'pt-br': emailTemplate,
+    },
+    accountDeletedEmailDefaultLanguage: 'pt-br',
+    confirmationEmailTemplates: {
+      'pt-br': emailTemplate,
+    },
     confirmationEmailDefaultLanguage: 'en',
   },
   preferencesCenter: {
@@ -129,6 +138,146 @@ const getEmailsExpectedResponse = {
   },
 }
 
+function getEmailsExpectedResponseWithMinimumTemplates() {
+  const clone = JSON.parse(JSON.stringify(getEmailsExpectedResponse))
+  deleteContent(clone)
+  return clone
+}
+
+function getExpectedExportConfigurationFileContentWithMinimumTemplates() {
+  const clone = JSON.parse(JSON.stringify(expectedExportConfigurationFileContent))
+  deleteContent(clone)
+  return clone
+}
+
+function deleteContent(clone) {
+  delete clone.emailNotifications.accountDeletedEmailTemplates
+  delete clone.emailNotifications.confirmationEmailTemplates
+  //delete clone.emailNotifications.welcomeEmailTemplates
+  delete clone.emailVerification
+  delete clone.impossibleTraveler.emailTemplates
+}
+
+const expectedExportConfigurationFileContent = {
+  callId: 'callId',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: getEmailsExpectedResponse.time,
+  magicLink: {
+    defaultLanguage: 'en',
+    urlPlaceHolder: '$url',
+    emailTemplates: {
+      en: 'MagicLink/en.html',
+      pt: 'MagicLink/pt.html',
+    },
+  },
+  codeVerification: {
+    defaultLanguage: 'en',
+    codePlaceHolder: '$code',
+    emailTemplates: {
+      en: 'CodeVerification/en.html',
+    },
+  },
+  emailVerification: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: 'EmailVerification/en.html',
+    },
+    verificationEmailExpiration: 93600,
+    autoLogin: true,
+  },
+  emailNotifications: {
+    welcomeEmailTemplates: {
+      ar: 'NewUserWelcome/ar.html',
+    },
+    welcomeEmailDefaultLanguage: 'ar',
+    accountDeletedEmailTemplates: {
+      'pt-br': 'AccountDeletionConfirmation/pt-br.html',
+    },
+    accountDeletedEmailDefaultLanguage: 'pt-br',
+    confirmationEmailTemplates: {
+      'pt-br': 'PasswordResetConfirmation/pt-br.html',
+    },
+    confirmationEmailDefaultLanguage: 'en',
+  },
+  preferencesCenter: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: 'LitePreferencesCenter/en.html',
+    },
+    linkPlaceHolder: '$link',
+  },
+  doubleOptIn: {
+    defaultLanguage: 'en',
+    confirmationEmailTemplates: {
+      ar: 'DoubleOptInConfirmation/ar.html',
+    },
+    nextURL: 'url/gs/confirmSubscriptions.aspx',
+    nextExpiredURL: 'url/gs/LinkExpired.aspx',
+    confirmationLinkExpiration: 7200,
+  },
+  passwordReset: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: 'PasswordReset/en.html',
+    },
+    requireSecurityCheck: false,
+    resetURL: '',
+    tokenExpiration: 3600,
+    sendConfirmationEmail: false,
+  },
+  twoFactorAuth: {
+    providers: [
+      {
+        name: 'gigyaPhone',
+        enabled: true,
+      },
+      {
+        name: 'gigyaEmail',
+        enabled: false,
+      },
+      {
+        name: 'gigyaTotp',
+        enabled: false,
+      },
+      {
+        name: 'gigyaPush',
+        enabled: false,
+        params: {
+          defaultRuleset: '_off',
+        },
+      },
+    ],
+    emailProvider: {
+      defaultLanguage: 'en',
+      emailTemplates: {
+        en: 'TFAEmailVerification/en.html',
+      },
+    },
+    smsProvider: {},
+  },
+  impossibleTraveler: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: 'ImpossibleTraveler/en.html',
+    },
+  },
+  unknownLocationNotification: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: emailTemplate,
+    },
+  },
+  passwordResetNotification: {
+    defaultLanguage: 'en',
+    emailTemplates: {
+      en: emailTemplate,
+    },
+  },
+}
+
 const badRequest = 'Bad Request'
 const invalidApiParam = 'Invalid ApiKey parameter'
 const expectedGigyaResponseInvalidAPI = {
@@ -163,4 +312,20 @@ const expectedGigyaInvalidSecret = {
   statusReason: 'Forbidden',
   time: Date.now(),
 }
-export { expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey, expectedGigyaInvalidSecret, getEmailsExpectedResponse, emailTemplate }
+
+const credentials = {
+  userKey: 'userKey',
+  secret: 'secret',
+}
+
+export {
+  credentials,
+  expectedGigyaResponseInvalidAPI,
+  expectedGigyaInvalidUserKey,
+  expectedGigyaInvalidSecret,
+  getEmailsExpectedResponse,
+  getEmailsExpectedResponseWithMinimumTemplates,
+  expectedExportConfigurationFileContent,
+  getExpectedExportConfigurationFileContentWithMinimumTemplates,
+  emailTemplate,
+}

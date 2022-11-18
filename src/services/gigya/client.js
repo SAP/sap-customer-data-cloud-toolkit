@@ -7,7 +7,7 @@ const isError = (response) => {
 
 const client = {
   post: async function (url, body) {
-    console.log(`Sending request to ${url}\n With body=${JSON.stringify(body)}`)
+    //console.log(`Sending request to ${url}\n With body=${JSON.stringify(body)}`)
 
     const requestOptions = {
       method: 'POST',
@@ -19,7 +19,7 @@ const client = {
     let retryCounter = 0
     do {
       response = await axios(requestOptions)
-      console.log(`${JSON.stringify(response)}`)
+      //console.log(`${JSON.stringify(response)}`)
       if (isError(response)) {
         retryCounter++
         client.wait(1000)

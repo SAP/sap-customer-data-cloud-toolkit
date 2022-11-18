@@ -3,7 +3,7 @@ import axios from 'axios'
 const client = {
   NETWORK_DELAY_IN_MS: 100,
   post: async function (url, body) {
-    console.log(`Mocked Sending request to ${url}\n With body=${JSON.stringify(body)}`)
+    //console.log(`Mocked Sending request to ${url}\n With body=${JSON.stringify(body)}`)
 
     const requestOptions = {
       method: 'POST',

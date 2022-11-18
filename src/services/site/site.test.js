@@ -89,7 +89,7 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
   })
@@ -99,7 +99,7 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
     let response = await siteService.delete('####')
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
   })
@@ -110,7 +110,7 @@ describe('Service Site test suite', () => {
 
     const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
     const response = await siteService.create(request)
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
     return response.data
   }
 })
@@ -127,6 +127,6 @@ async function deleteSite(site, dataCenter, expectedResponseFromServer, sitePara
 
   const siteService = new Site(siteParams.partnerId, siteParams.userKey, siteParams.secret)
   let response = await siteService.delete(site, dataCenter)
-  console.log('response=' + JSON.stringify(response))
+  //console.log('response=' + JSON.stringify(response))
   return response
 }

@@ -8,7 +8,7 @@ class SiteManager {
   }
 
   async create(siteHierarchy) {
-    console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
+    //console.log(`Received request to create ${JSON.stringify(siteHierarchy)}`)
 
     const promises = []
     for (let i = 0; i < siteHierarchy.sites.length; ++i) {
@@ -80,7 +80,7 @@ class SiteManager {
       description: site.description,
       dataCenter: site.dataCenter,
     }
-    console.log(`Creating site ${site.baseDomain}`)
+    //console.log(`Creating site ${site.baseDomain}`)
     return this.siteService.create(body)
   }
 
@@ -120,7 +120,7 @@ class SiteManager {
     }
     return Promise.all(responses.flat())
       .then((deleteResponses) => {
-        console.log(`Delete sites responses ${JSON.stringify(deleteResponses)}`)
+        //console.log(`Delete sites responses ${JSON.stringify(deleteResponses)}`)
         return deleteResponses.flat()
       })
       .catch((error) => {
@@ -130,7 +130,7 @@ class SiteManager {
   }
 
   async #deleteSite(targetApiKey) {
-    console.log(`Deleting site ${targetApiKey}`)
+    //console.log(`Deleting site ${targetApiKey}`)
     const responses = []
     const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
 
@@ -210,7 +210,7 @@ class SiteManager {
     }
     return Promise.all(promises)
       .then((responses) => {
-        console.log(`SiteManager.rollbackHierarchies then ${JSON.stringify(responses)}`)
+        //console.log(`SiteManager.rollbackHierarchies then ${JSON.stringify(responses)}`)
         return responses.flat()
       })
       .catch((error) => {

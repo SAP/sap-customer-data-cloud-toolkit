@@ -229,7 +229,7 @@ function createObject(numberOfParents, numberOfChildrenPerParent) {
       parent.childSites.push(child)
     }
   }
-  console.log(`Created Object ${JSON.stringify(obj)}`)
+  //console.log(`Created Object ${JSON.stringify(obj)}`)
   return obj
 }
 

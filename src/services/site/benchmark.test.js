@@ -56,15 +56,15 @@ describe('Benchmark test suite', () => {
     axios.mockImplementation((axiosConfig) => {
       if (axiosConfig.data.has('baseDomain') && axiosConfig.data.get('baseDomain').includes(`${TestData.DOMAIN_PREFIX}p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
         const response = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
-        console.log(`server response=${JSON.stringify(response)}`)
+        //console.log(`server response=${JSON.stringify(response)}`)
         return response
       } else if (axiosConfig.data.has('includeSiteGroupConfig')) {
         const response = { data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildrenPerParent) }
-        console.log(`server response=${JSON.stringify(response)}`)
+        //console.log(`server response=${JSON.stringify(response)}`)
         return response
       } else {
         const response = { data: TestData.expectedGigyaResponseOk }
-        console.log(`server response=${JSON.stringify(response)}`)
+        //console.log(`server response=${JSON.stringify(response)}`)
         return response
       }
     })
@@ -75,7 +75,7 @@ describe('Benchmark test suite', () => {
     performance.mark(MEASURE_START_MARK)
     let response = await manager.create(request)
     performance.measure(measureName, MEASURE_START_MARK)
-    console.log(`test.response=${JSON.stringify(response)}`)
+    //console.log(`test.response=${JSON.stringify(response)}`)
     return response
   }
 
