@@ -5,6 +5,8 @@ import { setUserKey, setUserSecret, selectCredentials } from '../../redux/siteSl
 import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
 import { spacing } from '@ui5/webcomponents-react-base'
 
+import { VERSION } from '../../constants'
+
 const CredentialsPopover = ({ userKey, userSecret }) => {
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
@@ -41,7 +43,7 @@ const CredentialsPopover = ({ userKey, userSecret }) => {
 
         <FormItem>
           <Label style={{ width: '100%', textAlign: 'right' }}>
-            <small>Version 1.0.0</small>
+            <small>Version {VERSION}</small>
           </Label>
         </FormItem>
       </Form>

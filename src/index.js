@@ -19,6 +19,8 @@ import { injectTopBarMenuPlaceholder } from './inject/injectTopBarMenuPlaceholde
 import { injectAppContainer } from './inject/injectAppContainer'
 import { MAIN_CONTAINER_CLASS, ROUTE_SITE_DEPLOYER, ROUTE_EMAIL_TEMPLATES } from './inject/constants'
 
+import { VERSION } from './constants'
+
 import './inject/main.css'
 
 import store from './redux/store'
@@ -43,7 +45,7 @@ injectAppContainer(() => {
     document.querySelector(`.${MAIN_CONTAINER_CLASS}`)
   )
 
-  console.log('SAP CDC Toolbox :: %cv1.0.0', logStyles.lightGreenBold)
+  console.log(`SAP CDC Toolbox :: %cv${VERSION}`, logStyles.lightGreenBold)
 
   // If you want to start measuring performance in your app, pass a function
   // to log results (for example: reportWebVitals(console.log))
