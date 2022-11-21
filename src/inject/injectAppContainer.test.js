@@ -4,9 +4,9 @@
 
 import fs from 'fs'
 import path from 'path'
-import { MAIN_CONTAINER_CLASS } from './constants'
+import { MAIN_CONTAINER_CLASS, TENANT_ID_CLASS } from './constants'
 import { htmlToElem } from './utils'
-import { injectAppContainer, initAppContainer, destroyAppContainer, TENANT_ID_CLASS } from './injectAppContainer'
+import { injectAppContainer, initAppContainer, destroyAppContainer } from './injectAppContainer'
 
 const html = fs.readFileSync(path.resolve(__dirname, '../../public/index.html'), 'utf8')
 jest.dontMock('fs')

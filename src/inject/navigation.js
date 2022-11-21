@@ -1,5 +1,5 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MENU_ELEMENT_CLASS, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
+import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
 import { chromeStorageState } from './chromeStorage'
 
 export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
@@ -51,7 +51,6 @@ const showContainer = (locationHash) => {
 
   // Show containers
   querySelectorAllShadows(`[route="${route}"]`).forEach((container) => container.classList.add(ROUTE_CONTAINER_SHOW_CLASS))
-  document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.add(MAIN_CONTAINER_SHOW_CLASS)
 
   setSelectedMenuLinks(locationHash)
 }
@@ -60,9 +59,6 @@ const hideContainer = () => {
   if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
     return
   }
-
-  // Hide cdc-tools wrap container
-  document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.remove(MAIN_CONTAINER_SHOW_CLASS)
 
   // Hide cdc-tools containers
   document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))

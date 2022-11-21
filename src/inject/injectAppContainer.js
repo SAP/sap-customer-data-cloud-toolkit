@@ -1,10 +1,8 @@
 import { onElementExists, htmlToElem } from './utils'
-import { MAIN_CONTAINER_CLASS } from './constants'
-
-export const TENANT_ID_CLASS = 'fd-info-label__text'
+import { TENANT_ID_CLASS, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS } from './constants'
 
 export const initAppContainer = (onCreated) => {
-  document.querySelector('body').append(htmlToElem(`<div class="${MAIN_CONTAINER_CLASS}"></div>`))
+  document.querySelector('body').append(htmlToElem(`<div class="${MAIN_CONTAINER_CLASS} ${MAIN_CONTAINER_SHOW_CLASS}"></div>`))
 
   if (typeof onCreated == 'function') {
     onCreated()
