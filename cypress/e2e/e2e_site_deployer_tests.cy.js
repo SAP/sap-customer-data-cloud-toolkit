@@ -179,7 +179,7 @@ describe('Site Deployer Test Suite', () => {
     const openPopoverButton = cy.get('body').find('#openPopoverButton')
     openPopoverButton.click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('dummyuserkey')
-    cy.get('#userSecret').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dummyusersecret', { force: true })
+    cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dummyusersecret', { force: true })
     openPopoverButton.click({ force: true })
   }
 
@@ -188,7 +188,7 @@ describe('Site Deployer Test Suite', () => {
     const openPopoverButton = cy.get('body').find('#openPopoverButton')
     openPopoverButton.click()
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
-    cy.get('#userSecret').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
+    cy.get('#secretKey').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
     openPopoverButton.click()
   }
   function getTableCell(cellNumber) {

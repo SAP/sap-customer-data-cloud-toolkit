@@ -18,7 +18,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValueOnce(mockedResponse).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
+    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
     expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
     expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
     expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
@@ -34,7 +34,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValueOnce(mockedResponse).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
 
     const zipContent = await emailManager.export('apiKey')
 
