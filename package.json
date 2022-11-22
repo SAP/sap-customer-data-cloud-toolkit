@@ -82,6 +82,7 @@
     "@cypress/browserify-preprocessor": "^3.0.2",
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
+    "@release-it/conventional-changelog": "^5.1.1",
     "babel-plugin-istanbul": "^6.1.1",
     "concurrently": "^7.4.0",
     "cypress": "^10.11.0",
