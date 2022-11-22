@@ -1,6 +1,6 @@
 {
   "name": "cdc-tools-chrome-extension",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@cypress/xvfb": "^1.2.4",
@@ -37,7 +37,7 @@
     "test": "CI=true react-scripts test --collect-coverage --coverage --watch=all --coverageDirectory=coverage/unit",
     "eject": "react-scripts eject",
     "lint": "npx eslint --ext .jsx,.js src/",
-    "prerelease": "npm run lint && npm run test && npm run build && npm run compress",
+    "prerelease": "npm run lint && npm run test",
     "release": "release-it",
     "compress": "zip -r ${npm_package_name}-${npm_package_version}.zip ./build/"
   },
