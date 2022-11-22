@@ -1,0 +1,18 @@
+{
+  "git": {
+    "commitMessage": "chore: release v${version}"
+  },
+  "github": {
+    "release": true,
+    "assets": ["${name}-${version}.zip"]
+  },
+  "npm": {
+    "publish": false,
+    "versionArgs": ["--allow-same-version"]
+  },
+  "hooks": {
+    "after:git:release": "echo After git push, before github release",
+    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+  }
+}
+
