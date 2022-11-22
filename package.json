@@ -38,7 +38,7 @@
     "eject": "react-scripts eject",
     "lint": "npx eslint --ext .jsx,.js src/",
     "prerelease": "npm run lint && npm run test",
-    "release": "release-it",
+    "release": "CI=true release-it",
     "compress": "zip -r ${npm_package_name}-${npm_package_version}.zip ./build/"
   },
   "jest": {

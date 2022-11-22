@@ -7,12 +7,10 @@
     "assets": ["${name}-${version}.zip"]
   },
   "npm": {
-    "publish": false,
-    "versionArgs": ["--allow-same-version"]
+    "publish": false
   },
   "hooks": {
     "after:bump": "npm run build && npm run compress",
-    "after:git:release": "echo After git push, before github release",
     "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
   }
 }
