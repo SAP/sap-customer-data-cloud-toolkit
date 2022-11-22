@@ -22,14 +22,18 @@ node() {
         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Test coverage report'])
     }
     
-    // stage ('cypress') {
-    //     withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache", "BROWSER=none"]) {
-    //     sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
-    //     npmExecuteScripts script:this, 
-    //                       runScripts: ["cypress:ci"],
-    //                       verbose: true
-    //     }
-    // }
+    stage ('cypress') {
+        dockerExecute(
+            script: this,
+            dockerImage: 'cypress/base:16.14.0',
+        ) {
+            sh '''chown -R root .
+            npm install
+            npm install start-server-and-test
+            npm run cypress:ci
+            '''
+        }
+    }
 
     stage('SonarQube report') {
         def scannerHome = tool 'cdc-tools-chrome-extension';

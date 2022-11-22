@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-
+import React from 'react'
 import { SitesTable } from '../../src/components/sites-table/sites-table.component'
 import { ThemeProvider } from '@ui5/webcomponents-react'
 
@@ -111,8 +111,6 @@ describe('Component Testing', () => {
     })
     mountSiteTable(parentWithoutChildren)
     cy.get('#addParentButton').click()
-
-    //Parent Domain and Description
   })
 
   function mountSiteTable(Body) {

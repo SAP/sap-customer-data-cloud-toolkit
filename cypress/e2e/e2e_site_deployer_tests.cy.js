@@ -5,7 +5,7 @@ import manualRemovalTestData from './manual-removal-test-data.json'
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000')
-    cy.contains('Site Deployer').click()
+    cy.contains('Site Deployer').click({ force: true })
     writeCredentials()
   })
 
@@ -177,10 +177,10 @@ describe('Site Deployer Test Suite', () => {
   function writeCredentials() {
     resizeObserverLoopErrRe()
     const openPopoverButton = cy.get('body').find('#openPopoverButton')
-    openPopoverButton.click()
+    openPopoverButton.click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('dummyuserkey')
     cy.get('#userSecret').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dummyusersecret', { force: true })
-    openPopoverButton.click()
+    openPopoverButton.click({ force: true })
   }
 
   function clearCredentials() {
