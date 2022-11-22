@@ -12,7 +12,7 @@ import {
   selectShowSuccessDialog,
   selectCredentials,
   selectSitesToDeleteManually,
-} from '../../redux/siteSlice'
+} from '../../redux/sites/siteSlice'
 
 import {
   Card,
@@ -60,10 +60,7 @@ const getSelectedDataCenters = () => {
 }
 
 const checkSitesExist = (sites) => {
-  if (sites.length === 0) {
-    return false
-  }
-  return true
+  return sites.length !== 0
 }
 
 const checkSitesRequiredFields = (sites) => {

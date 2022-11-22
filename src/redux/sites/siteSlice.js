@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { generateUUID } from '../utils/generateUUID'
-import dataCenters from '../dataCenters.json'
-import SiteManager from '../services/site/siteManager'
+import { generateUUID } from '../../utils/generateUUID'
+import dataCenters from '../../dataCenters.json'
+import SiteManager from '../../services/site/siteManager'
 
 const getDataCenterValue = (dataCentersToGetValueFrom, dataCenterLabel) => dataCentersToGetValueFrom.find((dataCenter) => dataCenter.label === dataCenterLabel).value
 
@@ -38,7 +38,7 @@ const getDataCenters = (host = window.location.hostname) => dataCenters.filter((
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
-const getUserKeyFromLocalStorage = () => {
+export const getUserKeyFromLocalStorage = () => {
   const userKeyFromLocalStorage = localStorage.getItem('userKey')
   if (userKeyFromLocalStorage) {
     return userKeyFromLocalStorage
@@ -46,10 +46,10 @@ const getUserKeyFromLocalStorage = () => {
   return ''
 }
 
-const getUserSecretFromLocalStorage = () => {
-  const userSecretFromLocalStorage = localStorage.getItem('userSecret')
-  if (userSecretFromLocalStorage) {
-    return userSecretFromLocalStorage
+export const getSecretKeyFromLocalStorage = () => {
+  const secretKeyFromLocalStorage = localStorage.getItem('secretKey')
+  if (secretKeyFromLocalStorage) {
+    return secretKeyFromLocalStorage
   }
   return ''
 }
@@ -64,7 +64,7 @@ export const siteSlice = createSlice({
     showSuccessDialog: false,
     credentials: {
       userKey: getUserKeyFromLocalStorage(),
-      userSecret: getUserSecretFromLocalStorage(),
+      secretKey: getSecretKeyFromLocalStorage(),
     },
     sitesToDeleteManually: [],
   },
@@ -145,9 +145,9 @@ export const siteSlice = createSlice({
       state.credentials.userKey = action.payload
       localStorage.setItem('userKey', action.payload)
     },
-    setUserSecret: (state, action) => {
-      state.credentials.userSecret = action.payload
-      localStorage.setItem('userSecret', action.payload)
+    setSecretKey: (state, action) => {
+      state.credentials.secretKey = action.payload
+      localStorage.setItem('secretKey', action.payload)
     },
   },
   extraReducers: (builder) => {
@@ -201,7 +201,7 @@ export const {
   clearErrors,
   setShowSuccessDialog,
   setUserKey,
-  setUserSecret,
+  setSecretKey,
   clearSitesToDeleteManually,
 } = siteSlice.actions
 
@@ -214,7 +214,7 @@ export const createSites = createAsyncThunk('service/createSites', async (sites,
       // window.location.hash starts with #/<partnerId>/...
       partnerID: getPartnerId(window.location.hash),
       userKey: state.sites.credentials.userKey,
-      secret: state.sites.credentials.userSecret,
+      secret: state.sites.credentials.secretKey,
     }).create({
       sites,
     })

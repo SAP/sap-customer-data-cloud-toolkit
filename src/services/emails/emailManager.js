@@ -4,7 +4,7 @@ import ZipManager from '../zip/zipManager'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
-  static #IMPORT_EXPORT_METADATA_FILE_NAME = 'impexMetadata.json'
+  static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
 
   constructor(credentials) {
     this.credentials = credentials
