@@ -43,7 +43,6 @@ import '@ui5/webcomponents-icons/dist/overflow.js'
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
-import CredentialsPopoverButton from '../../components/credentials-popover-button/credentials-popover-button.component'
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
 
 import structures from '../../sitesStructures.json'
@@ -195,7 +194,7 @@ const SiteDeployer = () => {
 
   return (
     <>
-      <Bar design="Header" startContent={<BarStart />} endContent={<CredentialsPopoverButton />}></Bar>
+      <Bar design="Header" startContent={<BarStart />}></Bar>
       <div className="cdc-tools-background" style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>

@@ -8,8 +8,8 @@ class="fd-nested-list__link">\
     <!--<span fd-nested-list-icon="" class="fd-nested-list__icon sap-icon--product" role="presentation"></span>-->\
     <span fd-nested-list-title="" class="fd-nested-list__title">\
       {{name}}\
-      <span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);
-  color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span> \
+      <!--<span style="margin-left:6px;color:var(--sapContent_Placeholderloading_Background);color:var(--sapList_SelectionBackgroundColor);
+  color:var(--sapButton_Emphasized_Hover_BorderColor);">●</span>-->\
       <!--<span class="sap-icon--settings" style="margin-left: 6px;"></span>-->\
     </span>\
   </a>\

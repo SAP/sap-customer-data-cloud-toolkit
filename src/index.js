@@ -15,8 +15,11 @@ import { logStyles } from './inject/utils'
 import { initChromeStorage } from './inject/chromeStorage'
 import { initNavigation } from './inject/navigation'
 import { injectMenu } from './inject/injectMenu'
+import { injectTopBarMenuPlaceholder } from './inject/injectTopBarMenuPlaceholder'
 import { injectAppContainer } from './inject/injectAppContainer'
 import { MAIN_CONTAINER_CLASS, ROUTE_SITE_DEPLOYER, ROUTE_EMAIL_TEMPLATES } from './inject/constants'
+
+import { VERSION } from './constants'
 
 import './inject/main.css'
 
@@ -33,6 +36,7 @@ const menuElements = [
 initChromeStorage()
 initNavigation()
 injectMenu(menuElements)
+injectTopBarMenuPlaceholder()
 injectAppContainer(() => {
   ReactDOM.render(
     <React.StrictMode>
@@ -43,7 +47,7 @@ injectAppContainer(() => {
     document.querySelector(`.${MAIN_CONTAINER_CLASS}`)
   )
 
-  console.log('SAP CDC Toolbox :: %cv0.1', logStyles.lightGreenBold)
+  console.log(`SAP CDC Toolbox :: %cv${VERSION}`, logStyles.lightGreenBold)
 
   // If you want to start measuring performance in your app, pass a function
   // to log results (for example: reportWebVitals(console.log))
