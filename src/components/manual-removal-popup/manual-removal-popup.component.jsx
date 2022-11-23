@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { Dialog, Button, CheckBox, Table, TableRow, TableCell, Label, TableColumn, Bar, ValueState, Toast } from '@ui5/webcomponents-react'
-import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../redux/siteSlice'
+import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../redux/sites/siteSlice'
 
 const generateListString = (sitesToDeleteManually) => {
   let listString = 'Base Domain; Site Id; Api Key\n'

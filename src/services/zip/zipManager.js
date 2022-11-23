@@ -1,4 +1,5 @@
 import JSZip from 'jszip'
+import { Buffer } from 'buffer'
 
 class ZipManager {
   #zipFile
@@ -18,7 +19,7 @@ class ZipManager {
   }
 
   createZipArchive() {
-    return this.#zipFile.generateAsync({ type: 'string' })
+    return this.#zipFile.generateAsync({ type: 'arraybuffer' })
   }
 
   async read(zipContent) {

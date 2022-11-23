@@ -26,6 +26,8 @@ import './inject/main.css'
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
+import './i18n'
+
 const menuElements = [
   { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
   { name: 'Email Templates', route: ROUTE_EMAIL_TEMPLATES },

@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { addNewParent, selectSites, selectErrors } from '../../redux/siteSlice'
+import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
 
 import { Label, Button, Table, TableColumn, IllustratedMessage, Bar } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
