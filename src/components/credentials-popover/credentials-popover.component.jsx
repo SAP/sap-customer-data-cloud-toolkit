@@ -24,10 +24,10 @@ const CredentialsPopover = ({ t }) => {
   return (
     <>
       <Form>
-        <FormItem label={t('User key')}>
+        <FormItem label={t('GLOBAL.USER_KEY')}>
           <Input type={InputType.Text} id="userKey" value={userKey} onInput={(event) => onUserKeyValueChange(event)} />
         </FormItem>
-        <FormItem label={t('Secret key')}>
+        <FormItem label={t('GLOBAL.SECRET_KEY')}>
           <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
         </FormItem>
       </Form>
@@ -35,14 +35,14 @@ const CredentialsPopover = ({ t }) => {
       <Form style={{ ...spacing.sapUiSmallMarginTop }} columnsS="2">
         <FormItem>
           <Link href="https://wiki.one.int.sap/wiki/display/CDCTOOLBOX/End+User+Documentation" target="_blank">
-            {t('Documentation')}
+            {t('GLOBAL.DOCUMENTATION')}
           </Link>
         </FormItem>
 
         <FormItem>
           <Label style={{ width: '100%', textAlign: 'right' }}>
             <small>
-              {t('Version')} {VERSION}
+              {t('GLOBAL.VERSION')} {VERSION}
             </small>
           </Label>
         </FormItem>

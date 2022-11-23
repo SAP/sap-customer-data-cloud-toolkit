@@ -1,7 +1,8 @@
 {
-  "appTitle": "CDC Tools",
-  "User key": "User key",
-  "Secret key": "Secret key",
-  "Documentation": "Documentation",
-  "Version": "Version"
+  "GLOBAL.DOCUMENTATION": "Documentation",
+  "GLOBAL.SECRET_KEY": "Secret key",
+  "GLOBAL.USER_KEY": "User key",
+  "GLOBAL.VERSION": "Version",
+  "SITE_DEPLOYER.SITE_CREATION_PREVIEW": "Site Creation Preview",
+  "SITE_DEPLOYER.SITE_CREATION_PREVIEW_DESCRIPTION": "Quickly add or remove sites, change the structure, update the domains naming, description and select data centers."
 }
