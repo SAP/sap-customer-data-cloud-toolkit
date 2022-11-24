@@ -42,7 +42,13 @@ describe('Emails Manager test suite', () => {
     expect(zipContentMap).toEqual(expectedZipEntries)
   })
 
-  test('3 - export templates', async () => {
+  test('3 - export error', async () => {
+    const mockedResponse = { data: EmailsTestData.expectedGigyaInvalidUserKey }
+    axios.mockResolvedValueOnce(mockedResponse)
+    await expect(emailManager.export('apiKey')).rejects.toEqual(EmailsTestData.expectedGigyaInvalidUserKey)
+  })
+
+  test('4 - export templates', async () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValue(mockedResponse)
 
@@ -50,7 +56,7 @@ describe('Emails Manager test suite', () => {
     expect(emailTemplates).toEqual(EmailsTestData.expectedExportConfigurationFileContent)
   })
 
-  test('4 - export templates with minimum templates', async () => {
+  test('5 - export templates with minimum templates', async () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValue(mockedResponse)
 
