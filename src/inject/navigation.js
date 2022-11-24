@@ -1,9 +1,15 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
+// import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS } from './constants'
+import { MENU_ELEMENT_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS } from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
+import { initReact, menuElements } from '../index'
+import { initAppContainer, destroyAppContainer } from './injectAppContainer'
+
 export const IS_SELECTED_CLASS = 'is-selected'
+
+let reactInitialized = false
+let flowBuilderLoaded = false
 
 const init = () => {
   onHashChange(() => processHashChange(window.location.hash))
@@ -26,7 +32,14 @@ export const processHashChange = (locationHash) => {
   locationHash = locationHash.endsWith('/') ? locationHash.slice(0, -1) : locationHash
 
   const route = getRouteFromHash(locationHash)
-  const containers = querySelectorAllShadows(`[route="${route}"]`)
+  // const containers = querySelectorAllShadows(`[route="${route}"]`)
+
+  console.log(route)
+  if (route.indexOf('flow-builder-web-app') !== -1) {
+    flowBuilderLoaded = true
+    console.log('processHashChange', { flowBuilderLoaded })
+  }
+
   const hashSplit = locationHash.split('/')
 
   if (hashSplit.length >= 3) {
@@ -36,7 +49,8 @@ export const processHashChange = (locationHash) => {
   }
 
   // Check if this route is supported by our app
-  if (hashSplit.length < 4 || !containers.length) {
+  // if (hashSplit.length < 4 || !containers.length) {
+  if (hashSplit.length < 4 || !menuElements.find((menuElement) => menuElement.route === route)) {
     hideContainer()
   } else {
     showContainer(locationHash)
@@ -46,8 +60,23 @@ export const processHashChange = (locationHash) => {
 const showContainer = (locationHash) => {
   const route = getRouteFromHash(locationHash)
 
+  if (flowBuilderLoaded) {
+    console.log('showContainer', { flowBuilderLoaded })
+    // window.location.reload(true)
+
+    return
+  }
+
   hideContainer()
   clearSelectionMenuLinks()
+
+  //
+  if (!reactInitialized) {
+    initAppContainer()
+    console.log('INIT', 'initReact')
+    initReact({ route })
+    reactInitialized = true
+  }
 
   // Show containers
   querySelectorAllShadows(`[route="${route}"]`).forEach((container) => container.classList.add(ROUTE_CONTAINER_SHOW_CLASS))
@@ -56,15 +85,23 @@ const showContainer = (locationHash) => {
 }
 
 const hideContainer = () => {
-  if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
-    return
-  }
+  // if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
+  //   return
+  // }
 
   // Hide cdc-tools containers
-  document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
+  // document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
 
   // Remove is-selected from all cdc-tools links
   querySelectorAllShadows(`.${MENU_ELEMENT_CLASS} .fd-nested-list__link`).forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
+
+  //
+  if (reactInitialized) {
+    console.log('DESTROY', 'destroyReact')
+    // destroyReact()
+    reactInitialized = false
+    destroyAppContainer()
+  }
 }
 
 // Remove is-selected from all menu links
@@ -88,7 +125,8 @@ const setSelectedMenuElement = (menuElement) => {
 
 export const initNavigation = () => {
   watchElement({
-    elemSelector: `.${ROUTE_CONTAINER_CLASS}`, // CDC Toolbox container
+    // elemSelector: `.${ROUTE_CONTAINER_CLASS}`, // CDC Toolbox container
+    elemSelector: `.${TENANT_ID_CLASS}`,
     onCreated: () => {
       init()
     },
