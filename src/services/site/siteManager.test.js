@@ -6,7 +6,6 @@ import * as CommonTestData from '../servicesData_test'
 import * as ConfiguratorTestData from '../configurator/data_test'
 
 jest.mock('axios')
-
 describe('Site manager async test suite', () => {
   const credentials = {
     partnerId: 'partnerId',
@@ -89,6 +88,21 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -98,7 +112,7 @@ describe('Site manager async test suite', () => {
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
-    expect(spy.mock.calls.length).toBe(5)
+    expect(spy.mock.calls.length).toBe(20)
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
     verifyResponseIsNotOk(response[1], TestData.expectedGigyaErrorApiRateLimit)
