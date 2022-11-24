@@ -45,9 +45,7 @@ describe('Emails Manager test suite', () => {
   test('3 - export error', async () => {
     const mockedResponse = { data: EmailsTestData.expectedGigyaInvalidUserKey }
     axios.mockResolvedValueOnce(mockedResponse)
-
-    const zipContent = await emailManager.export('apiKey')
-    expect(zipContent).toBe(EmailsTestData.expectedGigyaInvalidUserKey)
+    await expect(emailManager.export('apiKey')).rejects.toEqual(EmailsTestData.expectedGigyaInvalidUserKey)
   })
 
   test('4 - export templates', async () => {
