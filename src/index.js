@@ -11,42 +11,25 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
-import { logStyles } from './inject/utils'
-import { initChromeStorage } from './inject/chromeStorage'
-import { initNavigation } from './inject/navigation'
-import { injectMenu } from './inject/injectMenu'
-import { injectTopBarMenuPlaceholder } from './inject/injectTopBarMenuPlaceholder'
-import { initAppContainer, destroyAppContainer } from './inject/injectAppContainer'
-import { MAIN_CONTAINER_CLASS, MENU_ELEMENTS } from './inject/constants'
+import { initInject } from './inject/'
 
+import { logStyles } from './utils/logStyles'
 import { VERSION } from './constants'
-
-import './inject/main.css'
 
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
 import './i18n'
 
-export let isAppInitialized = false
-
-export const initAppReact = ({ route }) => {
-  if (isAppInitialized) {
-    return
-  }
-  initAppContainer()
-
-  const container = document.querySelector(`.${MAIN_CONTAINER_CLASS}`)
+export const initAppReact = (container) => {
   const root = createRoot(container)
   root.render(
     <React.StrictMode>
       <Provider store={store}>
-        <App route={route} />
+        <App />
       </Provider>
     </React.StrictMode>
   )
-  isAppInitialized = true
-
   console.log(`SAP CDC Toolbox :: %cv${VERSION}`, logStyles.lightGreenBold)
 
   // If you want to start measuring performance in your app, pass a function
@@ -55,15 +38,4 @@ export const initAppReact = ({ route }) => {
   reportWebVitals()
 }
 
-export const destroyAppReact = () => {
-  if (!isAppInitialized) {
-    return
-  }
-  destroyAppContainer()
-  isAppInitialized = false
-}
-
-initChromeStorage()
-injectMenu(MENU_ELEMENTS)
-injectTopBarMenuPlaceholder()
-initNavigation()
+initInject()

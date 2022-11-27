@@ -1,12 +1,22 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS, INCOMPATIBLE_ROUTE_FRAGMENTS, MENU_ELEMENTS } from './constants'
+import {
+  MENU_ELEMENT_CLASS,
+  ROUTE_CONTAINER_CLASS,
+  TENANT_ID_CLASS,
+  ROUTE_CONTAINER_SHOW_CLASS,
+  INCOMPATIBLE_ROUTE_FRAGMENTS,
+  MENU_ELEMENTS,
+  MAIN_CONTAINER_CLASS,
+} from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-import { initAppReact, destroyAppReact, isAppInitialized } from '../index'
+import { initAppReact } from '../index'
+import { initAppContainer, destroyAppContainer } from './injectAppContainer'
 
 export const IS_SELECTED_CLASS = 'is-selected'
 
 let incompatibleRouteLoaded = false
+let isAppInitialized = false
 
 const init = () => {
   onHashChange(() => processHashChange(window.location.hash))
@@ -22,14 +32,10 @@ const init = () => {
   )
 }
 
-export const getRouteFromHash = (locationHash = window.location.hash) =>
-  locationHash.split('/').reduce((route, hashPart, index) => (index > 2 && hashPart.length ? `${route}/${hashPart}` : route), '')
-
 export const processHashChange = (locationHash) => {
   locationHash = locationHash.endsWith('/') ? locationHash.slice(0, -1) : locationHash
 
   const route = getRouteFromHash(locationHash)
-  // const containers = querySelectorAllShadows(`[route="${route}"]`)
 
   const hashSplit = locationHash.split('/')
   if (hashSplit.length >= 3) {
@@ -42,7 +48,10 @@ export const processHashChange = (locationHash) => {
   incompatibleRouteLoaded = incompatibleRouteLoaded || isRouteIncompatible(route)
 
   if (!incompatibleRouteLoaded && !isAppInitialized) {
-    initAppReact({ route })
+    // Init React App
+    initAppContainer()
+    initAppReact(document.querySelector(`.${MAIN_CONTAINER_CLASS}`))
+    isAppInitialized = true
   }
 
   // Check if this route is from CDC Console or CDC Toolbox extension
@@ -51,7 +60,9 @@ export const processHashChange = (locationHash) => {
     hideContainer()
 
     if (incompatibleRouteLoaded && isAppInitialized) {
-      destroyAppReact()
+      // Destroy React App
+      destroyAppContainer()
+      isAppInitialized = false
     }
   } else {
     // Show CDC Toolbox extension route
@@ -62,6 +73,9 @@ export const processHashChange = (locationHash) => {
     showContainer(locationHash)
   }
 }
+
+export const getRouteFromHash = (locationHash = window.location.hash) =>
+  locationHash.split('/').reduce((route, hashPart, index) => (index > 2 && hashPart.length ? `${route}/${hashPart}` : route), '')
 
 const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((incompatibleRoute) => route.indexOf(incompatibleRoute) !== -1)
 
@@ -112,7 +126,6 @@ const setSelectedMenuElement = (menuElement) => {
 
 export const initNavigation = () => {
   watchElement({
-    // elemSelector: `.${ROUTE_CONTAINER_CLASS}`, // CDC Toolbox container
     elemSelector: `.${TENANT_ID_CLASS}`,
     onCreated: () => {
       init()
