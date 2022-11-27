@@ -1,15 +1,12 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-// import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS } from './constants'
-import { MENU_ELEMENT_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS } from './constants'
+import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS, TENANT_ID_CLASS, ROUTE_CONTAINER_SHOW_CLASS, INCOMPATIBLE_ROUTE_FRAGMENTS, MENU_ELEMENTS } from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-import { initReact, menuElements } from '../index'
-import { initAppContainer, destroyAppContainer } from './injectAppContainer'
+import { initAppReact, destroyAppReact, isAppInitialized } from '../index'
 
 export const IS_SELECTED_CLASS = 'is-selected'
 
-let reactInitialized = false
-let flowBuilderLoaded = false
+let incompatibleRouteLoaded = false
 
 const init = () => {
   onHashChange(() => processHashChange(window.location.hash))
@@ -34,49 +31,47 @@ export const processHashChange = (locationHash) => {
   const route = getRouteFromHash(locationHash)
   // const containers = querySelectorAllShadows(`[route="${route}"]`)
 
-  console.log(route)
-  if (route.indexOf('flow-builder-web-app') !== -1) {
-    flowBuilderLoaded = true
-    console.log('processHashChange', { flowBuilderLoaded })
-  }
-
   const hashSplit = locationHash.split('/')
-
   if (hashSplit.length >= 3) {
     const [, partnerId, apiKey] = hashSplit
     chromeStorageState.partnerId = partnerId
     chromeStorageState.apiKey = apiKey
   }
 
-  // Check if this route is supported by our app
-  // if (hashSplit.length < 4 || !containers.length) {
-  if (hashSplit.length < 4 || !menuElements.find((menuElement) => menuElement.route === route)) {
+  // Check if we are loading an incompatiable route
+  incompatibleRouteLoaded = incompatibleRouteLoaded || isRouteIncompatible(route)
+
+  if (!incompatibleRouteLoaded && !isAppInitialized) {
+    initAppReact({ route })
+  }
+
+  // Check if this route is from CDC Console or CDC Toolbox extension
+  if (!isRouteFromExtension(route)) {
+    // Show CDC Console route
     hideContainer()
+
+    if (incompatibleRouteLoaded && isAppInitialized) {
+      destroyAppReact()
+    }
   } else {
+    // Show CDC Toolbox extension route
+    if (incompatibleRouteLoaded) {
+      return window.location.reload(true)
+    }
+
     showContainer(locationHash)
   }
 }
 
+const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((incompatibleRoute) => route.indexOf(incompatibleRoute) !== -1)
+
+const isRouteFromExtension = (route) => (MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false)
+
 const showContainer = (locationHash) => {
   const route = getRouteFromHash(locationHash)
 
-  if (flowBuilderLoaded) {
-    console.log('showContainer', { flowBuilderLoaded })
-    // window.location.reload(true)
-
-    return
-  }
-
   hideContainer()
   clearSelectionMenuLinks()
-
-  //
-  if (!reactInitialized) {
-    initAppContainer()
-    console.log('INIT', 'initReact')
-    initReact({ route })
-    reactInitialized = true
-  }
 
   // Show containers
   querySelectorAllShadows(`[route="${route}"]`).forEach((container) => container.classList.add(ROUTE_CONTAINER_SHOW_CLASS))
@@ -85,23 +80,15 @@ const showContainer = (locationHash) => {
 }
 
 const hideContainer = () => {
-  // if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
-  //   return
-  // }
+  if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
+    return
+  }
 
   // Hide cdc-tools containers
-  // document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
+  document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
 
   // Remove is-selected from all cdc-tools links
   querySelectorAllShadows(`.${MENU_ELEMENT_CLASS} .fd-nested-list__link`).forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
-
-  //
-  if (reactInitialized) {
-    console.log('DESTROY', 'destroyReact')
-    // destroyReact()
-    reactInitialized = false
-    destroyAppContainer()
-  }
 }
 
 // Remove is-selected from all menu links
