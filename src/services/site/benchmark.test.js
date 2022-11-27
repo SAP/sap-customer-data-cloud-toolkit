@@ -9,7 +9,7 @@ jest.mock('axios')
 jest.mock('../gigya/client')
 jest.setTimeout(60000)
 
-describe('Benchmark test suite', () => {
+describe.skip('Benchmark test suite', () => {
   const credentials = {
     partnerId: 'partnerId',
     userKey: 'userKey',

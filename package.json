@@ -1,6 +1,6 @@
 {
   "name": "cdc-tools-chrome-extension",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@cypress/xvfb": "^1.2.4",
@@ -40,7 +40,8 @@
     "lint": "npx eslint --ext .jsx,.js src/",
     "prerelease": "npm run lint && npm run test",
     "release": "CI=true release-it",
-    "compress": "zip -r ${npm_package_name}-${npm_package_version}.zip ./build/"
+    "compress": "zip -r ${npm_package_name}-${npm_package_version}.zip ./build/",
+    "manifest": "./public/scripts/manifest.sh ${npm_package_version}"
   },
   "jest": {
     "transformIgnorePatterns": [

@@ -10,7 +10,7 @@
     "publish": false
   },
   "hooks": {
-    "after:bump": "npm run build && npm run compress",
+    "after:bump": "npm run manifest && npm run build && npm run compress",
     "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
   }
 }

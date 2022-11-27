@@ -1,14 +1,16 @@
 import axios from 'axios'
 
-const MAX_RETRY_ATTEMPTS = 5
+const MAX_RETRY_ATTEMPTS = 20
 const isError = (response) => {
-  return response.code === 'ETIMEDOUT' || response.data.errorCode === 403048
+  return response.code === 'ETIMEDOUT' ||
+    response.data.errorCode === 403048 ||
+    response.code === 'ERR_BAD_RESPONSE'||
+    response.code === 'ENOTFOUND'
 }
 
 const client = {
   post: async function (url, body) {
     //console.log(`Sending request to ${url}\n With body=${JSON.stringify(body)}`)
-
     const requestOptions = {
       method: 'POST',
       url: url,
@@ -23,7 +25,7 @@ const client = {
       if (isError(response)) {
         retryCounter++
         client.wait(1000)
-      }
+      }      
     } while (isError(response) && retryCounter < MAX_RETRY_ATTEMPTS)
 
     return response

@@ -16,7 +16,7 @@ class SiteConfigurator {
     const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getSetEndpoint())
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {
-      console.log(`error=${error}`)
+      //console.log(`error=${error}`)
       return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
     })
   }
@@ -42,7 +42,7 @@ class SiteConfigurator {
     const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getGetEndpoint())
 
     const response = await client.post(url, this.#siteConfigParameters(apiKey, this.userKey, this.secret)).catch(function (error) {
-      console.log(`error=${error}`)
+      //console.log(`error=${error}`)
       return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
     })
     return response.data
