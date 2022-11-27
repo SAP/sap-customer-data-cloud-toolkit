@@ -10,7 +10,7 @@ import {
 } from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-import { initAppReact } from '../index'
+import { initAppReact } from '../initAppReact'
 import { initAppContainer, destroyAppContainer } from './injectAppContainer'
 
 export const IS_SELECTED_CLASS = 'is-selected'
