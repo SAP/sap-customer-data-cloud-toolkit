@@ -1,7 +1,7 @@
 const emailTemplate =
   '<html xmlns="http://www.w3.org/1999/xhtml">\r\n' +
   '<head>\r\n' +
-  '<META name="from" content="Name <noreply@YOUR-SITE.com>" />\r\n' +
+  '<META name="from" content="Name noreply@YOUR-SITE.com" />\r\n' +
   '<META name="subject" content=" Login with magic link" />\r\n' +
   '</head>\r\n' +
   '<body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n' +
