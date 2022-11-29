@@ -46,7 +46,10 @@
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!(@ui5|lit-html|@babel|axios)).*\\.js$"
-    ]
+    ],
+    "moduleNameMapper": {
+      "\\.(css)$": "identity-obj-proxy"
+    }
   },
   "nyc": {
     "excludeAfterRemap": true,
@@ -89,6 +92,7 @@
     "concurrently": "^7.4.0",
     "cypress": "^10.11.0",
     "cypress-jest-coverage-merge": "^1.0.2",
+    "identity-obj-proxy": "^3.0.0",
     "istanbul": "^0.4.5",
     "nyc": "^15.1.0",
     "prettier": "2.7.1",

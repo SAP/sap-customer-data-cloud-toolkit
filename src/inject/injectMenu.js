@@ -1,5 +1,6 @@
 import { querySelectorAllShadows, watchElement, htmlToElem, getInnerText } from './utils'
-import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS } from './constants'
+// import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS } from './constants'
+import { ADMIN_BUTTON_SELECTOR, MENU_ELEMENT_CLASS } from './constants'
 
 export const menuElementHtml = `\
 <li fd-nested-list-item="" class="fd-nested-list__item ${MENU_ELEMENT_CLASS}">\
@@ -37,8 +38,8 @@ export const initMenuExtension = (menuElements = []) => {
 
       const newElem = htmlToElem(elemHtml)
 
-      // Add on click event to show tools wrap container before HASH changes
-      newElem.addEventListener('click', () => document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.add(MAIN_CONTAINER_SHOW_CLASS))
+      // // Add on click event to show tools wrap container before HASH changes
+      // newElem.addEventListener('click', () => document.querySelector(`.${MAIN_CONTAINER_CLASS}`).classList.add(MAIN_CONTAINER_SHOW_CLASS))
 
       li.after(newElem)
     }

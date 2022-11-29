@@ -1,9 +1,22 @@
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
-import { MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
+import {
+  MENU_ELEMENT_CLASS,
+  ROUTE_CONTAINER_CLASS,
+  TENANT_ID_CLASS,
+  ROUTE_CONTAINER_SHOW_CLASS,
+  INCOMPATIBLE_ROUTE_FRAGMENTS,
+  MENU_ELEMENTS,
+  MAIN_CONTAINER_CLASS,
+} from './constants'
 import { chromeStorageState } from './chromeStorage'
 
-export const ROUTE_CONTAINER_SHOW_CLASS = 'show-cdc-tools-app-container'
+import { initAppReact } from '../initAppReact'
+import { initAppContainer, destroyAppContainer } from './injectAppContainer'
+
 export const IS_SELECTED_CLASS = 'is-selected'
+
+let incompatibleRouteLoaded = false
+let isAppInitialized = false
 
 const init = () => {
   onHashChange(() => processHashChange(window.location.hash))
@@ -19,29 +32,54 @@ const init = () => {
   )
 }
 
-export const getRouteFromHash = (locationHash = window.location.hash) =>
-  locationHash.split('/').reduce((route, hashPart, index) => (index > 2 && hashPart.length ? `${route}/${hashPart}` : route), '')
-
 export const processHashChange = (locationHash) => {
   locationHash = locationHash.endsWith('/') ? locationHash.slice(0, -1) : locationHash
 
   const route = getRouteFromHash(locationHash)
-  const containers = querySelectorAllShadows(`[route="${route}"]`)
-  const hashSplit = locationHash.split('/')
 
+  const hashSplit = locationHash.split('/')
   if (hashSplit.length >= 3) {
     const [, partnerId, apiKey] = hashSplit
     chromeStorageState.partnerId = partnerId
     chromeStorageState.apiKey = apiKey
   }
 
-  // Check if this route is supported by our app
-  if (hashSplit.length < 4 || !containers.length) {
+  // Check if we are loading an incompatiable route
+  incompatibleRouteLoaded = incompatibleRouteLoaded || isRouteIncompatible(route)
+
+  if (!incompatibleRouteLoaded && !isAppInitialized) {
+    // Init React App
+    initAppContainer()
+    initAppReact(document.querySelector(`.${MAIN_CONTAINER_CLASS}`))
+    isAppInitialized = true
+  }
+
+  // Check if this route is from CDC Console or CDC Toolbox extension
+  if (!isRouteFromExtension(route)) {
+    // Show CDC Console route
     hideContainer()
+
+    if (incompatibleRouteLoaded && isAppInitialized) {
+      // Destroy React App
+      destroyAppContainer()
+      isAppInitialized = false
+    }
   } else {
+    // Show CDC Toolbox extension route
+    if (incompatibleRouteLoaded) {
+      return window.location.reload(true)
+    }
+
     showContainer(locationHash)
   }
 }
+
+export const getRouteFromHash = (locationHash = window.location.hash) =>
+  locationHash.split('/').reduce((route, hashPart, index) => (index > 2 && hashPart.length ? `${route}/${hashPart}` : route), '')
+
+const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((incompatibleRoute) => route.indexOf(incompatibleRoute) !== -1)
+
+const isRouteFromExtension = (route) => (MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false)
 
 const showContainer = (locationHash) => {
   const route = getRouteFromHash(locationHash)
@@ -88,7 +126,7 @@ const setSelectedMenuElement = (menuElement) => {
 
 export const initNavigation = () => {
   watchElement({
-    elemSelector: `.${ROUTE_CONTAINER_CLASS}`, // CDC Toolbox container
+    elemSelector: `.${TENANT_ID_CLASS}`,
     onCreated: () => {
       init()
     },
