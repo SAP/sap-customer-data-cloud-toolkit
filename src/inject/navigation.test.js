@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { processHashChange, ROUTE_CONTAINER_SHOW_CLASS, IS_SELECTED_CLASS } from './navigation'
+import { processHashChange, IS_SELECTED_CLASS } from './navigation'
 import { chromeStorageState } from './chromeStorage'
-import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, ROUTE_SITE_DEPLOYER, MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS } from './constants'
+import { MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, ROUTE_SITE_DEPLOYER, MENU_ELEMENT_CLASS, ROUTE_CONTAINER_CLASS, ROUTE_CONTAINER_SHOW_CLASS } from './constants'
 
 const expectedPartnerId = 'partnerId'
 const expectedApiKey = 'apiKey'
@@ -70,8 +70,8 @@ function createDocument() {
   return document
 }
 function createList(parentNode, id) {
-  var ul = document.createElement('ul')
-  var li = document.createElement('li')
+  const ul = document.createElement('ul')
+  const li = document.createElement('li')
   li.classList.add(MENU_ELEMENT_CLASS)
   li.classList.add('fd-nested-list__item')
   ul.appendChild(li)
@@ -80,7 +80,7 @@ function createList(parentNode, id) {
   return ul
 }
 function createElementWithClasses(tag, classNames, parentNode, id) {
-  var element = document.createElement(tag)
+  const element = document.createElement(tag)
   for (const name of classNames) {
     element.classList.add(name)
   }
