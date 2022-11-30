@@ -1,5 +1,7 @@
 import { Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { withNamespaces } from 'react-i18next'
+
 import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
 
 import { Label, Button, Table, TableColumn, IllustratedMessage, Bar } from '@ui5/webcomponents-react'
@@ -12,7 +14,7 @@ import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
 
-export const SitesTable = () => {
+export const SitesTable = ({ t }) => {
   const sitesStructure = useSelector(selectSites)
   const errorList = useSelector((state) => selectErrors(state))
 
@@ -36,13 +38,13 @@ export const SitesTable = () => {
               //   width: '12rem',
               // }}
               >
-                <Label>Site Domain</Label>
+                <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
               </TableColumn>
               <TableColumn>
-                <Label>Description</Label>
+                <Label>{t('GLOBAL.DESCRIPTION')}n</Label>
               </TableColumn>
               <TableColumn>
-                <Label>Data Center</Label>
+                <Label>{t('GLOBAL.DATA_CENTER')}</Label>
               </TableColumn>
               {/* <TableColumn>
               <Label>Tags</Label>
@@ -53,7 +55,7 @@ export const SitesTable = () => {
                   width: '44px',
                 }}
               >
-                <Label>Actions</Label>
+                <Label> {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}</Label>
                 {/* <Button
             icon="add"
             design="Emphasized"
@@ -75,17 +77,17 @@ export const SitesTable = () => {
         </Table>
       ) : (
         <Bar style={{ margin: '0px 0px 3px', height: 'auto' }}>
-          <IllustratedMessage name="EmptyList" titleText="No sites to create" subtitleText="You can create sites from a structure or manually" />
+          <IllustratedMessage name="EmptyList" titleText={t('GLOBAL.DELETE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
         </Bar>
       )}
 
       <div style={{ textAlign: 'center' }}>
         <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
-          Add Parent Site
+          {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
         </Button>
       </div>
     </Fragment>
   )
 }
 
-export default SitesTable
+export default withNamespaces()(SitesTable)

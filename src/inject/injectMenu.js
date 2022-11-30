@@ -17,7 +17,8 @@ class="fd-nested-list__link">\
 </li>`
 
 export const initMenuExtension = (menuElements = []) => {
-  const [, partnerId, apiKey] = window.location.hash.split('/')
+  const encodedHash = encodeURI(window.location.hash)
+  const [, partnerId, apiKey] = decodeURI(encodedHash).split('/')
 
   let ulMenu = querySelectorAllShadows('.fd-side-nav__main-navigation .level-1.fd-nested-list')
   if (!ulMenu.length) {

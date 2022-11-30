@@ -38,22 +38,6 @@ const getDataCenters = (host = window.location.hostname) => dataCenters.filter((
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
-export const getUserKeyFromLocalStorage = () => {
-  const userKeyFromLocalStorage = localStorage.getItem('userKey')
-  if (userKeyFromLocalStorage) {
-    return userKeyFromLocalStorage
-  }
-  return ''
-}
-
-export const getSecretKeyFromLocalStorage = () => {
-  const secretKeyFromLocalStorage = localStorage.getItem('secretKey')
-  if (secretKeyFromLocalStorage) {
-    return secretKeyFromLocalStorage
-  }
-  return ''
-}
-
 export const siteSlice = createSlice({
   name: 'sites',
   initialState: {
@@ -62,10 +46,6 @@ export const siteSlice = createSlice({
     dataCenters: getDataCenters(),
     errors: [],
     showSuccessDialog: false,
-    credentials: {
-      userKey: getUserKeyFromLocalStorage(),
-      secretKey: getSecretKeyFromLocalStorage(),
-    },
     sitesToDeleteManually: [],
   },
   reducers: {
@@ -141,14 +121,6 @@ export const siteSlice = createSlice({
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
     },
-    setUserKey: (state, action) => {
-      state.credentials.userKey = action.payload
-      localStorage.setItem('userKey', action.payload)
-    },
-    setSecretKey: (state, action) => {
-      state.credentials.secretKey = action.payload
-      localStorage.setItem('secretKey', action.payload)
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(createSites.pending, (state) => {
@@ -200,8 +172,6 @@ export const {
   clearSites,
   clearErrors,
   setShowSuccessDialog,
-  setUserKey,
-  setSecretKey,
   clearSitesToDeleteManually,
 } = siteSlice.actions
 
@@ -213,8 +183,8 @@ export const createSites = createAsyncThunk('service/createSites', async (sites,
     return await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: getPartnerId(window.location.hash),
-      userKey: state.sites.credentials.userKey,
-      secret: state.sites.credentials.secretKey,
+      userKey: state.credentials.credentials.userKey,
+      secret: state.credentials.credentials.secretKey,
     }).create({
       sites,
     })
@@ -269,8 +239,6 @@ export const selectErrors = (state) => state.sites.errors
 export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
 
 export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
-
-export const selectCredentials = (state) => state.sites.credentials
 
 export const selectDataCenters = (state) => state.sites.dataCenters
 

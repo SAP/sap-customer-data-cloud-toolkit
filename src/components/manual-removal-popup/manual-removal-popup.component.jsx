@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { withNamespaces } from 'react-i18next'
 
 import { Dialog, Button, CheckBox, Table, TableRow, TableCell, Label, TableColumn, Bar, ValueState, Toast } from '@ui5/webcomponents-react'
 import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../redux/sites/siteSlice'
@@ -10,7 +11,7 @@ const generateListString = (sitesToDeleteManually) => {
   return listString
 }
 
-const ManualRemovalPopup = () => {
+const ManualRemovalPopup = ({ t }) => {
   const [checkBoxIsChecked, setBoxIsChecked] = useState(false)
   const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
   const [dialogIsOpen, setDialogIsOpen] = useState(sitesToDeleteManually.length > 0)
@@ -48,26 +49,23 @@ const ManualRemovalPopup = () => {
     <>
       <Dialog
         id="manualRemovalPopup"
-        headerText="Manual Action Required!"
+        headerText={t('MANUAL_REMOVAL_POPUP.MANUAL_ACTION_REQUIRED')}
         open={dialogIsOpen}
         state={ValueState.Warning}
         children={
           <>
-            <h4>
-              The command was executed with errors, but some sites were created and could not be deleted. <br />
-              Please delete the following sites before repeating the command:
-            </h4>
+            <h4>{t('MANUAL_REMOVAL_POPUP.ERROR_MESSAGE')}</h4>
             <Table
               columns={
                 <>
                   <TableColumn>
-                    <Label>Base Domain</Label>
+                    <Label>{t('MANUAL_REMOVAL_POPUP.BASE_DOMAIN')}</Label>
                   </TableColumn>
                   <TableColumn>
-                    <Label>Site Id</Label>
+                    <Label>{t('MANUAL_REMOVAL_POPUP.SITE_ID')}</Label>
                   </TableColumn>
                   <TableColumn>
-                    <Label>Api Key</Label>
+                    <Label>{t('MANUAL_REMOVAL_POPUP.API_KEY')}</Label>
                   </TableColumn>
                 </>
               }
@@ -91,16 +89,11 @@ const ManualRemovalPopup = () => {
             <Bar
               design="Subheader"
               startContent={
-                <CheckBox
-                  id="manualRemovalCheckbox"
-                  text="I understand that manual action is required to avoid data duplication."
-                  onChange={onCheckBoxChangeHandler}
-                  checked={checkBoxIsChecked}
-                ></CheckBox>
+                <CheckBox id="manualRemovalCheckbox" text={t('MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT')} onChange={onCheckBoxChangeHandler} checked={checkBoxIsChecked}></CheckBox>
               }
               endContent={
                 <Button id="manualRemovalConfirmButton" onClick={onConfirmHandler} design="Emphasized" disabled={!checkBoxIsChecked}>
-                  Confirm
+                  {t('MANUAL_REMOVAL_POPUP.CONFIRM')}
                 </Button>
               }
             />
@@ -108,9 +101,9 @@ const ManualRemovalPopup = () => {
         }
         onBeforeClose={onBeforeCloseHandler}
       ></Dialog>
-      <Toast ref={ref} duration={5000} placement={'MiddleCenter'} children={'Site list was copied to the clipboard'} />
+      <Toast ref={ref} duration={5000} placement={'MiddleCenter'} children={t('MANUAL_REMOVAL_POPUP.CHILDREN_TEXT')} onChange={onCheckBoxChangeHandler} />
     </>
   )
 }
 
-export default ManualRemovalPopup
+export default withNamespaces()(ManualRemovalPopup)

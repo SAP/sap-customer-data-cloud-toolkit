@@ -19,20 +19,20 @@ import sitesReducer, {
   clearErrors,
   setShowSuccessDialog,
   selectSiteById,
-  setUserKey,
-  setSecretKey,
+  // setUserKey,
+  // setSecretKey,
   clearSitesToDeleteManually,
-  getUserKeyFromLocalStorage,
-  getSecretKeyFromLocalStorage,
+  // getUserKeyFromLocalStorage,
+  // getSecretKeyFromLocalStorage,
 } from './siteSlice'
 
 const initialState = {
   sites: [],
   isLoading: false,
-  credentials: {
-    userKey: '',
-    secretKey: '',
-  },
+  // credentials: {
+  //   userKey: '',
+  //   secretKey: '',
+  // },
   dataCenters: [
     {
       label: 'AU',
@@ -159,8 +159,8 @@ const stateWithSitesToRemoveManually = {
   sitesToDeleteManually: [{ tempId: '123abc' }, { tempId: '456edf' }],
 }
 
-const testUserKey = 'dummyUserKey'
-const testSecretKey = 'dummySecretKey'
+// const testUserKey = 'dummyUserKey'
+// const testSecretKey = 'dummySecretKey'
 
 describe('Site slice test suite', () => {
   test('should return initial state', () => {
@@ -347,20 +347,5 @@ describe('Site slice test suite', () => {
     expect(stateWithSitesToRemoveManually.sitesToDeleteManually).not.toEqual([])
     const newState = sitesReducer(stateWithSitesToRemoveManually, clearSitesToDeleteManually())
     expect(newState.sitesToDeleteManually).toEqual([])
-  })
-
-  test('should update credentials user key', () => {
-    const newState = sitesReducer(initialState, setUserKey(testUserKey))
-    expect(newState.credentials.userKey).toEqual(testUserKey)
-  })
-
-  test('should update credentials secret key', () => {
-    const newState = sitesReducer(initialState, setSecretKey(testSecretKey))
-    expect(newState.credentials.secretKey).toEqual(testSecretKey)
-  })
-
-  test('should get credentials from local storage', () => {
-    expect(getUserKeyFromLocalStorage()).toEqual(testUserKey)
-    expect(getSecretKeyFromLocalStorage()).toEqual(testSecretKey)
   })
 })

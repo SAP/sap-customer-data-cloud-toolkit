@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { setUserKey, setSecretKey, selectCredentials } from '../../redux/sites/siteSlice'
+import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { withNamespaces } from 'react-i18next'
 
 import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
@@ -17,20 +17,18 @@ const CredentialsPopover = ({ t }) => {
   }
 
   const onsecretKeyValueChange = (event) => {
-    const newsecretKey = event.target.value
-    dispatch(setSecretKey(newsecretKey))
+    const newSecretKey = event.target.value
+    dispatch(setSecretKey(newSecretKey))
   }
 
   return (
     <>
-      <Form>
-        <FormItem label={t('GLOBAL.USER_KEY')}>
-          <Input type={InputType.Text} id="userKey" value={userKey} onInput={(event) => onUserKeyValueChange(event)} />
-        </FormItem>
-        <FormItem label={t('GLOBAL.SECRET_KEY')}>
-          <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
-        </FormItem>
-      </Form>
+      <FormItem label={t('GLOBAL.USER_KEY')}>
+        <Input type={InputType.Text} id="userKey" value={userKey} onInput={(event) => onUserKeyValueChange(event)} />
+      </FormItem>
+      <FormItem label={t('GLOBAL.SECRET_KEY')}>
+        <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
+      </FormItem>
 
       <Form style={{ ...spacing.sapUiSmallMarginTop }} columnsS="2">
         <FormItem>

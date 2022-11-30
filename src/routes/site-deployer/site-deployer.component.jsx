@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { withNamespaces } from 'react-i18next'
+
 import {
   addParentFromStructure,
   clearSites,
@@ -10,9 +12,10 @@ import {
   selectLoadingState,
   selectErrors,
   selectShowSuccessDialog,
-  selectCredentials,
   selectSitesToDeleteManually,
 } from '../../redux/sites/siteSlice'
+
+import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
 
 import {
   Card,
@@ -83,9 +86,8 @@ const checkSitesRequiredFields = (sites) => {
   return !requiredFieldsExist
 }
 
-const SiteDeployer = () => {
+const SiteDeployer = ({ t }) => {
   const dispatch = useDispatch()
-
   const sites = useSelector(selectSites)
   const isLoading = useSelector(selectLoadingState)
   const dataCenters = useSelector(selectDataCenters)
@@ -99,12 +101,16 @@ const SiteDeployer = () => {
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
   const [showErrorDialog, setShowErrorDialog] = useState(false)
 
-  const checkCredentialsAreFilled = () => {
-    return credentials.userKey !== '' && credentials.userSecret !== ''
+  const areCredentialsFilled = () => {
+    return credentials.userKey !== '' && credentials.secretKey !== ''
   }
 
+  useEffect(() => {
+    dispatch(updateCredentialsAsync())
+  })
+
   const onSaveHandler = () => {
-    if (checkCredentialsAreFilled()) {
+    if (areCredentialsFilled()) {
       setShowErrorDialog(false)
       dispatch(createSites(sites))
     } else {
@@ -164,10 +170,10 @@ const SiteDeployer = () => {
         endContent={
           <div>
             <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
-              Save
+              {t('SITE_DEPLOYER_COMPONENT.SAVE')}
             </Button>
             <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
-              Cancel
+              {t('SITE_DEPLOYER_COMPONENT.CANCEL')}
             </Button>
           </div>
         }
@@ -199,11 +205,9 @@ const SiteDeployer = () => {
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
             <FlexBox style={spacing.sapUiSmallMarginBottom}>
-              <Text style={{ color: 'var(--sapNeutralElementColor)' }}>
-                Use Site Structures to quickly create complex implementations from a curated list of structures based on best practices.
-              </Text>
+              <Text style={{ color: 'var(--sapNeutralElementColor)' }}>{t('SITE_DEPLOYER_COMPONENT.TEXT')}</Text>
             </FlexBox>
-            <Card header={<CardHeader titleText="Site Structures" />}>
+            <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_STRUCTURES')} />}>
               <FlexBox justifyContent="SpaceBetween">
                 <div
                   style={{
@@ -213,7 +217,7 @@ const SiteDeployer = () => {
                   }}
                 >
                   <Label for="cdctools-siteDomain" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
-                    Site Domain: *
+                    {t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN')}
                   </Label>
                   <Input
                     id="cdctools-siteDomain"
@@ -233,7 +237,7 @@ const SiteDeployer = () => {
                   }}
                 >
                   <Label for="cdctools-dataCenter" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
-                    Choose Data Centers: *
+                    {t('SITE_DEPLOYER_COMPONENT.CHOOSE_DATA_CENTER')}
                   </Label>
                   <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }} onSelectionChange={(event) => checkDataCentersSelected(event)}>
                     {dataCenters.map(({ label }) => (
@@ -251,7 +255,7 @@ const SiteDeployer = () => {
                 }}
               >
                 <Label for="cdctools-siteStructure" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
-                  Select a Site Structure: *
+                  {t('SITE_DEPLOYER_COMPONENT.SELECT_SITE_STRUCTURE')}
                 </Label>
 
                 <Select id="cdctools-siteStructure" style={{ width: '100%' }} onChange={onChangeSiteStructure} required="true">
@@ -273,7 +277,7 @@ const SiteDeployer = () => {
                     design="Transparent"
                     style={{ display: 'block', position: 'absolute', left: 0, right: 0, margin: 0 }}
                   >
-                    Create Structure
+                    {t('SITE_DEPLOYER_COMPONENT.CREATE_STRUCTURE')}
                   </Button>
                 </Bar>
               </div>
@@ -285,8 +289,8 @@ const SiteDeployer = () => {
             <Card
               header={
                 <CardHeader
-                  titleText="Site Creation Preview"
-                  subtitleText="Quickly add or remove sites, change the structure, update the domains naming, description and select data centers."
+                  titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')}
+                  subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}
                   // subtitleText="Quickly change the domains naming and structure. You can also set policies, and other configurations to be copied from an existing site seed."
                 ></CardHeader>
               }
@@ -307,13 +311,13 @@ const SiteDeployer = () => {
         {showSuccessDialog ? (
           <DialogMessage
             open={showSuccessDialog}
-            headerText="Success"
+            headerText={t('SITE_DEPLOYER_COMPONENT.SUCCESS_HEADER')}
             state={ValueState.Success}
             closeButtonContent="Ok"
             onAfterClose={() => document.location.reload()}
             id="successPopup"
           >
-            All sites have been created successfully
+            {t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}
           </DialogMessage>
         ) : (
           ''
@@ -321,15 +325,14 @@ const SiteDeployer = () => {
 
         <DialogMessage
           open={showErrorDialog}
-          headerText="Error"
+          headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
           state={ValueState.Error}
           closeButtonContent="Ok"
           onAfterClose={() => setShowErrorDialog(false)}
           style={{ textAlign: 'center' }}
           id="errorPopup"
         >
-          Please insert User and Secret Keys <br />
-          in the Credentials menu
+          {t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}
         </DialogMessage>
         {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
@@ -337,4 +340,4 @@ const SiteDeployer = () => {
   )
 }
 
-export default SiteDeployer
+export default withNamespaces()(SiteDeployer)

@@ -8,11 +8,12 @@ import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
+import { withNamespaces } from 'react-i18next'
 
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 
-const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites }) => {
+const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const [isChildListOpen, setChildListOpen] = useState(true)
 
@@ -78,7 +79,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <Button
               icon="navigation-down-arrow"
               design="Transparent"
-              tooltip="Hide Child Sites"
+              tooltip={t('SITE_TABLE_PARENT_COMPONENT.HIDE_CHILD_TOOLTIP')}
               onClick={() => {
                 setChildListOpen(false)
               }}
@@ -87,7 +88,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <Button
               icon="navigation-right-arrow"
               design="Transparent"
-              tooltip="Show Child Sites"
+              tooltip={t('SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP')}
               onClick={() => {
                 setChildListOpen(true)
               }}
@@ -138,7 +139,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         <TableCell>{checkChildSitesView()}</TableCell>
 
         <TableCell>
-          <Input type={InputType.Text} style={{ width: '100%' }} value={description} onInput={(event) => onChangeParentDescription(event)} />
+          <Input type={InputType.Text} id="descriptionInput" style={{ width: '100%' }} value={description} onInput={(event) => onChangeParentDescription(event)} />
         </TableCell>
 
         <TableCell>
@@ -156,8 +157,8 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <>
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
-                <Button onClick={onAddChildHandler}>Create Child Site</Button>
-                <Button onClick={onDeleteParentHandler}>Delete</Button>
+                <Button onClick={onAddChildHandler}>{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
+                <Button onClick={onDeleteParentHandler}>{t('GLOBAL.DELETE')}</Button>
               </ActionSheet>
             </>
           </div>
@@ -168,4 +169,4 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
   )
 }
 
-export default SitesTableParentRow
+export default withNamespaces()(SitesTableParentRow)

@@ -1,8 +1,10 @@
 import { Bar, Button, FileUploader } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
+import { withNamespaces } from 'react-i18next'
+
 import { getEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading } from '../../redux/emails/emailSlice'
 
-const EmailTemplates = () => {
+const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
   const exportFile = useSelector(selectExportFile)
   const isLoading = useSelector(selectIsLoading)
@@ -28,11 +30,11 @@ const EmailTemplates = () => {
         endContent={
           <div>
             <Button id="exportAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }} onClick={onExportAllButtonClickHandler}>
-              Export All
+              {t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ALL')}
             </Button>
             <FileUploader accept=".zip" hideInput onChange={(event) => {}}>
               <Button id="importAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }}>
-                Import All
+                {t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ALL')}
               </Button>
             </FileUploader>
           </div>
@@ -43,4 +45,4 @@ const EmailTemplates = () => {
   )
 }
 
-export default EmailTemplates
+export default withNamespaces()(EmailTemplates)

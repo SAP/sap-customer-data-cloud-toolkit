@@ -1,11 +1,13 @@
 import { Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { withNamespaces } from 'react-i18next'
+
 import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 
 import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 
-const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter }) => {
+const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const dispatch = useDispatch()
   const dataCenters = useSelector((state) => state.sites.dataCenters)
@@ -66,6 +68,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
         {showErrorTableCell(errorList, error)}
         <TableCell>
           <Input
+            id="childBaseDomainInput"
             type={InputType.Text}
             style={{ width: 'calc(100% - 82px)', marginLeft: '80px' }}
             value={baseDomain}
@@ -75,7 +78,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
         </TableCell>
 
         <TableCell>
-          <Input type={InputType.Text} style={{ width: '100%' }} value={description} onInput={(event) => onChangeChildDescription(event)} />
+          <Input id="childDescriptionInput" type={InputType.Text} style={{ width: '100%' }} value={description} onInput={(event) => onChangeChildDescription(event)} />
         </TableCell>
 
         <TableCell>
@@ -95,7 +98,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
 
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
-                <Button onClick={onDeleteChildHandler}>Delete</Button>
+                <Button onClick={onDeleteChildHandler}>{t('GLOBAL.DELETE')}</Button>
               </ActionSheet>
             </>
           </div>
@@ -105,4 +108,4 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
   )
 }
 
-export default SitesTableChildRow
+export default withNamespaces()(SitesTableChildRow)
