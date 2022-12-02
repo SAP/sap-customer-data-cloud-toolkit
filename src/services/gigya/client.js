@@ -2,10 +2,9 @@ import axios from 'axios'
 
 const MAX_RETRY_ATTEMPTS = 20
 const isError = (response) => {
-  return response.code === 'ETIMEDOUT' ||
-    response.data.errorCode === 403048 ||
-    response.code === 'ERR_BAD_RESPONSE'||
-    response.code === 'ENOTFOUND'
+  return (
+    response.data.errorCode === 403048 || (response.code !== undefined && (response.code === 'ETIMEDOUT' || response.code === 'ERR_BAD_RESPONSE' || response.code === 'ENOTFOUND'))
+  )
 }
 
 const client = {
@@ -25,7 +24,7 @@ const client = {
       if (isError(response)) {
         retryCounter++
         client.wait(1000)
-      }      
+      }
     } while (isError(response) && retryCounter < MAX_RETRY_ATTEMPTS)
 
     return response

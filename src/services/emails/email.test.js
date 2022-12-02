@@ -14,11 +14,10 @@ describe('Emails test suite', () => {
   }
 
   test('get emails successfully - multiple emails templates', async () => {
-    axios.mockResolvedValue({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember }).mockResolvedValue({ data: EmailsTestData.getEmailsExpectedResponse })
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: EmailsTestData.getEmailsExpectedResponse })
 
     const email = new Email(credentials.userKey, credentials.secret)
     const response = await email.getSiteEmails('apiKey')
-
     //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
@@ -34,12 +33,11 @@ describe('Emails test suite', () => {
 
   test('get emails successfully - emailNotifications - no templates', async () => {
     axios
-      .mockResolvedValue({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember })
-      .mockResolvedValue({ data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() })
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() })
 
     const email = new Email(credentials.userKey, credentials.secret)
     const response = await email.getSiteEmails('apiKey')
-
     //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
@@ -52,26 +50,55 @@ describe('Emails test suite', () => {
     expect(response.emailNotifications.accountDeletedEmailDefaultLanguage).toBeDefined()
   })
 
-  test('get emails unsuccessfully - invalid secret', async () => {
-    axios.mockResolvedValue({ data: EmailsTestData.expectedGigyaInvalidSecret })
-    const email = new Email(credentials.userKey, '')
-    const response = await email.getSiteEmails('apiKey')
-
-    CommonTestData.verifyResponseIsNotOk(response, EmailsTestData.expectedGigyaInvalidSecret)
-  })
-
   test('get emails unsuccessfully - invalid user key', async () => {
-    axios.mockResolvedValue({ data: EmailsTestData.expectedGigyaInvalidUserKey })
+    const err = CommonTestData.createErrorObject('Error getting email templates')
+    axios.mockResolvedValue({ data: EmailsTestData.expectedGigyaInvalidUserKey }).mockImplementation(() => {
+      throw err
+    })
     const email = new Email('', credentials.secret)
     const response = await email.getSiteEmails('apiKey')
 
-    CommonTestData.verifyResponseIsNotOk(response, EmailsTestData.expectedGigyaInvalidUserKey)
+    expect(response.errorMessage).toEqual(err.message)
+    expect(response.errorCode).toEqual(err.code)
+    expect(response.errorDetails).toEqual(err.details)
+    expect(response.time).toBeDefined()
   })
+
   test('get emails unsuccessfully - invalid apiKey', async () => {
-    axios.mockResolvedValue({ data: EmailsTestData.expectedGigyaResponseInvalidAPI })
+    const err = CommonTestData.createErrorObject('Error getting email templates')
+    axios.mockResolvedValueOnce({ data: EmailsTestData.expectedGigyaResponseInvalidAPI }).mockImplementation(() => {
+      throw err
+    })
     const email = new Email(credentials.userKey, credentials.secret)
     const response = await email.getSiteEmails('apiKey')
 
-    CommonTestData.verifyResponseIsNotOk(response, EmailsTestData.expectedGigyaResponseInvalidAPI)
+    expect(response.errorMessage).toEqual(err.message)
+    expect(response.errorCode).toEqual(err.code)
+    expect(response.errorDetails).toEqual(err.details)
+    expect(response.time).toBeDefined()
+  })
+
+  test('set emails successfully - multiple emails templates', async () => {
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const email = new Email(credentials.userKey, credentials.secret)
+    const response = await email.setSiteEmails('apiKey', EmailsTestData.getEmailsExpectedResponse.magicLink)
+    //console.log('response=' + JSON.stringify(response))
+
+    CommonTestData.verifyResponseIsOk(response)
+  })
+
+  test('set emails unsuccessfully - invalid secret', async () => {
+    const err = CommonTestData.createErrorObject('Error setting email templates')
+    axios.mockResolvedValueOnce({ data: EmailsTestData.expectedGigyaInvalidSecret }).mockImplementation(() => {
+      throw err
+    })
+    const email = new Email(credentials.userKey, '')
+    const response = await email.setSiteEmails('apiKey', EmailsTestData.getEmailsExpectedResponse.magicLink)
+
+    expect(response.errorMessage).toEqual(err.message)
+    expect(response.errorCode).toEqual(err.code)
+    expect(response.errorDetails).toEqual(err.details)
+    expect(response.time).toBeDefined()
   })
 })

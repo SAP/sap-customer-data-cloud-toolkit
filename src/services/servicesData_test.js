@@ -4,10 +4,19 @@ const HttpStatus = {
   //   INTERNAL_SERVER_ERROR: 500,
 }
 
+const expectedGigyaResponseOk = {
+  statusCode: 200,
+  errorCode: 0,
+  statusReason: 'OK',
+  callId: 'callId',
+  apiVersion: 2,
+  time: Date.now(),
+}
+
 function verifyResponseIsOk(response) {
   expect(response.statusCode).toBeDefined()
   expect(response.statusCode).toEqual(HttpStatus.OK)
-  expect(response.statusReason).toEqual('OK')
+  expect(response.statusReason).toEqual(expectedGigyaResponseOk.statusReason)
   expect(response.callId).toBeDefined()
   expect(response.time).toBeDefined()
   // error case
@@ -28,4 +37,13 @@ function verifyResponseIsNotOk(response, expectedResponse) {
   expect(response.errorDetails).toEqual(expectedResponse.errorDetails)
 }
 
-export { verifyResponseIsNotOk, verifyResponseIsOk }
+function createErrorObject(message) {
+  const err = {}
+  err.code = 'ENOTFOUND'
+  err.details = 'getaddrinfo ENOTFOUND accounts..gigya.com'
+  err.message = message
+  err.time = Date.now()
+  return err
+}
+
+export { expectedGigyaResponseOk, createErrorObject, verifyResponseIsNotOk, verifyResponseIsOk }

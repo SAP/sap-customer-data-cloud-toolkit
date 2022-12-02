@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as EmailsTestData from './data_test'
 import EmailManager from './emailManager'
 import ZipManager from '../zip/zipManager'
+import * as CommonTestData from '../servicesData_test'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -43,9 +44,23 @@ describe('Emails Manager test suite', () => {
   })
 
   test('3 - export error', async () => {
-    const mockedResponse = { data: EmailsTestData.expectedGigyaInvalidUserKey }
-    axios.mockResolvedValueOnce(mockedResponse)
-    await expect(emailManager.export('apiKey')).rejects.toEqual(EmailsTestData.expectedGigyaInvalidUserKey)
+    const err = CommonTestData.createErrorObject('Error getting email templates')
+    axios.mockResolvedValue({ data: EmailsTestData.expectedGigyaInvalidUserKey }).mockImplementation(() => {
+      throw err
+    })
+    let testPassed = false
+    await emailManager.export('apiKey').catch((error) => {
+      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
+        throw new Error('It is not the expected exception')
+      } else {
+        testPassed = true
+      }
+    })
+
+    if (!testPassed) {
+      throw new Error('Expected exception was not thrown')
+    }
+    //await expect(emailManager.export('apiKey')).rejects.toEqual(generateExpectedErrorResponse())
   })
 
   test('4 - export templates', async () => {

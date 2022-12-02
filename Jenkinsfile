@@ -12,17 +12,7 @@ node() {
         sh 'env'
     }
 
-    stage ('test') {
-        withEnv(["CYPRESS_CACHE_FOLDER=/tmp/app/.cache", "BROWSER=none"]) {
-        sh "mkdir -p ${CYPRESS_CACHE_FOLDER}"
-        npmExecuteScripts script:this, 
-                          runScripts: ["test"],
-                          verbose: true
-        }
-        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/lcov-report', reportFiles: 'index.html', reportName: 'Test coverage report'])
-    }
-    
-    stage ('cypress') {
+    stage ('tests') {
         dockerExecute(
             script: this,
             dockerImage: 'cypress/base:16.14.0',
@@ -30,9 +20,12 @@ node() {
             sh '''chown -R root .
             npm install
             npm install start-server-and-test
+            npm run test
             npm run cypress:ci
             '''
         }
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/unit/lcov-report', reportFiles: 'index.html', reportName: 'Unit test coverage report'])
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/cypress/lcov-report', reportFiles: 'index.html', reportName: 'End to end test coverage report'])
     }
 
     stage('SonarQube report') {
@@ -59,6 +52,4 @@ node() {
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
-
-    //archive (includes: 'build/static/**/main.*')
 }

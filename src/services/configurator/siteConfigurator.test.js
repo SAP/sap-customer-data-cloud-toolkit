@@ -55,12 +55,8 @@ describe('Site configurator test suite', () => {
   })
 
   test('send request to invalid url', async () => {
+    const err = CommonTestData.createErrorObject('Error configuring site')
     axios.mockImplementation(() => {
-      const err = {}
-      err.code = 'ENOTFOUND'
-      err.details = 'getaddrinfo ENOTFOUND xadmin.us1.gigya.com'
-      err.message = 'Error configuring site'
-      err.time = Date.now()
       throw err
     })
 
@@ -68,8 +64,8 @@ describe('Site configurator test suite', () => {
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     //console.log('response=' + JSON.stringify(response))
 
-    expect(response.data.errorCode).toEqual('ENOTFOUND')
-    expect(response.data.errorMessage).toEqual('Error configuring site')
+    expect(response.data.errorCode).toEqual(err.code)
+    expect(response.data.errorMessage).toEqual(err.message)
     expect(response.data.time).toBeDefined()
   })
 })
