@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 import * as TestData from '../../src/services/site/data_test'
 import manualRemovalTestData from './manual-removal-test-data.json'
-import * as data from './test-information'
-//tirar as strings hardcoded e repetidas por constantes noutro ficheiro
+import * as data from './test-data'
 
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
