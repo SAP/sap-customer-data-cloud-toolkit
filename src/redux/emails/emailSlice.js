@@ -8,6 +8,7 @@ export const emailSlice = createSlice({
     exportFile: {},
     importFile: {},
     isLoading: false,
+    errors: [],
   },
   extraReducers: (builder) => {
     builder.addCase(getEmailTemplatesArrayBuffer.pending, (state) => {
@@ -17,8 +18,9 @@ export const emailSlice = createSlice({
       state.isLoading = false
       state.exportEmail = new File([action.payload], pkg.name, { type: 'application/zip' })
     })
-    builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state) => {
+    builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
+      state.errors = action.payload
     })
   },
 })
@@ -48,3 +50,5 @@ export const selectExportFile = (state) => state.emails.exportEmail
 export const selectImportFile = (state) => state.emails.importFile
 
 export const selectIsLoading = (state) => state.emails.isLoading
+
+export const selectErrors = (state) => state.emails.errors

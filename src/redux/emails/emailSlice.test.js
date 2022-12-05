@@ -8,6 +8,7 @@ const initialState = {
   exportFile: {},
   importFile: {},
   isLoading: false,
+  errors: [],
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'

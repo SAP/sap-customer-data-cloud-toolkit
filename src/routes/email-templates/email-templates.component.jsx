@@ -1,13 +1,18 @@
-import { Bar, Button, FileUploader } from '@ui5/webcomponents-react'
+import { Bar, Button, FileUploader, Card } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 
-import { getEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading } from '../../redux/emails/emailSlice'
+import { spacing } from '@ui5/webcomponents-react-base'
+
+import MessageList from '../../components/message-list/message-list.component'
+
+import { getEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading, selectErrors } from '../../redux/emails/emailSlice'
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
   const exportFile = useSelector(selectExportFile)
   const isLoading = useSelector(selectIsLoading)
+  const errors = useSelector(selectErrors)
 
   const onExportAllButtonClickHandler = () => {
     dispatch(getEmailTemplatesArrayBuffer())
@@ -22,6 +27,19 @@ const EmailTemplates = ({ t }) => {
     element.click()
     document.body.removeChild(element)
   }
+
+  const showErrorsList = (messages) =>
+    !messages.length ? (
+      ''
+    ) : (
+      <div style={spacing.sapUiSmallMargin}>
+        <div style={spacing.sapUiTinyMargin}>
+          <Card>
+            <MessageList messages={messages} />
+          </Card>
+        </div>
+      </div>
+    )
 
   return (
     <>
@@ -41,6 +59,7 @@ const EmailTemplates = ({ t }) => {
         }
       ></Bar>
       {!isLoading && exportFile ? getDownloadElement() : ''}
+      {showErrorsList(errors)}
     </>
   )
 }
