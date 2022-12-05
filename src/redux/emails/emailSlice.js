@@ -25,7 +25,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
+      state.errors = [action.payload]
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.pending, (state) => {
       state.isLoading = true
@@ -35,7 +35,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
+      state.errors = [action.payload]
     })
   },
 })
@@ -45,7 +45,7 @@ export const getApiKey = (hash) => {
   return apiKey !== undefined ? apiKey : ''
 }
 
-export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmail', async (dummy, { getState }) => {
+export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmail', async (dummy, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new EmailManager({
@@ -53,12 +53,11 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmai
       secret: state.credentials.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
-    console.log(`error: ${error}`)
-    return error
+    return rejectWithValue(error)
   }
 })
 
-export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEmail', async (zipContent, { getState }) => {
+export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEmail', async (zipContent, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new EmailManager({
@@ -66,8 +65,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
       secret: state.credentials.credentials.secretKey,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
-    console.log(`error: ${error}`)
-    return error
+    return rejectWithValue(error)
   }
 })
 
