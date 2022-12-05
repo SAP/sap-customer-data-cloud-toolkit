@@ -8,6 +8,12 @@ export const emailSlice = createSlice({
     exportFile: {},
     isLoading: false,
     errors: [],
+    isImportPopupOpen: false,
+  },
+  reducers: {
+    setIsImportPopupOpen(state, action) {
+      state.isImportPopupOpen = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getEmailTemplatesArrayBuffer.pending, (state) => {
@@ -43,8 +49,8 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmai
   try {
     const state = getState()
     return await new EmailManager({
-      userKey: state.sites.credentials.userKey,
-      secret: state.sites.credentials.secretKey,
+      userKey: state.credentials.credentials.userKey,
+      secret: state.credentials.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
     console.log(`error: ${error}`)
@@ -56,14 +62,16 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
   try {
     const state = getState()
     return await new EmailManager({
-      userKey: state.sites.credentials.userKey,
-      secret: state.sites.credentials.secretKey,
+      userKey: state.credentials.credentials.userKey,
+      secret: state.credentials.credentials.secretKey,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
     console.log(`error: ${error}`)
     return error
   }
 })
+
+export const { setIsImportPopupOpen } = emailSlice.actions
 
 export default emailSlice.reducer
 
@@ -74,3 +82,7 @@ export const selectImportFile = (state) => state.emails.importFile
 export const selectIsLoading = (state) => state.emails.isLoading
 
 export const selectErrors = (state) => state.emails.errors
+
+export const selectIsImportPopupOpen = (state) => {
+  return state.emails.isImportPopupOpen
+}
