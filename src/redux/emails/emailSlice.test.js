@@ -6,7 +6,6 @@ jest.mock('../../services/emails/emailManager')
 
 const initialState = {
   exportFile: {},
-  importFile: {},
   isLoading: false,
   errors: [],
 }

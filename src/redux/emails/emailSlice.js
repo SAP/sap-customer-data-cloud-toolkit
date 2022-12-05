@@ -6,7 +6,6 @@ export const emailSlice = createSlice({
   name: 'emails',
   initialState: {
     exportFile: {},
-    importFile: {},
     isLoading: false,
     errors: [],
   },
@@ -19,6 +18,16 @@ export const emailSlice = createSlice({
       state.exportEmail = new File([action.payload], pkg.name, { type: 'application/zip' })
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
+      state.isLoading = false
+      state.errors = action.payload
+    })
+    builder.addCase(sendEmailTemplatesArrayBuffer.pending, (state) => {
+      state.isLoading = true
+    })
+    builder.addCase(sendEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
+      state.isLoading = false
+    })
+    builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errors = action.payload
     })
@@ -37,6 +46,19 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmai
       userKey: state.sites.credentials.userKey,
       secret: state.sites.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
+  } catch (error) {
+    console.log(`error: ${error}`)
+    return error
+  }
+})
+
+export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEmail', async (zipContent, { getState }) => {
+  try {
+    const state = getState()
+    return await new EmailManager({
+      userKey: state.sites.credentials.userKey,
+      secret: state.sites.credentials.secretKey,
+    }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
     console.log(`error: ${error}`)
     return error

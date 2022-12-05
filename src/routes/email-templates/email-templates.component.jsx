@@ -6,7 +6,7 @@ import { spacing } from '@ui5/webcomponents-react-base'
 
 import MessageList from '../../components/message-list/message-list.component'
 
-import { getEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading, selectErrors } from '../../redux/emails/emailSlice'
+import { getEmailTemplatesArrayBuffer, sendEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading, selectErrors } from '../../redux/emails/emailSlice'
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
@@ -26,6 +26,11 @@ const EmailTemplates = ({ t }) => {
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
+  }
+
+  const onImportAllButtonClickHandler = async (event) => {
+    const arrayBuffer = await event.detail.files[0].arrayBuffer()
+    dispatch(sendEmailTemplatesArrayBuffer(arrayBuffer))
   }
 
   const showErrorsList = (messages) =>
@@ -50,7 +55,13 @@ const EmailTemplates = ({ t }) => {
             <Button id="exportAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }} onClick={onExportAllButtonClickHandler}>
               {t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ALL')}
             </Button>
-            <FileUploader accept=".zip" hideInput onChange={(event) => {}}>
+            <FileUploader
+              accept=".zip"
+              hideInput
+              onChange={(event) => {
+                onImportAllButtonClickHandler(event)
+              }}
+            >
               <Button id="importAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }}>
                 {t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ALL')}
               </Button>
