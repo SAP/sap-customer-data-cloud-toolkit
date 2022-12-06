@@ -8,6 +8,7 @@ const expectedSuccessMessage = 'OkAll sites have been created successfully'
 const childrenSiteDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys <br /> in the Credentials menu'
+const emailTemplatesExportErrorMessage = 'Error getting email templates'
 
 export {
   siteDomain,
@@ -19,4 +20,5 @@ export {
   childrenSiteDomain,
   childrenSiteDescription,
   missingCredentialsErrorMessage,
+  emailTemplatesExportErrorMessage,
 }

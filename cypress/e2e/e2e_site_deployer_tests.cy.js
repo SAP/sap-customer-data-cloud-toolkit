@@ -2,12 +2,11 @@
 import * as TestData from '../../src/services/site/data_test'
 import manualRemovalTestData from './manual-removal-test-data.json'
 import * as data from './test-data'
+import * as utils from './utils'
 
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/#')
-    cy.contains('Site Deployer').click({ force: true })
-    writeCredentials()
+    utils.startUp('Site Deployer')
   })
 
   it('Creating 3 parent sites with different datacenters', () => {
@@ -23,7 +22,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Create 1 parent site with US datacenter', () => {
-    resizeObserverLoopErrRe()
+    utils.resizeObserverLoopErrRe()
     getSiteDomain(data.siteDomain)
     getDataCenters('US', 'EU', 'AU')
 
@@ -44,7 +43,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a single Parent Site Manually with error message', () => {
-    mockResponse(TestData.expectedGigyaResponseNoPartnerId)
+    utils.mockResponse(TestData.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
 
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
@@ -55,8 +54,9 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a single Parent Site Manually with success message', () => {
-    resizeObserverLoopErrRe()
-    mockResponse(TestData.expectedGigyaResponseOk)
+    utils.resizeObserverLoopErrRe()
+
+    utils.mockResponse(TestData.expectedGigyaResponseOk, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
 
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
@@ -68,7 +68,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
-    resizeObserverLoopErrRe()
+    utils.resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
     getSaveButton().should('not.be.disabled')
@@ -89,7 +89,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should show error Popup when Credentials are empty', () => {
-    clearCredentials()
+    utils.clearCredentials()
     cy.get('#addParentButton').click()
 
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
@@ -102,8 +102,9 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should show Manual Removal Popup', () => {
-    resizeObserverLoopErrRe()
-    mockResponse(manualRemovalTestData.flat()[0])
+    utils.resizeObserverLoopErrRe()
+
+    utils.mockResponse(manualRemovalTestData.flat()[0], 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
     getSaveButton().click()
@@ -154,39 +155,6 @@ describe('Site Deployer Test Suite', () => {
   function writeChildrenSiteTable(childrenDomain, childrenDescription) {
     cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
     cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
-  }
-
-  function mockResponse(response) {
-    cy.intercept('POST', 'admin.createSite', {
-      body: response,
-    })
-  }
-
-  function resizeObserverLoopErrRe() {
-    const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
-    cy.on('uncaught:exception', (err) => {
-      if (resizeObserverLoopErrRe.test(err.message)) {
-        return false
-      }
-    })
-  }
-
-  function writeCredentials() {
-    resizeObserverLoopErrRe()
-    const openPopoverButton = cy.get('body').find('#openPopoverButton')
-    openPopoverButton.click({ force: true })
-    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('dummyuserkey', { force: true })
-    cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dummyusersecret', { force: true })
-    openPopoverButton.click({ force: true })
-  }
-
-  function clearCredentials() {
-    resizeObserverLoopErrRe()
-    const openPopoverButton = cy.get('body').find('#openPopoverButton')
-    openPopoverButton.click()
-    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
-    cy.get('#secretKey').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
-    openPopoverButton.click()
   }
 
   function createChild() {
