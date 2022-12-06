@@ -1,9 +1,7 @@
-import { Bar, Button, Card } from '@ui5/webcomponents-react'
+import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
-
-import { spacing } from '@ui5/webcomponents-react-base'
 
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
@@ -48,10 +46,14 @@ const EmailTemplates = ({ t }) => {
     !messages.length ? (
       ''
     ) : (
-      <DialogMessage style={spacing.sapUiSmallMargin}>
-        <Card>
-          <MessageList messages={messages} />
-        </Card>
+      <DialogMessage
+        style={{ textAlign: 'center' }}
+        headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+        state={ValueState.Error}
+        closeButtonContent="Ok"
+        id="emailTemplatesErrorPopup"
+      >
+        <MessageList messages={messages} />
       </DialogMessage>
     )
 
