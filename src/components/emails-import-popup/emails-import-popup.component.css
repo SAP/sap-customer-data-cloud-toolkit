@@ -1,0 +1,29 @@
+.dialog-button-1 {
+  box-shadow: none !important;
+  min-height: 30px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  border-color: #0a6ed1 !important;
+  background-color: #0a6ed1 !important;
+}
+
+.dialog-button-2 {
+  appearance: none !important;
+  outline: 0 !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  border-radius: 4px !important;
+  max-height: 36px !important;
+  min-height: 30px !important;
+  min-width: 36px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  color: #0a6ed1 !important;
+  border-color: #0a6ed1 !important;
+  background-color: #fff !important;
+}
