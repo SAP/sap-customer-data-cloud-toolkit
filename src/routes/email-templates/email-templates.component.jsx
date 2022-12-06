@@ -1,6 +1,7 @@
 import { Bar, Button, Card } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
+import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 
 import { spacing } from '@ui5/webcomponents-react-base'
 
@@ -38,13 +39,11 @@ const EmailTemplates = ({ t }) => {
     !messages.length ? (
       ''
     ) : (
-      <div style={spacing.sapUiSmallMargin}>
-        <div style={spacing.sapUiTinyMargin}>
-          <Card>
-            <MessageList messages={messages} />
-          </Card>
-        </div>
-      </div>
+      <DialogMessage style={spacing.sapUiSmallMargin}>
+        <Card>
+          <MessageList messages={messages} />
+        </Card>
+      </DialogMessage>
     )
 
   return (
