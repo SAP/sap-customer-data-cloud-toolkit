@@ -77,7 +77,7 @@ export const SitesTable = ({ t }) => {
         </Table>
       ) : (
         <Bar style={{ margin: '0px 0px 3px', height: 'auto' }}>
-          <IllustratedMessage name="EmptyList" titleText={t('GLOBAL.DELETE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
+          <IllustratedMessage name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
         </Bar>
       )}
 
