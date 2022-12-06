@@ -5,9 +5,10 @@ import { Buffer } from 'buffer'
 jest.mock('../../services/emails/emailManager')
 
 const initialState = {
-  exportFile: {},
+  exportFile: undefined,
   isLoading: false,
   errors: [],
+  isImportPopupOpen: false,
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'

@@ -7,7 +7,15 @@ import { spacing } from '@ui5/webcomponents-react-base'
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
 
-import { getEmailTemplatesArrayBuffer, selectExportFile, selectIsLoading, selectErrors, selectIsImportPopupOpen, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
+import {
+  getEmailTemplatesArrayBuffer,
+  selectExportFile,
+  selectIsLoading,
+  selectErrors,
+  selectIsImportPopupOpen,
+  setIsImportPopupOpen,
+  clearExportFile,
+} from '../../redux/emails/emailSlice'
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
@@ -28,6 +36,7 @@ const EmailTemplates = ({ t }) => {
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
+    dispatch(clearExportFile())
   }
 
   const onImportAllButtonClickHandler = () => {
