@@ -42,6 +42,7 @@ const EmailTemplates = ({ t }) => {
     dispatch(setIsImportPopupOpen(true))
   }
 
+  // TODO: error pop up is only showing once, must fix
   const showErrorsList = (messages) =>
     !messages.length ? (
       ''

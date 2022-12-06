@@ -1,5 +1,5 @@
 import { withNamespaces } from 'react-i18next'
-import { Dialog, Bar, Button, Label } from '@ui5/webcomponents-react'
+import { Dialog, Bar, Button, Label, FileUploader } from '@ui5/webcomponents-react'
 
 import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
 import { useSelector, useDispatch } from 'react-redux'
@@ -13,7 +13,7 @@ const EmailsImportPopup = ({ t }) => {
   const dispatch = useDispatch()
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
 
-  const [importFile, setImportFile] = useState()
+  const [importFile, setImportFile] = useState(undefined)
 
   const onImportButtonClickHandler = async () => {
     const arrayBuffer = await importFile.arrayBuffer()
@@ -49,14 +49,22 @@ const EmailsImportPopup = ({ t }) => {
           <>
             <Label>{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
             <br></br>
-            <input accept=".zip" type={'file'} onChange={(event) => onFileUploaderChangeHandler(event)} />
+            {/* <input accept=".zip" type={'file'} onChange={(event) => onFileUploaderChangeHandler(event)} /> */}
+            {/* TODO: using input, does not return the File instance,only the selected file path,
+            it can't work because fs doesnt work in react, but FileUploader is only working
+             on localhost, on CDC it does not open the file picker*/}
+            <FileUploader accept=".zip" hideInput onChange={(event) => onFileUploaderChangeHandler(event)}>
+              <Button>{t('EMAIL_TEMPLATES_COMPONENT.CHOOSE_FILE')}</Button>
+            </FileUploader>
+            <Label>{importFile ? importFile.name : t('EMAIL_TEMPLATES_COMPONENT.NO_FILE')}</Label>
           </>
         }
         footer={
           <Bar
             endContent={
               <div>
-                <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler}>
+                <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
+                  {/* TODO: disabled condition is not working, and it will be usefull to avoid errors */}
                   {t('EMAIL_TEMPLATES_COMPONENT.IMPORT')}
                 </Button>
                 <Button className="btn dialog-button-2" onClick={onCloseEmailImportPopup}>
@@ -68,6 +76,7 @@ const EmailsImportPopup = ({ t }) => {
         }
       ></Dialog>
 
+      {/* TODO: delete code below after make all design adjustments to the popup */}
       {/* <div
         className="ui-dialog ui-widget ui-corner-all gigya-jq-dialog"
         tabindex="-1"
