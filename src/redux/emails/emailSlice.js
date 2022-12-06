@@ -5,7 +5,7 @@ import pkg from '../../../package.json'
 export const emailSlice = createSlice({
   name: 'emails',
   initialState: {
-    exportFile: {},
+    exportFile: undefined,
     isLoading: false,
     errors: [],
     isImportPopupOpen: false,
@@ -14,6 +14,9 @@ export const emailSlice = createSlice({
     setIsImportPopupOpen(state, action) {
       state.isImportPopupOpen = action.payload
     },
+    clearExportFile(state) {
+      state.exportFile = undefined
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getEmailTemplatesArrayBuffer.pending, (state) => {
@@ -21,7 +24,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(getEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      state.exportEmail = new File([action.payload], pkg.name, { type: 'application/zip' })
+      state.exportFile = new File([action.payload], pkg.name, { type: 'application/zip' })
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
@@ -69,11 +72,11 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
   }
 })
 
-export const { setIsImportPopupOpen } = emailSlice.actions
+export const { setIsImportPopupOpen, clearExportFile } = emailSlice.actions
 
 export default emailSlice.reducer
 
-export const selectExportFile = (state) => state.emails.exportEmail
+export const selectExportFile = (state) => state.emails.exportFile
 
 export const selectImportFile = (state) => state.emails.importFile
 
@@ -81,6 +84,4 @@ export const selectIsLoading = (state) => state.emails.isLoading
 
 export const selectErrors = (state) => state.emails.errors
 
-export const selectIsImportPopupOpen = (state) => {
-  return state.emails.isImportPopupOpen
-}
+export const selectIsImportPopupOpen = (state) => state.emails.isImportPopupOpen
