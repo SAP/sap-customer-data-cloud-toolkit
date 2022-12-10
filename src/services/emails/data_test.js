@@ -144,6 +144,21 @@ function getEmailsExpectedResponseWithMinimumTemplates() {
   return clone
 }
 
+function getEmailsExpectedResponseWithNoTemplates() {
+  const clone = JSON.parse(JSON.stringify(getEmailsExpectedResponse))
+  deleteContent(clone)
+  delete clone.magicLink
+  delete clone.codeVerification
+  delete clone.preferencesCenter
+  delete clone.doubleOptIn
+  delete clone.passwordReset
+  delete clone.twoFactorAuth
+  delete clone.unknownLocationNotification
+  delete clone.passwordResetNotification
+  delete clone.emailNotifications
+  return clone
+}
+
 function getExpectedExportConfigurationFileContentWithMinimumTemplates() {
   const clone = JSON.parse(JSON.stringify(expectedExportConfigurationFileContent))
   deleteContent(clone)
@@ -155,7 +170,7 @@ function deleteContent(clone) {
   delete clone.emailNotifications.confirmationEmailTemplates
   delete clone.emailNotifications.welcomeEmailTemplates
   delete clone.emailVerification
-  delete clone.impossibleTraveler.emailTemplates
+  delete clone.impossibleTraveler
 }
 
 const expectedExportConfigurationFileContent = {
@@ -313,11 +328,23 @@ const expectedGigyaInvalidSecret = {
   time: Date.now(),
 }
 
-const expectedGigyaImportBadTemplate = {
-  callId: '41cbf2f712b24c7e839b18e42fe5687f',
+// const expectedGigyaImportBadTemplate = {
+//   callId: '41cbf2f712b24c7e839b18e42fe5687f',
+//   errorCode: 400006,
+//   errorDetails:
+//     "CodeVerification: Deserialized JSON type 'Newtonsoft.Json.Linq.JValue' is not compatible with expected type 'Newtonsoft.Json.Linq.JObject'. Path 'CodeVerification'.",
+//   errorMessage: 'Invalid parameter value',
+//   apiVersion: 2,
+//   statusCode: 400,
+//   statusReason: 'Bad Request',
+//   time: Date.now(),
+// }
+
+const expectedGigyaImportTemplateWithoutMetaSubject = {
+  callId: 'afa7d9bb1f164a2b9014fbba540bfd4a',
   errorCode: 400006,
   errorDetails:
-    "CodeVerification: Deserialized JSON type 'Newtonsoft.Json.Linq.JValue' is not compatible with expected type 'Newtonsoft.Json.Linq.JObject'. Path 'CodeVerification'.",
+    "Email template(s) must contain valid META 'subject' html headers'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'Email template(s) must contain valid META 'from' html headers'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'Email template(s) must contain link placeHolder $code'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'",
   errorMessage: 'Invalid parameter value',
   apiVersion: 2,
   statusCode: 400,
@@ -335,8 +362,10 @@ export {
   expectedGigyaResponseInvalidAPI,
   expectedGigyaInvalidUserKey,
   expectedGigyaInvalidSecret,
+  expectedGigyaImportTemplateWithoutMetaSubject,
   getEmailsExpectedResponse,
   getEmailsExpectedResponseWithMinimumTemplates,
+  getEmailsExpectedResponseWithNoTemplates,
   expectedExportConfigurationFileContent,
   getExpectedExportConfigurationFileContentWithMinimumTemplates,
   emailTemplate,

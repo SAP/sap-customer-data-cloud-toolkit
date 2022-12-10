@@ -5,10 +5,11 @@ import ZipManager from '../zip/zipManager'
 import * as CommonTestData from '../servicesData_test'
 import * as ConfiguratorTestData from '../configurator/data_test'
 import JSZip from 'jszip'
-import fs from 'fs'
 
 jest.mock('axios')
 jest.setTimeout(30000)
+
+const apiKey = 'apiKey'
 
 describe('Emails Manager test suite', () => {
   let emailManager
@@ -29,7 +30,7 @@ describe('Emails Manager test suite', () => {
     expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
     expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
 
-    const zipContent = await emailManager.export('apiKey')
+    const zipContent = await emailManager.export(apiKey)
 
     const zipContentMap = await new ZipManager().read(zipContent)
     expect(zipContentMap).toEqual(expectedZipEntries)
@@ -41,7 +42,7 @@ describe('Emails Manager test suite', () => {
     const expectedZipEntries = createExpectedZipEntries()
     expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
 
-    const zipContent = await emailManager.export('apiKey')
+    const zipContent = await emailManager.export(apiKey)
 
     const zipContentMap = await new ZipManager().read(zipContent)
     expect(zipContentMap).toEqual(expectedZipEntries)
@@ -53,7 +54,7 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     let testPassed = false
-    await emailManager.export('apiKey').catch((error) => {
+    await emailManager.export(apiKey).catch((error) => {
       if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
         throw new Error('It is not the expected exception')
       } else {
@@ -64,7 +65,6 @@ describe('Emails Manager test suite', () => {
     if (!testPassed) {
       throw new Error('Expected exception was not thrown')
     }
-    //await expect(emailManager.export('apiKey')).rejects.toEqual(generateExpectedErrorResponse())
   })
 
   test('4 - export error getting data center', async () => {
@@ -73,7 +73,7 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     let testPassed = false
-    await emailManager.export('apiKey').catch((error) => {
+    await emailManager.export(apiKey).catch((error) => {
       if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
         throw new Error('It is not the expected exception')
       } else {
@@ -90,7 +90,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValue(mockedResponse)
 
-    const emailTemplates = await emailManager.exportTemplates('apiKey')
+    const emailTemplates = await emailManager.exportTemplates(apiKey)
     expect(emailTemplates).toEqual(EmailsTestData.expectedExportConfigurationFileContent)
   })
 
@@ -98,45 +98,135 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValue(mockedResponse)
 
-    const emailTemplates = await emailManager.exportTemplates('apiKey')
+    const emailTemplates = await emailManager.exportTemplates(apiKey)
     expect(emailTemplates).toEqual(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates())
   })
 
   test('7 - import', async () => {
-    let spy = await jest.spyOn(emailManager.emailService, 'setSiteEmails')
-
-    // read zip file while there's no UI code passing its contents
-    //const zipContent = await readZipFile('unitTest.zip')
+    let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
     const zipContent = await createZipFullContent()
 
-    const mockedResponse = { data: CommonTestData.expectedGigyaResponseOk }
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue(mockedResponse)
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
 
-    // const expectedZipEntries = createExpectedZipEntries()
-    // expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
-    // expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
-    // expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    // expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    // expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
-    // expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
-
-    // const zipContentMap = await new ZipManager().read(zipContent)
-    // expect([...zipContentMap.keys()].sort()).toEqual([...expectedZipEntries.keys()].sort())
-
-    const response = await emailManager.import('apiKey', zipContent)
-    console.log('response=' + JSON.stringify(response))
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
     expect(spy.mock.calls.length).toBe(9)
   })
 
-  test('8 - error missing metadata file', async () => {
+  test('8 - import new template', async () => {
+    let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
+    const expectCallArgument = {
+      welcomeEmailTemplates: {
+        ar: EmailsTestData.emailTemplate,
+      },
+      apiKey: apiKey,
+      secret: EmailsTestData.credentials.secret,
+      userKey: EmailsTestData.credentials.userKey,
+    }
+
+    const zipContent = await createZipContentWithNewTemplate()
+
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(1)
+    expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
+  })
+
+  test('9 - delete template language', async () => {
+    let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
+    const expectCallArgument = {
+      defaultLanguage: 'en',
+      urlPlaceHolder: '$url',
+      emailTemplates: {
+        en: EmailsTestData.emailTemplate,
+        pt: null,
+      },
+      apiKey: 'apiKey',
+      secret: EmailsTestData.credentials.secret,
+      userKey: EmailsTestData.credentials.userKey,
+    }
+
+    const zipContent = await createZipContentWithTemplateLanguageRemoved()
+
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(1)
+    expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
+  })
+
+  test('10 - add template language', async () => {
+    let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
+    const expectCallArgument = {
+      defaultLanguage: 'en',
+      urlPlaceHolder: '$url',
+      emailTemplates: {
+        en: EmailsTestData.emailTemplate,
+        pt: EmailsTestData.emailTemplate,
+        fr: EmailsTestData.emailTemplate,
+      },
+      apiKey: apiKey,
+      secret: EmailsTestData.credentials.secret,
+      userKey: EmailsTestData.credentials.userKey,
+    }
+
+    const zipContent = await createZipContentWithTemplateLanguageAdded()
+
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(1)
+    expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
+  })
+
+  test('20 - error missing metadata file', async () => {
     const zipContent = await createZipContentEmpty()
+    await executeErrorTestCase(zipContent, 'Zip file does not contains the metadata file')
+  })
 
-    //await emailManager.import('apiKey', zipContent)
-    //await expect(emailManager.import('apiKey', zipContent)).rejects.toContain('Error on template file')
+  test('21 - error validating html template', async () => {
+    const zipContent = await createZipContentWithTemplateError(EmailsTestData.emailTemplate + 'x')
+    await executeErrorTestCase(zipContent, 'Error on template file')
+  })
+
+  test('22 - error template without meta subject', async () => {
+    let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
+    const template = '<a>test</a>'
+    const expectCallArgument = {
+      defaultLanguage: 'en',
+      urlPlaceHolder: '$url',
+      emailTemplates: {
+        en: template,
+        pt: EmailsTestData.emailTemplate,
+      },
+      apiKey: apiKey,
+      secret: EmailsTestData.credentials.secret,
+      userKey: EmailsTestData.credentials.userKey,
+    }
+    const zipContent = await createZipContentWithTemplateError(template)
+    axios
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: EmailsTestData.expectedGigyaImportTemplateWithoutMetaSubject })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response[0]))
+    response.map((resp) => CommonTestData.verifyResponseIsNotOk(resp, EmailsTestData.expectedGigyaImportTemplateWithoutMetaSubject))
+    expect(spy.mock.calls.length).toBe(1)
+    expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
+  })
+
+  async function executeErrorTestCase(zipContent, expectedErrorMessage) {
     let testPassed = false
-    await emailManager.import('apiKey', zipContent).catch((error) => {
-      if (error[0].errorDetails.startsWith('Zip file does not contains the metadata file')) {
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      if (error[0].errorDetails.startsWith(expectedErrorMessage)) {
         testPassed = true
       }
     })
@@ -144,24 +234,7 @@ describe('Emails Manager test suite', () => {
     if (!testPassed) {
       throw new Error('Expected exception was not thrown')
     }
-  })
-
-  test('9 - error validating html template', async () => {
-    const zipContent = await createZipContentWithTemplateError()
-
-    //await emailManager.import('apiKey', zipContent)
-    //await expect(emailManager.import('apiKey', zipContent)).rejects.toContain('Error on template file')
-    let testPassed = false
-    await emailManager.import('apiKey', zipContent).catch((error) => {
-      if (error[0].errorDetails.startsWith('Error on template file')) {
-        testPassed = true
-      }
-    })
-
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
-  })
+  }
 })
 
 function createExpectedZipEntries() {
@@ -174,18 +247,6 @@ function createExpectedZipEntries() {
   expectedZipEntries.set('PasswordReset/en.html', EmailsTestData.emailTemplate)
   expectedZipEntries.set('TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
   return expectedZipEntries
-}
-
-async function readZipFile(name) {
-  return new JSZip.external.Promise(function (resolve, reject) {
-    fs.readFile(name, function (err, data) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
-    })
-  })
 }
 
 function createZipFullContent() {
@@ -206,14 +267,42 @@ function createZipFullContent() {
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
-function createZipContentWithTemplateError() {
+function createZipContentWithTemplateError(template) {
+  const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
+  metadata['magicLink'] = EmailsTestData.getEmailsExpectedResponse.magicLink
   const jszip = new JSZip()
-  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
-  jszip.file('MagicLink/en.html', Buffer.from(EmailsTestData.emailTemplate + 'x', 'utf8'))
+  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
+  jszip.file('MagicLink/en.html', Buffer.from(template, 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentEmpty() {
   const jszip = new JSZip()
+  return jszip.generateAsync({ type: 'arraybuffer' })
+}
+
+function createZipContentWithNewTemplate() {
+  const jszip = new JSZip()
+  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
+  jszip.file('NewUserWelcome/ar.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  return jszip.generateAsync({ type: 'arraybuffer' })
+}
+
+function createZipContentWithTemplateLanguageRemoved() {
+  const jszip = new JSZip()
+  const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
+  metadata['magicLink'] = EmailsTestData.getEmailsExpectedResponse.magicLink
+  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
+  jszip.file('MagicLink/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('MagicLink/pt.html', Buffer.from('', 'utf8'))
+  return jszip.generateAsync({ type: 'arraybuffer' })
+}
+
+function createZipContentWithTemplateLanguageAdded() {
+  const jszip = new JSZip()
+  const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
+  metadata['magicLink'] = EmailsTestData.getEmailsExpectedResponse.magicLink
+  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
+  jszip.file('MagicLink/fr.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }

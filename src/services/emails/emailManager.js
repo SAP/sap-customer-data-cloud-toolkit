@@ -115,8 +115,13 @@ class EmailManager {
     }
 
     const metadataObj = JSON.parse(zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME))
+    const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
+    this.#removeOldContentFromMetadataMap(metadataMap)
+    return (await this.#importTemplates(site, metadataObj)).flat()
+  }
+
+  #mergeMetadataMapWithZipContent(zipContentMap, metadataObj) {
     const metadataMap = this.#getEmailTemplates(metadataObj)
-    // assign metadata map with zip content
     for (let [filePath, newTemplate] of zipContentMap) {
       const zipInfo = this.#getZipEntryInfo(filePath)
       if (zipInfo.template === undefined) {
@@ -124,23 +129,52 @@ class EmailManager {
       }
       const internalTemplateName = this.#emailTemplateNameTranslator.translateExternalName(zipInfo.template)
       const template = metadataMap.get(internalTemplateName)
-      if (newTemplate.length !== 0) {
+      if (template === undefined && newTemplate.length !== 0) {
+        this.#addNewTemplateToMetadata(internalTemplateName, zipInfo.language, newTemplate, metadataObj)
+      } else if (newTemplate.length !== 0) {
         template[zipInfo.language] = newTemplate
       } else {
-        delete template[zipInfo.language]
+        template[zipInfo.language] = null
       }
     }
+    return metadataMap
+  }
 
-    // remove metadata map old content
+  #removeOldContentFromMetadataMap(metadataMap) {
     for (let [internalTemplateName, templates] of metadataMap) {
       for (const key in templates) {
-        if (templates[key].startsWith(this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName))) {
+        if (templates[key] !== null && templates[key].startsWith(this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName))) {
           delete templates[key]
         }
       }
     }
+  }
 
-    return (await this.#importTemplates(site, metadataObj)).flat()
+  #addNewTemplateToMetadata(internalTemplateName, language, template, metadataObj) {
+    const optionalTemplatesPropertiesPath = [
+      'emailNotifications.welcomeEmailTemplates',
+      'emailNotifications.accountDeletedEmailTemplates',
+      'emailNotifications.confirmationEmailTemplates',
+    ]
+    optionalTemplatesPropertiesPath.some((path) => {
+      if (path.indexOf(internalTemplateName) > 0) {
+        const tokens = path.split('.')
+        let pointer = metadataObj
+        for (let i = 0; i < tokens.length; ++i) {
+          if (pointer.hasOwnProperty(tokens[i])) {
+            pointer = pointer[tokens[i]]
+          } else {
+            pointer[tokens[i]] = {}
+            pointer = pointer[tokens[i]]
+            if (i === tokens.length - 1) {
+              pointer[language] = template
+            }
+          }
+        }
+        return true
+      }
+      return false
+    })
   }
 
   #isResponseOk(responses) {
@@ -164,23 +198,6 @@ class EmailManager {
     })
   }
 
-  // async #importTemplate(site, templateName, template) {
-  //   const response = await this.emailService.setSiteEmails(site, template)
-  //   response.template = templateName
-  //   return response
-  // }
-
-  // #importTemplates(metadataObj) {
-  //   const EMAIL_TEMPLATE_PARENTS = ['emailNotifications']
-  //   const templates = {}
-  //   for (const property in metadataObj) {
-  //     if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {
-  //       templates[property] = metadataObj[property]
-  //     }
-  //   }
-  //   return templates
-  // }
-
   #getZipEntryInfo(zipEntry) {
     const info = {}
     const tokens = zipEntry.split('/')
@@ -201,8 +218,6 @@ class EmailManager {
         code: 1,
         details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
       }
-      // error.code = 1
-      // error.details = `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`
       response.push(generateErrorResponse(error, 'Error importing email templates').data)
     }
     response.push(this.#validateEmailTemplates(zipContentMap))
@@ -213,7 +228,7 @@ class EmailManager {
     const response = []
     const error = {}
     for (let [filename, template] of zipContentMap) {
-      if (this.#isTemplateFile(filename)) {
+      if (this.#isTemplateFile(filename) && template !== '') {
         const msg = XmlValidator.validate(template)
         if (msg !== '') {
           error.code = 2
@@ -231,16 +246,6 @@ class EmailManager {
 
   #isTemplateFile(filename) {
     return filename.endsWith('.html')
-  }
-
-  #getTemplatePath(internalTemplateName, metadataObj) {
-    const paths = this.#buildResponsePropertiesPath(metadataObj)
-    for (const path in paths) {
-      if (path.contains(internalTemplateName)) {
-        return path
-      }
-    }
-    return ''
   }
 }
 
