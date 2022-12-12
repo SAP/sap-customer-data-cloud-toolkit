@@ -58,9 +58,9 @@ class EmailManager {
   #generateEmptyDirectoriesForMissingTemplates(templates) {
     const internalNames = this.#emailTemplateNameTranslator.getInternalNames()
     if (templates.size !== internalNames.length) {
-      for (let i = 0; i < internalNames.length; ++i) {
-        if (!templates.has(internalNames[i])) {
-          const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalNames[i])
+      for (const internalName of internalNames) {
+        if (!templates.has(internalName)) {
+          const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalName)
           this.zipManager.createFolder(externalTemplateName)
         }
       }

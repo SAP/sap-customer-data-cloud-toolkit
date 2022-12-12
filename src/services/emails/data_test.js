@@ -328,18 +328,6 @@ const expectedGigyaInvalidSecret = {
   time: Date.now(),
 }
 
-// const expectedGigyaImportBadTemplate = {
-//   callId: '41cbf2f712b24c7e839b18e42fe5687f',
-//   errorCode: 400006,
-//   errorDetails:
-//     "CodeVerification: Deserialized JSON type 'Newtonsoft.Json.Linq.JValue' is not compatible with expected type 'Newtonsoft.Json.Linq.JObject'. Path 'CodeVerification'.",
-//   errorMessage: 'Invalid parameter value',
-//   apiVersion: 2,
-//   statusCode: 400,
-//   statusReason: 'Bad Request',
-//   time: Date.now(),
-// }
-
 const expectedGigyaImportTemplateWithoutMetaSubject = {
   callId: 'afa7d9bb1f164a2b9014fbba540bfd4a',
   errorCode: 400006,
