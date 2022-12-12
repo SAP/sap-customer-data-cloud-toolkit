@@ -229,10 +229,10 @@ class EmailManager {
     const error = {}
     for (let [filename, template] of zipContentMap) {
       if (this.#isTemplateFile(filename) && template !== '') {
-        const msg = XmlValidator.validate(template)
-        if (msg !== '') {
-          error.code = 2
-          error.details = `Error on template file ${filename}. ${msg}`
+        const result = XmlValidator.validate(template)
+        if (result !== true) {
+          error.code = result.err.code
+          error.details = `Error on template file ${filename}. ${result.err.msg} on line ${result.err.line}`
           response.push(generateErrorResponse(error, 'Error importing email templates').data)
         }
       }
