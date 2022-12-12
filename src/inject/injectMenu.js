@@ -1,5 +1,4 @@
 import { querySelectorAllShadows, watchElement, htmlToElem, getInnerText } from './utils'
-// import { ADMIN_BUTTON_SELECTOR, MAIN_CONTAINER_CLASS, MAIN_CONTAINER_SHOW_CLASS, MENU_ELEMENT_CLASS } from './constants'
 import { ADMIN_BUTTON_SELECTOR, MENU_ELEMENT_CLASS } from './constants'
 
 export const menuElementHtml = `\
