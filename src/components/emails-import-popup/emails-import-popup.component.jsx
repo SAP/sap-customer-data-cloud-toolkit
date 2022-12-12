@@ -1,5 +1,5 @@
 import { withNamespaces } from 'react-i18next'
-import { Dialog, Bar, Button, Label, FileUploader } from '@ui5/webcomponents-react'
+import { Dialog, Bar, Button, Label } from '@ui5/webcomponents-react'
 
 import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
 import { useSelector, useDispatch } from 'react-redux'
@@ -16,13 +16,17 @@ const EmailsImportPopup = ({ t }) => {
   const [importFile, setImportFile] = useState(undefined)
 
   const onImportButtonClickHandler = async () => {
-    const arrayBuffer = await importFile.arrayBuffer()
-    dispatch(sendEmailTemplatesArrayBuffer(arrayBuffer))
+    dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
   }
 
-  const onFileUploaderChangeHandler = (event) => {
-    if (event.detail.files && event.detail.files.lenght > 0) {
-      setImportFile(event.detail.files[0])
+  const onCancelImportButtonClickHandler = () => {
+    onCloseEmailImportPopup()
+  }
+
+  const onFileUploadButtonClickHandler = async (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      setImportFile(file)
     }
   }
 
@@ -49,14 +53,7 @@ const EmailsImportPopup = ({ t }) => {
           <>
             <Label>{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
             <br></br>
-            {/* <input accept=".zip" type={'file'} onChange={(event) => onFileUploaderChangeHandler(event)} /> */}
-            {/* TODO: using input, does not return the File instance,only the selected file path,
-            it can't work because fs doesnt work in react, but FileUploader is only working
-             on localhost, on CDC it does not open the file picker*/}
-            <FileUploader accept=".zip" hideInput onChange={(event) => onFileUploaderChangeHandler(event)}>
-              <Button>{t('EMAIL_TEMPLATES_COMPONENT.CHOOSE_FILE')}</Button>
-            </FileUploader>
-            <Label>{importFile ? importFile.name : t('EMAIL_TEMPLATES_COMPONENT.NO_FILE')}</Label>
+            <input type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
           </>
         }
         footer={
@@ -64,10 +61,9 @@ const EmailsImportPopup = ({ t }) => {
             endContent={
               <div>
                 <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
-                  {/* TODO: disabled condition is not working, and it will be usefull to avoid errors */}
                   {t('EMAIL_TEMPLATES_COMPONENT.IMPORT')}
                 </Button>
-                <Button className="btn dialog-button-2" onClick={onCloseEmailImportPopup}>
+                <Button className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
                   {t('GLOBAL.CANCEL')}
                 </Button>
               </div>
