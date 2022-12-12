@@ -51,19 +51,19 @@ const EmailsImportPopup = ({ t }) => {
         }
         children={
           <>
-            <Label>{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
+            <Label id="specifyFileLabel">{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
             <br></br>
-            <input type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
+            <input id="zipFileInput" type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
           </>
         }
         footer={
           <Bar
             endContent={
               <div>
-                <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
+                <Button id="importZipButton" className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
                   {t('EMAIL_TEMPLATES_COMPONENT.IMPORT')}
                 </Button>
-                <Button className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
+                <Button id="cancelImportZipButton" className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
                   {t('GLOBAL.CANCEL')}
                 </Button>
               </div>
