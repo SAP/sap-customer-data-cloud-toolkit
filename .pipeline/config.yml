@@ -1,0 +1,37 @@
+general:
+  buildTool: 'npm'
+steps:
+  checkmarxExecuteScan:
+    avoidDuplicateProjectScans: false
+    projectName: cdc-tools-chrome-extension
+    checkmarxCredentialsId: f262c01d-ba51-4591-afcb-8c5c77e9d4c2
+    filterPattern: '!**/node_modules/**,!**/coverage/**,!**/whitesource/**,!**/build/**,**/*.html, **/*.xml, **/*.js, **/*.jsx'
+    failBuildOnNewResults: false
+    failBuildOnNewSeverity: 'MEDIUM'
+    fullScanCycle: 5
+    generatePdfReport: true
+    includeOpenSourceFolders: ''
+    incremental: false
+    osaArchiveIncludePatterns: '*.zip, *.war, *.ear, *.tgz'
+    osaInstallBeforeScan: false
+    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    sastEnabled: true
+    serverUrl: 'https://cx.wdf.sap.corp:443'
+    sourceEncoding: '1'
+    teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program' # 502
+    vulnerabilityThresholdResult: 'FAILURE'
+    waitForResultsEnabled: true
+  whitesourceExecuteScan:
+    buildTool: 'npm'
+    userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
+    productName: cdc-tools-chrome-extension
+    projectName: cdc-tools-chrome-extension
+    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.3'
+    agentUrl: 'https://sap.whitesourcesoftware.com/agent'
+    verbose: true
+    agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
+    #includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
+    #excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
+    productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
+    orgToken: '6971b2eec2d3420bad0caf173ec629f6a3c7d3ba63f3445ab99ffdbf1acfb1d0'
+    projectToken: '6bec15ff676f41639b6c872ebf6d8dad65918481dc2a4c8b93069bffc5560c8d'

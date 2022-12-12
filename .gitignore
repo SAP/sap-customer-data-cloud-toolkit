@@ -3,9 +3,6 @@
 # dependencies
 /node_modules
 
-# testing
-/coverage
-
 # production
 /build
 
@@ -44,3 +41,10 @@ yarn-debug.log*
 yarn-error.log*
 
 .log
+
+.vscode
+.idea
+
+/cypress/downloads
+/cypress/videos
+/cypress/screenshots

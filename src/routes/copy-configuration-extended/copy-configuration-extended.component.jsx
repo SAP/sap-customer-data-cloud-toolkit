@@ -1,16 +1,7 @@
-import { Card, CardHeader, Text } from '@ui5/webcomponents-react';
-import { spacing } from '@ui5/webcomponents-react-base';
+import { withNamespaces } from 'react-i18next'
 
-const CopyConfigurationExtended = () => {
-  const handleHeaderClick = () => {
-    alert('Header clicked');
-  };
+const CopyConfigurationExtended = ({ t }) => {
+  return <h1>{t('COPY_CONFIGURATION_EXTENDED_COMPONENT.COPY_CONFIGURATION_EXTENDED')}</h1>
+}
 
-  return (
-    <div className="cdc-tools-app-container" name="copy-configuration-extended">
-      <h1>copy-configuration-extended</h1>
-    </div>
-  );
-};
-
-export default CopyConfigurationExtended;
+export default withNamespaces()(CopyConfigurationExtended)

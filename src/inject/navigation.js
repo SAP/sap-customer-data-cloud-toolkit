@@ -1,88 +1,134 @@
+import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
 import {
-  onHashChange,
-  querySelectorAllShadows,
-  watchElement,
-  logStyles,
-} from './utils';
-import { state } from './chromeStorage';
+  MENU_ELEMENT_CLASS,
+  ROUTE_CONTAINER_CLASS,
+  TENANT_ID_CLASS,
+  ROUTE_CONTAINER_SHOW_CLASS,
+  INCOMPATIBLE_ROUTE_FRAGMENTS,
+  MENU_ELEMENTS,
+  MAIN_CONTAINER_CLASS,
+} from './constants'
+import { chromeStorageState } from './chromeStorage'
+
+import { initAppReact } from '../initAppReact'
+import { initAppContainer, destroyAppContainer } from './injectAppContainer'
+
+export const IS_SELECTED_CLASS = 'is-selected'
+
+let incompatibleRouteLoaded = false
+let isAppInitialized = false
 
 const init = () => {
-  onHashChange(() => processHashChange());
-  setTimeout(() => processHashChange(), 50);
-};
+  onHashChange(() => processHashChange(window.location.hash))
+  setTimeout(() => processHashChange(window.location.hash), 50)
 
-const processHashChange = () => {
-  const hash = window.location.hash.split('/');
-  if (hash.length !== 5 || hash[3] !== 'cdc-tools') return hideTool();
-
-  const [, partnerId, apiKey, , tabName] = hash;
-
-  state.partnerId = partnerId;
-  state.apiKey = apiKey;
-
-  showTool({ partnerId, apiKey, tabName });
-};
-
-const showTool = ({ partnerId, apiKey, tabName }) => {
-  if (
-    !document.querySelectorAll('.cdc-tools-app-container').length ||
-    !document.querySelector(`.cdc-tools-app-container[name="${tabName}"]`)
+  // Overwrite .is-selected management behaviour for menu buttons in CDC Console (fix behaviour when user selects an extension tab and goes back to the previous tab)
+  const menuElements = querySelectorAllShadows('.fd-nested-list__link, .fd-nested-list__content')
+  menuElements.forEach((element) =>
+    element.addEventListener('click', (e) => {
+      clearSelectionMenuLinks()
+      setSelectedMenuElement(e.currentTarget)
+    })
   )
-    return;
+}
 
-  hideTool();
+export const processHashChange = (locationHash) => {
+  locationHash = locationHash.endsWith('/') ? locationHash.slice(0, -1) : locationHash
 
-  // Remove is-selected from all menu links
-  querySelectorAllShadows(
-    '.fd-nested-list__link, .fd-nested-list__content',
-  ).forEach((el) => el.classList.remove('is-selected'));
+  const route = getRouteFromHash(locationHash)
+
+  const hashSplit = locationHash.split('/')
+  if (hashSplit.length >= 3) {
+    const [, partnerId, apiKey] = hashSplit
+    chromeStorageState.partnerId = partnerId
+    chromeStorageState.apiKey = apiKey
+  }
+
+  // Check if we are loading an incompatiable route
+  incompatibleRouteLoaded = incompatibleRouteLoaded || isRouteIncompatible(route)
+
+  if (!incompatibleRouteLoaded && !isAppInitialized) {
+    // Init React App
+    initAppContainer()
+    initAppReact(document.querySelector(`.${MAIN_CONTAINER_CLASS}`))
+    isAppInitialized = true
+  }
+
+  // Check if this route is from CDC Console or CDC Toolbox extension
+  if (!isRouteFromExtension(route)) {
+    // Show CDC Console route
+    hideContainer()
+
+    if (incompatibleRouteLoaded && isAppInitialized) {
+      // Destroy React App
+      destroyAppContainer()
+      isAppInitialized = false
+    }
+  } else {
+    // Show CDC Toolbox extension route
+    if (incompatibleRouteLoaded) {
+      return window.location.reload(true)
+    }
+
+    showContainer(locationHash)
+  }
+}
+
+export const getRouteFromHash = (locationHash = window.location.hash) =>
+  locationHash.split('/').reduce((route, hashPart, index) => (index > 2 && hashPart.length ? `${route}/${hashPart}` : route), '')
+
+const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((incompatibleRoute) => route.indexOf(incompatibleRoute) !== -1)
+
+const isRouteFromExtension = (route) => (MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false)
+
+const showContainer = (locationHash) => {
+  const route = getRouteFromHash(locationHash)
+
+  hideContainer()
+  clearSelectionMenuLinks()
 
   // Show containers
-  document
-    .querySelector(`.cdc-tools-app-container[name="${tabName}"]`)
-    .classList.add('show-cdc-tools-app-container');
-  document.querySelector('.cdc-tools-app').classList.add('show-cdc-tools');
+  querySelectorAllShadows(`[route="${route}"]`).forEach((container) => container.classList.add(ROUTE_CONTAINER_SHOW_CLASS))
 
-  // Set menu link as selected
-  querySelectorAllShadows(
-    `.cdc-tools--menu-item .fd-nested-list__link[name="${tabName}"]`,
-  ).forEach((el) => {
-    el.classList.add('is-selected');
-    // Set dropdown list selector as is-selected
-    let menuParentElem = el.parentElement.parentElement.closest(
-      '.fd-nested-list__item',
-    );
-    if (menuParentElem)
-      menuParentElem
-        .querySelector('.fd-nested-list__content')
-        .classList.add('is-selected');
-  });
-};
+  setSelectedMenuLinks(locationHash)
+}
 
-const hideTool = () => {
-  if (!document.querySelectorAll('.cdc-tools-app-container').length) return;
-
-  // Hide cdc-tools wrap container
-  document.querySelector('.cdc-tools-app').classList.remove('show-cdc-tools');
+const hideContainer = () => {
+  if (!document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).length) {
+    return
+  }
 
   // Hide cdc-tools containers
-  document
-    .querySelectorAll('.cdc-tools-app-container')
-    .forEach((el) => el.classList.remove('show-cdc-tools-app-container'));
+  document.querySelectorAll(`.${ROUTE_CONTAINER_CLASS}`).forEach((el) => el.classList.remove(ROUTE_CONTAINER_SHOW_CLASS))
 
   // Remove is-selected from all cdc-tools links
-  querySelectorAllShadows(
-    '.cdc-tools--menu-item .fd-nested-list__link',
-  ).forEach((el) => el.classList.remove('is-selected'));
-};
+  querySelectorAllShadows(`.${MENU_ELEMENT_CLASS} .fd-nested-list__link`).forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
+}
+
+// Remove is-selected from all menu links
+const clearSelectionMenuLinks = () => {
+  querySelectorAllShadows('.fd-nested-list__link, .fd-nested-list__content').forEach((el) => el.classList.remove(IS_SELECTED_CLASS))
+}
+
+// Set menu links as selected
+const setSelectedMenuLinks = (locationHash) => {
+  querySelectorAllShadows(`[href="${locationHash}"]`).forEach((menuElement) => setSelectedMenuElement(menuElement))
+}
+
+const setSelectedMenuElement = (menuElement) => {
+  menuElement.classList.add(IS_SELECTED_CLASS)
+  // Set dropdown list header button as is-selected
+  const menuParentElem = menuElement.parentElement.parentElement.closest('.fd-nested-list__item')
+  if (menuParentElem) {
+    menuParentElem.querySelector('.fd-nested-list__content').classList.add(IS_SELECTED_CLASS)
+  }
+}
 
 export const initNavigation = () => {
   watchElement({
-    // elemSelector: '.fd-info-label__text', // Tenant ID
-    elemSelector: '.cdc-tools-app-container', // CDC Toolbox container
+    elemSelector: `.${TENANT_ID_CLASS}`,
     onCreated: () => {
-      init();
-      console.log('CDC Toolbox Navigation - %cLoaded', logStyles.green);
+      init()
     },
-  });
-};
+  })
+}
