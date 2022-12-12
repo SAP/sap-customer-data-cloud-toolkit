@@ -13,16 +13,20 @@ const EmailsImportPopup = ({ t }) => {
   const dispatch = useDispatch()
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
 
-  const [importFile, setImportFile] = useState()
+  const [importFile, setImportFile] = useState(undefined)
 
-  const onImportButtonClickHandler = async () => {
-    const arrayBuffer = await importFile.arrayBuffer()
-    dispatch(sendEmailTemplatesArrayBuffer(arrayBuffer))
+  const onImportButtonClickHandler = () => {
+    dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
   }
 
-  const onFileUploaderChangeHandler = (event) => {
-    if (event.detail.files && event.detail.files.lenght > 0) {
-      setImportFile(event.detail.files[0])
+  const onCancelImportButtonClickHandler = () => {
+    onCloseEmailImportPopup()
+  }
+
+  const onFileUploadButtonClickHandler = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      setImportFile(file)
     }
   }
 
@@ -49,17 +53,17 @@ const EmailsImportPopup = ({ t }) => {
           <>
             <Label>{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
             <br></br>
-            <input accept=".zip" type={'file'} onChange={(event) => onFileUploaderChangeHandler(event)} />
+            <input type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
           </>
         }
         footer={
           <Bar
             endContent={
               <div>
-                <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler}>
+                <Button className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
                   {t('EMAIL_TEMPLATES_COMPONENT.IMPORT')}
                 </Button>
-                <Button className="btn dialog-button-2" onClick={onCloseEmailImportPopup}>
+                <Button className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
                   {t('GLOBAL.CANCEL')}
                 </Button>
               </div>
@@ -68,6 +72,7 @@ const EmailsImportPopup = ({ t }) => {
         }
       ></Dialog>
 
+      {/* TODO: delete code below after make all design adjustments to the popup */}
       {/* <div
         className="ui-dialog ui-widget ui-corner-all gigya-jq-dialog"
         tabindex="-1"
