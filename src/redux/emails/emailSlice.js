@@ -17,6 +17,9 @@ export const emailSlice = createSlice({
     clearExportFile(state) {
       state.exportFile = undefined
     },
+    clearErrors(state) {
+      state.errors = []
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getEmailTemplatesArrayBuffer.pending, (state) => {
@@ -72,7 +75,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
   }
 })
 
-export const { setIsImportPopupOpen, clearExportFile } = emailSlice.actions
+export const { setIsImportPopupOpen, clearExportFile, clearErrors } = emailSlice.actions
 
 export default emailSlice.reducer
 

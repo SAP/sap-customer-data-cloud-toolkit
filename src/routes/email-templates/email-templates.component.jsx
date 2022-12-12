@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
@@ -14,6 +16,7 @@ import {
   selectIsImportPopupOpen,
   setIsImportPopupOpen,
   clearExportFile,
+  clearErrors,
 } from '../../redux/emails/emailSlice'
 
 const EmailTemplates = ({ t }) => {
@@ -22,6 +25,11 @@ const EmailTemplates = ({ t }) => {
   const isLoading = useSelector(selectIsLoading)
   const errors = useSelector(selectErrors)
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
+
+  useEffect(() => {
+    setShowErrorDialog(errors.length > 0)
+  }, [errors.length])
 
   const onExportAllButtonClickHandler = () => {
     dispatch(getEmailTemplatesArrayBuffer())
@@ -42,21 +50,22 @@ const EmailTemplates = ({ t }) => {
     dispatch(setIsImportPopupOpen(true))
   }
 
-  // TODO: error pop up is only showing once, must fix
-  const showErrorsList = (messages) =>
-    !messages.length ? (
-      ''
-    ) : (
-      <DialogMessage
-        style={{ textAlign: 'center' }}
-        headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
-        state={ValueState.Error}
-        closeButtonContent="Ok"
-        id="emailTemplatesErrorPopup"
-      >
-        <MessageList messages={messages} />
-      </DialogMessage>
-    )
+  const showErrorsList = () => (
+    <DialogMessage
+      open={showErrorDialog}
+      style={{ textAlign: 'center' }}
+      headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+      state={ValueState.Error}
+      closeButtonContent="Ok"
+      id="emailTemplatesErrorPopup"
+      onAfterClose={() => {
+        setShowErrorDialog(false)
+        dispatch(clearErrors())
+      }}
+    >
+      <MessageList messages={errors} />
+    </DialogMessage>
+  )
 
   return (
     <>
@@ -75,7 +84,7 @@ const EmailTemplates = ({ t }) => {
         }
       ></Bar>
       {!isLoading && exportFile ? getDownloadElement() : ''}
-      {showErrorsList(errors)}
+      {showErrorsList()}
       {isImportPopupOpen ? <EmailsImportPopup></EmailsImportPopup> : ''}
     </>
   )

@@ -15,7 +15,7 @@ const EmailsImportPopup = ({ t }) => {
 
   const [importFile, setImportFile] = useState(undefined)
 
-  const onImportButtonClickHandler = async () => {
+  const onImportButtonClickHandler = () => {
     dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
   }
 
@@ -23,7 +23,7 @@ const EmailsImportPopup = ({ t }) => {
     onCloseEmailImportPopup()
   }
 
-  const onFileUploadButtonClickHandler = async (event) => {
+  const onFileUploadButtonClickHandler = (event) => {
     const file = event.target.files[0]
     if (file) {
       setImportFile(file)
