@@ -7,6 +7,9 @@ const topBarCustomMenuItemSpacing = `<span class="header-menu-item ${TOPBAR_MENU
 const numberOfMenuItems = 1
 
 export const initTopBarMenuPlaceholder = (onCreated) => {
+  if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
+    return
+  }
   const searchInput = querySelectorAllShadows('global-search')[0]
 
   const menuContainerSpacing = htmlToElem(topBarCustomMenuContainerSpacing)
