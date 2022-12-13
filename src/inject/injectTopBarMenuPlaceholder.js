@@ -1,4 +1,4 @@
-import { onElementExists, querySelectorAllShadows, htmlToElem } from './utils'
+import { onElementExists, watchElement, querySelectorAllShadows, htmlToElem } from './utils'
 import { TENANT_ID_CLASS, TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS, TOPBAR_MENU_ITEM_PLACEHOLDER_CLASS } from './constants'
 
 const topBarCustomMenuContainerSpacing = `<span class="${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}"></span>`
@@ -7,6 +7,9 @@ const topBarCustomMenuItemSpacing = `<span class="header-menu-item ${TOPBAR_MENU
 const numberOfMenuItems = 1
 
 export const initTopBarMenuPlaceholder = (onCreated) => {
+  if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
+    return
+  }
   const searchInput = querySelectorAllShadows('global-search')[0]
 
   const menuContainerSpacing = htmlToElem(topBarCustomMenuContainerSpacing)
@@ -20,6 +23,19 @@ export const initTopBarMenuPlaceholder = (onCreated) => {
   if (typeof onCreated == 'function') {
     onCreated()
   }
+
+  // If the injected element is removed, inject it again
+  watchElement({
+    elemSelector: `.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`,
+    onRemoved: () => {
+      onElementExists(`.${TENANT_ID_CLASS}`, () => {
+        if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
+          return
+        }
+        initTopBarMenuPlaceholder(onCreated)
+      })
+    },
+  })
 }
 
 export const destroyTopBarMenuPlaceholder = () => document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`).remove()
