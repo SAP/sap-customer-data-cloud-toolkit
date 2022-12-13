@@ -17,7 +17,7 @@ describe('Email Templates Test Suite', () => {
     utils.mockResponse(manualRemovalTestData.flat()[1], 'POST', 'admin.getSiteConfig')
     cy.get('#exportAllButton').click()
     cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
-    cy.get('ui5-list').find(`[data-title = '${data.emailTemplatesExportErrorMessage}']`).should('have.text', data.emailTemplatesExportErrorMessage)
+    cy.get('ui5-list').find(`[data-title = '${data.emailTemplatesExportErrorMessage}']`).should('have.text', data.emailTemplatesExportErrorMessageDetail)
   })
 
   it('should show error on import button', () => {
