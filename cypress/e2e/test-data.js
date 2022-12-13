@@ -10,6 +10,9 @@ const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys <br /> in the Credentials menu'
 const emailTemplatesExportErrorMessage = 'Error getting email templates'
 const emailTemplatesIconName = 'Email Templates'
+const siteDeployerIconName = 'Site Deployer'
+const cdcExampleFile = 'cdc_example_file.zip'
+const importFileHeaderText = 'Import Zip'
 
 export {
   siteDomain,
@@ -23,4 +26,7 @@ export {
   missingCredentialsErrorMessage,
   emailTemplatesExportErrorMessage,
   emailTemplatesIconName,
+  siteDeployerIconName,
+  cdcExampleFile,
+  importFileHeaderText,
 }
