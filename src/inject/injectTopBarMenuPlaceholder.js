@@ -7,10 +7,6 @@ const topBarCustomMenuItemSpacing = `<span class="header-menu-item ${TOPBAR_MENU
 const numberOfMenuItems = 1
 
 export const initTopBarMenuPlaceholder = (onCreated) => {
-  if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
-    return
-  }
-
   const searchInput = querySelectorAllShadows('global-search')[0]
 
   const menuContainerSpacing = htmlToElem(topBarCustomMenuContainerSpacing)
@@ -29,7 +25,12 @@ export const initTopBarMenuPlaceholder = (onCreated) => {
   watchElement({
     elemSelector: `.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`,
     onRemoved: () => {
-      onElementExists(`.${TENANT_ID_CLASS}`, () => initTopBarMenuPlaceholder(onCreated))
+      onElementExists(`.${TENANT_ID_CLASS}`, () => {
+        if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
+          return
+        }
+        initTopBarMenuPlaceholder(onCreated)
+      })
     },
   })
 }
