@@ -18,6 +18,10 @@ class ZipManager {
     return `${name}`
   }
 
+  createFolder(name) {
+    return this.#zipFile.folder(`${name}`)
+  }
+
   createZipArchive() {
     return this.#zipFile.generateAsync({ type: 'arraybuffer' })
   }
