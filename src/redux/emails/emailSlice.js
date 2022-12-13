@@ -41,7 +41,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
   },
 })
