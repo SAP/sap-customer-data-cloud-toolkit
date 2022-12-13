@@ -1,20 +1,20 @@
 const emailTemplate =
   '<html xmlns="http://www.w3.org/1999/xhtml">\r\n' +
   '<head>\r\n' +
-  '<META name="from" content="Name noreply@YOUR-SITE.com" />\r\n' +
-  '<META name="subject" content=" Login with magic link" />\r\n' +
+  '    <META name="from" content="Name &lt;noreply@YOUR-SITE.com&gt;" />\r\n' +
+  '    <META name="subject" content=" Login with magic link" />\r\n' +
   '</head>\r\n' +
   '<body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n' +
-  '<div style="background: url(\'url\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n' +
-  '<div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n' +
-  '<div style="padding:30px 30px 29px;margin: 0px auto;">\r\n' +
-  '<p>Hello, </p>\r\n' +
-  '<p>Please click the following <a href="$url">magic link</a> to login to &lt;domain&gt;.</p>\r\n' +
-  '<p>If you have not tried to access your account, you may ignore this message.</p>\r\n' +
-  '<p>Your &lt;sitename&gt; team</p>\r\n' +
-  '</div>\r\n' +
-  '</div>\r\n' +
-  '</div>\r\n' +
+  '    <div style="background: url(\'https://cdns.gigya.com/site/images/email/background.png\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n' +
+  '        <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n' +
+  '            <div style="padding:30px 30px 29px;margin: 0px auto;">\r\n' +
+  '                <p>Hello, </p>\r\n' +
+  '                <p>Please click the following <a href="$url">magic link</a> to login to &lt;domain&gt;.</p>\r\n' +
+  '                <p>If you have not tried to access your account, you may ignore this message.</p>\r\n' +
+  '                <p>Your &lt;sitename&gt; team</p>\r\n' +
+  '            </div>\r\n' +
+  '        </div>\r\n' +
+  '    </div>\r\n' +
   '</body>\r\n' +
   '</html>'
 
@@ -144,6 +144,21 @@ function getEmailsExpectedResponseWithMinimumTemplates() {
   return clone
 }
 
+function getEmailsExpectedResponseWithNoTemplates() {
+  const clone = JSON.parse(JSON.stringify(getEmailsExpectedResponse))
+  deleteContent(clone)
+  delete clone.magicLink
+  delete clone.codeVerification
+  delete clone.preferencesCenter
+  delete clone.doubleOptIn
+  delete clone.passwordReset
+  delete clone.twoFactorAuth
+  delete clone.unknownLocationNotification
+  delete clone.passwordResetNotification
+  delete clone.emailNotifications
+  return clone
+}
+
 function getExpectedExportConfigurationFileContentWithMinimumTemplates() {
   const clone = JSON.parse(JSON.stringify(expectedExportConfigurationFileContent))
   deleteContent(clone)
@@ -153,9 +168,9 @@ function getExpectedExportConfigurationFileContentWithMinimumTemplates() {
 function deleteContent(clone) {
   delete clone.emailNotifications.accountDeletedEmailTemplates
   delete clone.emailNotifications.confirmationEmailTemplates
-  //delete clone.emailNotifications.welcomeEmailTemplates
+  delete clone.emailNotifications.welcomeEmailTemplates
   delete clone.emailVerification
-  delete clone.impossibleTraveler.emailTemplates
+  delete clone.impossibleTraveler
 }
 
 const expectedExportConfigurationFileContent = {
@@ -313,6 +328,18 @@ const expectedGigyaInvalidSecret = {
   time: Date.now(),
 }
 
+const expectedGigyaImportTemplateWithoutMetaSubject = {
+  callId: 'afa7d9bb1f164a2b9014fbba540bfd4a',
+  errorCode: 400006,
+  errorDetails:
+    "Email template(s) must contain valid META 'subject' html headers'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'Email template(s) must contain valid META 'from' html headers'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'Email template(s) must contain link placeHolder $code'.\n On Property: 'Item1.CodeVerification.EmailTemplates[1].Value'",
+  errorMessage: 'Invalid parameter value',
+  apiVersion: 2,
+  statusCode: 400,
+  statusReason: 'Bad Request',
+  time: Date.now(),
+}
+
 const credentials = {
   userKey: 'userKey',
   secret: 'secret',
@@ -323,8 +350,10 @@ export {
   expectedGigyaResponseInvalidAPI,
   expectedGigyaInvalidUserKey,
   expectedGigyaInvalidSecret,
+  expectedGigyaImportTemplateWithoutMetaSubject,
   getEmailsExpectedResponse,
   getEmailsExpectedResponseWithMinimumTemplates,
+  getEmailsExpectedResponseWithNoTemplates,
   expectedExportConfigurationFileContent,
   getExpectedExportConfigurationFileContentWithMinimumTemplates,
   emailTemplate,

@@ -15,9 +15,12 @@ class Email {
   }
 
   async getSiteEmails(site) {
-    const dataCenter = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return dataCenterResponse
+    }
 
-    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getGetEmailsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenterResponse.dataCenter, Email.getGetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_GET_CONFIG)
@@ -27,9 +30,12 @@ class Email {
   }
 
   async setSiteEmails(site, templates) {
-    const dataCenter = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return dataCenterResponse
+    }
 
-    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getSetEmailsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenterResponse.dataCenter, Email.getSetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#setEmailsTemplatesParameters(site, templates)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_SET_CONFIG)

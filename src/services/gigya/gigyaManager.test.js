@@ -13,14 +13,16 @@ describe('Emails Manager test suite', () => {
     axios.mockImplementation(() => {
       throw err
     })
-    const dataCenter = await gigyaManager.getDataCenterFromSite('apiKey')
-    expect(dataCenter).toBe('')
+    const response = await gigyaManager.getDataCenterFromSite('apiKey')
+    expect(response.errorCode).not.toBe(0)
+    expect(response.dataCenter).toBeUndefined()
   })
 
   test('get data center', async () => {
     const expectedResponse = TestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValue({ data: expectedResponse })
-    const dataCenter = await gigyaManager.getDataCenterFromSite('apiKey')
-    expect(dataCenter).toBe(expectedResponse.dataCenter)
+    const response = await gigyaManager.getDataCenterFromSite('apiKey')
+    expect(response.errorCode).toBe(0)
+    expect(response.dataCenter).toBe(expectedResponse.dataCenter)
   })
 })
