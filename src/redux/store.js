@@ -6,4 +6,8 @@ import credentialsSlice from './credentials/credentialsSlice'
 
 export default configureStore({
   reducer: { sites: sitesReducer, emails: emailReducer, credentials: credentialsSlice },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
