@@ -43,6 +43,7 @@ describe('Site Deployer Test Suite', () => {
   })
 
   it('Should add a single Parent Site Manually with error message', () => {
+    utils.resizeObserverLoopErrRe()
     utils.mockResponse(TestData.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
 

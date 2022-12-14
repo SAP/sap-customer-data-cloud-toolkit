@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
 export function startUp(pageName) {
-  cy.visit('http://localhost:3000/#')
+  cy.visit('http://localhost:3000')
   cy.contains(pageName).click({ force: true })
   writeCredentials()
 }
@@ -24,12 +24,11 @@ export function clearCredentials() {
   openPopoverButton.click()
 }
 
-export function mockResponse(response, method,url) {
-   cy.intercept(method, url, {
-     body: response,
-   })
- }
-
+export function mockResponse(response, method, url) {
+  cy.intercept(method, url, {
+    body: response,
+  })
+}
 
 export function resizeObserverLoopErrRe() {
   const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
