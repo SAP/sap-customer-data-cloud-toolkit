@@ -7,7 +7,7 @@ const topBarCustomMenuItemSpacing = `<span class="header-menu-item ${TOPBAR_MENU
 const numberOfMenuItems = 1
 
 export const initTopBarMenuPlaceholder = (onCreated) => {
-  if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
+  if (querySelectorAllShadows(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`).length) {
     return
   }
   const searchInput = querySelectorAllShadows('global-search')[0]
@@ -29,15 +29,12 @@ export const initTopBarMenuPlaceholder = (onCreated) => {
     elemSelector: `.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`,
     onRemoved: () => {
       onElementExists(`.${TENANT_ID_CLASS}`, () => {
-        if (document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`)) {
-          return
-        }
         initTopBarMenuPlaceholder(onCreated)
       })
     },
   })
 }
 
-export const destroyTopBarMenuPlaceholder = () => document.querySelector(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`).remove()
+export const destroyTopBarMenuPlaceholder = () => querySelectorAllShadows(`.${TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS}`).forEach((container) => container.remove())
 
 export const injectTopBarMenuPlaceholder = (onCreated) => onElementExists(`.${TENANT_ID_CLASS}`, () => initTopBarMenuPlaceholder(onCreated))
