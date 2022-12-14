@@ -21,8 +21,10 @@ describe('Email Templates Test Suite', () => {
   })
 
   it('should show error on import button', () => {
+    //.should('have.text', data.importFileHeaderText)
+    utils.resizeObserverLoopErrRe()
     cy.get('#importAllButton').click()
-    cy.get('#emailsImportPopup').find('[slot ="startContent"]').should('have.text', data.importFileHeaderText)
+    cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
     cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')

@@ -14,7 +14,7 @@ const emailTemplatesExportErrorMessageDetail =
 const emailTemplatesIconName = 'Email Templates'
 const siteDeployerIconName = 'Site Deployer'
 const cdcExampleFile = 'cdc_example_file.zip'
-const importFileHeaderText = 'Import Zip'
+const importFileHeaderText = 'Import email templates'
 
 export {
   siteDomain,
