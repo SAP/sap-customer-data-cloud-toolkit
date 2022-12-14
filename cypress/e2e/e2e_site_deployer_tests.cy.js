@@ -49,7 +49,7 @@ describe('Site Deployer Test Suite', () => {
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
     getSaveButton().should('not.be.disabled')
     getSaveButton().click()
-    cy.get('ui5-list').eq(1).should('have.text', data.expectedErrorMessage)
+    cy.get('[class = "MessageItem-title-0-2-59"]').eq(1).should('have.text', data.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
   })
 
