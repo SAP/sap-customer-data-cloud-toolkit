@@ -173,7 +173,7 @@ const SiteDeployer = ({ t }) => {
               {t('SITE_DEPLOYER_COMPONENT.SAVE')}
             </Button>
             <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
-              {t('SITE_DEPLOYER_COMPONENT.CANCEL')}
+              {t('GLOBAL.CANCEL')}
             </Button>
           </div>
         }
