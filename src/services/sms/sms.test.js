@@ -46,4 +46,13 @@ describe('Sms templates test suite', () => {
     const response = await sms.getSiteSms('apiKey')
     CommonTestData.verifyResponseIsNotOk(response, ConfiguratorTestData.scExpectedGigyaResponseNotOk)
   })
+
+  test('5 - set sms successfully', async () => {
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await sms.setSiteSms('apiKey', SmsTestData.getSmsExpectedResponse.templates)
+    //console.log('response=' + JSON.stringify(response))
+
+    CommonTestData.verifyResponseIsOk(response)
+  })
 })
