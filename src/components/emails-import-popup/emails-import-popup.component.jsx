@@ -39,22 +39,14 @@ const EmailsImportPopup = ({ t }) => {
     <>
       <Dialog
         className="ui-dialog"
-        style={{ height: 'auto', width: '400px', top: ' 324px', left: '120px' }}
         open={isImportPopupOpen}
         onAfterClose={onCloseEmailImportPopup}
         id="emailsImportPopup"
         header={
-          <div style={{ height: '50px' }}>
+          <div id="header" style={{ height: '50px' }}>
             <div style={{ position: 'absolute', top: '30%', right: 325 }}>{t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}</div>
             <div>
-              <Button
-                style={{ position: 'absolute', top: '1%', right: 0 }}
-                id="closeEmailImportPopup"
-                icon="decline"
-                onClick={onCloseEmailImportPopup}
-                design="Transparent"
-                className="ui-dialog-titlebar-close"
-              ></Button>
+              <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseEmailImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
             </div>
           </div>
         }

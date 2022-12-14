@@ -31,8 +31,8 @@
 
 .ui-dialog-titlebar-close {
   position: absolute;
-  right: 8px;
-  top: 8px;
+  right: 0;
+  top: '1%';
   width: 36px;
   height: 36px;
   padding: 0;
@@ -59,14 +59,18 @@
   border-bottom-left-radius: 5px;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
-  height: '253px';
+  height: 'auto';
   width: '400px';
   top: ' 324px';
-  left: '48px';
+  left: '120px';
   padding: 8px;
   min-width: 500px !important;
   font-family: '72' !important;
   font-size: 1.1em;
   position: fixed;
   line-height: 13.2px;
+}
+
+div#header {
+  height: '50px';
 }
