@@ -21,7 +21,6 @@ describe('Email Templates Test Suite', () => {
   })
 
   it('should show error on import button', () => {
-    //.should('have.text', data.importFileHeaderText)
     utils.resizeObserverLoopErrRe()
     cy.get('#importAllButton').click()
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importFileHeaderText)
