@@ -1,8 +1,7 @@
 import { Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-
-import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
+import { createUseStyles } from 'react-jss'
 
 import { Label, Button, Table, TableColumn, IllustratedMessage, Bar } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
@@ -12,9 +11,14 @@ import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
+import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'SitesTable' })
 
 export const SitesTable = ({ t }) => {
+  const classes = useStyles()
   const sitesStructure = useSelector(selectSites)
   const errorList = useSelector((state) => selectErrors(state))
 
@@ -24,7 +28,7 @@ export const SitesTable = ({ t }) => {
     dispatch(addNewParent())
   }
 
-  const showErrorTableColumn = (list) => (list.length ? <TableColumn style={{ width: 0 }}></TableColumn> : '')
+  const showErrorTableColumn = (list) => (list.length ? <TableColumn className={classes.errorTableColumnStyle}></TableColumn> : '')
 
   return (
     <Fragment>
@@ -33,11 +37,7 @@ export const SitesTable = ({ t }) => {
           columns={
             <>
               {showErrorTableColumn(errorList)}
-              <TableColumn
-              // style={{
-              //   width: '12rem',
-              // }}
-              >
+              <TableColumn>
                 <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
               </TableColumn>
               <TableColumn>
@@ -46,28 +46,9 @@ export const SitesTable = ({ t }) => {
               <TableColumn>
                 <Label>{t('GLOBAL.DATA_CENTER')}</Label>
               </TableColumn>
-              {/* <TableColumn>
-              <Label>Tags</Label>
-            </TableColumn> */}
-              <TableColumn
-                style={{
-                  // width: '94px',
-                  width: '44px',
-                }}
-              >
+              <TableColumn className={classes.addParentSiteColumnStyle}>
                 <Label> {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}</Label>
-                {/* <Button
-            icon="add"
-            design="Emphasized"
-            tooltip="Add Parent Site"
-          ></Button> */}
               </TableColumn>
-              {/* <TableColumn>
-        <Label>Applications</Label>
-      </TableColumn>
-      <TableColumn>
-        <Label>Permission Groups</Label>
-      </TableColumn> */}
             </>
           }
         >
@@ -76,13 +57,13 @@ export const SitesTable = ({ t }) => {
           ))}
         </Table>
       ) : (
-        <Bar style={{ margin: '0px 0px 3px', height: 'auto' }}>
+        <Bar className={classes.illustratedMessageBarStyle}>
           <IllustratedMessage size="Dialog" name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
         </Bar>
       )}
 
-      <div style={{ textAlign: 'center' }}>
-        <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" style={{ display: 'block' }}>
+      <div className={classes.addParentButtonOuterDivStyle}>
+        <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
           {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
         </Button>
       </div>

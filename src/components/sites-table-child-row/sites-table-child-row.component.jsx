@@ -1,11 +1,14 @@
 import { Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
+import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
+import { createUseStyles } from 'react-jss'
 
 import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
-
-import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'SitesTableChildRow' })
 
 const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
@@ -13,6 +16,8 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
   const dataCenters = useSelector((state) => state.sites.dataCenters)
   const errorList = useSelector((state) => selectErrors(state))
   const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
+
+  const classes = useStyles()
 
   const getDataCenterLabel = (dataCenterValue) => {
     if (dataCenter === '') {
@@ -59,7 +64,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
     if (!messages.length) {
       return ''
     }
-    return <TableCell style={{ width: 0 }}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
+    return <TableCell className={classes.errorTableCellStyle}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
   }
 
   return (
@@ -67,33 +72,25 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
       <TableRow>
         {showErrorTableCell(errorList, error)}
         <TableCell>
+          <Input id="childBaseDomainInput" type={InputType.Text} className={classes.childBaseDomainInputStyle} value={baseDomain} onInput={(event) => onChangeChildDomain(event)} />
+        </TableCell>
+
+        <TableCell>
           <Input
-            id="childBaseDomainInput"
+            id="childDescriptionInput"
             type={InputType.Text}
-            style={{ width: 'calc(100% - 82px)', marginLeft: '80px' }}
-            value={baseDomain}
-            onInput={(event) => onChangeChildDomain(event)}
-            required="true"
+            className={classes.childDescriptionInputStyle}
+            value={description}
+            onInput={(event) => onChangeChildDescription(event)}
           />
         </TableCell>
 
         <TableCell>
-          <Input id="childDescriptionInput" type={InputType.Text} style={{ width: '100%' }} value={description} onInput={(event) => onChangeChildDescription(event)} />
+          <Text className={classes.childDataCenterCellStyle}>{getDataCenterLabel(dataCenter)}</Text>
         </TableCell>
 
-        <TableCell>
-          <Text
-            style={{
-              marginLeft: 8,
-              textAlign: 'left',
-            }}
-          >
-            {getDataCenterLabel(dataCenter)}
-          </Text>
-        </TableCell>
-
-        <TableCell style={{ textAlign: 'right' }}>
-          <div style={{ position: 'relative' }}>
+        <TableCell className={classes.actionSheetTableCellStyle}>
+          <div className={classes.actionSheetOuterDivStyle}>
             <>
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
 
