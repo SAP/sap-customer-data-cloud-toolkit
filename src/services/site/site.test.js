@@ -8,11 +8,7 @@ jest.mock('axios')
 jest.setTimeout(10000)
 
 describe('Service Site test suite', () => {
-  const credentials = {
-    partnerId: 'partnerId',
-    userKey: 'userKey',
-    secret: 'secret',
-  }
+  const credentials = CommonTestData.siteCredentials
 
   test('create site successfully', async () => {
     const response = await createSites(TestData.createSingleParentRequest().sites[0], TestData.expectedGigyaResponseOk, credentials)
@@ -76,8 +72,8 @@ describe('Service Site test suite', () => {
   })
 
   test('error geting token to delete site', async () => {
-    const response = await deleteSite('######', 'us1', TestData.expectedGigyaResponseInvalidAPI, credentials)
-    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseInvalidAPI)
+    const response = await deleteSite('######', 'us1', CommonTestData.expectedGigyaResponseInvalidAPI, credentials)
+    CommonTestData.verifyResponseIsNotOk(response, CommonTestData.expectedGigyaResponseInvalidAPI)
   })
 
   test('delete single site', async () => {

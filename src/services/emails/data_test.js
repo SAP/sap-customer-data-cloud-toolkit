@@ -293,19 +293,6 @@ const expectedExportConfigurationFileContent = {
   },
 }
 
-const badRequest = 'Bad Request'
-const invalidApiParam = 'Invalid ApiKey parameter'
-const expectedGigyaResponseInvalidAPI = {
-  callId: 'callId',
-  errorCode: 400093,
-  errorDetails: invalidApiParam,
-  errorMessage: invalidApiParam,
-  apiVersion: 2,
-  statusCode: 400,
-  statusReason: badRequest,
-  time: Date.now(),
-}
-
 const expectedGigyaInvalidUserKey = {
   callId: 'f1d05f0a260d4bf48283b10fc27c6d3d',
   errorCode: 403005,
@@ -340,14 +327,7 @@ const expectedGigyaImportTemplateWithoutMetaSubject = {
   time: Date.now(),
 }
 
-const credentials = {
-  userKey: 'userKey',
-  secret: 'secret',
-}
-
 export {
-  credentials,
-  expectedGigyaResponseInvalidAPI,
   expectedGigyaInvalidUserKey,
   expectedGigyaInvalidSecret,
   expectedGigyaImportTemplateWithoutMetaSubject,

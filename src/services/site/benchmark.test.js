@@ -10,12 +10,6 @@ jest.mock('../gigya/client')
 jest.setTimeout(60000)
 
 describe.skip('Benchmark test suite', () => {
-  const credentials = {
-    partnerId: 'partnerId',
-    userKey: 'userKey',
-    secret: 'secret',
-  }
-
   const MEASURE_START_MARK = 'start'
   const MEASURE_NAME_ASYNC = 'Async'
   const MEASURE_NAME_ASYNC_ROLLBACK = 'AsyncRollback'
@@ -34,7 +28,7 @@ describe.skip('Benchmark test suite', () => {
     const request = TestData.createObject(numberOfParents, numberOfChildrenPerParent)
 
     for (let i = 0; i < numberOfRepetitions; ++i) {
-      const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC)
+      const response = await createTest(request, new SiteManager(CommonTestData.siteCredentials), MEASURE_NAME_ASYNC)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
       verifyAllResponsesAreOk(response, false)
     }
@@ -43,7 +37,7 @@ describe.skip('Benchmark test suite', () => {
   test('Site manager rollback async', async () => {
     const request = mockAxiosAndCreateRequest()
     for (let i = 0; i < numberOfRepetitions; ++i) {
-      const response = await createTest(request, new SiteManager(credentials), MEASURE_NAME_ASYNC_ROLLBACK)
+      const response = await createTest(request, new SiteManager(CommonTestData.siteCredentials), MEASURE_NAME_ASYNC_ROLLBACK)
       expect(getNumberOfResponses(response)).toEqual(numberOfParents * numberOfChildrenPerParent + numberOfParents)
 
       verifyAllResponsesAreOk(response.slice(0, -1), true)
