@@ -6,6 +6,7 @@ import { generateUUID } from '../../utils/generateUUID'
 const MessageList = ({ messages }) => {
   return (
     <MessageView
+      id="messageList"
       showDetailsPageHeader={true}
       onItemSelect={(e) => {
         // Fix to add horizontal scroll to message details
