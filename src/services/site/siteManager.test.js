@@ -7,11 +7,8 @@ import * as ConfiguratorTestData from '../configurator/data_test'
 
 jest.mock('axios')
 describe('Site manager async test suite', () => {
-  const credentials = {
-    partnerId: 'partnerId',
-    userKey: 'userKey',
-    secret: 'secret',
-  }
+  const credentials = CommonTestData.siteCredentials
+
   const siteManager = new SiteManager(credentials)
 
   afterEach(() => {
@@ -135,7 +132,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - parent with two children - rate limit', async () => {
-    let spy = await jest.spyOn(client, 'wait')
+    let spy = jest.spyOn(client, 'wait')
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
@@ -175,7 +172,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - two parent with two children - rate limit', async () => {
-    let spy = await jest.spyOn(client, 'wait')
+    let spy = jest.spyOn(client, 'wait')
 
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
@@ -235,7 +232,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - different data centers - rate limit', async () => {
-    let spy = await jest.spyOn(client, 'wait')
+    let spy = jest.spyOn(client, 'wait')
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
@@ -449,11 +446,11 @@ describe('Site manager async test suite', () => {
   })
 
   test('delete site invalid API', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidAPI })
+    axios.mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseInvalidAPI })
 
     const response = await siteManager.deleteSites(['####'])
     //console.log(`test.response=${JSON.stringify(response)}`)
-    CommonTestData.verifyResponseIsNotOk(response[0], TestData.expectedGigyaResponseInvalidAPI)
+    CommonTestData.verifyResponseIsNotOk(response[0], CommonTestData.expectedGigyaResponseInvalidAPI)
   })
 })
 

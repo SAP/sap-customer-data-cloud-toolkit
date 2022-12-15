@@ -15,7 +15,7 @@ describe('Emails Manager test suite', () => {
   let emailManager
 
   beforeEach(() => {
-    emailManager = new EmailManager(EmailsTestData.credentials)
+    emailManager = new EmailManager(CommonTestData.credentials)
     jest.clearAllMocks()
   })
 
@@ -121,8 +121,8 @@ describe('Emails Manager test suite', () => {
         ar: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithNewTemplate()
@@ -146,8 +146,8 @@ describe('Emails Manager test suite', () => {
         pt: null,
       },
       apiKey: 'apiKey',
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithTemplateLanguageRemoved()
@@ -172,8 +172,8 @@ describe('Emails Manager test suite', () => {
         fr: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithTemplateLanguageAdded()
@@ -208,8 +208,8 @@ describe('Emails Manager test suite', () => {
         pt: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
     const zipContent = await createZipContentWithTemplateError(template)
     axios

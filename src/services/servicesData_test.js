@@ -4,12 +4,32 @@ const HttpStatus = {
   //   INTERNAL_SERVER_ERROR: 500,
 }
 
+const credentials = {
+  userKey: 'userKey',
+  secret: 'secret',
+}
+
+const siteCredentials = Object.assign(credentials, { partnerId: 'partnerId' })
+
 const expectedGigyaResponseOk = {
   statusCode: 200,
   errorCode: 0,
   statusReason: 'OK',
   callId: 'callId',
   apiVersion: 2,
+  time: Date.now(),
+}
+
+const badRequest = 'Bad Request'
+const invalidApiParam = 'Invalid ApiKey parameter'
+const expectedGigyaResponseInvalidAPI = {
+  callId: 'callId',
+  errorCode: 400093,
+  errorDetails: invalidApiParam,
+  errorMessage: invalidApiParam,
+  apiVersion: 2,
+  statusCode: 400,
+  statusReason: badRequest,
   time: Date.now(),
 }
 
@@ -46,4 +66,4 @@ function createErrorObject(message) {
   return err
 }
 
-export { expectedGigyaResponseOk, createErrorObject, verifyResponseIsNotOk, verifyResponseIsOk }
+export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, verifyResponseIsNotOk, verifyResponseIsOk }

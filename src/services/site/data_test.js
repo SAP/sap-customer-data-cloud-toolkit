@@ -1,12 +1,9 @@
-import * as ServicesTestData from '../servicesData_test'
+import * as CommonTestData from '../servicesData_test'
 
 const Endpoints = {
   SITE_CREATE: 'admin.createSite',
   SITE_CONFIG: 'admin.setSiteConfig',
 }
-
-const badRequest = 'Bad Request'
-const invalidApiParam = 'Invalid ApiKey parameter'
 
 const parent1SiteId = 'idP1'
 const parent2SiteId = 'idP2'
@@ -15,7 +12,7 @@ const child2SiteId = 'C2'
 const apiKey = 'apiKey'
 const DOMAIN_PREFIX = 'cdc.'
 
-const expectedGigyaResponseOk = Object.assign({ apiKey: apiKey }, ServicesTestData.expectedGigyaResponseOk)
+const expectedGigyaResponseOk = Object.assign({ apiKey: apiKey }, CommonTestData.expectedGigyaResponseOk)
 
 const expectedGigyaResponseNoSecret = {
   errorMessage: 'Permission denied',
@@ -36,7 +33,7 @@ const expectedGigyaResponseNoPartnerId = {
   errorDetails: 'Missing required parameter : partnerID',
   errorMessage: 'Missing required parameter',
   statusCode: 400,
-  statusReason: badRequest,
+  statusReason: CommonTestData.badRequest,
   apiVersion: 2,
   time: Date.now(),
 }
@@ -47,7 +44,7 @@ const expectedGigyaResponseNoBaseDomain = {
   errorDetails: 'Missing required parameter : baseDomain',
   errorMessage: 'Missing required parameter',
   statusCode: 400,
-  statusReason: badRequest,
+  statusReason: CommonTestData.badRequest,
   apiVersion: 2,
   time: Date.now(),
 }
@@ -119,9 +116,9 @@ const multipleParentWithMultipleChildrenRequest = {
       ],
     },
   ],
-  partnerID: 'partnerId',
-  userKey: 'userKey',
-  secret: 'secret',
+  partnerID: CommonTestData.siteCredentials.partnerId,
+  userKey: CommonTestData.siteCredentials.userKey,
+  secret: CommonTestData.siteCredentials.secret,
 }
 
 const sdExpectedDeleteTokenSuccessfully = {
@@ -137,17 +134,6 @@ const sdExpectedGigyaResponseDeletedSite = {
   errorCode: 0,
   statusReason: 'OK',
   callId: 'callId',
-  time: Date.now(),
-}
-
-const expectedGigyaResponseInvalidAPI = {
-  callId: 'callId',
-  errorCode: 400093,
-  errorDetails: invalidApiParam,
-  errorMessage: invalidApiParam,
-  apiVersion: 2,
-  statusCode: 400,
-  statusReason: badRequest,
   time: Date.now(),
 }
 
@@ -208,7 +194,12 @@ function createParentWithTwoChildRequest() {
 }
 
 function createObject(numberOfParents, numberOfChildrenPerParent) {
-  const obj = { sites: [], partnerID: 'partnerId', userKey: 'userKey', secret: 'secret' }
+  const obj = {
+    sites: [],
+    partnerID: `${CommonTestData.siteCredentials.partnerId}`,
+    userKey: `${CommonTestData.siteCredentials.userKey}`,
+    secret: `${CommonTestData.siteCredentials.secret}`,
+  }
   for (let p = 0; p < numberOfParents; ++p) {
     const parent = createParent(p)
     obj.sites.push(parent)
@@ -254,11 +245,9 @@ export {
   expectedGigyaResponseNoBaseDomain,
   expectedGigyaResponseInvalidDataCenter,
   sdExpectedGigyaResponseDeletedSite,
-  expectedGigyaResponseInvalidAPI,
   sdExpectedDeleteTokenSuccessfully,
   sdSiteAlreadyDeleted,
   sdDeleteGroupSitesFirst,
-  invalidApiParam,
   expectedGigyaErrorApiRateLimit,
   createSingleParentRequest,
   createParentWithOneChildRequest,
