@@ -22,7 +22,6 @@ import {
   BusyIndicator,
   ValueState,
 } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
