@@ -8,13 +8,13 @@ import GigyaManager from '../gigya/gigyaManager'
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
   static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
+  #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
 
   constructor(credentials) {
-    this.credentials = credentials
     this.emailService = new Email(credentials.userKey, credentials.secret)
-    this.zipManager = new ZipManager()
+    this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
     this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
   }
@@ -26,8 +26,8 @@ class EmailManager {
       return Promise.reject(emailTemplatesResponse)
     }
 
-    this.zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    return this.zipManager.createZipArchive()
+    this.#zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    return this.#zipManager.createZipArchive()
   }
 
   async exportTemplates(site) {
@@ -51,7 +51,7 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.zipManager.createFile(externalTemplateName, language, templateObject[language])
+        const filePath = this.#zipManager.createFile(externalTemplateName, language, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -64,7 +64,7 @@ class EmailManager {
       for (const internalName of internalNames) {
         if (!templates.has(internalName)) {
           const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalName)
-          this.zipManager.createFolder(externalTemplateName)
+          this.#zipManager.createFolder(externalTemplateName)
         }
       }
     }
@@ -111,7 +111,7 @@ class EmailManager {
   }
 
   async import(site, zipContent) {
-    const zipContentMap = await this.zipManager.read(zipContent)
+    const zipContentMap = await this.#zipManager.read(zipContent)
     const errors = this.#validateZipFile(zipContentMap)
     if (!this.#isResponseOk(errors)) {
       return Promise.reject(errors)
