@@ -55,15 +55,34 @@ describe('Site slice test suite', () => {
   //   expect(newState.isLoading).toEqual(false)
   // })
 
-  test('should update isLoading while sendEmailTemplatesArrayBuffer is pending', async () => {
+  test('should update state while sendEmailTemplatesArrayBuffer is pending', () => {
     const action = sendEmailTemplatesArrayBuffer.pending
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
   })
 
-  test('should update isLoading when sendEmailTemplatesArrayBuffer is rejected', async () => {
+  test('should update state when sendEmailTemplatesArrayBuffer is rejected', () => {
     const action = sendEmailTemplatesArrayBuffer.rejected
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
+    expect(newState.isImportPopupOpen).toEqual(false)
+  })
+
+  test('should update state when sendEmailTemplatesArrayBuffer is fullfilled with errors', () => {
+    const action = sendEmailTemplatesArrayBuffer.fulfilled(data.payloadWithErrors.payload)
+    const newState = emailReducer(data.initialState, action)
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.errors).toEqual(data.payloadWithErrors.payload)
+    expect(newState.isImportPopupOpen).toEqual(false)
+    expect(newState.showSuccessDialog).toEqual(false)
+  })
+
+  test('should update state when sendEmailTemplatesArrayBuffer is fullfilled without errors', () => {
+    const action = sendEmailTemplatesArrayBuffer.fulfilled(data.payloadWithoutErrors.payload)
+    const newState = emailReducer(data.initialState, action)
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.errors).toEqual([])
+    expect(newState.isImportPopupOpen).toEqual(false)
+    expect(newState.showSuccessDialog).toEqual(true)
   })
 })

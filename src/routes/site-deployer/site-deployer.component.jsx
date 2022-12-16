@@ -286,15 +286,7 @@ const SiteDeployer = ({ t }) => {
         </div>
         <div style={spacing.sapUiSmallMargin}>
           <div style={spacing.sapUiTinyMargin}>
-            <Card
-              header={
-                <CardHeader
-                  titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')}
-                  subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}
-                  // subtitleText="Quickly change the domains naming and structure. You can also set policies, and other configurations to be copied from an existing site seed."
-                ></CardHeader>
-              }
-            >
+            <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')} subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}></CardHeader>}>
               {isLoading ? <BusyIndicator active delay="1" style={{ width: '100%', padding: '100px 0' }} /> : <SitesTable />}
             </Card>
           </div>
@@ -311,7 +303,7 @@ const SiteDeployer = ({ t }) => {
         {showSuccessDialog ? (
           <DialogMessage
             open={showSuccessDialog}
-            headerText={t('SITE_DEPLOYER_COMPONENT.SUCCESS_HEADER')}
+            headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
             closeButtonContent="Ok"
             onAfterClose={() => document.location.reload()}
@@ -325,7 +317,7 @@ const SiteDeployer = ({ t }) => {
 
         <DialogMessage
           open={showErrorDialog}
-          headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+          headerText={t('GLOBAL.ERROR')}
           state={ValueState.Error}
           closeButtonContent="Ok"
           onAfterClose={() => setShowErrorDialog(false)}

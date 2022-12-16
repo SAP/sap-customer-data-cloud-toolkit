@@ -9,6 +9,7 @@ export const emailSlice = createSlice({
     isLoading: false,
     errors: [],
     isImportPopupOpen: false,
+    showSuccessDialog: false,
   },
   reducers: {
     setIsImportPopupOpen(state, action) {
@@ -38,10 +39,19 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
+      const errors = action.payload.filter(({ errorCode }) => errorCode !== 0)
+      if (errors.length) {
+        state.errors = errors
+        state.showSuccessDialog = false
+      } else {
+        state.showSuccessDialog = true
+      }
+      state.isImportPopupOpen = false
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errors = action.payload
+      state.isImportPopupOpen = false
     })
   },
 })
@@ -88,3 +98,5 @@ export const selectIsLoading = (state) => state.emails.isLoading
 export const selectErrors = (state) => state.emails.errors
 
 export const selectIsImportPopupOpen = (state) => state.emails.isImportPopupOpen
+
+export const selectShowSuccessDialog = (state) => state.emails.showSuccessDialog
