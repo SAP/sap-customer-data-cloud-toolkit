@@ -55,12 +55,6 @@ import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
-const BarStart = (props) => (
-  <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
-    <span style={spacing.sapUiTinyMarginBegin}>Site Deployer</span>
-  </Title>
-)
-
 const getSelectedDataCenters = () => {
   const dataCenterHTMLCollection = document.getElementById('cdctools-dataCenter').children
   return [...dataCenterHTMLCollection].filter((item) => item._state.selected === true).map((item) => item._state.text)
@@ -206,7 +200,14 @@ const SiteDeployer = ({ t }) => {
 
   return (
     <>
-      <Bar design="Header" startContent={<BarStart />}></Bar>
+      <Bar
+        design="Header"
+        startContent={
+          <Title level={TitleLevel.H3} className={classes.titleStyle}>
+            <span className={classes.titleSpanStyle}>Site Deployer</span>
+          </Title>
+        }
+      ></Bar>
       <div className={classes.outerDivStyle}>
         <div className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>

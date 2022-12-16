@@ -2,7 +2,10 @@ import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {
   titleStyle: {
-    ...spacing.sapUiSmallMarginBegin, //TODO: doesn't work
+    ...spacing.sapUiSmallMarginBegin,
+  },
+  titleSpanStyle: {
+    ...spacing.sapUiTinyMarginBegin,
   },
   componentTextStyle: {
     color: 'var(--sapNeutralElementColor)',
