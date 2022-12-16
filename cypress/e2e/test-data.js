@@ -3,7 +3,7 @@ const dropdownOption = 'Test Structure'
 
 const parentSiteDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
-const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)'
+const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
 const expectedSuccessMessage = 'OkAll sites have been created successfully'
 const childrenSiteDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
