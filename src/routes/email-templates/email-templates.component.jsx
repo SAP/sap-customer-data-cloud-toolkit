@@ -17,6 +17,7 @@ import {
   setIsImportPopupOpen,
   clearExportFile,
   clearErrors,
+  selectShowSuccessDialog,
 } from '../../redux/emails/emailSlice'
 
 import styles from './styles.js'
@@ -29,6 +30,7 @@ const EmailTemplates = ({ t }) => {
   const isLoading = useSelector(selectIsLoading)
   const errors = useSelector(selectErrors)
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
+  const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const classes = useStyles()
 
@@ -59,7 +61,7 @@ const EmailTemplates = ({ t }) => {
     <DialogMessage
       open={showErrorDialog}
       className={classes.errorDialogStyle}
-      headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+      headerText={t('GLOBAL.ERROR')}
       state={ValueState.Error}
       closeButtonContent="Ok"
       id="emailTemplatesErrorPopup"
@@ -91,6 +93,20 @@ const EmailTemplates = ({ t }) => {
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
       {isImportPopupOpen ? <EmailsImportPopup></EmailsImportPopup> : ''}
+      {showSuccessDialog ? (
+        <DialogMessage
+          open={showSuccessDialog}
+          headerText={t('GLOBAL.SUCCESS')}
+          state={ValueState.Success}
+          onAfterClose={() => document.location.reload()}
+          closeButtonContent="Ok"
+          id="successPopup"
+        >
+          {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
+        </DialogMessage>
+      ) : (
+        ''
+      )}
     </>
   )
 }

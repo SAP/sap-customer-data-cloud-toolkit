@@ -284,7 +284,7 @@ const SiteDeployer = ({ t }) => {
         {showSuccessDialog ? (
           <DialogMessage
             open={showSuccessDialog}
-            headerText={t('SITE_DEPLOYER_COMPONENT.SUCCESS_HEADER')}
+            headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
             closeButtonContent="Ok"
             onAfterClose={() => document.location.reload()}
@@ -298,7 +298,7 @@ const SiteDeployer = ({ t }) => {
 
         <DialogMessage
           open={showErrorDialog}
-          headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+          headerText={t('GLOBAL.ERROR')}
           state={ValueState.Error}
           closeButtonContent="Ok"
           onAfterClose={() => setShowErrorDialog(false)}
