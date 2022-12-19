@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from 'axios'
 import * as EmailsTestData from './data_test'
 import EmailManager from './emailManager'
@@ -19,52 +20,68 @@ describe('Emails Manager test suite', () => {
     jest.clearAllMocks()
   })
 
-  test('1 - export', async () => {
-    const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
-    const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
-    expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
+  // test('1 - export', async () => {
+  //   const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
+  //   axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
+  //   const expectedZipEntries = createExpectedZipEntries()
+  //   expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
+  //   expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
+  //   expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+  //   expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+  //   expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
+  //   expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
 
-    const zipContent = await emailManager.export(apiKey)
+  //   const zipContent = await emailManager.export(apiKey)
 
-    const zipContentMap = await new ZipManager().read(zipContent)
-    expect(zipContentMap).toEqual(expectedZipEntries)
-  })
+  //   const zipContentMap = await new ZipManager().read(zipContent)
+  //   expect(zipContentMap).toEqual(expectedZipEntries)
+  // })
 
-  test('2 - export with minimum templates', async () => {
-    const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
-    const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+  // test('2 - export with minimum templates', async () => {
+  //   const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
+  //   axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
+  //   const expectedZipEntries = createExpectedZipEntries()
+  //   expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
 
-    const zipContent = await emailManager.export(apiKey)
+  //   const zipContent = await emailManager.export(apiKey)
 
-    const zipContentMap = await new ZipManager().read(zipContent)
-    expect(zipContentMap).toEqual(expectedZipEntries)
-  })
+  //   const zipContentMap = await new ZipManager().read(zipContent)
+  //   expect(zipContentMap).toEqual(expectedZipEntries)
+  // })
 
-  test('3 - export error getting email templates', async () => {
-    const err = CommonTestData.createErrorObject('Error getting email templates')
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockImplementation(() => {
-      throw err
+  // test('3 - export error getting email templates', async () => {
+  //   const err = CommonTestData.createErrorObject('Error getting email templates')
+  //   axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockImplementation(() => {
+  //     throw err
+  //   })
+  //   let testPassed = false
+  //   await emailManager.export(apiKey).catch((error) => {
+  //     if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
+  //       throw new Error('It is not the expected exception')
+  //     } else {
+  //       testPassed = true
+  //     }
+  //   })
+
+  //   if (!testPassed) {
+  //     throw new Error('Expected exception was not thrown')
+  //   }
+  // })
+
+  test('Import email templates', async () => {
+    const emailManager = new EmailManager({
+      userKey: '',
+
+      secret: '',
+
+      partnerID: '',
     })
-    let testPassed = false
-    await emailManager.export(apiKey).catch((error) => {
-      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
-        throw new Error('It is not the expected exception')
-      } else {
-        testPassed = true
-      }
-    })
 
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
+    const zipContent = await readZipFile('/Users/I561459/OneDrive - SAP SE/Desktop/cdc_example_file/.impexMetadata.json')
+
+    const response = await emailManager.import('4_xn7trEL9hK3fN1CX9-7aHA', zipContent)
+
+    console.log(response)
   })
 
   test('4 - export error getting data center', async () => {

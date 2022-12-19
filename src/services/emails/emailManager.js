@@ -6,7 +6,7 @@ import generateErrorResponse from '../errors/generateErrorResponse'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
-  static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
+  static #IMPORT_EXPORT_METADATA_FILE_NAME = 'impexMetadata.json'
   #emailTemplateNameTranslator
 
   constructor(credentials) {
@@ -213,13 +213,13 @@ class EmailManager {
 
   #validateZipFile(zipContentMap) {
     const response = []
-    if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
-      const error = {
-        code: 1,
-        details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
-      }
-      response.push(generateErrorResponse(error, 'Error importing email templates').data)
-    }
+    // if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
+    //   const error = {
+    //     code: 1,
+    //     details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
+    //   }
+    //   response.push(generateErrorResponse(error, 'Error importing email templates').data)
+    // }
     response.push(this.#validateEmailTemplates(zipContentMap))
     return response.flat()
   }
