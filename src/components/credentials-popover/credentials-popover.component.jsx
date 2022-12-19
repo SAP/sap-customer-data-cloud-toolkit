@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
 
 import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 

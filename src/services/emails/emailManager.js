@@ -3,17 +3,24 @@ import Email from './email'
 import ZipManager from '../zip/zipManager'
 import XmlValidator from '../validator/xmlValidator'
 import generateErrorResponse from '../errors/generateErrorResponse'
+import GigyaManager from '../gigya/gigyaManager'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
+<<<<<<< HEAD
   static #IMPORT_EXPORT_METADATA_FILE_NAME = 'impexMetadata.json'
+=======
+  static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
+  #zipManager
+>>>>>>> d12d8cb17c63ab285c55c5ba4ae522d2503863d5
   #emailTemplateNameTranslator
+  #gigyaManager
 
   constructor(credentials) {
-    this.credentials = credentials
     this.emailService = new Email(credentials.userKey, credentials.secret)
-    this.zipManager = new ZipManager()
+    this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
+    this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
   }
 
   async export(site) {
@@ -23,8 +30,8 @@ class EmailManager {
       return Promise.reject(emailTemplatesResponse)
     }
 
-    this.zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
-    return this.zipManager.createZipArchive()
+    this.#zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    return this.#zipManager.createZipArchive()
   }
 
   async exportTemplates(site) {
@@ -48,7 +55,7 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.zipManager.createFile(externalTemplateName, language, templateObject[language])
+        const filePath = this.#zipManager.createFile(externalTemplateName, language, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -61,7 +68,7 @@ class EmailManager {
       for (const internalName of internalNames) {
         if (!templates.has(internalName)) {
           const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalName)
-          this.zipManager.createFolder(externalTemplateName)
+          this.#zipManager.createFolder(externalTemplateName)
         }
       }
     }
@@ -108,7 +115,7 @@ class EmailManager {
   }
 
   async import(site, zipContent) {
-    const zipContentMap = await this.zipManager.read(zipContent)
+    const zipContentMap = await this.#zipManager.read(zipContent)
     const errors = this.#validateZipFile(zipContentMap)
     if (!this.#isResponseOk(errors)) {
       return Promise.reject(errors)
@@ -117,7 +124,7 @@ class EmailManager {
     const metadataObj = JSON.parse(zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME))
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
     this.#removeOldContentFromMetadataMap(metadataMap)
-    return (await this.#importTemplates(site, metadataObj)).flat()
+    return await this.#importTemplates(site, metadataObj)
   }
 
   #mergeMetadataMapWithZipContent(zipContentMap, metadataObj) {
@@ -186,16 +193,16 @@ class EmailManager {
   async #importTemplates(site, metadataObj) {
     const EMAIL_TEMPLATE_PARENTS = ['emailNotifications']
     const promises = []
+    const dataCenterResponse = await this.#gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return Promise.all(dataCenterResponse)
+    }
     for (const property in metadataObj) {
       if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {
-        promises.push(this.emailService.setSiteEmails(site, metadataObj[property]))
+        promises.push(this.emailService.setSiteEmailsWithDataCenter(site, property, metadataObj[property], dataCenterResponse.dataCenter))
       }
     }
-    const responses = []
-    return Promise.all(promises).then((response) => {
-      responses.push(response)
-      return responses
-    })
+    return Promise.all(promises)
   }
 
   #getZipEntryInfo(zipEntry) {
@@ -213,6 +220,7 @@ class EmailManager {
 
   #validateZipFile(zipContentMap) {
     const response = []
+<<<<<<< HEAD
     // if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
     //   const error = {
     //     code: 1,
@@ -222,6 +230,18 @@ class EmailManager {
     // }
     response.push(this.#validateEmailTemplates(zipContentMap))
     return response.flat()
+=======
+    if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
+      const error = {
+        code: 1,
+        details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
+      }
+      response.push(generateErrorResponse(error, 'Error importing email templates').data)
+    } else {
+      response.push(...this.#validateEmailTemplates(zipContentMap))
+    }
+    return response
+>>>>>>> d12d8cb17c63ab285c55c5ba4ae522d2503863d5
   }
 
   #validateEmailTemplates(zipContentMap) {

@@ -22,7 +22,6 @@ import {
   BusyIndicator,
   ValueState,
 } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
@@ -54,12 +53,6 @@ import structures from '../../sitesStructures.json'
 import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
-
-const BarStart = (props) => (
-  <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
-    <span style={spacing.sapUiTinyMarginBegin}>Site Deployer</span>
-  </Title>
-)
 
 const getSelectedDataCenters = () => {
   const dataCenterHTMLCollection = document.getElementById('cdctools-dataCenter').children
@@ -206,7 +199,14 @@ const SiteDeployer = ({ t }) => {
 
   return (
     <>
-      <Bar design="Header" startContent={<BarStart />}></Bar>
+      <Bar
+        design="Header"
+        startContent={
+          <Title level={TitleLevel.H3} className={classes.titleStyle}>
+            <span className={classes.titleSpanStyle}>Site Deployer</span>
+          </Title>
+        }
+      ></Bar>
       <div className={classes.outerDivStyle}>
         <div className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>
@@ -284,7 +284,7 @@ const SiteDeployer = ({ t }) => {
         {showSuccessDialog ? (
           <DialogMessage
             open={showSuccessDialog}
-            headerText={t('SITE_DEPLOYER_COMPONENT.SUCCESS_HEADER')}
+            headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
             closeButtonContent="Ok"
             onAfterClose={() => document.location.reload()}
@@ -298,7 +298,7 @@ const SiteDeployer = ({ t }) => {
 
         <DialogMessage
           open={showErrorDialog}
-          headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+          headerText={t('GLOBAL.ERROR')}
           state={ValueState.Error}
           closeButtonContent="Ok"
           onAfterClose={() => setShowErrorDialog(false)}
