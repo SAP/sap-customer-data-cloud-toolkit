@@ -27,24 +27,24 @@ class SmsManager {
   }
 
   #exportTfaTemplates(smsTemplatesResponse) {
-    this.#exportTemplates(smsTemplatesResponse, "tfa")
+    this.#exportTemplates(smsTemplatesResponse, 'tfa')
   }
 
   #exportOtpTemplates(smsTemplatesResponse) {
-    this.#exportTemplates(smsTemplatesResponse, "otp")
+    this.#exportTemplates(smsTemplatesResponse, 'otp')
   }
 
   #exportTemplates(smsTemplatesResponse, type) {
     const globalTemplatesObj = smsTemplatesResponse.templates[type].globalTemplates.templates
-    for(const language in globalTemplatesObj) {
-      this.#zipManager.createFile(type + "/globalTemplates", language, globalTemplatesObj[language])
+    for (const language in globalTemplatesObj) {
+      this.#zipManager.createFile(type + '/globalTemplates', `${language}.txt`, globalTemplatesObj[language])
     }
 
     const templatesPerCountryCodeObj = smsTemplatesResponse.templates[type].templatesPerCountryCode
-    for(const countryCode in templatesPerCountryCodeObj) {
+    for (const countryCode in templatesPerCountryCodeObj) {
       const countryCodeObj = templatesPerCountryCodeObj[countryCode].templates
-      for(const language in countryCodeObj) {
-        this.#zipManager.createFile(`${type}/templatesPerCountryCode/${countryCode}`, language, countryCodeObj[language])
+      for (const language in countryCodeObj) {
+        this.#zipManager.createFile(`${type}/templatesPerCountryCode/${countryCode}`, `${language}.txt`, countryCodeObj[language])
       }
     }
   }

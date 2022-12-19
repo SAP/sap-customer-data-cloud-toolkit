@@ -49,14 +49,14 @@ describe('Sms Manager test suite', () => {
 
 function createExpectedZipEntries() {
   const expectedZipEntries = new Map()
-  expectedZipEntries.set('tfa/globalTemplates/en.html', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
-  expectedZipEntries.set('tfa/globalTemplates/pt-br.html', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
-  expectedZipEntries.set('tfa/templatesPerCountryCode/355/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/355/bg.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/351/pt.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt)
+  expectedZipEntries.set('tfa/globalTemplates/en.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
+  expectedZipEntries.set('tfa/globalTemplates/pt-br.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
+  expectedZipEntries.set('tfa/templatesPerCountryCode/355/en.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en)
+  expectedZipEntries.set('tfa/templatesPerCountryCode/355/bg.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg)
+  expectedZipEntries.set('tfa/templatesPerCountryCode/351/en.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
+  expectedZipEntries.set('tfa/templatesPerCountryCode/351/pt.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt)
 
-  expectedZipEntries.set('otp/globalTemplates/en.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
-  expectedZipEntries.set('otp/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
+  expectedZipEntries.set('otp/globalTemplates/en.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
+  expectedZipEntries.set('otp/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   return expectedZipEntries
 }
