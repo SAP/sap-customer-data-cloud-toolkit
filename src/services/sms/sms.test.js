@@ -15,7 +15,7 @@ describe('Sms templates test suite', () => {
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: SmsTestData.getSmsExpectedResponse })
 
     const response = await sms.getSiteSms('apiKey')
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
 
     CommonTestData.verifyResponseIsOk(response)
     expect(response).toEqual(SmsTestData.getSmsExpectedResponse)

@@ -12,6 +12,7 @@ jest.setTimeout(30000)
 const apiKey = 'apiKey'
 const methodNameToSpy = 'setSiteEmailsWithDataCenter'
 const magicLinkTemplateName = 'magicLink'
+const emailTemplateBuffer = Buffer.from(EmailsTestData.emailTemplate, 'utf8')
 
 describe('Emails Manager test suite', () => {
   let emailManager
@@ -243,19 +244,19 @@ function createExpectedZipEntries() {
 
 function createZipFullContent() {
   const jszip = new JSZip()
-  jszip.file('MagicLink/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('MagicLink/pt.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('CodeVerification/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('LitePreferencesCenter/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('DoubleOptInConfirmation/ar.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('PasswordReset/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('TFAEmailVerification/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('MagicLink/en.html', emailTemplateBuffer)
+  jszip.file('MagicLink/pt.html', emailTemplateBuffer)
+  jszip.file('CodeVerification/en.html', emailTemplateBuffer)
+  jszip.file('LitePreferencesCenter/en.html', emailTemplateBuffer)
+  jszip.file('DoubleOptInConfirmation/ar.html', emailTemplateBuffer)
+  jszip.file('PasswordReset/en.html', emailTemplateBuffer)
+  jszip.file('TFAEmailVerification/en.html', emailTemplateBuffer)
   jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
-  jszip.file('EmailVerification/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('AccountDeletionConfirmation/pt-br.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('PasswordResetConfirmation/pt-br.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('ImpossibleTraveler/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
-  jszip.file('NewUserWelcome/ar.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('EmailVerification/en.html', emailTemplateBuffer)
+  jszip.file('AccountDeletionConfirmation/pt-br.html', emailTemplateBuffer)
+  jszip.file('PasswordResetConfirmation/pt-br.html', emailTemplateBuffer)
+  jszip.file('ImpossibleTraveler/en.html', emailTemplateBuffer)
+  jszip.file('NewUserWelcome/ar.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
@@ -273,20 +274,20 @@ function createZipContentEmpty() {
 function createZipContentWithNewTemplate() {
   const jszip = new JSZip()
   jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
-  jszip.file('NewUserWelcome/ar.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('NewUserWelcome/ar.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentWithTemplateLanguageRemoved() {
   const jszip = createZipContent()
-  jszip.file('MagicLink/en.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('MagicLink/en.html', emailTemplateBuffer)
   jszip.file('MagicLink/pt.html', Buffer.from('', 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentWithTemplateLanguageAdded() {
   const jszip = createZipContent()
-  jszip.file('MagicLink/fr.html', Buffer.from(EmailsTestData.emailTemplate, 'utf8'))
+  jszip.file('MagicLink/fr.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
