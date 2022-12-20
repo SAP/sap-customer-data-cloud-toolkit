@@ -7,12 +7,8 @@ import GigyaManager from '../gigya/gigyaManager'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
-<<<<<<< HEAD
-  static #IMPORT_EXPORT_METADATA_FILE_NAME = 'impexMetadata.json'
-=======
   static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
   #zipManager
->>>>>>> d12d8cb17c63ab285c55c5ba4ae522d2503863d5
   #emailTemplateNameTranslator
   #gigyaManager
 
@@ -220,17 +216,6 @@ class EmailManager {
 
   #validateZipFile(zipContentMap) {
     const response = []
-<<<<<<< HEAD
-    // if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
-    //   const error = {
-    //     code: 1,
-    //     details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
-    //   }
-    //   response.push(generateErrorResponse(error, 'Error importing email templates').data)
-    // }
-    response.push(this.#validateEmailTemplates(zipContentMap))
-    return response.flat()
-=======
     if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
       const error = {
         code: 1,
@@ -241,7 +226,6 @@ class EmailManager {
       response.push(...this.#validateEmailTemplates(zipContentMap))
     }
     return response
->>>>>>> d12d8cb17c63ab285c55c5ba4ae522d2503863d5
   }
 
   #validateEmailTemplates(zipContentMap) {
