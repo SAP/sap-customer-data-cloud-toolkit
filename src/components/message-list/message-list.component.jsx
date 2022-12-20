@@ -1,12 +1,12 @@
 import { MessageView } from '@ui5/webcomponents-react'
 
 import MessageListItem from '../message-list-item/message-list-item.component'
-
 import { generateUUID } from '../../utils/generateUUID'
 
 const MessageList = ({ messages }) => {
   return (
     <MessageView
+      id="messageList"
       showDetailsPageHeader={true}
       onItemSelect={(e) => {
         // Fix to add horizontal scroll to message details
