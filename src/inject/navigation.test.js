@@ -33,7 +33,16 @@ describe('Navigation test suite', () => {
   })
 
   test('Process Hash Change Show container after hidden', () => {
-    executeTest(`#/${expectedPartnerId}/${expectedApiKey}${ROUTE_SITE_DEPLOYER}`, true)
+    initialVerification()
+
+    processHashChange(`#/${expectedPartnerId}/${expectedApiKey}${ROUTE_SITE_DEPLOYER}`)
+    verifyAppliedClasses(true)
+
+    processHashChange(`#/${expectedPartnerId}/${expectedApiKey}/mock-different-feature`)
+    verifyAppliedClasses(false)
+
+    processHashChange(`#/${expectedPartnerId}/${expectedApiKey}${ROUTE_SITE_DEPLOYER}`)
+    verifyAppliedClasses(true)
   })
 
   test('Process Hash Change Show container when feature is in a sub-level of the main route', () => {
