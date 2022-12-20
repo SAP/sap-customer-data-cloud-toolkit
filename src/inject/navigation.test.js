@@ -10,13 +10,15 @@ const expectedPartnerId = 'partnerId'
 const expectedApiKey = 'apiKey'
 
 describe('Navigation test suite', () => {
-  // const expectedPartnerId = 'partnerId'
-  // const expectedApiKey = 'apiKey'
-
   beforeEach(() => {
     chromeStorageState.partnerId = ''
     chromeStorageState.apiKey = ''
     createDocument()
+  })
+
+  // clear the DOM document
+  afterEach(() => {
+    document.getElementsByTagName('html')[0].innerHTML = ''
   })
 
   test('Process Hash Change Show container', () => {
