@@ -1,13 +1,17 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { withNamespaces } from 'react-i18next'
-
+import { createUseStyles } from 'react-jss'
 import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
+
+import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { VERSION } from '../../constants'
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })
 
 const CredentialsPopover = ({ t }) => {
+  const classes = useStyles()
   const dispatch = useDispatch()
   const { userKey, secretKey } = useSelector(selectCredentials)
 
@@ -30,7 +34,7 @@ const CredentialsPopover = ({ t }) => {
         <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
       </FormItem>
 
-      <Form style={{ ...spacing.sapUiSmallMarginTop }} columnsS="2">
+      <Form className={classes.documentationLinkStyle} columnsS="2">
         <FormItem>
           <Link href="https://wiki.one.int.sap/wiki/display/CDCTOOLBOX/End+User+Documentation" target="_blank">
             {t('GLOBAL.DOCUMENTATION')}
@@ -38,7 +42,7 @@ const CredentialsPopover = ({ t }) => {
         </FormItem>
 
         <FormItem>
-          <Label style={{ width: '100%', textAlign: 'right' }}>
+          <Label className={classes.versionLabelStyle}>
             <small>
               {t('GLOBAL.VERSION')} {VERSION}
             </small>

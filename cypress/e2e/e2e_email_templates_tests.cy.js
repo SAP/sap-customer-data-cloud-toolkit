@@ -17,7 +17,7 @@ describe('Email Templates Test Suite', () => {
     utils.mockResponse(manualRemovalTestData.flat()[1], 'POST', 'admin.getSiteConfig')
     cy.get('#exportAllButton').click()
     cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
-    cy.get('ui5-list').find(`[data-title = '${data.emailTemplatesExportErrorMessage}']`).should('have.text', data.emailTemplatesExportErrorMessageDetail)
+    cy.get('#messageList').should('have.text', data.emailTemplatesExportErrorMessageDetail)
   })
 
   it('should show error on import button', () => {
@@ -25,9 +25,10 @@ describe('Email Templates Test Suite', () => {
     cy.get('#importAllButton').click()
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
+
     cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
-    cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header-text').should('have.text', 'Error')
+    cy.get('#messageList').should('have.text', data.importMessage)
   })
 })

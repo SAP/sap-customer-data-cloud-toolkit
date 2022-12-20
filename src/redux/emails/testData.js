@@ -3,6 +3,7 @@ const initialState = {
   isLoading: false,
   errors: [],
   isImportPopupOpen: false,
+  showSuccessDialog: false,
 }
 
 const initialStateWithExportFile = {
@@ -23,4 +24,8 @@ const testAPIKey = 'aabbccddeeffgghhiijjkk'
 
 const testHash = `/1234567/${testAPIKey}/user-interfacing/email-templates/`
 
-export { initialState, initialStateWithExportFile, initialStateWithErrors, testAPIKey, testHash }
+const payloadWithErrors = { payload: [{ errorCode: 40000 }] }
+
+const payloadWithoutErrors = { payload: [{ errorCode: 0 }] }
+
+export { initialState, initialStateWithExportFile, initialStateWithErrors, testAPIKey, testHash, payloadWithErrors, payloadWithoutErrors }

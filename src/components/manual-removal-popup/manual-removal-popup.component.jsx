@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-
 import { Dialog, Button, CheckBox, Table, TableRow, TableCell, Label, TableColumn, Bar, ValueState, Toast } from '@ui5/webcomponents-react'
+
 import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../redux/sites/siteSlice'
 
 const generateListString = (sitesToDeleteManually) => {

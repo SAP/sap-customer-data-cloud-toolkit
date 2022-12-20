@@ -1,15 +1,18 @@
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { Dialog, Button, Label } from '@ui5/webcomponents-react'
+import { createUseStyles } from 'react-jss'
 
 import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
-import { useSelector, useDispatch } from 'react-redux'
-
 import '@ui5/webcomponents-icons/dist/decline.js'
-import { useState } from 'react'
-
 import './emails-import-popup.component.css'
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
 
 const EmailsImportPopup = ({ t }) => {
+  const classes = useStyles()
   const dispatch = useDispatch()
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
 
@@ -43,8 +46,8 @@ const EmailsImportPopup = ({ t }) => {
         onAfterClose={onCloseEmailImportPopup}
         id="emailsImportPopup"
         header={
-          <div id="header" style={{ height: '50px' }}>
-            <div style={{ position: 'absolute', top: '30%', right: 325 }}>{t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}</div>
+          <div id="header" className={classes.headerOuterDivStyle}>
+            <div className={classes.headerInnerDivStyle}>{t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}</div>
             <div>
               <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseEmailImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
             </div>
@@ -52,7 +55,7 @@ const EmailsImportPopup = ({ t }) => {
         }
         children={
           <div>
-            <div style={{ paddingBottom: '12px' }}>
+            <div className={classes.specifyFileLableStyle}>
               <Label id="specifyFileLabel">{t('EMAIL_TEMPLATES_COMPONENT.SPECIFY_FILE')}</Label>
             </div>
             <div>
@@ -61,7 +64,7 @@ const EmailsImportPopup = ({ t }) => {
           </div>
         }
         footer={
-          <div style={{ paddingTop: '12px', position: 'relative', left: 175 }}>
+          <div className={classes.footerOuterDivStyle}>
             <Button id="importZipButton" className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
               {t('EMAIL_TEMPLATES_COMPONENT.IMPORT')}
             </Button>

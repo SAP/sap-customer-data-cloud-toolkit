@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-
 import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import { createUseStyles } from 'react-jss'
 
+import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
 
@@ -17,7 +17,12 @@ import {
   setIsImportPopupOpen,
   clearExportFile,
   clearErrors,
+  selectShowSuccessDialog,
 } from '../../redux/emails/emailSlice'
+
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
@@ -25,7 +30,9 @@ const EmailTemplates = ({ t }) => {
   const isLoading = useSelector(selectIsLoading)
   const errors = useSelector(selectErrors)
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
+  const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const classes = useStyles()
 
   useEffect(() => {
     setShowErrorDialog(errors.length > 0)
@@ -53,8 +60,8 @@ const EmailTemplates = ({ t }) => {
   const showErrorsList = () => (
     <DialogMessage
       open={showErrorDialog}
-      style={{ textAlign: 'center' }}
-      headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
+      className={classes.errorDialogStyle}
+      headerText={t('GLOBAL.ERROR')}
       state={ValueState.Error}
       closeButtonContent="Ok"
       id="emailTemplatesErrorPopup"
@@ -70,14 +77,14 @@ const EmailTemplates = ({ t }) => {
   return (
     <>
       <Bar
-        style={{ width: '300px', position: 'absolute', top: '5px', right: '30px', boxShadow: 'none', zIndex: 10, background: 'transparent' }}
+        className={classes.outerBarStyle}
         endContent={
           <div>
-            <Button id="exportAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }} onClick={onExportAllButtonClickHandler}>
+            <Button id="exportAllButton" className="fd-button fd-button--compact" onClick={onExportAllButtonClickHandler}>
               {t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ALL')}
             </Button>
 
-            <Button id="importAllButton" className="fd-button fd-button--compact" style={{ marginLeft: '5px' }} onClick={onImportAllButtonClickHandler}>
+            <Button id="importAllButton" className={classes.importAllButtonStyle} onClick={onImportAllButtonClickHandler}>
               {t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ALL')}
             </Button>
           </div>
@@ -86,6 +93,20 @@ const EmailTemplates = ({ t }) => {
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
       {isImportPopupOpen ? <EmailsImportPopup></EmailsImportPopup> : ''}
+      {showSuccessDialog ? (
+        <DialogMessage
+          open={showSuccessDialog}
+          headerText={t('GLOBAL.SUCCESS')}
+          state={ValueState.Success}
+          onAfterClose={() => document.location.reload()}
+          closeButtonContent="Ok"
+          id="successPopup"
+        >
+          {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
+        </DialogMessage>
+      ) : (
+        ''
+      )}
     </>
   )
 }

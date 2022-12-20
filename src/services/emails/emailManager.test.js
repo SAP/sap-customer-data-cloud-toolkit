@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import axios from 'axios'
 import * as EmailsTestData from './data_test'
 import EmailManager from './emailManager'
@@ -15,7 +16,7 @@ describe('Emails Manager test suite', () => {
   let emailManager
 
   beforeEach(() => {
-    emailManager = new EmailManager(EmailsTestData.credentials)
+    emailManager = new EmailManager(CommonTestData.credentials)
     jest.clearAllMocks()
   })
 
@@ -65,6 +66,22 @@ describe('Emails Manager test suite', () => {
     if (!testPassed) {
       throw new Error('Expected exception was not thrown')
     }
+  })
+
+  test('Import email templates', async () => {
+    const emailManager = new EmailManager({
+      userKey: '',
+
+      secret: '',
+
+      partnerID: '',
+    })
+
+    const zipContent = await readZipFile('/Users/I561459/OneDrive - SAP SE/Desktop/cdc_example_file/.impexMetadata.json')
+
+    const response = await emailManager.import('4_xn7trEL9hK3fN1CX9-7aHA', zipContent)
+
+    console.log(response)
   })
 
   test('4 - export error getting data center', async () => {
@@ -121,8 +138,8 @@ describe('Emails Manager test suite', () => {
         ar: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithNewTemplate()
@@ -146,8 +163,8 @@ describe('Emails Manager test suite', () => {
         pt: null,
       },
       apiKey: 'apiKey',
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithTemplateLanguageRemoved()
@@ -172,8 +189,8 @@ describe('Emails Manager test suite', () => {
         fr: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
 
     const zipContent = await createZipContentWithTemplateLanguageAdded()
@@ -208,8 +225,8 @@ describe('Emails Manager test suite', () => {
         pt: EmailsTestData.emailTemplate,
       },
       apiKey: apiKey,
-      secret: EmailsTestData.credentials.secret,
-      userKey: EmailsTestData.credentials.userKey,
+      secret: CommonTestData.credentials.secret,
+      userKey: CommonTestData.credentials.userKey,
     }
     const zipContent = await createZipContentWithTemplateError(template)
     axios
