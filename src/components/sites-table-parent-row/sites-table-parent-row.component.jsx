@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { withNamespaces } from 'react-i18next'
+import { createUseStyles } from 'react-jss'
 
 import { Input, InputType, Select, Option, Button, TableRow, TableCell, ActionSheet } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
@@ -8,14 +9,18 @@ import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
-import { withNamespaces } from 'react-i18next'
 
+import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'SitesTableParentRow' })
 
 const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const [isChildListOpen, setChildListOpen] = useState(true)
+  const classes = useStyles()
 
   const dispatch = useDispatch()
   const dataCenters = useSelector((state) => state.sites.dataCenters)
@@ -97,10 +102,9 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
           <Input
             id="baseDomainInput"
             type={InputType.Text}
-            style={{ width: 'calc(100% - 40px)' }}
+            className={classes.baseDomainInputWithChildsStyle}
             value={baseDomain}
             onInput={(event) => onChangeParentDomain(event)}
-            required="true"
           />
         </Fragment>
       )
@@ -109,10 +113,9 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         <Input
           id="baseDomainInput"
           type={InputType.Text}
-          style={{ width: 'calc(100% - 40px)', marginLeft: '38px' }}
+          className={classes.baseDomainInputWithoutChildsStyle}
           value={baseDomain}
           onInput={(event) => onChangeParentDomain(event)}
-          required="true"
         />
       )
     }
@@ -129,7 +132,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
     if (!messages.length) {
       return ''
     }
-    return <TableCell style={{ width: 0 }}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
+    return <TableCell className={classes.errorTableCellStyle}>{message ? <MessagePopoverButton message={message} /> : ''}</TableCell>
   }
 
   return (
@@ -139,11 +142,11 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         <TableCell>{checkChildSitesView()}</TableCell>
 
         <TableCell>
-          <Input type={InputType.Text} id="descriptionInput" style={{ width: '100%' }} value={description} onInput={(event) => onChangeParentDescription(event)} />
+          <Input type={InputType.Text} id="descriptionInput" className={classes.descriptionInputStyle} value={description} onInput={(event) => onChangeParentDescription(event)} />
         </TableCell>
 
         <TableCell>
-          <Select id="dataCenterSelect" style={{ width: '100%' }} onChange={onChangeDataCenter}>
+          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter}>
             {dataCentersSelect.map(({ label, value }) => (
               <Option key={label} data-value={value} selected={label === dataCenter || value === dataCenter}>
                 {label}
@@ -152,8 +155,8 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
           </Select>
         </TableCell>
 
-        <TableCell style={{ textAlign: 'right' }}>
-          <div style={{ position: 'relative' }}>
+        <TableCell className={classes.actionSheetTableCellStyle}>
+          <div className={classes.actionSheetOuterDivStyle}>
             <>
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
