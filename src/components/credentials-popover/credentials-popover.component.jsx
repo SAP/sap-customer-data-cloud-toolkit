@@ -6,6 +6,7 @@ import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponent
 import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { VERSION } from '../../constants'
+
 import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })

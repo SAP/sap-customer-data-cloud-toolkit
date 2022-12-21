@@ -41,12 +41,13 @@ import {
   selectSitesToDeleteManually,
 } from '../../redux/sites/siteSlice'
 
-import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
+import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import structures from '../../sitesStructures.json'
 
@@ -86,6 +87,7 @@ const checkSitesRequiredFields = (sites) => {
 
 const SiteDeployer = ({ t }) => {
   const dispatch = useDispatch()
+
   const sites = useSelector(selectSites)
   const isLoading = useSelector(selectLoadingState)
   const dataCenters = useSelector(selectDataCenters)
@@ -97,23 +99,20 @@ const SiteDeployer = ({ t }) => {
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
-  const [showErrorDialog, setShowErrorDialog] = useState(false)
-  const classes = useStyles()
+  const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
-  const areCredentialsFilled = () => {
-    return credentials.userKey !== '' && credentials.secretKey !== ''
-  }
+  const classes = useStyles()
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
   })
 
   const onSaveHandler = () => {
-    if (areCredentialsFilled()) {
-      setShowErrorDialog(false)
+    if (areCredentialsFilled(credentials)) {
+      setShowCredentialsErrorDialog(false)
       dispatch(createSites(sites))
     } else {
-      setShowErrorDialog(true)
+      setShowCredentialsErrorDialog(true)
     }
   }
 
@@ -160,6 +159,10 @@ const SiteDeployer = ({ t }) => {
 
   const onBaseDomainChange = (event) => {
     setBaseDomain(event.target.value)
+  }
+
+  const onAfterCloseCredentialsErrorDialogHandle = () => {
+    setShowCredentialsErrorDialog(false)
   }
 
   const showSaveCancelButtons = () => {
@@ -296,17 +299,8 @@ const SiteDeployer = ({ t }) => {
           ''
         )}
 
-        <DialogMessage
-          open={showErrorDialog}
-          headerText={t('GLOBAL.ERROR')}
-          state={ValueState.Error}
-          closeButtonContent="Ok"
-          onAfterClose={() => setShowErrorDialog(false)}
-          className={classes.errorDialogStyle}
-          id="errorPopup"
-        >
-          {t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}
-        </DialogMessage>
+        <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+
         {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
     </>

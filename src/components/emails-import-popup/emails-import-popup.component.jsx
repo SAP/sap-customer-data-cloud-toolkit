@@ -1,12 +1,17 @@
 import { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { Dialog, Button, Label } from '@ui5/webcomponents-react'
+import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 
+import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
+
 import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
+import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+
 import '@ui5/webcomponents-icons/dist/decline.js'
 import './emails-import-popup.component.css'
+
 import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
@@ -14,12 +19,20 @@ const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
 const EmailsImportPopup = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
+  const credentials = useSelector(selectCredentials)
 
   const [importFile, setImportFile] = useState(undefined)
+  const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
   const onImportButtonClickHandler = () => {
-    dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
+    if (areCredentialsFilled(credentials)) {
+      setShowCredentialsErrorDialog(false)
+      dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
+    } else {
+      setShowCredentialsErrorDialog(true)
+    }
   }
 
   const onCancelImportButtonClickHandler = () => {
@@ -36,6 +49,11 @@ const EmailsImportPopup = ({ t }) => {
   const onCloseEmailImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
     setImportFile(undefined)
+  }
+
+  const onAfterCloseCredentialsErrorDialogHandle = () => {
+    setShowCredentialsErrorDialog(false)
+    onCloseEmailImportPopup()
   }
 
   return (
@@ -75,6 +93,8 @@ const EmailsImportPopup = ({ t }) => {
           </div>
         }
       ></Dialog>
+
+      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
     </>
   )
 }

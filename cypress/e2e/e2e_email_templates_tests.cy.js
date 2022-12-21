@@ -31,4 +31,18 @@ describe('Email Templates Test Suite', () => {
     cy.get('#importZipButton').click()
     cy.get('#messageList').should('have.text', data.importMessage)
   })
+
+  it('should show credentials error dialog on export', () => {
+    utils.clearCredentials()
+    cy.get('#exportAllButton').click()
+    cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+  })
+
+  it('should show credentials error dialog on import', () => {
+    utils.clearCredentials()
+    cy.get('#importAllButton').click()
+    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#importZipButton').click()
+    cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+  })
 })

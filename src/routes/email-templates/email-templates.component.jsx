@@ -7,6 +7,7 @@ import { createUseStyles } from 'react-jss'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
+import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import {
   getEmailTemplatesArrayBuffer,
@@ -20,18 +21,23 @@ import {
   selectShowSuccessDialog,
 } from '../../redux/emails/emailSlice'
 
+import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
+
   const exportFile = useSelector(selectExportFile)
   const isLoading = useSelector(selectIsLoading)
   const errors = useSelector(selectErrors)
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const credentials = useSelector(selectCredentials)
+
   const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
   const classes = useStyles()
 
   useEffect(() => {
@@ -39,7 +45,12 @@ const EmailTemplates = ({ t }) => {
   }, [errors.length])
 
   const onExportAllButtonClickHandler = () => {
-    dispatch(getEmailTemplatesArrayBuffer())
+    if (areCredentialsFilled(credentials)) {
+      setShowCredentialsErrorDialog(false)
+      dispatch(getEmailTemplatesArrayBuffer())
+    } else {
+      setShowCredentialsErrorDialog(true)
+    }
   }
 
   const getDownloadElement = () => {
@@ -74,6 +85,10 @@ const EmailTemplates = ({ t }) => {
     </DialogMessage>
   )
 
+  const onAfterCloseCredentialsErrorDialogHandle = () => {
+    setShowCredentialsErrorDialog(false)
+  }
+
   return (
     <>
       <Bar
@@ -107,6 +122,8 @@ const EmailTemplates = ({ t }) => {
       ) : (
         ''
       )}
+
+      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
     </>
   )
 }

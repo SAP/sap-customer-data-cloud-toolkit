@@ -84,9 +84,6 @@ const styles = {
     width: '100%',
     padding: '100px 0',
   },
-  errorDialogStyle: {
-    textAlign: 'center',
-  },
   errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,
   },
