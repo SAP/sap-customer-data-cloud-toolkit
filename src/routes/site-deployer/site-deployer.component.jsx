@@ -34,12 +34,13 @@ import {
   clearErrors,
   createSites,
   selectSites,
-  selectDataCenters,
   selectLoadingState,
   selectErrors,
   selectShowSuccessDialog,
   selectSitesToDeleteManually,
 } from '../../redux/sites/siteSlice'
+
+import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
 
 import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 
@@ -134,11 +135,14 @@ const SiteDeployer = ({ t }) => {
       selectedStructure.data.forEach((structure) => {
         dispatch(
           addParentFromStructure({
-            rootBaseDomain: baseDomain,
-            baseDomain: structure.baseDomain,
-            description: structure.description,
-            dataCenter: dataCenter,
-            childSites: structure.childSites,
+            parentFromStructure: {
+              rootBaseDomain: baseDomain,
+              baseDomain: structure.baseDomain,
+              description: structure.description,
+              dataCenter: dataCenter,
+              childSites: structure.childSites,
+            },
+            dataCenters: dataCenters,
           })
         )
       })
