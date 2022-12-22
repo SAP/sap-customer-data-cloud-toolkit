@@ -216,6 +216,19 @@ describe('Emails Manager test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
   })
 
+  test('23 - import cleaning dispensable files ', async () => {
+
+    let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const zipContent = await createZipFullContentWithDispensableFiles()
+
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(9)
+  })
+
   async function executeErrorTestCase(zipContent, expectedErrorMessage) {
     let testPassed = false
     await emailManager.import(apiKey, zipContent).catch((error) => {
@@ -257,6 +270,20 @@ function createZipFullContent() {
   jszip.file('PasswordResetConfirmation/pt-br.html', emailTemplateBuffer)
   jszip.file('ImpossibleTraveler/en.html', emailTemplateBuffer)
   jszip.file('NewUserWelcome/ar.html', emailTemplateBuffer)
+  return jszip.generateAsync({ type: 'arraybuffer' })
+}
+
+function createZipFullContentWithDispensableFiles() {
+
+  const jszip = new JSZip()
+  jszip.file('MagicLink/en.html', emailTemplateBuffer)
+  jszip.file('MagicLink/pt.html', emailTemplateBuffer)
+  jszip.file('CodeVerification/en.html', emailTemplateBuffer)
+  jszip.file('/__MACOSX/', emailTemplateBuffer)
+  jszip.file('.DS_Store', emailTemplateBuffer)
+  jszip.file('dymmy.txt', emailTemplateBuffer)
+  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
+
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 

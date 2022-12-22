@@ -40,6 +40,10 @@ class EmailTemplateNameTranslator {
   translateExternalName(externalName) {
     return this.#emailTemplatesExternalName.get(externalName)
   }
+
+  getExternalNames() {
+    return Array.from(this.#emailTemplatesExternalName.keys())
+  }
 }
 
 export default EmailTemplateNameTranslator

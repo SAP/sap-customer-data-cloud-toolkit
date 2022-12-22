@@ -113,6 +113,7 @@ class EmailManager {
 
   async import(site, zipContent) {
     const zipContentMap = await this.#zipManager.read(zipContent)
+    this.#cleanZipFile(zipContentMap)
     const errors = this.#validateZipFile(zipContentMap)
     if (!this.#isResponseOk(errors)) {
       return Promise.reject(errors)
@@ -252,6 +253,24 @@ class EmailManager {
   #isTemplateFile(filename) {
     return filename.endsWith(EmailManager.TEMPLATE_FILE_EXTENSION)
   }
+
+  #isMetadataFile(filename) {
+    return filename.endsWith(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME)
+  }
+
+  #getValues() {
+    return this.#emailTemplateNameTranslator.getExternalNames()
+  }
+
+  #cleanZipFile(zipContentMap) {
+    const values = this.#getValues()
+    for (let filename of zipContentMap) {
+      if (!values.some(t => filename[0].includes(t)) && !this.#isMetadataFile(filename[0])) {
+        zipContentMap.delete(filename[0])
+      }
+    }
+  }
+
 }
 
 export default EmailManager
