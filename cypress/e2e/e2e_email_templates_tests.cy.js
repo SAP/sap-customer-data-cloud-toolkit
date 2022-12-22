@@ -9,20 +9,20 @@ describe('Email Templates Test Suite', () => {
   })
 
   it('should display Export All and Import All buttons', () => {
-    cy.get('#exportAllButton').should('not.be.disabled')
-    cy.get('#importAllButton').should('not.be.disabled')
+    cy.get('#exportAllEmailTemplatesButton').should('not.be.disabled')
+    cy.get('#importAllEmailTemplatesButton').should('not.be.disabled')
   })
 
   it('should show error messages on export button', () => {
     utils.mockResponse(manualRemovalTestData.flat()[1], 'POST', 'admin.getSiteConfig')
-    cy.get('#exportAllButton').click()
+    cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
     cy.get('#messageList').should('have.text', data.emailTemplatesExportErrorMessageDetail)
   })
 
   it('should show error on import button', () => {
     utils.resizeObserverLoopErrRe()
-    cy.get('#importAllButton').click()
+    cy.get('#importAllEmailTemplatesButton').click()
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
 
@@ -34,13 +34,13 @@ describe('Email Templates Test Suite', () => {
 
   it('should show credentials error dialog on export', () => {
     utils.clearCredentials()
-    cy.get('#exportAllButton').click()
+    cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
   })
 
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
-    cy.get('#importAllButton').click()
+    cy.get('#importAllEmailTemplatesButton').click()
     cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
