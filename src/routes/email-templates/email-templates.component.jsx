@@ -96,11 +96,11 @@ const EmailTemplates = ({ t }) => {
         endContent={
           <div>
             <Button id="exportAllButton" className="fd-button fd-button--compact" onClick={onExportAllButtonClickHandler}>
-              {t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ALL')}
+              {t('GLOBAL.EXPORT_ALL')}
             </Button>
 
             <Button id="importAllButton" className={classes.importAllButtonStyle} onClick={onImportAllButtonClickHandler}>
-              {t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ALL')}
+              {t('GLOBAL.IMPORT_ALL')}
             </Button>
           </div>
         }

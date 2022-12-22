@@ -172,7 +172,7 @@ const SiteDeployer = ({ t }) => {
         endContent={
           <div>
             <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
-              {t('SITE_DEPLOYER_COMPONENT.SAVE')}
+              {t('GLOBAL.SAVE')}
             </Button>
             <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
               {t('GLOBAL.CANCEL')}
@@ -226,7 +226,7 @@ const SiteDeployer = ({ t }) => {
                     id="cdctools-siteDomain"
                     type={InputType.Text}
                     className={classes.siteDomainInputStyle}
-                    placeholder="e.g. mysite.com"
+                    placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
                       onBaseDomainChange(event)
                     }}

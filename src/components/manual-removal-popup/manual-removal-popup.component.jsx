@@ -96,7 +96,7 @@ const ManualRemovalPopup = ({ t }) => {
               }
               endContent={
                 <Button id="manualRemovalConfirmButton" onClick={onConfirmHandler} design="Emphasized" disabled={!checkBoxIsChecked}>
-                  {t('MANUAL_REMOVAL_POPUP.CONFIRM')}
+                  {t('GLOBAL.CONFIRM')}
                 </Button>
               }
             />

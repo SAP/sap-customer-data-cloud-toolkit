@@ -16,7 +16,7 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
       open={open}
       headerText={t('GLOBAL.ERROR')}
       state={ValueState.Error}
-      closeButtonContent="Ok"
+      closeButtonContent={t('GLOBAL.OK')}
       className={classes.dialogMessageStyle}
       onAfterClose={() => onAfterCloseHandle()}
       id="errorPopup"
