@@ -50,6 +50,8 @@
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/17.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/18.css">
   <link rel="stylesheet" href="%PUBLIC_URL%/styles/email-templates/19.css">
+
+  <link rel="stylesheet" href="%PUBLIC_URL%/styles/sms-templates/1.css">
 </head>
 
 <body>
@@ -734,8 +736,111 @@
           </div>
         </email-templates-container>
       </div>
-
     </email-templates-web-app>
+
+    <!--
+      SMS Templates
+    -->
+    <sms-templates-web-app name="mock-sms-templates" route="/user-interfacing/sms-templates"
+      style="background-color: var(--sapBackgroundColor, #f7f7f7);">
+      <div cdkscrollable="" class="content">
+        <router-outlet></router-outlet>
+        <sms-templates-container _nghost-med-c121="">
+          <div _ngcontent-med-c121="" fd-action-bar="" class="fd-action-bar">
+            <div _ngcontent-med-c121="" fd-action-bar-header="" class="fd-action-bar__header">
+              <h2 class="fd-title fd-title--h3">SmsTemplates</h2>
+              <div _ngcontent-med-c121="" fd-action-bar-actions="" class="fd-action-bar__actions"></div>
+            </div>
+          </div>
+          <div _ngcontent-med-c121="" class="content">
+            <section _ngcontent-med-c121="" class="fd-section">
+              <fd-busy-indicator _ngcontent-med-c121="" aria-role="progressbar"
+                class="busy-indicator fd-busy-indicator__container fd-busy-indicator__container--inline" tabindex="-1"
+                aria-busy="false" aria-live="polite" aria-label="Loading">
+                <nav _ngcontent-med-c121="" fd-tab-nav="" class="fd-tabs fd-tabs--m">
+                  <div _ngcontent-med-c121="" fd-tab-item="" class="fd-tabs__item" aria-disabled="false"><a
+                      _ngcontent-med-c121="" role="tab" tabindex="0" fd-tab-link="" routerlinkactive=""
+                      class="fd-tabs__link is-selected"
+                      href="/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/sms-templates/Tfa"
+                      aria-selected="true"><span _ngcontent-med-c121="" fd-tab-tag=""
+                        class="fd-tabs__tag">TFA</span></a></div>
+                  <div _ngcontent-med-c121="" fd-tab-item="" class="fd-tabs__item" aria-disabled="false"><a
+                      _ngcontent-med-c121="" role="tab" tabindex="0" fd-tab-link="" routerlinkactive=""
+                      class="fd-tabs__link"
+                      href="/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/sms-templates/Otp"
+                      aria-selected="false"><span _ngcontent-med-c121="" fd-tab-tag=""
+                        class="fd-tabs__tag">OTP</span></a></div>
+                </nav>
+                <div _ngcontent-med-c121="" class="sms-templates-page">
+                  <div _ngcontent-med-c121="" class="email-templates-page__content">
+                    <sms-template _ngcontent-med-c121="" _nghost-med-c120="">
+                      <div _ngcontent-med-c120="">
+                        <div _ngcontent-med-c120="" class="search-bar__container">
+                          <fd-input-group _ngcontent-med-c120="" type="search" glyph="search" glypharialabel="Search"
+                            class="search__input ng-untouched ng-pristine ng-valid">
+                            <div class="fd-input-group">
+                              <input fd-input-group-input="" type="search"
+                                class="fd-input fd-input-group__input ng-untouched ng-pristine ng-valid">
+                              <span fd-input-group-addon=""
+                                class="fd-input-group__addon fd-input-group__addon--button"><button fd-button=""
+                                  type="button" fdtype="transparent"
+                                  class="fd-button fd-button--transparent fd-input-group__button" tabindex="0"
+                                  aria-expanded="false" aria-label="Search" aria-controls="[object Object]">
+                                  <fd-icon role="presentation" class="sap-icon--search"></fd-icon>
+                                </button></span>
+                            </div>
+                          </fd-input-group>
+                        </div>
+                        <div _ngcontent-med-c120="">
+                          <div _ngcontent-med-c120="" class="languages_list_container">
+                            <div _ngcontent-med-c120=""><span _ngcontent-med-c120="" fd-list-title=""
+                                class="fd-list__title">Global Default Content</span></div>
+                            <ul _ngcontent-med-c120="" role="list" tabindex="0" fd-list=""
+                              class="fd-list languages_list fd-list--navigation-indication fd-list--navigation">
+                              <li _ngcontent-med-c120="" role="listitem" fd-list-item=""
+                                class="fd-list__item fd-list__item--link" aria-selected="false" tabindex="-1">
+                                <a _ngcontent-med-c120="" fd-list-link=""
+                                  class="global_languages fd-list__link--navigation-indicator fd-list__link"><span
+                                    _ngcontent-med-c120="" fd-list-title="" class="fd-list__title"> English (+42
+                                    more)</span></a>
+                              </li>
+                            </ul>
+                          </div>
+                          <div _ngcontent-med-c120="" class="languages_list_container">
+                            <div _ngcontent-med-c120="" class="languages_list-header"><span _ngcontent-med-c120=""
+                                fd-list-title="" class="fd-list__title">Country Specific Content</span><button
+                                _ngcontent-med-c120="" fd-button="" label="+ Add New"
+                                class="fd-button fd-button--standard add_btn" tabindex="0" type="button">
+                                <span class="fd-button__text"> + Add New
+                                </span>
+                              </button></div>
+                            <app-no-templates-per-country _ngcontent-med-c120="" _nghost-med-c119="">
+                              <div _ngcontent-med-c119="" class="no-data">
+                                <div _ngcontent-med-c119="" class="right-arrow"><img _ngcontent-med-c119=""
+                                    src="/console-apps/sms-templates-web-app/dist/assets/sms-templates-web-app/arrow-right.png"
+                                    alt="no-data"></div>
+                                <div _ngcontent-med-c119="" class="no-data-container"><img _ngcontent-med-c119=""
+                                    src="/console-apps/sms-templates-web-app/dist/assets/sms-templates-web-app/no-templates.png"
+                                    alt="no-data" class="no-data-container__img">
+                                  <div _ngcontent-med-c119="" class="main-label">There are no templates yet</div>
+                                  <div _ngcontent-med-c119="" class="small-label">If you need country specific text for
+                                  </div>
+                                  <div _ngcontent-med-c119="" class="small-label">SMS messages define them here.</div>
+                                </div>
+                              </div>
+                            </app-no-templates-per-country>
+                          </div>
+                        </div>
+                      </div>
+                    </sms-template>
+                  </div>
+                </div>
+              </fd-busy-indicator>
+            </section>
+          </div>
+        </sms-templates-container>
+      </div>
+    </sms-templates-web-app>
 
   </mock-container-templates>
   <script src="scripts/mock-container-templates/mock-nav-utils.js"></script>

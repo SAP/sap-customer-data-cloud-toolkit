@@ -13,7 +13,7 @@ const styles = {
   },
   importAllButtonStyle: {
     composes: 'fd-button fd-button--compact',
-    marginLeft: '5px',
+    marginLeft: '5px !important',
   },
 }
 

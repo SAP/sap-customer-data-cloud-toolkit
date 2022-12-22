@@ -22,7 +22,7 @@ import {
 } from '../../redux/emails/emailSlice'
 
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
-import styles from './styles.js'
+import styles from './email-templates.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
@@ -44,7 +44,7 @@ const EmailTemplates = ({ t }) => {
     setShowErrorDialog(errors.length > 0)
   }, [errors.length])
 
-  const onExportAllButtonClickHandler = () => {
+  const onExportAllEmailTemplatesButtonClickHandler = () => {
     if (areCredentialsFilled(credentials)) {
       setShowCredentialsErrorDialog(false)
       dispatch(getEmailTemplatesArrayBuffer())
@@ -64,7 +64,7 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
-  const onImportAllButtonClickHandler = () => {
+  const onImportAllEmailTemplatesButtonClickHandler = () => {
     dispatch(setIsImportPopupOpen(true))
   }
 
@@ -95,11 +95,11 @@ const EmailTemplates = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <div>
-            <Button id="exportAllButton" className="fd-button fd-button--compact" onClick={onExportAllButtonClickHandler}>
+            <Button id="exportAllEmailTemplatesButton" className="fd-button fd-button--compact" onClick={onExportAllEmailTemplatesButtonClickHandler}>
               {t('GLOBAL.EXPORT_ALL')}
             </Button>
 
-            <Button id="importAllButton" className={classes.importAllButtonStyle} onClick={onImportAllButtonClickHandler}>
+            <Button id="importAllEmailTemplatesButton" className={classes.importAllButtonStyle} onClick={onImportAllEmailTemplatesButtonClickHandler}>
               {t('GLOBAL.IMPORT_ALL')}
             </Button>
           </div>
