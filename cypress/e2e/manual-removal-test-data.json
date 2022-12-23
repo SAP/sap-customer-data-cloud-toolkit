@@ -19,5 +19,15 @@
     "callId": "ed5c54bfe321478b8db4298c2539265a",
     "apiVersion": 2,
     "time": "Date.now()"
+  },
+  {
+    "errorMessage": "Error getting SMS templates",
+    "errorDetails": "There was an error when getting the SMS templates or you do not have the required permissions to call it.",
+    "statusCode": 403,
+    "errorCode": 403007,
+    "statusReason": "Forbidden",
+    "callId": "ed5c54bfe321478b8db4298c2539265a",
+    "apiVersion": 2,
+    "time": "Date.now()"
   }
 ]

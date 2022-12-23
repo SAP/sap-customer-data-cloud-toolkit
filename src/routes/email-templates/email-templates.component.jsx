@@ -107,7 +107,7 @@ const EmailTemplates = ({ t }) => {
       ></Bar>
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
-      {isImportPopupOpen ? <EmailsImportPopup></EmailsImportPopup> : ''}
+      {isImportPopupOpen ? <EmailsImportPopup /> : ''}
       {showSuccessDialog ? (
         <DialogMessage
           open={showSuccessDialog}

@@ -45,5 +45,8 @@
   "SITE_TABLE_COMPONENT.SUBTITLE_TEXT": "You can create sites from a structure or manually",
   "SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE": "Create Child Site",
   "SITE_TABLE_PARENT_COMPONENT.HIDE_CHILD_TOOLTIP": "Hide Child Sites",
-  "SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP": "Show Child Sites"
+  "SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP": "Show Child Sites",
+  "SMS_IMPORT_POPUP.POPUP_HEADER": "Import SMS templates",
+  "SMS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the SMS templates to import:",
+  "SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All SMS templates have been imported successfully"
 }
