@@ -33,7 +33,7 @@ const CredentialsPopoverButton = ({ t }) => {
           }
         }}
         icon="fridge"
-        tooltip={t('CREDENTIALS_POPOVER.CDCTOOLBOX')}
+        tooltip={t('CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX')}
         design={ButtonDesign.Transparent}
       />
       <ResponsivePopover
@@ -41,7 +41,7 @@ const CredentialsPopoverButton = ({ t }) => {
         ref={ref}
         opener="openPopoverButton"
         placementType={PopoverPlacementType.Bottom}
-        headerText={t('CREDENTIALS_POPOVER.CDCTOOLBOX')}
+        headerText={t('CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX')}
         className={classes.responsivePopoverStyle}
       >
         <CredentialsPopover />

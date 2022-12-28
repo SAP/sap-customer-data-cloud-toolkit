@@ -39,7 +39,6 @@ const getSmsExpectedResponse = {
         },
         defaultLanguage: 'en',
       },
-      templatesPerCountryCode: {},
     },
   },
 }
@@ -55,4 +54,9 @@ function getSmsExpectedResponseWithNoTemplates() {
   return clone
 }
 
-export { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates }
+function setSmsExpectedTemplateArgument() {
+  const clone = JSON.parse(JSON.stringify(getSmsExpectedResponse))
+  return clone.templates
+}
+
+export { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument }

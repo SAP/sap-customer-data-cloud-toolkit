@@ -8,6 +8,7 @@ import GigyaManager from '../gigya/gigyaManager'
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
   static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
+  static TEMPLATE_FILE_EXTENSION = '.html'
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
@@ -51,7 +52,7 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.#zipManager.createFile(externalTemplateName, language, templateObject[language])
+        const filePath = this.#zipManager.createFile(externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -112,6 +113,7 @@ class EmailManager {
 
   async import(site, zipContent) {
     const zipContentMap = await this.#zipManager.read(zipContent)
+    this.#cleanZipFile(zipContentMap)
     const errors = this.#validateZipFile(zipContentMap)
     if (!this.#isResponseOk(errors)) {
       return Promise.reject(errors)
@@ -205,7 +207,7 @@ class EmailManager {
     const info = {}
     const tokens = zipEntry.split('/')
     if (tokens.length > 1) {
-      const languageIndex = tokens[1].lastIndexOf('.html')
+      const languageIndex = tokens[1].lastIndexOf(EmailManager.TEMPLATE_FILE_EXTENSION)
       if (tokens.length === 2 && languageIndex !== -1) {
         info.template = tokens[0]
         info.language = tokens[1].slice(0, languageIndex)
@@ -249,8 +251,26 @@ class EmailManager {
   }
 
   #isTemplateFile(filename) {
-    return filename.endsWith('.html')
+    return filename.endsWith(EmailManager.TEMPLATE_FILE_EXTENSION)
   }
+
+  #isMetadataFile(filename) {
+    return filename.endsWith(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME)
+  }
+
+  #getValues() {
+    return this.#emailTemplateNameTranslator.getExternalNames()
+  }
+
+  #cleanZipFile(zipContentMap) {
+    const values = this.#getValues()
+    for (let filename of zipContentMap) {
+      if (!values.some(t => filename[0].includes(t)) && !this.#isMetadataFile(filename[0])) {
+        zipContentMap.delete(filename[0])
+      }
+    }
+  }
+
 }
 
 export default EmailManager

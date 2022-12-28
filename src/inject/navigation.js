@@ -55,7 +55,7 @@ export const processHashChange = (locationHash) => {
   }
 
   // Check if this route is from CDC Console or CDC Toolbox extension
-  if (!isRouteFromExtension(route)) {
+  if (!getFilterRouteFromExtension(route)) {
     // Show CDC Console route
     hideContainer()
 
@@ -79,10 +79,26 @@ export const getRouteFromHash = (locationHash = window.location.hash) =>
 
 const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((incompatibleRoute) => route.indexOf(incompatibleRoute) !== -1)
 
-const isRouteFromExtension = (route) => (MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false)
+const getFilterRouteFromExtension = (route) => {
+  route = route.endsWith('/') ? route.slice(0, -1) : route
+  const isFromExtension = MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false
+  if (isFromExtension) {
+    return route
+  }
+  // If not found, try to find it recursively by removing the last element of the route
+  const routeArray = route.split('/')
+  if (!isFromExtension && routeArray.length > 2) {
+    return getFilterRouteFromExtension(routeArray.slice(0, -1).join('/'))
+  }
+  return false
+}
 
 const showContainer = (locationHash) => {
-  const route = getRouteFromHash(locationHash)
+  let route = getRouteFromHash(locationHash)
+  route = getFilterRouteFromExtension(route) || route
+
+  // Remove from locationHash what's after the filtered route from extension
+  locationHash = locationHash.split(route)[0] + route
 
   hideContainer()
   clearSelectionMenuLinks()

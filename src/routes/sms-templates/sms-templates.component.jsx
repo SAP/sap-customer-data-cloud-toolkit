@@ -6,11 +6,11 @@ import { createUseStyles } from 'react-jss'
 
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import MessageList from '../../components/message-list/message-list.component'
-import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
+import SmsImportPopup from '../../components/sms-import-popup/sms-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import {
-  getEmailTemplatesArrayBuffer,
+  getSmsTemplatesArrayBuffer,
   selectExportFile,
   selectIsLoading,
   selectErrors,
@@ -19,14 +19,15 @@ import {
   clearExportFile,
   clearErrors,
   selectShowSuccessDialog,
-} from '../../redux/emails/emailSlice'
+} from '../../redux/sms/smsSlice'
 
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
-import styles from './email-templates.styles.js'
 
-const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
+import styles from './sms-templates.styles.js'
 
-const EmailTemplates = ({ t }) => {
+const useStyles = createUseStyles(styles, { name: 'SmsTemplates' })
+
+const SmsTemplates = ({ t }) => {
   const dispatch = useDispatch()
 
   const exportFile = useSelector(selectExportFile)
@@ -44,10 +45,10 @@ const EmailTemplates = ({ t }) => {
     setShowErrorDialog(errors.length > 0)
   }, [errors.length])
 
-  const onExportAllEmailTemplatesButtonClickHandler = () => {
+  const onExportAllSmsTemplatesButtonClickHandler = () => {
     if (areCredentialsFilled(credentials)) {
       setShowCredentialsErrorDialog(false)
-      dispatch(getEmailTemplatesArrayBuffer())
+      dispatch(getSmsTemplatesArrayBuffer())
     } else {
       setShowCredentialsErrorDialog(true)
     }
@@ -64,7 +65,7 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
-  const onImportAllEmailTemplatesButtonClickHandler = () => {
+  const onImportAllSmsTemplatesButtonClickHandler = () => {
     dispatch(setIsImportPopupOpen(true))
   }
 
@@ -75,7 +76,7 @@ const EmailTemplates = ({ t }) => {
       headerText={t('GLOBAL.ERROR')}
       state={ValueState.Error}
       closeButtonContent="Ok"
-      id="emailTemplatesErrorPopup"
+      id="smsTemplatesErrorPopup"
       onAfterClose={() => {
         setShowErrorDialog(false)
         dispatch(clearErrors())
@@ -95,11 +96,11 @@ const EmailTemplates = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <div>
-            <Button id="exportAllEmailTemplatesButton" className="fd-button fd-button--compact" onClick={onExportAllEmailTemplatesButtonClickHandler}>
+            <Button id="exportAllSmsTemplatesButton" className="fd-button fd-button--compact" onClick={onExportAllSmsTemplatesButtonClickHandler}>
               {t('GLOBAL.EXPORT_ALL')}
             </Button>
 
-            <Button id="importAllEmailTemplatesButton" className={classes.importAllButtonStyle} onClick={onImportAllEmailTemplatesButtonClickHandler}>
+            <Button id="importAllSmsTemplatesButton" className={classes.importAllButtonStyle} onClick={onImportAllSmsTemplatesButtonClickHandler}>
               {t('GLOBAL.IMPORT_ALL')}
             </Button>
           </div>
@@ -107,7 +108,7 @@ const EmailTemplates = ({ t }) => {
       ></Bar>
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
-      {isImportPopupOpen ? <EmailsImportPopup /> : ''}
+      {isImportPopupOpen ? <SmsImportPopup /> : ''}
       {showSuccessDialog ? (
         <DialogMessage
           open={showSuccessDialog}
@@ -117,7 +118,7 @@ const EmailTemplates = ({ t }) => {
           closeButtonContent="Ok"
           id="successPopup"
         >
-          {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
+          {t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
         </DialogMessage>
       ) : (
         ''
@@ -128,4 +129,4 @@ const EmailTemplates = ({ t }) => {
   )
 }
 
-export default withNamespaces()(EmailTemplates)
+export default withNamespaces()(SmsTemplates)

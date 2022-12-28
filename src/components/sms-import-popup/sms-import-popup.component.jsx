@@ -6,16 +6,17 @@ import { createUseStyles } from 'react-jss'
 
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
-import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
+import { selectIsImportPopupOpen, sendSmsTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/sms/smsSlice'
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 
 import '@ui5/webcomponents-icons/dist/decline.js'
-import './emails-import-popup.component.css'
+import './sms-import-popup.component.css'
+
 import styles from './styles.js'
 
-const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
+const useStyles = createUseStyles(styles, { name: 'SmsImportPopup' })
 
-const EmailsImportPopup = ({ t }) => {
+const SmsImportPopup = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
@@ -28,14 +29,14 @@ const EmailsImportPopup = ({ t }) => {
   const onImportButtonClickHandler = () => {
     if (areCredentialsFilled(credentials)) {
       setShowCredentialsErrorDialog(false)
-      dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
+      dispatch(sendSmsTemplatesArrayBuffer(importFile.arrayBuffer()))
     } else {
       setShowCredentialsErrorDialog(true)
     }
   }
 
   const onCancelImportButtonClickHandler = () => {
-    onCloseEmailImportPopup()
+    onCloseSmsImportPopup()
   }
 
   const onFileUploadButtonClickHandler = (event) => {
@@ -45,14 +46,14 @@ const EmailsImportPopup = ({ t }) => {
     }
   }
 
-  const onCloseEmailImportPopup = () => {
+  const onCloseSmsImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
     setImportFile(undefined)
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
     setShowCredentialsErrorDialog(false)
-    onCloseEmailImportPopup()
+    onCloseSmsImportPopup()
   }
 
   return (
@@ -60,20 +61,20 @@ const EmailsImportPopup = ({ t }) => {
       <Dialog
         className="ui-dialog"
         open={isImportPopupOpen}
-        onAfterClose={onCloseEmailImportPopup}
-        id="emailsImportPopup"
+        onAfterClose={onCloseSmsImportPopup}
+        id="smsImportPopup"
         header={
           <div id="header" className={classes.headerOuterDivStyle}>
-            <div className={classes.headerInnerDivStyle}>{t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}</div>
+            <div className={classes.headerInnerDivStyle}>{t('SMS_IMPORT_POPUP.POPUP_HEADER')}</div>
             <div>
-              <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseEmailImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
+              <Button id="closeSmsImportPopup" icon="decline" onClick={onCloseSmsImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
             </div>
           </div>
         }
         children={
           <div>
             <div className={classes.specifyFileLableStyle}>
-              <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
+              <Label id="specifyFileLabel">{t('SMS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
               <input id="zipFileInput" type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
@@ -98,4 +99,4 @@ const EmailsImportPopup = ({ t }) => {
   )
 }
 
-export default withNamespaces()(EmailsImportPopup)
+export default withNamespaces()(SmsImportPopup)

@@ -14,161 +14,24 @@ import sitesReducer, {
   addChild,
   deleteChild,
   clearSites,
-  getPartnerId,
   createSites,
   clearErrors,
   setShowSuccessDialog,
   selectSiteById,
-  // setUserKey,
-  // setSecretKey,
   clearSitesToDeleteManually,
-  // getUserKeyFromLocalStorage,
-  // getSecretKeyFromLocalStorage,
 } from './siteSlice'
 
-const initialState = {
-  sites: [],
-  isLoading: false,
-  // credentials: {
-  //   userKey: '',
-  //   secretKey: '',
-  // },
-  dataCenters: [
-    {
-      label: 'AU',
-      value: 'au1',
-    },
-    {
-      label: 'EU',
-      value: 'eu1',
-    },
-    {
-      label: 'US',
-      value: 'us1',
-    },
-  ],
-  errors: [],
-  showSuccessDialog: false,
-  sitesToDeleteManually: [],
-}
+import { getPartnerId } from './utils'
 
-const stateWithParentWithNoChild = {
-  sites: [
-    {
-      parentSiteTempId: '',
-      tempId: '1234',
-      baseDomain: 'test domain',
-      description: 'test description',
-      dataCenter: 'test data center',
-      childSites: [],
-      isChildSite: false,
-    },
-  ],
-  isLoading: false,
-}
-
-const stateWithParentWithChild = {
-  sites: [
-    {
-      parentSiteTempId: '',
-      tempId: '1234',
-      baseDomain: 'test domain',
-      description: 'test description',
-      dataCenter: 'test data center',
-      childSites: [
-        {
-          parentSiteTempId: '1234',
-          tempId: '5678',
-          baseDomain: 'test domain',
-          description: 'test description',
-          dataCenter: 'test data center',
-          isChildSite: true,
-        },
-      ],
-      isChildSite: false,
-    },
-  ],
-  isLoading: false,
-}
-
-const stateWithError = {
-  sites: [],
-  isLoading: false,
-  dataCenters: [],
-  errors: [{ error: 'I am a dummy error!' }],
-  showSuccessDialog: false,
-}
-
-const structure = {
-  _id: '1',
-  name: 'Structure 1',
-  data: [
-    {
-      rootBaseDomain: 'test',
-      baseDomain: 'dev.parent.{{dataCenter}}.{{baseDomain}}',
-      description: 'test parent from strucure',
-      dataCenter: 'AU',
-      childSites: [
-        {
-          baseDomain: 'dev.{{dataCenter}}.{{baseDomain}}',
-          description: 'test child from strucure',
-          dataCenter: 'AU',
-        },
-      ],
-    },
-  ],
-}
-
-const parentToUpdate = {
-  tempId: '1234',
-  newBaseDomain: 'updated domain',
-  newDescription: 'updated description',
-  newDataCenter: 'updated data center',
-}
-
-const childToUpdate = {
-  parentSiteTempId: '1234',
-  tempId: '5678',
-  newBaseDomain: 'updated domain',
-  newDescription: 'updated description',
-}
-
-const stateWithSitesToRemoveManually = {
-  sites: [],
-  isLoading: false,
-  credentials: {
-    userKey: '',
-    secretKey: '',
-  },
-  dataCenters: [
-    {
-      label: 'AU',
-      value: 'au1',
-    },
-    {
-      label: 'EU',
-      value: 'eu1',
-    },
-    {
-      label: 'US',
-      value: 'us1',
-    },
-  ],
-  errors: [],
-  showSuccessDialog: false,
-  sitesToDeleteManually: [{ tempId: '123abc' }, { tempId: '456edf' }],
-}
-
-// const testUserKey = 'dummyUserKey'
-// const testSecretKey = 'dummySecretKey'
+import * as data from './testData'
 
 describe('Site slice test suite', () => {
   test('should return initial state', () => {
-    expect(sitesReducer(undefined, { type: undefined })).toEqual(initialState)
+    expect(sitesReducer(undefined, { type: undefined })).toEqual(data.initialState)
   })
 
   test('should add a new Parent site', () => {
-    const newState = sitesReducer(initialState, addNewParent())
+    const newState = sitesReducer(data.initialState, addNewParent())
     expect(newState.sites.length).toEqual(1)
 
     const newParent = newState.sites[0]
@@ -183,7 +46,7 @@ describe('Site slice test suite', () => {
   })
 
   test('should add a Parent site with a child from a Structure', () => {
-    const newState = sitesReducer(initialState, addParentFromStructure(structure.data[0]))
+    const newState = sitesReducer(data.initialState, addParentFromStructure(data.dataToAddParentFromStructure))
     expect(newState.sites.length).toEqual(1)
 
     const newParent = newState.sites[0]
@@ -206,8 +69,8 @@ describe('Site slice test suite', () => {
   })
 
   test('should add a new child site', () => {
-    const parent = stateWithParentWithNoChild.sites[0]
-    const newState = sitesReducer(stateWithParentWithNoChild, addChild({ tempId: parent.tempId }))
+    const parent = data.stateWithParentWithNoChild.sites[0]
+    const newState = sitesReducer(data.stateWithParentWithNoChild, addChild({ tempId: parent.tempId }))
     expect(newState.sites[0].childSites.length).toEqual(1)
 
     const newChild = newState.sites[0].childSites[0]
@@ -220,36 +83,36 @@ describe('Site slice test suite', () => {
   })
 
   test('should update parent site Base Domain', () => {
-    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentBaseDomain(parentToUpdate)).sites[0]
-    expect(updatedParent.baseDomain).toEqual(parentToUpdate.newBaseDomain)
+    const updatedParent = sitesReducer(data.stateWithParentWithNoChild, updateParentBaseDomain(data.parentToUpdate)).sites[0]
+    expect(updatedParent.baseDomain).toEqual(data.parentToUpdate.newBaseDomain)
   })
 
   test('should update parent site Description', () => {
-    const updatedParent = sitesReducer(stateWithParentWithNoChild, updateParentDescription(parentToUpdate)).sites[0]
-    expect(updatedParent.description).toEqual(parentToUpdate.newDescription)
+    const updatedParent = sitesReducer(data.stateWithParentWithNoChild, updateParentDescription(data.parentToUpdate)).sites[0]
+    expect(updatedParent.description).toEqual(data.parentToUpdate.newDescription)
   })
 
   test('should update parent site Data Center', () => {
-    const updatedParent = sitesReducer(stateWithParentWithChild, updateParentDataCenter(parentToUpdate)).sites[0]
-    expect(updatedParent.dataCenter).toEqual(parentToUpdate.newDataCenter)
+    const updatedParent = sitesReducer(data.stateWithParentWithChild, updateParentDataCenter(data.parentToUpdate)).sites[0]
+    expect(updatedParent.dataCenter).toEqual(data.parentToUpdate.newDataCenter)
     updatedParent.childSites.forEach((childSite) => {
-      expect(childSite.dataCenter).toEqual(parentToUpdate.newDataCenter)
+      expect(childSite.dataCenter).toEqual(data.parentToUpdate.newDataCenter)
     })
   })
 
   test('should update child site Base Domain', () => {
-    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildBaseDomain(childToUpdate)).sites[0].childSites[0]
-    expect(updatedChild.baseDomain).toEqual(childToUpdate.newBaseDomain)
+    const updatedChild = sitesReducer(data.stateWithParentWithChild, updateChildBaseDomain(data.childToUpdate)).sites[0].childSites[0]
+    expect(updatedChild.baseDomain).toEqual(data.childToUpdate.newBaseDomain)
   })
 
   test('should update child site Description', () => {
-    const updatedChild = sitesReducer(stateWithParentWithChild, updateChildDescription(childToUpdate)).sites[0].childSites[0]
-    expect(updatedChild.description).toEqual(childToUpdate.newDescription)
+    const updatedChild = sitesReducer(data.stateWithParentWithChild, updateChildDescription(data.childToUpdate)).sites[0].childSites[0]
+    expect(updatedChild.description).toEqual(data.childToUpdate.newDescription)
   })
 
   test('should delete child site', () => {
     const newState = sitesReducer(
-      stateWithParentWithChild,
+      data.stateWithParentWithChild,
       deleteChild({
         parentSiteTempId: '1234',
         tempId: '5678',
@@ -260,7 +123,7 @@ describe('Site slice test suite', () => {
 
   test('should delete parent site', () => {
     const newState = sitesReducer(
-      stateWithParentWithChild,
+      data.stateWithParentWithChild,
       deleteParent({
         tempId: '1234',
       })
@@ -269,7 +132,7 @@ describe('Site slice test suite', () => {
   })
 
   test('should clear all sites', () => {
-    const newState = sitesReducer(stateWithParentWithChild, clearSites())
+    const newState = sitesReducer(data.stateWithParentWithChild, clearSites())
     expect(newState.sites.length).toEqual(0)
   })
 
@@ -292,36 +155,36 @@ describe('Site slice test suite', () => {
   })
 
   test('should set isLoading to true while createSites is pending', () => {
-    const newState = sitesReducer(initialState, { type: createSites.pending.type })
+    const newState = sitesReducer(data.initialState, { type: createSites.pending.type })
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
   })
 
   test('should set isLoading to false when createSites is rejected', () => {
-    const newState = sitesReducer(initialState, { type: createSites.rejected.type })
+    const newState = sitesReducer(data.initialState, { type: createSites.rejected.type })
     expect(newState.isLoading).toEqual(false)
   })
 
   test('should clear errors', () => {
-    const newState = sitesReducer(stateWithError, clearErrors())
+    const newState = sitesReducer(data.stateWithError, clearErrors())
     expect(newState.errors.length).toEqual(0)
   })
 
   test('should set showSuccessDialog to true', () => {
-    const newState = sitesReducer(initialState, setShowSuccessDialog(true))
+    const newState = sitesReducer(data.initialState, setShowSuccessDialog(true))
     expect(newState.showSuccessDialog).toEqual(true)
   })
 
   test('should have fulfilled createSites without errors', () => {
-    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [] })
+    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [] })
     expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
   })
 
   test('should have fulfilled createSites with errors', () => {
-    const newState = sitesReducer(initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
+    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
     expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.errors.length).toEqual(1)
@@ -329,23 +192,23 @@ describe('Site slice test suite', () => {
   })
 
   test('should select a Parent site by id', () => {
-    const parentSite = selectSiteById({ sites: stateWithParentWithChild }, '1234')
+    const parentSite = selectSiteById({ sites: data.stateWithParentWithChild }, '1234')
     expect(parentSite).not.toBe(undefined)
   })
 
   test('should select a Child site by id', () => {
-    const childSite = selectSiteById({ sites: stateWithParentWithChild }, '5678')
+    const childSite = selectSiteById({ sites: data.stateWithParentWithChild }, '5678')
     expect(childSite).not.toBe(undefined)
   })
 
   test('should return undefiend on getting site by unexisting id', () => {
-    const site = selectSiteById({ sites: stateWithParentWithChild }, 'abc')
+    const site = selectSiteById({ sites: data.stateWithParentWithChild }, 'abc')
     expect(site).toBe(undefined)
   })
 
   test('should clear sites to delete manually', () => {
-    expect(stateWithSitesToRemoveManually.sitesToDeleteManually).not.toEqual([])
-    const newState = sitesReducer(stateWithSitesToRemoveManually, clearSitesToDeleteManually())
+    expect(data.stateWithSitesToRemoveManually.sitesToDeleteManually).not.toEqual([])
+    const newState = sitesReducer(data.stateWithSitesToRemoveManually, clearSitesToDeleteManually())
     expect(newState.sitesToDeleteManually).toEqual([])
   })
 })

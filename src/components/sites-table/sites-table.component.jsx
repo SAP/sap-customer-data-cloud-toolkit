@@ -41,13 +41,13 @@ export const SitesTable = ({ t }) => {
                 <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
               </TableColumn>
               <TableColumn>
-                <Label>{t('GLOBAL.DESCRIPTION')}n</Label>
+                <Label>{t('GLOBAL.DESCRIPTION')}</Label>
               </TableColumn>
               <TableColumn>
                 <Label>{t('GLOBAL.DATA_CENTER')}</Label>
               </TableColumn>
               <TableColumn className={classes.addParentSiteColumnStyle}>
-                <Label> {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}</Label>
+                <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
               </TableColumn>
             </>
           }

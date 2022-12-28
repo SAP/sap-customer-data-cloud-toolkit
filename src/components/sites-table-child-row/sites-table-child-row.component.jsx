@@ -5,6 +5,8 @@ import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from
 import { createUseStyles } from 'react-jss'
 
 import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
+
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import styles from './styles.js'
 
@@ -13,7 +15,7 @@ const useStyles = createUseStyles(styles, { name: 'SitesTableChildRow' })
 const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const dispatch = useDispatch()
-  const dataCenters = useSelector((state) => state.sites.dataCenters)
+  const dataCenters = useSelector(selectDataCenters)
   const errorList = useSelector((state) => selectErrors(state))
   const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
 

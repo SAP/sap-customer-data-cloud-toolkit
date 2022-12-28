@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, getAccountURL, readCredentialsFromAccountSettings } from './credentialsSlice'
+import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, getAccountURL, readCredentialsFromAccountSettings, areCredentialsFilled } from './credentialsSlice'
 
 const initialState = {
   credentials: {
@@ -18,6 +18,11 @@ const testSecretKey = 'dummySecretKey'
 const expectedCredentials = {
   secretKey: testSecretKey,
   userKey: testUserKey,
+}
+
+const emptyCredentials = {
+  secretKey: '',
+  userKey: '',
 }
 
 describe('Credentials Slice test suite', () => {
@@ -50,6 +55,14 @@ describe('Credentials Slice test suite', () => {
 
   test('should get credentials', () => {
     expect(readCredentialsFromAccountSettings()).toEqual(expectedCredentials)
+  })
+
+  test('should return true if credentials are filled', () => {
+    expect(areCredentialsFilled(expectedCredentials)).toEqual(true)
+  })
+
+  test('should return false if credentials are empty', () => {
+    expect(areCredentialsFilled(emptyCredentials)).toEqual(false)
   })
 })
 
