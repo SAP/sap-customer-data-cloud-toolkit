@@ -39,6 +39,7 @@ const EmailTemplates = ({ t }) => {
   }, [errors.length])
 
   const onExportAllButtonClickHandler = () => {
+    console.log('Entered')
     dispatch(getEmailTemplatesArrayBuffer())
   }
 

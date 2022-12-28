@@ -1,16 +1,25 @@
 const { defineConfig } = require('cypress')
-
+const path = require('path')
 module.exports = defineConfig({
   projectId: '4iymaz',
 
   e2e: {
     setupNodeEvents(on, config) {
+      on('before:browser:launch', (browser, launchOptions) => {
+        const extensionFolder = path.resolve(__dirname, '..', '..', '/Users/I561459/cdc_automation/cdc-tools-chrome-extension/build')
+
+        launchOptions.args.push(`--load-extension=${extensionFolder}`)
+
+        return launchOptions
+      })
+
       require('@cypress/code-coverage/task')(on, config)
 
       // include any other plugin code...
 
       // It's IMPORTANT to return the config object
       // with any changed environment variables
+
       on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
       return config
     },
