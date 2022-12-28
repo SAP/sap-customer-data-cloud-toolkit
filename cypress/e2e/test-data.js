@@ -37,15 +37,10 @@ export {
   emailTemplatesIconName,
   siteDeployerIconName,
   cdcExampleFile,
-<<<<<<< HEAD
-  importFileHeaderText,
-  importMessage,
-=======
   importEmailsFileHeaderText,
   importSmsFileHeaderText,
   importMessage,
   smsTemplatesIconName,
   smsTemplatesExportErrorMessage,
   smsTemplatesExportErrorMessageDetail,
->>>>>>> e9fb7d58622fa8fb4166def53263ea4a2e0ee323
 }

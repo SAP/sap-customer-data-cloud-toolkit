@@ -5,31 +5,6 @@ import * as data from '../../src/services/site/data_test'
 import * as testData from './test-data'
 import manualRemovalTestData from './manual-removal-test-data.json'
 
-const payload = {
-  sites: [
-    {
-      baseDomain: 'e2e_cypress_test.com',
-      description: 'E2E Cypress Test',
-      dataCenter: 'us1',
-      isChildSite: false,
-      tempId: '123',
-      parentSiteId: '',
-      childSites: [],
-    },
-  ],
-  partnerID: 79597568,
-  userKey: 'AFww+F466MSR',
-  secret: 'dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP',
-  errors: [],
-  showSuccessDialog: false,
-  dataCenters: [
-    {
-      label: 'US',
-      value: 'us1',
-    },
-  ],
-}
-
 describe('Site Deployer Test Suite', () => {
   it('should display Export All and Import All buttons', () => {
     // cy.visit('https://console.gigya.com/#/79597568/4_N9OlHeDGq9sC0GBaMrp3jg/cdc-toolbox/site-deployer')
