@@ -5,7 +5,7 @@ import * as data from './test-data'
 
 describe('SMS Templates Test Suite', () => {
   beforeEach(() => {
-    utils.startUp(data.smsTemplatesIconName)
+    utils.startUp('http://localhost:3000', data.smsTemplatesIconName)
   })
 
   it('should display Export All and Import All buttons', () => {

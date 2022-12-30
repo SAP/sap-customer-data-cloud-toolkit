@@ -11,7 +11,9 @@ export function writeCredentials() {
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
   openPopoverButton.click({ force: true })
   cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('AFww+F466MSR', { force: true })
-  cy.get('#userSecret').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
+  //cy.get('#userSecret').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
+  cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
+
   openPopoverButton.click({ force: true })
 }
 
@@ -40,7 +42,7 @@ export function resizeObserverLoopErrRe() {
 }
 
 export function getSiteDomain(siteDomain, timeout) {
-  return cy.get('#cdctools-siteDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
+  return cy.get('#cdctools-siteDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(siteDomain, { force: true }).should('have.value', siteDomain)
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {

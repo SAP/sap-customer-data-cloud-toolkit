@@ -48,8 +48,8 @@ describe('Site Deployer Test Suite', () => {
     cy.get('#addParentButton').click()
 
     writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
-    getSaveButton().should('not.be.disabled')
-    getSaveButton().click()
+    utils.getSaveButton().should('not.be.disabled')
+    utils.getSaveButton().click()
     cy.get('#messageList').should('have.text', data.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
   })

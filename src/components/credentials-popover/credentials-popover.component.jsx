@@ -10,10 +10,6 @@ import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })
 
-import styles from './styles.js'
-
-const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })
-
 const CredentialsPopover = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
