@@ -1,12 +1,8 @@
-import jsdom from 'jsdom'
+import { XMLValidator } from 'fast-xml-parser'
 
 class XmlValidator {
-  static validate(htmlString) {
-    const { window } = new jsdom.JSDOM()
-    const parser = new window.DOMParser()
-    const doc = parser.parseFromString(htmlString, 'text/xml')
-    const error = doc.querySelector('parsererror')
-    return error == null ? '' : error.textContent
+  static validate(xmlString) {
+    return XMLValidator.validate(xmlString, { allowBooleanAttributes: true, ignoreAttributes: false })
   }
 }
 

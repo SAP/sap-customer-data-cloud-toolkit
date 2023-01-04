@@ -1,0 +1,72 @@
+.dialog-button-1 {
+  box-shadow: none !important;
+  min-height: 30px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  border-color: #0a6ed1 !important;
+  background-color: #0a6ed1 !important;
+}
+
+.dialog-button-2 {
+  appearance: none !important;
+  outline: 0 !important;
+  display: inline-block !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  border-radius: 4px !important;
+  max-height: 36px !important;
+  min-height: 30px !important;
+  min-width: 36px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  color: #0a6ed1 !important;
+  border-color: #0a6ed1 !important;
+  background-color: #fff !important;
+  margin-left: 10px;
+}
+
+.ui-dialog-titlebar-close {
+  position: absolute;
+  right: 0;
+  top: '1%';
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background-image: none;
+  float: none;
+  margin: 0;
+  background-position: unset;
+  outline: 0;
+  border: 1px solid;
+  display: inline-block;
+  text-decoration: none;
+  border-color: transparent;
+  background-color: transparent;
+  color: #0a6ed1;
+  transition: all 125ms ease-in;
+  border-radius: 4px;
+}
+
+.ui-dialog {
+  border: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  height: 'auto';
+  width: '400px';
+  top: ' 324px';
+  left: '120px';
+  padding: 8px;
+  min-width: 500px !important;
+  font-family: '72' !important;
+  font-size: 1.1em;
+  position: fixed;
+  line-height: 13.2px;
+}

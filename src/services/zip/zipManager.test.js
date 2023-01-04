@@ -9,10 +9,10 @@ describe('files test suite', () => {
     expectedZipEntries.set('name4', 'content4')
 
     const zipManager = new ZipManager()
-    const path = zipManager.createFile('template', 'name', 'content')
+    const path = zipManager.createFile('template', 'name.html', 'content')
     expect(path).toBe('template/name.html')
-    zipManager.createFile('template', 'name2', 'content2')
-    zipManager.createFile('template2', 'name3', 'content3')
+    zipManager.createFile('template', 'name2.html', 'content2')
+    zipManager.createFile('template2', 'name3.html', 'content3')
     zipManager.create('name4', 'content4')
 
     const filesContent = await zipManager.read(zipManager.createZipArchive())
@@ -27,10 +27,10 @@ describe('files test suite', () => {
     expectedZipEntries.set('#', 'content4')
 
     const zipManager = new ZipManager()
-    const path = zipManager.createFile('...', '?', 'content')
+    const path = zipManager.createFile('...', '?.html', 'content')
     expect(path).toBe('.../?.html')
-    zipManager.createFile('...', '*', 'content2')
-    zipManager.createFile('?', '|', 'content3')
+    zipManager.createFile('...', '*.html', 'content2')
+    zipManager.createFile('?', '|.html', 'content3')
     zipManager.create('#', 'content4')
 
     const filesContent = await zipManager.read(zipManager.createZipArchive())

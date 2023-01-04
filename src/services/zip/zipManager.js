@@ -9,13 +9,17 @@ class ZipManager {
   }
 
   createFile(template, name, content) {
-    this.#zipFile.file(`${template}/${name}.html`, Buffer.from(content, 'utf8'))
-    return `${template}/${name}.html`
+    this.#zipFile.file(`${template}/${name}`, Buffer.from(content, 'utf8'))
+    return `${template}/${name}`
   }
 
   create(name, content) {
     this.#zipFile.file(`${name}`, Buffer.from(content, 'utf8'))
     return `${name}`
+  }
+
+  createFolder(name) {
+    return this.#zipFile.folder(`${name}`)
   }
 
   createZipArchive() {

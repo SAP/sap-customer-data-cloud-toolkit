@@ -15,9 +15,12 @@ class Email {
   }
 
   async getSiteEmails(site) {
-    const dataCenter = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return dataCenterResponse
+    }
 
-    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getGetEmailsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenterResponse.dataCenter, Email.getGetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_GET_CONFIG)
@@ -26,11 +29,18 @@ class Email {
     return res.data
   }
 
-  async setSiteEmails(site, templates) {
-    const dataCenter = await this.gigyaManager.getDataCenterFromSite(site)
+  async setSiteEmails(site, templateName, template) {
+    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return dataCenterResponse
+    }
 
+    return this.setSiteEmailsWithDataCenter(site, templateName, template, dataCenterResponse.dataCenter)
+  }
+
+  async setSiteEmailsWithDataCenter(site, templateName, template, dataCenter) {
     const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getSetEmailsTemplatesEndpoint())
-    const res = await client.post(url, this.#setEmailsTemplatesParameters(site, templates)).catch(function (error) {
+    const res = await client.post(url, this.#setEmailsTemplatesParameters(site, templateName, template)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_SET_CONFIG)
     })
@@ -46,9 +56,10 @@ class Email {
     return parameters
   }
 
-  #setEmailsTemplatesParameters(apiKey, templates) {
-    const parameters = Object.assign(templates, this.#getEmailsTemplatesParameters(apiKey))
+  #setEmailsTemplatesParameters(apiKey, templateName, template) {
+    const parameters = this.#getEmailsTemplatesParameters(apiKey)
     parameters.secret = this.secret
+    parameters[templateName] = JSON.stringify(template)
 
     return parameters
   }

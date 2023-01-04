@@ -1,21 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-
-import {
-  addParentFromStructure,
-  clearSites,
-  clearErrors,
-  createSites,
-  selectSites,
-  selectDataCenters,
-  selectLoadingState,
-  selectErrors,
-  selectShowSuccessDialog,
-  selectSitesToDeleteManually,
-} from '../../redux/sites/siteSlice'
-
-import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+import { createUseStyles } from 'react-jss'
 
 import {
   Card,
@@ -36,25 +22,39 @@ import {
   BusyIndicator,
   ValueState,
 } from '@ui5/webcomponents-react'
-import { spacing } from '@ui5/webcomponents-react-base'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
+import {
+  addParentFromStructure,
+  clearSites,
+  clearErrors,
+  createSites,
+  selectSites,
+  selectLoadingState,
+  selectErrors,
+  selectShowSuccessDialog,
+  selectSitesToDeleteManually,
+} from '../../redux/sites/siteSlice'
+
+import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
+
+import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
 import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
+import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import structures from '../../sitesStructures.json'
 
-const BarStart = (props) => (
-  <Title level={TitleLevel.H3} slot={props.slot} style={spacing.sapUiSmallMarginBegin}>
-    <span style={spacing.sapUiTinyMarginBegin}>Site Deployer</span>
-  </Title>
-)
+import styles from './styles.js'
+
+const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
 const getSelectedDataCenters = () => {
   const dataCenterHTMLCollection = document.getElementById('cdctools-dataCenter').children
@@ -88,6 +88,7 @@ const checkSitesRequiredFields = (sites) => {
 
 const SiteDeployer = ({ t }) => {
   const dispatch = useDispatch()
+
   const sites = useSelector(selectSites)
   const isLoading = useSelector(selectLoadingState)
   const dataCenters = useSelector(selectDataCenters)
@@ -99,22 +100,20 @@ const SiteDeployer = ({ t }) => {
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
-  const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
-  const areCredentialsFilled = () => {
-    return credentials.userKey !== '' && credentials.secretKey !== ''
-  }
+  const classes = useStyles()
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
   })
 
   const onSaveHandler = () => {
-    if (areCredentialsFilled()) {
-      setShowErrorDialog(false)
+    if (areCredentialsFilled(credentials)) {
+      setShowCredentialsErrorDialog(false)
       dispatch(createSites(sites))
     } else {
-      setShowErrorDialog(true)
+      setShowCredentialsErrorDialog(true)
     }
   }
 
@@ -136,11 +135,14 @@ const SiteDeployer = ({ t }) => {
       selectedStructure.data.forEach((structure) => {
         dispatch(
           addParentFromStructure({
-            rootBaseDomain: baseDomain,
-            baseDomain: structure.baseDomain,
-            description: structure.description,
-            dataCenter: dataCenter,
-            childSites: structure.childSites,
+            parentFromStructure: {
+              rootBaseDomain: baseDomain,
+              baseDomain: structure.baseDomain,
+              description: structure.description,
+              dataCenter: dataCenter,
+              childSites: structure.childSites,
+            },
+            dataCenters: dataCenters,
           })
         )
       })
@@ -163,6 +165,10 @@ const SiteDeployer = ({ t }) => {
     setBaseDomain(event.target.value)
   }
 
+  const onAfterCloseCredentialsErrorDialogHandle = () => {
+    setShowCredentialsErrorDialog(false)
+  }
+
   const showSaveCancelButtons = () => {
     return (
       <Bar
@@ -170,10 +176,10 @@ const SiteDeployer = ({ t }) => {
         endContent={
           <div>
             <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
-              {t('SITE_DEPLOYER_COMPONENT.SAVE')}
+              {t('GLOBAL.SAVE')}
             </Button>
             <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
-              {t('SITE_DEPLOYER_COMPONENT.CANCEL')}
+              {t('GLOBAL.CANCEL')}
             </Button>
           </div>
         }
@@ -189,8 +195,8 @@ const SiteDeployer = ({ t }) => {
     !messages.length ? (
       ''
     ) : (
-      <div style={spacing.sapUiSmallMargin}>
-        <div style={spacing.sapUiTinyMargin}>
+      <div className={classes.errorListOuterDivStyle}>
+        <div className={classes.errorListInnerDivStyle}>
           <Card>
             <MessageList messages={messages} />
           </Card>
@@ -200,46 +206,41 @@ const SiteDeployer = ({ t }) => {
 
   return (
     <>
-      <Bar design="Header" startContent={<BarStart />}></Bar>
-      <div className="cdc-tools-background" style={{ overflow: 'scroll', height: 'calc(100vh - 100px)' }}>
-        <div style={spacing.sapUiSmallMargin}>
-          <div style={spacing.sapUiTinyMargin}>
-            <FlexBox style={spacing.sapUiSmallMarginBottom}>
-              <Text style={{ color: 'var(--sapNeutralElementColor)' }}>{t('SITE_DEPLOYER_COMPONENT.TEXT')}</Text>
+      <Bar
+        design="Header"
+        startContent={
+          <Title level={TitleLevel.H3} className={classes.titleStyle}>
+            <span className={classes.titleSpanStyle}>Site Deployer</span>
+          </Title>
+        }
+      ></Bar>
+      <div className={classes.outerDivStyle}>
+        <div className={classes.headerOuterDivStyle}>
+          <div className={classes.headerInnerDivStyle}>
+            <FlexBox className={classes.headerTextFlexboxStyle}>
+              <Text className={classes.componentTextStyle}>{t('SITE_DEPLOYER_COMPONENT.TEXT')}</Text>
             </FlexBox>
             <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_STRUCTURES')} />}>
               <FlexBox justifyContent="SpaceBetween">
-                <div
-                  style={{
-                    ...spacing.sapUiSmallMargin,
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  <Label for="cdctools-siteDomain" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
+                <div className={classes.cardFlexboxStyle}>
+                  <Label for="cdctools-siteDomain" className={classes.siteDomainLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN')}
                   </Label>
                   <Input
                     id="cdctools-siteDomain"
                     type={InputType.Text}
-                    style={{ width: '100%' }}
-                    placeholder="e.g. mysite.com"
+                    className={classes.siteDomainInputStyle}
+                    placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
                       onBaseDomainChange(event)
                     }}
                   />
                 </div>
-                <div
-                  style={{
-                    ...spacing.sapUiSmallMargin,
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  <Label for="cdctools-dataCenter" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
+                <div className={classes.dataCentersOuterDivStyle}>
+                  <Label for="cdctools-dataCenter" className={classes.dataCentersLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.CHOOSE_DATA_CENTER')}
                   </Label>
-                  <MultiComboBox id="cdctools-dataCenter" style={{ width: '100%' }} onSelectionChange={(event) => checkDataCentersSelected(event)}>
+                  <MultiComboBox id="cdctools-dataCenter" className={classes.dataCentersMultiComboBoxStyle} onSelectionChange={(event) => checkDataCentersSelected(event)}>
                     {dataCenters.map(({ label }) => (
                       <MultiComboBoxItem key={label} text={label} selected />
                     ))}
@@ -247,18 +248,12 @@ const SiteDeployer = ({ t }) => {
                 </div>
               </FlexBox>
 
-              <div
-                style={{
-                  ...spacing.sapUiSmallMargin,
-                  marginTop: 0,
-                  textAlign: 'left',
-                }}
-              >
-                <Label for="cdctools-siteStructure" style={{ ...spacing.sapUiTinyMarginTopBottom }}>
+              <div className={classes.siteStructureOuterDivStyle}>
+                <Label for="cdctools-siteStructure" className={classes.siteStructuresLabelStyle}>
                   {t('SITE_DEPLOYER_COMPONENT.SELECT_SITE_STRUCTURE')}
                 </Label>
 
-                <Select id="cdctools-siteStructure" style={{ width: '100%' }} onChange={onChangeSiteStructure} required="true">
+                <Select id="cdctools-siteStructure" className={classes.siteStructureSelectStyle} onChange={onChangeSiteStructure} required="true">
                   <Option></Option>
                   {structures.map(({ _id, name }) => (
                     <Option key={_id} value={_id} data-value={_id}>
@@ -267,16 +262,9 @@ const SiteDeployer = ({ t }) => {
                   ))}
                 </Select>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <Bar design="Footer" style={{ display: 'block', position: 'relative', margin: '0 0px -3px 0' }}>
-                  <Button
-                    id="createButton"
-                    disabled={checkRequiredFields()}
-                    onClick={onCreateHandler}
-                    icon="add"
-                    design="Transparent"
-                    style={{ display: 'block', position: 'absolute', left: 0, right: 0, margin: 0 }}
-                  >
+              <div className={classes.createButtonOuterDivStyle}>
+                <Bar design="Footer" className={classes.createButtonBarStyle}>
+                  <Button id="createButton" disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" className={classes.createButtonStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.CREATE_STRUCTURE')}
                   </Button>
                 </Bar>
@@ -284,26 +272,18 @@ const SiteDeployer = ({ t }) => {
             </Card>
           </div>
         </div>
-        <div style={spacing.sapUiSmallMargin}>
-          <div style={spacing.sapUiTinyMargin}>
-            <Card
-              header={
-                <CardHeader
-                  titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')}
-                  subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}
-                  // subtitleText="Quickly change the domains naming and structure. You can also set policies, and other configurations to be copied from an existing site seed."
-                ></CardHeader>
-              }
-            >
-              {isLoading ? <BusyIndicator active delay="1" style={{ width: '100%', padding: '100px 0' }} /> : <SitesTable />}
+        <div className={classes.siteCreationPreviewCardOuterDivStyle}>
+          <div className={classes.siteCreationPreviewCardInnerDivStyle}>
+            <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')} subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}></CardHeader>}>
+              {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : <SitesTable />}
             </Card>
           </div>
         </div>
 
         {showErrorsList(errors)}
 
-        <div style={spacing.sapUiSmallMargin}>
-          <div style={spacing.sapUiTinyMargin}>
+        <div className={classes.saveCancelButtonsOuterDivStyle}>
+          <div className={classes.saveCancelButtonsInnerDivStyle}>
             <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
@@ -311,7 +291,7 @@ const SiteDeployer = ({ t }) => {
         {showSuccessDialog ? (
           <DialogMessage
             open={showSuccessDialog}
-            headerText={t('SITE_DEPLOYER_COMPONENT.SUCCESS_HEADER')}
+            headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
             closeButtonContent="Ok"
             onAfterClose={() => document.location.reload()}
@@ -323,17 +303,8 @@ const SiteDeployer = ({ t }) => {
           ''
         )}
 
-        <DialogMessage
-          open={showErrorDialog}
-          headerText={t('SITE_DEPLOYER_COMPONENT.ERROR_HEADER')}
-          state={ValueState.Error}
-          closeButtonContent="Ok"
-          onAfterClose={() => setShowErrorDialog(false)}
-          style={{ textAlign: 'center' }}
-          id="errorPopup"
-        >
-          {t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}
-        </DialogMessage>
+        <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+
         {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
     </>

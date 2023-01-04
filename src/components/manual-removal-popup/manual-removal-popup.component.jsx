@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-
 import { Dialog, Button, CheckBox, Table, TableRow, TableCell, Label, TableColumn, Bar, ValueState, Toast } from '@ui5/webcomponents-react'
+
 import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../redux/sites/siteSlice'
 
 const generateListString = (sitesToDeleteManually) => {
@@ -54,18 +54,21 @@ const ManualRemovalPopup = ({ t }) => {
         state={ValueState.Warning}
         children={
           <>
-            <h4>{t('MANUAL_REMOVAL_POPUP.ERROR_MESSAGE')}</h4>
+            <h4>
+              {t('MANUAL_REMOVAL_POPUP.ERROR_MESSAGE')}
+              <br />
+            </h4>
             <Table
               columns={
                 <>
                   <TableColumn>
-                    <Label>{t('MANUAL_REMOVAL_POPUP.BASE_DOMAIN')}</Label>
+                    <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
                   </TableColumn>
                   <TableColumn>
-                    <Label>{t('MANUAL_REMOVAL_POPUP.SITE_ID')}</Label>
+                    <Label>{t('GLOBAL.SITE_ID')}</Label>
                   </TableColumn>
                   <TableColumn>
-                    <Label>{t('MANUAL_REMOVAL_POPUP.API_KEY')}</Label>
+                    <Label>{t('GLOBAL.API_KEY')}</Label>
                   </TableColumn>
                 </>
               }
@@ -93,7 +96,7 @@ const ManualRemovalPopup = ({ t }) => {
               }
               endContent={
                 <Button id="manualRemovalConfirmButton" onClick={onConfirmHandler} design="Emphasized" disabled={!checkBoxIsChecked}>
-                  {t('MANUAL_REMOVAL_POPUP.CONFIRM')}
+                  {t('GLOBAL.CONFIRM')}
                 </Button>
               }
             />
@@ -101,7 +104,7 @@ const ManualRemovalPopup = ({ t }) => {
         }
         onBeforeClose={onBeforeCloseHandler}
       ></Dialog>
-      <Toast ref={ref} duration={5000} placement={'MiddleCenter'} children={t('MANUAL_REMOVAL_POPUP.CHILDREN_TEXT')} onChange={onCheckBoxChangeHandler} />
+      <Toast ref={ref} duration={5000} placement={'MiddleCenter'} children={t('MANUAL_REMOVAL_POPUP.TOAST_TEXT')} onChange={onCheckBoxChangeHandler} />
     </>
   )
 }

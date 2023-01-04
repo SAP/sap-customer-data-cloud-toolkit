@@ -5,17 +5,14 @@ import axios from 'axios'
 
 jest.mock('axios')
 jest.setTimeout(10000)
+
 describe('Site configurator test suite', () => {
-  const credentials = {
-    userKey: 'userKey',
-    secret: 'secret',
-  }
+  const siteConfigurator = new SiteConfigurator(CommonTestData.credentials.userKey, CommonTestData.credentials.secret, 'us1')
 
   test('configure site successfully', async () => {
     const mockedResponse = { data: TestData.scExpectedGigyaResponseOk }
     axios.mockResolvedValue(mockedResponse)
 
-    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     //console.log('response=' + JSON.stringify(response))
 
@@ -26,7 +23,6 @@ describe('Site configurator test suite', () => {
     const expectedResponse = TestData.scExpectedGigyaResponseNotOk
     axios.mockResolvedValue({ data: expectedResponse })
 
-    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey_NOT_EXISTS')
     //console.log('response=' + JSON.stringify(response))
 
@@ -37,7 +33,6 @@ describe('Site configurator test suite', () => {
     const expectedResponse = TestData.scExpectedGigyaResponseWithDifferentDataCenter
     axios.mockResolvedValue({ data: expectedResponse })
 
-    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     //console.log('response=' + JSON.stringify(response))
 
@@ -48,7 +43,6 @@ describe('Site configurator test suite', () => {
     const expectedResponse = TestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValue({ data: expectedResponse })
 
-    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     let response = await siteConfigurator.getSiteConfig('#######')
 
     CommonTestData.verifyResponseIsOk(response)
@@ -60,7 +54,6 @@ describe('Site configurator test suite', () => {
       throw err
     })
 
-    const siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, 'us1')
     const response = await siteConfigurator.connect('parentApiKey', 'childApiKey')
     //console.log('response=' + JSON.stringify(response))
 

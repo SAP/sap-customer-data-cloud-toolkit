@@ -107,7 +107,7 @@ const getCredentials = () => {
   })
 }
 
-const areCredentialsFilled = (credentials) => {
+export const areCredentialsFilled = (credentials) => {
   return credentials.userKey !== '' && credentials.secretKey !== ''
 }
 
