@@ -1,10 +1,11 @@
-import { useRef } from 'react'
-import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType } from '@ui5/webcomponents-react'
-import { useDispatch } from 'react-redux'
+import { useRef, useEffect } from 'react'
+import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType, Badge } from '@ui5/webcomponents-react'
+import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { setIsPopUpOpen } from '../../redux/credentials/credentialsSlice'
+import { selectHasNewVersion, checkNewVersion } from '../../redux/version/versionSlice'
 
 import CredentialsPopover from '../credentials-popover/credentials-popover.component'
 import './credentials-popover-button.component.css'
@@ -17,6 +18,13 @@ const CredentialsPopoverButton = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const ref = useRef()
+
+  const hasNewVersion = useSelector(selectHasNewVersion)
+
+  useEffect(() => {
+    dispatch(checkNewVersion())
+  }, [dispatch])
+
   return (
     <>
       <Button
@@ -35,7 +43,16 @@ const CredentialsPopoverButton = ({ t }) => {
         icon="fridge"
         tooltip={t('CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX')}
         design={ButtonDesign.Transparent}
-      />
+      ></Button>
+
+      {hasNewVersion ? (
+        <Badge colorScheme="3" className={classes.badgeStyle}>
+          !
+        </Badge>
+      ) : (
+        ''
+      )}
+
       <ResponsivePopover
         id="credentialsResponsivePopover"
         ref={ref}

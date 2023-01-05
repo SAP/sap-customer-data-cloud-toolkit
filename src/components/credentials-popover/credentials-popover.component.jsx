@@ -1,9 +1,10 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
+import { Form, FormItem, Input, InputType, Link, Label, MessageStrip, MessageStripDesign } from '@ui5/webcomponents-react'
 
 import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { selectHasNewVersion, selectNewVersion } from '../../redux/version/versionSlice'
 
 import { VERSION } from '../../constants'
 
@@ -14,7 +15,10 @@ const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })
 const CredentialsPopover = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const { userKey, secretKey } = useSelector(selectCredentials)
+  const hasNewVersion = useSelector(selectHasNewVersion)
+  const newVersion = useSelector(selectNewVersion)
 
   const onUserKeyValueChange = (event) => {
     const newUserKey = event.target.value
@@ -50,6 +54,19 @@ const CredentialsPopover = ({ t }) => {
           </Label>
         </FormItem>
       </Form>
+      {hasNewVersion ? (
+        <FormItem>
+          <MessageStrip design={MessageStripDesign.Warning} hideCloseButton={true}>
+            {t('CREDENTIALS_POPOVER.NEW_VERSION')}
+            <br />
+            <Link href="#TODO" target="_blank">
+              {t('CREDENTIALS_POPOVER.DOWNLOAD_VERSION', { version: newVersion })}
+            </Link>
+          </MessageStrip>
+        </FormItem>
+      ) : (
+        ''
+      )}
     </>
   )
 }
