@@ -2,8 +2,8 @@
 import * as utils from './utils'
 import * as testData from './test-data'
 
-describe('Site Deployer Test Suite', () => {
-  it('should display Export All and Import All buttons', () => {
+describe('All features full Test Suite', () => {
+  it('All features tests', () => {
     utils.resizeObserverLoopErrRe()
     cy.visit('http://console.gigya.com/#/79597568/4_cMYU_H9RYRInYnw_b1CZ6A/cdc-toolbox/site-deployer')
 
