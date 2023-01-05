@@ -26,7 +26,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importEmailsFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
 
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#messageList').should('have.text', data.importMessage)

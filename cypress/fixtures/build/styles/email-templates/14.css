@@ -1,9 +1,0 @@
-.fd-list__item[aria-disabled='true'],
-.fd-list__item.is-disabled,
-.fd-list__item:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.fd-list__item:disabled:focus {
-  outline: none;
-}
