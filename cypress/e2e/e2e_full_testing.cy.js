@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
+import * as testData from './test-data'
 
 describe('Site Deployer Test Suite', () => {
   it('should display Export All and Import All buttons', () => {

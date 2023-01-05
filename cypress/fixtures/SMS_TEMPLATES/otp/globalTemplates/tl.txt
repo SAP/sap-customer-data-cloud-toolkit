@@ -1,1 +1,0 @@
-Ang iyong verification code ay: {{code}}

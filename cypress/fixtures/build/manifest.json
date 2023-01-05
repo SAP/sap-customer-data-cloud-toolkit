@@ -3,9 +3,7 @@
   "name": "SAP CDC Tools",
   "version": "0.2.0",
   "description": "Add extra functionality to SAP CDC console",
-  "permissions": [
-    "storage"
-  ],
+  "permissions": ["storage"],
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -15,27 +13,18 @@
   "action": {},
   "content_scripts": [
     {
-      "matches": [
-        "https://console.gigya.com/*"
-      ],
+      "matches": ["https://console.gigya.com/*"],
+      "all_frames": true,
       "run_at": "document_end",
-      "js": [
-        "static/js/main.66b80c7d.js"
-      ],
-      "css": [
-        "static/css/main.155bff51.css"
-      ],
+      "js": ["static/js/main.66b80c7d.js"],
+      "css": ["static/css/main.155bff51.css"],
       "media": []
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": [
-        "static/css/main.155bff51.css"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
+      "resources": ["static/css/main.155bff51.css"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

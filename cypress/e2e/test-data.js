@@ -20,7 +20,6 @@ const importMessage = `Error importing email templatesError on template file Dou
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
-// TODO: create separated data for emails and sms and aplly it on e2e_sms_templates_tests.cy.js
 
 export {
   siteDomain,
