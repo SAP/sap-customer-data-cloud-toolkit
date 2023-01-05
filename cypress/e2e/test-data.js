@@ -13,7 +13,7 @@ const emailTemplatesExportErrorMessageDetail =
   'Error getting email templatesThere was an error when getting the email templates or you do not have the required permissions to call it.'
 const emailTemplatesIconName = 'Email Templates'
 const siteDeployerIconName = 'Site Deployer'
-const cdcExampleFile = 'sms_use_case.zip'
+const cdcExampleFile = 'cdc_example.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
 const importMessage = `Error importing email templatesError on template file DoubleOptInConfirmation/ar.html. Expected closing tag 'div' (opened in line 8, col 1) instead of closing tag 'body'. on line 18`

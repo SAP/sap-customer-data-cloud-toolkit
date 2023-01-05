@@ -1,12 +1,5 @@
-/* eslint-disable no-cond-assign */
 /* eslint-disable no-undef */
-import SiteManager from '../../src/services/site/siteManager'
 import * as utils from './utils'
-import * as data from '../../src/services/site/data_test'
-import * as testData from './test-data'
-import manualRemovalTestData from './manual-removal-test-data.json'
-import JSZip from 'jszip'
-import { Buffer } from 'buffer'
 
 describe('Site Deployer Test Suite', () => {
   it('should display Export All and Import All buttons', () => {
@@ -18,38 +11,38 @@ describe('Site Deployer Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
     cy.wait(20000)
 
-    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item cdc-tools--menu-item"]').click({ force: true })
-    // //utils.writeCredentials()
-    // utils.getSiteDomain('e2e_testing', 40000)
-    // utils.getDataCenters('US', 'EU', 'AU')
-    // utils.getSiteStructure(5).should('have.text', testData.dropdownOption)
-    // utils.getCreateButton().click()
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item cdc-tools--menu-item"]').click({ force: true })
+    //utils.writeCredentials()
+    utils.getSiteDomain('e2e_testing', 40000)
+    utils.getDataCenters('US', 'EU', 'AU')
+    utils.getSiteStructure(5).should('have.text', testData.dropdownOption)
+    utils.getCreateButton().click()
 
-    // cy.get('ui5-table-cell').eq(7).click()
-    // cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
-    // utils.getSaveButton().click()
-    // cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', 'Success')
-    // cy.get('#successPopup').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    // cy.visit('https://console.gigya.com/#/79597568/4_cMYU_H9RYRInYnw_b1CZ6A/sites/site-selector')
-    // cy.wait(20000)
-    // cy.get('main-app')
-    //   .shadow()
-    //   .find('site-selector-web-app')
-    //   .shadow()
-    //   .find('[class ="fd-section app__header"]')
-    //   .find('[class ="fd-input-group"]')
-    //   .find('[placeholder="Search"]')
-    //   .type('e2e_testing', { force: true })
+    cy.get('ui5-table-cell').eq(7).click()
+    cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
+    utils.getSaveButton().click()
+    cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', 'Success')
+    cy.get('#successPopup').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.visit('https://console.gigya.com/#/79597568/4_cMYU_H9RYRInYnw_b1CZ6A/sites/site-selector')
+    cy.wait(20000)
+    cy.get('main-app')
+      .shadow()
+      .find('site-selector-web-app')
+      .shadow()
+      .find('[class ="fd-section app__header"]')
+      .find('[class ="fd-input-group"]')
+      .find('[placeholder="Search"]')
+      .type('e2e_testing', { force: true })
 
-    // cy.get('main-app')
-    //   .shadow()
-    //   .find('[class ="app-area"]')
-    //   .find('site-selector-web-app')
-    //   .shadow()
-    //   .find('[class ="fd-table__body"]')
-    //   .find('[class ="fd-link base-domain"]')
-    //   .eq(0)
-    //   .click({ force: true })
+    cy.get('main-app')
+      .shadow()
+      .find('[class ="app-area"]')
+      .find('site-selector-web-app')
+      .shadow()
+      .find('[class ="fd-table__body"]')
+      .find('[class ="fd-link base-domain"]')
+      .eq(0)
+      .click({ force: true })
     cy.wait(10000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Email Templates').click({ force: true })
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
