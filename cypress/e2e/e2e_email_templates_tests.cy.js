@@ -41,7 +41,7 @@ describe('Email Templates Test Suite', () => {
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
     cy.get('#importAllEmailTemplatesButton').click()
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile('cdc-tools-email-import')
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
   })
