@@ -45,6 +45,5 @@ yarn-error.log*
 .vscode
 .idea
 
-/cypress/downloads
 /cypress/videos
 /cypress/screenshots
