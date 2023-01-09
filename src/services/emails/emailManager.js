@@ -112,8 +112,7 @@ class EmailManager {
   }
 
   async import(site, zipContent) {
-    const zipContentMap = await this.#zipManager.read(zipContent)
-    this.#cleanZipFile(zipContentMap)
+    const zipContentMap = await this.#readZipContent(zipContent)
     const errors = this.#validateZipFile(zipContentMap)
     if (!this.#isResponseOk(errors)) {
       return Promise.reject(errors)
@@ -123,6 +122,18 @@ class EmailManager {
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
     this.#removeOldContentFromMetadataMap(metadataMap)
     return await this.#importTemplates(site, metadataObj)
+  }
+
+  async validateEmailTemplates(zipContent) {
+    const zipContentMap = await this.#readZipContent(zipContent)
+    const errors = this.#validateEmailTemplates(zipContentMap)
+    return this.#isResponseOk(errors) ? Promise.resolve(errors) : Promise.reject(errors)
+  }
+
+  async #readZipContent(zipContent) {
+    const zipContentMap = await this.#zipManager.read(zipContent)
+    this.#cleanZipFile(zipContentMap)
+    return zipContentMap
   }
 
   #mergeMetadataMapWithZipContent(zipContentMap, metadataObj) {
@@ -193,7 +204,7 @@ class EmailManager {
     const promises = []
     const dataCenterResponse = await this.#gigyaManager.getDataCenterFromSite(site)
     if (dataCenterResponse.errorCode !== 0) {
-      return Promise.all(dataCenterResponse)
+      return Promise.reject(dataCenterResponse)
     }
     for (const property in metadataObj) {
       if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {
@@ -224,8 +235,6 @@ class EmailManager {
         details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
       }
       response.push(generateErrorResponse(error, 'Error importing email templates').data)
-    } else {
-      response.push(...this.#validateEmailTemplates(zipContentMap))
     }
     return response
   }
@@ -265,12 +274,11 @@ class EmailManager {
   #cleanZipFile(zipContentMap) {
     const values = this.#getValues()
     for (let filename of zipContentMap) {
-      if (!values.some(t => filename[0].includes(t)) && !this.#isMetadataFile(filename[0])) {
+      if (!values.some((t) => filename[0].includes(t)) && !this.#isMetadataFile(filename[0])) {
         zipContentMap.delete(filename[0])
       }
     }
   }
-
 }
 
 export default EmailManager

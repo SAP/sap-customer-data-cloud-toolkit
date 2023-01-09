@@ -134,6 +134,21 @@ describe('Emails Manager test suite', () => {
     expect(spy.mock.calls.length).toBe(9)
   })
 
+  test('7.1 - import with email validation', async () => {
+    let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const zipContent = await createZipFullContent()
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const validEmailsResponse = await emailManager.validateEmailTemplates(zipContent)
+    expect(validEmailsResponse.length).toBe(1)
+    expect(validEmailsResponse[0].errorCode).toBe(0)
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(9)
+  })
+
   test('8 - import new template', async () => {
     let spy = jest.spyOn(emailManager.emailService, 'setSiteEmails')
     const expectCallArgument = {
@@ -169,7 +184,6 @@ describe('Emails Manager test suite', () => {
       secret: CommonTestData.credentials.secret,
       userKey: CommonTestData.credentials.userKey,
     }
-
     const zipContent = await createZipContentWithTemplateLanguageRemoved()
 
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
@@ -179,6 +193,26 @@ describe('Emails Manager test suite', () => {
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
+  })
+
+  test('9.1 - import error getting data center', async () => {
+    const err = CommonTestData.createErrorObject('Error configuring site')
+    axios.mockImplementation(() => {
+      throw err
+    })
+    const zipContent = await createZipFullContent()
+    let testPassed = false
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
+        throw new Error('It is not the expected exception')
+      } else {
+        testPassed = true
+      }
+    })
+
+    if (!testPassed) {
+      throw new Error('Expected exception was not thrown')
+    }
   })
 
   test('10 - add template language', async () => {
@@ -214,7 +248,16 @@ describe('Emails Manager test suite', () => {
 
   test('21 - error validating html template', async () => {
     const zipContent = await createZipContentWithTemplateError(EmailsTestData.emailTemplate + 'x')
-    await executeErrorTestCase(zipContent, 'Error on template file')
+    let testPassed = false
+    await emailManager.validateEmailTemplates(zipContent).catch((error) => {
+      if (error.length === 1 && error[0].errorDetails.startsWith('Error on template file')) {
+        testPassed = true
+      }
+    })
+
+    if (!testPassed) {
+      throw new Error('Expected exception was not thrown')
+    }
   })
 
   test('22 - error template without meta subject', async () => {
@@ -243,7 +286,7 @@ describe('Emails Manager test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, expectCallArgument)
   })
 
-  test('23 - import cleaning dispensable files ', async () => {
+  test('23 - import cleaning dispensable files', async () => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
     const zipContent = await createZipFullContentWithDispensableFiles()
 

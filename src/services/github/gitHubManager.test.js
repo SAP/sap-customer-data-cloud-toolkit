@@ -23,7 +23,7 @@ describe('GitHub Manager test suite', () => {
     })
 
     let testPassed = false
-    await gitHubManager.isNewReleaseAvailable().catch((error) => {
+    await gitHubManager.getNewReleaseAvailable().catch((error) => {
       if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
         throw new Error('It is not the expected exception')
       } else {
@@ -56,8 +56,10 @@ describe('GitHub Manager test suite', () => {
     expectedResponse.tag_name = latestVersion
     const mockedResponse = { data: JSON.parse(JSON.stringify(expectedResponse)) }
     axios.get.mockResolvedValueOnce(mockedResponse)
-    const response = await gitHubManager.isNewReleaseAvailable()
+    const response = await gitHubManager.getNewReleaseAvailable()
     //console.log('response=' + JSON.stringify(response))
-    expect(response).toEqual(shouldBeNewer)
+    expect(response.isNewReleaseAvailable).toEqual(shouldBeNewer)
+    expect(response.latestReleaseVersion).toEqual(latestVersion)
+    expect(response.latestReleaseUrl).toBeDefined()
   }
 })

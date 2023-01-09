@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+
 import EmailManager from '../../services/emails/emailManager'
 import pkg from '../../../package.json'
 
@@ -8,8 +9,10 @@ export const emailSlice = createSlice({
     exportFile: undefined,
     isLoading: false,
     errors: [],
+    validationErrors: [],
     isImportPopupOpen: false,
     showSuccessDialog: false,
+    isImportFileValid: false,
   },
   reducers: {
     setIsImportPopupOpen(state, action) {
@@ -20,6 +23,12 @@ export const emailSlice = createSlice({
     },
     clearErrors(state) {
       state.errors = []
+    },
+    clearValidationErrors(state) {
+      state.validationErrors = []
+    },
+    setIsImportFileValid(state, action) {
+      state.isImportFileValid = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -50,8 +59,17 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
+      state.errors = [action.payload]
       state.isImportPopupOpen = false
+    })
+    builder.addCase(validateEmailTemplates.fulfilled, (state) => {
+      state.isLoading = false
+      state.isImportFileValid = true
+    })
+    builder.addCase(validateEmailTemplates.rejected, (state, action) => {
+      state.isLoading = false
+      state.validationErrors = action.payload
+      state.isImportFileValid = false
     })
   },
 })
@@ -85,7 +103,19 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
   }
 })
 
-export const { setIsImportPopupOpen, clearExportFile, clearErrors } = emailSlice.actions
+export const validateEmailTemplates = createAsyncThunk('service/validateEmailTemplates', async (zipContent, { getState, rejectWithValue }) => {
+  try {
+    const state = getState()
+    return await new EmailManager({
+      userKey: state.credentials.credentials.userKey,
+      secret: state.credentials.credentials.secretKey,
+    }).validateEmailTemplates(zipContent)
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const { setIsImportPopupOpen, clearExportFile, clearErrors, setIsImportFileValid, clearValidationErrors } = emailSlice.actions
 
 export default emailSlice.reducer
 
@@ -100,3 +130,7 @@ export const selectErrors = (state) => state.emails.errors
 export const selectIsImportPopupOpen = (state) => state.emails.isImportPopupOpen
 
 export const selectShowSuccessDialog = (state) => state.emails.showSuccessDialog
+
+export const selectIsImportFileValid = (state) => state.emails.isImportFileValid
+
+export const selectValidationErrors = (state) => state.emails.validationErrors

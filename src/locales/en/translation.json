@@ -1,5 +1,7 @@
 {
-  "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "CDC TOOLBOX",
+  "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download CDC Toolbox v{{version}}",
+  "CREDENTIALS_POPOVER.NEW_VERSION": "A new version is available!",
+  "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "CDC Toolbox",
   "EMAILS_IMPORT_POPUP.POPUP_HEADER": "Import email templates",
   "EMAILS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the email templates to import:",
   "EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All email templates have been imported successfully",
@@ -7,6 +9,7 @@
   "GLOBAL.BASE_DOMAIN": "Base Domain",
   "GLOBAL.CANCEL": "Cancel",
   "GLOBAL.CONFIRM": "Confirm",
+  "GLOBAL.CONTINUE": "Continue",
   "GLOBAL.DATA_CENTER": "Data Center",
   "GLOBAL.DELETE": "Delete",
   "GLOBAL.DESCRIPTION": "Description",

@@ -2,22 +2,30 @@ const initialState = {
   exportFile: undefined,
   isLoading: false,
   errors: [],
+  validationErrors: [],
   isImportPopupOpen: false,
   showSuccessDialog: false,
+  isImportFileValid: false,
 }
 
 const initialStateWithExportFile = {
   exportFile: { test: 'test' },
   isLoading: false,
   errors: [],
+  validationErrors: [],
   isImportPopupOpen: false,
+  showSuccessDialog: false,
+  isImportFileValid: false,
 }
 
 const initialStateWithErrors = {
   exportFile: undefined,
   isLoading: false,
   errors: [{ test: 'test' }],
+  validationErrors: [{ test: 'test' }],
   isImportPopupOpen: false,
+  showSuccessDialog: false,
+  isImportFileValid: false,
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'

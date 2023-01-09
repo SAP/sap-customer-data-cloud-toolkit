@@ -6,7 +6,7 @@ import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessage' })
 
-const DialogMessage = ({ children, open = true, state = ValueState.Error, closeButtonContent = 'Close', ...otherProps }) => {
+const DialogMessageInform = ({ children, open = true, state = ValueState.Error, closeButtonContent = 'Close', ...otherProps }) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(open)
   const classes = useStyles()
 
@@ -37,4 +37,4 @@ const DialogMessage = ({ children, open = true, state = ValueState.Error, closeB
   )
 }
 
-export default DialogMessage
+export default DialogMessageInform

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "SAP CDC Tools",
+  "name": "SAP CDC Toolbox",
   "version": "0.1.0",
   "description": "Add extra functionality to SAP CDC console",
   "permissions": [
