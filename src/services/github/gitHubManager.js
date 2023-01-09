@@ -4,9 +4,13 @@ import { VERSION } from '../../constants'
 
 class GitHubManager {
   static ERROR_MSG_RELEASE = 'Error accessing release information on git hub'
+  #protocol = 'https'
+  #github = 'github.tools.sap'
+  #api = 'api/v3'
 
   constructor() {
-    this.gitHubClient = new GitHubClient('https://github.tools.sap/api/v3', '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') // repo_deployment permission only
+    //this.gitHubClient = new GitHubClient('https://github.tools.sap/api/v3', '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') // repo_deployment permission only
+    this.gitHubClient = new GitHubClient(`${this.#protocol}://${this.#github}/${this.#api}`, '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') // repo_deployment permission only
   }
 
   async getNewReleaseAvailable() {
