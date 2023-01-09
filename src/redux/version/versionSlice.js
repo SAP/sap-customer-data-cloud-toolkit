@@ -4,20 +4,34 @@ import GitHubManager from '../../services/github/gitHubManager'
 export const versionSlice = createSlice({
   name: 'version',
   initialState: {
-    newVersion: '',
+    isNewReleaseAvailable: false,
+    latestReleaseUrl: '',
+    latestReleaseVersion: '',
   },
   extraReducers: (builder) => {
     builder.addCase(checkNewVersion.pending, (state) => {
-      state.newVersion = ''
+      clearState(state)
     })
     builder.addCase(checkNewVersion.fulfilled, (state, action) => {
-      state.newVersion = action.payload
+      fillState(state, action.payload)
     })
     builder.addCase(checkNewVersion.rejected, (state) => {
-      state.newVersion = ''
+      clearState(state)
     })
   },
 })
+
+const fillState = (state, versionData) => {
+  state.isNewReleaseAvailable = versionData.isNewReleaseAvailable
+  state.latestReleaseVersion = versionData.latestReleaseVersion
+  state.latestReleaseUrl = versionData.latestReleaseUrl
+}
+
+const clearState = (state) => {
+  state.isNewReleaseAvailable = false
+  state.latestReleaseVersion = ''
+  state.latestReleaseUrl = ''
+}
 
 export const checkNewVersion = createAsyncThunk('service/version', async (dummy, { rejectWithValue }) => {
   try {
@@ -29,6 +43,8 @@ export const checkNewVersion = createAsyncThunk('service/version', async (dummy,
 
 export default versionSlice.reducer
 
-export const selectNewVersion = (state) => state.version.newVersion
+export const selectIsNewReleaseAvailable = (state) => state.version.isNewReleaseAvailable
 
-export const selectHasNewVersion = (state) => selectNewVersion(state) !== ''
+export const selectLatestReleaseVersion = (state) => state.version.latestReleaseVersion
+
+export const selectLatestReleaseUrl = (state) => state.version.latestReleaseUrl

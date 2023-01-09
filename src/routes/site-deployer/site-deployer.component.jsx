@@ -46,7 +46,7 @@ import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from 
 
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
@@ -289,7 +289,7 @@ const SiteDeployer = ({ t }) => {
         </div>
 
         {showSuccessDialog ? (
-          <DialogMessage
+          <DialogMessageInform
             open={showSuccessDialog}
             headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
@@ -298,7 +298,7 @@ const SiteDeployer = ({ t }) => {
             id="successPopup"
           >
             {t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}
-          </DialogMessage>
+          </DialogMessageInform>
         ) : (
           ''
         )}

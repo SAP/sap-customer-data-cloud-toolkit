@@ -16,7 +16,11 @@ class GitHubManager {
     this.latestReleaseInformation = latestReleaseInformation.data
     const latestReleaseVersion = latestReleaseInformation.data.tag_name
     const currentReleaseVersion = VERSION
-    return latestReleaseVersion > currentReleaseVersion ? latestReleaseVersion : ''
+    return {
+      isNewReleaseAvailable: latestReleaseVersion > currentReleaseVersion,
+      latestReleaseVersion: latestReleaseVersion,
+      latestReleaseUrl: latestReleaseInformation.data.html_url
+    }
   }
 }
 

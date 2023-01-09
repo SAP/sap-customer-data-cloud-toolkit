@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import MessageList from '../../components/message-list/message-list.component'
 import SmsImportPopup from '../../components/sms-import-popup/sms-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
@@ -70,7 +70,7 @@ const SmsTemplates = ({ t }) => {
   }
 
   const showErrorsList = () => (
-    <DialogMessage
+    <DialogMessageInform
       open={showErrorDialog}
       className={classes.errorDialogStyle}
       headerText={t('GLOBAL.ERROR')}
@@ -83,7 +83,7 @@ const SmsTemplates = ({ t }) => {
       }}
     >
       <MessageList messages={errors} />
-    </DialogMessage>
+    </DialogMessageInform>
   )
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
@@ -110,7 +110,7 @@ const SmsTemplates = ({ t }) => {
       {showErrorsList()}
       {isImportPopupOpen ? <SmsImportPopup /> : ''}
       {showSuccessDialog ? (
-        <DialogMessage
+        <DialogMessageInform
           open={showSuccessDialog}
           headerText={t('GLOBAL.SUCCESS')}
           state={ValueState.Success}
@@ -119,7 +119,7 @@ const SmsTemplates = ({ t }) => {
           id="successPopup"
         >
           {t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
-        </DialogMessage>
+        </DialogMessageInform>
       ) : (
         ''
       )}

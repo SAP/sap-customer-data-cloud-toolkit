@@ -58,10 +58,8 @@ describe('GitHub Manager test suite', () => {
     axios.get.mockResolvedValueOnce(mockedResponse)
     const response = await gitHubManager.getNewReleaseAvailable()
     //console.log('response=' + JSON.stringify(response))
-    expect(isNewer(response)).toEqual(shouldBeNewer)
-  }
-
-  function isNewer(response) {
-    return response.length !== 0
+    expect(response.isNewReleaseAvailable).toEqual(shouldBeNewer)
+    expect(response.latestReleaseVersion).toEqual(latestVersion)
+    expect(response.latestReleaseUrl).toBeDefined()
   }
 })

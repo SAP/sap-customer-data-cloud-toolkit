@@ -2,7 +2,7 @@ import { ValueState } from '@ui5/webcomponents-react'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 
 import styles from './styles.js'
 
@@ -12,7 +12,7 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
   const classes = useStyles()
 
   return (
-    <DialogMessage
+    <DialogMessageInform
       open={open}
       headerText={t('GLOBAL.ERROR')}
       state={ValueState.Error}
@@ -22,7 +22,7 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
       id="errorPopup"
     >
       {t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}
-    </DialogMessage>
+    </DialogMessageInform>
   )
 }
 

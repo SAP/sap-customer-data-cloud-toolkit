@@ -1,7 +1,13 @@
 const initialState = {
-  newVersion: '',
+  isNewReleaseAvailable: false,
+  latestReleaseUrl: '',
+  latestReleaseVersion: '',
 }
 
-const newVersion = '6.0.0'
+const versionData = {
+  isNewReleaseAvailable: true,
+  latestReleaseUrl: 'dummy test url',
+  latestReleaseVersion: '6.0.0',
+}
 
-export { initialState, newVersion }
+export { initialState, versionData }
