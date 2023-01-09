@@ -20,6 +20,7 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
       <Dialog
         open={dialogIsOpen}
         state={state}
+        className={classes.errorDialogStyle}
         footer={
           <Bar
             design="Footer"
