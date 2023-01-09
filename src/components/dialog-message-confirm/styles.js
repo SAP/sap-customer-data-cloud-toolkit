@@ -1,4 +1,7 @@
 const styles = {
+  errorDialogStyle: {
+    textAlign: 'left',
+  },
   confirmButtonStyle: {
     minWidth: '70px',
     maxHeight: '30px',
