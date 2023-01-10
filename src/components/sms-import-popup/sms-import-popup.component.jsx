@@ -77,7 +77,7 @@ const SmsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('SMS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
+              <input id="zipFileInput" type="file" accept="application/zip"></input>
             </div>
           </div>
         }

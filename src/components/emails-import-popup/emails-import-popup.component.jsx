@@ -141,7 +141,7 @@ const EmailsImportPopup = ({ t }) => {
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
       <>{isImportFileValid ? onImportValidatedFile() : ''}</>
       {showValidationErrorsList()}
-      <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
+      <input type="text"></input>
     </>
   )
 }
