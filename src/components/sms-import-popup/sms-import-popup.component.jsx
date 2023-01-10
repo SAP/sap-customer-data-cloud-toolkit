@@ -39,12 +39,12 @@ const SmsImportPopup = ({ t }) => {
     onCloseSmsImportPopup()
   }
 
-  // const onFileUploadButtonClickHandler = (event) => {
-  //   const file = event.target.files[0]
-  //   if (file) {
-  //     setImportFile(file)
-  //   }
-  // }
+  const onFileUploadButtonClickHandler = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      setImportFile(file)
+    }
+  }
 
   const onCloseSmsImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
@@ -77,7 +77,7 @@ const SmsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('SMS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type="file" accept="application/zip"></input>
+              <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
             </div>
           </div>
         }

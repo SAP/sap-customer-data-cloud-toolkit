@@ -141,7 +141,6 @@ const EmailsImportPopup = ({ t }) => {
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
       <>{isImportFileValid ? onImportValidatedFile() : ''}</>
       {showValidationErrorsList()}
-      <input type="text"></input>
     </>
   )
 }
