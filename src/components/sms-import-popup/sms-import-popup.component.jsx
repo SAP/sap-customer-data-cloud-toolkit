@@ -39,12 +39,12 @@ const SmsImportPopup = ({ t }) => {
     onCloseSmsImportPopup()
   }
 
-  const onFileUploadButtonClickHandler = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      setImportFile(file)
-    }
-  }
+  // const onFileUploadButtonClickHandler = (event) => {
+  //   const file = event.target.files[0]
+  //   if (file) {
+  //     setImportFile(file)
+  //   }
+  // }
 
   const onCloseSmsImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
