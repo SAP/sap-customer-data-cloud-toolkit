@@ -5,7 +5,7 @@ const emailTemplate =
   '    <META name="subject" content=" Login with magic link" />\r\n' +
   '</head>\r\n' +
   '<body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n' +
-  '    <div style="background: url(\'https://cdns.gigya.com/site/images/email/background.png\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n' +
+  '    <div style="background: url(\'background.png\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n' +
   '        <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n' +
   '            <div style="padding:30px 30px 29px;margin: 0px auto;">\r\n' +
   '                <p>Hello, </p>\r\n' +
