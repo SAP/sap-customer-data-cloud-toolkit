@@ -5,10 +5,9 @@ const gitHubExpectedErrorResponse = {
 }
 
 const gitHubExpectedResponse = {
-  url: 'https://github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320',
-  assets_url: 'https://github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320/assets',
-  upload_url: 'https://github.tools.sap/api/uploads/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320/assets{?name,label}',
-  html_url: 'https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension/releases/tag/0.2.0',
+  url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320',
+  assets_url: 'github/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320/assets',
+  html_url: 'github/cx-servicesautomation/cdc-tools-chrome-extension/releases/tag/0.2.0',
   id: 100320,
   author: {
     login: 'Iuser',
@@ -23,7 +22,7 @@ const gitHubExpectedResponse = {
   published_at: '2022-12-13T13:38:36Z',
   assets: [
     {
-      url: 'https://github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/assets/35336',
+      url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/assets/35336',
       id: 35336,
       node_id: 'MDEyOlJlbGVhc2VBc3NldDM1MzM2',
       name: 'cdc-tools-chrome-extension-0.2.0.zip',
@@ -35,11 +34,11 @@ const gitHubExpectedResponse = {
       download_count: 1,
       created_at: '2022-12-13T13:38:38Z',
       updated_at: '2022-12-13T13:38:38Z',
-      browser_download_url: 'https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension/releases/download/0.2.0/cdc-tools-chrome-extension-0.2.0.zip',
+      browser_download_url: 'github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension/releases/download/0.2.0/cdc-tools-chrome-extension-0.2.0.zip',
     },
   ],
-  tarball_url: 'https://github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/tarball/0.2.0',
-  zipball_url: 'https://github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/zipball/0.2.0',
+  tarball_url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/tarball/0.2.0',
+  zipball_url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/zipball/0.2.0',
   body: '*',
 }
 
