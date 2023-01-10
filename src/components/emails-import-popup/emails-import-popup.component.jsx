@@ -121,7 +121,7 @@ const EmailsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type='file' accept="application/zip" onChange=onFileUploadButtonClickHandler></input>
+              <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
             </div>
           </div>
         }
@@ -141,6 +141,7 @@ const EmailsImportPopup = ({ t }) => {
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
       <>{isImportFileValid ? onImportValidatedFile() : ''}</>
       {showValidationErrorsList()}
+      <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
     </>
   )
 }
