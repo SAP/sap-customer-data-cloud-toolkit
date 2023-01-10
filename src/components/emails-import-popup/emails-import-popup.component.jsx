@@ -65,10 +65,10 @@ const EmailsImportPopup = ({ t }) => {
   }
 
   const onFileUploadButtonClickHandler = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      setImportFile(file)
-    }
+    // const file = event.target.files[0]
+    // if (file) {
+    //   setImportFile(file)
+    // }
   }
 
   const onCloseEmailImportPopup = () => {

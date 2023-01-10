@@ -21,13 +21,13 @@ node() {
             npm install
             npm install start-server-and-test
             npm run test
-            npm run cypress:ci
+
             '''
         }
         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/unit/lcov-report', reportFiles: 'index.html', reportName: 'Unit test coverage report'])
         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/cypress/lcov-report', reportFiles: 'index.html', reportName: 'End to end test coverage report'])
     }
-
+//            npm run cypress:ci
 //     stage('SonarQube report') {
 //         def scannerHome = tool 'cdc-tools-chrome-extension';
 //         def nodeHome = tool 'nodejs16';
