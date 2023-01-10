@@ -27,12 +27,12 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
-    expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/EmailVerification/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -44,7 +44,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -288,13 +288,13 @@ describe('Emails Manager test suite', () => {
 
 function createExpectedZipEntries() {
   const expectedZipEntries = new Map()
-  expectedZipEntries.set('MagicLink/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('MagicLink/pt.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('CodeVerification/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('PasswordReset/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordReset/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
   return expectedZipEntries
 }
 

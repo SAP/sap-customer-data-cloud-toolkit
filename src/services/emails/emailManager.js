@@ -13,12 +13,14 @@ class EmailManager {
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
+  #zipInnerRootFolder
 
   constructor(credentials) {
     this.emailService = new Email(credentials.userKey, credentials.secret)
     this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
     this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
+    this.#zipInnerRootFolder = `${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/`
   }
 
   async export(site) {
@@ -28,7 +30,7 @@ class EmailManager {
       return Promise.reject(emailTemplatesResponse)
     }
 
-    this.#zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    this.#zipManager.createFile(EXPORT_EMAIL_TEMPLATES_FILE_NAME, EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
     return this.#zipManager.createZipArchive()
   }
 
@@ -53,7 +55,7 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.#zipManager.createFile(externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
+        const filePath = this.#zipManager.createFile(this.#zipInnerRootFolder + externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -66,7 +68,7 @@ class EmailManager {
       for (const internalName of internalNames) {
         if (!templates.has(internalName)) {
           const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalName)
-          this.#zipManager.createFolder(externalTemplateName)
+          this.#zipManager.createFolder(this.#zipInnerRootFolder + externalTemplateName)
         }
       }
     }
