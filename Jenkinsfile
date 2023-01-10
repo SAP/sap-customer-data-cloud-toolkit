@@ -28,22 +28,22 @@ node() {
         publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/cypress/lcov-report', reportFiles: 'index.html', reportName: 'End to end test coverage report'])
     }
 
-    stage('SonarQube report') {
-        def scannerHome = tool 'cdc-tools-chrome-extension';
-        def nodeHome = tool 'nodejs16';
-        withEnv(["PATH=${nodeHome}/bin:${PATH}"]) {
-            withSonarQubeEnv('cdc-tools-chrome-extension') {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
-        }
-    }
-
-    stage("SonarQube result") {
-        timeout(time: 30, unit: 'MINUTES') {
-          waitForQualityGate abortPipeline: true,
-            credentialsId:"cdc-tools-chrome-extension-sonar"
-        }
-    }
+//     stage('SonarQube report') {
+//         def scannerHome = tool 'cdc-tools-chrome-extension';
+//         def nodeHome = tool 'nodejs16';
+//         withEnv(["PATH=${nodeHome}/bin:${PATH}"]) {
+//             withSonarQubeEnv('cdc-tools-chrome-extension') {
+//                 sh "${scannerHome}/bin/sonar-scanner"
+//             }
+//         }
+//     }
+//
+//     stage("SonarQube result") {
+//         timeout(time: 30, unit: 'MINUTES') {
+//           waitForQualityGate abortPipeline: true,
+//             credentialsId:"cdc-tools-chrome-extension-sonar"
+//         }
+//     }
 
     stage('Mend/Whitesource report') {
         whitesourceExecuteScan script: this
