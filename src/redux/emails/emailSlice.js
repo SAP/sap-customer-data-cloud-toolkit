@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import EmailManager from '../../services/emails/emailManager'
-import EXPORT_EMAIL_TEMPLATES_FILE_NAME from '../../constants'
+import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 export const emailSlice = createSlice({
   name: 'emails',
