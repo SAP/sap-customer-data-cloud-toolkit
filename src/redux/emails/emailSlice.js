@@ -59,7 +59,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = [action.payload]
+      state.errors = action.payload
       state.isImportPopupOpen = false
     })
     builder.addCase(validateEmailTemplates.fulfilled, (state) => {
