@@ -121,7 +121,7 @@ const EmailsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type='file' accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
+              <input id="zipFileInput" type='file' accept="application/zip" onChange=onFileUploadButtonClickHandler></input>
             </div>
           </div>
         }

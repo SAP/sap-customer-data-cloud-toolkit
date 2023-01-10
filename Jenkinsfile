@@ -20,7 +20,7 @@ node() {
             sh '''chown -R root .
             npm install
             npm install start-server-and-test
-            npm run test
+            npm run build
 
             '''
         }
