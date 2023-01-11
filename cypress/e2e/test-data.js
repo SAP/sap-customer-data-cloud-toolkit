@@ -22,7 +22,7 @@ const importMessage = `Error importing email templatesError on template file Dou
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
-
+const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
 export {
   siteDomain,
   dropdownOption,
@@ -46,4 +46,5 @@ export {
   emailExampleFile,
   smsExampleFile,
   emailErrorExampleFile,
+  unauthorizedUser,
 }
