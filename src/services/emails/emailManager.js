@@ -4,6 +4,7 @@ import ZipManager from '../zip/zipManager'
 import XmlValidator from '../validator/xmlValidator'
 import generateErrorResponse from '../errors/generateErrorResponse'
 import GigyaManager from '../gigya/gigyaManager'
+import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
@@ -12,12 +13,14 @@ class EmailManager {
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
+  #zipInnerRootFolder
 
   constructor(credentials) {
     this.emailService = new Email(credentials.userKey, credentials.secret)
     this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
     this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
+    this.#zipInnerRootFolder = `${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/`
   }
 
   async export(site) {
@@ -27,7 +30,7 @@ class EmailManager {
       return Promise.reject(emailTemplatesResponse)
     }
 
-    this.#zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
+    this.#zipManager.createFile(EXPORT_EMAIL_TEMPLATES_FILE_NAME, EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
     return this.#zipManager.createZipArchive()
   }
 
@@ -52,7 +55,7 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.#zipManager.createFile(externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
+        const filePath = this.#zipManager.createFile(this.#zipInnerRootFolder + externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
         templateObject[language] = filePath
       }
     }
@@ -65,7 +68,7 @@ class EmailManager {
       for (const internalName of internalNames) {
         if (!templates.has(internalName)) {
           const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(internalName)
-          this.#zipManager.createFolder(externalTemplateName)
+          this.#zipManager.createFolder(this.#zipInnerRootFolder + externalTemplateName)
         }
       }
     }
@@ -118,7 +121,7 @@ class EmailManager {
       return Promise.reject(errors)
     }
 
-    const metadataObj = JSON.parse(zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME))
+    const metadataObj = JSON.parse(zipContentMap.get(`${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`))
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
     this.#removeOldContentFromMetadataMap(metadataMap)
     return await this.#importTemplates(site, metadataObj)
@@ -217,11 +220,11 @@ class EmailManager {
   #getZipEntryInfo(zipEntry) {
     const info = {}
     const tokens = zipEntry.split('/')
-    if (tokens.length > 1) {
-      const languageIndex = tokens[1].lastIndexOf(EmailManager.TEMPLATE_FILE_EXTENSION)
-      if (tokens.length === 2 && languageIndex !== -1) {
-        info.template = tokens[0]
-        info.language = tokens[1].slice(0, languageIndex)
+    if (tokens.length > 2) {
+      const languageIndex = tokens[2].lastIndexOf(EmailManager.TEMPLATE_FILE_EXTENSION)
+      if (tokens.length === 3 && languageIndex !== -1) {
+        info.template = tokens[1]
+        info.language = tokens[2].slice(0, languageIndex)
       }
     }
     return info
@@ -229,10 +232,12 @@ class EmailManager {
 
   #validateZipFile(zipContentMap) {
     const response = []
-    if (zipContentMap.get(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME) === undefined) {
+    if (zipContentMap.get(`${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`) === undefined) {
       const error = {
         code: 1,
-        details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
+        details: `Zip file does not contains the metadata file ${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/${
+          EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME
+        }. Please export the email templates again.`,
       }
       response.push(generateErrorResponse(error, 'Error importing email templates').data)
     }
@@ -274,7 +279,7 @@ class EmailManager {
   #cleanZipFile(zipContentMap) {
     const values = this.#getValues()
     for (let filename of zipContentMap) {
-      if (!values.some((t) => filename[0].includes(t)) && !this.#isMetadataFile(filename[0])) {
+      if (!filename[0].startsWith(EXPORT_EMAIL_TEMPLATES_FILE_NAME) || (!values.some((t) => filename[0].includes(t)) && !this.#isMetadataFile(filename[0]))) {
         zipContentMap.delete(filename[0])
       }
     }

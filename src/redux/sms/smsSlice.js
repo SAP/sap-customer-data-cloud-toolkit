@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import SmsManager from '../../services/sms/smsManager'
 
-const exportFileName = 'cdc-toolbox-sms-templates'
+import SmsManager from '../../services/sms/smsManager'
+import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 export const smsSlice = createSlice({
   name: 'sms',
@@ -29,7 +29,7 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getSmsTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      state.exportFile = new File([action.payload], exportFileName, { type: 'application/zip' })
+      state.exportFile = new File([action.payload], EXPORT_SMS_TEMPLATES_FILE_NAME, { type: 'application/zip' })
     })
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
