@@ -12,7 +12,6 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
     cy.wait(30000)
 
-
     //Site creation using Site Deployer with the domain dev.us.e2e_testing
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Deployer').click({ force: true })
     cy.wait(20000)
@@ -31,7 +30,7 @@ describe('All features full Test Suite', () => {
     cy.wait(20000)
 
     //Navigating to the Site that was created
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
+    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
     cy.wait(20000)
     cy.get('main-app')
       .shadow()
@@ -56,7 +55,7 @@ describe('All features full Test Suite', () => {
     //Email export and import use cases
     // - Export and import the default files
     // - Import the file with changed locales and compare them
-    //cy.wait(20000)
+    cy.wait(20000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Email Templates').click({ force: true })
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
 
@@ -156,7 +155,7 @@ describe('All features full Test Suite', () => {
       .find('[role="listitem"]')
       .find('[class="fd-list__title"]')
       .click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '31')
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
     //Delete the site created on this test
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })

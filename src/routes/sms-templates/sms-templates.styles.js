@@ -1,6 +1,6 @@
 const styles = {
   errorDialogStyle: {
-    textAlign: 'center',
+    textAlign: 'left',
   },
   outerBarStyle: {
     width: '300px',

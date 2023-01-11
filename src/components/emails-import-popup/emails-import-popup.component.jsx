@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { withNamespaces } from 'react-i18next'
-import { Dialog, Button, Label, ValueState } from '@ui5/webcomponents-react'
+import { Dialog, Button, Label, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 
@@ -17,6 +17,7 @@ import {
   setIsImportFileValid,
   selectValidationErrors,
   clearValidationErrors,
+  selectIsLoading,
 } from '../../redux/emails/emailSlice'
 
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
@@ -35,6 +36,7 @@ const EmailsImportPopup = ({ t }) => {
   const credentials = useSelector(selectCredentials)
   const isImportFileValid = useSelector(selectIsImportFileValid)
   const validationErrors = useSelector(selectValidationErrors)
+  const isLoading = useSelector(selectIsLoading)
 
   const [importFile, setImportFile] = useState(undefined)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
@@ -99,8 +101,8 @@ const EmailsImportPopup = ({ t }) => {
     </DialogMessageConfirm>
   )
 
-  return (
-    <>
+  const showDialog = () => {
+    return (
       <Dialog
         className="ui-dialog"
         open={isImportPopupOpen}
@@ -120,7 +122,7 @@ const EmailsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
+              <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
             </div>
           </div>
         }
@@ -136,9 +138,14 @@ const EmailsImportPopup = ({ t }) => {
           </div>
         }
       ></Dialog>
+    )
+  }
 
+  return (
+    <>
+      {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : showDialog()}
+      {isImportFileValid ? onImportValidatedFile() : ''}
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
-      <>{isImportFileValid ? onImportValidatedFile() : ''}</>
       {showValidationErrorsList()}
     </>
   )

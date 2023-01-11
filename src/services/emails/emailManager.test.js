@@ -6,6 +6,7 @@ import ZipManager from '../zip/zipManager'
 import * as CommonTestData from '../servicesData_test'
 import * as ConfiguratorTestData from '../configurator/data_test'
 import JSZip from 'jszip'
+import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -27,12 +28,12 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
-    expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/EmailVerification/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -44,7 +45,10 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+    expectedZipEntries.set(
+      EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json',
+      JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates())
+    )
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -314,53 +318,50 @@ describe('Emails Manager test suite', () => {
 
 function createExpectedZipEntries() {
   const expectedZipEntries = new Map()
-  expectedZipEntries.set('MagicLink/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('MagicLink/pt.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('CodeVerification/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('PasswordReset/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set('TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordReset/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
   return expectedZipEntries
 }
 
 function createZipFullContent() {
   const jszip = new JSZip()
-  jszip.file('MagicLink/en.html', emailTemplateBuffer)
-  jszip.file('MagicLink/pt.html', emailTemplateBuffer)
-  jszip.file('CodeVerification/en.html', emailTemplateBuffer)
-  jszip.file('LitePreferencesCenter/en.html', emailTemplateBuffer)
-  jszip.file('DoubleOptInConfirmation/ar.html', emailTemplateBuffer)
-  jszip.file('PasswordReset/en.html', emailTemplateBuffer)
-  jszip.file('TFAEmailVerification/en.html', emailTemplateBuffer)
-  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
-  jszip.file('EmailVerification/en.html', emailTemplateBuffer)
-  jszip.file('AccountDeletionConfirmation/pt-br.html', emailTemplateBuffer)
-  jszip.file('PasswordResetConfirmation/pt-br.html', emailTemplateBuffer)
-  jszip.file('ImpossibleTraveler/en.html', emailTemplateBuffer)
-  jszip.file('NewUserWelcome/ar.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/LitePreferencesCenter/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/DoubleOptInConfirmation/ar.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordReset/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/TFAEmailVerification/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/EmailVerification/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/AccountDeletionConfirmation/pt-br.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordResetConfirmation/pt-br.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/ImpossibleTraveler/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/NewUserWelcome/ar.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipFullContentWithDispensableFiles() {
   const jszip = new JSZip()
-  jszip.file('MagicLink/en.html', emailTemplateBuffer)
-  jszip.file('MagicLink/pt.html', emailTemplateBuffer)
-  jszip.file('CodeVerification/en.html', emailTemplateBuffer)
-  jszip.file('/__MACOSX/', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html', emailTemplateBuffer)
+  jszip.file('/__MACOSX/' + EXPORT_EMAIL_TEMPLATES_FILE_NAME, emailTemplateBuffer)
   jszip.file('.DS_Store', emailTemplateBuffer)
   jszip.file('dymmy.txt', emailTemplateBuffer)
-  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
 
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentWithTemplateError(template) {
-  const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
-  metadata['magicLink'] = EmailsTestData.getEmailsExpectedResponse.magicLink
-  const jszip = new JSZip()
-  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
-  jszip.file('MagicLink/en.html', Buffer.from(template, 'utf8'))
+  const jszip = createZipContent()
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', Buffer.from(template, 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
@@ -371,20 +372,28 @@ function createZipContentEmpty() {
 
 function createZipContentWithNewTemplate() {
   const jszip = new JSZip()
-  jszip.file('.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
-  jszip.file('NewUserWelcome/ar.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/NewUserWelcome/ar.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentWithTemplateLanguageRemoved() {
   const jszip = createZipContent()
-  jszip.file('MagicLink/en.html', emailTemplateBuffer)
-  jszip.file('MagicLink/pt.html', Buffer.from('', 'utf8'))
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', Buffer.from('', 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
 function createZipContentWithTemplateLanguageAdded() {
   const jszip = createZipContent()
-  jszip.file('MagicLink/fr.html', emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/fr.html', emailTemplateBuffer)
   return jszip.generateAsync({ type: 'arraybuffer' })
+}
+
+function createZipContent() {
+  const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
+  metadata[magicLinkTemplateName] = EmailsTestData.getEmailsExpectedResponse.magicLink
+  const jszip = new JSZip()
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
+  return jszip
 }
