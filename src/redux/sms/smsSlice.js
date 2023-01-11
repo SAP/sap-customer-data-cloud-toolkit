@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import SmsManager from '../../services/sms/smsManager'
-
 import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 export const smsSlice = createSlice({
