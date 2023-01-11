@@ -23,6 +23,8 @@ const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
 const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
+const cypressDownloadsPath = '../cdc-tools-chrome-extension/cypress/downloads/'
+
 export {
   siteDomain,
   dropdownOption,
@@ -47,4 +49,5 @@ export {
   smsExampleFile,
   emailErrorExampleFile,
   unauthorizedUser,
+  cypressDownloadsPath,
 }
