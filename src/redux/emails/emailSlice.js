@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import EmailManager from '../../services/emails/emailManager'
-import pkg from '../../../package.json'
+import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 export const emailSlice = createSlice({
   name: 'emails',
@@ -37,7 +37,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(getEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      state.exportFile = new File([action.payload], pkg.name, { type: 'application/zip' })
+      state.exportFile = new File([action.payload], EXPORT_EMAIL_TEMPLATES_FILE_NAME, { type: 'application/zip' })
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
@@ -59,7 +59,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = [action.payload]
+      state.errors = action.payload
       state.isImportPopupOpen = false
     })
     builder.addCase(validateEmailTemplates.fulfilled, (state) => {
