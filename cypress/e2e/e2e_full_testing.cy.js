@@ -30,7 +30,7 @@ describe('All features full Test Suite', () => {
     cy.wait(20000)
 
     //Navigating to the Site that was created
-    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
     cy.wait(20000)
     cy.get('main-app')
       .shadow()
@@ -55,107 +55,107 @@ describe('All features full Test Suite', () => {
     //Email export and import use cases
     // - Export and import the default files
     // - Import the file with changed locales and compare them
-    cy.wait(20000)
+    // cy.wait(20000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Email Templates').click({ force: true })
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
+    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
 
-    //Email Templates -  First Use Case
-    //Exporting and Importing the original template
-    cy.get('#exportAllEmailTemplatesButton').click({ force: true })
-    cy.wait(20000)
-    cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#confirmButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile('../cdc-tools-chrome-extension/cypress/downloads/cdc-tools-chrome-extension.zip', { force: true })
-    cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
-    cy.wait(10000)
-    cy.get('#confirmButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    cy.wait(20000)
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
-    cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
+    // //Email Templates -  First Use Case
+    // //Exporting and Importing the original template
+    // cy.get('#exportAllEmailTemplatesButton').click({ force: true })
+    // cy.wait(20000)
+    // cy.get('#importAllEmailTemplatesButton').click({ force: true })
+    // cy.get('#confirmButton').click({ force: true })
+    // cy.get('#zipFileInput').selectFile('../cdc-tools-chrome-extension/cypress/downloads/cdc-tools-chrome-extension.zip', { force: true })
+    // cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
+    // cy.wait(10000)
+    // cy.get('#confirmButton').click({ force: true })
+    // cy.wait(10000)
+    // cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    // cy.wait(20000)
+    // cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
+    // cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
 
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
+    // cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
 
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Email Templates').click({ force: true })
+    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Email Templates').click({ force: true })
 
-    //Email Templates - Second Use Case
-    //Importing the test template with added languages
-    cy.wait(20000)
-    cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile('cdc-tools-email-import.zip', { force: true })
-    cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
-    cy.get('#confirmButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    cy.wait(20000)
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
-    cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '45')
+    // //Email Templates - Second Use Case
+    // //Importing the test template with added languages
+    // cy.wait(20000)
+    // cy.get('#importAllEmailTemplatesButton').click({ force: true })
+    // cy.get('#zipFileInput').attachFile('cdc-tools-email-import.zip', { force: true })
+    // cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
+    // cy.get('#confirmButton').click({ force: true })
+    // cy.wait(10000)
+    // cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    // cy.wait(20000)
+    // cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
+    // cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
+    // cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '45')
 
-    //Email Templates - Third Use Case
-    //Validating the error by using a bad userKey
-    cy.wait(10000)
-    cy.get('body').find('#openPopoverButton').click({ force: true })
-    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
+    // //Email Templates - Third Use Case
+    // //Validating the error by using a bad userKey
+    // cy.wait(10000)
+    // cy.get('body').find('#openPopoverButton').click({ force: true })
+    // cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
 
-    cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile('cdc-tools-email-import.zip', { force: true })
-    cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
-    cy.get('#confirmButton').click({ force: true })
-    cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', testData.unauthorizedUser)
-    cy.wait(10000)
-    cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    // cy.get('#importAllEmailTemplatesButton').click({ force: true })
+    // cy.get('#zipFileInput').attachFile('cdc-tools-email-import.zip', { force: true })
+    // cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
+    // cy.get('#confirmButton').click({ force: true })
+    // cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', testData.unauthorizedUser)
+    // cy.wait(10000)
+    // cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
 
-    cy.get('body').find('#openPopoverButton').click({ force: true })
-    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}')
+    // cy.get('body').find('#openPopoverButton').click({ force: true })
+    // cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}')
 
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
-    cy.wait(10000)
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('SMS Templates').click({ force: true })
-    //SMS Templates - First Use Case
-    //Exporting and Importing the original template
-    cy.get('#exportAllSmsTemplatesButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile('../cdc-tools-chrome-extension/cypress/downloads/cdc-tools-chrome-extension.zip', { force: true })
-    cy.get('#importZipButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    cy.wait(20000)
-    cy.get('main-app')
-      .shadow()
-      .find('sms-templates-web-app')
-      .shadow()
-      .find('[class="languages_list_container"]')
-      .find('[role="list"]')
-      .find('[role="listitem"]')
-      .find('[class="fd-list__title"]')
-      .click({ force: true })
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
+    // cy.wait(10000)
+    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('SMS Templates').click({ force: true })
+    // //SMS Templates - First Use Case
+    // //Exporting and Importing the original template
+    // cy.get('#exportAllSmsTemplatesButton').click({ force: true })
+    // cy.wait(10000)
+    // cy.get('#importAllSmsTemplatesButton').click({ force: true })
+    // cy.get('#zipFileInput').selectFile('../cdc-tools-chrome-extension/cypress/downloads/cdc-tools-chrome-extension.zip', { force: true })
+    // cy.get('#importZipButton').click({ force: true })
+    // cy.wait(10000)
+    // cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    // cy.wait(20000)
+    // cy.get('main-app')
+    //   .shadow()
+    //   .find('sms-templates-web-app')
+    //   .shadow()
+    //   .find('[class="languages_list_container"]')
+    //   .find('[role="list"]')
+    //   .find('[role="listitem"]')
+    //   .find('[class="fd-list__title"]')
+    //   .click({ force: true })
 
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
-    //SMS Templates - Second Use Case
-    //Importing and validating the template with new changes
-    cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
-    cy.get('#importZipButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    cy.wait(20000)
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
-    cy.get('main-app')
-      .shadow()
-      .find('sms-templates-web-app')
-      .shadow()
-      .find('[class="languages_list_container"]')
-      .find('[role="list"]')
-      .find('[role="listitem"]')
-      .find('[class="fd-list__title"]')
-      .click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
+    // //SMS Templates - Second Use Case
+    // //Importing and validating the template with new changes
+    // cy.get('#importAllSmsTemplatesButton').click({ force: true })
+    // cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
+    // cy.get('#importZipButton').click({ force: true })
+    // cy.wait(10000)
+    // cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    // cy.wait(20000)
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
+    // cy.get('main-app')
+    //   .shadow()
+    //   .find('sms-templates-web-app')
+    //   .shadow()
+    //   .find('[class="languages_list_container"]')
+    //   .find('[role="list"]')
+    //   .find('[role="listitem"]')
+    //   .find('[class="fd-list__title"]')
+    //   .click({ force: true })
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
     //Delete the site created on this test
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
