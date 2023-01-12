@@ -55,7 +55,11 @@ class EmailManager {
     for (const [templateName, templateObject] of templates) {
       const externalTemplateName = this.#emailTemplateNameTranslator.translateInternalName(templateName)
       for (const language of Object.keys(templateObject)) {
-        const filePath = this.#zipManager.createFile(this.#zipInnerRootFolder + externalTemplateName, `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`, templateObject[language])
+        const filePath = this.#zipManager.createFile(
+          this.#zipInnerRootFolder + externalTemplateName,
+          `${language}${EmailManager.TEMPLATE_FILE_EXTENSION}`,
+          templateObject[language]
+        )
         templateObject[language] = filePath
       }
     }
@@ -162,7 +166,10 @@ class EmailManager {
   #removeOldContentFromMetadataMap(metadataMap) {
     for (let [internalTemplateName, templates] of metadataMap) {
       for (const key in templates) {
-        if (templates[key] !== null && templates[key].startsWith(this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName))) {
+        if (
+          templates[key] !== null &&
+          templates[key].startsWith(`${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/${this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName)}`)
+        ) {
           delete templates[key]
         }
       }
@@ -265,24 +272,23 @@ class EmailManager {
   }
 
   #isTemplateFile(filename) {
-    return filename.endsWith(EmailManager.TEMPLATE_FILE_EXTENSION)
+    return filename.endsWith(EmailManager.TEMPLATE_FILE_EXTENSION) && this.#emailTemplateNameTranslator.getExternalNames().some((t) => filename.includes(t))
   }
 
   #isMetadataFile(filename) {
-    return filename.endsWith(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME)
-  }
-
-  #getValues() {
-    return this.#emailTemplateNameTranslator.getExternalNames()
+    return filename === `${EXPORT_EMAIL_TEMPLATES_FILE_NAME}/${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`
   }
 
   #cleanZipFile(zipContentMap) {
-    const values = this.#getValues()
     for (let filename of zipContentMap) {
-      if (!filename[0].startsWith(EXPORT_EMAIL_TEMPLATES_FILE_NAME) || (!values.some((t) => filename[0].includes(t)) && !this.#isMetadataFile(filename[0]))) {
+      if (this.#shouldBeIgnored(filename[0]) || !filename[0].startsWith(EXPORT_EMAIL_TEMPLATES_FILE_NAME)) {
         zipContentMap.delete(filename[0])
       }
     }
+  }
+
+  #shouldBeIgnored(filename) {
+    return !this.#isTemplateFile(filename) && !this.#isMetadataFile(filename)
   }
 }
 

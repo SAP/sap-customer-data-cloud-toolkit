@@ -44,7 +44,10 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+    expectedZipEntries.set(
+      EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json',
+      JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates())
+    )
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -322,8 +325,9 @@ function createZipFullContentWithDispensableFiles() {
   jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html', emailTemplateBuffer)
   jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html', emailTemplateBuffer)
   jszip.file('/__MACOSX/' + EXPORT_EMAIL_TEMPLATES_FILE_NAME, emailTemplateBuffer)
+  jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/.DS_Store', emailTemplateBuffer)
   jszip.file('.DS_Store', emailTemplateBuffer)
-  jszip.file('dymmy.txt', emailTemplateBuffer)
+  jszip.file('dummy.txt', emailTemplateBuffer)
   jszip.file(EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent), 'utf8'))
 
   return jszip.generateAsync({ type: 'arraybuffer' })
