@@ -122,10 +122,6 @@ const SiteDeployer = ({ t }) => {
     dispatch(clearErrors())
   }
 
-  const onChangeSiteStructure = (event) => {
-    setSelectedStructureId(event.detail.selectedOption.dataset.value)
-  }
-
   const onCreateHandler = () => {
     const selectedDataCenters = getSelectedDataCenters()
     const selectedStructure = getSelectedStructure()
@@ -147,6 +143,17 @@ const SiteDeployer = ({ t }) => {
         )
       })
     })
+  }
+
+  const onSuccessDialogAfterCloseHandler = () => {
+    const SITE_DEPLOYER_URL_PATH = 'cdc-toolbox/site-deployer'
+    const SITE_SELECTOR_URL_PATH = 'sites/site-selector'
+    window.location.href = document.location.href.replace(SITE_DEPLOYER_URL_PATH, SITE_SELECTOR_URL_PATH)
+    document.location.reload()
+  }
+
+  const onChangeSiteStructure = (event) => {
+    setSelectedStructureId(event.detail.selectedOption.dataset.value)
   }
 
   const checkDataCentersSelected = (event) => {
@@ -294,7 +301,7 @@ const SiteDeployer = ({ t }) => {
             headerText={t('GLOBAL.SUCCESS')}
             state={ValueState.Success}
             closeButtonContent="Ok"
-            onAfterClose={() => document.location.reload()}
+            onAfterClose={onSuccessDialogAfterCloseHandler}
             id="successPopup"
           >
             {t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}
