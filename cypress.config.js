@@ -20,11 +20,17 @@ module.exports = defineConfig({
 
         return launchOptions
       })
-
       require('@cypress/code-coverage/task')(on, config)
 
       on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
-      return config
+      // return {
+      //   config,
+
+      //   excludeSpecPattern: ['cypress/e2e/e2e_full_testing.cy.js'],
+      // }
+      return {
+        config,
+      }
     },
   },
 

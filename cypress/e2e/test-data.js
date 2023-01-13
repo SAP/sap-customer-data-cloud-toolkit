@@ -23,6 +23,13 @@ const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
 const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
+const consoleUrl = 'http://console.gigya.com'
+const siteDomainName = 'e2e_testing'
+const downloadImportPath = '../cdc-tools-chrome-extension/cypress/downloads/cdc-tools-chrome-extension.zip'
+const emailFixturesImportPath = 'cdc-tools-email-templates.zip'
+const siteSelectorOption = 'Site Selector'
+const smsTemplatesOption = 'SMS Templates'
+
 export {
   siteDomain,
   dropdownOption,
@@ -47,4 +54,10 @@ export {
   smsExampleFile,
   emailErrorExampleFile,
   unauthorizedUser,
+  consoleUrl,
+  siteDomainName,
+  downloadImportPath,
+  siteSelectorOption,
+  smsTemplatesOption,
+  emailFixturesImportPath,
 }
