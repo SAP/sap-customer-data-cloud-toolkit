@@ -16,7 +16,7 @@ describe('SMS Templates Test Suite', () => {
   it('should show error messages on export button', () => {
     utils.mockResponse(manualRemovalTestData.flat()[2], 'POST', 'admin.getSiteConfig')
     cy.get('#exportAllSmsTemplatesButton').click()
-    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
+    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.smsTemplatesExportErrorHeaderMessage)
   })
 
   it('should show error on import button', () => {
@@ -28,7 +28,7 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
-    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
+    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.smsTemplatesImportErrorHeaderMessage)
   })
 
   it('should show credentials error dialog on export', () => {

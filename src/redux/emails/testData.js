@@ -1,4 +1,4 @@
-import { errorConditions } from './errorConditions'
+import { errorConditions } from '../errorConditions'
 
 const initialState = {
   exportFile: undefined,

@@ -19,11 +19,15 @@ import {
   clearExportFile,
   clearErrors,
   selectShowSuccessDialog,
+  selectErrorCondition,
+  clearErrorCondition,
 } from '../../redux/sms/smsSlice'
 
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 
 import styles from './sms-templates.styles.js'
+
+import { errorConditions } from '../../redux/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'SmsTemplates' })
 
@@ -36,6 +40,7 @@ const SmsTemplates = ({ t }) => {
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
+  const errorCondition = useSelector(selectErrorCondition)
 
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
@@ -65,22 +70,36 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
+  const getErrorDialogHeaderText = () => {
+    switch (errorCondition) {
+      case errorConditions.exportError:
+        return t('SMS_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE')
+      case errorConditions.importWithoutCountError:
+        return t('SMS_TEMPLATES_COMPONENT.IMPORT_ERROR_HEADER_MESSAGE')
+      default:
+        return t('GLOBAL.ERROR')
+    }
+  }
+
   const onImportAllSmsTemplatesButtonClickHandler = () => {
     dispatch(setIsImportPopupOpen(true))
+  }
+
+  const onAfterCloseErrorDialogHandler = () => {
+    setShowErrorDialog(false)
+    dispatch(clearErrors())
+    dispatch(clearErrorCondition())
   }
 
   const showErrorsList = () => (
     <DialogMessageInform
       open={showErrorDialog}
       className={classes.errorDialogStyle}
-      headerText={t('GLOBAL.ERROR')}
+      headerText={getErrorDialogHeaderText()}
       state={ValueState.Error}
       closeButtonContent="Ok"
       id="smsTemplatesErrorPopup"
-      onAfterClose={() => {
-        setShowErrorDialog(false)
-        dispatch(clearErrors())
-      }}
+      onAfterClose={onAfterCloseErrorDialogHandler}
     >
       <MessageList messages={errors} />
     </DialogMessageInform>

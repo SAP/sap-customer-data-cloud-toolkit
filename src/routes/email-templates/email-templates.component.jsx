@@ -29,7 +29,7 @@ import { selectCredentials, areCredentialsFilled } from '../../redux/credentials
 
 import styles from './email-templates.styles.js'
 
-import { errorConditions } from '../../redux/emails/errorConditions'
+import { errorConditions } from '../../redux/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 

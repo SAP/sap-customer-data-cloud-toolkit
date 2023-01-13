@@ -5,7 +5,7 @@ import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 import { getApiKey } from '../utils'
 import { EMAILS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
-import { errorConditions } from './errorConditions'
+import { errorConditions } from '../errorConditions'
 
 const IMPORT_EMAIL_TEMPLATES_ACTION = 'service/importEmailTemplates'
 const EXPORT_EMAIL_TEMPLATES_ACTION = 'service/exportEmailTemplates'

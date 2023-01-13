@@ -13,7 +13,7 @@ import emailReducer, {
 import EmailManager from '../../services/emails/emailManager'
 import { Buffer } from 'buffer'
 import * as data from './testData'
-import { errorConditions } from './errorConditions'
+import { errorConditions } from '../errorConditions'
 
 jest.mock('../../services/emails/emailManager')
 
