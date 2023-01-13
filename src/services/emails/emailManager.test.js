@@ -5,7 +5,6 @@ import ZipManager from '../zip/zipManager'
 import * as CommonTestData from '../servicesData_test'
 import * as ConfiguratorTestData from '../configurator/data_test'
 import JSZip from 'jszip'
-import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -16,18 +15,14 @@ const magicLinkTemplateName = 'magicLink'
 const emailTemplateBuffer = Buffer.from(EmailsTestData.emailTemplate, 'utf8')
 let zipRootFolder
 
-const directoriesTable = [
-  [EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/'],
-  ['a/b/'],
-  ['']
-];
+const directoriesTable = [['cdc-toolbox-email-templates/'], ['a/b/'], ['']]
 
 describe('Emails Manager test suite', () => {
   let emailManager
 
   beforeEach(() => {
     emailManager = new EmailManager(CommonTestData.credentials)
-    zipRootFolder = EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/'
+    zipRootFolder = 'cdc-toolbox-email-templates/'
     jest.clearAllMocks()
   })
 
@@ -35,12 +30,12 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: JSON.parse(JSON.stringify(EmailsTestData.getEmailsExpectedResponse)) }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set(zipRootFolder + '.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
-    expectedZipEntries.set(zipRootFolder + 'EmailVerification/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set(zipRootFolder + 'AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set(zipRootFolder + 'PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set(zipRootFolder + 'ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
-    expectedZipEntries.set(zipRootFolder + 'NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.expectedExportConfigurationFileContent))
+    expectedZipEntries.set('EmailVerification/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set('AccountDeletionConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set('PasswordResetConfirmation/pt-br.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set('ImpossibleTraveler/en.html', EmailsTestData.emailTemplate)
+    expectedZipEntries.set('NewUserWelcome/ar.html', EmailsTestData.emailTemplate)
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -52,7 +47,7 @@ describe('Emails Manager test suite', () => {
     const mockedResponse = { data: EmailsTestData.getEmailsExpectedResponseWithMinimumTemplates() }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce(mockedResponse)
     const expectedZipEntries = createExpectedZipEntries()
-    expectedZipEntries.set(zipRootFolder + '.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
+    expectedZipEntries.set('.impexMetadata.json', JSON.stringify(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates()))
 
     const zipContent = await emailManager.export(apiKey)
 
@@ -327,13 +322,13 @@ describe('Emails Manager test suite', () => {
 
 function createExpectedZipEntries() {
   const expectedZipEntries = new Map()
-  expectedZipEntries.set(zipRootFolder + 'MagicLink/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'MagicLink/pt.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'CodeVerification/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'PasswordReset/en.html', EmailsTestData.emailTemplate)
-  expectedZipEntries.set(zipRootFolder + 'TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('MagicLink/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('MagicLink/pt.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('CodeVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('LitePreferencesCenter/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('PasswordReset/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
   return expectedZipEntries
 }
 
@@ -388,7 +383,7 @@ function createZipContent(zipRootFolder) {
   return jszip
 }
 
-function createCustomEmailTemplate(zipRootFolder){
+function createCustomEmailTemplate(zipRootFolder) {
   let customEmailTemplate = EmailsTestData.emailTemplate.slice()
   const replaceValue = `##${zipRootFolder}##`
   return customEmailTemplate.replace('noreply', replaceValue)

@@ -1,5 +1,3 @@
-import {EXPORT_EMAIL_TEMPLATES_FILE_NAME} from "../../constants";
-
 const emailTemplate =
   '<html xmlns="http://www.w3.org/1999/xhtml">\r\n' +
   '<head>\r\n' +
@@ -186,50 +184,50 @@ const expectedExportConfigurationFileContent = {
     defaultLanguage: 'en',
     urlPlaceHolder: '$url',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/en.html',
-      pt: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/MagicLink/pt.html',
+      en: 'MagicLink/en.html',
+      pt: 'MagicLink/pt.html',
     },
   },
   codeVerification: {
     defaultLanguage: 'en',
     codePlaceHolder: '$code',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/CodeVerification/en.html',
+      en: 'CodeVerification/en.html',
     },
   },
   emailVerification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/EmailVerification/en.html',
+      en: 'EmailVerification/en.html',
     },
     verificationEmailExpiration: 93600,
     autoLogin: true,
   },
   emailNotifications: {
     welcomeEmailTemplates: {
-      ar: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/NewUserWelcome/ar.html',
+      ar: 'NewUserWelcome/ar.html',
     },
     welcomeEmailDefaultLanguage: 'ar',
     accountDeletedEmailTemplates: {
-      'pt-br': EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/AccountDeletionConfirmation/pt-br.html',
+      'pt-br': 'AccountDeletionConfirmation/pt-br.html',
     },
     accountDeletedEmailDefaultLanguage: 'pt-br',
     confirmationEmailTemplates: {
-      'pt-br': EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordResetConfirmation/pt-br.html',
+      'pt-br': 'PasswordResetConfirmation/pt-br.html',
     },
     confirmationEmailDefaultLanguage: 'en',
   },
   preferencesCenter: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/LitePreferencesCenter/en.html',
+      en: 'LitePreferencesCenter/en.html',
     },
     linkPlaceHolder: '$link',
   },
   doubleOptIn: {
     defaultLanguage: 'en',
     confirmationEmailTemplates: {
-      ar: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/DoubleOptInConfirmation/ar.html',
+      ar: 'DoubleOptInConfirmation/ar.html',
     },
     nextURL: 'url/gs/confirmSubscriptions.aspx',
     nextExpiredURL: 'url/gs/LinkExpired.aspx',
@@ -238,7 +236,7 @@ const expectedExportConfigurationFileContent = {
   passwordReset: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/PasswordReset/en.html',
+      en: 'PasswordReset/en.html',
     },
     requireSecurityCheck: false,
     resetURL: '',
@@ -270,7 +268,7 @@ const expectedExportConfigurationFileContent = {
     emailProvider: {
       defaultLanguage: 'en',
       emailTemplates: {
-        en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/TFAEmailVerification/en.html',
+        en: 'TFAEmailVerification/en.html',
       },
     },
     smsProvider: {},
@@ -278,7 +276,7 @@ const expectedExportConfigurationFileContent = {
   impossibleTraveler: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/ImpossibleTraveler/en.html',
+      en: 'ImpossibleTraveler/en.html',
     },
   },
   unknownLocationNotification: {
