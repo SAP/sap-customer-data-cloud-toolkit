@@ -8,6 +8,7 @@ const expectedSuccessMessage = 'OkAll sites have been created successfully'
 const childrenSiteDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu'
+const emailTemplatesExportErrorHeaderMessage = 'Error - email templates were not exported'
 const emailTemplatesExportErrorMessage = 'Error getting email templates'
 const emailTemplatesExportErrorMessageDetail =
   'Error getting email templatesThere was an error when getting the email templates or you do not have the required permissions to call it.'
@@ -18,12 +19,15 @@ const emailErrorExampleFile = 'cdc-toolbox-email-templates.zip'
 const smsExampleFile = 'cdc-tools-sms-import.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importMessage = `Error importing email templatesError on template file cdc-toolbox-email-templates/DoubleOptInConfirmation/ar.html. Expected closing tag 'div' (opened in line 8, col 1) instead of closing tag 'body'. on line 18`
+const importEmailTemplatesErrorMessage = `Error importing email templatesError on template file cdc-toolbox-email-templates/DoubleOptInConfirmation/ar.html. Expected closing tag 'div' (opened in line 8, col 1) instead of closing tag 'body'. on line 18`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
 const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
 const cypressDownloadsPath = '../cdc-tools-chrome-extension/cypress/downloads/'
+const smsTemplatesExportErrorHeaderMessage = 'Error - SMS templates were not exported'
+const smsTemplatesImportErrorHeaderMessage = 'Error - SMS templates were not imported'
+// TODO: create separated data for emails and sms and aplly it on e2e_sms_templates_tests.cy.js
 
 export {
   siteDomain,
@@ -41,7 +45,7 @@ export {
   siteDeployerIconName,
   importEmailsFileHeaderText,
   importSmsFileHeaderText,
-  importMessage,
+  importEmailTemplatesErrorMessage,
   smsTemplatesIconName,
   smsTemplatesExportErrorMessage,
   smsTemplatesExportErrorMessageDetail,
@@ -50,4 +54,7 @@ export {
   emailErrorExampleFile,
   unauthorizedUser,
   cypressDownloadsPath,
+  emailTemplatesExportErrorHeaderMessage,
+  smsTemplatesExportErrorHeaderMessage,
+  smsTemplatesImportErrorHeaderMessage,
 }

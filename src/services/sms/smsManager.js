@@ -1,6 +1,7 @@
 import Sms from './sms'
 import ZipManager from '../zip/zipManager'
 import _ from 'lodash'
+import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 class SmsManager {
   static TEMPLATE_FILE_EXTENSION = '.txt'
@@ -41,7 +42,10 @@ class SmsManager {
   }
 
   #isTemplateFile(file) {
-    return file.endsWith(SmsManager.TEMPLATE_FILE_EXTENSION) && (file.startsWith(SmsManager.TEMPLATE_TYPE_TFA) || file.startsWith(SmsManager.TEMPLATE_TYPE_OTP))
+    return (
+      file.endsWith(SmsManager.TEMPLATE_FILE_EXTENSION) &&
+      (file.startsWith(`${EXPORT_SMS_TEMPLATES_FILE_NAME}/${SmsManager.TEMPLATE_TYPE_TFA}`) || file.startsWith(`${EXPORT_SMS_TEMPLATES_FILE_NAME}/${SmsManager.TEMPLATE_TYPE_OTP}`))
+    )
   }
 
   async #importTemplates(site, zipContentMap) {
@@ -61,9 +65,9 @@ class SmsManager {
     const template = {}
     let pointer = template
     const tokens = zipEntry.split('/')
-    if (tokens.length > 2) {
+    if (tokens.length > 3) {
       let i
-      for (i = 0; i < tokens.length - 1; ++i) {
+      for (i = 1; i < tokens.length - 1; ++i) { // i=1 to ignore the root folder token
         pointer[tokens[i]] = {}
         pointer = pointer[tokens[i]]
       }
@@ -100,7 +104,7 @@ class SmsManager {
   }
 
   #exportGlobalTemplates(smsTemplatesResponse, type) {
-    const folder = `${type}/globalTemplates`
+    const folder = `${EXPORT_SMS_TEMPLATES_FILE_NAME}/${type}/globalTemplates`
     const globalTemplatesObj = smsTemplatesResponse.templates[type].globalTemplates.templates
     const globalTemplatesDefaultLanguage = smsTemplatesResponse.templates[type].globalTemplates.defaultLanguage
     for (const language in globalTemplatesObj) {
@@ -113,7 +117,7 @@ class SmsManager {
   }
 
   #exportTemplatesPerCountryCode(smsTemplatesResponse, type) {
-    const folder = `${type}/templatesPerCountryCode`
+    const folder = `${EXPORT_SMS_TEMPLATES_FILE_NAME}/${type}/templatesPerCountryCode`
     const templatesPerCountryCodeObj = smsTemplatesResponse.templates[type].templatesPerCountryCode
     for (const countryCode in templatesPerCountryCodeObj) {
       const countryCodeObj = templatesPerCountryCodeObj[countryCode].templates

@@ -4,7 +4,10 @@
   "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "CDC Toolbox",
   "EMAILS_IMPORT_POPUP.POPUP_HEADER": "Import email templates",
   "EMAILS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the email templates to import:",
-  "EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All email templates have been imported successfully",
+  "EMAIL_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE": "Error - email templates were not exported",
+  "EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_COUNT_HEADER_MESSAGE": "Error - {{notImportedEmailTemplatesCount}} of {{totalEmailTemplatesToImportCount}} email templates were not imported",
+  "EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_GENERIC_HEADER_MESSAGE": "Error - email templates were not imported",
+  "EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All {{importedEmailTemplatesCount}} email templates have been imported successfully",
   "GLOBAL.API_KEY": "Api Key",
   "GLOBAL.BASE_DOMAIN": "Base Domain",
   "GLOBAL.CANCEL": "Cancel",
@@ -51,5 +54,7 @@
   "SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP": "Show Child Sites",
   "SMS_IMPORT_POPUP.POPUP_HEADER": "Import SMS templates",
   "SMS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the SMS templates to import:",
+  "SMS_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE": "Error - SMS templates were not exported",
+  "SMS_TEMPLATES_COMPONENT.IMPORT_ERROR_HEADER_MESSAGE": "Error - SMS templates were not imported",
   "SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All SMS templates have been imported successfully"
 }

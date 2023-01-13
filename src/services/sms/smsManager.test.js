@@ -6,6 +6,7 @@ import { credentials } from '../servicesData_test'
 import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './data_test'
 import * as CommonTestData from '../servicesData_test'
 import JSZip from 'jszip'
+import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -103,15 +104,27 @@ describe('Sms Manager test suite', () => {
 
 function createExpectedZipEntries() {
   const expectedZipEntries = new Map()
-  expectedZipEntries.set('tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
-  expectedZipEntries.set('tfa/globalTemplates/pt-br.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
-  expectedZipEntries.set('tfa/templatesPerCountryCode/355/en.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/355/bg.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/351/en.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
-  expectedZipEntries.set('tfa/templatesPerCountryCode/351/pt.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt)
+  expectedZipEntries.set(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
+  expectedZipEntries.set(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/globalTemplates/pt-br.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
+  expectedZipEntries.set(
+    EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/355/en.default.txt',
+    getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en
+  )
+  expectedZipEntries.set(
+    EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/355/bg.txt',
+    getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg
+  )
+  expectedZipEntries.set(
+    EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/351/en.txt',
+    getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en
+  )
+  expectedZipEntries.set(
+    EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/351/pt.default.txt',
+    getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt
+  )
 
-  expectedZipEntries.set('otp/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
-  expectedZipEntries.set('otp/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
+  expectedZipEntries.set(EXPORT_SMS_TEMPLATES_FILE_NAME + '/otp/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
+  expectedZipEntries.set(EXPORT_SMS_TEMPLATES_FILE_NAME + '/otp/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   return expectedZipEntries
 }
 
@@ -125,6 +138,7 @@ function createZipWithUnrelatedContent() {
   jszip.file('bin/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   jszip.file('otp/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   jszip.file('tfa/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
+  jszip.file('__MACOSX/tfa/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   jszip.file('tfa/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
   jszip.file('otp/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
   return jszip.generateAsync({ type: 'arraybuffer' })
@@ -137,13 +151,13 @@ function createZipContentEmpty() {
 
 function createContent() {
   const jszip = new JSZip()
-  jszip.file('tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
-  jszip.file('tfa/globalTemplates/pt-br.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
-  jszip.file('tfa/templatesPerCountryCode/355/en.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en)
-  jszip.file('tfa/templatesPerCountryCode/355/bg.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg)
-  jszip.file('tfa/templatesPerCountryCode/351/en.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
-  jszip.file('tfa/templatesPerCountryCode/351/pt.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt)
-  jszip.file('otp/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
-  jszip.file('otp/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/globalTemplates/pt-br.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates['pt-br'])
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/355/en.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.en)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/355/bg.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['355'].templates.bg)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/351/en.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/tfa/templatesPerCountryCode/351/pt.default.txt', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.pt)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/otp/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.en)
+  jszip.file(EXPORT_SMS_TEMPLATES_FILE_NAME + '/otp/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
   return jszip
 }
