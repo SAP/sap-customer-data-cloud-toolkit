@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as testData from './test-data'
+// import { data } from 'cypress/types/jquery'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
@@ -12,7 +13,7 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
     cy.wait(30000)
 
-    // //Site creation using Site Deployer with the domain dev.us.e2e_testing
+    //Site creation using Site Deployer with the domain dev.us.e2e_testing
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteDeployerIconName).click({ force: true })
     cy.wait(20000)
 
@@ -29,9 +30,9 @@ describe('All features full Test Suite', () => {
     cy.get('#successPopup').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
     cy.wait(30000)
 
-    //Navigating to the Site that was created
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
-    cy.wait(20000)
+    // //Navigating to the Site that was created
+    // cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
+    // cy.wait(20000)
     cy.get('main-app')
       .shadow()
       .find('site-selector-web-app')
@@ -65,7 +66,7 @@ describe('All features full Test Suite', () => {
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
     cy.get('#confirmButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile(testData.downloadImportPath, { force: true })
+    cy.get('#zipFileInput').selectFile(`${testData.cypressDownloadsPath}${testData.emailExampleFile}`, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.wait(10000)
     cy.get('#confirmButton').click({ force: true })
@@ -83,7 +84,7 @@ describe('All features full Test Suite', () => {
     // //Importing the test template with added languages
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.emailFixturesImportPath, { force: true })
+    cy.get('#zipFileInput').attachFile(testData.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
     cy.wait(10000)
@@ -98,36 +99,15 @@ describe('All features full Test Suite', () => {
     cy.wait(10000)
     cy.get('body').find('#openPopoverButton').click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
-
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.emailFixturesImportPath, { force: true })
+    cy.get('#zipFileInput').attachFile(testData.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
     cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', testData.unauthorizedUser)
     cy.wait(10000)
     cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
-    //SMS Templates - Second Use Case
-    //Importing and validating the template with new changes
-    cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
-    cy.get('#importZipButton').click({ force: true })
-    cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
-    cy.wait(20000)
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
-    cy.get('main-app')
-      .shadow()
-      .find('sms-templates-web-app')
-      .shadow()
-      .find('[class="languages_list_container"]')
-      .find('[role="list"]')
-      .find('[role="listitem"]')
-      .find('[class="fd-list__title"]')
-      .click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
+    cy.get('body').find('#openPopoverButton').click({ force: true })
+    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}')
 
     //SMS export and import use cases:
     // - Export and import the default files
@@ -139,7 +119,7 @@ describe('All features full Test Suite', () => {
     cy.get('#exportAllSmsTemplatesButton').click({ force: true })
     cy.wait(10000)
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile(testData.downloadImportPath, { force: true })
+    cy.get('#zipFileInput').selectFile(`${testData.cypressDownloadsPath}${testData.smsExampleFile}`, { force: true })
     cy.get('#importZipButton').click({ force: true })
     cy.wait(10000)
     cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
@@ -154,14 +134,14 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-list__title"]')
       .click({ force: true })
 
-    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
-    // // //SMS Templates - Second Use Case
-    // // //Importing and validating the template with new changes
+    //SMS Templates - Second Use Case
+    //Importing and validating the template with new changes
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
     cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
     cy.get('#importZipButton').click({ force: true })
     cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.get('#closeButton').click({ force: true })
+    cy.get('#successPopup').find('[id ="closeButton"]').click({ force: true })
     cy.wait(20000)
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
@@ -178,7 +158,6 @@ describe('All features full Test Suite', () => {
 
     //Delete the site created on this test
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteSelectorOption).click({ force: true })
-
     cy.wait(10000)
     cy.get('main-app')
       .shadow()

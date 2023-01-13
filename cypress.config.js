@@ -1,14 +1,11 @@
 const { defineConfig } = require('cypress')
 require('dotenv').config()
-const { exec } = require('child_process')
 const path = require('path')
 module.exports = defineConfig({
   projectId: '4iymaz',
   env: {
     userName: `${process.env.email}`,
     passWord: `${process.env.passWord}`,
-    userKey: `${process.env.userKey}`,
-    secreKey: `${process.env.secreKey}`,
   },
 
   e2e: {
