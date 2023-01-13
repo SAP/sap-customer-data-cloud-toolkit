@@ -1,3 +1,5 @@
+import { errorConditions } from '../errorConditions'
+
 const initialState = {
   exportFile: undefined,
   isLoading: false,
@@ -6,6 +8,9 @@ const initialState = {
   isImportPopupOpen: false,
   showSuccessDialog: false,
   isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithExportFile = {
@@ -16,6 +21,9 @@ const initialStateWithExportFile = {
   isImportPopupOpen: false,
   showSuccessDialog: false,
   isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithErrors = {
@@ -26,6 +34,9 @@ const initialStateWithErrors = {
   isImportPopupOpen: false,
   showSuccessDialog: false,
   isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.exportError,
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'

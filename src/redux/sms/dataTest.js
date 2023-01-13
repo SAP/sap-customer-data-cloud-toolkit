@@ -1,9 +1,12 @@
+import { errorConditions } from '../errorConditions'
+
 const initialState = {
   exportFile: undefined,
   isLoading: false,
   errors: [],
   isImportPopupOpen: false,
   showSuccessDialog: false,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithExportFile = {
@@ -11,6 +14,7 @@ const initialStateWithExportFile = {
   isLoading: false,
   errors: [],
   isImportPopupOpen: false,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithErrors = {
@@ -18,6 +22,7 @@ const initialStateWithErrors = {
   isLoading: false,
   errors: [{ test: 'test' }],
   isImportPopupOpen: false,
+  errorCondition: errorConditions.exportError,
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'
