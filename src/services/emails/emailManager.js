@@ -25,7 +25,7 @@ class EmailManager {
     //console.log(`Exporting email templates for site ${site}`)
     const emailTemplatesResponse = await this.exportTemplates(site)
     if (emailTemplatesResponse.errorCode !== 0) {
-      return Promise.reject(emailTemplatesResponse)
+      return Promise.reject([emailTemplatesResponse])
     }
 
     this.#zipManager.create(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME, JSON.stringify(emailTemplatesResponse))
@@ -234,7 +234,7 @@ class EmailManager {
     const promises = []
     const dataCenterResponse = await this.#gigyaManager.getDataCenterFromSite(site)
     if (dataCenterResponse.errorCode !== 0) {
-      return Promise.reject(dataCenterResponse)
+      return Promise.reject([dataCenterResponse])
     }
     for (const property in metadataObj) {
       if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {

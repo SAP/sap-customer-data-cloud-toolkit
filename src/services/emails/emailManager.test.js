@@ -60,18 +60,7 @@ describe('Emails Manager test suite', () => {
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockImplementation(() => {
       throw err
     })
-    let testPassed = false
-    await emailManager.export(apiKey).catch((error) => {
-      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
-        throw new Error('It is not the expected exception')
-      } else {
-        testPassed = true
-      }
-    })
-
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
+    await emailManager.export(apiKey).catch((error) => { errorCallback(error, err) })
   })
 
   test('4 - export error getting data center', async () => {
@@ -79,18 +68,7 @@ describe('Emails Manager test suite', () => {
     axios.mockImplementation(() => {
       throw err
     })
-    let testPassed = false
-    await emailManager.export(apiKey).catch((error) => {
-      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
-        throw new Error('It is not the expected exception')
-      } else {
-        testPassed = true
-      }
-    })
-
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
+    await emailManager.export(apiKey).catch((error) => { errorCallback(error, err) })
   })
 
   test('5 - export templates', async () => {
@@ -210,18 +188,7 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     const zipContent = await createZipFullContent()
-    let testPassed = false
-    await emailManager.import(apiKey, zipContent).catch((error) => {
-      if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined) {
-        throw new Error('It is not the expected exception')
-      } else {
-        testPassed = true
-      }
-    })
-
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
+    await emailManager.import(apiKey, zipContent).catch((error) => { errorCallback(error, err) })
   })
 
   test.each(directoriesTable)('10 - add template language', async (zipRootFolder) => {
@@ -255,7 +222,16 @@ describe('Emails Manager test suite', () => {
 
   test('20 - error missing metadata file', async () => {
     const zipContent = await createZipContentEmpty()
-    await executeErrorTestCase(zipContent, 'Zip file does not contains the metadata file')
+    let testPassed = false
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      if (error.length === 1 && error[0].errorDetails.startsWith('Zip file does not contains the metadata file')) {
+        testPassed = true
+      }
+    })
+
+    if (!testPassed) {
+      throw new Error('Expected exception was not thrown')
+    }
   })
 
   test('21 - error validating html template', async () => {
@@ -296,7 +272,7 @@ describe('Emails Manager test suite', () => {
 
   test('23 - import cleaning dispensable files', async () => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
-    const zipContent = await createZipFullContentWithDispensableFiles()
+    const zipContent = await createZipFullContentWithIgnorableFiles()
 
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
 
@@ -306,14 +282,13 @@ describe('Emails Manager test suite', () => {
     expect(spy.mock.calls.length).toBe(9)
   })
 
-  async function executeErrorTestCase(zipContent, expectedErrorMessage) {
+  async function errorCallback(error, err) {
     let testPassed = false
-    await emailManager.import(apiKey, zipContent).catch((error) => {
-      if (error.length === 1 && error[0].errorDetails.startsWith(expectedErrorMessage)) {
-        testPassed = true
-      }
-    })
-
+    if (error[0].errorMessage !== err.message || error[0].errorCode !== err.code || error[0].errorDetails !== err.details || error[0].time === undefined) {
+      throw new Error('It is not the expected exception')
+    } else {
+      testPassed = true
+    }
     if (!testPassed) {
       throw new Error('Expected exception was not thrown')
     }
@@ -350,7 +325,7 @@ function createZipFullContent() {
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
-function createZipFullContentWithDispensableFiles() {
+function createZipFullContentWithIgnorableFiles() {
   const jszip = new JSZip()
   jszip.file(zipRootFolder + 'MagicLink/en.html', emailTemplateBuffer)
   jszip.file(zipRootFolder + 'MagicLink/pt.html', emailTemplateBuffer)
