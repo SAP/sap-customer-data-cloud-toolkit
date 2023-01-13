@@ -1,17 +1,24 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
+import { getApiKey } from '../utils'
 import SmsManager from '../../services/sms/smsManager'
-
 import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
+import { errorConditions } from '../errorConditions'
+import { SMS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
+
+const IMPORT_SMS_TEMPLATES_ACTION = 'service/importSmsTemplates'
+const EXPORT_SMS_TEMPLATES_ACTION = 'service/exportSmsTemplates'
+
 export const smsSlice = createSlice({
-  name: 'sms',
+  name: SMS_SLICE_STATE_NAME,
   initialState: {
     exportFile: undefined,
     isLoading: false,
     errors: [],
     isImportPopupOpen: false,
     showSuccessDialog: false,
+    errorCondition: errorConditions.empty,
   },
   reducers: {
     setIsImportPopupOpen(state, action) {
@@ -23,6 +30,9 @@ export const smsSlice = createSlice({
     clearErrors(state) {
       state.errors = []
     },
+    clearErrorCondition(state) {
+      state.errorCondition = errorConditions.empty
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getSmsTemplatesArrayBuffer.pending, (state) => {
@@ -30,10 +40,11 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getSmsTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      state.exportFile = new File([action.payload], EXPORT_SMS_TEMPLATES_FILE_NAME, { type: 'application/zip' })
+      state.exportFile = new File([action.payload], EXPORT_SMS_TEMPLATES_FILE_NAME, { type: ZIP_FILE_MIME_TYPE })
     })
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
+      state.errorCondition = errorConditions.exportError
       state.errors = [action.payload]
     })
     builder.addCase(sendSmsTemplatesArrayBuffer.pending, (state) => {
@@ -41,8 +52,8 @@ export const smsSlice = createSlice({
     })
     builder.addCase(sendSmsTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      debugger
       if (action.payload.errorCode !== 0) {
+        state.errorCondition = errorConditions.importWithoutCountError
         state.errors = [action.payload]
         state.showSuccessDialog = false
       } else {
@@ -52,18 +63,14 @@ export const smsSlice = createSlice({
     })
     builder.addCase(sendSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
+      state.errorCondition = errorConditions.importWithoutCountError
       state.errors = [action.payload]
       state.isImportPopupOpen = false
     })
   },
 })
 
-export const getApiKey = (hash) => {
-  const [, , apiKey] = hash.split('/')
-  return apiKey !== undefined ? apiKey : ''
-}
-
-export const getSmsTemplatesArrayBuffer = createAsyncThunk('service/exportSms', async (dummy, { getState, rejectWithValue }) => {
+export const getSmsTemplatesArrayBuffer = createAsyncThunk(EXPORT_SMS_TEMPLATES_ACTION, async (dummy, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new SmsManager({
@@ -75,7 +82,7 @@ export const getSmsTemplatesArrayBuffer = createAsyncThunk('service/exportSms', 
   }
 })
 
-export const sendSmsTemplatesArrayBuffer = createAsyncThunk('service/importSms', async (zipContent, { getState, rejectWithValue }) => {
+export const sendSmsTemplatesArrayBuffer = createAsyncThunk(IMPORT_SMS_TEMPLATES_ACTION, async (zipContent, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new SmsManager({
@@ -89,7 +96,7 @@ export const sendSmsTemplatesArrayBuffer = createAsyncThunk('service/importSms',
 
 export default smsSlice.reducer
 
-export const { setIsImportPopupOpen, clearExportFile, clearErrors } = smsSlice.actions
+export const { setIsImportPopupOpen, clearExportFile, clearErrors, clearErrorCondition } = smsSlice.actions
 
 export const selectExportFile = (state) => state.sms.exportFile
 
@@ -102,3 +109,5 @@ export const selectErrors = (state) => state.sms.errors
 export const selectIsImportPopupOpen = (state) => state.sms.isImportPopupOpen
 
 export const selectShowSuccessDialog = (state) => state.sms.showSuccessDialog
+
+export const selectErrorCondition = (state) => state.sms.errorCondition
