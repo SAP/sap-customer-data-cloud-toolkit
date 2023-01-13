@@ -16,7 +16,7 @@ describe('Email Templates Test Suite', () => {
   it('should show error messages on export button', () => {
     utils.mockResponse(manualRemovalTestData.flat()[1], 'POST', 'admin.getSiteConfig')
     cy.get('#exportAllEmailTemplatesButton').click()
-    cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
+    cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.emailTemplatesExportErrorHeaderMessage)
     cy.get('#messageList').should('have.text', data.emailTemplatesExportErrorMessageDetail)
   })
 
@@ -30,7 +30,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#emailTemplatesValidationErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
-    cy.get('#emailTemplatesValidationErrorPopup').find('[id="messageList"]').should('have.text', data.importMessage)
+    cy.get('#emailTemplatesValidationErrorPopup').find('[id="messageList"]').should('have.text', data.importEmailTemplatesErrorMessage)
   })
 
   it('should show credentials error dialog on export', () => {

@@ -3,8 +3,16 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import EmailManager from '../../services/emails/emailManager'
 import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
+import { getApiKey } from '../utils'
+import { EMAILS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
+import { errorConditions } from './errorConditions'
+
+const IMPORT_EMAIL_TEMPLATES_ACTION = 'service/importEmailTemplates'
+const EXPORT_EMAIL_TEMPLATES_ACTION = 'service/exportEmailTemplates'
+const VALIDATE_EMAIL_TEMPLATES_ACTION = 'service/validateEmailTemplates'
+
 export const emailSlice = createSlice({
-  name: 'emails',
+  name: EMAILS_SLICE_STATE_NAME,
   initialState: {
     exportFile: undefined,
     isLoading: false,
@@ -13,6 +21,9 @@ export const emailSlice = createSlice({
     isImportPopupOpen: false,
     showSuccessDialog: false,
     isImportFileValid: false,
+    importedEmailTemplatesCount: 0,
+    totalEmailTemplatesToImportCount: 0,
+    errorCondition: errorConditions.empty,
   },
   reducers: {
     setIsImportPopupOpen(state, action) {
@@ -30,6 +41,9 @@ export const emailSlice = createSlice({
     setIsImportFileValid(state, action) {
       state.isImportFileValid = action.payload
     },
+    clearErrorCondition(state) {
+      state.errorCondition = errorConditions.empty
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getEmailTemplatesArrayBuffer.pending, (state) => {
@@ -37,30 +51,39 @@ export const emailSlice = createSlice({
     })
     builder.addCase(getEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
-      state.exportFile = new File([action.payload], EXPORT_EMAIL_TEMPLATES_FILE_NAME, { type: 'application/zip' })
+      state.exportFile = new File([action.payload], EXPORT_EMAIL_TEMPLATES_FILE_NAME, { type: ZIP_FILE_MIME_TYPE })
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
+      state.errorCondition = errorConditions.exportError
       state.errors = [action.payload]
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.pending, (state) => {
       state.isLoading = true
+      state.importedEmailTemplatesCount = 0
+      state.totalEmailTemplatesToImportCount = 0
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
       const errors = action.payload.filter(({ errorCode }) => errorCode !== 0)
       if (errors.length) {
+        state.errorCondition = errorConditions.importWithCountError
         state.errors = errors
+        state.totalEmailTemplatesToImportCount = action.payload.length
         state.showSuccessDialog = false
       } else {
+        state.importedEmailTemplatesCount = action.payload.length
         state.showSuccessDialog = true
       }
       state.isImportPopupOpen = false
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
+      state.errorCondition = errorConditions.importWithoutCountError
+      state.errors = [action.payload]
       state.isImportPopupOpen = false
+      state.importedEmailTemplatesCount = 0
+      state.totalEmailTemplatesToImportCount = 0
     })
     builder.addCase(validateEmailTemplates.fulfilled, (state) => {
       state.isLoading = false
@@ -74,12 +97,7 @@ export const emailSlice = createSlice({
   },
 })
 
-export const getApiKey = (hash) => {
-  const [, , apiKey] = hash.split('/')
-  return apiKey !== undefined ? apiKey : ''
-}
-
-export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmail', async (dummy, { getState, rejectWithValue }) => {
+export const getEmailTemplatesArrayBuffer = createAsyncThunk(EXPORT_EMAIL_TEMPLATES_ACTION, async (dummy, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new EmailManager({
@@ -91,7 +109,7 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk('service/exportEmai
   }
 })
 
-export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEmail', async (zipContent, { getState, rejectWithValue }) => {
+export const sendEmailTemplatesArrayBuffer = createAsyncThunk(IMPORT_EMAIL_TEMPLATES_ACTION, async (zipContent, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new EmailManager({
@@ -103,7 +121,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk('service/importEma
   }
 })
 
-export const validateEmailTemplates = createAsyncThunk('service/validateEmailTemplates', async (zipContent, { getState, rejectWithValue }) => {
+export const validateEmailTemplates = createAsyncThunk(VALIDATE_EMAIL_TEMPLATES_ACTION, async (zipContent, { getState, rejectWithValue }) => {
   try {
     const state = getState()
     return await new EmailManager({
@@ -115,7 +133,7 @@ export const validateEmailTemplates = createAsyncThunk('service/validateEmailTem
   }
 })
 
-export const { setIsImportPopupOpen, clearExportFile, clearErrors, setIsImportFileValid, clearValidationErrors } = emailSlice.actions
+export const { setIsImportPopupOpen, clearExportFile, clearErrors, setIsImportFileValid, clearValidationErrors, clearErrorCondition } = emailSlice.actions
 
 export default emailSlice.reducer
 
@@ -134,3 +152,9 @@ export const selectShowSuccessDialog = (state) => state.emails.showSuccessDialog
 export const selectIsImportFileValid = (state) => state.emails.isImportFileValid
 
 export const selectValidationErrors = (state) => state.emails.validationErrors
+
+export const selectImportedEmailTemplatesCount = (state) => state.emails.importedEmailTemplatesCount
+
+export const selectTotalEmailTemplatesToImportCount = (state) => state.emails.totalEmailTemplatesToImportCount
+
+export const selectErrorCondition = (state) => state.emails.errorCondition

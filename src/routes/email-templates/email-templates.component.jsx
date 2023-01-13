@@ -19,11 +19,17 @@ import {
   clearExportFile,
   clearErrors,
   selectShowSuccessDialog,
+  selectImportedEmailTemplatesCount,
+  selectTotalEmailTemplatesToImportCount,
+  selectErrorCondition,
+  clearErrorCondition,
 } from '../../redux/emails/emailSlice'
 
 import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
 
 import styles from './email-templates.styles.js'
+
+import { errorConditions } from '../../redux/emails/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
@@ -37,6 +43,9 @@ const EmailTemplates = ({ t }) => {
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
+  const importedEmailTemplatesCount = useSelector(selectImportedEmailTemplatesCount)
+  const totalEmailTemplatesToImportCount = useSelector(selectTotalEmailTemplatesToImportCount)
+  const errorCondition = useSelector(selectErrorCondition)
 
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
@@ -61,6 +70,7 @@ const EmailTemplates = ({ t }) => {
   const onAfterCloseErrorDialogHandler = () => {
     setShowErrorDialog(false)
     dispatch(clearErrors())
+    dispatch(clearErrorCondition())
   }
 
   const onAfterCloseSuccessDialogHandler = () => {
@@ -82,11 +92,24 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
+  const getErrorDialogHeaderText = () => {
+    switch (errorCondition) {
+      case errorConditions.exportError:
+        return t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE')
+      case errorConditions.importWithCountError:
+        return t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_COUNT_HEADER_MESSAGE', { notImportedEmailTemplatesCount: errors.length, totalEmailTemplatesToImportCount })
+      case errorConditions.importWithoutCountError:
+        return t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_GENERIC_HEADER_MESSAGE')
+      default:
+        return t('GLOBAL.ERROR')
+    }
+  }
+
   const showErrorsList = () => (
     <DialogMessageInform
       open={showErrorDialog}
       className={classes.errorDialogStyle}
-      headerText={t('GLOBAL.ERROR')}
+      headerText={getErrorDialogHeaderText()}
       state={ValueState.Error}
       closeButtonContent={t('GLOBAL.OK')}
       id="emailTemplatesErrorPopup"
@@ -105,7 +128,7 @@ const EmailTemplates = ({ t }) => {
       closeButtonContent={t('GLOBAL.OK')}
       id="successPopup"
     >
-      {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
+      {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}
     </DialogMessageInform>
   )
 
