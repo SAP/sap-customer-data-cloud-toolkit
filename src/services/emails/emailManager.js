@@ -150,10 +150,12 @@ class EmailManager {
       const filePath = entry[0]
       if (this.#isMetadataFile(filePath) && !this.#isInIgnoreBaseFolders(filePath)) {
         const idx = entry[0].indexOf(EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME)
-        const baseFolder = filePath.slice(0, idx)
-        return {
-          zipBaseFolder: baseFolder,
-          numberOfFolders: (baseFolder.match(/\//g) || []).length,
+        if(idx === 0 || (idx > 0 && entry[0].charAt(idx-1) === '/')) {
+          const baseFolder = filePath.slice(0, idx)
+          return {
+            zipBaseFolder: baseFolder,
+            numberOfFolders: (baseFolder.match(/\//g) || []).length,
+          }
         }
       }
     }

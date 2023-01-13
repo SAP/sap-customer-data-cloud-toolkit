@@ -16,6 +16,12 @@ const magicLinkTemplateName = 'magicLink'
 const emailTemplateBuffer = Buffer.from(EmailsTestData.emailTemplate, 'utf8')
 let zipRootFolder
 
+const directoriesTable = [
+  [EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/'],
+  ['a/b/'],
+  ['']
+];
+
 describe('Emails Manager test suite', () => {
   let emailManager
 
@@ -108,48 +114,34 @@ describe('Emails Manager test suite', () => {
     expect(emailTemplates).toEqual(EmailsTestData.getExpectedExportConfigurationFileContentWithMinimumTemplates())
   })
 
-  // test.each([
-  //     [EXPORT_EMAIL_TEMPLATES_FILE_NAME + '/'],
-  //     ['a/b/'],
-  //     [''],
-  // ])('6.9 - import', async (zipRootFolder) => {
-  //   //zipRootFolder = 'a/b/'
-  //   let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
-  //   const expectCallArgument = {
-  //     defaultLanguage: 'en',
-  //     urlPlaceHolder: '$url',
-  //     emailTemplates: {
-  //       en: EmailsTestData.emailTemplate,
-  //       pt: EmailsTestData.emailTemplate,
-  //     },
-  //   }
-  //   const jszip = createZipContent(zipRootFolder)
-  //   jszip.file(zipRootFolder + 'MagicLink/pt.html', emailTemplateBuffer)
-  //   jszip.file(zipRootFolder + 'MagicLink/.DS_Store', emailTemplateBuffer)
-  //   jszip.file('__MACOSX' + '/MagicLink/fr.html', emailTemplateBuffer)
-  //   jszip.file('' + 'MagicLink/fr.html', emailTemplateBuffer)
-  //   const zipContent = await jszip.generateAsync({ type: 'arraybuffer' })
-  //
-  //   const siteConfigResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
-  //   axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
-  //
-  //   const response = await emailManager.import(apiKey, zipContent)
-  //   console.log('response=' + JSON.stringify(response))
-  //   response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
-  //   expect(spy.mock.calls.length).toBe(1)
-  //   expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
-  // })
-
-  test('7 - import', async () => {
+  test.each(directoriesTable)('7 - import with several directories', async (zipRootFolder) => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
-    const zipContent = await createZipFullContent()
+    const customEmailTemplate = createCustomEmailTemplate(zipRootFolder)
+    const expectCallArgument = {
+      defaultLanguage: 'en',
+      urlPlaceHolder: '$url',
+      emailTemplates: {
+        en: customEmailTemplate,
+        pt: customEmailTemplate,
+      },
+    }
 
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+    const jszip = createZipContent(zipRootFolder)
+    jszip.file(zipRootFolder + 'MagicLink/pt.html', Buffer.from(customEmailTemplate, 'utf8'))
+    jszip.file(zipRootFolder + 'MagicLink/en.html', Buffer.from(customEmailTemplate, 'utf8'))
+    jszip.file(zipRootFolder + 'MagicLink/.DS_Store', Buffer.from(customEmailTemplate, 'utf8'))
+    jszip.file(`__MACOSX/${zipRootFolder}MagicLink/es.html`, emailTemplateBuffer)
+    jszip.file('anotherFolder/MagicLink/fr.html', emailTemplateBuffer)
+    const zipContent = await jszip.generateAsync({ type: 'arraybuffer' })
+
+    const siteConfigResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
+    axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
 
     const response = await emailManager.import(apiKey, zipContent)
     //console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
-    expect(spy.mock.calls.length).toBe(9)
+    expect(spy.mock.calls.length).toBe(1)
+    expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
   })
 
   test('7.1 - import with email validation', async () => {
@@ -167,15 +159,19 @@ describe('Emails Manager test suite', () => {
     expect(spy.mock.calls.length).toBe(9)
   })
 
-  test('8 - import new template', async () => {
+  test.each(directoriesTable)('8 - import new template', async (zipRootFolder) => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const customEmailTemplate = createCustomEmailTemplate(zipRootFolder)
     const expectCallArgument = {
       welcomeEmailTemplates: {
-        ar: EmailsTestData.emailTemplate,
+        ar: customEmailTemplate,
       },
     }
 
-    const zipContent = await createZipContentWithNewTemplate()
+    const jszip = new JSZip()
+    jszip.file(zipRootFolder + '.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
+    jszip.file(zipRootFolder + 'NewUserWelcome/ar.html', Buffer.from(customEmailTemplate, 'utf8'))
+    const zipContent = await jszip.generateAsync({ type: 'arraybuffer' })
 
     const siteConfigResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
@@ -187,23 +183,27 @@ describe('Emails Manager test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, 'emailNotifications', expectCallArgument, siteConfigResponse.dataCenter)
   })
 
-  test('9 - delete template language', async () => {
+  test.each(directoriesTable)('9 - delete template language', async (zipRootFolder) => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const customEmailTemplate = createCustomEmailTemplate(zipRootFolder)
     const expectCallArgument = {
       defaultLanguage: 'en',
       urlPlaceHolder: '$url',
       emailTemplates: {
-        en: EmailsTestData.emailTemplate,
+        en: customEmailTemplate,
         pt: null,
       },
     }
-    const zipContent = await createZipContentWithTemplateLanguageRemoved()
+    const jszip = createZipContent(zipRootFolder)
+    jszip.file(zipRootFolder + 'MagicLink/en.html', customEmailTemplate)
+    jszip.file(zipRootFolder + 'MagicLink/pt.html', Buffer.from('', 'utf8'))
+    const zipContent = await jszip.generateAsync({ type: 'arraybuffer' })
 
     const siteConfigResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
 
     const response = await emailManager.import(apiKey, zipContent)
-    //console.log('response=' + JSON.stringify(response))
+    console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
@@ -229,19 +229,24 @@ describe('Emails Manager test suite', () => {
     }
   })
 
-  test('10 - add template language', async () => {
+  test.each(directoriesTable)('10 - add template language', async (zipRootFolder) => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const customEmailTemplate = createCustomEmailTemplate(zipRootFolder)
     const expectCallArgument = {
       defaultLanguage: 'en',
       urlPlaceHolder: '$url',
       emailTemplates: {
-        en: EmailsTestData.emailTemplate,
-        pt: EmailsTestData.emailTemplate,
-        fr: EmailsTestData.emailTemplate,
+        en: customEmailTemplate,
+        pt: customEmailTemplate,
+        fr: customEmailTemplate,
       },
     }
 
-    const zipContent = await createZipContentWithTemplateLanguageAdded()
+    const jszip = createZipContent(zipRootFolder)
+    jszip.file(zipRootFolder + 'MagicLink/en.html', customEmailTemplate)
+    jszip.file(zipRootFolder + 'MagicLink/pt.html', customEmailTemplate)
+    jszip.file(zipRootFolder + 'MagicLink/fr.html', customEmailTemplate)
+    const zipContent = await jszip.generateAsync({ type: 'arraybuffer' })
 
     const siteConfigResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
@@ -365,7 +370,7 @@ function createZipFullContentWithDispensableFiles() {
 }
 
 function createZipContentWithTemplateError(template) {
-  const jszip = createZipContent()
+  const jszip = createZipContent(zipRootFolder)
   jszip.file(zipRootFolder + 'MagicLink/en.html', Buffer.from(template, 'utf8'))
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
@@ -375,30 +380,16 @@ function createZipContentEmpty() {
   return jszip.generateAsync({ type: 'arraybuffer' })
 }
 
-function createZipContentWithNewTemplate() {
-  const jszip = new JSZip()
-  jszip.file(zipRootFolder + '.impexMetadata.json', Buffer.from(JSON.stringify(EmailsTestData.getEmailsExpectedResponseWithNoTemplates()), 'utf8'))
-  jszip.file(zipRootFolder + 'NewUserWelcome/ar.html', emailTemplateBuffer)
-  return jszip.generateAsync({ type: 'arraybuffer' })
-}
-
-function createZipContentWithTemplateLanguageRemoved() {
-  const jszip = createZipContent()
-  jszip.file(zipRootFolder + 'MagicLink/en.html', emailTemplateBuffer)
-  jszip.file(zipRootFolder + 'MagicLink/pt.html', Buffer.from('', 'utf8'))
-  return jszip.generateAsync({ type: 'arraybuffer' })
-}
-
-function createZipContentWithTemplateLanguageAdded() {
-  const jszip = createZipContent()
-  jszip.file(zipRootFolder + 'MagicLink/fr.html', emailTemplateBuffer)
-  return jszip.generateAsync({ type: 'arraybuffer' })
-}
-
-function createZipContent() {
+function createZipContent(zipRootFolder) {
   const metadata = EmailsTestData.getEmailsExpectedResponseWithNoTemplates()
   metadata[magicLinkTemplateName] = EmailsTestData.getEmailsExpectedResponse.magicLink
   const jszip = new JSZip()
   jszip.file(zipRootFolder + '.impexMetadata.json', Buffer.from(JSON.stringify(metadata), 'utf8'))
   return jszip
+}
+
+function createCustomEmailTemplate(zipRootFolder){
+  let customEmailTemplate = EmailsTestData.emailTemplate.slice()
+  const replaceValue = `##${zipRootFolder}##`
+  return customEmailTemplate.replace('noreply', replaceValue)
 }
