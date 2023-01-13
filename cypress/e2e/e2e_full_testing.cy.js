@@ -12,7 +12,7 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
     cy.wait(30000)
 
-    //Site creation using Site Deployer with the domain dev.us.e2e_testing
+    // //Site creation using Site Deployer with the domain dev.us.e2e_testing
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteDeployerIconName).click({ force: true })
     cy.wait(20000)
 
@@ -107,12 +107,31 @@ describe('All features full Test Suite', () => {
     cy.wait(10000)
     cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
 
-    cy.get('body').find('#openPopoverButton').click({ force: true })
-    cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}')
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
+    //SMS Templates - Second Use Case
+    //Importing and validating the template with new changes
+    cy.get('#importAllSmsTemplatesButton').click({ force: true })
+    cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
+    cy.get('#importZipButton').click({ force: true })
+    cy.wait(10000)
+    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.wait(20000)
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
+    cy.get('main-app')
+      .shadow()
+      .find('sms-templates-web-app')
+      .shadow()
+      .find('[class="languages_list_container"]')
+      .find('[role="list"]')
+      .find('[role="listitem"]')
+      .find('[class="fd-list__title"]')
+      .click({ force: true })
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
-    // //SMS export and import use cases:
-    // // - Export and import the default files
-    // // - Import the file with changed locales and compare them
+    //SMS export and import use cases:
+    // - Export and import the default files
+    // - Import the file with changed locales and compare them
     cy.wait(10000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.smsTemplatesOption).click({ force: true })
     //SMS Templates - First Use Case
@@ -135,9 +154,9 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-list__title"]')
       .click({ force: true })
 
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
-    // //SMS Templates - Second Use Case
-    // //Importing and validating the template with new changes
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
+    // // //SMS Templates - Second Use Case
+    // // //Importing and validating the template with new changes
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
     cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
     cy.get('#importZipButton').click({ force: true })
@@ -155,21 +174,22 @@ describe('All features full Test Suite', () => {
       .find('[role="listitem"]')
       .find('[class="fd-list__title"]')
       .click({ force: true })
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '31')
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
     //Delete the site created on this test
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteSelectorOption).click({ force: true })
+
     cy.wait(10000)
     cy.get('main-app')
       .shadow()
+      .find('[class ="app-area"]')
       .find('site-selector-web-app')
       .shadow()
-      .find('[class ="fd-section app__header"]')
-      .find('[class ="fd-input-group"]')
-      .find('[placeholder="Search"]')
-      .type('e2e_testing', { force: true })
-    cy.wait(10000)
-    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('[id="fd-popover-56"]').click()
+      .find('[class ="fd-table__body"]')
+      .find('[class="fd-table__cell"]')
+      .eq(3)
+      .find('sslct-site-actions')
+      .click({ force: true })
     cy.get('.fd-list > :nth-child(6)').click()
     cy.get('.fd-bar__right > :nth-child(2) > .fd-button').click()
     cy.get('.fd-form__control').click()
