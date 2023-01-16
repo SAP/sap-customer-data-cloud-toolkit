@@ -60,7 +60,9 @@ describe('Emails Manager test suite', () => {
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockImplementation(() => {
       throw err
     })
-    await emailManager.export(apiKey).catch((error) => { errorCallback(error, err) })
+    await emailManager.export(apiKey).catch((error) => {
+      errorCallback(error, err)
+    })
   })
 
   test('4 - export error getting data center', async () => {
@@ -68,7 +70,9 @@ describe('Emails Manager test suite', () => {
     axios.mockImplementation(() => {
       throw err
     })
-    await emailManager.export(apiKey).catch((error) => { errorCallback(error, err) })
+    await emailManager.export(apiKey).catch((error) => {
+      errorCallback(error, err)
+    })
   })
 
   test('5 - export templates', async () => {
@@ -188,7 +192,9 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     const zipContent = await createZipFullContent()
-    await emailManager.import(apiKey, zipContent).catch((error) => { errorCallback(error, err) })
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      errorCallback(error, err)
+    })
   })
 
   test.each(directoriesTable)('10 - add template language', async (zipRootFolder) => {

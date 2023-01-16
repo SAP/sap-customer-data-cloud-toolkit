@@ -24,7 +24,6 @@ import { selectCredentials, areCredentialsFilled } from '../../redux/credentials
 
 import '@ui5/webcomponents-icons/dist/decline.js'
 import './emails-import-popup.component.css'
-
 import styles from './styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
