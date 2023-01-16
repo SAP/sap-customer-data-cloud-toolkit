@@ -56,7 +56,7 @@ export const emailSlice = createSlice({
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.exportError
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
     builder.addCase(sendEmailTemplatesArrayBuffer.pending, (state) => {
       state.isLoading = true
@@ -80,7 +80,7 @@ export const emailSlice = createSlice({
     builder.addCase(sendEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.importWithoutCountError
-      Array.isArray(action.payload) ? (state.errors = action.payload) : (state.errors = [action.payload])
+      state.errors = action.payload
       state.isImportPopupOpen = false
       state.importedEmailTemplatesCount = 0
       state.totalEmailTemplatesToImportCount = 0
