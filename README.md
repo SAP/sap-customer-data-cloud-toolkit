@@ -27,4 +27,4 @@ App created to extend the existing functionality of the CDC Console.
 
 ## Cypress End-to-End tests
 
-1. Run `npm run cypress:run`
+1. Run `npm run cypress:ci`
