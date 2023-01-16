@@ -35,6 +35,7 @@ describe('SMS Templates Test Suite', () => {
     utils.clearCredentials()
     cy.get('#exportAllSmsTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 
   it('should show credentials error dialog on import', () => {
@@ -43,5 +44,6 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(data.smsExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })

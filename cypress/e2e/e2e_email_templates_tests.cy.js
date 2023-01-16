@@ -37,6 +37,7 @@ describe('Email Templates Test Suite', () => {
     utils.clearCredentials()
     cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 
   it('should show credentials error dialog on import', () => {
@@ -45,5 +46,6 @@ describe('Email Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })
