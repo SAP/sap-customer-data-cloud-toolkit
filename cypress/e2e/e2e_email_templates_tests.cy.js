@@ -26,7 +26,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importEmailsFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
 
-    cy.get('#zipFileInput').attachFile(data.emailErrorExampleFile)
+    cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#emailTemplatesValidationErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
@@ -42,7 +42,7 @@ describe('Email Templates Test Suite', () => {
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
     cy.get('#importAllEmailTemplatesButton').click()
-    cy.get('#zipFileInput').attachFile('cdc-tools-email-import')
+    cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
   })

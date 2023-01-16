@@ -1,14 +1,11 @@
 const { defineConfig } = require('cypress')
 require('dotenv').config()
-const { exec } = require('child_process')
 const path = require('path')
 module.exports = defineConfig({
   projectId: '4iymaz',
   env: {
     userName: `${process.env.email}`,
     passWord: `${process.env.passWord}`,
-    userKey: `${process.env.userKey}`,
-    secreKey: `${process.env.secreKey}`,
   },
 
   e2e: {
@@ -38,7 +35,6 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       console.log('setupNodeEvents for components')
 
-      // https://github.com/bahmutov/cypress-code-coverage
       require('@bahmutov/cypress-code-coverage/plugin')(on, config)
 
       return config
@@ -46,7 +42,7 @@ module.exports = defineConfig({
     devServer: {
       framework: 'create-react-app',
       bundler: 'webpack',
-      // here are the additional settings from Gleb's instructions
+
       webpackConfig: {
         mode: 'development',
         devtool: false,
