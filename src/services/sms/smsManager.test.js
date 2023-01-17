@@ -124,7 +124,6 @@ describe('Sms Manager test suite', () => {
 
   function createZipWithUnrelatedContent(zipRootFolder) {
     const jszip = createContent(zipRootFolder)
-    jszip.file('tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
     jszip.file('nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('bin/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('otp/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
@@ -132,6 +131,7 @@ describe('Sms Manager test suite', () => {
     jszip.file('__MACOSX/tfa/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('tfa/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
     jszip.file('otp/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
+    jszip.file('tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
     return jszip.generateAsync({ type: 'arraybuffer' })
   }
 

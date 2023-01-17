@@ -45,7 +45,7 @@ class SmsManager {
   #findZipBaseFolder(zipContentMap) {
     for (let entry of zipContentMap) {
       const filePath = entry[0]
-      const templateFolderIndex = this.#containsTemplateFolder(filePath)
+      const templateFolderIndex = this.#getTemplateFolderIndex(filePath)
       if (templateFolderIndex !== -1 && !this.#isInIgnoreBaseFolders(filePath)) {
         if (templateFolderIndex === 0 || (templateFolderIndex > 0 && entry[0].charAt(templateFolderIndex - 1) === '/')) {
           const baseFolder = filePath.slice(0, templateFolderIndex)
@@ -63,16 +63,18 @@ class SmsManager {
     throw error
   }
 
-  #containsTemplateFolder(filePath) {
+  #getTemplateFolderIndex(filePath) {
+    const folders = [
+      `${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`,
+      `${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`,
+      `${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`,
+      `${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`,
+    ]
     let idx = -1
-    if (filePath.endsWith(SmsManager.TEMPLATE_FILE_EXTENSION)) {
-      idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`)
-      if (idx === -1) {
-        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`)
-      } else if (idx === -1) {
-        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`)
-      } else if (idx === -1) {
-        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`)
+    for (let i = 0; i < folders.length; ++i) {
+      idx = filePath.indexOf(folders[i])
+      if (idx !== -1) {
+        break
       }
     }
     return idx
