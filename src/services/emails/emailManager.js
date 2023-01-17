@@ -186,10 +186,7 @@ class EmailManager {
   #removeOldContentFromMetadataMap(metadataMap) {
     for (let [internalTemplateName, templates] of metadataMap) {
       for (const key in templates) {
-        if (
-          templates[key] !== null &&
-          templates[key].startsWith(`${this.zipBaseFolderInfo.zipBaseFolder}${this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName)}`)
-        ) {
+        if (templates[key] !== null && templates[key].startsWith(`${this.#emailTemplateNameTranslator.translateInternalName(internalTemplateName)}`)) {
           delete templates[key]
         }
       }
