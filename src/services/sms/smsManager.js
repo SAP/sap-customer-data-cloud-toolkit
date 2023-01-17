@@ -1,13 +1,16 @@
 import Sms from './sms'
 import ZipManager from '../zip/zipManager'
 import _ from 'lodash'
-import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
+import generateErrorResponse from '../errors/generateErrorResponse'
 
 class SmsManager {
   static TEMPLATE_FILE_EXTENSION = '.txt'
   static TEMPLATE_DEFAULT_LANGUAGE_PLACEHOLDER = '.default'
   static TEMPLATE_TYPE_TFA = 'tfa'
   static TEMPLATE_TYPE_OTP = 'otp'
+  static TEMPLATE_SUBTYPE_GLOBAL = 'globalTemplates'
+  static TEMPLATE_SUBTYPE_COUNTRY = 'templatesPerCountryCode'
+  static #zipIgnoreBaseFolders = ['__MACOSX']
   #zipManager
 
   constructor(credentials) {
@@ -27,13 +30,59 @@ class SmsManager {
   }
 
   async import(site, zipContent) {
-    const zipContentMap = await this.#zipManager.read(zipContent)
-    this.#removeNotRelatedContent(zipContentMap)
+    let zipContentMap
+    try {
+      zipContentMap = await this.#zipManager.read(zipContent)
+      this.zipBaseFolderInfo = this.#findZipBaseFolder(zipContentMap)
+    } catch (error) {
+      return Promise.reject([generateErrorResponse(error, 'Error importing SMS templates').data])
+    }
+    this.#cleanZipFile(zipContentMap)
     const smsTemplatesResponse = await this.#importTemplates(site, zipContentMap)
     return smsTemplatesResponse.errorCode === 0 ? smsTemplatesResponse : Promise.reject(smsTemplatesResponse)
   }
 
-  #removeNotRelatedContent(zipContentMap) {
+  #findZipBaseFolder(zipContentMap) {
+    for (let entry of zipContentMap) {
+      const filePath = entry[0]
+      const templateFolderIndex = this.#containsTemplateFolder(filePath)
+      if (templateFolderIndex !== -1 && !this.#isInIgnoreBaseFolders(filePath)) {
+        if (templateFolderIndex === 0 || (templateFolderIndex > 0 && entry[0].charAt(templateFolderIndex - 1) === '/')) {
+          const baseFolder = filePath.slice(0, templateFolderIndex)
+          return {
+            zipBaseFolder: baseFolder,
+            numberOfFolders: (baseFolder.match(/\//g) || []).length,
+          }
+        }
+      }
+    }
+    const error = {
+      code: 1,
+      details: `Zip file does not contains any SMS template files. Please export the templates again.`,
+    }
+    throw error
+  }
+
+  #containsTemplateFolder(filePath) {
+    let idx = -1
+    if (filePath.endsWith(SmsManager.TEMPLATE_FILE_EXTENSION)) {
+      idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`)
+      if (idx === -1) {
+        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_TFA}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`)
+      } else if (idx === -1) {
+        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}/`)
+      } else if (idx === -1) {
+        idx = filePath.indexOf(`${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`)
+      }
+    }
+    return idx
+  }
+
+  #isInIgnoreBaseFolders(filePath) {
+    return SmsManager.#zipIgnoreBaseFolders.some((folder) => filePath.startsWith(folder))
+  }
+
+  #cleanZipFile(zipContentMap) {
     for (const entry of zipContentMap) {
       if (!this.#isTemplateFile(entry[0])) {
         zipContentMap.delete(entry[0])
@@ -44,7 +93,8 @@ class SmsManager {
   #isTemplateFile(file) {
     return (
       file.endsWith(SmsManager.TEMPLATE_FILE_EXTENSION) &&
-      (file.startsWith(`${EXPORT_SMS_TEMPLATES_FILE_NAME}/${SmsManager.TEMPLATE_TYPE_TFA}`) || file.startsWith(`${EXPORT_SMS_TEMPLATES_FILE_NAME}/${SmsManager.TEMPLATE_TYPE_OTP}`))
+      (file.startsWith(`${this.zipBaseFolderInfo.zipBaseFolder}${SmsManager.TEMPLATE_TYPE_TFA}`) ||
+        file.startsWith(`${this.zipBaseFolderInfo.zipBaseFolder}${SmsManager.TEMPLATE_TYPE_OTP}`))
     )
   }
 
@@ -65,9 +115,9 @@ class SmsManager {
     const template = {}
     let pointer = template
     const tokens = zipEntry.split('/')
-    if (tokens.length > 3) {
+    if (tokens.length > 2 + this.zipBaseFolderInfo.numberOfFolders) {
       let i
-      for (i = 1; i < tokens.length - 1; ++i) { // i=1 to ignore the root folder token
+      for (i = this.zipBaseFolderInfo.numberOfFolders; i < tokens.length - 1; ++i) {
         pointer[tokens[i]] = {}
         pointer = pointer[tokens[i]]
       }
@@ -104,7 +154,7 @@ class SmsManager {
   }
 
   #exportGlobalTemplates(smsTemplatesResponse, type) {
-    const folder = `${EXPORT_SMS_TEMPLATES_FILE_NAME}/${type}/globalTemplates`
+    const folder = `${type}/${SmsManager.TEMPLATE_SUBTYPE_GLOBAL}`
     const globalTemplatesObj = smsTemplatesResponse.templates[type].globalTemplates.templates
     const globalTemplatesDefaultLanguage = smsTemplatesResponse.templates[type].globalTemplates.defaultLanguage
     for (const language in globalTemplatesObj) {
@@ -117,7 +167,7 @@ class SmsManager {
   }
 
   #exportTemplatesPerCountryCode(smsTemplatesResponse, type) {
-    const folder = `${EXPORT_SMS_TEMPLATES_FILE_NAME}/${type}/templatesPerCountryCode`
+    const folder = `${type}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}`
     const templatesPerCountryCodeObj = smsTemplatesResponse.templates[type].templatesPerCountryCode
     for (const countryCode in templatesPerCountryCodeObj) {
       const countryCodeObj = templatesPerCountryCodeObj[countryCode].templates
