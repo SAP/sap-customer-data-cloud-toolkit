@@ -5,7 +5,7 @@
 
 # production
 /build
-
+.env
 # misc
 .DS_Store
 .env.local
@@ -45,6 +45,6 @@ yarn-error.log*
 .vscode
 .idea
 
-/cypress/downloads
 /cypress/videos
 /cypress/screenshots
+/cypress/downloads

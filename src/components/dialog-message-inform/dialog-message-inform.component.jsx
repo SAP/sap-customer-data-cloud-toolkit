@@ -23,7 +23,7 @@ const DialogMessageInform = ({ children, open = true, state = ValueState.Error, 
           <Bar
             design="Footer"
             endContent={
-              <Button onClick={() => setDialogIsOpen(false)} design="Emphasized" className={classes.closeButtonStyle}>
+              <Button id="closeButton" onClick={() => setDialogIsOpen(false)} design="Emphasized" className={classes.closeButtonStyle}>
                 {closeButtonContent}
               </Button>
             }

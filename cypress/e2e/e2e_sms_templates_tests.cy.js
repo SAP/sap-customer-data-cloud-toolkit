@@ -5,7 +5,7 @@ import * as data from './test-data'
 
 describe('SMS Templates Test Suite', () => {
   beforeEach(() => {
-    utils.startUp(data.smsTemplatesIconName)
+    utils.startUp('http://localhost:3000', data.smsTemplatesIconName)
   })
 
   it('should display Export All and Import All buttons', () => {
@@ -25,7 +25,7 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#importAllSmsTemplatesButton').click()
     cy.get('#smsImportPopup').contains('Import SMS templates').should('have.text', data.importSmsFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile(data.smsExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.smsTemplatesImportErrorHeaderMessage)
@@ -35,13 +35,15 @@ describe('SMS Templates Test Suite', () => {
     utils.clearCredentials()
     cy.get('#exportAllSmsTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
     cy.get('#importAllSmsTemplatesButton').click()
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile(data.smsExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })

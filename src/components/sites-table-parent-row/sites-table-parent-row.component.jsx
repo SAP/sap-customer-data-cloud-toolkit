@@ -12,7 +12,6 @@ import '@ui5/webcomponents-icons/dist/overflow.js'
 
 import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
-
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import styles from './styles.js'

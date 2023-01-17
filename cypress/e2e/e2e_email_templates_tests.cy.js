@@ -5,7 +5,7 @@ import * as data from './test-data'
 
 describe('Email Templates Test Suite', () => {
   beforeEach(() => {
-    utils.startUp(data.emailTemplatesIconName)
+    utils.startUp('http://localhost:3000', data.emailTemplatesIconName)
   })
 
   it('should display Export All and Import All buttons', () => {
@@ -26,7 +26,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#emailsImportPopup').contains('Import email templates').should('have.text', data.importEmailsFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
 
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#emailTemplatesValidationErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error')
@@ -37,13 +37,15 @@ describe('Email Templates Test Suite', () => {
     utils.clearCredentials()
     cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
     cy.get('#importAllEmailTemplatesButton').click()
-    cy.get('#zipFileInput').attachFile(data.cdcExampleFile)
+    cy.get('#zipFileInput').attachFile(data.emailExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })
