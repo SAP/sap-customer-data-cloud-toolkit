@@ -4,7 +4,7 @@ import { createUseStyles } from 'react-jss'
 
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 
-import styles from './styles.js'
+import styles from './credentials-error-dialog.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'CredentialsErrorDialog' })
 

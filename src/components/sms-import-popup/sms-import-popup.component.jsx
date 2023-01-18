@@ -7,12 +7,14 @@ import { createUseStyles } from 'react-jss'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import { selectIsImportPopupOpen, sendSmsTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/sms/smsSlice'
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import '@ui5/webcomponents-icons/dist/decline.js'
 import './sms-import-popup.component.css'
 
-import styles from './styles.js'
+import styles from './sms-import-popup.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SmsImportPopup' })
 

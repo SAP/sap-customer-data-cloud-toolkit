@@ -11,10 +11,12 @@ import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
 import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
-import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
+import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
-import styles from './styles.js'
+import ShowHideChildListButton from '../show-hide-child-list-button/show-hide-child-list-button.component'
+
+import styles from './sites-table-parent-row.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTableParentRow' })
 
@@ -77,28 +79,22 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
     setChildListOpen(true)
   }
 
+  const showChildListButtonClickHandler = () => {
+    setChildListOpen(true)
+  }
+
+  const hideChildListButtonClickHandler = () => {
+    setChildListOpen(false)
+  }
+
   const checkChildSitesView = () => {
     if (childSites && childSites.length) {
       return (
         <Fragment>
           {isChildListOpen ? (
-            <Button
-              icon="navigation-down-arrow"
-              design="Transparent"
-              tooltip={t('SITE_TABLE_PARENT_COMPONENT.HIDE_CHILD_TOOLTIP')}
-              onClick={() => {
-                setChildListOpen(false)
-              }}
-            ></Button>
+            <ShowHideChildListButton icon="navigation-down-arrow" tooltipKey="SITE_TABLE_PARENT_COMPONENT.HIDE_CHILD_TOOLTIP" onClickHandler={hideChildListButtonClickHandler} />
           ) : (
-            <Button
-              icon="navigation-right-arrow"
-              design="Transparent"
-              tooltip={t('SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP')}
-              onClick={() => {
-                setChildListOpen(true)
-              }}
-            ></Button>
+            <ShowHideChildListButton icon="navigation-right-arrow" tooltipKey="SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP" onClickHandler={showChildListButtonClickHandler} />
           )}
           <Input
             id="baseDomainInput"

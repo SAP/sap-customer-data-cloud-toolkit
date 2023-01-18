@@ -7,7 +7,7 @@ import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credent
 import { selectIsNewReleaseAvailable, selectLatestReleaseVersion, selectLatestReleaseUrl } from '../../redux/version/versionSlice'
 
 import { VERSION } from '../../constants'
-import styles from './styles.js'
+import styles from './credentials-popover.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'CredentialsPopover' })
 

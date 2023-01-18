@@ -2,10 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { getApiKey } from '../utils'
 import SmsManager from '../../services/sms/smsManager'
-import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 import { errorConditions } from '../errorConditions'
-import { SMS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
+import { ZIP_FILE_MIME_TYPE } from '../constants'
+
+const SMS_SLICE_STATE_NAME = 'sms'
+const EXPORT_SMS_TEMPLATES_FILE_NAME = 'cdc-toolbox-sms-templates'
 
 const IMPORT_SMS_TEMPLATES_ACTION = 'service/importSmsTemplates'
 const EXPORT_SMS_TEMPLATES_ACTION = 'service/exportSmsTemplates'

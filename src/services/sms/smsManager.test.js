@@ -1,10 +1,10 @@
 import axios from 'axios'
-import * as ConfiguratorTestData from '../configurator/data_test'
+import * as ConfiguratorTestData from '../configurator/dataTest'
 import ZipManager from '../zip/zipManager'
 import SmsManager from './smsManager'
-import { credentials } from '../servicesData_test'
-import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './data_test'
-import * as CommonTestData from '../servicesData_test'
+import { credentials } from '../servicesDataTest'
+import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './dataTest'
+import * as CommonTestData from '../servicesDataTest'
 import JSZip from 'jszip'
 
 jest.mock('axios')

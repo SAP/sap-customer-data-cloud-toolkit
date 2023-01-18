@@ -1,6 +1,6 @@
 import GitHubClient from './client'
 import axios from 'axios'
-import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './data_test'
+import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './dataTest'
 
 jest.mock('axios')
 jest.setTimeout(10000)

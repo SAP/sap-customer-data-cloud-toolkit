@@ -30,6 +30,40 @@ const cypressDownloadsPath = '../cdc-tools-chrome-extension/cypress/downloads/'
 const smsTemplatesExportErrorHeaderMessage = 'Error - SMS templates were not exported'
 const smsTemplatesImportErrorHeaderMessage = 'Error - SMS templates were not imported'
 
+const errorToManualRemoveSiteMessage = {
+  callId: '079f19c68315418dae4179eca5373122',
+  errorCode: 400,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2022-11-04T11:59:16.142Z',
+  siteID: 131133173102,
+  apiKey: '4_Zk14vYv3A_tdMF912nfmEA',
+  tempId: '0feb52c1-e330-47b6-a0c3-27a8144fbd1b',
+}
+
+const emailTemplateExportError = {
+  errorMessage: 'Error getting email templates',
+  errorDetails: 'There was an error when getting the email templates or you do not have the required permissions to call it.',
+  statusCode: 403,
+  errorCode: 403007,
+  statusReason: 'Forbidden',
+  callId: 'ed5c54bfe321478b8db4298c2539265a',
+  apiVersion: 2,
+  time: 'Date.now()',
+}
+
+const smsTemplateExportError = {
+  errorMessage: 'Error getting SMS templates',
+  errorDetails: 'There was an error when getting the SMS templates or you do not have the required permissions to call it.',
+  statusCode: 403,
+  errorCode: 403007,
+  statusReason: 'Forbidden',
+  callId: 'ed5c54bfe321478b8db4298c2539265a',
+  apiVersion: 2,
+  time: 'Date.now()',
+}
+
 export {
   siteDomain,
   dropdownOption,
@@ -61,4 +95,7 @@ export {
   siteDomainName,
   siteSelectorOption,
   smsTemplatesOption,
+  errorToManualRemoveSiteMessage,
+  emailTemplateExportError,
+  smsTemplateExportError,
 }

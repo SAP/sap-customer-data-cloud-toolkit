@@ -1,9 +1,9 @@
 import axios from 'axios'
-import * as EmailsTestData from './data_test'
+import * as EmailsTestData from './dataTest'
 import EmailManager from './emailManager'
 import ZipManager from '../zip/zipManager'
-import * as CommonTestData from '../servicesData_test'
-import * as ConfiguratorTestData from '../configurator/data_test'
+import * as CommonTestData from '../servicesDataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest'
 import JSZip from 'jszip'
 
 jest.mock('axios')

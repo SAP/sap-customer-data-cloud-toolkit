@@ -1,4 +1,4 @@
-import * as data from '../redux/emails/testData'
+import * as data from '../redux/emails/dataTest'
 import { getApiKey } from './utils'
 
 describe('Redux utils test suite', () => {

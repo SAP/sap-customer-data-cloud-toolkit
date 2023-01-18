@@ -10,7 +10,7 @@ import { selectIsNewReleaseAvailable, checkNewVersion } from '../../redux/versio
 import CredentialsPopover from '../credentials-popover/credentials-popover.component'
 import './credentials-popover-button.component.css'
 import '@ui5/webcomponents-icons/dist/fridge.js'
-import styles from './styles.js'
+import styles from './credentials-popover-button.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'CredentialsPopoverButton' })
 

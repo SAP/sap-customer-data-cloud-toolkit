@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import dataCenters from '../../dataCenters.json'
+import { getDataCenters } from './utils'
 
-const getDataCenters = (host = window.location.hostname) => dataCenters.filter((dataCenter) => dataCenter.console === host)[0].datacenters
+const DATA_CENTERS_SLICE_STATE_NAME = 'dataCenters'
 
 export const dataCentersSlice = createSlice({
-  name: 'dataCenters',
+  name: DATA_CENTERS_SLICE_STATE_NAME,
   initialState: {
     dataCenters: getDataCenters(),
   },

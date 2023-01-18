@@ -1,8 +1,8 @@
 import axios from 'axios'
-import * as SmsTestData from './data_test'
+import * as SmsTestData from './dataTest'
 import Sms from './sms'
-import * as CommonTestData from '../servicesData_test'
-import * as ConfiguratorTestData from '../configurator/data_test'
+import * as CommonTestData from '../servicesDataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest'
 
 jest.mock('axios')
 jest.setTimeout(10000)

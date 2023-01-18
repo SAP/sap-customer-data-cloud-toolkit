@@ -1,8 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import GitHubManager from '../../services/github/gitHubManager'
 
+import { fillState, clearState } from './utils'
+
+const VERSION_SLICE_STATE_NAME = 'version'
+const CHECK_NEW_VERSION_ACTION = 'service/version'
+
 export const versionSlice = createSlice({
-  name: 'version',
+  name: VERSION_SLICE_STATE_NAME,
   initialState: {
     isNewReleaseAvailable: false,
     latestReleaseUrl: '',
@@ -21,19 +26,7 @@ export const versionSlice = createSlice({
   },
 })
 
-const fillState = (state, versionData) => {
-  state.isNewReleaseAvailable = versionData.isNewReleaseAvailable
-  state.latestReleaseVersion = versionData.latestReleaseVersion
-  state.latestReleaseUrl = versionData.latestReleaseUrl
-}
-
-const clearState = (state) => {
-  state.isNewReleaseAvailable = false
-  state.latestReleaseVersion = ''
-  state.latestReleaseUrl = ''
-}
-
-export const checkNewVersion = createAsyncThunk('service/version', async (dummy, { rejectWithValue }) => {
+export const checkNewVersion = createAsyncThunk(CHECK_NEW_VERSION_ACTION, async (dummy, { rejectWithValue }) => {
   try {
     return await new GitHubManager().getNewReleaseAvailable()
   } catch (error) {

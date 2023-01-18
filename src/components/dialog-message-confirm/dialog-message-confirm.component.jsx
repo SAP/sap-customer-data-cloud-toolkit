@@ -3,7 +3,7 @@ import { Dialog, Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { withNamespaces } from 'react-i18next'
 
-import styles from './styles.js'
+import styles from './dialog-message-confirm.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessageConfirm' })
 

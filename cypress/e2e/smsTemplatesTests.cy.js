@@ -1,11 +1,10 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
-import manualRemovalTestData from './manual-removal-test-data.json'
-import * as data from './test-data'
+import * as dataTest from './dataTest'
 
 describe('SMS Templates Test Suite', () => {
   beforeEach(() => {
-    utils.startUp('http://localhost:3000', data.smsTemplatesIconName)
+    utils.startUp('http://localhost:3000', dataTest.smsTemplatesIconName)
   })
 
   it('should display Export All and Import All buttons', () => {
@@ -14,36 +13,36 @@ describe('SMS Templates Test Suite', () => {
   })
 
   it('should show error messages on export button', () => {
-    utils.mockResponse(manualRemovalTestData.flat()[2], 'POST', 'admin.getSiteConfig')
+    utils.mockResponse(dataTest.smsTemplateExportError, 'POST', 'admin.getSiteConfig')
     cy.get('#exportAllSmsTemplatesButton').click()
-    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.smsTemplatesExportErrorHeaderMessage)
+    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', dataTest.smsTemplatesExportErrorHeaderMessage)
   })
 
   it('should show error on import button', () => {
-    utils.mockResponse(manualRemovalTestData.flat()[2], 'POST', 'admin.getSiteConfig')
+    utils.mockResponse(dataTest.smsTemplateExportError, 'POST', 'admin.getSiteConfig')
     utils.resizeObserverLoopErrRe()
     cy.get('#importAllSmsTemplatesButton').click()
-    cy.get('#smsImportPopup').contains('Import SMS templates').should('have.text', data.importSmsFileHeaderText)
+    cy.get('#smsImportPopup').contains('Import SMS templates').should('have.text', dataTest.importSmsFileHeaderText)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('be.disabled')
-    cy.get('#zipFileInput').attachFile(data.smsExampleFile)
+    cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
-    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', data.smsTemplatesImportErrorHeaderMessage)
+    cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', dataTest.smsTemplatesImportErrorHeaderMessage)
   })
 
   it('should show credentials error dialog on export', () => {
     utils.clearCredentials()
     cy.get('#exportAllSmsTemplatesButton').click()
-    cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
     cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 
   it('should show credentials error dialog on import', () => {
     utils.clearCredentials()
     cy.get('#importAllSmsTemplatesButton').click()
-    cy.get('#zipFileInput').attachFile(data.smsExampleFile)
+    cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click()
-    cy.get('#errorPopup').should('have.text', data.missingCredentialsErrorMessage)
+    cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
     cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })

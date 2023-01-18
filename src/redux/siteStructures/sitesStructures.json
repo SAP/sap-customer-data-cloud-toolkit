@@ -177,7 +177,7 @@
         "dataCenter": "",
         "childSites": [
           {
-            "baseDomain": "dev.{{dataCenter}}.{{country}}.{{baseDomain}}",
+            "baseDomain": "dev.{{dataCenter}}.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }

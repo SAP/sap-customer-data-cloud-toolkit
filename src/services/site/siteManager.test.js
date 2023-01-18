@@ -1,9 +1,9 @@
 import SiteManager from './siteManager'
-import * as TestData from './data_test'
+import * as TestData from './dataTest'
 import client from '../gigya/client'
 import axios from 'axios'
-import * as CommonTestData from '../servicesData_test'
-import * as ConfiguratorTestData from '../configurator/data_test'
+import * as CommonTestData from '../servicesDataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest'
 
 jest.mock('axios')
 describe('Site manager async test suite', () => {
