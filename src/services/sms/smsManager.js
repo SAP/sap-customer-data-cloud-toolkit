@@ -25,7 +25,7 @@ class SmsManager {
       this.#exportOtpTemplates(smsTemplatesResponse)
       return this.#zipManager.createZipArchive()
     } else {
-      return Promise.reject(smsTemplatesResponse)
+      return Promise.reject([smsTemplatesResponse])
     }
   }
 
@@ -39,7 +39,7 @@ class SmsManager {
     }
     this.#cleanZipFile(zipContentMap)
     const smsTemplatesResponse = await this.#importTemplates(site, zipContentMap)
-    return smsTemplatesResponse.errorCode === 0 ? smsTemplatesResponse : Promise.reject(smsTemplatesResponse)
+    return smsTemplatesResponse.errorCode === 0 ? smsTemplatesResponse : Promise.reject([smsTemplatesResponse])
   }
 
   #findZipBaseFolder(zipContentMap) {

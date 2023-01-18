@@ -49,7 +49,7 @@ describe('Sms Manager test suite', () => {
   test('3 - export with error getting data center', async () => {
     const mockedResponse = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
     axios.mockResolvedValueOnce(mockedResponse)
-    await expect(smsManager.export('apiKey')).rejects.toEqual(mockedResponse.data)
+    await expect(smsManager.export('apiKey')).rejects.toEqual([mockedResponse.data])
   })
 
   test.each(directoriesTable)('4 - import all templates', async (zipRootFolder) => {
@@ -94,14 +94,14 @@ describe('Sms Manager test suite', () => {
     const zipContent = await createZipFullContent(zipRootFolder)
     const mockedResponse = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
     axios.mockResolvedValueOnce(mockedResponse)
-    await expect(smsManager.import('apiKey', zipContent)).rejects.toEqual(mockedResponse.data)
+    await expect(smsManager.import('apiKey', zipContent)).rejects.toEqual([mockedResponse.data])
   })
 
   test('8 - import with error setting templates', async () => {
     const zipContent = await createZipFullContent(zipRootFolder)
     const mockedResponse = { data: CommonTestData.expectedGigyaResponseInvalidAPI }
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue(mockedResponse)
-    await expect(smsManager.import('apiKey', zipContent)).rejects.toEqual(mockedResponse.data)
+    await expect(smsManager.import('apiKey', zipContent)).rejects.toEqual([mockedResponse.data])
   })
 
   function createExpectedZipEntries() {

@@ -47,7 +47,7 @@ export const smsSlice = createSlice({
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.exportError
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
     builder.addCase(sendSmsTemplatesArrayBuffer.pending, (state) => {
       state.isLoading = true
@@ -56,7 +56,7 @@ export const smsSlice = createSlice({
       state.isLoading = false
       if (action.payload.errorCode !== 0) {
         state.errorCondition = errorConditions.importWithoutCountError
-        state.errors = [action.payload]
+        state.errors = action.payload
         state.showSuccessDialog = false
       } else {
         state.showSuccessDialog = true
@@ -66,7 +66,7 @@ export const smsSlice = createSlice({
     builder.addCase(sendSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.importWithoutCountError
-      state.errors = [action.payload]
+      state.errors = action.payload
       state.isImportPopupOpen = false
     })
   },
