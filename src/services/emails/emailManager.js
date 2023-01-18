@@ -126,7 +126,12 @@ class EmailManager {
   }
 
   async validateEmailTemplates(zipContent) {
-    const zipContentMap = await this.#readZipContent(zipContent)
+    let zipContentMap
+    try {
+      zipContentMap = await this.#readZipContent(zipContent)
+    } catch (error) {
+      return Promise.reject([generateErrorResponse(error, 'Error validating email templates').data])
+    }
     const errors = this.#validateEmailTemplates(zipContentMap)
     return this.#isResponseOk(errors) ? Promise.resolve(errors) : Promise.reject(errors)
   }

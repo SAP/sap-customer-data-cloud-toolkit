@@ -136,6 +136,32 @@ describe('Emails Manager test suite', () => {
     expect(spy.mock.calls.length).toBe(9)
   })
 
+  test('7.2 - import empty zip file', async () => {
+    const err = {
+      message: 'Error importing email templates',
+      code: 1,
+      details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
+    }
+    const zipContent = await createZipContentEmpty()
+
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      errorCallback(error, err)
+    })
+  })
+
+  test('7.3 - validate emails on empty zip file', async () => {
+    const err = {
+      message: 'Error validating email templates',
+      code: 1,
+      details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
+    }
+    const zipContent = await createZipContentEmpty()
+
+    await emailManager.validateEmailTemplates(zipContent).catch((error) => {
+      errorCallback(error, err)
+    })
+  })
+
   test.each(directoriesTable)('8 - import new template', async (zipRootFolder) => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
     const customEmailTemplate = createCustomEmailTemplate(zipRootFolder)
