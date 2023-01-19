@@ -4,7 +4,7 @@ const initialState = {
   exportFile: undefined,
   isLoading: false,
   errors: [],
-  validationErrors: [],
+  validationWarnings: [],
   isImportPopupOpen: false,
   showSuccessDialog: false,
   isImportFileValid: false,

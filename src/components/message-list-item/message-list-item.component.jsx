@@ -1,7 +1,7 @@
 import { MessageItem } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/slim-arrow-right.js'
 
-const MessageListItem = ({ message }) => {
+const MessageListItem = ({ message, type = 'Error' }) => {
   let { titleText, subtitleText } = message
 
   if (!titleText) {
@@ -21,7 +21,7 @@ const MessageListItem = ({ message }) => {
   }
 
   return (
-    <MessageItem titleText={titleText} subtitleText={subtitleText}>
+    <MessageItem titleText={titleText} subtitleText={subtitleText} type={type}>
       <pre>{JSON.stringify(message, null, 2)}</pre>
     </MessageItem>
   )

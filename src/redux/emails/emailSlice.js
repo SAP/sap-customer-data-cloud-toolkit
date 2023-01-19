@@ -19,7 +19,7 @@ export const emailSlice = createSlice({
     exportFile: undefined,
     isLoading: false,
     errors: [],
-    validationErrors: [],
+    validationWarnings: [],
     isImportPopupOpen: false,
     showSuccessDialog: false,
     isImportFileValid: false,
@@ -38,7 +38,7 @@ export const emailSlice = createSlice({
       state.errors = []
     },
     clearValidationErrors(state) {
-      state.validationErrors = []
+      state.validationWarnings = []
     },
     setIsImportFileValid(state, action) {
       state.isImportFileValid = action.payload
@@ -93,7 +93,12 @@ export const emailSlice = createSlice({
     })
     builder.addCase(validateEmailTemplates.rejected, (state, action) => {
       state.isLoading = false
-      state.validationErrors = action.payload
+      const warnings = action.payload.filter((error) => error.severity === EmailManager.ERROR_SEVERITY_WARNING)
+      if (warnings.length !== 0) {
+        state.validationWarnings = action.payload
+      } else {
+        state.errors = action.payload
+      }
       state.isImportFileValid = false
     })
   },
@@ -153,7 +158,7 @@ export const selectShowSuccessDialog = (state) => state.emails.showSuccessDialog
 
 export const selectIsImportFileValid = (state) => state.emails.isImportFileValid
 
-export const selectValidationErrors = (state) => state.emails.validationErrors
+export const selectValidationWarnings = (state) => state.emails.validationWarnings
 
 export const selectImportedEmailTemplatesCount = (state) => state.emails.importedEmailTemplatesCount
 
