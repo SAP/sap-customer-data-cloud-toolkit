@@ -242,7 +242,7 @@ describe('Emails Manager test suite', () => {
   test('20 - error validating html template', async () => {
     const err = {
       message: 'Error validating email templates',
-      code: 'invalidXml',
+      code: 'InvalidXml',
       details: `Error on template file cdc-toolbox-email-templates/MagicLink/en.html. Extra text at the end on line 18`,
       severity: EmailManager.ERROR_SEVERITY_WARNING,
     }
@@ -310,8 +310,6 @@ describe('Emails Manager test suite', () => {
       error[0].time === undefined ||
       error[0].severity !== err.severity
     ) {
-      console.log('bmserror:' + JSON.stringify(error[0]))
-      console.log('bmserr:' + JSON.stringify(err))
       throw new Error('It is not the expected exception')
     }
   }
