@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
-import * as testData from './test-data'
+import * as dataTest from './dataTest'
 // import { data } from 'cypress/types/jquery'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
     utils.resizeObserverLoopErrRe()
-    cy.visit(testData.consoleUrl)
+    cy.visit(dataTest.consoleUrl)
 
     cy.get('[name ="username"]', { timeout: 10000 }).eq(2).type(Cypress.env('userName'))
     cy.get('[name="password"]').eq(3).type(Cypress.env('passWord'))
@@ -14,12 +14,12 @@ describe('All features full Test Suite', () => {
     cy.wait(30000)
 
     //Site creation using Site Deployer with the domain dev.us.e2e_testing
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteDeployerIconName).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.siteDeployerIconName).click({ force: true })
     cy.wait(20000)
 
-    utils.getSiteDomain(testData.siteDomainName, 40000)
+    utils.getSiteDomain(dataTest.siteDomainName, 40000)
     utils.getDataCenters('US', 'EU', 'AU')
-    utils.getSiteStructure(5).should('have.text', testData.dropdownOption)
+    utils.getSiteStructure(5).should('have.text', dataTest.dropdownOption)
     utils.getCreateButton().click()
 
     cy.get('ui5-table-cell').eq(7).click()
@@ -40,7 +40,7 @@ describe('All features full Test Suite', () => {
       .find('[class ="fd-section app__header"]')
       .find('[class ="fd-input-group"]')
       .find('[placeholder="Search"]')
-      .type(testData.siteDomainName, { force: true })
+      .type(dataTest.siteDomainName, { force: true })
 
     cy.get('main-app')
       .shadow()
@@ -57,7 +57,7 @@ describe('All features full Test Suite', () => {
     // - Export and import the default files
     // - Import the file with changed locales and compare them
     cy.wait(20000)
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.emailTemplatesIconName).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.emailTemplatesIconName).click({ force: true })
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
 
     //Email Templates -  First Use Case
@@ -66,7 +66,7 @@ describe('All features full Test Suite', () => {
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
     cy.get('#confirmButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile(`${testData.cypressDownloadsPath}${testData.emailExampleFile}`, { force: true })
+    cy.get('#zipFileInput').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.wait(10000)
     cy.get('#confirmButton').click({ force: true })
@@ -78,13 +78,13 @@ describe('All features full Test Suite', () => {
 
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
 
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.emailTemplatesIconName).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.emailTemplatesIconName).click({ force: true })
 
     // //Email Templates - Second Use Case
     // //Importing the test template with added languages
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.emailExampleFile, { force: true })
+    cy.get('#zipFileInput').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
     cy.wait(10000)
@@ -100,10 +100,10 @@ describe('All features full Test Suite', () => {
     cy.get('body').find('#openPopoverButton').click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.emailExampleFile, { force: true })
+    cy.get('#zipFileInput').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
-    cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', testData.unauthorizedUser)
+    cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', dataTest.unauthorizedUser)
     cy.wait(10000)
     cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
     cy.get('body').find('#openPopoverButton').click({ force: true })
@@ -113,13 +113,13 @@ describe('All features full Test Suite', () => {
     // - Export and import the default files
     // - Import the file with changed locales and compare them
     cy.wait(10000)
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.smsTemplatesOption).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.smsTemplatesOption).click({ force: true })
     // SMS Templates - First Use Case
     //Exporting and Importing the original template
     cy.get('#exportAllSmsTemplatesButton').click({ force: true })
     cy.wait(10000)
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').selectFile(`${testData.cypressDownloadsPath}${testData.smsExampleFile}`, { force: true })
+    cy.get('#zipFileInput').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.smsExampleFile}`, { force: true })
     cy.get('#importZipButton').click({ force: true })
     cy.wait(10000)
     cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
@@ -137,7 +137,7 @@ describe('All features full Test Suite', () => {
     // //SMS Templates - Second Use Case
     //Importing and validating the template with new changes
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
-    cy.get('#zipFileInput').attachFile(testData.smsExampleFile)
+    cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click({ force: true })
     cy.wait(10000)
     cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
@@ -156,7 +156,7 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
     //Delete the site created on this test
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(testData.siteSelectorOption).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.siteSelectorOption).click({ force: true })
     cy.wait(10000)
     cy.get('main-app')
       .shadow()

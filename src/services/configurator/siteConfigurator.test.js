@@ -1,6 +1,6 @@
 import SiteConfigurator from './siteConfigurator'
-import * as TestData from './data_test'
-import * as CommonTestData from '../servicesData_test'
+import * as TestData from './dataTest'
+import * as CommonTestData from '../servicesDataTest'
 import axios from 'axios'
 
 jest.mock('axios')

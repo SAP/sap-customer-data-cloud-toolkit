@@ -40,9 +40,10 @@ import {
   selectSitesToDeleteManually,
 } from '../../redux/sites/siteSlice'
 
-import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
-
-import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
+import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
+import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
@@ -50,9 +51,7 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
-import structures from '../../sitesStructures.json'
-
-import styles from './styles.js'
+import styles from './site-deployer.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
@@ -96,6 +95,7 @@ const SiteDeployer = ({ t }) => {
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
   const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
+  const structures = useSelector(selectSiteStructures)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
@@ -106,7 +106,7 @@ const SiteDeployer = ({ t }) => {
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
-  })
+  }, [dispatch])
 
   const onSaveHandler = () => {
     if (areCredentialsFilled(credentials)) {

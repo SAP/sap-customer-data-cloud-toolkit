@@ -25,8 +25,8 @@ import {
   clearErrorCondition,
 } from '../../redux/emails/emailSlice'
 
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
-
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './email-templates.styles.js'
 
 import { errorConditions } from '../../redux/errorConditions'

@@ -1,6 +1,6 @@
 import GitHubManager from './gitHubManager'
 import axios from 'axios'
-import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './data_test'
+import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './dataTest'
 
 jest.mock('axios')
 jest.mock('../../../package.json')

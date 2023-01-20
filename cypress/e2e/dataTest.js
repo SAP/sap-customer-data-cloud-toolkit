@@ -21,7 +21,7 @@ const emailExampleFile = 'cdc-toolbox-email-templates.zip'
 const smsExampleFile = 'cdc-toolbox-sms-templates.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importEmailTemplatesErrorMessage = `Error importing email templatesError on template file cdc-toolbox-email-templates/DoubleOptInConfirmation/ar.html. Expected closing tag 'div' (opened in line 8, col 1) instead of closing tag 'body'. on line 18`
+const importEmailTemplatesErrorMessage = `Error validating email templatesError on template file cdc-toolbox-email-templates/DoubleOptInConfirmation/ar.html. Expected closing tag 'div' (opened in line 8, col 1) instead of closing tag 'body'. on line 18`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
@@ -29,6 +29,40 @@ const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
 const cypressDownloadsPath = '../cdc-tools-chrome-extension/cypress/downloads/'
 const smsTemplatesExportErrorHeaderMessage = 'Error - SMS templates were not exported'
 const smsTemplatesImportErrorHeaderMessage = 'Error - SMS templates were not imported'
+
+const errorToManualRemoveSiteMessage = {
+  callId: '079f19c68315418dae4179eca5373122',
+  errorCode: 400,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2022-11-04T11:59:16.142Z',
+  siteID: 131133173102,
+  apiKey: '4_Zk14vYv3A_tdMF912nfmEA',
+  tempId: '0feb52c1-e330-47b6-a0c3-27a8144fbd1b',
+}
+
+const emailTemplateExportError = {
+  errorMessage: 'Error getting email templates',
+  errorDetails: 'There was an error when getting the email templates or you do not have the required permissions to call it.',
+  statusCode: 403,
+  errorCode: 403007,
+  statusReason: 'Forbidden',
+  callId: 'ed5c54bfe321478b8db4298c2539265a',
+  apiVersion: 2,
+  time: 'Date.now()',
+}
+
+const smsTemplateExportError = {
+  errorMessage: 'Error getting SMS templates',
+  errorDetails: 'There was an error when getting the SMS templates or you do not have the required permissions to call it.',
+  statusCode: 403,
+  errorCode: 403007,
+  statusReason: 'Forbidden',
+  callId: 'ed5c54bfe321478b8db4298c2539265a',
+  apiVersion: 2,
+  time: 'Date.now()',
+}
 
 export {
   siteDomain,
@@ -61,4 +95,7 @@ export {
   siteDomainName,
   siteSelectorOption,
   smsTemplatesOption,
+  errorToManualRemoveSiteMessage,
+  emailTemplateExportError,
+  smsTemplateExportError,
 }

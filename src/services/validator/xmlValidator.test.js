@@ -1,5 +1,5 @@
 import XmlValidator from './xmlValidator'
-import * as EmailsTestData from '../emails/data_test'
+import * as EmailsTestData from '../emails/dataTest'
 
 describe('html validator test suite', () => {
   const htmlString = '<a attr="<true">a<b>b</b><c/></a>'

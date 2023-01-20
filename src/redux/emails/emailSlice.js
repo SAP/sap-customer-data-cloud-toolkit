@@ -1,11 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import EmailManager from '../../services/emails/emailManager'
-import { EXPORT_EMAIL_TEMPLATES_FILE_NAME } from '../../constants'
 
 import { getApiKey } from '../utils'
-import { EMAILS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
+import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
+
+const EMAILS_SLICE_STATE_NAME = 'emails'
+const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'cdc-toolbox-email-templates'
 
 const IMPORT_EMAIL_TEMPLATES_ACTION = 'service/importEmailTemplates'
 const EXPORT_EMAIL_TEMPLATES_ACTION = 'service/exportEmailTemplates'
@@ -17,7 +19,7 @@ export const emailSlice = createSlice({
     exportFile: undefined,
     isLoading: false,
     errors: [],
-    validationErrors: [],
+    validationWarnings: [],
     isImportPopupOpen: false,
     showSuccessDialog: false,
     isImportFileValid: false,
@@ -36,7 +38,7 @@ export const emailSlice = createSlice({
       state.errors = []
     },
     clearValidationErrors(state) {
-      state.validationErrors = []
+      state.validationWarnings = []
     },
     setIsImportFileValid(state, action) {
       state.isImportFileValid = action.payload
@@ -91,7 +93,12 @@ export const emailSlice = createSlice({
     })
     builder.addCase(validateEmailTemplates.rejected, (state, action) => {
       state.isLoading = false
-      state.validationErrors = action.payload
+      const warnings = action.payload.filter((error) => error.severity === EmailManager.ERROR_SEVERITY_WARNING)
+      if (warnings.length !== 0) {
+        state.validationWarnings = action.payload
+      } else {
+        state.errors = action.payload
+      }
       state.isImportFileValid = false
     })
   },
@@ -151,7 +158,7 @@ export const selectShowSuccessDialog = (state) => state.emails.showSuccessDialog
 
 export const selectIsImportFileValid = (state) => state.emails.isImportFileValid
 
-export const selectValidationErrors = (state) => state.emails.validationErrors
+export const selectValidationWarnings = (state) => state.emails.validationWarnings
 
 export const selectImportedEmailTemplatesCount = (state) => state.emails.importedEmailTemplatesCount
 

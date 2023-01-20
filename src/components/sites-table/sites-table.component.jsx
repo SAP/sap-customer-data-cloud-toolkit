@@ -13,7 +13,7 @@ import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
 import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
-import styles from './styles.js'
+import styles from './sites-table.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTable' })
 

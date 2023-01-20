@@ -2,10 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import { getApiKey } from '../utils'
 import SmsManager from '../../services/sms/smsManager'
-import { EXPORT_SMS_TEMPLATES_FILE_NAME } from '../../constants'
 
 import { errorConditions } from '../errorConditions'
-import { SMS_SLICE_STATE_NAME, ZIP_FILE_MIME_TYPE } from '../constants'
+import { ZIP_FILE_MIME_TYPE } from '../constants'
+
+const SMS_SLICE_STATE_NAME = 'sms'
+const EXPORT_SMS_TEMPLATES_FILE_NAME = 'cdc-toolbox-sms-templates'
 
 const IMPORT_SMS_TEMPLATES_ACTION = 'service/importSmsTemplates'
 const EXPORT_SMS_TEMPLATES_ACTION = 'service/exportSmsTemplates'
@@ -45,7 +47,7 @@ export const smsSlice = createSlice({
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.exportError
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
     builder.addCase(sendSmsTemplatesArrayBuffer.pending, (state) => {
       state.isLoading = true
@@ -54,7 +56,7 @@ export const smsSlice = createSlice({
       state.isLoading = false
       if (action.payload.errorCode !== 0) {
         state.errorCondition = errorConditions.importWithoutCountError
-        state.errors = [action.payload]
+        state.errors = action.payload
         state.showSuccessDialog = false
       } else {
         state.showSuccessDialog = true
@@ -64,7 +66,7 @@ export const smsSlice = createSlice({
     builder.addCase(sendSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
       state.errorCondition = errorConditions.importWithoutCountError
-      state.errors = [action.payload]
+      state.errors = action.payload
       state.isImportPopupOpen = false
     })
   },

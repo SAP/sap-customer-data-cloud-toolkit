@@ -12,7 +12,7 @@ import emailReducer, {
 
 import EmailManager from '../../services/emails/emailManager'
 import { Buffer } from 'buffer'
-import * as data from './testData'
+import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
 
 jest.mock('../../services/emails/emailManager')
@@ -44,7 +44,7 @@ describe('Email slice test suite', () => {
 
   test('should clear validation errors', () => {
     const newState = emailReducer(data.initialStateWithErrors, clearValidationErrors())
-    expect(newState.validationErrors).toEqual([])
+    expect(newState.validationWarnings).toEqual([])
   })
 
   test('should clear error condition', () => {
@@ -118,7 +118,7 @@ describe('Email slice test suite', () => {
   })
 
   test('should update state when validateEmailTemplates is rejected', () => {
-    const action = validateEmailTemplates.rejected()
+    const action = validateEmailTemplates.rejected('', '', '', data.payloadWithErrors.payload) // payload must be the 4th argument
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.isImportPopupOpen).toEqual(false)

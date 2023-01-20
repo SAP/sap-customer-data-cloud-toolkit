@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Dialog, Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
-import styles from './styles.js'
+import styles from './dialog-message-inform.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessage' })
 

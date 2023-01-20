@@ -69,7 +69,7 @@ describe('Site slice test suite', () => {
     const action = sendSmsTemplatesArrayBuffer.fulfilled(data.payloadWithErrors.payload)
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
-    expect(newState.errors).toEqual([data.payloadWithErrors.payload])
+    expect(newState.errors).toEqual(data.payloadWithErrors.payload)
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(false)
     expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)

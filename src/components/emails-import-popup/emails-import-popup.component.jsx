@@ -15,16 +15,17 @@ import {
   validateEmailTemplates,
   selectIsImportFileValid,
   setIsImportFileValid,
-  selectValidationErrors,
+  selectValidationWarnings,
   clearValidationErrors,
   selectIsLoading,
 } from '../../redux/emails/emailSlice'
 
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import '@ui5/webcomponents-icons/dist/decline.js'
 import './emails-import-popup.component.css'
-import styles from './styles.js'
+import styles from './emails-import-popup.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
 
@@ -35,16 +36,16 @@ const EmailsImportPopup = ({ t }) => {
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const credentials = useSelector(selectCredentials)
   const isImportFileValid = useSelector(selectIsImportFileValid)
-  const validationErrors = useSelector(selectValidationErrors)
+  const validationWarnings = useSelector(selectValidationWarnings)
   const isLoading = useSelector(selectIsLoading)
 
   const [importFile, setImportFile] = useState(undefined)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
-  const [showValidationErrors, setShowValidationErrors] = useState(false)
+  const [showValidationWarnings, setShowValidationWarnings] = useState(false)
 
   useEffect(() => {
-    setShowValidationErrors(validationErrors.length > 0)
-  }, [validationErrors.length])
+    setShowValidationWarnings(validationWarnings.length > 0)
+  }, [validationWarnings.length])
 
   const onImportValidatedFile = () => {
     dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
@@ -82,22 +83,22 @@ const EmailsImportPopup = ({ t }) => {
   }
 
   const onAfterCloseValidationErrorDialogHandler = () => {
-    setShowValidationErrors(false)
+    setShowValidationWarnings(false)
     dispatch(clearValidationErrors())
   }
 
-  const showValidationErrorsList = () => (
+  const showValidationWarningList = () => (
     <DialogMessageConfirm
-      open={showValidationErrors}
+      open={showValidationWarnings}
       className={classes.errorDialogStyle}
-      headerText={t('GLOBAL.ERROR')}
-      state={ValueState.Error}
+      headerText={t('GLOBAL.WARNING')}
+      state={ValueState.Warning}
       closeButtonContent={t('GLOBAL.CANCEL')}
       id="emailTemplatesValidationErrorPopup"
       onAfterClose={onAfterCloseValidationErrorDialogHandler}
       confirmButtonClickHandler={onImportValidatedFile}
     >
-      <MessageList messages={validationErrors} />
+      <MessageList messages={validationWarnings} type={ValueState.Warning} />
     </DialogMessageConfirm>
   )
 
@@ -146,7 +147,7 @@ const EmailsImportPopup = ({ t }) => {
       {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : showDialog()}
       {isImportFileValid ? onImportValidatedFile() : ''}
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
-      {showValidationErrorsList()}
+      {showValidationWarningList()}
     </>
   )
 }

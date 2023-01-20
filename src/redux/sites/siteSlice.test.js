@@ -23,7 +23,7 @@ import sitesReducer, {
 
 import { getPartnerId } from './utils'
 
-import * as data from './testData'
+import * as data from './dataTest'
 
 describe('Site slice test suite', () => {
   test('should return initial state', () => {

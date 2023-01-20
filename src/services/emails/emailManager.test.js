@@ -1,9 +1,9 @@
 import axios from 'axios'
-import * as EmailsTestData from './data_test'
+import * as EmailsTestData from './dataTest'
 import EmailManager from './emailManager'
 import ZipManager from '../zip/zipManager'
-import * as CommonTestData from '../servicesData_test'
-import * as ConfiguratorTestData from '../configurator/data_test'
+import * as CommonTestData from '../servicesDataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest'
 import JSZip from 'jszip'
 
 jest.mock('axios')
@@ -129,6 +129,7 @@ describe('Emails Manager test suite', () => {
     const validEmailsResponse = await emailManager.validateEmailTemplates(zipContent)
     expect(validEmailsResponse.length).toBe(1)
     expect(validEmailsResponse[0].errorCode).toBe(0)
+    expect(validEmailsResponse[0].severity).toBe(EmailManager.ERROR_SEVERITY_INFO)
 
     const response = await emailManager.import(apiKey, zipContent)
     //console.log('response=' + JSON.stringify(response))
@@ -180,7 +181,7 @@ describe('Emails Manager test suite', () => {
     axios.mockResolvedValueOnce({ data: siteConfigResponse }).mockResolvedValueOnce({ data: CommonTestData.expectedGigyaResponseOk })
 
     const response = await emailManager.import(apiKey, zipContent)
-    console.log('response=' + JSON.stringify(response))
+    //console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
@@ -226,35 +227,32 @@ describe('Emails Manager test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
   })
 
-  test('20 - error missing metadata file', async () => {
-    const zipContent = await createZipContentEmpty()
-    let testPassed = false
-    await emailManager.import(apiKey, zipContent).catch((error) => {
-      if (error.length === 1 && error[0].errorDetails.startsWith('Zip file does not contains the metadata file')) {
-        testPassed = true
-      }
-    })
+  test('11 - import cleaning dispensable files', async () => {
+    let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
+    const zipContent = await createZipFullContentWithIgnorableFiles()
 
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
+    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+
+    const response = await emailManager.import(apiKey, zipContent)
+    //console.log('response=' + JSON.stringify(response))
+    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
+    expect(spy.mock.calls.length).toBe(9)
   })
 
-  test('21 - error validating html template', async () => {
+  test('20 - error validating html template', async () => {
+    const err = {
+      message: 'Error validating email templates',
+      code: 'InvalidXml',
+      details: `Error on template file cdc-toolbox-email-templates/MagicLink/en.html. Extra text at the end on line 18`,
+      severity: EmailManager.ERROR_SEVERITY_WARNING,
+    }
     const zipContent = await createZipContentWithTemplateError(EmailsTestData.emailTemplate + 'x')
-    let testPassed = false
     await emailManager.validateEmailTemplates(zipContent).catch((error) => {
-      if (error.length === 1 && error[0].errorDetails.startsWith('Error on template file')) {
-        testPassed = true
-      }
+      errorCallback(error, err)
     })
-
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
-    }
   })
 
-  test('22 - error template without meta subject', async () => {
+  test('21 - error template without meta subject', async () => {
     let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
     const template = '<a>test</a>'
     const expectCallArgument = {
@@ -276,27 +274,43 @@ describe('Emails Manager test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, magicLinkTemplateName, expectCallArgument, siteConfigResponse.dataCenter)
   })
 
-  test('23 - import cleaning dispensable files', async () => {
-    let spy = jest.spyOn(emailManager.emailService, methodNameToSpy)
-    const zipContent = await createZipFullContentWithIgnorableFiles()
+  test('22 - import empty zip file', async () => {
+    const err = {
+      message: 'Error importing email templates',
+      code: 1,
+      details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
+      severity: EmailManager.ERROR_SEVERITY_ERROR,
+    }
+    const zipContent = await createZipContentEmpty()
 
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
+    await emailManager.import(apiKey, zipContent).catch((error) => {
+      errorCallback(error, err)
+    })
+  })
 
-    const response = await emailManager.import(apiKey, zipContent)
-    //console.log('response=' + JSON.stringify(response))
-    response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
-    expect(spy.mock.calls.length).toBe(9)
+  test('23 - validate emails on empty zip file', async () => {
+    const err = {
+      message: 'Error validating email templates',
+      code: 1,
+      details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
+      severity: EmailManager.ERROR_SEVERITY_ERROR,
+    }
+    const zipContent = await createZipContentEmpty()
+
+    await emailManager.validateEmailTemplates(zipContent).catch((error) => {
+      errorCallback(error, err)
+    })
   })
 
   async function errorCallback(error, err) {
-    let testPassed = false
-    if (error[0].errorMessage !== err.message || error[0].errorCode !== err.code || error[0].errorDetails !== err.details || error[0].time === undefined) {
+    if (
+      error[0].errorMessage !== err.message ||
+      error[0].errorCode !== err.code ||
+      error[0].errorDetails !== err.details ||
+      error[0].time === undefined ||
+      error[0].severity !== err.severity
+    ) {
       throw new Error('It is not the expected exception')
-    } else {
-      testPassed = true
-    }
-    if (!testPassed) {
-      throw new Error('Expected exception was not thrown')
     }
   }
 })

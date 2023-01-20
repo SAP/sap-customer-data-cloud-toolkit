@@ -6,6 +6,7 @@ module.exports = defineConfig({
   env: {
     userName: `${process.env.email}`,
     passWord: `${process.env.passWord}`,
+    codeCoverageTasksRegistered: true,
   },
 
   e2e: {
@@ -23,11 +24,8 @@ module.exports = defineConfig({
       return {
         config,
 
-        excludeSpecPattern: ['cypress/e2e/e2e_full_testing.cy.js'],
+        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
       }
-      // return {
-      //   config,
-      // }
     },
   },
 

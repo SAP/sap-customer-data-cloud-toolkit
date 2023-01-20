@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, getAccountURL, readCredentialsFromAccountSettings, areCredentialsFilled } from './credentialsSlice'
+import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, updateCredentialsAsync } from './credentialsSlice'
+import { getAccountURL, readCredentialsFromAccountSettings, areCredentialsFilled, shouldUpdateCredentials } from './utils'
 
 const initialState = {
   credentials: {
@@ -63,6 +64,16 @@ describe('Credentials Slice test suite', () => {
 
   test('should return false if credentials are empty', () => {
     expect(areCredentialsFilled(emptyCredentials)).toEqual(false)
+  })
+
+  test('shouldUpdateCredentials should return false', () => {
+    expect(shouldUpdateCredentials(emptyCredentials, false)).toEqual(false)
+  })
+
+  test('should update credentials when updateCredentialsAsync is fulfilled', () => {
+    const action = updateCredentialsAsync.fulfilled(expectedCredentials)
+    const newState = credentialsReducer(initialState, action)
+    expect(newState.credentials).toEqual(expectedCredentials)
   })
 })
 

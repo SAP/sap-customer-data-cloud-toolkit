@@ -1,39 +1,38 @@
 /* eslint-disable no-undef */
-import * as TestData from '../../src/services/site/data_test'
-import manualRemovalTestData from './manual-removal-test-data.json'
-import * as data from './test-data'
+import * as servicesDataTest from '../../src/services/site/dataTest'
+import * as dataTest from './dataTest'
 import * as utils from './utils'
 
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
-    utils.startUp('http://localhost:3000', data.siteDeployerIconName)
+    utils.startUp('http://localhost:3000', dataTest.siteDeployerIconName)
   })
 
   it('Creating 3 parent sites with different datacenters', () => {
-    utils.getSiteDomain(data.siteDomain, 0)
+    utils.getSiteDomain(dataTest.siteDomain, 0)
 
-    utils.getSiteStructure(5).should('have.text', data.dropdownOption)
+    utils.getSiteStructure(5).should('have.text', dataTest.dropdownOption)
 
     utils.getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '6')
-    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', `dev.au.${data.siteDomain}`)
-    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(1).should('have.value', `dev.eu.${data.siteDomain}`)
-    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(2).should('have.value', `dev.us.${data.siteDomain}`)
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', `dev.au.${dataTest.siteDomain}`)
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(1).should('have.value', `dev.eu.${dataTest.siteDomain}`)
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(2).should('have.value', `dev.us.${dataTest.siteDomain}`)
   })
 
   it('Create 1 parent site with US datacenter', () => {
     utils.resizeObserverLoopErrRe()
-    utils.getSiteDomain(data.siteDomain, 0)
+    utils.getSiteDomain(dataTest.siteDomain, 0)
     utils.getDataCenters('US', 'EU', 'AU')
 
     utils.getCreateButton().should('be.disabled')
-    utils.getSiteStructure(5).should('have.text', data.dropdownOption)
+    utils.getSiteStructure(5).should('have.text', dataTest.dropdownOption)
 
     cy.get('ui5-table-row').should('have.length', '0')
     utils.getCreateButton().should('not.be.disabled')
     utils.getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '2')
-    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').should('have.value', `dev.us.${data.siteDomain}`)
+    cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').should('have.value', `dev.us.${dataTest.siteDomain}`)
 
     utils.getSaveButton().should('not.be.disabled')
 
@@ -44,34 +43,34 @@ describe('Site Deployer Test Suite', () => {
 
   it('Should add a single Parent Site Manually with error message', () => {
     utils.resizeObserverLoopErrRe()
-    utils.mockResponse(TestData.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
+    utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
 
-    writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
+    writeParentSiteTable(dataTest.parentSiteDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().click()
-    cy.get('#messageList').should('have.text', data.expectedErrorMessage)
+    cy.get('#messageList').should('have.text', dataTest.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
   })
 
   it('Should add a single Parent Site Manually with success message', () => {
     utils.resizeObserverLoopErrRe()
 
-    utils.mockResponse(TestData.expectedGigyaResponseOk, 'POST', 'admin.createSite')
+    utils.mockResponse(servicesDataTest.expectedGigyaResponseOk, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
 
-    writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
+    writeParentSiteTable(dataTest.parentSiteDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().click()
     const successPopup = cy.get('#successPopup')
     successPopup.should('be.visible')
-    successPopup.should('have.text', data.expectedSuccessMessage)
+    successPopup.should('have.text', dataTest.expectedSuccessMessage)
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
     utils.resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
-    writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
+    writeParentSiteTable(dataTest.parentSiteDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
     createChild()
@@ -79,7 +78,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Hide Child Sites"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
-    writeChildrenSiteTable(data.childrenSiteDomain, data.childrenSiteDescription)
+    writeChildrenSiteTable(dataTest.childrenSiteDomain, dataTest.childrenSiteDescription)
     cy.get('#dataCenterSelect').shadow().find('[class ="ui5-select-root ui5-input-focusable-element"]').find('[class ="ui5-select-label-root"]').should('have.text', 'EU')
 
     utils.getSaveButton().should('not.be.disabled')
@@ -93,21 +92,21 @@ describe('Site Deployer Test Suite', () => {
     utils.clearCredentials()
     cy.get('#addParentButton').click()
 
-    writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
+    writeParentSiteTable(dataTest.parentSiteDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().click()
 
     const errorPopup = cy.get('#errorPopup')
     errorPopup.should('be.visible')
-    errorPopup.should('have.text', data.missingCredentialsErrorMessage)
+    errorPopup.should('have.text', dataTest.missingCredentialsErrorMessage)
   })
 
   it('Should show Manual Removal Popup', () => {
     utils.resizeObserverLoopErrRe()
 
-    utils.mockResponse(manualRemovalTestData.flat()[0], 'POST', 'admin.createSite')
+    utils.mockResponse(dataTest.errorToManualRemoveSiteMessage, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
-    writeParentSiteTable(data.parentSiteDomain, data.parentSiteDescription, 2)
+    writeParentSiteTable(dataTest.parentSiteDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().click()
     cy.get('#manualRemovalPopup').should('be.visible')
     cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').shadow().find('.ui5-button-root').should('be.disabled')
