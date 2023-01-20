@@ -3,7 +3,7 @@ import { MessageView } from '@ui5/webcomponents-react'
 import MessageListItem from '../message-list-item/message-list-item.component'
 import { generateUUID } from '../../utils/generateUUID'
 
-const MessageList = ({ messages }) => {
+const MessageList = ({ messages, type }) => {
   return (
     <MessageView
       id="messageList"
@@ -15,7 +15,7 @@ const MessageList = ({ messages }) => {
       }}
     >
       {messages.map((message) => (
-        <MessageListItem key={message.callId ? message.callId : generateUUID()} message={message} />
+        <MessageListItem key={message.callId ? message.callId : generateUUID()} message={message} type={type} />
       ))}
     </MessageView>
   )

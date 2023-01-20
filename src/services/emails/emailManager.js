@@ -10,6 +10,9 @@ class EmailManager {
   static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
   static TEMPLATE_FILE_EXTENSION = '.html'
   static #zipIgnoreBaseFolders = ['__MACOSX']
+  static ERROR_SEVERITY_ERROR = 'error'
+  static ERROR_SEVERITY_WARNING = 'warning'
+  static ERROR_SEVERITY_INFO = 'info'
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
@@ -117,7 +120,9 @@ class EmailManager {
     try {
       zipContentMap = await this.#readZipContent(zipContent)
     } catch (error) {
-      return Promise.reject([generateErrorResponse(error, 'Error importing email templates').data])
+      const userError = generateErrorResponse(error, 'Error importing email templates').data
+      userError.severity = EmailManager.ERROR_SEVERITY_ERROR
+      return Promise.reject([userError])
     }
     const metadataObj = JSON.parse(zipContentMap.get(`${this.zipBaseFolderInfo.zipBaseFolder}${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`))
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
@@ -130,7 +135,9 @@ class EmailManager {
     try {
       zipContentMap = await this.#readZipContent(zipContent)
     } catch (error) {
-      return Promise.reject([generateErrorResponse(error, 'Error validating email templates').data])
+      const userError = generateErrorResponse(error, 'Error validating email templates').data
+      userError.severity = EmailManager.ERROR_SEVERITY_ERROR
+      return Promise.reject([userError])
     }
     const errors = this.#validateEmailTemplates(zipContentMap)
     return this.#isResponseOk(errors) ? Promise.resolve(errors) : Promise.reject(errors)
@@ -269,12 +276,15 @@ class EmailManager {
         if (result !== true) {
           error.code = result.err.code
           error.details = `Error on template file ${filename}. ${result.err.msg} on line ${result.err.line}`
-          response.push(generateErrorResponse(error, 'Error importing email templates').data)
+          const userError = generateErrorResponse(error, 'Error validating email templates').data
+          userError.severity = EmailManager.ERROR_SEVERITY_WARNING
+          response.push(userError)
         }
       }
     }
     if (response.length === 0) {
       error.errorCode = 0
+      error.severity = EmailManager.ERROR_SEVERITY_INFO
       response.push(error)
     }
     return response
