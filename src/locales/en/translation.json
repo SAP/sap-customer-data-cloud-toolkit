@@ -9,7 +9,7 @@
   "EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_GENERIC_HEADER_MESSAGE": "Error - email templates were not imported",
   "EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All {{importedEmailTemplatesCount}} email templates have been imported successfully.",
   "GLOBAL.API_KEY": "Api Key",
-  "GLOBAL.BASE_DOMAIN": "Base Domain",
+  "GLOBAL.SITE_DOMAIN": "Site Domain",
   "GLOBAL.CANCEL": "Cancel",
   "GLOBAL.CONFIRM": "Confirm",
   "GLOBAL.CONTINUE": "Continue",

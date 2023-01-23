@@ -166,5 +166,23 @@
         ]
       }
     ]
+  },
+  {
+    "_id": "999",
+    "name": "Test Structure",
+    "data": [
+      {
+        "siteDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+        "description": "",
+        "dataCenter": "",
+        "childSites": [
+          {
+            "siteDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+            "description": "",
+            "dataCenter": ""
+          }
+        ]
+      }
+    ]
   }
 ]

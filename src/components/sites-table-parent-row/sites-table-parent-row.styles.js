@@ -1,8 +1,8 @@
 const styles = {
-  baseDomainInputWithChildsStyle: {
+  siteDomainInputWithChildsStyle: {
     width: 'calc(100% - 40px)',
   },
-  baseDomainInputWithoutChildsStyle: {
+  siteDomainInputWithoutChildsStyle: {
     width: 'calc(100% - 40px)',
     marginLeft: '38px',
   },

@@ -76,11 +76,11 @@ class SiteManager {
 
   #createSite(site) {
     const body = {
-      baseDomain: site.baseDomain,
+      siteDomain: site.siteDomain,
       description: site.description,
       dataCenter: site.dataCenter,
     }
-    //console.log(`Creating site ${site.baseDomain}`)
+    //console.log(`Creating site ${site.siteDomain}`)
     return this.siteService.create(body)
   }
 

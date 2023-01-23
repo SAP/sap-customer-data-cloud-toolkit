@@ -71,12 +71,12 @@ const checkSitesRequiredFields = (sites) => {
   }
 
   sites.forEach((site) => {
-    if (site.baseDomain === '' || site.dataCenter === '') {
+    if (site.siteDomain === '' || site.dataCenter === '') {
       requiredFieldsExist = false
     }
     if (site.childSites) {
       site.childSites.forEach((childSite) => {
-        if (childSite.baseDomain === '') {
+        if (childSite.siteDomain === '') {
           requiredFieldsExist = false
         }
       })
@@ -98,7 +98,7 @@ const SiteDeployer = ({ t }) => {
   const structures = useSelector(selectSiteStructures)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
-  const [baseDomain, setBaseDomain] = useState('')
+  const [siteDomain, setsiteDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
@@ -132,8 +132,8 @@ const SiteDeployer = ({ t }) => {
         dispatch(
           addParentFromStructure({
             parentFromStructure: {
-              rootBaseDomain: baseDomain,
-              baseDomain: structure.baseDomain,
+              rootSiteDomain: siteDomain,
+              siteDomain: structure.siteDomain,
               description: structure.description,
               dataCenter: dataCenter,
               childSites: structure.childSites,
@@ -168,8 +168,8 @@ const SiteDeployer = ({ t }) => {
     return structures.filter((siteStructure) => siteStructure._id === selectedStructureId)[0]
   }
 
-  const onBaseDomainChange = (event) => {
-    setBaseDomain(event.target.value)
+  const onSiteDomainChange = (event) => {
+    setsiteDomain(event.target.value)
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
@@ -195,7 +195,7 @@ const SiteDeployer = ({ t }) => {
   }
 
   const checkRequiredFields = () => {
-    return !(baseDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
+    return !(siteDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
   }
 
   const showErrorsList = (messages) =>
@@ -252,7 +252,7 @@ const SiteDeployer = ({ t }) => {
                     className={classes.siteDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
-                      onBaseDomainChange(event)
+                      onSiteDomainChange(event)
                     }}
                   />
                 </div>

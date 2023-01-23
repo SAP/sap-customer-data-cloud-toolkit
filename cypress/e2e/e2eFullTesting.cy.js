@@ -18,12 +18,16 @@ describe('All features full Test Suite', () => {
     cy.wait(20000)
 
     utils.getSiteDomain(dataTest.siteDomainName, 40000)
+    utils.getSiteStructure(1)
     utils.getDataCenters('US', 'EU', 'AU')
-    utils.getSiteStructure(5).should('have.text', dataTest.dropdownOption)
     utils.getCreateButton().click()
+    cy.get('ui5-table-row').should('have.length', '6')
+    cy.get('ui5-table-row')
+      .its('length')
+      .then((n) => {
+        utils.deleteChildSite(n)
+      })
 
-    cy.get('ui5-table-cell').eq(7).click()
-    cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
     utils.getSaveButton().click()
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', 'Success')
     cy.wait(10000)

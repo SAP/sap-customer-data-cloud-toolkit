@@ -9,8 +9,8 @@ const MessageListItem = ({ message, type = 'Error' }) => {
       titleText = message.errorMessage
 
       // Site deployer specific error message title
-      if (message.site && message.site.baseDomain && message.site.dataCenter) {
-        titleText += ` (${message.site.baseDomain} - ${message.site.dataCenter})`
+      if (message.site && message.site.siteDomain && message.site.dataCenter) {
+        titleText += ` (${message.site.siteDomain} - ${message.site.dataCenter})`
       }
     }
   }

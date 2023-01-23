@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 
+import * as dataTest from './dataTest'
 export function startUp(url, pageName) {
   cy.visit(url)
   cy.contains(pageName).click({ force: true })
@@ -59,7 +60,26 @@ export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
 
 export function getSiteStructure(optionNumber) {
   cy.get('#cdctools-siteStructure').click()
-  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click()
+
+  return cy
+    .get('ui5-static-area-item')
+    .shadow()
+    .find('.ui5-select-popover')
+    .find('ui5-li')
+    .eq(optionNumber)
+    .should('have.text', dataTest.dropdownOption)
+    .then(($option) => {
+      cy.wrap($option).shadow().find('li').click({ force: true })
+    })
+}
+
+export function deleteChildSite(length) {
+  for (let i = length - 1; i >= 0; i--) {
+    if (i % 2 === 0 && i > 0) {
+      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).click({ force: true })
+    }
+  }
+  cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
 }
 
 export function getCreateButton() {

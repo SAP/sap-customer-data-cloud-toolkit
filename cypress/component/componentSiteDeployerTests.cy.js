@@ -12,7 +12,7 @@ const initialState = [
     sites: {
       sites: [
         {
-          baseDomain: 'p1.com',
+          siteDomain: 'p1.com',
           description: 'parent 1 description',
           dataCenter: 'us1',
           isChildSite: false,
@@ -20,7 +20,7 @@ const initialState = [
           parentSiteId: '',
           childSites: [
             {
-              baseDomain: 'p1.c1.com',
+              siteDomain: 'p1.c1.com',
               description: 'parent 1 child 1 description',
               dataCenter: 'us1',
               isChildSite: true,
@@ -47,7 +47,7 @@ const initialState = [
     sites: {
       sites: [
         {
-          baseDomain: 'p1.com',
+          siteDomain: 'p1.com',
           description: 'parent 1 description',
           dataCenter: 'us1',
           isChildSite: false,

@@ -1,5 +1,5 @@
 const siteDomain = 'a_b_c_site_deployer'
-const dropdownOption = 'Test Structure'
+const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const consoleUrl = 'http://console.gigya.com'
 const siteDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
