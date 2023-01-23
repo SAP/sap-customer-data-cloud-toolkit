@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
+import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
@@ -91,6 +91,10 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearErrorCondition())
   }
 
+  const onAfterCloseCredentialsErrorDialogHandler = () => {
+    setShowCredentialsErrorDialog(false)
+  }
+
   const showErrorsList = () => (
     <DialogMessageInform
       open={showErrorDialog}
@@ -105,9 +109,18 @@ const SmsTemplates = ({ t }) => {
     </DialogMessageInform>
   )
 
-  const onAfterCloseCredentialsErrorDialogHandle = () => {
-    setShowCredentialsErrorDialog(false)
-  }
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      onAfterClose={() => document.location.reload()}
+      closeButtonContent="Ok"
+      id="successPopup"
+    >
+      <Text>{t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
+    </DialogMessageInform>
+  )
 
   return (
     <>
@@ -128,22 +141,8 @@ const SmsTemplates = ({ t }) => {
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
       {isImportPopupOpen ? <SmsImportPopup /> : ''}
-      {showSuccessDialog ? (
-        <DialogMessageInform
-          open={showSuccessDialog}
-          headerText={t('GLOBAL.SUCCESS')}
-          state={ValueState.Success}
-          onAfterClose={() => document.location.reload()}
-          closeButtonContent="Ok"
-          id="successPopup"
-        >
-          {t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
-        </DialogMessageInform>
-      ) : (
-        ''
-      )}
-
-      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+      {showSuccessMessage()}
+      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandler} />
     </>
   )
 }

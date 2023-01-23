@@ -1,4 +1,4 @@
-import { ValueState } from '@ui5/webcomponents-react'
+import { ValueState, Text } from '@ui5/webcomponents-react'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
@@ -21,7 +21,7 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
       onAfterClose={() => onAfterCloseHandle()}
       id="errorPopup"
     >
-      {t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}
+      <Text>{t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}</Text>
     </DialogMessageInform>
   )
 }
