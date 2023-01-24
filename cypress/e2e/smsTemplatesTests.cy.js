@@ -48,14 +48,14 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#successPopup').shadow().find('#ui5-popup-header').should('have.text', 'Success')
-    cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
+    utils.clickPopUpOkButton('#successPopup')
   })
 
   it('should show credentials error dialog on export', () => {
     utils.clearCredentials()
     cy.get('#exportAllSmsTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
-    cy.get('.show-cdc-tools-app-container').find('#errorPopup').find('ui5-bar').find('ui5-button').click({ force: true })
+    utils.clickPopUpOkButton('#errorPopup')
   })
 
   it('should show credentials error dialog on import', () => {
@@ -64,6 +64,5 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
-    cy.get('#errorPopup').find('#closeButton').click({ force: true })
   })
 })

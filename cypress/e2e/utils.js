@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 
-import * as dataTest from './dataTest'
 export function startUp(url, pageName) {
   cy.visit(url)
   cy.contains(pageName).click({ force: true })
@@ -41,7 +40,7 @@ export function resizeObserverLoopErrRe() {
   })
 }
 
-export function getbaseDomain(baseDomain, timeout) {
+export function getBaseDomain(baseDomain, timeout) {
   return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
@@ -60,17 +59,7 @@ export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
 
 export function getSiteStructure(optionNumber) {
   cy.get('#cdctools-siteStructure').click()
-
-  return cy
-    .get('ui5-static-area-item')
-    .shadow()
-    .find('.ui5-select-popover')
-    .find('ui5-li')
-    .eq(optionNumber)
-    .should('have.text', dataTest.dropdownOption)
-    .then(($option) => {
-      cy.wrap($option).shadow().find('li').click({ force: true })
-    })
+  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
 
 export function deleteChildSite(length) {
@@ -88,4 +77,8 @@ export function getCreateButton() {
 
 export function getSaveButton() {
   return cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#save-main')
+}
+
+export function clickPopUpOkButton(popUpId) {
+  return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
 }

@@ -55,7 +55,7 @@ const stateWithError = {
 
 const parentToUpdate = {
   tempId: '1234',
-  newbaseDomain: 'updated domain',
+  newBaseDomain: 'updated domain',
   newDescription: 'updated description',
   newDataCenter: 'updated data center',
 }
@@ -63,7 +63,7 @@ const parentToUpdate = {
 const childToUpdate = {
   parentSiteTempId: '1234',
   tempId: '5678',
-  newbaseDomain: 'updated domain',
+  newBaseDomain: 'updated domain',
   newDescription: 'updated description',
 }
 
@@ -81,7 +81,7 @@ const stateWithSitesToRemoveManually = {
 
 const dataToAddParentFromStructure = {
   parentFromStructure: {
-    rootbaseDomain: 'test',
+    rootBaseDomain: 'test',
     baseDomain: 'dev.parent.{{dataCenter}}.{{baseDomain}}',
     description: 'test parent from strucure',
     dataCenter: 'AU',

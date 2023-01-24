@@ -8,21 +8,21 @@ const SET_SITE_CONFIG_ENDPOINT = 'admin.setSiteConfig'
 
 const getDataCenterValue = (dataCentersToGetValueFrom, dataCenterLabel) => dataCentersToGetValueFrom.find((dataCenter) => dataCenter.label === dataCenterLabel).value
 
-const generatebaseDomain = (source, { dataCenter, baseDomain }) =>
+const generateBaseDomain = (source, { dataCenter, baseDomain }) =>
   source.replaceAll(DATA_CENTER_PLACEHOLDER, dataCenter.toLowerCase()).replaceAll(BASE_DOMAIN_PLACEHOLDER, baseDomain)
 
-const getChildsFromStructure = (parentSiteTempId, rootbaseDomain, dataCenter, structureChildSites, sourceDataCenters) =>
+const getChildsFromStructure = (parentSiteTempId, rootBaseDomain, dataCenter, structureChildSites, sourceDataCenters) =>
   structureChildSites.map(({ baseDomain, description }) =>
-    getSiteFromStructure({ parentSiteTempId, rootbaseDomain, baseDomain, dataCenter, description, isChildSite: true }, sourceDataCenters)
+    getSiteFromStructure({ parentSiteTempId, rootBaseDomain, baseDomain, dataCenter, description, isChildSite: true }, sourceDataCenters)
   )
 
-const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite = false, rootbaseDomain, baseDomain, dataCenter, description }, sourceDataCenters) => {
+const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite = false, rootBaseDomain, baseDomain, dataCenter, description }, sourceDataCenters) => {
   const tempId = generateUUID()
   const dataCenterValue = getDataCenterValue(sourceDataCenters, dataCenter)
-  baseDomain = generatebaseDomain(baseDomain, { dataCenter, baseDomain: rootbaseDomain })
+  baseDomain = generateBaseDomain(baseDomain, { dataCenter, baseDomain: rootBaseDomain })
 
   const site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
-  return isChildSite ? site : { ...site, childSites: getChildsFromStructure(tempId, rootbaseDomain, dataCenter, childSites, sourceDataCenters) }
+  return isChildSite ? site : { ...site, childSites: getChildsFromStructure(tempId, rootBaseDomain, dataCenter, childSites, sourceDataCenters) }
 }
 
 const getNewSite = ({ parentSiteTempId = '', dataCenter = '', isChildSite = false } = {}) => {
@@ -55,9 +55,9 @@ const requiredManualRemovalResponseFilter = (response) => {
 }
 
 const siteToDeleteManuallyMapper = (siteToDeleteManually, state, selectSiteById) => {
-  const siteToDeletebaseDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).baseDomain
+  const siteToDeleteBaseDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).baseDomain
   siteToDeleteManually = {
-    baseDomain: siteToDeletebaseDomain,
+    baseDomain: siteToDeleteBaseDomain,
     siteId: siteToDeleteManually.siteID,
     apiKey: siteToDeleteManually.apiKey,
   }

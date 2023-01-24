@@ -43,9 +43,9 @@ describe('Service Site test suite', () => {
   test('create site without baseDomain', async () => {
     const request = TestData.createSingleParentRequest().sites[0]
     delete request.baseDomain
-    const response = await createSites(request, TestData.expectedGigyaResponseNobaseDomain, credentials)
+    const response = await createSites(request, TestData.expectedGigyaResponseNoBaseDomain, credentials)
 
-    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNobaseDomain)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoBaseDomain)
   })
 
   test('create site with invalid data center', async () => {

@@ -10,7 +10,7 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import { deleteParent, updateParentbaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
@@ -43,11 +43,11 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
   }
 
   const onChangeParentDomain = (event) => {
-    const newbaseDomain = event.target.value
+    const newBaseDomain = event.target.value
     dispatch(
-      updateParentbaseDomain({
+      updateParentBaseDomain({
         tempId,
-        newbaseDomain,
+        newBaseDomain,
       })
     )
   }

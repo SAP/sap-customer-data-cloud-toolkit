@@ -38,7 +38,7 @@ const expectedGigyaResponseNoPartnerId = {
   time: Date.now(),
 }
 
-const expectedGigyaResponseNobaseDomain = {
+const expectedGigyaResponseNoBaseDomain = {
   callId: '719a94d3fecc4159a748345c757a49a3',
   errorCode: 400002,
   errorDetails: 'Missing required parameter : baseDomain',
@@ -242,7 +242,7 @@ export {
   expectedGigyaResponseNoSecret,
   expectedGigyaResponseNoUserKey,
   expectedGigyaResponseNoPartnerId,
-  expectedGigyaResponseNobaseDomain,
+  expectedGigyaResponseNoBaseDomain,
   expectedGigyaResponseInvalidDataCenter,
   sdExpectedGigyaResponseDeletedSite,
   sdExpectedDeleteTokenSuccessfully,

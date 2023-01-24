@@ -4,11 +4,11 @@ const consoleUrl = 'http://console.gigya.com'
 const baseDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
-const parentbaseDomain = 'Manually add parent site'
+const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
 const expectedSuccessMessage = 'OkAll sites have been created successfully.'
-const childrenbaseDomain = 'Children site domain'
+const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
 const emailTemplatesExportErrorHeaderMessage = 'Error - email templates were not exported'
@@ -119,11 +119,11 @@ const siteConfigResponse = {
 export {
   baseDomain,
   dropdownOption,
-  parentbaseDomain,
+  parentBaseDomain,
   parentSiteDescription,
   expectedErrorMessage,
   expectedSuccessMessage,
-  childrenbaseDomain,
+  childrenBaseDomain,
   childrenSiteDescription,
   missingCredentialsErrorMessage,
   emailTemplatesExportErrorMessage,

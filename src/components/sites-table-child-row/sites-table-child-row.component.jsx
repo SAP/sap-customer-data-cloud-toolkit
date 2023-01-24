@@ -4,7 +4,7 @@ import { withNamespaces } from 'react-i18next'
 import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
-import { deleteChild, updateChildbaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
@@ -29,12 +29,12 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
   }
 
   const onChangeChildDomain = (event) => {
-    const newbaseDomain = event.target.value
+    const newBaseDomain = event.target.value
     dispatch(
-      updateChildbaseDomain({
+      updateChildBaseDomain({
         parentSiteTempId,
         tempId,
-        newbaseDomain,
+        newBaseDomain,
       })
     )
   }
@@ -74,7 +74,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
       <TableRow>
         {showErrorTableCell(errorList, error)}
         <TableCell>
-          <Input id="childbaseDomainInput" type={InputType.Text} className={classes.childbaseDomainInputStyle} value={baseDomain} onInput={(event) => onChangeChildDomain(event)} />
+          <Input id="childBaseDomainInput" type={InputType.Text} className={classes.childBaseDomainInputStyle} value={baseDomain} onInput={(event) => onChangeChildDomain(event)} />
         </TableCell>
 
         <TableCell>

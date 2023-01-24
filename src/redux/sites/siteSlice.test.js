@@ -6,10 +6,10 @@ import sitesReducer, {
   addNewParent,
   addParentFromStructure,
   deleteParent,
-  updateParentbaseDomain,
+  updateParentBaseDomain,
   updateParentDescription,
   updateParentDataCenter,
-  updateChildbaseDomain,
+  updateChildBaseDomain,
   updateChildDescription,
   addChild,
   deleteChild,
@@ -83,8 +83,8 @@ describe('Site slice test suite', () => {
   })
 
   test('should update parent site Base Domain', () => {
-    const updatedParent = sitesReducer(data.stateWithParentWithNoChild, updateParentbaseDomain(data.parentToUpdate)).sites[0]
-    expect(updatedParent.baseDomain).toEqual(data.parentToUpdate.newbaseDomain)
+    const updatedParent = sitesReducer(data.stateWithParentWithNoChild, updateParentBaseDomain(data.parentToUpdate)).sites[0]
+    expect(updatedParent.baseDomain).toEqual(data.parentToUpdate.newBaseDomain)
   })
 
   test('should update parent site Description', () => {
@@ -101,8 +101,8 @@ describe('Site slice test suite', () => {
   })
 
   test('should update child site Base Domain', () => {
-    const updatedChild = sitesReducer(data.stateWithParentWithChild, updateChildbaseDomain(data.childToUpdate)).sites[0].childSites[0]
-    expect(updatedChild.baseDomain).toEqual(data.childToUpdate.newbaseDomain)
+    const updatedChild = sitesReducer(data.stateWithParentWithChild, updateChildBaseDomain(data.childToUpdate)).sites[0].childSites[0]
+    expect(updatedChild.baseDomain).toEqual(data.childToUpdate.newBaseDomain)
   })
 
   test('should update child site Description', () => {

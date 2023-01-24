@@ -28,11 +28,11 @@ export const siteSlice = createSlice({
       const parentSiteTempId = action.payload.tempId
       state.sites = state.sites.filter((site) => site.tempId !== parentSiteTempId)
     },
-    updateParentbaseDomain: (state, action) => {
+    updateParentBaseDomain: (state, action) => {
       const sourceParent = action.payload
       const parentSiteTempId = sourceParent.tempId
       const parentSite = utils.getSiteById(state.sites, parentSiteTempId)
-      parentSite.baseDomain = sourceParent.newbaseDomain
+      parentSite.baseDomain = sourceParent.newBaseDomain
     },
     updateParentDescription: (state, action) => {
       const sourceParent = action.payload
@@ -59,13 +59,13 @@ export const siteSlice = createSlice({
       const parentSite = utils.getSiteById(state.sites, parentSiteTempId)
       parentSite.childSites = parentSite.childSites.filter((childSite) => childSite.tempId !== childTempId)
     },
-    updateChildbaseDomain: (state, action) => {
+    updateChildBaseDomain: (state, action) => {
       const sourceChild = action.payload
       const parentSiteTempId = sourceChild.parentSiteTempId
       const childTempId = sourceChild.tempId
       const parentSite = utils.getSiteById(state.sites, parentSiteTempId)
       const childSite = utils.getSiteById(parentSite.childSites, childTempId)
-      childSite.baseDomain = sourceChild.newbaseDomain
+      childSite.baseDomain = sourceChild.newBaseDomain
     },
     updateChildDescription: (state, action) => {
       const sourceChild = action.payload
@@ -120,10 +120,10 @@ export const {
   addNewParent,
   addParentFromStructure,
   deleteParent,
-  updateParentbaseDomain,
+  updateParentBaseDomain,
   updateParentDescription,
   updateParentDataCenter,
-  updateChildbaseDomain,
+  updateChildBaseDomain,
   updateChildDescription,
   updateChildDataCenter,
   addChild,

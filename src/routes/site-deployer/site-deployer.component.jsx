@@ -98,7 +98,7 @@ const SiteDeployer = ({ t }) => {
   const structures = useSelector(selectSiteStructures)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
-  const [baseDomain, setbaseDomain] = useState('')
+  const [baseDomain, setBaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
@@ -132,7 +132,7 @@ const SiteDeployer = ({ t }) => {
         dispatch(
           addParentFromStructure({
             parentFromStructure: {
-              rootbaseDomain: baseDomain,
+              rootBaseDomain: baseDomain,
               baseDomain: structure.baseDomain,
               description: structure.description,
               dataCenter: dataCenter,
@@ -168,8 +168,8 @@ const SiteDeployer = ({ t }) => {
     return structures.filter((siteStructure) => siteStructure._id === selectedStructureId)[0]
   }
 
-  const onbaseDomainChange = (event) => {
-    setbaseDomain(event.target.value)
+  const onBaseDomainChange = (event) => {
+    setBaseDomain(event.target.value)
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
@@ -252,7 +252,7 @@ const SiteDeployer = ({ t }) => {
                     className={classes.baseDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
-                      onbaseDomainChange(event)
+                      onBaseDomainChange(event)
                     }}
                   />
                 </div>
