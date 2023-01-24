@@ -25,7 +25,7 @@ yarn-error.log*
 
 # testing
 /coverage
-
+/.nyc_output
 # production
 /build
 
