@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { Dialog, Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
-import styles from './styles.js'
+import styles from './dialog-message-inform.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessage' })
 
-const DialogMessage = ({ children, open = true, state = ValueState.Error, closeButtonContent = 'Close', ...otherProps }) => {
+const DialogMessageInform = ({ children, open = true, state = ValueState.Error, closeButtonContent = 'Close', ...otherProps }) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(open)
   const classes = useStyles()
 
@@ -23,7 +23,7 @@ const DialogMessage = ({ children, open = true, state = ValueState.Error, closeB
           <Bar
             design="Footer"
             endContent={
-              <Button onClick={() => setDialogIsOpen(false)} design="Emphasized" className={classes.closeButtonStyle}>
+              <Button id="closeButton" onClick={() => setDialogIsOpen(false)} design="Emphasized" className={classes.closeButtonStyle}>
                 {closeButtonContent}
               </Button>
             }
@@ -37,4 +37,4 @@ const DialogMessage = ({ children, open = true, state = ValueState.Error, closeB
   )
 }
 
-export default DialogMessage
+export default DialogMessageInform

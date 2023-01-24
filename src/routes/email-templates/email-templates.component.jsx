@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
+import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
@@ -19,15 +19,23 @@ import {
   clearExportFile,
   clearErrors,
   selectShowSuccessDialog,
+  selectImportedEmailTemplatesCount,
+  selectTotalEmailTemplatesToImportCount,
+  selectErrorCondition,
+  clearErrorCondition,
 } from '../../redux/emails/emailSlice'
 
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './email-templates.styles.js'
+
+import { errorConditions } from '../../redux/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
+  const classes = useStyles()
 
   const exportFile = useSelector(selectExportFile)
   const isLoading = useSelector(selectIsLoading)
@@ -35,10 +43,12 @@ const EmailTemplates = ({ t }) => {
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
+  const importedEmailTemplatesCount = useSelector(selectImportedEmailTemplatesCount)
+  const totalEmailTemplatesToImportCount = useSelector(selectTotalEmailTemplatesToImportCount)
+  const errorCondition = useSelector(selectErrorCondition)
 
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
-  const classes = useStyles()
 
   useEffect(() => {
     setShowErrorDialog(errors.length > 0)
@@ -53,6 +63,24 @@ const EmailTemplates = ({ t }) => {
     }
   }
 
+  const onImportAllEmailTemplatesButtonClickHandler = () => {
+    dispatch(setIsImportPopupOpen(true))
+  }
+
+  const onAfterCloseErrorDialogHandler = () => {
+    setShowErrorDialog(false)
+    dispatch(clearErrors())
+    dispatch(clearErrorCondition())
+  }
+
+  const onAfterCloseSuccessDialogHandler = () => {
+    document.location.reload()
+  }
+
+  const onAfterCloseCredentialsErrorDialogHandler = () => {
+    setShowCredentialsErrorDialog(false)
+  }
+
   const getDownloadElement = () => {
     const element = document.createElement('a')
     element.setAttribute('href', URL.createObjectURL(exportFile))
@@ -64,30 +92,45 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
-  const onImportAllEmailTemplatesButtonClickHandler = () => {
-    dispatch(setIsImportPopupOpen(true))
+  const getErrorDialogHeaderText = () => {
+    switch (errorCondition) {
+      case errorConditions.exportError:
+        return t('EMAIL_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE')
+      case errorConditions.importWithCountError:
+        return t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_COUNT_HEADER_MESSAGE', { notImportedEmailTemplatesCount: errors.length, totalEmailTemplatesToImportCount })
+      case errorConditions.importWithoutCountError:
+        return t('EMAIL_TEMPLATES_COMPONENT.IMPORT_ERROR_GENERIC_HEADER_MESSAGE')
+      default:
+        return t('GLOBAL.ERROR')
+    }
   }
 
   const showErrorsList = () => (
-    <DialogMessage
+    <DialogMessageInform
       open={showErrorDialog}
       className={classes.errorDialogStyle}
-      headerText={t('GLOBAL.ERROR')}
+      headerText={getErrorDialogHeaderText()}
       state={ValueState.Error}
-      closeButtonContent="Ok"
+      closeButtonContent={t('GLOBAL.OK')}
       id="emailTemplatesErrorPopup"
-      onAfterClose={() => {
-        setShowErrorDialog(false)
-        dispatch(clearErrors())
-      }}
+      onAfterClose={onAfterCloseErrorDialogHandler}
     >
       <MessageList messages={errors} />
-    </DialogMessage>
+    </DialogMessageInform>
   )
 
-  const onAfterCloseCredentialsErrorDialogHandle = () => {
-    setShowCredentialsErrorDialog(false)
-  }
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      onAfterClose={onAfterCloseSuccessDialogHandler}
+      closeButtonContent={t('GLOBAL.OK')}
+      id="successPopup"
+    >
+      <Text>{t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}</Text>
+    </DialogMessageInform>
+  )
 
   return (
     <>
@@ -108,22 +151,8 @@ const EmailTemplates = ({ t }) => {
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
       {isImportPopupOpen ? <EmailsImportPopup /> : ''}
-      {showSuccessDialog ? (
-        <DialogMessage
-          open={showSuccessDialog}
-          headerText={t('GLOBAL.SUCCESS')}
-          state={ValueState.Success}
-          onAfterClose={() => document.location.reload()}
-          closeButtonContent="Ok"
-          id="successPopup"
-        >
-          {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
-        </DialogMessage>
-      ) : (
-        ''
-      )}
-
-      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+      {showSuccessMessage()}
+      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandler} />
     </>
   )
 }

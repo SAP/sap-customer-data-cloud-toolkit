@@ -1,18 +1,14 @@
-import smsReducer, { getApiKey, setIsImportPopupOpen, clearExportFile, clearErrors, getSmsTemplatesArrayBuffer, sendSmsTemplatesArrayBuffer } from './smsSlice'
+import smsReducer, { setIsImportPopupOpen, clearExportFile, clearErrors, getSmsTemplatesArrayBuffer, sendSmsTemplatesArrayBuffer, clearErrorCondition } from './smsSlice'
 import SmsManager from '../../services/sms/smsManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
+import { errorConditions } from '../errorConditions'
 
 jest.mock('../../services/sms/smsManager')
 
 describe('Site slice test suite', () => {
   test('should return initial state', () => {
     expect(smsReducer(undefined, { type: undefined })).toEqual(data.initialState)
-  })
-
-  test('should get API Key from URL', () => {
-    expect(getApiKey(data.testHash)).toEqual(data.testAPIKey)
-    expect(getApiKey('')).toEqual('')
   })
 
   test('should set isImportPopupOpen', () => {
@@ -30,6 +26,11 @@ describe('Site slice test suite', () => {
     expect(newState.errors).toEqual([])
   })
 
+  test('should clear error condition', () => {
+    const newState = smsReducer(data.initialStateWithErrors, clearErrorCondition())
+    expect(newState.errorCondition).toEqual(errorConditions.empty)
+  })
+
   test('should return a mocked array buffer', async () => {
     SmsManager.mockResolvedValueOnce(Buffer.from('test').buffer)
     const dispatch = jest.fn()
@@ -43,17 +44,12 @@ describe('Site slice test suite', () => {
     expect(newState.isLoading).toEqual(true)
   })
 
-  test('should update isLoading when getSmsTemplatesArrayBuffer is rejected', async () => {
+  test('should update state when getSmsTemplatesArrayBuffer is rejected', async () => {
     const action = getSmsTemplatesArrayBuffer.rejected
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
+    expect(newState.errorCondition).toEqual(errorConditions.exportError)
   })
-
-  // test('should update isLoading on fulfilled', async () => {
-  //   const action = getSmsTemplatesArrayBuffer.fulfilled
-  //   const newState = smsReducer(initialState, action)
-  //   expect(newState.isLoading).toEqual(false)
-  // })
 
   test('should update state while sendSmsTemplatesArrayBuffer is pending', () => {
     const action = sendSmsTemplatesArrayBuffer.pending
@@ -66,15 +62,17 @@ describe('Site slice test suite', () => {
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.isImportPopupOpen).toEqual(false)
+    expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)
   })
 
   test('should update state when sendSmsTemplatesArrayBuffer is fullfilled with errors', () => {
     const action = sendSmsTemplatesArrayBuffer.fulfilled(data.payloadWithErrors.payload)
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
-    expect(newState.errors).toEqual([data.payloadWithErrors.payload])
+    expect(newState.errors).toEqual(data.payloadWithErrors.payload)
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)
   })
 
   test('should update state when sendSmsTemplatesArrayBuffer is fullfilled without errors', () => {

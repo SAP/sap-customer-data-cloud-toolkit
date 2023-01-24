@@ -1,5 +1,5 @@
-import * as CommonTestData from '../servicesData_test'
-import * as TestData from '../configurator/data_test'
+import * as CommonTestData from '../servicesDataTest'
+import * as TestData from '../configurator/dataTest'
 import GigyaManager from './gigyaManager'
 import axios from 'axios'
 

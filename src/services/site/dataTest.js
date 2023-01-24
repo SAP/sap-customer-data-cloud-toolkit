@@ -1,4 +1,4 @@
-import * as CommonTestData from '../servicesData_test'
+import * as CommonTestData from '../servicesDataTest'
 
 const Endpoints = {
   SITE_CREATE: 'admin.createSite',

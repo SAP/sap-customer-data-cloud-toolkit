@@ -1,18 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { withNamespaces } from 'react-i18next'
-import { Dialog, Button, Label } from '@ui5/webcomponents-react'
+import { Dialog, Button, Label, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
+import DialogMessageConfirm from '../../components/dialog-message-confirm/dialog-message-confirm.component'
+import MessageList from '../../components/message-list/message-list.component'
 
-import { selectIsImportPopupOpen, sendEmailTemplatesArrayBuffer, setIsImportPopupOpen } from '../../redux/emails/emailSlice'
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+import {
+  selectIsImportPopupOpen,
+  sendEmailTemplatesArrayBuffer,
+  setIsImportPopupOpen,
+  validateEmailTemplates,
+  selectIsImportFileValid,
+  setIsImportFileValid,
+  selectValidationWarnings,
+  clearValidationErrors,
+  selectIsLoading,
+} from '../../redux/emails/emailSlice'
+
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import '@ui5/webcomponents-icons/dist/decline.js'
 import './emails-import-popup.component.css'
-
-import styles from './styles.js'
+import styles from './emails-import-popup.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailsImportPopup' })
 
@@ -22,14 +35,28 @@ const EmailsImportPopup = ({ t }) => {
 
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const credentials = useSelector(selectCredentials)
+  const isImportFileValid = useSelector(selectIsImportFileValid)
+  const validationWarnings = useSelector(selectValidationWarnings)
+  const isLoading = useSelector(selectIsLoading)
 
   const [importFile, setImportFile] = useState(undefined)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
+  const [showValidationWarnings, setShowValidationWarnings] = useState(false)
+
+  useEffect(() => {
+    setShowValidationWarnings(validationWarnings.length > 0)
+  }, [validationWarnings.length])
+
+  const onImportValidatedFile = () => {
+    dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
+    dispatch(setIsImportFileValid(false))
+    dispatch(clearValidationErrors())
+  }
 
   const onImportButtonClickHandler = () => {
     if (areCredentialsFilled(credentials)) {
       setShowCredentialsErrorDialog(false)
-      dispatch(sendEmailTemplatesArrayBuffer(importFile.arrayBuffer()))
+      dispatch(validateEmailTemplates(importFile.arrayBuffer()))
     } else {
       setShowCredentialsErrorDialog(true)
     }
@@ -48,7 +75,6 @@ const EmailsImportPopup = ({ t }) => {
 
   const onCloseEmailImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
-    setImportFile(undefined)
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
@@ -56,8 +82,28 @@ const EmailsImportPopup = ({ t }) => {
     onCloseEmailImportPopup()
   }
 
-  return (
-    <>
+  const onAfterCloseValidationErrorDialogHandler = () => {
+    setShowValidationWarnings(false)
+    dispatch(clearValidationErrors())
+  }
+
+  const showValidationWarningList = () => (
+    <DialogMessageConfirm
+      open={showValidationWarnings}
+      className={classes.errorDialogStyle}
+      headerText={t('GLOBAL.WARNING')}
+      state={ValueState.Warning}
+      closeButtonContent={t('GLOBAL.CANCEL')}
+      id="emailTemplatesValidationErrorPopup"
+      onAfterClose={onAfterCloseValidationErrorDialogHandler}
+      confirmButtonClickHandler={onImportValidatedFile}
+    >
+      <MessageList messages={validationWarnings} type={ValueState.Warning} />
+    </DialogMessageConfirm>
+  )
+
+  const showDialog = () => {
+    return (
       <Dialog
         className="ui-dialog"
         open={isImportPopupOpen}
@@ -77,7 +123,7 @@ const EmailsImportPopup = ({ t }) => {
               <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
             </div>
             <div>
-              <input id="zipFileInput" type={'file'} accept="application/zip" onChange={(event) => onFileUploadButtonClickHandler(event)}></input>
+              <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
             </div>
           </div>
         }
@@ -93,8 +139,15 @@ const EmailsImportPopup = ({ t }) => {
           </div>
         }
       ></Dialog>
+    )
+  }
 
+  return (
+    <>
+      {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : showDialog()}
+      {isImportFileValid ? onImportValidatedFile() : ''}
       <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+      {showValidationWarningList()}
     </>
   )
 }

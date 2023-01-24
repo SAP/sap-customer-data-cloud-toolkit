@@ -3,8 +3,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 
+const SITES_SLICE_STATE_NAME = 'sites'
+const CREATE_SITES_ACTION = 'service/createSites'
+
 export const siteSlice = createSlice({
-  name: 'sites',
+  name: SITES_SLICE_STATE_NAME,
   initialState: {
     sites: [],
     isLoading: false,
@@ -133,7 +136,7 @@ export const {
 
 export default siteSlice.reducer
 
-export const createSites = createAsyncThunk('service/createSites', async (sites, { getState }) => {
+export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState }) => {
   try {
     const state = getState()
     return await new SiteManager({

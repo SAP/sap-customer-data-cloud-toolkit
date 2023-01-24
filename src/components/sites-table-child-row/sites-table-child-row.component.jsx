@@ -5,10 +5,10 @@ import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from
 import { createUseStyles } from 'react-jss'
 
 import { deleteChild, updateChildBaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
-import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
+import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
-import styles from './styles.js'
+import styles from './sites-table-child-row.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTableChildRow' })
 

@@ -13,7 +13,7 @@ import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
 import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
-import styles from './styles.js'
+import styles from './sites-table.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTable' })
 
@@ -38,7 +38,7 @@ export const SitesTable = ({ t }) => {
             <>
               {showErrorTableColumn(errorList)}
               <TableColumn>
-                <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
+                <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
               </TableColumn>
               <TableColumn>
                 <Label>{t('GLOBAL.DESCRIPTION')}</Label>

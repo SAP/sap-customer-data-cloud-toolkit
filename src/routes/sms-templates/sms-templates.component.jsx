@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
+import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import MessageList from '../../components/message-list/message-list.component'
 import SmsImportPopup from '../../components/sms-import-popup/sms-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
@@ -19,11 +19,15 @@ import {
   clearExportFile,
   clearErrors,
   selectShowSuccessDialog,
+  selectErrorCondition,
+  clearErrorCondition,
 } from '../../redux/sms/smsSlice'
 
-import { selectCredentials, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
-
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './sms-templates.styles.js'
+
+import { errorConditions } from '../../redux/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'SmsTemplates' })
 
@@ -36,6 +40,7 @@ const SmsTemplates = ({ t }) => {
   const isImportPopupOpen = useSelector(selectIsImportPopupOpen)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
+  const errorCondition = useSelector(selectErrorCondition)
 
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
@@ -65,30 +70,57 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearExportFile())
   }
 
+  const getErrorDialogHeaderText = () => {
+    switch (errorCondition) {
+      case errorConditions.exportError:
+        return t('SMS_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE')
+      case errorConditions.importWithoutCountError:
+        return t('SMS_TEMPLATES_COMPONENT.IMPORT_ERROR_HEADER_MESSAGE')
+      default:
+        return t('GLOBAL.ERROR')
+    }
+  }
+
   const onImportAllSmsTemplatesButtonClickHandler = () => {
     dispatch(setIsImportPopupOpen(true))
   }
 
+  const onAfterCloseErrorDialogHandler = () => {
+    setShowErrorDialog(false)
+    dispatch(clearErrors())
+    dispatch(clearErrorCondition())
+  }
+
+  const onAfterCloseCredentialsErrorDialogHandler = () => {
+    setShowCredentialsErrorDialog(false)
+  }
+
   const showErrorsList = () => (
-    <DialogMessage
+    <DialogMessageInform
       open={showErrorDialog}
       className={classes.errorDialogStyle}
-      headerText={t('GLOBAL.ERROR')}
+      headerText={getErrorDialogHeaderText()}
       state={ValueState.Error}
       closeButtonContent="Ok"
       id="smsTemplatesErrorPopup"
-      onAfterClose={() => {
-        setShowErrorDialog(false)
-        dispatch(clearErrors())
-      }}
+      onAfterClose={onAfterCloseErrorDialogHandler}
     >
       <MessageList messages={errors} />
-    </DialogMessage>
+    </DialogMessageInform>
   )
 
-  const onAfterCloseCredentialsErrorDialogHandle = () => {
-    setShowCredentialsErrorDialog(false)
-  }
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      onAfterClose={() => document.location.reload()}
+      closeButtonContent="Ok"
+      id="successPopup"
+    >
+      <Text>{t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
+    </DialogMessageInform>
+  )
 
   return (
     <>
@@ -109,22 +141,8 @@ const SmsTemplates = ({ t }) => {
       {!isLoading && exportFile ? getDownloadElement() : ''}
       {showErrorsList()}
       {isImportPopupOpen ? <SmsImportPopup /> : ''}
-      {showSuccessDialog ? (
-        <DialogMessage
-          open={showSuccessDialog}
-          headerText={t('GLOBAL.SUCCESS')}
-          state={ValueState.Success}
-          onAfterClose={() => document.location.reload()}
-          closeButtonContent="Ok"
-          id="successPopup"
-        >
-          {t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}
-        </DialogMessage>
-      ) : (
-        ''
-      )}
-
-      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
+      {showSuccessMessage()}
+      <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandler} />
     </>
   )
 }

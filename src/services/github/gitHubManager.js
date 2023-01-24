@@ -1,22 +1,29 @@
 import GitHubClient from './client'
 import generateErrorResponse from '../errors/generateErrorResponse'
-import { version } from '../../../package.json'
+import { VERSION } from '../../constants'
 
 class GitHubManager {
   static ERROR_MSG_RELEASE = 'Error accessing release information on git hub'
+  #protocol = 'https'
+  #github = 'github.tools.sap'
+  #api = 'api/v3'
 
   constructor() {
-    this.gitHubClient = new GitHubClient('https://github.tools.sap/api/v3', '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') // repo_deployment permission only
+    this.gitHubClient = new GitHubClient(`${this.#protocol}://${this.#github}/${this.#api}`, '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') // repo_deployment permission only
   }
 
-  async isNewReleaseAvailable() {
+  async getNewReleaseAvailable() {
     const latestReleaseInformation = await this.gitHubClient.getLatestReleaseInformation().catch(function (error) {
       return Promise.reject(generateErrorResponse(error, GitHubManager.ERROR_MSG_RELEASE).data)
     })
     this.latestReleaseInformation = latestReleaseInformation.data
     const latestReleaseVersion = latestReleaseInformation.data.tag_name
-    const currentReleaseVersion = version
-    return latestReleaseVersion > currentReleaseVersion
+    const currentReleaseVersion = VERSION
+    return {
+      isNewReleaseAvailable: latestReleaseVersion > currentReleaseVersion,
+      latestReleaseVersion: latestReleaseVersion,
+      latestReleaseUrl: latestReleaseInformation.data.html_url
+    }
   }
 }
 

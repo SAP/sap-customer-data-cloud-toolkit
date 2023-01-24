@@ -1,23 +1,42 @@
+import { errorConditions } from '../errorConditions'
+
 const initialState = {
   exportFile: undefined,
   isLoading: false,
   errors: [],
+  validationWarnings: [],
   isImportPopupOpen: false,
   showSuccessDialog: false,
+  isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithExportFile = {
   exportFile: { test: 'test' },
   isLoading: false,
   errors: [],
+  validationErrors: [],
   isImportPopupOpen: false,
+  showSuccessDialog: false,
+  isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.empty,
 }
 
 const initialStateWithErrors = {
   exportFile: undefined,
   isLoading: false,
   errors: [{ test: 'test' }],
+  validationErrors: [{ test: 'test' }],
   isImportPopupOpen: false,
+  showSuccessDialog: false,
+  isImportFileValid: false,
+  importedEmailTemplatesCount: 0,
+  totalEmailTemplatesToImportCount: 0,
+  errorCondition: errorConditions.exportError,
 }
 
 const testAPIKey = 'aabbccddeeffgghhiijjkk'

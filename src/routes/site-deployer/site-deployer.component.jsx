@@ -40,19 +40,18 @@ import {
   selectSitesToDeleteManually,
 } from '../../redux/sites/siteSlice'
 
-import { selectDataCenters } from '../../redux/data-centers/dataCentersSlice'
-
-import { selectCredentials, updateCredentialsAsync, areCredentialsFilled } from '../../redux/credentials/credentialsSlice'
+import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
+import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
+import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import SitesTable from '../../components/sites-table/sites-table.component'
 import MessageList from '../../components/message-list/message-list.component'
-import DialogMessage from '../../components/dialog-message-dialog/dialog-message.component'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import ManualRemovalPopup from '../../components/manual-removal-popup/manual-removal-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
-import structures from '../../sitesStructures.json'
-
-import styles from './styles.js'
+import styles from './site-deployer.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
@@ -96,6 +95,7 @@ const SiteDeployer = ({ t }) => {
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const credentials = useSelector(selectCredentials)
   const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
+  const structures = useSelector(selectSiteStructures)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
@@ -122,10 +122,6 @@ const SiteDeployer = ({ t }) => {
     dispatch(clearErrors())
   }
 
-  const onChangeSiteStructure = (event) => {
-    setSelectedStructureId(event.detail.selectedOption.dataset.value)
-  }
-
   const onCreateHandler = () => {
     const selectedDataCenters = getSelectedDataCenters()
     const selectedStructure = getSelectedStructure()
@@ -147,6 +143,17 @@ const SiteDeployer = ({ t }) => {
         )
       })
     })
+  }
+
+  const onSuccessDialogAfterCloseHandler = () => {
+    const SITE_DEPLOYER_URL_PATH = 'cdc-toolbox/site-deployer'
+    const SITE_SELECTOR_URL_PATH = 'sites/site-selector'
+    window.location.href = document.location.href.replace(SITE_DEPLOYER_URL_PATH, SITE_SELECTOR_URL_PATH)
+    document.location.reload()
+  }
+
+  const onChangeSiteStructure = (event) => {
+    setSelectedStructureId(event.detail.selectedOption.dataset.value)
   }
 
   const checkDataCentersSelected = (event) => {
@@ -204,6 +211,19 @@ const SiteDeployer = ({ t }) => {
       </div>
     )
 
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      closeButtonContent="Ok"
+      onAfterClose={onSuccessDialogAfterCloseHandler}
+      id="successPopup"
+    >
+      <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
+    </DialogMessageInform>
+  )
+
   return (
     <>
       <Bar
@@ -223,13 +243,13 @@ const SiteDeployer = ({ t }) => {
             <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_STRUCTURES')} />}>
               <FlexBox justifyContent="SpaceBetween">
                 <div className={classes.cardFlexboxStyle}>
-                  <Label for="cdctools-siteDomain" className={classes.siteDomainLabelStyle}>
+                  <Label for="cdctools-baseDomain" className={classes.baseDomainLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN')}
                   </Label>
                   <Input
-                    id="cdctools-siteDomain"
+                    id="cdctools-baseDomain"
                     type={InputType.Text}
-                    className={classes.siteDomainInputStyle}
+                    className={classes.baseDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
                       onBaseDomainChange(event)
@@ -281,30 +301,13 @@ const SiteDeployer = ({ t }) => {
         </div>
 
         {showErrorsList(errors)}
-
         <div className={classes.saveCancelButtonsOuterDivStyle}>
           <div className={classes.saveCancelButtonsInnerDivStyle}>
             <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
-
-        {showSuccessDialog ? (
-          <DialogMessage
-            open={showSuccessDialog}
-            headerText={t('GLOBAL.SUCCESS')}
-            state={ValueState.Success}
-            closeButtonContent="Ok"
-            onAfterClose={() => document.location.reload()}
-            id="successPopup"
-          >
-            {t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}
-          </DialogMessage>
-        ) : (
-          ''
-        )}
-
+        {showSuccessMessage()}
         <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
-
         {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
     </>
