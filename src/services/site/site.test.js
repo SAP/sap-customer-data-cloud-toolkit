@@ -40,12 +40,12 @@ describe('Service Site test suite', () => {
     CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNoUserKey)
   })
 
-  test('create site without siteDomain', async () => {
+  test('create site without baseDomain', async () => {
     const request = TestData.createSingleParentRequest().sites[0]
-    delete request.siteDomain
-    const response = await createSites(request, TestData.expectedGigyaResponseNositeDomain, credentials)
+    delete request.baseDomain
+    const response = await createSites(request, TestData.expectedGigyaResponseNobaseDomain, credentials)
 
-    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNositeDomain)
+    CommonTestData.verifyResponseIsNotOk(response, TestData.expectedGigyaResponseNobaseDomain)
   })
 
   test('create site with invalid data center', async () => {

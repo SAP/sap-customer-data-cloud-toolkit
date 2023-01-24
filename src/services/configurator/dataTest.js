@@ -36,7 +36,7 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
     statusCode: 200,
     statusReason: 'OK',
     time: Date.now(),
-    siteDomain: 'a_b_c_',
+    baseDomain: 'a_b_c_',
     dataCenter: 'au1',
     trustedSiteURLs: ['a_b_c_site/*', '*.a_b_c_site/*'],
     tags: [],

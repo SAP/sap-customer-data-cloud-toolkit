@@ -4,7 +4,7 @@ import { withNamespaces } from 'react-i18next'
 import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
-import { deleteChild, updateChildSiteDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { deleteChild, updateChildbaseDomain, updateChildDescription, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
@@ -12,7 +12,7 @@ import styles from './sites-table-child-row.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTableChildRow' })
 
-const SitesTableChildRow = ({ parentSiteTempId, tempId, siteDomain, description, tags, dataCenter, t }) => {
+const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const dispatch = useDispatch()
   const dataCenters = useSelector(selectDataCenters)
@@ -29,12 +29,12 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, siteDomain, description,
   }
 
   const onChangeChildDomain = (event) => {
-    const newSiteDomain = event.target.value
+    const newbaseDomain = event.target.value
     dispatch(
-      updateChildSiteDomain({
+      updateChildbaseDomain({
         parentSiteTempId,
         tempId,
-        newSiteDomain,
+        newbaseDomain,
       })
     )
   }
@@ -74,7 +74,7 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, siteDomain, description,
       <TableRow>
         {showErrorTableCell(errorList, error)}
         <TableCell>
-          <Input id="childsiteDomainInput" type={InputType.Text} className={classes.childsiteDomainInputStyle} value={siteDomain} onInput={(event) => onChangeChildDomain(event)} />
+          <Input id="childbaseDomainInput" type={InputType.Text} className={classes.childbaseDomainInputStyle} value={baseDomain} onInput={(event) => onChangeChildDomain(event)} />
         </TableCell>
 
         <TableCell>

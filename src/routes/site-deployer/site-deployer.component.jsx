@@ -71,12 +71,12 @@ const checkSitesRequiredFields = (sites) => {
   }
 
   sites.forEach((site) => {
-    if (site.siteDomain === '' || site.dataCenter === '') {
+    if (site.baseDomain === '' || site.dataCenter === '') {
       requiredFieldsExist = false
     }
     if (site.childSites) {
       site.childSites.forEach((childSite) => {
-        if (childSite.siteDomain === '') {
+        if (childSite.baseDomain === '') {
           requiredFieldsExist = false
         }
       })
@@ -98,7 +98,7 @@ const SiteDeployer = ({ t }) => {
   const structures = useSelector(selectSiteStructures)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
-  const [siteDomain, setsiteDomain] = useState('')
+  const [baseDomain, setbaseDomain] = useState('')
   const [areDataCentersSelected, setDataCentersSelected] = useState(true)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
 
@@ -106,7 +106,7 @@ const SiteDeployer = ({ t }) => {
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
-  }, [dispatch])
+  })
 
   const onSaveHandler = () => {
     if (areCredentialsFilled(credentials)) {
@@ -132,8 +132,8 @@ const SiteDeployer = ({ t }) => {
         dispatch(
           addParentFromStructure({
             parentFromStructure: {
-              rootSiteDomain: siteDomain,
-              siteDomain: structure.siteDomain,
+              rootbaseDomain: baseDomain,
+              baseDomain: structure.baseDomain,
               description: structure.description,
               dataCenter: dataCenter,
               childSites: structure.childSites,
@@ -168,8 +168,8 @@ const SiteDeployer = ({ t }) => {
     return structures.filter((siteStructure) => siteStructure._id === selectedStructureId)[0]
   }
 
-  const onSiteDomainChange = (event) => {
-    setsiteDomain(event.target.value)
+  const onbaseDomainChange = (event) => {
+    setbaseDomain(event.target.value)
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {
@@ -195,7 +195,7 @@ const SiteDeployer = ({ t }) => {
   }
 
   const checkRequiredFields = () => {
-    return !(siteDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
+    return !(baseDomain !== '' && selectedStructureId !== undefined && areDataCentersSelected)
   }
 
   const showErrorsList = (messages) =>
@@ -243,16 +243,16 @@ const SiteDeployer = ({ t }) => {
             <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_STRUCTURES')} />}>
               <FlexBox justifyContent="SpaceBetween">
                 <div className={classes.cardFlexboxStyle}>
-                  <Label for="cdctools-siteDomain" className={classes.siteDomainLabelStyle}>
+                  <Label for="cdctools-baseDomain" className={classes.baseDomainLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN')}
                   </Label>
                   <Input
-                    id="cdctools-siteDomain"
+                    id="cdctools-baseDomain"
                     type={InputType.Text}
-                    className={classes.siteDomainInputStyle}
+                    className={classes.baseDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
-                      onSiteDomainChange(event)
+                      onbaseDomainChange(event)
                     }}
                   />
                 </div>

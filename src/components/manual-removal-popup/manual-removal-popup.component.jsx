@@ -7,7 +7,7 @@ import { selectSitesToDeleteManually, clearSitesToDeleteManually } from '../../r
 
 const generateListString = (sitesToDeleteManually) => {
   let listString = 'Base Domain; Site Id; Api Key\n'
-  sitesToDeleteManually.forEach((siteToDeleteManually) => (listString += `${siteToDeleteManually.siteDomain};${siteToDeleteManually.siteId};${siteToDeleteManually.apiKey}\n`))
+  sitesToDeleteManually.forEach((siteToDeleteManually) => (listString += `${siteToDeleteManually.baseDomain};${siteToDeleteManually.siteId};${siteToDeleteManually.apiKey}\n`))
   return listString
 }
 
@@ -77,7 +77,7 @@ const ManualRemovalPopup = ({ t }) => {
                 return (
                   <TableRow>
                     <TableCell>
-                      <Label>{siteToDeleteManually.siteDomain}</Label>
+                      <Label>{siteToDeleteManually.baseDomain}</Label>
                     </TableCell>
                     <TableCell>
                       <Label>{siteToDeleteManually.siteId}</Label>

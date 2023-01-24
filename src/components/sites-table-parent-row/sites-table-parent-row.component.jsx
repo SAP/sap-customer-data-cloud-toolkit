@@ -10,7 +10,7 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
-import { deleteParent, updateParentSiteDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
+import { deleteParent, updateParentbaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
@@ -20,7 +20,7 @@ import styles from './sites-table-parent-row.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTableParentRow' })
 
-const SitesTableParentRow = ({ tempId, siteDomain, description, tags, dataCenter, childSites, t }) => {
+const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const [isChildListOpen, setChildListOpen] = useState(true)
   const classes = useStyles()
@@ -43,11 +43,11 @@ const SitesTableParentRow = ({ tempId, siteDomain, description, tags, dataCenter
   }
 
   const onChangeParentDomain = (event) => {
-    const newSiteDomain = event.target.value
+    const newbaseDomain = event.target.value
     dispatch(
-      updateParentSiteDomain({
+      updateParentbaseDomain({
         tempId,
-        newSiteDomain,
+        newbaseDomain,
       })
     )
   }
@@ -97,10 +97,10 @@ const SitesTableParentRow = ({ tempId, siteDomain, description, tags, dataCenter
             <ShowHideChildListButton icon="navigation-right-arrow" tooltipKey="SITE_TABLE_PARENT_COMPONENT.SHOW_CHILD_TOOLTIP" onClickHandler={showChildListButtonClickHandler} />
           )}
           <Input
-            id="siteDomainInput"
+            id="baseDomainInput"
             type={InputType.Text}
-            className={classes.siteDomainInputWithChildsStyle}
-            value={siteDomain}
+            className={classes.baseDomainInputWithChildsStyle}
+            value={baseDomain}
             onInput={(event) => onChangeParentDomain(event)}
           />
         </Fragment>
@@ -108,10 +108,10 @@ const SitesTableParentRow = ({ tempId, siteDomain, description, tags, dataCenter
     } else {
       return (
         <Input
-          id="siteDomainInput"
+          id="baseDomainInput"
           type={InputType.Text}
-          className={classes.siteDomainInputWithoutChildsStyle}
-          value={siteDomain}
+          className={classes.baseDomainInputWithoutChildsStyle}
+          value={baseDomain}
           onInput={(event) => onChangeParentDomain(event)}
         />
       )

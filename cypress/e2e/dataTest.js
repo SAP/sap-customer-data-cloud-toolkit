@@ -1,14 +1,14 @@
-const siteDomain = 'a_b_c_site_deployer'
+const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const consoleUrl = 'http://console.gigya.com'
-const siteDomainName = 'e2e_testing'
+const baseDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
-const parentSiteDomain = 'Manually add parent site'
+const parentbaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
 const expectedSuccessMessage = 'OkAll sites have been created successfully.'
-const childrenSiteDomain = 'Children site domain'
+const childrenbaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
 const emailTemplatesExportErrorHeaderMessage = 'Error - email templates were not exported'
@@ -117,13 +117,13 @@ const siteConfigResponse = {
 }
 
 export {
-  siteDomain,
+  baseDomain,
   dropdownOption,
-  parentSiteDomain,
+  parentbaseDomain,
   parentSiteDescription,
   expectedErrorMessage,
   expectedSuccessMessage,
-  childrenSiteDomain,
+  childrenbaseDomain,
   childrenSiteDescription,
   missingCredentialsErrorMessage,
   emailTemplatesExportErrorMessage,
@@ -144,7 +144,7 @@ export {
   smsTemplatesExportErrorHeaderMessage,
   smsTemplatesImportErrorHeaderMessage,
   consoleUrl,
-  siteDomainName,
+  baseDomainName,
   siteSelectorOption,
   smsTemplatesOption,
   errorToManualRemoveSiteMessage,

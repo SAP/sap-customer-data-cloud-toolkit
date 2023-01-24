@@ -1,32 +1,32 @@
 import { generateUUID } from '../../utils/generateUUID'
 
 const DATA_CENTER_PLACEHOLDER = '{{dataCenter}}'
-const SITE_DOMAIN_PLACEHOLDER = '{{siteDomain}}'
+const BASE_DOMAIN_PLACEHOLDER = '{{baseDomain}}'
 const HASH_SPLIT_SEPARATOR = '/'
 const OK_RESPONSE_STATUS = 200
 const SET_SITE_CONFIG_ENDPOINT = 'admin.setSiteConfig'
 
 const getDataCenterValue = (dataCentersToGetValueFrom, dataCenterLabel) => dataCentersToGetValueFrom.find((dataCenter) => dataCenter.label === dataCenterLabel).value
 
-const generateSiteDomain = (source, { dataCenter, siteDomain }) =>
-  source.replaceAll(DATA_CENTER_PLACEHOLDER, dataCenter.toLowerCase()).replaceAll(SITE_DOMAIN_PLACEHOLDER, siteDomain)
+const generatebaseDomain = (source, { dataCenter, baseDomain }) =>
+  source.replaceAll(DATA_CENTER_PLACEHOLDER, dataCenter.toLowerCase()).replaceAll(BASE_DOMAIN_PLACEHOLDER, baseDomain)
 
-const getChildsFromStructure = (parentSiteTempId, rootSiteDomain, dataCenter, structureChildSites, sourceDataCenters) =>
-  structureChildSites.map(({ siteDomain, description }) =>
-    getSiteFromStructure({ parentSiteTempId, rootSiteDomain, siteDomain, dataCenter, description, isChildSite: true }, sourceDataCenters)
+const getChildsFromStructure = (parentSiteTempId, rootbaseDomain, dataCenter, structureChildSites, sourceDataCenters) =>
+  structureChildSites.map(({ baseDomain, description }) =>
+    getSiteFromStructure({ parentSiteTempId, rootbaseDomain, baseDomain, dataCenter, description, isChildSite: true }, sourceDataCenters)
   )
 
-const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite = false, rootSiteDomain, siteDomain, dataCenter, description }, sourceDataCenters) => {
+const getSiteFromStructure = ({ parentSiteTempId = '', childSites, isChildSite = false, rootbaseDomain, baseDomain, dataCenter, description }, sourceDataCenters) => {
   const tempId = generateUUID()
   const dataCenterValue = getDataCenterValue(sourceDataCenters, dataCenter)
-  siteDomain = generateSiteDomain(siteDomain, { dataCenter, siteDomain: rootSiteDomain })
+  baseDomain = generatebaseDomain(baseDomain, { dataCenter, baseDomain: rootbaseDomain })
 
-  const site = { parentSiteTempId, tempId, siteDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
-  return isChildSite ? site : { ...site, childSites: getChildsFromStructure(tempId, rootSiteDomain, dataCenter, childSites, sourceDataCenters) }
+  const site = { parentSiteTempId, tempId, baseDomain, description, dataCenter: dataCenterValue, isChildSite, childSites }
+  return isChildSite ? site : { ...site, childSites: getChildsFromStructure(tempId, rootbaseDomain, dataCenter, childSites, sourceDataCenters) }
 }
 
 const getNewSite = ({ parentSiteTempId = '', dataCenter = '', isChildSite = false } = {}) => {
-  const site = { parentSiteTempId, tempId: generateUUID(), siteDomain: '', description: '', dataCenter, isChildSite }
+  const site = { parentSiteTempId, tempId: generateUUID(), baseDomain: '', description: '', dataCenter, isChildSite }
   return isChildSite ? site : { ...site, childSites: [] }
 }
 
@@ -55,9 +55,9 @@ const requiredManualRemovalResponseFilter = (response) => {
 }
 
 const siteToDeleteManuallyMapper = (siteToDeleteManually, state, selectSiteById) => {
-  const siteToDeletesiteDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).siteDomain
+  const siteToDeletebaseDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).baseDomain
   siteToDeleteManually = {
-    siteDomain: siteToDeletesiteDomain,
+    baseDomain: siteToDeletebaseDomain,
     siteId: siteToDeleteManually.siteID,
     apiKey: siteToDeleteManually.apiKey,
   }

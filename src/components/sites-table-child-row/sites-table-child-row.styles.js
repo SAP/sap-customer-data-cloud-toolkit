@@ -2,7 +2,7 @@ const styles = {
   errorTableCellStyle: {
     width: 0,
   },
-  childsiteDomainInputStyle: {
+  childbaseDomainInputStyle: {
     width: 'calc(100% - 82px)',
     marginLeft: '80px',
   },

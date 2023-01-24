@@ -4,36 +4,36 @@
     "name": "Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)",
     "data": [
       {
-        "siteDomain": "dev.{{dataCenter}}.parent.{{siteDomain}}",
+        "baseDomain": "dev.{{dataCenter}}.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+            "baseDomain": "dev.{{dataCenter}}.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "stag.{{dataCenter}}.parent.{{siteDomain}}",
+        "baseDomain": "stag.{{dataCenter}}.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "stag.{{dataCenter}}.{{siteDomain}}",
+            "baseDomain": "stag.{{dataCenter}}.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "prod.{{dataCenter}}.parent.{{siteDomain}}",
+        "baseDomain": "prod.{{dataCenter}}.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "prod.{{dataCenter}}.{{siteDomain}}",
+            "baseDomain": "prod.{{dataCenter}}.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
@@ -46,36 +46,36 @@
     "name": "Dev, Stag, Prod separated with Parent and Child without mentioning Datacenter (ex: dev.parent.siteDomain, dev.siteDomain)",
     "data": [
       {
-        "siteDomain": "dev.parent.{{siteDomain}}",
+        "baseDomain": "dev.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "dev.{{siteDomain}}",
+            "baseDomain": "dev.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "stag.parent.{{siteDomain}}",
+        "baseDomain": "stag.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "stag.{{siteDomain}}",
+            "baseDomain": "stag.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "prod.parent.{{siteDomain}}",
+        "baseDomain": "prod.parent.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "prod.{{siteDomain}}",
+            "baseDomain": "prod.{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
@@ -88,36 +88,36 @@
     "name": "Dev, Stag, Prod separated with Parent and Child using the Site Domain for the child (ex: dev.eu.siteDomain, siteDomain)",
     "data": [
       {
-        "siteDomain": "dev.{{dataCenter}}.{{siteDomain}}",
+        "baseDomain": "dev.{{dataCenter}}.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "stag.{{dataCenter}}.{{siteDomain}}",
+        "baseDomain": "stag.{{dataCenter}}.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "prod.{{dataCenter}}.{{siteDomain}}",
+        "baseDomain": "prod.{{dataCenter}}.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
@@ -130,36 +130,36 @@
     "name": "Dev, Stag, Prod separated with Parent and Child using the Site Domain for the child without mentioning Datacenter (ex: dev.siteDomain, siteDomain)",
     "data": [
       {
-        "siteDomain": "dev.{{siteDomain}}",
+        "baseDomain": "dev.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "stag.{{siteDomain}}",
+        "baseDomain": "stag.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }
         ]
       },
       {
-        "siteDomain": "prod.{{siteDomain}}",
+        "baseDomain": "prod.{{baseDomain}}",
         "description": "",
         "dataCenter": "",
         "childSites": [
           {
-            "siteDomain": "{{siteDomain}}",
+            "baseDomain": "{{baseDomain}}",
             "description": "",
             "dataCenter": ""
           }

@@ -41,8 +41,8 @@ export function resizeObserverLoopErrRe() {
   })
 }
 
-export function getSiteDomain(siteDomain, timeout) {
-  return cy.get('#cdctools-siteDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(siteDomain, { force: true }).should('have.value', siteDomain)
+export function getbaseDomain(baseDomain, timeout) {
+  return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {

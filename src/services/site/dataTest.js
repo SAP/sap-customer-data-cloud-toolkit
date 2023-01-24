@@ -38,10 +38,10 @@ const expectedGigyaResponseNoPartnerId = {
   time: Date.now(),
 }
 
-const expectedGigyaResponseNositeDomain = {
+const expectedGigyaResponseNobaseDomain = {
   callId: '719a94d3fecc4159a748345c757a49a3',
   errorCode: 400002,
-  errorDetails: 'Missing required parameter : siteDomain',
+  errorDetails: 'Missing required parameter : baseDomain',
   errorMessage: 'Missing required parameter',
   statusCode: 400,
   statusReason: CommonTestData.badRequest,
@@ -64,7 +64,7 @@ const expectedGigyaResponseInvalidDataCenter = {
 const multipleParentWithMultipleChildrenRequest = {
   sites: [
     {
-      siteDomain: `${DOMAIN_PREFIX}p1.com`,
+      baseDomain: `${DOMAIN_PREFIX}p1.com`,
       description: 'parent 1 description',
       dataCenter: 'us1',
       isChildSite: false,
@@ -72,7 +72,7 @@ const multipleParentWithMultipleChildrenRequest = {
       parentSiteId: '',
       childSites: [
         {
-          siteDomain: `${DOMAIN_PREFIX}p1.c1.com`,
+          baseDomain: `${DOMAIN_PREFIX}p1.c1.com`,
           description: 'parent 1 child 1 description',
           dataCenter: 'us1',
           isChildSite: true,
@@ -80,7 +80,7 @@ const multipleParentWithMultipleChildrenRequest = {
           parentSiteId: parent1SiteId,
         },
         {
-          siteDomain: `${DOMAIN_PREFIX}p1.c2.com`,
+          baseDomain: `${DOMAIN_PREFIX}p1.c2.com`,
           description: 'parent 1 child 2 description',
           dataCenter: 'us1',
           isChildSite: true,
@@ -90,7 +90,7 @@ const multipleParentWithMultipleChildrenRequest = {
       ],
     },
     {
-      siteDomain: `${DOMAIN_PREFIX}p2.com`,
+      baseDomain: `${DOMAIN_PREFIX}p2.com`,
       description: 'parent 2 description',
       dataCenter: 'au1',
       isChildSite: false,
@@ -98,7 +98,7 @@ const multipleParentWithMultipleChildrenRequest = {
       parentSiteId: '',
       childSites: [
         {
-          siteDomain: `${DOMAIN_PREFIX}p2.c1.com`,
+          baseDomain: `${DOMAIN_PREFIX}p2.c1.com`,
           description: 'parent 2 child 1 description',
           dataCenter: 'au1',
           isChildSite: true,
@@ -106,7 +106,7 @@ const multipleParentWithMultipleChildrenRequest = {
           parentSiteId: parent2SiteId,
         },
         {
-          siteDomain: `${DOMAIN_PREFIX}p2.c2.com`,
+          baseDomain: `${DOMAIN_PREFIX}p2.c2.com`,
           description: 'parent 2 child 2 description',
           dataCenter: 'au1',
           isChildSite: true,
@@ -214,7 +214,7 @@ function createObject(numberOfParents, numberOfChildrenPerParent) {
 
 function createParent(id) {
   return {
-    siteDomain: `${DOMAIN_PREFIX}p${id}.com`,
+    baseDomain: `${DOMAIN_PREFIX}p${id}.com`,
     description: `parent ${id} description`,
     dataCenter: 'us1',
     isChildSite: false,
@@ -226,7 +226,7 @@ function createParent(id) {
 
 function createChild(parent, id) {
   return {
-    siteDomain: `${DOMAIN_PREFIX}${parent.tempId}.c${id}.com`,
+    baseDomain: `${DOMAIN_PREFIX}${parent.tempId}.c${id}.com`,
     description: `${parent.tempId} child ${id} description`,
     dataCenter: `${parent.dataCenter}`,
     isChildSite: true,
@@ -242,7 +242,7 @@ export {
   expectedGigyaResponseNoSecret,
   expectedGigyaResponseNoUserKey,
   expectedGigyaResponseNoPartnerId,
-  expectedGigyaResponseNositeDomain,
+  expectedGigyaResponseNobaseDomain,
   expectedGigyaResponseInvalidDataCenter,
   sdExpectedGigyaResponseDeletedSite,
   sdExpectedDeleteTokenSuccessfully,

@@ -11,7 +11,7 @@ const stateWithParentWithNoChild = {
     {
       parentSiteTempId: '',
       tempId: '1234',
-      siteDomain: 'test domain',
+      baseDomain: 'test domain',
       description: 'test description',
       dataCenter: 'test data center',
       childSites: [],
@@ -26,14 +26,14 @@ const stateWithParentWithChild = {
     {
       parentSiteTempId: '',
       tempId: '1234',
-      siteDomain: 'test domain',
+      baseDomain: 'test domain',
       description: 'test description',
       dataCenter: 'test data center',
       childSites: [
         {
           parentSiteTempId: '1234',
           tempId: '5678',
-          siteDomain: 'test domain',
+          baseDomain: 'test domain',
           description: 'test description',
           dataCenter: 'test data center',
           isChildSite: true,
@@ -55,7 +55,7 @@ const stateWithError = {
 
 const parentToUpdate = {
   tempId: '1234',
-  newSiteDomain: 'updated domain',
+  newbaseDomain: 'updated domain',
   newDescription: 'updated description',
   newDataCenter: 'updated data center',
 }
@@ -63,7 +63,7 @@ const parentToUpdate = {
 const childToUpdate = {
   parentSiteTempId: '1234',
   tempId: '5678',
-  newSiteDomain: 'updated domain',
+  newbaseDomain: 'updated domain',
   newDescription: 'updated description',
 }
 
@@ -81,13 +81,13 @@ const stateWithSitesToRemoveManually = {
 
 const dataToAddParentFromStructure = {
   parentFromStructure: {
-    rootSiteDomain: 'test',
-    siteDomain: 'dev.parent.{{dataCenter}}.{{siteDomain}}',
+    rootbaseDomain: 'test',
+    baseDomain: 'dev.parent.{{dataCenter}}.{{baseDomain}}',
     description: 'test parent from strucure',
     dataCenter: 'AU',
     childSites: [
       {
-        siteDomain: 'dev.{{dataCenter}}.{{siteDomain}}',
+        baseDomain: 'dev.{{dataCenter}}.{{baseDomain}}',
         description: 'test child from strucure',
         dataCenter: 'AU',
       },

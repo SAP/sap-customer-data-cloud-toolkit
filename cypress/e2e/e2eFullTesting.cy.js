@@ -17,7 +17,7 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.siteDeployerIconName).click({ force: true })
     cy.wait(20000)
 
-    utils.getSiteDomain(dataTest.siteDomainName, 40000)
+    utils.getbaseDomain(dataTest.baseDomainName, 40000)
     utils.getSiteStructure(1)
     utils.getDataCenters('US', 'EU', 'AU')
     utils.getCreateButton().click()
@@ -44,7 +44,7 @@ describe('All features full Test Suite', () => {
       .find('[class ="fd-section app__header"]')
       .find('[class ="fd-input-group"]')
       .find('[placeholder="Search"]')
-      .type(dataTest.siteDomainName, { force: true })
+      .type(dataTest.baseDomainName, { force: true })
 
     cy.get('main-app')
       .shadow()

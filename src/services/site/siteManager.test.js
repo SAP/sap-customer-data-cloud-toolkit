@@ -199,14 +199,14 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error on parent', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNositeDomain })
+    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNobaseDomain })
 
     const request = TestData.createParentWithOneChildRequest()
     let response = await siteManager.create(request)
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
-    expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNositeDomain, false, TestData.Endpoints.SITE_CREATE)
+    expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNobaseDomain, false, TestData.Endpoints.SITE_CREATE)
     expect(response[0].apiKey).toBeUndefined()
   })
 
@@ -366,7 +366,7 @@ describe('Site manager async test suite', () => {
   test('create site unsuccessfully - error on rollback', async () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNositeDomain })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNobaseDomain })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdSiteAlreadyDeleted })
@@ -377,7 +377,7 @@ describe('Site manager async test suite', () => {
 
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], false)
-    expectResponseIsNotOk(response[1], TestData.expectedGigyaResponseNositeDomain, false, TestData.Endpoints.SITE_CREATE)
+    expectResponseIsNotOk(response[1], TestData.expectedGigyaResponseNobaseDomain, false, TestData.Endpoints.SITE_CREATE)
     expect(response[1].apiKey).toBeUndefined()
   })
 

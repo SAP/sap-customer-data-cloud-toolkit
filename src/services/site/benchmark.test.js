@@ -48,7 +48,7 @@ describe.skip('Benchmark test suite', () => {
 
   function mockAxiosAndCreateRequest() {
     axios.mockImplementation((axiosConfig) => {
-      if (axiosConfig.data.has('siteDomain') && axiosConfig.data.get('siteDomain').includes(`${TestData.DOMAIN_PREFIX}p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
+      if (axiosConfig.data.has('baseDomain') && axiosConfig.data.get('baseDomain').includes(`${TestData.DOMAIN_PREFIX}p${numberOfParents - 1}.c${numberOfChildrenPerParent - 1}`)) {
         const response = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
         //console.log(`server response=${JSON.stringify(response)}`)
         return response
