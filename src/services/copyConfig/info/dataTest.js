@@ -1,18 +1,4 @@
-import Info from './info'
-import * as CommonTestData from '../servicesDataTest'
-
-describe('Info test suite', () => {
-  const apiKey = 'apiKey'
-  const info = new Info(CommonTestData.credentials, apiKey, 'eu1')
-
-  test('get info successfully', async () => {
-    const response = await info.get()
-    console.log('response=' + JSON.stringify(response))
-    expect(response).toEqual(getInfoExpectedResponse(true))
-  })
-})
-
-function getInfoExpectedResponse(supports) {
+export function getInfoExpectedResponse(supports) {
   return {
     schema: {
       data: supports,

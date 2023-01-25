@@ -66,4 +66,16 @@ function createErrorObject(message) {
   return err
 }
 
-export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, verifyResponseIsNotOk, verifyResponseIsOk }
+function errorCallback(error, err) {
+  if (
+      error.errorMessage !== err.message ||
+      error.errorCode !== err.code ||
+      error.errorDetails !== err.details ||
+      error.time === undefined ||
+      error.severity !== err.severity
+  ) {
+    throw new Error('It is not the expected exception')
+  }
+}
+
+export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, errorCallback, verifyResponseIsNotOk, verifyResponseIsOk }
