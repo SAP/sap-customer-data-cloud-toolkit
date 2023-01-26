@@ -36,7 +36,7 @@ describe('Email Templates Test Suite', () => {
     utils.clearCredentials()
     cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
-    cy.get('#errorPopup').find('#closeButton').click({ force: true })
+    utils.clickPopUpOkButton('#errorPopup')
   })
 
   it('should show credentials error dialog on import', () => {

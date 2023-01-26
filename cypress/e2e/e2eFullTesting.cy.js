@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
-// import { data } from 'cypress/types/jquery'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
@@ -13,26 +12,28 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
     cy.wait(30000)
 
-    //Site creation using Site Deployer with the domain dev.us.e2e_testing
+    // Site creation using Site Deployer with the domain dev.us.e2e_testing
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.siteDeployerIconName).click({ force: true })
     cy.wait(20000)
 
-    utils.getSiteDomain(dataTest.siteDomainName, 40000)
+    utils.getBaseDomain(dataTest.baseDomainName, 40000)
+    utils.getSiteStructure(1)
     utils.getDataCenters('US', 'EU', 'AU')
-    utils.getSiteStructure(5).should('have.text', dataTest.dropdownOption)
     utils.getCreateButton().click()
+    cy.get('ui5-table-row').should('have.length', '6')
+    cy.get('ui5-table-row')
+      .its('length')
+      .then((n) => {
+        utils.deleteChildSite(n)
+      })
 
-    cy.get('ui5-table-cell').eq(7).click()
-    cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
     utils.getSaveButton().click()
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', 'Success')
     cy.wait(10000)
-    cy.get('#successPopup').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    utils.clickPopUpOkButton('#successPopup')
     cy.wait(30000)
 
-    // // //Navigating to the Site that was created
-    //cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains('Site Selector').click({ force: true })
-    // cy.wait(20000)
+    // Navigating to the Site that was created
     cy.get('main-app')
       .shadow()
       .find('site-selector-web-app')
@@ -40,7 +41,7 @@ describe('All features full Test Suite', () => {
       .find('[class ="fd-section app__header"]')
       .find('[class ="fd-input-group"]')
       .find('[placeholder="Search"]')
-      .type(dataTest.siteDomainName, { force: true })
+      .type(dataTest.baseDomainName, { force: true })
 
     cy.get('main-app')
       .shadow()
@@ -53,15 +54,15 @@ describe('All features full Test Suite', () => {
       .click({ force: true })
     cy.wait(10000)
 
-    //Email export and import use cases
+    // Email export and import use cases
     // - Export and import the default files
     // - Import the file with changed locales and compare them
     cy.wait(20000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.emailTemplatesIconName).click({ force: true })
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').eq(9).click()
 
-    //Email Templates -  First Use Case
-    // //Exporting and Importing the original template
+    // Email Templates -  First Use Case
+    // Exporting and Importing the original template
     cy.get('#exportAllEmailTemplatesButton').click({ force: true })
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
@@ -71,31 +72,29 @@ describe('All features full Test Suite', () => {
     cy.wait(10000)
     cy.get('#confirmButton').click({ force: true })
     cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
     cy.wait(20000)
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
     cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
-
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
-
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.emailTemplatesIconName).click({ force: true })
 
-    // //Email Templates - Second Use Case
-    // //Importing the test template with added languages
+    //Email Templates - Second Use Case
+    //Importing the test template with added languages
     cy.wait(20000)
     cy.get('#importAllEmailTemplatesButton').click({ force: true })
     cy.get('#zipFileInput').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
     cy.wait(10000)
-    cy.get('#successPopup').find('[class ="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
     cy.wait(20000)
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
     cy.get('.cdk-overlay-container').find('fd-option').eq(0).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '2')
 
-    // //Email Templates - Third Use Case
-    // //Validating the error by using a bad userKey
+    // Email Templates - Third Use Case
+    // Validating the error by using a bad userKey
     cy.wait(10000)
     cy.get('body').find('#openPopoverButton').click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
@@ -105,7 +104,7 @@ describe('All features full Test Suite', () => {
     cy.get('#confirmButton').click({ force: true })
     cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', dataTest.unauthorizedUser)
     cy.wait(10000)
-    cy.get('#emailTemplatesErrorPopup').find('[design="Footer"]').find('[class="DialogMessage-closeButtonStyle-0-2-56 ui5-bar-content"]').click({ force: true })
+    cy.get('#emailTemplatesErrorPopup').find('#closeButton').click({ force: true })
     cy.get('body').find('#openPopoverButton').click({ force: true })
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}', { force: true })
 
@@ -115,7 +114,7 @@ describe('All features full Test Suite', () => {
     cy.wait(10000)
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.smsTemplatesOption).click({ force: true })
     // SMS Templates - First Use Case
-    //Exporting and Importing the original template
+    // Exporting and Importing the original template
     cy.get('#exportAllSmsTemplatesButton').click({ force: true })
     cy.wait(10000)
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
@@ -134,13 +133,13 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-list__title"]')
       .click({ force: true })
 
-    // //SMS Templates - Second Use Case
-    //Importing and validating the template with new changes
+    // SMS Templates - Second Use Case
+    // Importing and validating the template with new changes
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
     cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click({ force: true })
     cy.wait(10000)
-    cy.get('.show-cdc-tools-app-container').find('#successPopup').find('ui5-bar').find('ui5-button').click({ force: true })
+    utils.clickPopUpOkButton('#successPopup')
     cy.wait(20000)
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).click({ force: true })
@@ -155,7 +154,7 @@ describe('All features full Test Suite', () => {
       .click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '43')
 
-    //Delete the site created on this test
+    // Delete the site created on this test
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(dataTest.siteSelectorOption).click({ force: true })
     cy.wait(10000)
     cy.get('main-app')

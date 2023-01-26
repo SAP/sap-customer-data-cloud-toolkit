@@ -106,7 +106,7 @@ const SiteDeployer = ({ t }) => {
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
-  }, [dispatch])
+  })
 
   const onSaveHandler = () => {
     if (areCredentialsFilled(credentials)) {
@@ -211,6 +211,19 @@ const SiteDeployer = ({ t }) => {
       </div>
     )
 
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      closeButtonContent="Ok"
+      onAfterClose={onSuccessDialogAfterCloseHandler}
+      id="successPopup"
+    >
+      <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
+    </DialogMessageInform>
+  )
+
   return (
     <>
       <Bar
@@ -230,13 +243,13 @@ const SiteDeployer = ({ t }) => {
             <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_STRUCTURES')} />}>
               <FlexBox justifyContent="SpaceBetween">
                 <div className={classes.cardFlexboxStyle}>
-                  <Label for="cdctools-siteDomain" className={classes.siteDomainLabelStyle}>
+                  <Label for="cdctools-baseDomain" className={classes.baseDomainLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN')}
                   </Label>
                   <Input
-                    id="cdctools-siteDomain"
+                    id="cdctools-baseDomain"
                     type={InputType.Text}
-                    className={classes.siteDomainInputStyle}
+                    className={classes.baseDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
                     onInput={(event) => {
                       onBaseDomainChange(event)
@@ -288,30 +301,13 @@ const SiteDeployer = ({ t }) => {
         </div>
 
         {showErrorsList(errors)}
-
         <div className={classes.saveCancelButtonsOuterDivStyle}>
           <div className={classes.saveCancelButtonsInnerDivStyle}>
             <Card>{showSaveCancelButtons()}</Card>
           </div>
         </div>
-
-        {showSuccessDialog ? (
-          <DialogMessageInform
-            open={showSuccessDialog}
-            headerText={t('GLOBAL.SUCCESS')}
-            state={ValueState.Success}
-            closeButtonContent="Ok"
-            onAfterClose={onSuccessDialogAfterCloseHandler}
-            id="successPopup"
-          >
-            {t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}
-          </DialogMessageInform>
-        ) : (
-          ''
-        )}
-
+        {showSuccessMessage()}
         <CredentialsErrorDialog open={showCredentialsErrorDialog} onAfterCloseHandle={onAfterCloseCredentialsErrorDialogHandle} />
-
         {sitesToDeleteManually.length ? <ManualRemovalPopup /> : ''}
       </div>
     </>

@@ -40,8 +40,8 @@ export function resizeObserverLoopErrRe() {
   })
 }
 
-export function getSiteDomain(siteDomain, timeout) {
-  return cy.get('#cdctools-siteDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(siteDomain, { force: true }).should('have.value', siteDomain)
+export function getBaseDomain(baseDomain, timeout) {
+  return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
@@ -59,7 +59,16 @@ export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
 
 export function getSiteStructure(optionNumber) {
   cy.get('#cdctools-siteStructure').click()
-  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click()
+  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
+}
+
+export function deleteChildSite(length) {
+  for (let i = length - 1; i >= 0; i--) {
+    if (i % 2 === 0 && i > 0) {
+      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).click({ force: true })
+    }
+  }
+  cy.get('[data-component-name ="ActionSheetMobileContent"]').find('[accessible-name="Delete Item 1 of 1"]').click({ force: true })
 }
 
 export function getCreateButton() {
@@ -68,4 +77,8 @@ export function getCreateButton() {
 
 export function getSaveButton() {
   return cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#save-main')
+}
+
+export function clickPopUpOkButton(popUpId) {
+  return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
 }

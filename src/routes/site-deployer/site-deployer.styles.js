@@ -29,10 +29,10 @@ const styles = {
     textAlign: 'left',
     width: '100%',
   },
-  siteDomainLabelStyle: {
+  baseDomainLabelStyle: {
     ...spacing.sapUiTinyMarginTopBottom,
   },
-  siteDomainInputStyle: {
+  baseDomainInputStyle: {
     width: '100%',
   },
   dataCentersOuterDivStyle: {

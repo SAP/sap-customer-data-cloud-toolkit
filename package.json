@@ -1,6 +1,6 @@
 {
   "name": "cdc-tools-chrome-extension",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@cypress/xvfb": "^1.2.4",
@@ -35,7 +35,7 @@
     "start": "react-scripts -r @cypress/instrument-cra start",
     "build": "CI=true react-scripts build",
     "cypress:open": "cypress open",
-    "cypress:stage": "cypress run --headless ",
+    "cypress:stage": "cypress run --headless",
     "cypress:ci": "start-server-and-test start http://localhost:3000 cypress:stage",
     "postbuild": "node ./scripts/postbuild.js",
     "test": "CI=true react-scripts test --collect-coverage --coverage --watch=all --coverageDirectory=coverage/unit",

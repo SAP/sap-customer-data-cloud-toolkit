@@ -62,7 +62,7 @@ const ManualRemovalPopup = ({ t }) => {
               columns={
                 <>
                   <TableColumn>
-                    <Label>{t('GLOBAL.BASE_DOMAIN')}</Label>
+                    <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
                   </TableColumn>
                   <TableColumn>
                     <Label>{t('GLOBAL.SITE_ID')}</Label>

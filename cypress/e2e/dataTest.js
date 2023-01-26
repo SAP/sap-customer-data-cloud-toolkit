@@ -1,16 +1,16 @@
-const siteDomain = 'a_b_c_site_deployer'
-const dropdownOption = 'Test Structure'
+const baseDomain = 'a_b_c_site_deployer'
+const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const consoleUrl = 'http://console.gigya.com'
-const siteDomainName = 'e2e_testing'
+const baseDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
-const parentSiteDomain = 'Manually add parent site'
+const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
-const expectedSuccessMessage = 'OkAll sites have been created successfully'
-const childrenSiteDomain = 'Children site domain'
+const expectedSuccessMessage = 'OkAll sites have been created successfully.'
+const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
-const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu'
+const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
 const emailTemplatesExportErrorHeaderMessage = 'Error - email templates were not exported'
 const emailTemplatesExportErrorMessage = 'Error getting email templates'
 const emailTemplatesExportErrorMessageDetail =
@@ -64,14 +64,66 @@ const smsTemplateExportError = {
   time: 'Date.now()',
 }
 
+const smsTemplateSuccessResponse = {
+  callId: '69867486da1443d7925e935bf1b84cb0',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-20T17:50:26.126Z',
+}
+
+const siteConfigResponse = {
+  callId: '0e2233dce5fd4b439f5645dd842ff44a',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-20T17:50:26.196Z',
+  baseDomain: 'daniel',
+  dataCenter: 'eu1',
+  trustedSiteURLs: ['*.daniel/*', 'daniel/*'],
+  tags: [],
+  description: 'Local Environment',
+  captchaProvider: 'Google',
+  settings: {
+    CNAME: '',
+    shortURLDomain: '',
+    shortURLRedirMethod: 'JS',
+    encryptPII: true,
+  },
+  siteGroupConfig: {
+    enableSSO: false,
+  },
+  urlShorteners: {
+    bitly: {},
+  },
+  trustedShareURLs: ['bit.ly/*', 'fw.to/*', 'shr.gs/*', 'vst.to/*', 'socli.ru/*', 's.gigya-api.cn/*'],
+  enableDataSharing: true,
+  isCDP: false,
+  invisibleRecaptcha: {
+    SiteKey: '',
+    Secret: '',
+  },
+  recaptchaV2: {
+    SiteKey: '6LfDRQwcAAAAADiyEXojwPmYhK7nAQcPMIZ11111',
+    Secret: '6LfDRQwcAAAAAKz1pJzCivvxbxT7sGRAOU722222',
+  },
+  funCaptcha: {
+    SiteKey: '',
+    Secret: '',
+  },
+  customAPIDomainPrefix: '',
+}
+
 export {
-  siteDomain,
+  baseDomain,
   dropdownOption,
-  parentSiteDomain,
+  parentBaseDomain,
   parentSiteDescription,
   expectedErrorMessage,
   expectedSuccessMessage,
-  childrenSiteDomain,
+  childrenBaseDomain,
   childrenSiteDescription,
   missingCredentialsErrorMessage,
   emailTemplatesExportErrorMessage,
@@ -92,10 +144,12 @@ export {
   smsTemplatesExportErrorHeaderMessage,
   smsTemplatesImportErrorHeaderMessage,
   consoleUrl,
-  siteDomainName,
+  baseDomainName,
   siteSelectorOption,
   smsTemplatesOption,
   errorToManualRemoveSiteMessage,
   emailTemplateExportError,
   smsTemplateExportError,
+  smsTemplateSuccessResponse,
+  siteConfigResponse,
 }

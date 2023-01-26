@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Bar, Button, ValueState } from '@ui5/webcomponents-react'
+import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
@@ -128,7 +128,7 @@ const EmailTemplates = ({ t }) => {
       closeButtonContent={t('GLOBAL.OK')}
       id="successPopup"
     >
-      {t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}
+      <Text>{t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}</Text>
     </DialogMessageInform>
   )
 
