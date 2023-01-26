@@ -7,7 +7,7 @@ import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
 
 const EMAILS_SLICE_STATE_NAME = 'emails'
-const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'cdc-toolbox-email-templates'
+const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'email-templates'
 
 const IMPORT_EMAIL_TEMPLATES_ACTION = 'service/importEmailTemplates'
 const EXPORT_EMAIL_TEMPLATES_ACTION = 'service/exportEmailTemplates'

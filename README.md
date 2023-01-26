@@ -1,6 +1,6 @@
-# CDC Automation Tools - Chrome Extension
+# SAP Customer Data Cloud Automation Tools - Chrome Extension
 
-App created to extend the existing functionality of the CDC Console.
+App created to extend the existing functionality of the SAP Customer Data Cloud Console.
 
 #### Features:
 
@@ -8,7 +8,7 @@ App created to extend the existing functionality of the CDC Console.
 - Import/Export email templates
 - Import/Export SMS templates
 
-## Run in CDC Console
+## Run in SAP Customer Data Cloud Console
 
 1. `git clone https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension.git`
 2. `npm install`

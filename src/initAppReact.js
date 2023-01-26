@@ -18,7 +18,7 @@ export const initAppReact = (container) => {
       </Provider>
     </React.StrictMode>
   )
-  console.log(`SAP CDC Toolbox :: %cv${VERSION}`, logStyles.lightGreenBold)
+  console.log(`SAP Customer Data Cloud Toolbox :: %cv${VERSION}`, logStyles.lightGreenBold)
 
   // If you want to start measuring performance in your app, pass a function
   // to log results (for example: reportWebVitals(console.log))

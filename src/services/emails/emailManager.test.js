@@ -5,6 +5,7 @@ import ZipManager from '../zip/zipManager'
 import * as CommonTestData from '../servicesDataTest'
 import * as ConfiguratorTestData from '../configurator/dataTest'
 import JSZip from 'jszip'
+import {errorCallback} from "../servicesDataTest";
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -61,7 +62,7 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     await emailManager.export(apiKey).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -71,7 +72,7 @@ describe('Emails Manager test suite', () => {
       throw err
     })
     await emailManager.export(apiKey).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -194,7 +195,7 @@ describe('Emails Manager test suite', () => {
     })
     const zipContent = await createZipFullContent()
     await emailManager.import(apiKey, zipContent).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -248,7 +249,7 @@ describe('Emails Manager test suite', () => {
     }
     const zipContent = await createZipContentWithTemplateError(EmailsTestData.emailTemplate + 'x')
     await emailManager.validateEmailTemplates(zipContent).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -284,7 +285,7 @@ describe('Emails Manager test suite', () => {
     const zipContent = await createZipContentEmpty()
 
     await emailManager.import(apiKey, zipContent).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -298,21 +299,9 @@ describe('Emails Manager test suite', () => {
     const zipContent = await createZipContentEmpty()
 
     await emailManager.validateEmailTemplates(zipContent).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
-
-  async function errorCallback(error, err) {
-    if (
-      error[0].errorMessage !== err.message ||
-      error[0].errorCode !== err.code ||
-      error[0].errorDetails !== err.details ||
-      error[0].time === undefined ||
-      error[0].severity !== err.severity
-    ) {
-      throw new Error('It is not the expected exception')
-    }
-  }
 })
 
 function createExpectedZipEntries() {

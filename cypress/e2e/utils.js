@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-export function startUp(url, pageName) {
-  cy.visit(url)
+export function startUp(pageName) {
+  cy.visit('')
   cy.contains(pageName).click({ force: true })
   writeCredentials()
 }

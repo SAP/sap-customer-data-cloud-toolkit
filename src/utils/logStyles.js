@@ -1,4 +1,4 @@
-// Console.log styles, ex: console.log('CDC Toolbox - %cLoaded', logStyles.green)
+// Console.log styles, ex: console.log('SAP Customer Data Cloud Toolbox - %cLoaded', logStyles.green)
 const padding = 'padding: 2px 4px'
 const borderRadius = 'border-radius: 4px'
 export const logStyles = {

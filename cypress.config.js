@@ -10,6 +10,7 @@ module.exports = defineConfig({
   },
 
   e2e: {
+    baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
         const extensionFolder = path.resolve(__dirname, './build')
@@ -25,6 +26,7 @@ module.exports = defineConfig({
         config,
 
         excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
+        //excludeSpecPattern: ['cypress/e2e/emailTemplatesTests.cy.js', 'cypress/e2e/smsTemplatesTests.cy.js', 'cypress/e2e/siteDeployerTests.cy.js'],
       }
     },
   },
