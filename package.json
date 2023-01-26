@@ -1,5 +1,5 @@
 {
-  "name": "cdc-tools-chrome-extension",
+  "name": "sap-customer-data-cloud-toolbox",
   "version": "1.0.0",
   "private": true,
   "dependencies": {

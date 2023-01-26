@@ -5,7 +5,7 @@ import * as utils from './utils'
 
 describe('Site Deployer Test Suite', () => {
   beforeEach(() => {
-    utils.startUp('http://localhost:3000', dataTest.siteDeployerIconName)
+    utils.startUp(dataTest.siteDeployerIconName)
   })
 
   it('Creating 3 parent sites with different datacenters', () => {

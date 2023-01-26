@@ -4,7 +4,7 @@ import * as dataTest from './dataTest'
 
 describe('Email Templates Test Suite', () => {
   beforeEach(() => {
-    utils.startUp('http://localhost:3000', dataTest.emailTemplatesIconName)
+    utils.startUp(dataTest.emailTemplatesIconName)
   })
 
   it('should display Export All and Import All buttons', () => {

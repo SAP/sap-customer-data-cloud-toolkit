@@ -1,7 +1,7 @@
 {
-  "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download CDC Toolbox v{{version}}",
+  "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download SAP Customer Data Cloud Toolbox v{{version}}",
   "CREDENTIALS_POPOVER.NEW_VERSION": "A new version is available!",
-  "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "CDC Toolbox",
+  "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "SAP Customer Data Cloud Toolbox",
   "EMAILS_IMPORT_POPUP.POPUP_HEADER": "Import email templates",
   "EMAILS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the email templates to import:",
   "EMAIL_TEMPLATES_COMPONENT.EXPORT_ERROR_HEADER_MESSAGE": "Error - email templates were not exported",

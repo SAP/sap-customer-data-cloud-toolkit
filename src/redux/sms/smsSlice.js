@@ -7,7 +7,7 @@ import { errorConditions } from '../errorConditions'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
 
 const SMS_SLICE_STATE_NAME = 'sms'
-const EXPORT_SMS_TEMPLATES_FILE_NAME = 'cdc-toolbox-sms-templates'
+const EXPORT_SMS_TEMPLATES_FILE_NAME = 'sms-templates'
 
 const IMPORT_SMS_TEMPLATES_ACTION = 'service/importSmsTemplates'
 const EXPORT_SMS_TEMPLATES_ACTION = 'service/exportSmsTemplates'
