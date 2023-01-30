@@ -1,22 +1,38 @@
 import GigyaManager from '../gigya/gigyaManager'
 import Info from './info/info'
+import Schema from './schema/schema'
 
 class ConfigManager {
-  #configs
+  #configurations = []
   #credentials
   #originApiKey
-  #targetApiKeys
-  #configOptions
   #originDataCenter
   #gigyaManager
 
-  constructor(credentials, originApiKey, targetApiKeys, configOptions) {
+  constructor(credentials, originApiKey) {
     this.#credentials = credentials
     this.#originApiKey = originApiKey
-    this.#targetApiKeys = targetApiKeys
-    this.#configOptions = configOptions
     this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
     this.#originDataCenter = undefined
+  }
+
+  async copy(targetApiKeys, configOptions) {
+    const responses = []
+    await this.#init()
+    for (const targetApiKey of targetApiKeys) {
+      responses.push(this.#copyConfigurations(targetApiKey, configOptions))
+    }
+    return (await Promise.all(responses)).flat()
+  }
+
+  async #copyConfigurations(targetApiKey, configOptions) {
+    const responses = []
+    const targetDataCenter = await this.#getDataCenter(targetApiKey)
+    const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
+    for (const config of configurationsToCopy) {
+      responses.push(config.copy(targetApiKey, targetDataCenter))
+    }
+    return (await Promise.all(responses)).flat()
   }
 
   async getConfiguration() {
@@ -28,24 +44,29 @@ class ConfigManager {
   async #init() {
     if (this.#originDataCenter === undefined) {
       await this.#initOriginDataCenter()
-      this.#initConfigurations(this.#originDataCenter)
+      this.#initConfigurations()
     }
   }
 
   async #initOriginDataCenter() {
-    if (this.#originDataCenter === undefined) {
-      const response = await this.#gigyaManager.getDataCenterFromSite(this.#originApiKey)
-      if (response.errorCode === 0) {
-        this.#originDataCenter = response.dataCenter
-      } else {
-        throw response
-      }
+    this.#originDataCenter = await this.#getDataCenter(this.#originApiKey)
+  }
+
+  async #getDataCenter(apiKey) {
+    const response = await this.#gigyaManager.getDataCenterFromSite(apiKey)
+    if (response.errorCode === 0) {
+      return response.dataCenter
+    } else {
+      throw response
     }
   }
 
-  #initConfigurations(dataCenter) {
-    // to be implemented
-    this.#configs = [dataCenter]
+  #initConfigurations() {
+    this.#configurations.push(new Schema(this.#credentials, this.#originApiKey, this.#originDataCenter))
+  }
+
+  #getConfigurationsToCopy(configOptions) {
+    return this.#configurations
   }
 }
 

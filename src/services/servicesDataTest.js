@@ -33,6 +33,12 @@ const expectedGigyaResponseInvalidAPI = {
   time: Date.now(),
 }
 
+function verifyAllResponsesAreOk(responses) {
+  responses.forEach((response) => {
+    verifyResponseIsOk(response)
+  })
+}
+
 function verifyResponseIsOk(response) {
   expect(response.statusCode).toBeDefined()
   expect(response.statusCode).toEqual(HttpStatus.OK)
@@ -67,15 +73,19 @@ function createErrorObject(message) {
 }
 
 function errorCallback(error, err) {
-  if (
-      error.errorMessage !== err.message ||
-      error.errorCode !== err.code ||
-      error.errorDetails !== err.details ||
-      error.time === undefined ||
-      error.severity !== err.severity
-  ) {
+  if (error.errorMessage !== err.message || error.errorCode !== err.code || error.errorDetails !== err.details || error.time === undefined || error.severity !== err.severity) {
     throw new Error('It is not the expected exception')
   }
 }
 
-export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, errorCallback, verifyResponseIsNotOk, verifyResponseIsOk }
+export {
+  credentials,
+  siteCredentials,
+  expectedGigyaResponseOk,
+  expectedGigyaResponseInvalidAPI,
+  createErrorObject,
+  errorCallback,
+  verifyResponseIsNotOk,
+  verifyResponseIsOk,
+  verifyAllResponsesAreOk,
+}

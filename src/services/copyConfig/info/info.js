@@ -1,3 +1,5 @@
+import Schema from '../schema/schema'
+
 class Info {
   constructor(credentials, site, dataCenter) {
     this.credentials = credentials
@@ -6,80 +8,108 @@ class Info {
   }
 
   async get() {
-    const info = {}
-    this.#getSchema(info)
-    this.#getScreenSets(info)
-    this.#getPolicies(info)
-    this.#getSocialIdentities(info)
-    this.#getEmailTemplates(info)
-    this.#getSmsTemplates(info)
-    this.#getDataflows(info)
-    return info
+    return Promise.all([
+      this.#getSchema(),
+      this.#getScreenSets(),
+      this.#getPolicies(),
+      this.#getSocialIdentities(),
+      this.#getEmailTemplates(),
+      this.#getSmsTemplates(),
+      this.#getDataflows(),
+    ])
   }
 
-  #getSchema(info) {
-    info.schema = {
-      data: true,
-      profile: true,
-    }
+  async #getSchema() {
+    const schema = new Schema(this.credentials, this.site, this.dataCenter)
+    const response = await schema.get()
+    return response.errorCode !== 0
+      ? Promise.reject(response)
+      : Promise.resolve({
+          id: 'schema',
+          name: 'schema',
+          value: [
+            {
+              id: 'dataSchema',
+              name: 'dataSchema',
+              value: false,
+            },
+            {
+              id: 'profileSchema',
+              name: 'profileSchema',
+              value: false,
+            },
+          ],
+        })
   }
 
-  #getScreenSets(info) {
-    info.screenSets = {
-      default: {
-        defaultLinkAccounts: true,
-        defaultLiteRegistration: true,
+  async #getScreenSets() {
+    return Promise.resolve({
+      screenSets: {
+        default: {
+          defaultLinkAccounts: false,
+          defaultLiteRegistration: false,
+        },
+        custom: {
+          customLinkAccounts: false,
+          customLiteRegistration: false,
+        },
       },
-      custom: {
-        customLinkAccounts: true,
-        customLiteRegistration: true,
+    })
+  }
+
+  async #getPolicies() {
+    return Promise.resolve({
+      policies: {
+        accountOptions: false,
+        codeVerification: false,
+        emailNotifications: false,
+        emailVerification: false,
+        federation: false,
+        webSdk: false,
+        passwordComplexity: false,
+        passwordReset: false,
+        defaultProfilePhotoDimensions: false,
+        registration: false,
+        security: false,
+        twoFactorAuthenticationProviders: false,
       },
-    }
+    })
   }
 
-  #getPolicies(info) {
-    info.policies = {
-      accountOptions: true,
-      codeVerification: true,
-      emailNotifications: true,
-      emailVerification: true,
-      federation: true,
-      webSdk: true,
-      passwordComplexity: true,
-      passwordReset: true,
-      defaultProfilePhotoDimensions: true,
-      registration: true,
-      security: true,
-      twoFactorAuthenticationProviders: true,
-    }
+  #getSocialIdentities() {
+    return Promise.resolve({
+      socialIdentities: false,
+    })
   }
 
-  #getSocialIdentities(info) {
-    info.socialIdentities = true
+  #getEmailTemplates() {
+    return Promise.resolve({
+      emailTemplates: {
+        magicLink: false,
+        codeVerification: false,
+        emailVerification: false,
+        newUserWelcome: false,
+        accountDeletionConfirmation: false,
+        litePreferencesCenter: false,
+        doubleOptInConfirmation: false,
+        passwordReset: false,
+        tfaEmailVerification: false,
+        impossibleTraveler: false,
+        passwordResetConfirmation: false,
+      },
+    })
   }
 
-  #getEmailTemplates(info) {
-    info.emailTemplates = {
-      magicLink: true,
-      codeVerification: true,
-      emailVerification: true,
-      newUserWelcome: true,
-      accountDeletionConfirmation: true,
-      litePreferencesCenter: true,
-      doubleOptInConfirmation: true,
-      passwordReset: true,
-      tfaEmailVerification: true,
-      impossibleTraveler: true,
-      passwordResetConfirmation: true,
-    }
+  #getSmsTemplates() {
+    return Promise.resolve({
+      smsTemplates: false,
+    })
   }
 
-  #getSmsTemplates(info) {
-    info.smsTemplates = true
-  }
-
-  #getDataflows(info) {
-    info.dataflows = true
+  #getDataflows() {
+    return Promise.resolve({
+      dataflows: false,
+    })
   }
 }
 
