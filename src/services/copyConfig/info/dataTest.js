@@ -17,56 +17,184 @@ export function getInfoExpectedResponse(supports) {
       ],
     },
     {
-      screenSets: {
-        default: {
-          defaultLinkAccounts: supports,
-          defaultLiteRegistration: supports,
+      id: 'screenSets',
+      name: 'screenSets',
+      value: [
+        {
+          id: 'default',
+          name: 'default',
+          value: [
+            {
+              id: 'defaultLinkAccounts',
+              name: 'defaultLinkAccounts',
+              value: false,
+            },
+            {
+              id: 'defaultLiteRegistration',
+              name: 'defaultLiteRegistration',
+              value: false,
+            },
+          ],
         },
-        custom: {
-          customLinkAccounts: supports,
-          customLiteRegistration: supports,
+        {
+          id: 'custom',
+          name: 'custom',
+          value: [
+            {
+              id: 'customLinkAccounts',
+              name: 'customLinkAccounts',
+              value: false,
+            },
+            {
+              id: 'customLiteRegistration',
+              name: 'customLiteRegistration',
+              value: false,
+            },
+          ],
         },
-      },
+      ],
     },
     {
-      policies: {
-        accountOptions: supports,
-        codeVerification: supports,
-        emailNotifications: supports,
-        emailVerification: supports,
-        federation: supports,
-        webSdk: supports,
-        passwordComplexity: supports,
-        passwordReset: supports,
-        defaultProfilePhotoDimensions: supports,
-        registration: supports,
-        security: supports,
-        twoFactorAuthenticationProviders: supports,
-      },
+      id: 'policies',
+      name: 'policies',
+      value: [
+        {
+          id: 'accountOptions',
+          name: 'accountOptions',
+          value: false,
+        },
+        {
+          id: 'codeVerification',
+          name: 'codeVerification',
+          value: false,
+        },
+        {
+          id: 'emailNotifications',
+          name: 'emailNotifications',
+          value: false,
+        },
+        {
+          id: 'emailVerification',
+          name: 'emailVerification',
+          value: false,
+        },
+        {
+          id: 'federation',
+          name: 'federation',
+          value: false,
+        },
+        {
+          id: 'webSdk',
+          name: 'webSdk',
+          value: false,
+        },
+        {
+          id: 'passwordComplexity',
+          name: 'passwordComplexity',
+          value: false,
+        },
+        {
+          id: 'passwordReset',
+          name: 'passwordReset',
+          value: false,
+        },
+        {
+          id: 'defaultProfilePhotoDimensions',
+          name: 'defaultProfilePhotoDimensions',
+          value: false,
+        },
+        {
+          id: 'registration',
+          name: 'registration',
+          value: false,
+        },
+        {
+          id: 'security',
+          name: 'security',
+          value: false,
+        },
+        {
+          id: 'twoFactorAuthenticationProviders',
+          name: 'twoFactorAuthenticationProviders',
+          value: false,
+        },
+      ],
     },
     {
-      socialIdentities: supports,
+      id: 'socialIdentities',
+      name: 'socialIdentities',
+      value: false,
     },
     {
-      emailTemplates: {
-        magicLink: supports,
-        codeVerification: supports,
-        emailVerification: supports,
-        newUserWelcome: supports,
-        accountDeletionConfirmation: supports,
-        litePreferencesCenter: supports,
-        doubleOptInConfirmation: supports,
-        passwordReset: supports,
-        tfaEmailVerification: supports,
-        impossibleTraveler: supports,
-        passwordResetConfirmation: supports,
-      },
+      id: 'emailTemplates',
+      name: 'emailTemplates',
+      value: [
+        {
+          id: 'magicLink',
+          name: 'magicLink',
+          value: false,
+        },
+        {
+          id: 'codeVerification',
+          name: 'codeVerification',
+          value: false,
+        },
+        {
+          id: 'emailVerification',
+          name: 'emailVerification',
+          value: false,
+        },
+        {
+          id: 'newUserWelcome',
+          name: 'newUserWelcome',
+          value: false,
+        },
+        {
+          id: 'accountDeletionConfirmation',
+          name: 'accountDeletionConfirmation',
+          value: false,
+        },
+        {
+          id: 'litePreferencesCenter',
+          name: 'litePreferencesCenter',
+          value: false,
+        },
+        {
+          id: 'doubleOptInConfirmation',
+          name: 'doubleOptInConfirmation',
+          value: false,
+        },
+        {
+          id: 'etPasswordReset',
+          name: 'passwordReset',
+          passwordReset: false,
+        },
+        {
+          id: 'tfaEmailVerification',
+          name: 'tfaEmailVerification',
+          value: false,
+        },
+        {
+          id: 'impossibleTraveler',
+          name: 'impossibleTraveler',
+          value: false,
+        },
+        {
+          id: 'passwordResetConfirmation',
+          name: 'passwordResetConfirmation',
+          value: false,
+        },
+      ],
     },
     {
-      smsTemplates: supports,
+      id: 'smsTemplates',
+      name: 'smsTemplates',
+      value: false,
     },
     {
-      dataflows: supports,
+      id: 'dataflows',
+      name: 'dataflows',
+      value: false,
     },
   ]
 }
