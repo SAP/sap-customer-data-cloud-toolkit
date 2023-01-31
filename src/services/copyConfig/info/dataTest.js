@@ -55,28 +55,33 @@ export function getInfoExpectedResponse(supports) {
       },
     ],
   }
+  const accountOptions = 'accountOptions'
+  const codeVerification = 'codeVerification'
+  const emailNotifications = 'emailNotifications'
+  const emailVerification = 'emailVerification'
+  const passwordReset = 'passwordReset'
   const policies = {
     id: 'policies',
     name: 'policies',
     value: [
       {
-        id: 'accountOptions',
-        name: 'accountOptions',
+        id: accountOptions,
+        name: accountOptions,
         value: false,
       },
       {
-        id: 'codeVerification',
-        name: 'codeVerification',
+        id: codeVerification,
+        name: codeVerification,
         value: false,
       },
       {
-        id: 'emailNotifications',
-        name: 'emailNotifications',
+        id: emailNotifications,
+        name: emailNotifications,
         value: false,
       },
       {
-        id: 'emailVerification',
-        name: 'emailVerification',
+        id: emailVerification,
+        name: emailVerification,
         value: false,
       },
       {
@@ -95,8 +100,8 @@ export function getInfoExpectedResponse(supports) {
         value: false,
       },
       {
-        id: 'passwordReset',
-        name: 'passwordReset',
+        id: passwordReset,
+        name: passwordReset,
         value: false,
       },
       {
@@ -136,13 +141,13 @@ export function getInfoExpectedResponse(supports) {
         value: false,
       },
       {
-        id: 'codeVerification',
-        name: 'codeVerification',
+        id: 'etCodeVerification',
+        name: codeVerification,
         value: false,
       },
       {
-        id: 'emailVerification',
-        name: 'emailVerification',
+        id: 'etEmailVerification',
+        name: emailVerification,
         value: false,
       },
       {
@@ -167,8 +172,8 @@ export function getInfoExpectedResponse(supports) {
       },
       {
         id: 'etPasswordReset',
-        name: 'passwordReset',
-        passwordReset: false,
+        name: passwordReset,
+        value: false,
       },
       {
         id: 'tfaEmailVerification',
