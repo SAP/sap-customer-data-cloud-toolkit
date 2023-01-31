@@ -1,3 +1,5 @@
+import { expectedSchemaResponse } from '../schema/dataTest'
+
 export function getInfoExpectedResponse(supports) {
   return [
     {
@@ -197,4 +199,12 @@ export function getInfoExpectedResponse(supports) {
       value: false,
     },
   ]
+}
+
+export function getExpectedSchemaResponseExcept(exceptions) {
+  const response = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  exceptions.forEach((exception) => {
+    delete response[exception]
+  })
+  return response
 }

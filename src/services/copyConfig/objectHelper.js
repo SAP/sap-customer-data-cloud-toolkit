@@ -14,7 +14,6 @@ function deleteProperty(object, propertyPath, property) {
       pointer = pointer[prop]
     } else {
       delete pointer[prop]
-      return
     }
   })
 }
