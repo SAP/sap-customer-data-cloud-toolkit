@@ -20,7 +20,7 @@ class Info {
       this.#getDataflows(),
     ]).then((infos) => {
       infos.forEach((info) => {
-        if (typeof info.value === 'boolean' || (Array.isArray(info.value) && info.value.length !== 0)) {
+        if (info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)) {
           response.push(info)
         }
       })
@@ -35,13 +35,14 @@ class Info {
       const info = {
         id: 'schema',
         name: 'schema',
-        value: [],
+        value: false,
+        branches: [],
       }
       if (response.dataSchema) {
-        info.value.push(this.#generateDataSchema())
+        info.branches.push(this.#generateDataSchema())
       }
       if (response.profileSchema) {
-        info.value.push(this.#generateProfileSchema())
+        info.branches.push(this.#generateProfileSchema())
       }
       return Promise.resolve(info)
     } else {

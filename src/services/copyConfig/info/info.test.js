@@ -23,7 +23,7 @@ describe('Info test suite', () => {
     axios.mockResolvedValueOnce({ data: mockedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse[0].value.splice(1, 1) // remove schema.profileSchema
+    expectedResponse[0].branches.splice(1, 1) // remove schema.profileSchema
     expect(response).toEqual(expectedResponse)
   })
 

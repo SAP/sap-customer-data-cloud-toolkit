@@ -4,7 +4,8 @@ export function getInfoExpectedResponse(supports) {
   const schema = {
     id: 'schema',
     name: 'schema',
-    value: [
+    value: supports,
+    branches: [
       {
         id: 'dataSchema',
         name: 'dataSchema',
@@ -20,36 +21,39 @@ export function getInfoExpectedResponse(supports) {
   const screenSets = {
     id: 'screenSets',
     name: 'screenSets',
-    value: [
+    value: supports,
+    branches: [
       {
         id: 'default',
         name: 'default',
-        value: [
+        value: supports,
+        branches: [
           {
             id: 'defaultLinkAccounts',
             name: 'defaultLinkAccounts',
-            value: false,
+            value: supports,
           },
           {
             id: 'defaultLiteRegistration',
             name: 'defaultLiteRegistration',
-            value: false,
+            value: supports,
           },
         ],
       },
       {
         id: 'custom',
         name: 'custom',
-        value: [
+        value: supports,
+        branches: [
           {
             id: 'customLinkAccounts',
             name: 'customLinkAccounts',
-            value: false,
+            value: supports,
           },
           {
             id: 'customLiteRegistration',
             name: 'customLiteRegistration',
-            value: false,
+            value: supports,
           },
         ],
       },
@@ -63,154 +67,148 @@ export function getInfoExpectedResponse(supports) {
   const policies = {
     id: 'policies',
     name: 'policies',
-    value: [
+    value: supports,
+    branches: [
       {
         id: accountOptions,
         name: accountOptions,
-        value: false,
+        value: supports,
       },
       {
         id: codeVerification,
         name: codeVerification,
-        value: false,
+        value: supports,
       },
       {
         id: emailNotifications,
         name: emailNotifications,
-        value: false,
+        value: supports,
       },
       {
         id: emailVerification,
         name: emailVerification,
-        value: false,
+        value: supports,
       },
       {
         id: 'federation',
         name: 'federation',
-        value: false,
+        value: supports,
       },
       {
         id: 'webSdk',
         name: 'webSdk',
-        value: false,
+        value: supports,
       },
       {
         id: 'passwordComplexity',
         name: 'passwordComplexity',
-        value: false,
+        value: supports,
       },
       {
         id: passwordReset,
         name: passwordReset,
-        value: false,
+        value: supports,
       },
       {
         id: 'defaultProfilePhotoDimensions',
         name: 'defaultProfilePhotoDimensions',
-        value: false,
+        value: supports,
       },
       {
         id: 'registration',
         name: 'registration',
-        value: false,
+        value: supports,
       },
       {
         id: 'security',
         name: 'security',
-        value: false,
+        value: supports,
       },
       {
         id: 'twoFactorAuthenticationProviders',
         name: 'twoFactorAuthenticationProviders',
-        value: false,
+        value: supports,
       },
     ],
   }
   const socialIdentities = {
     id: 'socialIdentities',
     name: 'socialIdentities',
-    value: false,
+    value: supports,
   }
   const emailTemplates = {
     id: 'emailTemplates',
     name: 'emailTemplates',
-    value: [
+    value: supports,
+    branches: [
       {
         id: 'magicLink',
         name: 'magicLink',
-        value: false,
+        value: supports,
       },
       {
         id: 'etCodeVerification',
         name: codeVerification,
-        value: false,
+        value: supports,
       },
       {
         id: 'etEmailVerification',
         name: emailVerification,
-        value: false,
+        value: supports,
       },
       {
         id: 'newUserWelcome',
         name: 'newUserWelcome',
-        value: false,
+        value: supports,
       },
       {
         id: 'accountDeletionConfirmation',
         name: 'accountDeletionConfirmation',
-        value: false,
+        value: supports,
       },
       {
         id: 'litePreferencesCenter',
         name: 'litePreferencesCenter',
-        value: false,
+        value: supports,
       },
       {
         id: 'doubleOptInConfirmation',
         name: 'doubleOptInConfirmation',
-        value: false,
+        value: supports,
       },
       {
         id: 'etPasswordReset',
         name: passwordReset,
-        value: false,
+        value: supports,
       },
       {
         id: 'tfaEmailVerification',
         name: 'tfaEmailVerification',
-        value: false,
+        value: supports,
       },
       {
         id: 'impossibleTraveler',
         name: 'impossibleTraveler',
-        value: false,
+        value: supports,
       },
       {
         id: 'passwordResetConfirmation',
         name: 'passwordResetConfirmation',
-        value: false,
+        value: supports,
       },
     ],
   }
   const smsTemplates = {
     id: 'smsTemplates',
     name: 'smsTemplates',
-    value: false,
+    value: supports,
   }
   const dataflows = {
     id: 'dataflows',
     name: 'dataflows',
-    value: false,
+    value: supports,
   }
-  return [
-    schema,
-    screenSets,
-    policies,
-    socialIdentities,
-    emailTemplates,
-    smsTemplates,
-    dataflows,
-  ]
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, dataflows]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {
