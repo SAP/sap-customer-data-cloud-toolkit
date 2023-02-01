@@ -293,17 +293,6 @@ const expectedExportConfigurationFileContent = {
   },
 }
 
-const expectedGigyaInvalidUserKey = {
-  callId: 'f1d05f0a260d4bf48283b10fc27c6d3d',
-  errorCode: 403005,
-  errorDetails: 'The supplied userkey was not found',
-  errorMessage: 'Unauthorized user',
-  apiVersion: 2,
-  statusCode: 403,
-  statusReason: 'Forbidden',
-  time: Date.now(),
-}
-
 const expectedGigyaInvalidSecret = {
   callId: 'f1d05f0a260d4bf48283b10fc27c6d3d',
   errorCode: 403010,
@@ -328,7 +317,6 @@ const expectedGigyaImportTemplateWithoutMetaSubject = {
 }
 
 export {
-  expectedGigyaInvalidUserKey,
   expectedGigyaInvalidSecret,
   expectedGigyaImportTemplateWithoutMetaSubject,
   getEmailsExpectedResponse,

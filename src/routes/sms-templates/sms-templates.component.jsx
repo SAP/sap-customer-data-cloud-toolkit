@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
@@ -147,4 +147,4 @@ const SmsTemplates = ({ t }) => {
   )
 }
 
-export default withNamespaces()(SmsTemplates)
+export default withTranslation()(SmsTemplates)

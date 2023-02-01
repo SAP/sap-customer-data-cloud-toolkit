@@ -3,6 +3,7 @@ import * as EmailsTestData from './dataTest'
 import Email from './email'
 import * as CommonTestData from '../servicesDataTest'
 import * as ConfiguratorTestData from '../configurator/dataTest'
+import * as ServiceDataTest from '../servicesDataTest'
 
 jest.mock('axios')
 jest.setTimeout(10000)
@@ -46,10 +47,10 @@ describe('Emails test suite', () => {
   })
 
   test('get emails unsuccessfully - invalid user key', async () => {
-    axios.mockResolvedValueOnce({ data: EmailsTestData.expectedGigyaInvalidUserKey })
+    axios.mockResolvedValueOnce({ data: ServiceDataTest.expectedGigyaInvalidUserKey })
     const email = new Email('', CommonTestData.credentials.secret)
     const response = await email.getSiteEmails('apiKey')
-    CommonTestData.verifyResponseIsNotOk(response, EmailsTestData.expectedGigyaInvalidUserKey)
+    CommonTestData.verifyResponseIsNotOk(response, ServiceDataTest.expectedGigyaInvalidUserKey)
   })
 
   test('get emails unsuccessfully - invalid apiKey', async () => {

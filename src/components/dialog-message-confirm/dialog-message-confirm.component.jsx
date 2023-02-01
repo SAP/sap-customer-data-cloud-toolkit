@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Dialog, Bar, Button, ValueState } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 
 import styles from './dialog-message-confirm.styles.js'
 
@@ -45,4 +45,4 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
   )
 }
 
-export default withNamespaces()(DialogMessageConfirm)
+export default withTranslation()(DialogMessageConfirm)

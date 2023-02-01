@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import {
@@ -314,4 +314,4 @@ const SiteDeployer = ({ t }) => {
   )
 }
 
-export default withNamespaces()(SiteDeployer)
+export default withTranslation()(SiteDeployer)

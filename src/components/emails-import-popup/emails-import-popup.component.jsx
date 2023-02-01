@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { Dialog, Button, Label, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
@@ -152,4 +152,4 @@ const EmailsImportPopup = ({ t }) => {
   )
 }
 
-export default withNamespaces()(EmailsImportPopup)
+export default withTranslation()(EmailsImportPopup)
