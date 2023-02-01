@@ -45,7 +45,11 @@ class ConfigManager {
 
   #initConfigurations(dataCenter) {
     // to be implemented
-    this.#configs = [dataCenter]
+    // this.#configs.push(new Social(
+    //     this.#credentials.userKey,
+    //     this.#credentials.secret,
+    //     this.#originApiKey,
+    //     this.#originDataCenter))
   }
 }
 

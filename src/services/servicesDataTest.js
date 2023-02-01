@@ -33,6 +33,17 @@ const expectedGigyaResponseInvalidAPI = {
   time: Date.now(),
 }
 
+const expectedGigyaInvalidUserKey = {
+  callId: 'f1d05f0a260d4bf48283b10fc27c6d3d',
+  errorCode: 403005,
+  errorDetails: 'The supplied userkey was not found',
+  errorMessage: 'Unauthorized user',
+  apiVersion: 2,
+  statusCode: 403,
+  statusReason: 'Forbidden',
+  time: Date.now(),
+}
+
 function verifyResponseIsOk(response) {
   expect(response.statusCode).toBeDefined()
   expect(response.statusCode).toEqual(HttpStatus.OK)
@@ -78,4 +89,4 @@ function errorCallback(error, err) {
   }
 }
 
-export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, errorCallback, verifyResponseIsNotOk, verifyResponseIsOk }
+export { credentials, siteCredentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, createErrorObject, errorCallback, verifyResponseIsNotOk, verifyResponseIsOk, expectedGigyaInvalidUserKey }

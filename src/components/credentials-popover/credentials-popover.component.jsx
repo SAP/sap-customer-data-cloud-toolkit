@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { Form, FormItem, Input, InputType, Link, Label, MessageStrip, MessageStripDesign } from '@ui5/webcomponents-react'
 
@@ -71,4 +71,4 @@ const CredentialsPopover = ({ t }) => {
   )
 }
 
-export default withNamespaces()(CredentialsPopover)
+export default withTranslation()(CredentialsPopover)

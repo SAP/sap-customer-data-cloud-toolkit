@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType, Badge } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { setIsPopUpOpen } from '../../redux/credentials/credentialsSlice'
@@ -69,4 +69,4 @@ const CredentialsPopoverButton = ({ t }) => {
   )
 }
 
-export default withNamespaces()(CredentialsPopoverButton)
+export default withTranslation()(CredentialsPopoverButton)

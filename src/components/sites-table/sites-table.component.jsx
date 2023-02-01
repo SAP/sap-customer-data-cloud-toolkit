@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { Label, Button, Table, TableColumn, IllustratedMessage, Bar } from '@ui5/webcomponents-react'
@@ -71,4 +71,4 @@ export const SitesTable = ({ t }) => {
   )
 }
 
-export default withNamespaces()(SitesTable)
+export default withTranslation()(SitesTable)
