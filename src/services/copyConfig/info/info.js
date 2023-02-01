@@ -1,3 +1,6 @@
+import Schema from '../schema/schema'
+import { getInfoExpectedResponse } from './dataTest'
+
 class Info {
   constructor(credentials, site, dataCenter) {
     this.credentials = credentials
@@ -6,80 +9,85 @@ class Info {
   }
 
   async get() {
-    const info = {}
-    this.#getSchema(info)
-    this.#getScreenSets(info)
-    this.#getPolicies(info)
-    this.#getSocialIdentities(info)
-    this.#getEmailTemplates(info)
-    this.#getSmsTemplates(info)
-    this.#getDataflows(info)
-    return info
+    const response = []
+    return Promise.all([
+      this.#getSchema(),
+      this.#getScreenSets(),
+      this.#getPolicies(),
+      this.#getSocialIdentities(),
+      this.#getEmailTemplates(),
+      this.#getSmsTemplates(),
+      this.#getDataflows(),
+    ]).then((infos) => {
+      infos.forEach((info) => {
+        if (info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)) {
+          response.push(info)
+        }
+      })
+      return response
+    })
   }
 
-  #getSchema(info) {
-    info.schema = {
-      data: true,
-      profile: true,
+  async #getSchema() {
+    const schema = new Schema(this.credentials, this.site, this.dataCenter)
+    const response = await schema.get()
+    if (response.errorCode === 0) {
+      const info = {
+        id: 'schema',
+        name: 'schema',
+        value: false,
+        branches: [],
+      }
+      if (response.dataSchema) {
+        info.branches.push(this.#generateDataSchema())
+      }
+      if (response.profileSchema) {
+        info.branches.push(this.#generateProfileSchema())
+      }
+      return Promise.resolve(info)
+    } else {
+      return Promise.reject(response)
     }
   }
 
-  #getScreenSets(info) {
-    info.screenSets = {
-      default: {
-        defaultLinkAccounts: true,
-        defaultLiteRegistration: true,
-      },
-      custom: {
-        customLinkAccounts: true,
-        customLiteRegistration: true,
-      },
+  #generateDataSchema() {
+    return {
+      id: 'dataSchema',
+      name: 'dataSchema',
+      value: false,
     }
   }
 
-  #getPolicies(info) {
-    info.policies = {
-      accountOptions: true,
-      codeVerification: true,
-      emailNotifications: true,
-      emailVerification: true,
-      federation: true,
-      webSdk: true,
-      passwordComplexity: true,
-      passwordReset: true,
-      defaultProfilePhotoDimensions: true,
-      registration: true,
-      security: true,
-      twoFactorAuthenticationProviders: true,
+  #generateProfileSchema() {
+    return {
+      id: 'profileSchema',
+      name: 'profileSchema',
+      value: false,
     }
   }
 
-  #getSocialIdentities(info) {
-    info.socialIdentities = true
+  async #getScreenSets() {
+    return Promise.resolve(getInfoExpectedResponse(false)[1])
   }
 
-  #getEmailTemplates(info) {
-    info.emailTemplates = {
-      magicLink: true,
-      codeVerification: true,
-      emailVerification: true,
-      newUserWelcome: true,
-      accountDeletionConfirmation: true,
-      litePreferencesCenter: true,
-      doubleOptInConfirmation: true,
-      passwordReset: true,
-      tfaEmailVerification: true,
-      impossibleTraveler: true,
-      passwordResetConfirmation: true,
-    }
+  async #getPolicies() {
+    return Promise.resolve(getInfoExpectedResponse(false)[2])
   }
 
-  #getSmsTemplates(info) {
-    info.smsTemplates = true
+  #getSocialIdentities() {
+    return Promise.resolve(getInfoExpectedResponse(false)[3])
   }
 
-  #getDataflows(info) {
-    info.dataflows = true
+  #getEmailTemplates() {
+    return Promise.resolve(getInfoExpectedResponse(false)[4])
+  }
+
+  #getSmsTemplates() {
+    return Promise.resolve(getInfoExpectedResponse(false)[5])
+  }
+
+  #getDataflows() {
+    return Promise.resolve(getInfoExpectedResponse(false)[6])
   }
 }
 
