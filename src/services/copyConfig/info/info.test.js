@@ -14,9 +14,7 @@ describe('Info test suite', () => {
   test('get all info successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
     const response = await info.get()
-    console.log('response=' + JSON.stringify(response))
     const expectedResponse = getInfoExpectedResponse(false)
-    console.log('expectedResponse=' + JSON.stringify(expectedResponse))
     expect(response).toEqual(expectedResponse)
   })
 
