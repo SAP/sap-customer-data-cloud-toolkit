@@ -14,13 +14,8 @@ class Sms {
     this.gigyaManager = new GigyaManager(this.userKey, this.secret)
   }
 
-  async getSiteSms(site) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
-    if (dataCenterResponse.errorCode !== 0) {
-      return dataCenterResponse
-    }
-
-    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenterResponse.dataCenter, Sms.getGetSmsTemplatesEndpoint())
+  async get(site, dataCenter) {
+    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getGetSmsTemplatesEndpoint())
     const res = await client.post(url, this.#getSmsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Sms.#ERROR_MSG_GET_CONFIG)
@@ -29,19 +24,29 @@ class Sms {
     return res.data
   }
 
+  async getSiteSms(site) {
+    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    if (dataCenterResponse.errorCode !== 0) {
+      return dataCenterResponse
+    }
+    return this.get(site, dataCenterResponse.dataCenter)
+  }
+
+  async set(site, dataCenter, templates) {
+    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getSetSmsTemplatesEndpoint())
+    const res = await client.post(url, this.#setSmsTemplatesParameters(site, templates)).catch(function (error) {
+      //console.log(`error=${error}`)
+      return generateErrorResponse(error, Sms.#ERROR_MSG_SET_CONFIG)
+    })
+    return res.data
+  }
+
   async setSiteSms(site, templates) {
     const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }
-
-    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenterResponse.dataCenter, Sms.getSetSmsTemplatesEndpoint())
-    const res = await client.post(url, this.#setSmsTemplatesParameters(site, templates)).catch(function (error) {
-      //console.log(`error=${error}`)
-      return generateErrorResponse(error, Sms.#ERROR_MSG_SET_CONFIG)
-    })
-
-    return res.data
+    return this.set(site, dataCenterResponse.dataCenter, templates)
   }
 
   #getSmsTemplatesParameters(apiKey) {

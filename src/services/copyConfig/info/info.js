@@ -1,11 +1,16 @@
 import Schema from '../schema/schema'
 import { getInfoExpectedResponse } from './dataTest'
+import SmsConfiguration from '../sms/smsConfiguration'
 
 class Info {
+  #credentials
+  #site
+  #dataCenter
+
   constructor(credentials, site, dataCenter) {
-    this.credentials = credentials
-    this.site = site
-    this.dataCenter = dataCenter
+    this.#credentials = credentials
+    this.#site = site
+    this.#dataCenter = dataCenter
   }
 
   async get() {
@@ -29,7 +34,7 @@ class Info {
   }
 
   async #getSchema() {
-    const schema = new Schema(this.credentials, this.site, this.dataCenter)
+    const schema = new Schema(this.#credentials, this.#site, this.#dataCenter)
     const response = await schema.get()
     if (response.errorCode === 0) {
       const info = {
@@ -82,8 +87,23 @@ class Info {
     return Promise.resolve(getInfoExpectedResponse(false)[4])
   }
 
-  #getSmsTemplates() {
-    return Promise.resolve(getInfoExpectedResponse(false)[5])
+  async #getSmsTemplates() {
+    const smsConfiguration = new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter)
+    const response = await smsConfiguration.get()
+    if (response.errorCode === 0) {
+      const info = {
+        id: 'smsTemplates',
+        name: 'smsTemplates',
+        value: false,
+        branches: [],
+      }
+      if (response.templates) {
+        delete info.branches
+      }
+      return Promise.resolve(info)
+    } else {
+      return Promise.reject(response)
+    }
   }
 
   #getDataflows() {
