@@ -5,16 +5,24 @@ import * as ConfiguratorTestData from '../configurator/dataTest'
 import { getInfoExpectedResponse } from './info/dataTest'
 import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk } from '../servicesDataTest'
 import { expectedSchemaResponse } from './schema/dataTest'
+import { getSmsExpectedResponse } from '../sms/dataTest'
 
 jest.mock('axios')
 
 const apiKey = 'apiKey'
 
 describe('Config Manager test suite', () => {
-  let configManager = new ConfigManager(CommonTestData.credentials, apiKey)
+  let configManager
+
+  beforeEach(() => {
+    configManager = new ConfigManager(CommonTestData.credentials, apiKey)
+  })
 
   test('get configuration successfully', async () => {
-    axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValueOnce({ data: expectedSchemaResponse })
+    axios
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -39,11 +47,14 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
-    expect(response.length).toEqual(1)
+    expect(response.length).toEqual(2)
     verifyAllResponsesAreOk(response)
     expect(response[0].id).toEqual(`Schema;${apiKey}`)
+    expect(response[1].id).toEqual(`SmsConfiguration;${apiKey}`)
   })
 
   test('copy all unsuccessfully - error getting origin data center', async () => {
@@ -81,9 +92,14 @@ describe('Config Manager test suite', () => {
       details: mockedResponse.data.errorDetails,
     }
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
-    axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce(mockedResponse)
+    axios
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
       errorCallback(error, err)
+      expect(error.id).toBeDefined()
     })
   })
 
@@ -99,9 +115,13 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
       .mockResolvedValueOnce(mockedResponse)
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
       errorCallback(error, err)
+      expect(error.id).toBeDefined()
     })
   })
 })

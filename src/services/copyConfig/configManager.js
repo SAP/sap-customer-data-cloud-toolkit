@@ -1,6 +1,7 @@
 import GigyaManager from '../gigya/gigyaManager'
 import Info from './info/info'
 import Schema from './schema/schema'
+import SmsConfiguration from './sms/smsConfiguration'
 
 class ConfigManager {
   #configurations = []
@@ -63,6 +64,7 @@ class ConfigManager {
 
   #initConfigurations() {
     this.#configurations.push(new Schema(this.#credentials, this.#originApiKey, this.#originDataCenter))
+    this.#configurations.push(new SmsConfiguration(this.#credentials, this.#originApiKey, this.#originDataCenter))
   }
 
   #getConfigurationsToCopy(configOptions) {
