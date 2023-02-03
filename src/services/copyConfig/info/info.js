@@ -1,5 +1,6 @@
 import Schema from '../schema/schema'
 import { getInfoExpectedResponse } from './dataTest'
+import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 
 class Info {
@@ -79,8 +80,21 @@ class Info {
     return Promise.resolve(getInfoExpectedResponse(false)[2])
   }
 
-  #getSocialIdentities() {
-    return Promise.resolve(getInfoExpectedResponse(false)[3])
+  async #getSocialIdentities() {
+    const social = new Social(this.#credentials, this.#site, this.#dataCenter)
+    const response = await social.get()
+    if (response.errorCode === 0) {
+      const info = {
+        id: 'socialIdentities',
+        name: 'socialIdentities',
+        value: false,
+      }
+      if (!this.#hasSocialProviders(response.providers)) {
+        info.branches = []
+      }
+      return Promise.resolve(info)
+    }
+    return Promise.reject(response)
   }
 
   #getEmailTemplates() {
@@ -108,6 +122,17 @@ class Info {
 
   #getDataflows() {
     return Promise.resolve(getInfoExpectedResponse(false)[6])
+  }
+
+  #hasSocialProviders(providers) {
+    let atLeastOneHasConfig = false
+    for (const key in providers) {
+      if (!Object.values(providers[key].app).every((x) => x === '')) {
+        atLeastOneHasConfig = true
+        break
+      }
+    }
+    return atLeastOneHasConfig
   }
 }
 
