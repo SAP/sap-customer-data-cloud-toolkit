@@ -1,7 +1,18 @@
 /* eslint-disable no-undef */
 
+import {
+  siteConfigResponse,
+  mockedGetSchemaResponse,
+  mockedSetSchemaResponse,
+  mockedGetSmsConfigsResponse,
+  mockedSetSmsTemplatesResponse,
+  mockedGetSocialsConfigsResponse,
+  mockedSetSocialsConfigsResponse,
+} from './dataTest'
+
 export function startUp(pageName) {
   cy.visit('')
+  mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   cy.contains(pageName).click({ force: true })
   writeCredentials()
 }
@@ -12,7 +23,6 @@ export function writeCredentials() {
   openPopoverButton.click({ force: true })
   cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('AFww+F466MSR', { force: true })
   cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
-
   openPopoverButton.click({ force: true })
 }
 
@@ -81,4 +91,16 @@ export function getSaveButton() {
 
 export function clickPopUpOkButton(popUpId) {
   return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
+}
+
+export function mockGetConfigurationRequests() {
+  mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
+  mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
+  mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
+}
+
+export function mockSetConfigurationRequests() {
+  mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
+  mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
+  mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
 }

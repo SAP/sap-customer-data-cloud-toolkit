@@ -37,6 +37,7 @@ class Schema {
     let response = await this.get()
     if (response.errorCode === 0) {
       removePropertyFromObjectCascading(response.profileSchema, 'allowNull')
+      // removePropertyFromObjectCascading(response.profileSchema, 'dynamicSchema')
       response = await this.set(destinationSite, destinationSiteDataCenter, response)
     }
     response['id'] = `${this.constructor.name};${destinationSite}`

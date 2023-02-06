@@ -86,6 +86,8 @@ const checkSitesRequiredFields = (sites) => {
 }
 
 const SiteDeployer = ({ t }) => {
+  const PAGE_TITLE = 'Site Deployer'
+
   const dispatch = useDispatch()
 
   const sites = useSelector(selectSites)
@@ -216,7 +218,7 @@ const SiteDeployer = ({ t }) => {
       open={showSuccessDialog}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      closeButtonContent="Ok"
+      closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="successPopup"
     >
@@ -230,7 +232,7 @@ const SiteDeployer = ({ t }) => {
         design="Header"
         startContent={
           <Title level={TitleLevel.H3} className={classes.titleStyle}>
-            <span className={classes.titleSpanStyle}>Site Deployer</span>
+            <span className={classes.titleSpanStyle}>{PAGE_TITLE}</span>
           </Title>
         }
       ></Bar>
