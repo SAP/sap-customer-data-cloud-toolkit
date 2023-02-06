@@ -1,4 +1,12 @@
 {
+  "COPY_CONFIGURATION_EXTENDED.APIS": "APIs",
+  "COPY_CONFIGURATION_EXTENDED.COPY_SUCCESS_MESSAGE": "All selected configurations were copied successfully.",
+  "COPY_CONFIGURATION_EXTENDED.CURRENT_SITE": "Current Site:",
+  "COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY": "API Key:",
+  "COPY_CONFIGURATION_EXTENDED.DESTINATION_SITE": "Destination Site:",
+  "COPY_CONFIGURATION_EXTENDED.HEADER_TEXT": "Copy configuration and settings from the current site to multiple target sites.",
+  "COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION": "Select Configuration",
+  "COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS": "Target Sites API Keys:",
   "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download SAP Customer Data Cloud Toolbox v{{version}}",
   "CREDENTIALS_POPOVER.NEW_VERSION": "A new version is available!",
   "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "SAP Customer Data Cloud Toolbox",
