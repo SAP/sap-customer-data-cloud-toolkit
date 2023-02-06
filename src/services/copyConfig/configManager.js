@@ -1,21 +1,21 @@
-import GigyaManager from '../gigya/gigyaManager'
 import Info from './info/info'
 import Schema from './schema/schema'
 import Social from './social/social'
 import SmsConfiguration from './sms/smsConfiguration'
+import SiteConfigurator from '../configurator/siteConfigurator'
 
 class ConfigManager {
   #configurations = []
   #credentials
   #originApiKey
-  #originDataCenter
-  #gigyaManager
+  #originSiteConfiguration
+  #siteConfigurator
 
   constructor(credentials, originApiKey) {
     this.#credentials = credentials
     this.#originApiKey = originApiKey
-    this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
-    this.#originDataCenter = undefined
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
+    this.#originSiteConfiguration = undefined
   }
 
   async copy(targetApiKeys, configOptions) {
@@ -29,44 +29,41 @@ class ConfigManager {
 
   async #copyConfigurations(targetApiKey, configOptions) {
     const responses = []
-    const targetDataCenter = await this.#getDataCenter(targetApiKey)
+    const targetSiteConfiguration = await this.getSiteConfiguration(targetApiKey)
     const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
     for (const config of configurationsToCopy) {
-      responses.push(config.copy(targetApiKey, targetDataCenter))
+      responses.push(config.copy(targetApiKey, targetSiteConfiguration))
     }
     return (await Promise.all(responses)).flat()
   }
 
   async getConfiguration() {
     await this.#init()
-    const info = new Info(this.#credentials, this.#originApiKey, this.#originDataCenter)
+    const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
     return info.get()
   }
 
   async #init() {
-    if (this.#originDataCenter === undefined) {
-      await this.#initOriginDataCenter()
+    if (this.#originSiteConfiguration === undefined) {
+      this.#originSiteConfiguration = await this.getSiteConfiguration(this.#originApiKey)
       this.#initConfigurations()
     }
   }
 
-  async #initOriginDataCenter() {
-    this.#originDataCenter = await this.#getDataCenter(this.#originApiKey)
-  }
-
-  async #getDataCenter(apiKey) {
-    const response = await this.#gigyaManager.getDataCenterFromSite(apiKey)
+  async getSiteConfiguration(apiKey) {
+    const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
     if (response.errorCode === 0) {
-      return response.dataCenter
+      return response
     } else {
       throw response
     }
   }
 
   #initConfigurations() {
-    this.#configurations.push(new Schema(this.#credentials, this.#originApiKey, this.#originDataCenter))
-    this.#configurations.push(new Social(this.#credentials, this.#originApiKey, this.#originDataCenter))
-    this.#configurations.push(new SmsConfiguration(this.#credentials, this.#originApiKey, this.#originDataCenter))
+    const originDataCenter = this.#originSiteConfiguration.dataCenter
+    this.#configurations.push(new Schema(this.#credentials, this.#originApiKey, originDataCenter))
+    this.#configurations.push(new Social(this.#credentials, this.#originApiKey, originDataCenter))
+    this.#configurations.push(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter))
   }
 
   #getConfigurationsToCopy(configOptions) {

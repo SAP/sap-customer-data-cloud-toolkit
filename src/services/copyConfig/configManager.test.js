@@ -55,6 +55,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)

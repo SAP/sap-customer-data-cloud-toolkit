@@ -7,8 +7,8 @@ class GigyaManager {
   }
 
   async getDataCenterFromSite(site) {
-    const siteConfigurator = new SiteConfigurator(this.userKey, this.secret, 'us1')
-    return await siteConfigurator.getSiteConfig(site)
+    const siteConfigurator = new SiteConfigurator(this.userKey, this.secret)
+    return await siteConfigurator.getSiteConfig(site, 'us1')
   }
 }
 

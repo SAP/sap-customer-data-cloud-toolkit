@@ -28,11 +28,11 @@ class Social {
     })
     return response.data
   }
-  async copy(targetApi, targetDataCenter) {
+  async copy(targetApi, targetSiteConfiguration) {
     let response = await this.get(this.originApiKey)
 
     if (response.errorCode === 0) {
-      response = await this.#set(targetApi, response, targetDataCenter)
+      response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
     response['id'] = `${this.constructor.name};${targetApi}`
 

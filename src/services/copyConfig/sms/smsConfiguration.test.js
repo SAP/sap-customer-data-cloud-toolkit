@@ -18,7 +18,7 @@ describe('Sms Configuration test suite', () => {
     let spy = jest.spyOn(smsConfiguration.getSms(), 'set')
     const expectCallArgument = getSmsExpectedResponse.templates
     axios.mockResolvedValueOnce({ data: getSmsExpectedResponse }).mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-    const response = await smsConfiguration.copy(apiKey, dataCenter)
+    const response = await smsConfiguration.copy(apiKey, { dataCenter })
     expect(response).toEqual(expectedGigyaResponseOk)
     expect(response.id).toEqual(`SmsConfiguration;${apiKey}`)
 

@@ -1,43 +1,64 @@
 import Schema from './schema'
 import * as CommonTestData from '../../servicesDataTest'
-import { expectedSchemaResponse, getExpectedBody } from './dataTest'
+import { expectedSchemaResponse, getExpectedBodyForChildSite, getExpectedBodyForParentSite } from './dataTest'
 import axios from 'axios'
 import { errorCallback, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 
 jest.mock('axios')
 
 describe('Schema test suite', () => {
   const apiKey = 'apiKey'
-  const dataCenter = 'eu1'
+  const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
+  const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
 
   beforeEach(() => {
     jest.restoreAllMocks()
   })
 
-  test('get schema successfully', async () => {
-    axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
-    const response = await schema.get()
-    //console.log('response=' + JSON.stringify(response))
-    expect(response).toEqual(expectedSchemaResponse)
-  })
-
-  test('get schema unsuccessfully', async () => {
-    axios.mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
-    const response = await schema.get()
-    CommonTestData.verifyResponseIsNotOk(response, expectedGigyaResponseInvalidAPI)
-  })
-
-  test('copy successfully', async () => {
+  test('copy successfully to parent site', async () => {
     let spy = jest.spyOn(schema, 'set')
-    const expectCallArgument = getExpectedBody()
+    const expectCallArgument = getExpectedBodyForParentSite()
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-    const response = await schema.copy(apiKey, dataCenter)
+    const response = await schema.copy(apiKey, dataCenterConfiguration)
     expect(response).toEqual(expectedGigyaResponseOk)
     expect(response.id).toEqual(`Schema;${apiKey}`)
 
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenCalledWith(apiKey, dataCenter, expectCallArgument)
+  })
+
+  test('copy successfully to child site', async () => {
+    const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(0)
+    let spy = jest.spyOn(schema, 'set')
+    axios
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedSchemaResponse)) })
+      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+    const response = await schema.copy(apiKey, dataCenterConfiguration)
+    expect(response).toEqual(expectedGigyaResponseOk)
+    expect(response.id).toEqual(`Schema;${apiKey}`)
+
+    expect(spy.mock.calls.length).toBe(2)
+    const expectCallArgument = getExpectedBodyForChildSite()
+    delete expectCallArgument.dataSchema.fields.terms.required
+    delete expectCallArgument.dataSchema.fields.subscribe.required
+
+    const expectCallArgument2 = getExpectedBodyForChildSite()
+    delete expectCallArgument2.profileSchema
+    const terms = expectCallArgument2.dataSchema.fields.terms
+    delete terms.type
+    delete terms.writeAccess
+    delete terms.allowNull
+    const subscribe = expectCallArgument2.dataSchema.fields.subscribe
+    delete subscribe.type
+    delete subscribe.writeAccess
+    delete subscribe.allowNull
+    expectCallArgument2['scope'] = 'site'
+
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectCallArgument)
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, expectCallArgument2)
   })
 
   test('copy unsuccessfully - error on get', async () => {
@@ -50,7 +71,10 @@ describe('Schema test suite', () => {
     }
     axios.mockResolvedValueOnce(mockedResponse)
 
-    await schema.copy(apiKey, dataCenter).catch((error) => {
+    await schema.copy(apiKey, dataCenterConfiguration).then((response) => {
+      // It should not reach here
+      expect(1).toEqual(0)
+    }).catch((error) => {
       errorCallback(error, err)
       expect(error.id).toEqual(`Schema;${apiKey}`)
     })
@@ -65,7 +89,10 @@ describe('Schema test suite', () => {
       details: mockedResponse.data.errorDetails,
     }
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce(mockedResponse)
-    await schema.copy(apiKey, dataCenter).catch((error) => {
+    await schema.copy(apiKey, dataCenterConfiguration).then((response) => {
+      // It should not reach here
+      expect(1).toEqual(0)
+    }).catch((error) => {
       errorCallback(error, err)
       expect(error.id).toEqual(`Schema;${apiKey}`)
     })

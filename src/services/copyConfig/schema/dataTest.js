@@ -88,13 +88,27 @@ export const expectedSchemaResponse = {
   },
 }
 
-export function getExpectedBody() {
+export function getExpectedBodyForParentSite() {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
-  delete expectedBody.profileSchema.fields.email.allowNull
-  delete expectedBody.profileSchema.fields.birthYear.allowNull
-  delete expectedBody.profileSchema.fields.firstName.allowNull
-  delete expectedBody.profileSchema.fields.lastName.allowNull
-  delete expectedBody.profileSchema.fields.zip.allowNull
-  delete expectedBody.profileSchema.fields.country.allowNull
+  const fields = expectedBody.profileSchema.fields
+  delete fields.email.allowNull
+  delete fields.birthYear.allowNull
+  delete fields.firstName.allowNull
+  delete fields.lastName.allowNull
+  delete fields.zip.allowNull
+  delete fields.country.allowNull
+  delete expectedBody.profileSchema.dynamicSchema
+  return expectedBody
+}
+
+export function getExpectedBodyForChildSite() {
+  const expectedBody = getExpectedBodyForParentSite()
+  const fields = expectedBody.profileSchema.fields
+  delete fields.email.required
+  delete fields.birthYear.required
+  delete fields.firstName.required
+  delete fields.lastName.required
+  delete fields.zip.required
+  delete fields.country.required
   return expectedBody
 }

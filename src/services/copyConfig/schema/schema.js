@@ -33,14 +33,51 @@ class Schema {
     return res.data
   }
 
-  async copy(destinationSite, destinationSiteDataCenter) {
+  async copy(destinationSite, destinationSiteConfiguration) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      removePropertyFromObjectCascading(response.profileSchema, 'allowNull')
-      response = await this.set(destinationSite, destinationSiteDataCenter, response)
+      response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
     }
     response['id'] = `${this.constructor.name};${destinationSite}`
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
+  }
+
+  async #copySchema(destinationSite, destinationSiteConfiguration, payload) {
+    let response
+    // the fields 'allowNull' and 'dynamicSchema' cannot be copied
+    removePropertyFromObjectCascading(payload.profileSchema, 'allowNull')
+    removePropertyFromObjectCascading(payload.profileSchema, 'dynamicSchema')
+    if (this.#isParentSite(destinationSiteConfiguration)) {
+      response = await this.set(destinationSite, destinationSiteConfiguration.dataCenter, payload)
+    } else {
+      response = await this.#copySchemaToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, payload)
+    }
+    return response
+  }
+
+  async #copySchemaToChildSite(destinationSite, dataCenter, payload) {
+    let response
+    let clonePayload = JSON.parse(JSON.stringify(payload))
+    // the field 'required' cannot be copied to a child site together with other fields
+    removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
+    removePropertyFromObjectCascading(clonePayload.dataSchema, 'required')
+    response = await this.set(destinationSite, dataCenter, clonePayload)
+
+    if (response.errorCode === 0) {
+      // the field 'required' can only be copied alone to a child site together with scope=site
+      clonePayload = JSON.parse(JSON.stringify(payload))
+      removePropertyFromObjectCascading(clonePayload, 'profileSchema')
+      removePropertyFromObjectCascading(clonePayload.dataSchema, 'type')
+      removePropertyFromObjectCascading(clonePayload.dataSchema, 'writeAccess')
+      removePropertyFromObjectCascading(clonePayload.dataSchema, 'allowNull')
+      clonePayload['scope'] = 'site'
+      response = await this.set(destinationSite, dataCenter, clonePayload)
+    }
+    return response
+  }
+
+  #isParentSite(site) {
+    return site.siteGroupConfig.members !== undefined && site.siteGroupConfig.members.length > 0
   }
 
   #getSchemaParameters(apiKey) {
@@ -57,7 +94,12 @@ class Schema {
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
     parameters['dataSchema'] = JSON.stringify(body.dataSchema)
-    parameters['profileSchema'] = JSON.stringify(body.profileSchema)
+    if (body.profileSchema) {
+      parameters['profileSchema'] = JSON.stringify(body.profileSchema)
+    }
+    if (body.scope) {
+      parameters['scope'] = JSON.stringify(body.scope)
+    }
     // The following schemas should not be handled now
     //parameters["subscriptionsSchema"] = JSON.stringify(body.subscriptionsSchema)
     //parameters["preferencesSchema"] = JSON.stringify(body.preferencesSchema)
