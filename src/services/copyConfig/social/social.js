@@ -34,9 +34,9 @@ class Social {
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
-    response['id'] = `${this.constructor.name};${targetApi}`
-
-    return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
+    response['id'] = 'SocialIdentities'
+    response['targetApiKey'] = `${targetApi}`
+    return response
   }
 
   #getSocialConfigParameters(apiKey) {

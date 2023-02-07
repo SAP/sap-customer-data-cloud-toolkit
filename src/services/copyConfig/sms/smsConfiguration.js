@@ -22,8 +22,9 @@ class SmsConfiguration {
     if (response.errorCode === 0) {
       response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response.templates)
     }
-    response['id'] = `${this.constructor.name};${destinationSite}`
-    return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
+    response['id'] = 'SmsTemplates'
+    response['targetApiKey'] = `${destinationSite}`
+    return response
   }
 
   getSms() {

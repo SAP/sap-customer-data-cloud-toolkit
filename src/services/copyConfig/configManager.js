@@ -33,10 +33,14 @@ class ConfigManager {
 
   async #copyConfigurations(targetApiKey, configOptions) {
     const responses = []
-    const targetSiteConfiguration = await this.getSiteConfiguration(targetApiKey)
-    const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
-    for (const config of configurationsToCopy) {
-      responses.push(config.copy(targetApiKey, targetSiteConfiguration))
+    try {
+      const targetSiteConfiguration = await this.getSiteConfiguration(targetApiKey)
+      const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
+      for (const config of configurationsToCopy) {
+        responses.push(config.copy(targetApiKey, targetSiteConfiguration))
+      }
+    } catch (error) {
+      responses.push(error)
     }
     return (await Promise.all(responses)).flat()
   }

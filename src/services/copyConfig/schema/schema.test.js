@@ -12,6 +12,7 @@ describe('Schema test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
+  const responseId = 'Schema'
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -23,7 +24,8 @@ describe('Schema test suite', () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: expectedGigyaResponseOk })
     const response = await schema.copy(apiKey, dataCenterConfiguration)
     expect(response).toEqual(expectedGigyaResponseOk)
-    expect(response.id).toEqual(`Schema;${apiKey}`)
+    expect(response.id).toEqual(`${responseId}`)
+    expect(response.targetApiKey).toEqual(`${apiKey}`)
 
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenCalledWith(apiKey, dataCenter, expectCallArgument)
@@ -38,7 +40,8 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
     const response = await schema.copy(apiKey, dataCenterConfiguration)
     expect(response).toEqual(expectedGigyaResponseOk)
-    expect(response.id).toEqual(`Schema;${apiKey}`)
+    expect(response.id).toEqual(`${responseId}`)
+    expect(response.targetApiKey).toEqual(`${apiKey}`)
 
     expect(spy.mock.calls.length).toBe(2)
     const expectCallArgument = getExpectedBodyForChildSite()
@@ -62,45 +65,21 @@ describe('Schema test suite', () => {
   })
 
   test('copy unsuccessfully - error on get', async () => {
-    const mockedResponse = { data: expectedGigyaResponseInvalidAPI }
+    const mockedResponse = expectedGigyaResponseInvalidAPI
+    axios.mockResolvedValueOnce({ data: mockedResponse })
 
-    const err = {
-      message: mockedResponse.data.errorMessage,
-      code: mockedResponse.data.errorCode,
-      details: mockedResponse.data.errorDetails,
-    }
-    axios.mockResolvedValueOnce(mockedResponse)
-
-    await schema
-      .copy(apiKey, dataCenterConfiguration)
-      .then(() => {
-        // It should not reach here
-        expect(1).toEqual(0)
-      })
-      .catch((error) => {
-        errorCallback(error, err)
-        expect(error.id).toEqual(`Schema;${apiKey}`)
-      })
+    const response = await schema.copy(apiKey, dataCenterConfiguration)
+    expect(response).toEqual(mockedResponse)
+    expect(response.id).toEqual(`${responseId}`)
+    expect(response.targetApiKey).toEqual(`${apiKey}`)
   })
 
   test('copy unsuccessfully - error on set', async () => {
-    const mockedResponse = { data: expectedGigyaResponseInvalidAPI }
-
-    const err = {
-      message: mockedResponse.data.errorMessage,
-      code: mockedResponse.data.errorCode,
-      details: mockedResponse.data.errorDetails,
-    }
-    axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce(mockedResponse)
-    await schema
-      .copy(apiKey, dataCenterConfiguration)
-      .then(() => {
-        // It should not reach here
-        expect(1).toEqual(0)
-      })
-      .catch((error) => {
-        errorCallback(error, err)
-        expect(error.id).toEqual(`Schema;${apiKey}`)
-      })
+    const mockedResponse = expectedGigyaResponseInvalidAPI
+    axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: mockedResponse })
+    const response = await schema.copy(apiKey, dataCenterConfiguration)
+    expect(response).toEqual(mockedResponse)
+    expect(response.id).toEqual(`${responseId}`)
+    expect(response.targetApiKey).toEqual(`${apiKey}`)
   })
 })

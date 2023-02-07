@@ -38,8 +38,9 @@ class Schema {
     if (response.errorCode === 0) {
       response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
     }
-    response['id'] = `${this.constructor.name};${destinationSite}`
-    return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
+    response['id'] = 'Schema'
+    response['targetApiKey'] = `${destinationSite}`
+    return response
   }
 
   async #copySchema(destinationSite, destinationSiteConfiguration, payload) {
