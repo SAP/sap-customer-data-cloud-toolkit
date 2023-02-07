@@ -3,7 +3,7 @@ import ConfigManager from './configManager'
 import axios from 'axios'
 import * as ConfiguratorTestData from '../configurator/dataTest'
 import { getInfoExpectedResponse } from './info/dataTest'
-import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk } from '../servicesDataTest'
+import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI } from '../servicesDataTest'
 import { expectedSchemaResponse } from './schema/dataTest'
 import { getSocialsProviders } from './social/dataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
@@ -40,8 +40,32 @@ describe('Config Manager test suite', () => {
     }
     axios.mockResolvedValueOnce(mockedResponse)
     await configManager.getConfiguration().catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
+  })
+
+  test('get configuration error getting schema info', async () => {
+    const mockedResponse = { data: expectedGigyaResponseInvalidAPI }
+    axios
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+    const err = {
+      message: mockedResponse.data.errorMessage,
+      code: mockedResponse.data.errorCode,
+      details: mockedResponse.data.errorDetails,
+    }
+    //axios.mockResolvedValueOnce(mockedResponse)
+    await configManager
+      .getConfiguration()
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error[0], err)
+      })
   })
 
   test('copy all successfully', async () => {
@@ -73,7 +97,7 @@ describe('Config Manager test suite', () => {
     }
     axios.mockResolvedValueOnce(mockedResponse)
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -87,7 +111,7 @@ describe('Config Manager test suite', () => {
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce(mockedResponse)
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
+      errorCallback(error[0], err)
     })
   })
 
@@ -107,8 +131,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
       .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toBeDefined()
+      errorCallback(error[0], err)
+      expect(error[0].id).toBeDefined()
     })
   })
 
@@ -131,8 +155,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
       .mockResolvedValueOnce(mockedResponse)
     await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toBeDefined()
+      errorCallback(error[0], err)
+      expect(error[0].id).toBeDefined()
     })
   })
 })

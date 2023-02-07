@@ -19,12 +19,16 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, configOptions) {
-    const responses = []
-    await this.#init()
-    for (const targetApiKey of targetApiKeys) {
-      responses.push(this.#copyConfigurations(targetApiKey, configOptions))
+    try {
+      const responses = []
+      await this.#init()
+      for (const targetApiKey of targetApiKeys) {
+        responses.push(this.#copyConfigurations(targetApiKey, configOptions))
+      }
+      return (await Promise.all(responses)).flat()
+    } catch (error) {
+      return Promise.reject([error])
     }
-    return (await Promise.all(responses)).flat()
   }
 
   async #copyConfigurations(targetApiKey, configOptions) {
@@ -38,9 +42,13 @@ class ConfigManager {
   }
 
   async getConfiguration() {
-    await this.#init()
-    const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
-    return info.get()
+    try {
+      await this.#init()
+      const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
+      return info.get()
+    } catch (error) {
+      return Promise.reject([error])
+    }
   }
 
   async #init() {
@@ -52,11 +60,7 @@ class ConfigManager {
 
   async getSiteConfiguration(apiKey) {
     const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
-    if (response.errorCode === 0) {
-      return response
-    } else {
-      throw response
-    }
+    return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }
 
   #initConfigurations() {

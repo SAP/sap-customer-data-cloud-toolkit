@@ -71,13 +71,16 @@ describe('Schema test suite', () => {
     }
     axios.mockResolvedValueOnce(mockedResponse)
 
-    await schema.copy(apiKey, dataCenterConfiguration).then((response) => {
-      // It should not reach here
-      expect(1).toEqual(0)
-    }).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toEqual(`Schema;${apiKey}`)
-    })
+    await schema
+      .copy(apiKey, dataCenterConfiguration)
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error, err)
+        expect(error.id).toEqual(`Schema;${apiKey}`)
+      })
   })
 
   test('copy unsuccessfully - error on set', async () => {
@@ -89,12 +92,15 @@ describe('Schema test suite', () => {
       details: mockedResponse.data.errorDetails,
     }
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce(mockedResponse)
-    await schema.copy(apiKey, dataCenterConfiguration).then((response) => {
-      // It should not reach here
-      expect(1).toEqual(0)
-    }).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toEqual(`Schema;${apiKey}`)
-    })
+    await schema
+      .copy(apiKey, dataCenterConfiguration)
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error, err)
+        expect(error.id).toEqual(`Schema;${apiKey}`)
+      })
   })
 })

@@ -30,7 +30,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
       .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
       .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
-    await expect(info.get()).rejects.toEqual(expectedGigyaResponseInvalidAPI)
+    await expect(info.get()).rejects.toEqual([expectedGigyaResponseInvalidAPI])
   })
 
   test('get info except profileSchema successfully', async () => {
