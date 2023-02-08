@@ -27,6 +27,8 @@ import {
   selectIsLoading,
   selectTargetApiKeys,
   clearTargetApiKeys,
+  getSiteConfigurations,
+  selectCurrentSiteInformation,
 } from '../../redux/copyConfigurationExtendend/copyConfigurationExtendendSlice'
 
 import './copy-configuration-extended.css'
@@ -47,10 +49,13 @@ const CopyConfigurationExtended = ({ t }) => {
   const targetApiKeys = useSelector(selectTargetApiKeys)
   const credentials = useSelector(selectCredentials)
   const configurations = useSelector(selectConfigurations)
+  const currentSiteInformation = useSelector(selectCurrentSiteInformation)
 
   useEffect(() => {
     if (areCredentialsFilled(credentials)) {
       dispatch(getConfigurations())
+      dispatch(getSiteConfigurations())
+
       cleanTreeVerticalScrolls()
     }
   }, [dispatch, credentials])
@@ -118,7 +123,7 @@ const CopyConfigurationExtended = ({ t }) => {
                     <Label id="currentSiteLabel" className="current_site">
                       {t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE')}
                     </Label>
-                    <Text> {getApiKey(window.location.hash)} </Text>
+                    <Text> {currentSiteInformation.baseDomain} </Text>
                   </FlexBox>
                   <FlexBox className={classes.currentApiKeyFlexboxStyle}>
                     <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY')}</Label>

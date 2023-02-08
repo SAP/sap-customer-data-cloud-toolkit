@@ -44,6 +44,7 @@ export const initialState = {
   isLoading: false,
   targetApiKeys: [],
   showSuccessMessage: false,
+  currentSiteInformation: {},
 }
 
 export const initialStateWithConfigurations = {
@@ -60,6 +61,10 @@ export const initialStateWithErrors = {
   isLoading: false,
   targetApiKeys: [],
   showSuccessMessage: false,
+}
+
+export const siteConfigResponse = {
+  baseDomain: 'a_b_c_dummy_site',
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
