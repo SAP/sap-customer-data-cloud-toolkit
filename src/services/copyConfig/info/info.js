@@ -52,7 +52,7 @@ class Info {
       }
       return Promise.resolve(info)
     } else {
-      return Promise.reject(response)
+      return Promise.reject([response])
     }
   }
 
@@ -94,7 +94,7 @@ class Info {
       }
       return Promise.resolve(info)
     }
-    return Promise.reject(response)
+    return Promise.reject([response])
   }
 
   #getEmailTemplates() {
@@ -116,7 +116,7 @@ class Info {
       }
       return Promise.resolve(info)
     } else {
-      return Promise.reject(response)
+      return Promise.reject([response])
     }
   }
 

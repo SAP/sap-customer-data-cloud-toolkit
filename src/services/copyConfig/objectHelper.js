@@ -1,21 +1,34 @@
 export function removePropertyFromObjectCascading(object, property) {
+  const deletedProperties = []
   const propertiesPath = buildPropertiesPath(object)
   propertiesPath.forEach((value) => {
-    if (value.includes(property)) {
-      deleteProperty(object, value, property)
+    if (
+      value.includes(property) &&
+      !deletedProperties.find((str) => {
+        return value.startsWith(str)
+      })
+    ) {
+      const deletedPath = deleteProperty(object, value, property)
+      if (deletedPath) {
+        deletedProperties.push(deletedPath)
+      }
     }
   })
 }
 
 function deleteProperty(object, propertyPath, property) {
   let pointer = object
-  propertyPath.split('.').forEach((prop) => {
-    if (prop !== property) {
-      pointer = pointer[prop]
+  const tokens = propertyPath.split('.')
+  for (const token of tokens) {
+    if (token !== property) {
+      pointer = pointer[token]
     } else {
-      delete pointer[prop]
+      delete pointer[token]
+      const idx = propertyPath.search(property)
+      return propertyPath.substring(0, idx + property.length)
     }
-  })
+  }
+  return undefined
 }
 
 function buildPropertiesPath(propertiesPath) {
