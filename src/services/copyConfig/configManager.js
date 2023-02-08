@@ -34,7 +34,7 @@ class ConfigManager {
   async #copyConfigurations(targetApiKey, configOptions) {
     const responses = []
     try {
-      const targetSiteConfiguration = await this.getSiteConfiguration(targetApiKey)
+      const targetSiteConfiguration = await this.getSiteInformation(targetApiKey)
       const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
       for (const config of configurationsToCopy) {
         responses.push(config.copy(targetApiKey, targetSiteConfiguration))
@@ -57,12 +57,12 @@ class ConfigManager {
 
   async #init() {
     if (this.#originSiteConfiguration === undefined) {
-      this.#originSiteConfiguration = await this.getSiteConfiguration(this.#originApiKey)
+      this.#originSiteConfiguration = await this.getSiteInformation(this.#originApiKey)
       this.#initConfigurations()
     }
   }
 
-  async getSiteConfiguration(apiKey) {
+  async getSiteInformation(apiKey) {
     const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }
