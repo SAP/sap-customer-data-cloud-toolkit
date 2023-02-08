@@ -3,7 +3,7 @@ import ConfigManager from './configManager'
 import axios from 'axios'
 import * as ConfiguratorTestData from '../configurator/dataTest'
 import { getInfoExpectedResponse } from './info/dataTest'
-import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk } from '../servicesDataTest'
+import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI } from '../servicesDataTest'
 import { expectedSchemaResponse } from './schema/dataTest'
 import { getSocialsProviders } from './social/dataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
@@ -39,9 +39,38 @@ describe('Config Manager test suite', () => {
       details: mockedResponse.data.errorDetails,
     }
     axios.mockResolvedValueOnce(mockedResponse)
-    await configManager.getConfiguration().catch((error) => {
-      errorCallback(error, err)
-    })
+    await configManager
+      .getConfiguration()
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error[0], err)
+      })
+  })
+
+  test('get configuration error getting schema info', async () => {
+    const mockedResponse = { data: expectedGigyaResponseInvalidAPI }
+    axios
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+    const err = {
+      message: mockedResponse.data.errorMessage,
+      code: mockedResponse.data.errorCode,
+      details: mockedResponse.data.errorDetails,
+    }
+    await configManager
+      .getConfiguration()
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error[0], err)
+      })
   })
 
   test('copy all successfully', async () => {
@@ -55,12 +84,16 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedGigyaResponseOk)) })
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
     expect(response.length).toEqual(3)
     verifyAllResponsesAreOk(response)
-    expect(response[0].id).toEqual(`Schema;${apiKey}`)
-    expect(response[1].id).toEqual(`Social;${apiKey}`)
-    expect(response[2].id).toEqual(`SmsConfiguration;${apiKey}`)
+    expect(response[0].id).toEqual('Schema')
+    expect(response[0].targetApiKey).toEqual(`${apiKey}`)
+    expect(response[1].id).toEqual('SocialIdentities')
+    expect(response[1].targetApiKey).toEqual(`${apiKey}`)
+    expect(response[2].id).toEqual('SmsTemplates')
+    expect(response[2].targetApiKey).toEqual(`${apiKey}`)
   })
 
   test('copy all unsuccessfully - error getting origin data center', async () => {
@@ -71,53 +104,42 @@ describe('Config Manager test suite', () => {
       details: mockedResponse.data.errorDetails,
     }
     axios.mockResolvedValueOnce(mockedResponse)
-    await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-    })
+    await configManager
+      .copy([apiKey], getInfoExpectedResponse(false))
+      .then(() => {
+        // It should not reach here
+        expect(1).toEqual(0)
+      })
+      .catch((error) => {
+        errorCallback(error[0], err)
+      })
   })
 
   test('copy all unsuccessfully - error getting destination data center', async () => {
-    const mockedResponse = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
-    const err = {
-      message: mockedResponse.data.errorMessage,
-      code: mockedResponse.data.errorCode,
-      details: mockedResponse.data.errorDetails,
-    }
+    const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
-    axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce(mockedResponse)
-    await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-    })
+    axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce({ data: mockedResponse })
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    expect(response.length).toEqual(1)
+    expect(response[0]).toEqual(mockedResponse)
   })
 
   test('copy all unsuccessfully - error getting configuration info', async () => {
-    const mockedResponse = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
-    const err = {
-      message: mockedResponse.data.errorMessage,
-      code: mockedResponse.data.errorCode,
-      details: mockedResponse.data.errorDetails,
-    }
+    const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-    await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toBeDefined()
-    })
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+
+    await executeCopyAllUnsuccessfully(mockedResponse)
   })
 
   test('copy all unsuccessfully - error setting configuration info', async () => {
-    const mockedResponse = { data: ConfiguratorTestData.scExpectedGigyaResponseNotOk }
-    const err = {
-      message: mockedResponse.data.errorMessage,
-      code: mockedResponse.data.errorCode,
-      details: mockedResponse.data.errorDetails,
-    }
+    const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
@@ -125,13 +147,51 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-      .mockResolvedValueOnce(JSON.parse(JSON.stringify(mockedResponse)))
-      .mockResolvedValueOnce(mockedResponse)
-    await configManager.copy([apiKey], getInfoExpectedResponse(false)).catch((error) => {
-      errorCallback(error, err)
-      expect(error.id).toBeDefined()
-    })
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+
+    await executeCopyAllUnsuccessfully(mockedResponse)
   })
+
+  test('copy all unsuccessfully - error on single copy', async () => {
+    const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
+    const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
+    axios
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: mockedResponse })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: expectedGigyaResponseOk })))
+      .mockResolvedValueOnce(JSON.parse(JSON.stringify({ data: expectedGigyaResponseOk })))
+
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    expect(response.length).toEqual(3)
+    CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
+    expect(response[0].id).toEqual('Schema')
+    expect(response[0].targetApiKey).toEqual(apiKey)
+    CommonTestData.verifyResponseIsOk(response[1], expectedGigyaResponseOk)
+    expect(response[1].id).toEqual('SocialIdentities')
+    expect(response[1].targetApiKey).toEqual(apiKey)
+    CommonTestData.verifyResponseIsOk(response[2], expectedGigyaResponseOk)
+    expect(response[2].id).toEqual('SmsTemplates')
+    expect(response[2].targetApiKey).toEqual(apiKey)
+  })
+
+  async function executeCopyAllUnsuccessfully(mockedResponse) {
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    expect(response.length).toEqual(3)
+    CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
+    expect(response[0].id).toEqual('Schema')
+    expect(response[0].targetApiKey).toEqual(apiKey)
+    CommonTestData.verifyResponseIsNotOk(response[1], mockedResponse)
+    expect(response[1].id).toEqual('SocialIdentities')
+    expect(response[1].targetApiKey).toEqual(apiKey)
+    CommonTestData.verifyResponseIsNotOk(response[2], mockedResponse)
+    expect(response[2].id).toEqual('SmsTemplates')
+    expect(response[2].targetApiKey).toEqual(apiKey)
+  }
 })
