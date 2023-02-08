@@ -27,7 +27,7 @@ import {
   selectIsLoading,
   selectTargetApiKeys,
   clearTargetApiKeys,
-  getSiteConfigurations,
+  getCurrentSiteInformation,
   selectCurrentSiteInformation,
 } from '../../redux/copyConfigurationExtendend/copyConfigurationExtendendSlice'
 
@@ -54,7 +54,7 @@ const CopyConfigurationExtended = ({ t }) => {
   useEffect(() => {
     if (areCredentialsFilled(credentials)) {
       dispatch(getConfigurations())
-      dispatch(getSiteConfigurations())
+      dispatch(getCurrentSiteInformation())
 
       cleanTreeVerticalScrolls()
     }

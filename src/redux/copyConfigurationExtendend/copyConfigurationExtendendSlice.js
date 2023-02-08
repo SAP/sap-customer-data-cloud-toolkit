@@ -109,7 +109,7 @@ export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFOR
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
   try {
-    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getSiteConfiguration(getApiKey(window.location.hash))
+    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getSiteInformation(getApiKey(window.location.hash))
   } catch (error) {
     return rejectWithValue(error)
   }
