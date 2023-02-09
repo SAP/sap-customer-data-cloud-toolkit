@@ -25,8 +25,8 @@ steps:
     buildTool: 'npm'
     userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
     productName: cdc-tools-chrome-extension
-    projectName: cdc-tools-chrome-extension
-    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.3'
+    projectName: sap-customer-data-cloud-toolbox
+    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.4'
     agentUrl: 'https://sap.whitesourcesoftware.com/agent'
     verbose: true
     agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
@@ -34,4 +34,4 @@ steps:
     #excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
     productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
     orgToken: '6971b2eec2d3420bad0caf173ec629f6a3c7d3ba63f3445ab99ffdbf1acfb1d0'
-    projectToken: '6bec15ff676f41639b6c872ebf6d8dad65918481dc2a4c8b93069bffc5560c8d'
+    projectToken: 'b4e71b275d8e45908014de2d62e1e62e8388c889ede74e1bba01381deb641dc0'
