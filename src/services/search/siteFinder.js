@@ -22,7 +22,7 @@ class SiteFinder {
 
   async #getPagedUserEffectiveSites(partnerId) {
     const url = UrlBuilder.buildUrl(SiteFinder.#NAMESPACE, SiteFinder.#DATA_CENTER_DEFAULT, 'admin.console.getPagedUserEffectiveSites')
-    const bodyWithCredentials = { userKey: this.#credentials.userKey, secret: this.#credentials.secret, targetPartnerID: partnerId, pageSize: 1000 }
+    const bodyWithCredentials = { userKey: this.#credentials.userKey, secret: this.#credentials.secret, targetPartnerID: partnerId, pageSize: 1000, context: partnerId }
     const response = await client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, 'Error getting partner user effective sites')
     })
@@ -42,7 +42,7 @@ class SiteFinder {
       for (const partnerSites of responses) {
         if (partnerSites.errorCode === 0) {
           for (const site of partnerSites.sites) {
-            sites.push({ apiKey: site.apiKey, baseDomain: site.name, dataCenter: site.datacenter })
+            sites.push({ apiKey: site.apiKey, baseDomain: site.name, dataCenter: site.datacenter, partnerId: partnerSites.context })
           }
         } else {
           return Promise.reject([partnerSites])

@@ -38,7 +38,12 @@ describe('Site Finder test suite', () => {
   function isValid(response, instance) {
     let i = 3 * instance
     for (const site of getExpectedGetPartnerSitesResponseOk(instance).sites) {
-      expect(response[i++]).toEqual({ apiKey: site.apiKey, baseDomain: site.name, dataCenter: site.datacenter })
+      expect(response[i++]).toEqual({
+        apiKey: site.apiKey,
+        baseDomain: site.name,
+        dataCenter: site.datacenter,
+        partnerId: expectedGetPartnersResponseOk.partners[instance].partner.PartnerID,
+      })
     }
     return true
   }
