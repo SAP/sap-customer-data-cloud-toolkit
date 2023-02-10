@@ -123,7 +123,7 @@ const CopyConfigurationExtended = ({ t }) => {
                     <Label id="currentSiteLabel" className="current_site">
                       {t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE')}
                     </Label>
-                    <Text> {currentSiteInformation.baseDomain} </Text>
+                    <Text> {currentSiteInformation} </Text>
                   </FlexBox>
                   <FlexBox className={classes.currentApiKeyFlexboxStyle}>
                     <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY')}</Label>

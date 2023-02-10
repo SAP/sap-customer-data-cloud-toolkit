@@ -34,7 +34,7 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('#saveButton').shadow().find('button').should('be.enabled')
     cy.get('#saveButton').click()
     cy.get('#copyConfigSuccessPopup').should('have.text', dataTest.copyConfigSuccessPopupMessage)
-    cy.get('#copyConfigSuccessPopup').find('#closeButton').click()
+    cy.get('#copyConfigSuccessPopup').find('#closeButton').click({ force: true })
   })
 
   it('should clear target api keys and checkboxes, and disable save button on cancel', () => {
