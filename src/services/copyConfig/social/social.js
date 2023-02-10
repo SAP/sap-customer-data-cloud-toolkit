@@ -34,7 +34,7 @@ class Social {
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
-    response['id'] = 'SocialIdentities'
+    response['id'] = 'socialIdentities'
     response['targetApiKey'] = `${targetApi}`
     return response
   }

@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import ConfigManager from '../../services/copyConfig/configManager'
 import { getApiKey } from '../utils'
-import { findConfiguration, propagateConfigurationState } from './utils'
+import { findConfiguration, propagateConfigurationState, clearConfigurationsErrors, clearTargetApiKeysErrors, addErrorToConfigurations, addErrorToTargetApiKey } from './utils'
 
 const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtendend'
-const GET_CONFIGURATIONS_ACTION = 'copyConfigurationExtendend/getConfigurations'
-const SET_CONFIGURATIONS_ACTION = 'copyConfigurationExtendend/setConfigurations'
+const GET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getConfigurations`
+const SET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/setConfigurations`
 
 export const copyConfigurationExtendendSlice = createSlice({
   name: COPY_CONFIGURATION_EXTENDED_STATE_NAME,
@@ -19,10 +19,10 @@ export const copyConfigurationExtendendSlice = createSlice({
   },
   reducers: {
     addTargetApiKey(state, action) {
-      state.targetApiKeys.push(action.payload)
+      state.targetApiKeys.push({ targetApiKey: action.payload })
     },
     removeTargetApiKey(state, action) {
-      state.targetApiKeys = state.targetApiKeys.filter((targetApiKey) => targetApiKey !== action.payload)
+      state.targetApiKeys = state.targetApiKeys.filter((targetApiKey) => targetApiKey.targetApiKey !== action.payload)
     },
     setConfigurationStatus(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
@@ -35,6 +35,8 @@ export const copyConfigurationExtendendSlice = createSlice({
     },
     clearErrors(state) {
       state.errors = []
+      clearConfigurationsErrors(state.configurations)
+      clearTargetApiKeysErrors(state.targetApiKeys)
     },
     clearTargetApiKeys(state) {
       state.targetApiKeys = []
@@ -66,7 +68,15 @@ export const copyConfigurationExtendendSlice = createSlice({
     builder.addCase(setConfigurations.fulfilled, (state, action) => {
       console.log('setConfigurations.fulfilled')
       console.log(action.payload)
-      state.showSuccessMessage = true
+      const errors = action.payload.filter((response) => response.errorCode !== 0)
+      if (errors.length) {
+        state.showSuccessMessage = false
+        state.errors = errors
+        addErrorToConfigurations(state.configurations, errors)
+        addErrorToTargetApiKey(state.targetApiKeys, errors)
+      } else {
+        state.showSuccessMessage = true
+      }
       state.isLoading = false
     })
     builder.addCase(setConfigurations.rejected, (state, action) => {
@@ -94,7 +104,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
   try {
     return await new ConfigManager(credentials, getApiKey(window.location.hash)).copy(
-      state.copyConfigurationExtendend.targetApiKeys,
+      state.copyConfigurationExtendend.targetApiKeys.map((targetApiKey) => targetApiKey.targetApiKey),
       state.copyConfigurationExtendend.configurations
     )
   } catch (error) {
@@ -108,7 +118,7 @@ export const selectConfigurations = (state) => state.copyConfigurationExtendend.
 
 export const selectIsLoading = (state) => state.copyConfigurationExtendend.isLoading
 
-export const selectErrors = (state) => state.copyConfigurationExtendend.selectErrors
+export const selectErrors = (state) => state.copyConfigurationExtendend.errors
 
 export const selectShowSuccessDialog = (state) => state.copyConfigurationExtendend.showSuccessMessage
 
