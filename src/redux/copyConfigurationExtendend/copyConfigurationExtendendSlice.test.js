@@ -7,6 +7,7 @@ import copyConfigurationExtendendReducer, {
   getConfigurations,
   setConfigurations,
   clearTargetApiKeys,
+  getCurrentSiteInformation,
 } from './copyConfigurationExtendendSlice'
 
 import {
@@ -17,6 +18,7 @@ import {
   dummyTargetApiKey,
   configurationsMockedResponse,
   mockedErrorsResponse,
+  siteConfigResponse,
   setConfigSuccessResponse,
   initialStateWithTargetApiKeyAndConfigurations,
 } from './dataTest'
@@ -120,5 +122,20 @@ describe('copyConfigurationExtendendSlice test suite', () => {
     expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
+  })
+
+  test('should update the name of the current site when fulfilled', () => {
+    const action = getCurrentSiteInformation.fulfilled(siteConfigResponse)
+    const newState = copyConfigurationExtendendReducer(initialState, action)
+
+    expect(newState.currentSiteInformation.baseDomain).toEqual(siteConfigResponse.baseDomain)
+    expect(newState.isLoading).toEqual(false)
+  })
+
+  test('should reject site', () => {
+    const action = getCurrentSiteInformation.rejected('', '', '', mockedErrorsResponse)
+    const newState = copyConfigurationExtendendReducer(initialState, action)
+    expect(newState.errors).toEqual(mockedErrorsResponse)
+    expect(newState.isLoading).toEqual(false)
   })
 })
