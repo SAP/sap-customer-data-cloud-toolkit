@@ -3,6 +3,7 @@ import Schema from './schema/schema'
 import Social from './social/social'
 import SmsConfiguration from './sms/smsConfiguration'
 import SiteConfigurator from '../configurator/siteConfigurator'
+import {stringToJson} from "./objectHelper";
 
 class ConfigManager {
   #configurations = []

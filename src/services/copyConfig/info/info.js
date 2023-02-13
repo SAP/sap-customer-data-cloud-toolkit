@@ -2,6 +2,7 @@ import Schema from '../schema/schema'
 import { getInfoExpectedResponse } from './dataTest'
 import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
+import { stringToJson } from '../objectHelper'
 
 class Info {
   #credentials
@@ -52,6 +53,7 @@ class Info {
       }
       return Promise.resolve(info)
     } else {
+      stringToJson(response, 'context')
       return Promise.reject([response])
     }
   }
@@ -94,7 +96,10 @@ class Info {
       }
       return Promise.resolve(info)
     }
-    return Promise.reject([response])
+    else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   #getEmailTemplates() {
@@ -116,6 +121,7 @@ class Info {
       }
       return Promise.resolve(info)
     } else {
+      stringToJson(response, 'context')
       return Promise.reject([response])
     }
   }

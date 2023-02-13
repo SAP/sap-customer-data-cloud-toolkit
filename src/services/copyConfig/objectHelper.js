@@ -48,3 +48,13 @@ function buildPropertiesPath(propertiesPath) {
 
   return paths(propertiesPath)
 }
+
+export function stringToJson(obj, property) {
+  if (Array.isArray(obj)) {
+    for (const instance of obj) {
+      instance[property] = JSON.parse(instance[property])
+    }
+  } else {
+    obj[property] = JSON.parse(obj[property])
+  }
+}

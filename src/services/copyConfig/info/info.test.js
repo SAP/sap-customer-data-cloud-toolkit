@@ -6,6 +6,7 @@ import { expectedSchemaResponse } from '../schema/dataTest'
 import { expectedGigyaResponseInvalidAPI } from '../../servicesDataTest'
 import { getSocialsProviders } from '../social/dataTest'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
+import { getExpectedResponseWithContext, getResponseWithContext, schemaId, smsTemplatesId, socialIdentitiesId } from '../dataTest'
 
 jest.mock('axios')
 
@@ -27,10 +28,10 @@ describe('Info test suite', () => {
 
   test('get all info unsuccessfully', async () => {
     axios
-      .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
-    await expect(info.get()).rejects.toEqual([expectedGigyaResponseInvalidAPI])
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, socialIdentitiesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, smsTemplatesId, apiKey) })
+    await expect(info.get()).rejects.toEqual([getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)])
   })
 
   test('get info except profileSchema successfully', async () => {

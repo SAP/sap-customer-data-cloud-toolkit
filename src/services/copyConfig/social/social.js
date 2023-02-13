@@ -1,6 +1,7 @@
 import client from '../../gigya/client'
 import generateErrorResponse from '../../errors/generateErrorResponse'
 import UrlBuilder from '../../gigya/urlBuilder'
+import { stringToJson } from '../objectHelper'
 
 class Social {
   static #NAMESPACE = 'socialize'
@@ -34,6 +35,7 @@ class Social {
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
+    stringToJson(response, 'context')
     return response
   }
 

@@ -1,4 +1,5 @@
 import Sms from '../../sms/sms'
+import { stringToJson } from '../objectHelper'
 
 class SmsConfiguration {
   #credentials
@@ -22,6 +23,7 @@ class SmsConfiguration {
     if (response.errorCode === 0) {
       response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)
     }
+    stringToJson(response, 'context')
     return response
   }
 

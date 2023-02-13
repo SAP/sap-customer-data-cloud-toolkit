@@ -91,6 +91,8 @@ export const expectedSchemaResponse = {
 export function getDataSchemaExpectedBodyForParentSite(apiKey) {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
   expectedBody.context = { targetApiKey: apiKey, id: 'dataSchema' }
+  delete expectedBody.profileSchema
+  delete expectedBody.preferencesSchema
   return expectedBody
 }
 
@@ -105,6 +107,9 @@ export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   delete fields.zip.allowNull
   delete fields.country.allowNull
   delete expectedBody.profileSchema.dynamicSchema
+
+  delete expectedBody.dataSchema
+  delete expectedBody.preferencesSchema
   return expectedBody
 }
 
@@ -113,6 +118,9 @@ export function getDataSchemaExpectedBodyForChildSiteStep1(apiKey) {
   const fields = expectedBody.dataSchema.fields
   delete fields.terms.required
   delete fields.subscribe.required
+
+  delete expectedBody.profileSchema
+  delete expectedBody.preferencesSchema
   return expectedBody
 }
 
@@ -126,6 +134,9 @@ export function getDataSchemaExpectedBodyForChildSiteStep2(apiKey) {
   delete fields.terms.type
   delete fields.subscribe.type
   expectedBody.scope = 'site'
+
+  delete expectedBody.profileSchema
+  delete expectedBody.preferencesSchema
   return expectedBody
 }
 
@@ -138,5 +149,8 @@ export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
   delete fields.lastName.required
   delete fields.zip.required
   delete fields.country.required
+
+  delete expectedBody.dataSchema
+  delete expectedBody.preferencesSchema
   return expectedBody
 }

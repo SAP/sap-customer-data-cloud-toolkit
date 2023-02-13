@@ -1,7 +1,7 @@
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
 import generateErrorResponse from '../../errors/generateErrorResponse'
-import { removePropertyFromObjectCascading } from '../objectHelper'
+import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
 
 class Schema {
   static #ERROR_MSG_GET_CONFIG = 'Error getting schema'
@@ -38,12 +38,15 @@ class Schema {
     if (response.errorCode === 0) {
       response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
     }
+    stringToJson(response, 'context')
     return response
   }
 
   async #copySchema(destinationSite, destinationSiteConfiguration, payload) {
     const responses = []
     const isParentSite = this.#isParentSite(destinationSiteConfiguration)
+    removePropertyFromObjectCascading(payload, 'subscriptionsSchema') // to be processed later
+    removePropertyFromObjectCascading(payload, 'preferencesSchema')
     responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     return Promise.all(responses)
@@ -52,6 +55,7 @@ class Schema {
   async #copyDataSchema(destinationSite, dataCenter, payload, isParentSite) {
     let response
     const dataSchemaPayload = JSON.parse(JSON.stringify(payload))
+    removePropertyFromObjectCascading(dataSchemaPayload, 'profileSchema')
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: 'dataSchema' }
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
@@ -64,6 +68,7 @@ class Schema {
   async #copyProfileSchema(destinationSite, dataCenter, payload, isParentSite) {
     let response
     const clonePayload = JSON.parse(JSON.stringify(payload))
+    removePropertyFromObjectCascading(clonePayload, 'dataSchema')
     clonePayload.context = { targetApiKey: destinationSite, id: 'profileSchema' }
     // the fields 'allowNull' and 'dynamicSchema' cannot be copied
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
@@ -104,7 +109,7 @@ class Schema {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
-    parameters.context = { id: 'schema', targetApiKey: apiKey }
+    parameters.context = JSON.stringify({ id: 'schema', targetApiKey: apiKey })
 
     return parameters
   }

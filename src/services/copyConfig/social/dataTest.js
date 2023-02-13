@@ -1,4 +1,4 @@
-import {expectedSchemaResponse} from "../schema/dataTest";
+import { expectedSchemaResponse } from '../schema/dataTest'
 
 export function getSocialsProviders(socialsCredentials) {
   const getSocialsResponse = {
@@ -88,10 +88,4 @@ const expectedSetSocialsProvidersResponse = {
   time: Date.now(),
 }
 
-function getExpectedSetSocialsProvidersResponseWithContext(apiKey) {
-  const expectedResponse = JSON.parse(JSON.stringify(expectedSetSocialsProvidersResponse))
-  expectedResponse.context = { targetApiKey: apiKey, id: 'socialIdentities' }
-  return expectedResponse
-}
-
-export { expectedSetSocialsProvidersResponse, getExpectedSetSocialsProvidersResponseWithContext }
+export { expectedSetSocialsProvidersResponse }

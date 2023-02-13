@@ -11,7 +11,7 @@ import {
 import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import { getResponseWithContext, profileId, schemaId } from '../dataTest'
+import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId } from '../dataTest'
 
 jest.mock('axios')
 
@@ -33,8 +33,8 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration)
     expect(responses.length).toBe(2)
-    expect(responses[0]).toEqual(getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[1]).toEqual(getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
     expect(responses[0].context.id).toEqual(schemaId)
     expect(responses[1].context.id).toEqual(profileId)
     expect(responses[0].context.targetApiKey).toEqual(apiKey)
@@ -55,8 +55,8 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration)
     expect(responses.length).toBe(2)
-    expect(responses[1]).toEqual(getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[0]).toEqual(getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
     expect(responses[1].context.id).toEqual(schemaId)
     expect(responses[0].context.id).toEqual(profileId)
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
@@ -70,7 +70,7 @@ describe('Schema test suite', () => {
 
   test('copy unsuccessfully - error on get', async () => {
     const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
-    mockedResponse.context = { id: 'schema', targetApiKey: apiKey }
+    mockedResponse.context = JSON.stringify({ id: 'schema', targetApiKey: apiKey })
     axios.mockResolvedValueOnce({ data: mockedResponse })
 
     const response = await schema.copy(apiKey, dataCenterConfiguration)
@@ -80,13 +80,11 @@ describe('Schema test suite', () => {
   })
 
   test('copy unsuccessfully - error on set data', async () => {
-    const mockedDataResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
-    mockedDataResponse.context = { id: schemaId, targetApiKey: apiKey }
-    const mockedProfileResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
-    mockedProfileResponse.context = { id: profileId, targetApiKey: apiKey }
+    const mockedDataResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)
+    const mockedProfileResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, profileId, apiKey)
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: mockedDataResponse }).mockResolvedValueOnce({ data: mockedProfileResponse })
     const responses = await schema.copy(apiKey, dataCenterConfiguration)
-    expect(responses[0]).toEqual(mockedDataResponse)
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey))
     expect(responses[0].context.id).toEqual(`${schemaId}`)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
   })
