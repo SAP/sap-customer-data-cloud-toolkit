@@ -42,7 +42,7 @@ function buildPropertiesPath(propertiesPath) {
     }
     return Object.entries(obj).reduce((product, [key, value]) => {
       const fullPath = addDelimiter(head, key)
-      return isObject(value) ? product.concat(paths(value, fullPath)) : product.concat(fullPath)
+      return isObject(value) && Object.keys(value).length !== 0 ? product.concat(paths(value, fullPath)) : product.concat(fullPath)
     }, [])
   }
 
