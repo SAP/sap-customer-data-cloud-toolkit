@@ -36,36 +36,44 @@ class SiteFinder {
   }
 
   async getAllSites() {
-    const promises = []
     const partnersResponse = await this.#getPartners()
     if (partnersResponse.errorCode === 0) {
-      for (const partner of partnersResponse.partners) {
-        if (partner.errorCode === 0) {
-          promises.push(this.#getPagedUserEffectiveSites(partner.partner))
-        }
-      }
-      const responses = await Promise.all(promises)
-
-      const sites = []
-      for (const partnerSites of responses) {
-        if (partnerSites.errorCode === 0) {
-          for (const site of partnerSites.sites) {
-            const context = JSON.parse(partnerSites.context)
-            sites.push({
-              apiKey: site.apiKey,
-              baseDomain: site.name,
-              dataCenter: site.datacenter,
-              partnerId: context.partnerId,
-              partnerName: context.partnerName,
-            })
-          }
-        } else {
-          return Promise.reject([partnerSites])
-        }
-      }
-      return sites
+      return await this.#getPartnerSites(partnersResponse.partners)
     }
     return Promise.reject([partnersResponse])
+  }
+
+  async #getPartnerSites(partners) {
+    const promises = []
+    for (const partner of partners) {
+      if (partner.errorCode === 0) {
+        promises.push(this.#getPagedUserEffectiveSites(partner.partner))
+      }
+    }
+    const responses = await Promise.all(promises)
+
+    const sites = []
+    for (const partnerSites of responses) {
+      if (partnerSites.errorCode === 0) {
+        this.#extractInfo(sites, partnerSites)
+      } else {
+        return Promise.reject([partnerSites])
+      }
+    }
+    return sites
+  }
+
+  #extractInfo(sites, partnerSites) {
+    for (const site of partnerSites.sites) {
+      const context = JSON.parse(partnerSites.context)
+      sites.push({
+        apiKey: site.apiKey,
+        baseDomain: site.name,
+        dataCenter: site.datacenter,
+        partnerId: context.partnerId,
+        partnerName: context.partnerName,
+      })
+    }
   }
 }
 
