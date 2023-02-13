@@ -1,5 +1,5 @@
-import { findConfiguration, propagateConfigurationState } from './utils'
-import { configurationsMockedResponse } from './dataTest'
+import { findConfiguration, propagateConfigurationState, clearConfigurationsErrors, clearTargetApiKeysErrors, addErrorToConfigurations, addErrorToTargetApiKey } from './utils'
+import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey } from './dataTest'
 
 describe('copyConfigurationExtended utils test suite', () => {
   test('should find a first level configuration', () => {
@@ -63,5 +63,31 @@ describe('copyConfigurationExtended utils test suite', () => {
     expect(configuration.branches[1].value).toEqual(true)
     expect(configuration.branches[1].branches[0].value).toEqual(true)
     expect(configuration.branches[1].branches[1].value).toEqual(true)
+  })
+
+  test('should add a configuration error', () => {
+    expect(configurationsMockedResponse[0].error).toBe(undefined)
+    addErrorToConfigurations(configurationsMockedResponse, mockedErrorsResponse)
+    expect(configurationsMockedResponse[0].error).toBeDefined()
+  })
+
+  test('should add a targetApiKey error', () => {
+    expect(initialStateWithTargetApiKey.targetApiKeys[0].error).toBe(undefined)
+    addErrorToTargetApiKey(initialStateWithTargetApiKey.targetApiKeys, mockedErrorsResponse)
+    expect(initialStateWithTargetApiKey.targetApiKeys[0].error).toBeDefined()
+  })
+
+  test('should clear configuration error', () => {
+    const configurations = initialStateWithErrors.configurations
+    expect(configurations[0].error).toBeDefined()
+    clearConfigurationsErrors(configurations, mockedErrorsResponse)
+    expect(configurations[0].error).toBe(undefined)
+  })
+
+  test('should clear targetApiKey error', () => {
+    const targetApiKeys = initialStateWithErrors.targetApiKeys
+    expect(targetApiKeys[0].error).toBeDefined()
+    clearTargetApiKeysErrors(targetApiKeys, mockedErrorsResponse)
+    expect(targetApiKeys[0].error).toBe(undefined)
   })
 })

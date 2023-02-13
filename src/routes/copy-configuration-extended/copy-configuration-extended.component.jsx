@@ -1,21 +1,14 @@
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useEffect, useState } from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Card, CardHeader, Input, InputType, Label, Bar, Title, Text, TitleLevel, FlexBox, Button, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
 
-import { cleanTreeVerticalScrolls, areConfigurationsFilled } from './utils'
-
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
-
-import { selectCredentials } from '../../redux/credentials/credentialsSlice'
-import { areCredentialsFilled } from '../../redux/credentials/utils'
-
-import { getApiKey } from '../../redux/utils'
-import '@ui5/webcomponents-icons/dist/arrow-right.js'
+import MessageList from '../../components/message-list/message-list.component'
+import MessagePopoverButton from '../../components/message-popover-button/message-popover-button.component'
 
 import {
   selectConfigurations,
@@ -29,7 +22,16 @@ import {
   clearTargetApiKeys,
   getCurrentSiteInformation,
   selectCurrentSiteInformation,
+  selectErrors,
+  clearErrors,
 } from '../../redux/copyConfigurationExtendend/copyConfigurationExtendendSlice'
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+
+import { areCredentialsFilled } from '../../redux/credentials/utils'
+import { cleanTreeVerticalScrolls, areConfigurationsFilled } from './utils'
+import { getApiKey } from '../../redux/utils'
+
+import '@ui5/webcomponents-icons/dist/arrow-right.js'
 
 import './copy-configuration-extended.css'
 import styles from './copy-configuration-extended.styles'
@@ -50,6 +52,7 @@ const CopyConfigurationExtended = ({ t }) => {
   const credentials = useSelector(selectCredentials)
   const configurations = useSelector(selectConfigurations)
   const currentSiteInformation = useSelector(selectCurrentSiteInformation)
+  const errors = useSelector(selectErrors)
 
   useEffect(() => {
     if (areCredentialsFilled(credentials)) {
@@ -61,6 +64,9 @@ const CopyConfigurationExtended = ({ t }) => {
   }, [dispatch, credentials])
 
   const onSaveHandler = () => {
+    if (errors.length) {
+      dispatch(clearErrors())
+    }
     dispatch(setConfigurations())
   }
 
@@ -68,8 +74,9 @@ const CopyConfigurationExtended = ({ t }) => {
     setTarketApiKeyInputValue('')
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
+    dispatch(clearErrors())
   }
-  const onTargetApiKeysInputChange = (event) => {
+  const onTargetApiKeysInputChangeHandler = (event) => {
     setTarketApiKeyInputValue(event.target.value)
     dispatch(addTargetApiKey(event.target.value))
   }
@@ -88,11 +95,65 @@ const CopyConfigurationExtended = ({ t }) => {
   )
 
   const onSuccessDialogAfterCloseHandler = () => {
-    // TODO
+    setTarketApiKeyInputValue('')
+    dispatch(clearConfigurations())
+    dispatch(clearTargetApiKeys())
   }
 
   const disableSaveButton = () => {
     return targetApiKeys.length === 0 || !areConfigurationsFilled(configurations)
+  }
+
+  const showConfigurations = () => {
+    return configurations.length ? (
+      <div className={classes.selectConfigurationOuterDivStyle}>
+        <div className={classes.selectConfigurationInnerDivStyle}>
+          <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')} />}>
+            <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
+              {configurations.map((configuration) => (
+                <ConfigurationTree key={configuration.id} {...configuration} />
+              ))}
+            </FlexBox>
+          </Card>
+        </div>
+      </div>
+    ) : (
+      ''
+    )
+  }
+
+  const showErrorList = () => {
+    return errors.length ? (
+      <div className={classes.errorListOuterDivStyle}>
+        <div className={classes.errorListInnerDivStyle}>
+          <Card id="errorListContainer">
+            <MessageList messages={errors} />
+          </Card>
+        </div>
+      </div>
+    ) : (
+      ''
+    )
+  }
+
+  const showBusyIndicator = () => {
+    return isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
+  }
+
+  const showTargetApiKeys = () => {
+    return (
+      <ul>
+        {targetApiKeys.map((targetApiKey) => (
+          <li key={targetApiKey.targetApiKey}>
+            <FlexBox>
+              {/* <FlexBox direction="Row" justifyContent="Center"> */}
+              {targetApiKey.targetApiKey}
+              {targetApiKey.error ? <MessagePopoverButton message={targetApiKey.error} /> : ''}
+            </FlexBox>
+          </li>
+        ))}
+      </ul>
+    )
   }
 
   return (
@@ -116,8 +177,9 @@ const CopyConfigurationExtended = ({ t }) => {
                 {t('COPY_CONFIGURATION_EXTENDED.HEADER_TEXT')}
               </Text>
             </FlexBox>
+
             <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.APIS')} />}>
-              <FlexBox className={classes.Container}>
+              <FlexBox className={classes.container}>
                 <FlexBox direction="Column" className={classes.currentInfoContainer}>
                   <FlexBox justifyContent="Start" className={classes.currentSiteFlexboxStyle}>
                     <Label id="currentSiteLabel" className="current_site">
@@ -125,14 +187,17 @@ const CopyConfigurationExtended = ({ t }) => {
                     </Label>
                     <Text> {currentSiteInformation} </Text>
                   </FlexBox>
+
                   <FlexBox className={classes.currentApiKeyFlexboxStyle}>
                     <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY')}</Label>
                     <Text> {getApiKey(window.location.hash)} </Text>
                   </FlexBox>
                 </FlexBox>
+
                 <FlexBox justifyContent="Center" alignItems="Start" className={classes.iconContainer}>
                   <ui5-icon class={classes.iconStyle} name="arrow-right"></ui5-icon>
                 </FlexBox>
+
                 <FlexBox direction="Column" className={classes.targetInfoContainer}>
                   <FlexBox className={classes.destinationSiteFlexboxStyle}>
                     <Label id="destinationSiteLabel" className="current_site">
@@ -140,31 +205,24 @@ const CopyConfigurationExtended = ({ t }) => {
                     </Label>
                     <Text> {getApiKey(window.location.hash)} </Text>
                   </FlexBox>
+
                   <FlexBox className={classes.innerFlexBoxStyle}>
                     <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
-                    <Input id="targetApiKeyInput" onInput={onTargetApiKeysInputChange} type={InputType.Text} value={tarketApiKeyInputValue}></Input>
+                    <Input id="targetApiKeyInput" onInput={onTargetApiKeysInputChangeHandler} type={InputType.Text} value={tarketApiKeyInputValue}></Input>
                   </FlexBox>
+
+                  {showTargetApiKeys()}
                 </FlexBox>
               </FlexBox>
+
+              {showBusyIndicator()}
             </Card>
           </div>
         </div>
 
-        {configurations.length !== 0 ? (
-          <div className={classes.selectConfigurationOuterDivStyle}>
-            <div className={classes.selectConfigurationInnerDivStyle}>
-              <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')} />}>
-                <FlexBox alignItems="Stretch" direction="Row" justifyContent="Start" wrap="Wrap">
-                  {configurations.map((configuration) => (
-                    <ConfigurationTree key={configuration.id} {...configuration} />
-                  ))}
-                </FlexBox>
-              </Card>
-            </div>
-          </div>
-        ) : (
-          ''
-        )}
+        {showConfigurations()}
+
+        {showErrorList()}
 
         <div className={classes.selectConfigurationOuterDivStyle}>
           <div className={classes.selectConfigurationInnerDivStyle}>
@@ -193,7 +251,7 @@ const CopyConfigurationExtended = ({ t }) => {
           </div>
         </div>
       </div>
-      {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''}
+
       {showSuccessMessage()}
     </>
   )
