@@ -38,7 +38,7 @@ class Schema {
     if (response.errorCode === 0) {
       response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
     }
-    response['id'] = 'Schema'
+    response['id'] = 'schema'
     response['targetApiKey'] = `${destinationSite}`
     return response
   }

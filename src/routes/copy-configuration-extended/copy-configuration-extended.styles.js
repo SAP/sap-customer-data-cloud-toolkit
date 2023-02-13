@@ -54,7 +54,7 @@ const styles = {
   targetApiKeyFlexBoxStyle: {
     marginLeft: '300px',
   },
-  Container: {
+  container: {
     height: '100 %',
     width: '100%',
   },
@@ -96,6 +96,16 @@ const styles = {
   iconStyle: {
     height: '30px',
     width: '30px',
+  },
+  errorListOuterDivStyle: {
+    ...spacing.sapUiSmallMargin,
+  },
+  errorListInnerDivStyle: {
+    ...spacing.sapUiTinyMargin,
+  },
+  busyIndicatorStyle: {
+    width: '100%',
+    position: 'relative',
   },
 }
 

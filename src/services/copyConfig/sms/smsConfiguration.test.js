@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { credentials, errorCallback, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import SmsConfiguration from './smsConfiguration'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
 
@@ -9,7 +9,7 @@ describe('Sms Configuration test suite', () => {
   const apiKey = 'apiKey'
   const dataCenter = 'eu1'
   const smsConfiguration = new SmsConfiguration(credentials, apiKey, dataCenter)
-  const responseId = 'SmsTemplates'
+  const responseId = 'smsTemplates'
 
   beforeEach(() => {
     jest.restoreAllMocks()
