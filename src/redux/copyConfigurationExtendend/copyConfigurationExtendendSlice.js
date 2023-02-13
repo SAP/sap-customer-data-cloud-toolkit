@@ -17,7 +17,7 @@ export const copyConfigurationExtendendSlice = createSlice({
     isLoading: false,
     targetApiKeys: [],
     showSuccessMessage: false,
-    currentSiteInformation: undefined,
+    currentSiteInformation: {},
   },
   reducers: {
     addTargetApiKey(state, action) {
@@ -91,7 +91,6 @@ export const copyConfigurationExtendendSlice = createSlice({
     builder.addCase(getCurrentSiteInformation.fulfilled, (state, action) => {
       console.log('getCurrentSiteInformation.fulfilled')
       console.log(action.payload)
-
       state.isLoading = false
       state.currentSiteInformation = action.payload
     })

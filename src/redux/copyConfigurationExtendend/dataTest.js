@@ -42,7 +42,7 @@ export const initialState = {
   isLoading: false,
   targetApiKeys: [],
   showSuccessMessage: false,
-  currentSiteInformation: undefined,
+  currentSiteInformation: {},
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
