@@ -17,7 +17,7 @@ export const copyConfigurationExtendendSlice = createSlice({
     isLoading: false,
     targetApiKeys: [],
     showSuccessMessage: false,
-    currentSiteInformation: {},
+    currentSiteInformation: undefined,
   },
   reducers: {
     addTargetApiKey(state, action) {

@@ -127,7 +127,8 @@ describe('copyConfigurationExtendendSlice test suite', () => {
   test('should update the name of the current site when fulfilled', () => {
     const action = getCurrentSiteInformation.fulfilled(siteConfigResponse)
     const newState = copyConfigurationExtendendReducer(initialState, action)
-    expect(newState.currentSiteInformation).toEqual(siteConfigResponse.baseDomain)
+
+    expect(newState.currentSiteInformation.baseDomain).toEqual(siteConfigResponse.baseDomain)
     expect(newState.isLoading).toEqual(false)
   })
 
