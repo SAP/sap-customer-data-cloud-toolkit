@@ -1,9 +1,7 @@
-import {expectedGigyaResponseOk} from "../servicesDataTest";
-
-export function getExpectedResponseOkWithContext(id, apiKey) {
-    const response = JSON.parse(JSON.stringify(expectedGigyaResponseOk))
-    response.context = { targetApiKey: apiKey, id: id }
-    return response
+export function getResponseWithContext(response, id, apiKey) {
+    const resp = JSON.parse(JSON.stringify(response))
+    resp.context = { targetApiKey: apiKey, id: id }
+    return resp
 }
 
 export const schemaId = 'dataSchema'

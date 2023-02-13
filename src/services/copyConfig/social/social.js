@@ -54,8 +54,8 @@ class Social {
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
     parameters.secret = this.secret
-    parameters.settings = JSON.stringify(config.settings)
-    parameters.capabilities = JSON.stringify(config.capabilities)
+    parameters.settings = config.settings
+    parameters.capabilities = config.capabilities
     parameters.providers = JSON.stringify(config.providers)
     parameters.format = 'json'
     if (config.context) {

@@ -2,7 +2,7 @@ import axios from 'axios'
 import { credentials, errorCallback, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import SmsConfiguration from './smsConfiguration'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
-import {getExpectedResponseOkWithContext, smsTemplatesId} from "../dataTest";
+import {getResponseWithContext, smsTemplatesId} from "../dataTest";
 
 jest.mock('axios')
 
@@ -18,9 +18,9 @@ describe('Sms Configuration test suite', () => {
   test('copy successfully', async () => {
     let spy = jest.spyOn(smsConfiguration.getSms(), 'set')
     const expectCallArgument = getSmsExpectedResponse
-    axios.mockResolvedValueOnce({ data: getSmsExpectedResponse }).mockResolvedValueOnce({ data: getExpectedResponseOkWithContext(smsTemplatesId, apiKey) })
+    axios.mockResolvedValueOnce({ data: getSmsExpectedResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
     const response = await smsConfiguration.copy(apiKey, { dataCenter })
-    expect(response).toEqual(getExpectedResponseOkWithContext(smsTemplatesId, apiKey))
+    expect(response).toEqual(getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey))
     expect(response.context.id).toEqual(`${smsTemplatesId}`)
     expect(response.context.targetApiKey).toEqual(`${apiKey}`)
 
