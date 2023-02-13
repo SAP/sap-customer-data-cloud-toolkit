@@ -20,9 +20,15 @@ class SiteFinder {
     return response.data
   }
 
-  async #getPagedUserEffectiveSites(partnerId) {
+  async #getPagedUserEffectiveSites(partnerInfo) {
     const url = UrlBuilder.buildUrl(SiteFinder.#NAMESPACE, SiteFinder.#DATA_CENTER_DEFAULT, 'admin.console.getPagedUserEffectiveSites')
-    const bodyWithCredentials = { userKey: this.#credentials.userKey, secret: this.#credentials.secret, targetPartnerID: partnerId, pageSize: 1000, context: partnerId }
+    const bodyWithCredentials = {
+      userKey: this.#credentials.userKey,
+      secret: this.#credentials.secret,
+      targetPartnerID: partnerInfo.PartnerID,
+      pageSize: 1000,
+      context: JSON.stringify({ partnerId: partnerInfo.PartnerID, partnerName: partnerInfo.Name }),
+    }
     const response = await client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, 'Error getting partner user effective sites')
     })
@@ -34,7 +40,9 @@ class SiteFinder {
     const partnersResponse = await this.#getPartners()
     if (partnersResponse.errorCode === 0) {
       for (const partner of partnersResponse.partners) {
-        promises.push(this.#getPagedUserEffectiveSites(partner.partner.PartnerID))
+        if (partner.errorCode === 0) {
+          promises.push(this.#getPagedUserEffectiveSites(partner.partner))
+        }
       }
       const responses = await Promise.all(promises)
 
@@ -42,7 +50,14 @@ class SiteFinder {
       for (const partnerSites of responses) {
         if (partnerSites.errorCode === 0) {
           for (const site of partnerSites.sites) {
-            sites.push({ apiKey: site.apiKey, baseDomain: site.name, dataCenter: site.datacenter, partnerId: partnerSites.context })
+            const context = JSON.parse(partnerSites.context)
+            sites.push({
+              apiKey: site.apiKey,
+              baseDomain: site.name,
+              dataCenter: site.datacenter,
+              partnerId: context.partnerId,
+              partnerName: context.partnerName,
+            })
           }
         } else {
           return Promise.reject([partnerSites])
