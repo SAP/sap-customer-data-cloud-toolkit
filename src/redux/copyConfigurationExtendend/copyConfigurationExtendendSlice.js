@@ -58,7 +58,7 @@ export const copyConfigurationExtendendSlice = createSlice({
     })
     builder.addCase(getConfigurations.rejected, (state, action) => {
       console.log('getConfigurations.rejected')
-      console.log('ACTION PAYLOAD FULFILELD', action.payload)
+      console.log(action.payload)
       state.errors = action.payload
       state.isLoading = false
     })

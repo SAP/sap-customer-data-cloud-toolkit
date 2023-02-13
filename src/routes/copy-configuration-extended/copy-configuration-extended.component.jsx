@@ -53,7 +53,6 @@ const CopyConfigurationExtended = ({ t }) => {
   const configurations = useSelector(selectConfigurations)
   const currentSiteInformation = useSelector(selectCurrentSiteInformation)
   const errors = useSelector(selectErrors)
-  console.log('CURRENT SITE Informations', currentSiteInformation)
 
   useEffect(() => {
     if (areCredentialsFilled(credentials)) {
