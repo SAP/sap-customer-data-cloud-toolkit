@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { credentials, errorCallback, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import SmsConfiguration from './smsConfiguration'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
-import {getResponseWithContext, smsTemplatesId} from "../dataTest";
+import { getResponseWithContext, smsTemplatesId } from '../dataTest'
 
 jest.mock('axios')
 
@@ -42,7 +42,7 @@ describe('Sms Configuration test suite', () => {
   test('copy unsuccessfully - error on set', async () => {
     const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
     mockedResponse.context = { id: smsTemplatesId, targetApiKey: apiKey }
-    axios.mockResolvedValueOnce({ data: getSmsExpectedResponse }).mockResolvedValueOnce({data: mockedResponse})
+    axios.mockResolvedValueOnce({ data: getSmsExpectedResponse }).mockResolvedValueOnce({ data: mockedResponse })
 
     const response = await smsConfiguration.copy(apiKey, { dataCenter })
     expect(response).toEqual(mockedResponse)

@@ -22,8 +22,6 @@ class SmsConfiguration {
     if (response.errorCode === 0) {
       response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)
     }
-    //response['id'] = 'SmsTemplates'
-    //response['targetApiKey'] = `${destinationSite}`
     return response
   }
 

@@ -11,7 +11,7 @@ import {
 import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import {getResponseWithContext, profileId, schemaId} from "../dataTest";
+import { getResponseWithContext, profileId, schemaId } from '../dataTest'
 
 jest.mock('axios')
 

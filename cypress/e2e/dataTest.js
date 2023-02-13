@@ -545,6 +545,18 @@ const mockedSetSocialsConfigsResponse = {
   time: '2023-02-06T14:14:38.103Z',
 }
 
+const mockedSetSchemaErrorResponse = {
+  callId: '9203bf0eed4b4e31802d4aa02e1ad6a4',
+  errorCode: 500000,
+  apiVersion: 2,
+  statusCode: 200,
+  errorMessage: 'Test error',
+  statusReason: 'Error',
+  time: '2023-02-08T12:03:36.046Z',
+  id: 'dataSchemaId',
+  targetApiKey: dummyApiKey,
+}
+
 export {
   baseDomain,
   dropdownOption,
@@ -596,4 +608,5 @@ export {
   copyConfigSuccessPopupMessage,
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
+  mockedSetSchemaErrorResponse,
 }

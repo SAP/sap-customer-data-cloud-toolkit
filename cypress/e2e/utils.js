@@ -8,6 +8,7 @@ import {
   mockedSetSmsTemplatesResponse,
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
+  dummyApiKey,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -103,4 +104,25 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
   mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
+}
+
+export function checkErrors(expectedState) {
+  cy.get('[icon = error]').should(expectedState)
+  cy.get('#errorListContainer').should(expectedState)
+}
+
+export function checkElementsInitialState() {
+  cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
+  cy.get('ui5-tree').should('be.visible')
+  cy.get('ui5-tree').eq(0).find('ui5-checkbox').should('not.be.checked')
+  cy.get('#saveButton').shadow().find('button').should('be.disabled')
+  cy.get('#cancelButton').shadow().find('button').should('be.enabled')
+}
+
+export function setConfigurationCheckBox() {
+  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).click()
+}
+
+export function fillTargetApiKeyInput() {
+  cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
 }

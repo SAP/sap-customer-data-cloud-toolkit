@@ -1,7 +1,5 @@
 :root {
   --_ui5_checkbox_inner_width_height: 16px !important;
-  /* --_ui5_checkbox_label_color: #32363a !important;
-  --sapContent_IconColor: #32363a !important; */
   --sapList_AlternatingBackground: white !important;
   --sapList_SelectionBackgroundColor: white !important;
   --ui5-listitem-selected-border-bottom: 0 !important;

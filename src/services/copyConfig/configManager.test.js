@@ -7,7 +7,7 @@ import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk, expect
 import { expectedSchemaResponse } from './schema/dataTest'
 import { getSocialsProviders } from './social/dataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
-import {getResponseWithContext, profileId, schemaId, smsTemplatesId, socialIdentitiesId} from './dataTest'
+import { getResponseWithContext, profileId, schemaId, smsTemplatesId, socialIdentitiesId } from './dataTest'
 
 jest.mock('axios')
 
@@ -39,7 +39,7 @@ describe('Config Manager test suite', () => {
       code: mockedResponse.errorCode,
       details: mockedResponse.errorDetails,
     }
-    axios.mockResolvedValueOnce({ data: mockedResponse})
+    axios.mockResolvedValueOnce({ data: mockedResponse })
     await configManager
       .getConfiguration()
       .then(() => {
@@ -56,7 +56,7 @@ describe('Config Manager test suite', () => {
     const mockedResponse = expectedGigyaResponseInvalidAPI
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, 'schema', apiKey)})
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, 'schema', apiKey) })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
     const err = {
@@ -101,7 +101,7 @@ describe('Config Manager test suite', () => {
       code: mockedResponse.errorCode,
       details: mockedResponse.errorDetails,
     }
-    axios.mockResolvedValueOnce({ data: mockedResponse})
+    axios.mockResolvedValueOnce({ data: mockedResponse })
     await configManager
       .copy([apiKey], getInfoExpectedResponse(false))
       .then(() => {
@@ -146,10 +146,10 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-        .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithDataContext(mockedResponse, apiKey))) })
-        .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithProfileContext(mockedResponse, apiKey))) })
-        .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithContext(mockedResponse, socialIdentitiesId, apiKey))) })
-        .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithContext(mockedResponse, smsTemplatesId, apiKey))) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithDataContext(mockedResponse, apiKey))) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithProfileContext(mockedResponse, apiKey))) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithContext(mockedResponse, socialIdentitiesId, apiKey))) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(getResponseWithContext(mockedResponse, smsTemplatesId, apiKey))) })
 
     await executeCopyAllUnsuccessfully(mockedResponse, 4)
   })
@@ -206,7 +206,7 @@ describe('Config Manager test suite', () => {
   }
 
   function verifyAllContext(responses) {
-    for(const response of responses) {
+    for (const response of responses) {
       expect(response.context.id).toBeDefined()
       expect(response.context.targetApiKey).toBeDefined()
     }
