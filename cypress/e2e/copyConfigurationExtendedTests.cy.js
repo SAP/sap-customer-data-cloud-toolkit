@@ -14,6 +14,7 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('[title-text = APIs]').should('be.visible')
     cy.get('#currentSiteLabel').should('have.text', dataTest.copyConfigCurrentSiteLabel)
     cy.get('#currentSiteApiKeyLabel').should('have.text', dataTest.copyConfigCurrentSiteApiKeyLabel)
+    cy.get('#currentSiteName').should('have.text', dataTest.currentSiteName)
     cy.get('#destinationSiteLabel').should('have.text', dataTest.copyConfigDestinationSiteLabel)
     cy.get('#targetSitesApisLabel').should('have.text', dataTest.copyConfigTargetSitesApisLabel)
     cy.get('#targetApiKeyInput').should('be.visible')

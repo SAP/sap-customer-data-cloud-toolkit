@@ -42,6 +42,7 @@ export const initialState = {
   isLoading: false,
   targetApiKeys: [],
   showSuccessMessage: false,
+  currentSiteInformation: {},
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
@@ -84,6 +85,10 @@ export const initialStateWithErrors = {
   isLoading: false,
   targetApiKeys: [{ targetApiKey: dummyTargetApiKey, error: mockedErrorsResponse }],
   showSuccessMessage: false,
+}
+
+export const siteConfigResponse = {
+  baseDomain: 'a_b_c_dummy_site',
 }
 
 export const initialStateWithTargetApiKey = {

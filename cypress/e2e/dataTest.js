@@ -1,6 +1,7 @@
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const consoleUrl = 'http://console.gigya.com'
+const currentSiteName = ' dev.cdc-tools '
 const baseDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
@@ -89,9 +90,9 @@ const siteConfigResponse = {
   statusCode: 200,
   statusReason: 'OK',
   time: '2023-01-20T17:50:26.196Z',
-  baseDomain: 'daniel',
+  baseDomain: 'dev.cdc-tools',
   dataCenter: 'eu1',
-  trustedSiteURLs: ['*.daniel/*', 'daniel/*'],
+  trustedSiteURLs: ['*.dev.cdc-tools/*', 'dev.cdc-tools/*'],
   tags: [],
   description: 'Local Environment',
   captchaProvider: 'Google',
@@ -609,4 +610,5 @@ export {
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
   mockedSetSchemaErrorResponse,
+  currentSiteName,
 }
