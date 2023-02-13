@@ -1,3 +1,5 @@
+import {expectedSchemaResponse} from "../schema/dataTest";
+
 export function getSocialsProviders(socialsCredentials) {
   const getSocialsResponse = {
     statusCode: 200,
@@ -86,4 +88,10 @@ const expectedSetSocialsProvidersResponse = {
   time: Date.now(),
 }
 
-export { expectedSetSocialsProvidersResponse }
+function getExpectedSetSocialsProvidersResponseWithContext(apiKey) {
+  const expectedResponse = JSON.parse(JSON.stringify(expectedSetSocialsProvidersResponse))
+  expectedResponse.context = { targetApiKey: apiKey, id: 'socialIdentities' }
+  return expectedResponse
+}
+
+export { expectedSetSocialsProvidersResponse, getExpectedSetSocialsProvidersResponseWithContext }

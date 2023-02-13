@@ -88,8 +88,15 @@ export const expectedSchemaResponse = {
   },
 }
 
-export function getExpectedBodyForParentSite() {
+export function getDataSchemaExpectedBodyForParentSite(apiKey) {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  expectedBody.context = { targetApiKey: apiKey, id: 'dataSchema' }
+  return expectedBody
+}
+
+export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
+  const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  expectedBody.context = { targetApiKey: apiKey, id: 'profileSchema' }
   const fields = expectedBody.profileSchema.fields
   delete fields.email.allowNull
   delete fields.birthYear.allowNull
@@ -101,8 +108,29 @@ export function getExpectedBodyForParentSite() {
   return expectedBody
 }
 
-export function getExpectedBodyForChildSite() {
-  const expectedBody = getExpectedBodyForParentSite()
+export function getDataSchemaExpectedBodyForChildSiteStep1(apiKey) {
+  const expectedBody = getDataSchemaExpectedBodyForParentSite(apiKey)
+  const fields = expectedBody.dataSchema.fields
+  delete fields.terms.required
+  delete fields.subscribe.required
+  return expectedBody
+}
+
+export function getDataSchemaExpectedBodyForChildSiteStep2(apiKey) {
+  const expectedBody = getDataSchemaExpectedBodyForParentSite(apiKey)
+  const fields = expectedBody.dataSchema.fields
+  delete fields.terms.allowNull
+  delete fields.subscribe.allowNull
+  delete fields.terms.writeAccess
+  delete fields.subscribe.writeAccess
+  delete fields.terms.type
+  delete fields.subscribe.type
+  expectedBody.scope = 'site'
+  return expectedBody
+}
+
+export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
+  const expectedBody = getProfileSchemaExpectedBodyForParentSite(apiKey)
   const fields = expectedBody.profileSchema.fields
   delete fields.email.required
   delete fields.birthYear.required

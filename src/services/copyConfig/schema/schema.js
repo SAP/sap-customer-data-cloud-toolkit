@@ -38,36 +38,55 @@ class Schema {
     if (response.errorCode === 0) {
       response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
     }
-    response['id'] = 'Schema'
-    response['targetApiKey'] = `${destinationSite}`
     return response
   }
 
   async #copySchema(destinationSite, destinationSiteConfiguration, payload) {
+    const responses = []
+    const isParentSite = this.#isParentSite(destinationSiteConfiguration)
+    responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    return Promise.all(responses)
+  }
+
+  async #copyDataSchema(destinationSite, dataCenter, payload, isParentSite) {
     let response
-    // the fields 'allowNull' and 'dynamicSchema' cannot be copied
-    removePropertyFromObjectCascading(payload.profileSchema, 'allowNull')
-    removePropertyFromObjectCascading(payload.profileSchema, 'dynamicSchema')
-    if (this.#isParentSite(destinationSiteConfiguration)) {
-      response = await this.set(destinationSite, destinationSiteConfiguration.dataCenter, payload)
+    const dataSchemaPayload = JSON.parse(JSON.stringify(payload))
+    dataSchemaPayload.context = { targetApiKey: destinationSite, id: 'dataSchema' }
+    if (isParentSite) {
+      response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
     } else {
-      response = await this.#copySchemaToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, payload)
+      response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
     }
     return response
   }
 
-  async #copySchemaToChildSite(destinationSite, dataCenter, payload) {
+  async #copyProfileSchema(destinationSite, dataCenter, payload, isParentSite) {
+    let response
+    const clonePayload = JSON.parse(JSON.stringify(payload))
+    clonePayload.context = { targetApiKey: destinationSite, id: 'profileSchema' }
+    // the fields 'allowNull' and 'dynamicSchema' cannot be copied
+    removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
+    removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
+    if (isParentSite) {
+      response = await this.set(destinationSite, dataCenter, clonePayload)
+    } else {
+      removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
+      response = await this.set(destinationSite, dataCenter, clonePayload)
+    }
+    return response
+  }
+
+  async #copyDataSchemaToChildSite(destinationSite, dataCenter, payload) {
     let response
     let clonePayload = JSON.parse(JSON.stringify(payload))
     // the field 'required' cannot be copied to a child site together with other fields
-    removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
     removePropertyFromObjectCascading(clonePayload.dataSchema, 'required')
     response = await this.set(destinationSite, dataCenter, clonePayload)
 
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
       clonePayload = JSON.parse(JSON.stringify(payload))
-      removePropertyFromObjectCascading(clonePayload, 'profileSchema')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'type')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'writeAccess')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'allowNull')
@@ -85,6 +104,7 @@ class Schema {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
+    parameters.context = { id: 'schema', targetApiKey: apiKey }
 
     return parameters
   }
@@ -94,16 +114,19 @@ class Schema {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters['dataSchema'] = JSON.stringify(body.dataSchema)
+
+    if (body.dataSchema) {
+      parameters['dataSchema'] = JSON.stringify(body.dataSchema)
+    }
     if (body.profileSchema) {
       parameters['profileSchema'] = JSON.stringify(body.profileSchema)
     }
     if (body.scope) {
       parameters['scope'] = JSON.stringify(body.scope)
     }
-    // The following schemas should not be handled now
-    //parameters["subscriptionsSchema"] = JSON.stringify(body.subscriptionsSchema)
-    //parameters["preferencesSchema"] = JSON.stringify(body.preferencesSchema)
+    if (body.context) {
+      parameters['context'] = JSON.stringify(body.context)
+    }
     return parameters
   }
 

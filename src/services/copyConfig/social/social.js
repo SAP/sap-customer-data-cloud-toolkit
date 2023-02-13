@@ -34,8 +34,6 @@ class Social {
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
-    response['id'] = 'SocialIdentities'
-    response['targetApiKey'] = `${targetApi}`
     return response
   }
 
@@ -48,6 +46,7 @@ class Social {
     parameters.includeCapabilities = true
     parameters.includeSecretKeys = true
     parameters.format = 'json'
+    parameters.context = { id: 'socialIdentities', targetApiKey: apiKey }
     return parameters
   }
   #setSocialConfigParameters(apiKey, config) {
@@ -59,6 +58,9 @@ class Social {
     parameters.capabilities = JSON.stringify(config.capabilities)
     parameters.providers = JSON.stringify(config.providers)
     parameters.format = 'json'
+    if (config.context) {
+      parameters['context'] = JSON.stringify(config.context)
+    }
     return parameters
   }
 }

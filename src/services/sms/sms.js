@@ -53,13 +53,16 @@ class Sms {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
-
+    parameters.context = { id: 'smsTemplates', targetApiKey: apiKey }
     return parameters
   }
 
-  #setSmsTemplatesParameters(apiKey, templates) {
-    const parameters = Object.assign({ templates: JSON.stringify(templates) }, this.#getSmsTemplatesParameters(apiKey))
+  #setSmsTemplatesParameters(apiKey, body) {
+    const parameters = Object.assign({ templates: JSON.stringify(body.templates) }, this.#getSmsTemplatesParameters(apiKey))
     parameters.secret = this.secret
+    if (body.context) {
+      parameters['context'] = JSON.stringify(body.context)
+    }
     return parameters
   }
 

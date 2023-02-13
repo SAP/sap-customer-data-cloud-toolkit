@@ -20,10 +20,10 @@ class SmsConfiguration {
   async copy(destinationSite, destinationSiteConfiguration) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response.templates)
+      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)
     }
-    response['id'] = 'SmsTemplates'
-    response['targetApiKey'] = `${destinationSite}`
+    //response['id'] = 'SmsTemplates'
+    //response['targetApiKey'] = `${destinationSite}`
     return response
   }
 
