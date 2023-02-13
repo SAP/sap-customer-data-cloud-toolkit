@@ -2,7 +2,7 @@ import Schema from './schema'
 import * as CommonTestData from '../../servicesDataTest'
 import { expectedSchemaResponse, getExpectedBodyForChildSite, getExpectedBodyForParentSite } from './dataTest'
 import axios from 'axios'
-import { errorCallback, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
+import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 
 jest.mock('axios')
@@ -12,7 +12,7 @@ describe('Schema test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
-  const responseId = 'Schema'
+  const responseId = 'schema'
 
   beforeEach(() => {
     jest.restoreAllMocks()

@@ -17,6 +17,8 @@ import {
   dummyTargetApiKey,
   configurationsMockedResponse,
   mockedErrorsResponse,
+  setConfigSuccessResponse,
+  initialStateWithTargetApiKeyAndConfigurations,
 } from './dataTest'
 
 describe('copyConfigurationExtendendSlice test suite', () => {
@@ -26,7 +28,7 @@ describe('copyConfigurationExtendendSlice test suite', () => {
 
   test('should add a target api key', () => {
     const newState = copyConfigurationExtendendReducer(initialState, addTargetApiKey(dummyTargetApiKey))
-    expect(newState.targetApiKeys[0]).toEqual(dummyTargetApiKey)
+    expect(newState.targetApiKeys[0].targetApiKey).toEqual(dummyTargetApiKey)
   })
 
   test('should remove a target api key', () => {
@@ -52,8 +54,12 @@ describe('copyConfigurationExtendendSlice test suite', () => {
 
   test('should clear errors', () => {
     expect(initialStateWithErrors.errors.length).toEqual(1)
+    expect(initialStateWithErrors.configurations[0].error).toBeDefined()
+    expect(initialStateWithErrors.targetApiKeys[0].error).toBeDefined()
     const newState = copyConfigurationExtendendReducer(initialStateWithErrors, clearErrors())
     expect(newState.errors.length).toEqual(0)
+    expect(newState.configurations[0].error).toBe(undefined)
+    expect(newState.targetApiKeys[0].error).toBe(undefined)
   })
 
   test('should clear clearTargetApiKeys', () => {
@@ -92,11 +98,20 @@ describe('copyConfigurationExtendendSlice test suite', () => {
     expect(newState.configurations.length).toEqual(0)
   })
 
-  test('should update state when setConfigurations is fulfilled', () => {
-    const action = setConfigurations.fulfilled
+  test('should update state when setConfigurations is fulfilled with success', () => {
+    const action = setConfigurations.fulfilled([setConfigSuccessResponse])
     const newState = copyConfigurationExtendendReducer(initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(true)
+  })
+
+  test('should update state when setConfigurations is fulfilled with errors', () => {
+    const action = setConfigurations.fulfilled(mockedErrorsResponse)
+    const newState = copyConfigurationExtendendReducer(initialStateWithTargetApiKeyAndConfigurations, action)
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.showSuccessMessage).toEqual(false)
+    expect(newState.configurations[0].error).toBeDefined()
+    expect(newState.targetApiKeys[0].error).toBeDefined()
   })
 
   test('should update state when setConfigurations is rejected', () => {

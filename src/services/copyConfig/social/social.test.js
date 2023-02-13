@@ -12,7 +12,7 @@ describe('Socials test suite', () => {
   const targetDataCenter = 'us1'
   const targetApiKey = 'targetApiKey'
   const socialsKeys = 'APP KEY'
-  const responseId = 'SocialIdentities'
+  const responseId = 'socialIdentities'
 
   test('copy socials successfully', async () => {
     axios.mockResolvedValueOnce({ data: SocialsTestData.getSocialsProviders(socialsKeys) }).mockResolvedValueOnce({ data: SocialsTestData.expectedSetSocialsProvidersResponse })

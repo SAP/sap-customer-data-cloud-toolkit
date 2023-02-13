@@ -8,13 +8,19 @@ const MessagePopoverButton = ({ message, type = ValueState.Error }) => {
   return (
     <>
       <MessageViewButton
+        className="errorButton"
         type={type}
         onClick={(e) => {
-          ref.current.showAt(e.target)
+          const responsivePopover = ref.current
+          if (responsivePopover.isOpen()) {
+            responsivePopover.close()
+          } else {
+            ref.current.showAt(e.target)
+          }
         }}
       />
       <ResponsivePopover ref={ref}>
-        <MessageList messages={[message]} />
+        <MessageList messages={Array.isArray(message) ? message : [message]} />
       </ResponsivePopover>
     </>
   )
