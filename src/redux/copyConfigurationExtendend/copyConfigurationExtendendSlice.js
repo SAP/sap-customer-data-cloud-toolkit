@@ -81,9 +81,9 @@ export const copyConfigurationExtendendSlice = createSlice({
     builder.addCase(getCurrentSiteInformation.fulfilled, (state, action) => {
       console.log('getCurrentSiteInformation.fulfilled')
       console.log(action.payload)
-      state.showSuccessMessage = false
+
       state.isLoading = false
-      state.currentSiteInformation = action.payload.baseDomain
+      state.currentSiteInformation = action.payload
     })
     builder.addCase(getCurrentSiteInformation.rejected, (state, action) => {
       console.log('getCurrentSiteInformation.rejected')
@@ -108,6 +108,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
 export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFORMATION_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+
   try {
     return await new ConfigManager(credentials, getApiKey(window.location.hash)).getSiteInformation(getApiKey(window.location.hash))
   } catch (error) {
