@@ -148,6 +148,10 @@ export const expectedGetPartnersResponseOk = {
 export function getExpectedGetPartnerSitesResponseOk(instance) {
   return {
     callId: '72f2108b116547cc9759d95da0a7fc73',
+    context: JSON.stringify({
+      partnerId: expectedGetPartnersResponseOk.partners[instance].partner.PartnerID,
+      partnerName: expectedGetPartnersResponseOk.partners[instance].partner.Name,
+    }),
     errorCode: 0,
     apiVersion: 2,
     statusCode: 200,
