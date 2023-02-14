@@ -39,6 +39,11 @@ class Social {
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
+
+    if (response.context) {
+      response['context'] = response.context.replace(/&quot;/g, '"')
+    }
+
     stringToJson(response, 'context')
     return response
   }
