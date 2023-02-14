@@ -55,8 +55,10 @@ export const mockedErrorsResponse = [
     statusCode: 200,
     statusReason: 'OK',
     time: '2023-02-08T12:03:36.046Z',
-    id: 'schemaId',
-    targetApiKey: dummyTargetApiKey,
+    context: {
+      id: 'schemaId',
+      targetApiKey: dummyTargetApiKey,
+    },
   },
 ]
 

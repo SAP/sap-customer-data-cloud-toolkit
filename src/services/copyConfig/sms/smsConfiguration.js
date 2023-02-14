@@ -1,4 +1,5 @@
 import Sms from '../../sms/sms'
+import { stringToJson } from '../objectHelper'
 
 class SmsConfiguration {
   #credentials
@@ -20,10 +21,9 @@ class SmsConfiguration {
   async copy(destinationSite, destinationSiteConfiguration) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response.templates)
+      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)
     }
-    response['id'] = 'smsTemplates'
-    response['targetApiKey'] = `${destinationSite}`
+    stringToJson(response, 'context')
     return response
   }
 

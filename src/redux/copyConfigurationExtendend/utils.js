@@ -51,7 +51,7 @@ export const clearTargetApiKeysErrors = (targetApiKeys) => {
 
 export const addErrorToConfigurations = (configurations, errors) => {
   for (const error of errors) {
-    const configuration = findConfiguration(configurations, error.id)
+    const configuration = findConfiguration(configurations, error.context.id)
     if (configuration) {
       configuration.error = error
     }
@@ -61,7 +61,7 @@ export const addErrorToConfigurations = (configurations, errors) => {
 
 export const addErrorToTargetApiKey = (targetApiKeys, errors) => {
   for (const targetApiKey of targetApiKeys) {
-    const targetApiKeyErrors = errors.filter((error) => error.targetApiKey === targetApiKey.targetApiKey)
+    const targetApiKeyErrors = errors.filter((error) => error.context.targetApiKey === targetApiKey.targetApiKey)
     if (targetApiKeyErrors.length !== 0) {
       targetApiKey.error = targetApiKeyErrors
     }

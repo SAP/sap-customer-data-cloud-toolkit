@@ -64,6 +64,7 @@ class ConfigManager {
 
   async getSiteInformation(apiKey) {
     const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
+    response.context = { id: 'admin.getSiteConfig', targetApiKey: apiKey }
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }
 

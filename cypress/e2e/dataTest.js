@@ -266,6 +266,7 @@ const mockedSetSchemaResponse = {
   statusCode: 200,
   statusReason: 'OK',
   time: '2023-02-03T22:14:38.376Z',
+  context: `{\"schema\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
 
 const mockedSetSmsTemplatesResponse = {
@@ -275,6 +276,7 @@ const mockedSetSmsTemplatesResponse = {
   statusCode: 200,
   statusReason: 'OK',
   time: '2023-02-03T22:14:38.103Z',
+  context: `{\"smsTemplates\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
 
 const mockedGetSocialsConfigsResponse = {
@@ -544,6 +546,7 @@ const mockedSetSocialsConfigsResponse = {
   statusCode: 200,
   statusReason: 'OK',
   time: '2023-02-06T14:14:38.103Z',
+  context: `{\"socialIdentities\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
 
 const mockedSetSchemaErrorResponse = {
@@ -554,8 +557,7 @@ const mockedSetSchemaErrorResponse = {
   errorMessage: 'Test error',
   statusReason: 'Error',
   time: '2023-02-08T12:03:36.046Z',
-  id: 'dataSchemaId',
-  targetApiKey: dummyApiKey,
+  context: `{\"dataSchemaId\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
 
 export {
