@@ -83,7 +83,6 @@ class Info {
   }
 
   async #getSocialIdentities() {
-    debugger
     const social = new Social(this.#credentials, this.#site, this.#dataCenter)
     const response = await social.get()
     if (response.errorCode === 0) {
