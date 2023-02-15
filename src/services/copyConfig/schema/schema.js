@@ -33,22 +33,26 @@ class Schema {
     return res.data
   }
 
-  async copy(destinationSite, destinationSiteConfiguration) {
+  async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response)
+      response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response, options)
     }
     stringToJson(response, 'context')
     return response
   }
 
-  async #copySchema(destinationSite, destinationSiteConfiguration, payload) {
+  async #copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
     const responses = []
     const isParentSite = this.#isParentSite(destinationSiteConfiguration)
     removePropertyFromObjectCascading(payload, 'subscriptionsSchema') // to be processed later
     removePropertyFromObjectCascading(payload, 'preferencesSchema')
-    responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
-    responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    if (options[0].value) {
+      responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    }
+    if (options[1].value) {
+      responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    }
     return Promise.all(responses)
   }
 
@@ -88,7 +92,6 @@ class Schema {
     // the field 'required' cannot be copied to a child site together with other fields
     removePropertyFromObjectCascading(clonePayload.dataSchema, 'required')
     response = await this.set(destinationSite, dataCenter, clonePayload)
-
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
       clonePayload = JSON.parse(JSON.stringify(payload))
@@ -102,7 +105,7 @@ class Schema {
   }
 
   #isParentSite(site) {
-    return site.siteGroupConfig.members !== undefined && site.siteGroupConfig.members.length > 0
+    return site.siteGroupConfig.members !== undefined
   }
 
   #getSchemaParameters(apiKey) {

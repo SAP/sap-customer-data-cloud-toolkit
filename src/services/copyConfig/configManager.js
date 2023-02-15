@@ -3,6 +3,10 @@ import Schema from './schema/schema'
 import Social from './social/social'
 import SmsConfiguration from './sms/smsConfiguration'
 import SiteConfigurator from '../configurator/siteConfigurator'
+import ConfigOptions from './configOptions'
+import SchemaOptions from './schema/schemaOptions'
+import SmsOptions from './sms/smsOptions'
+import SocialOptions from './social/socialOptions'
 
 class ConfigManager {
   #configurations = []
@@ -18,12 +22,13 @@ class ConfigManager {
     this.#originSiteConfiguration = undefined
   }
 
-  async copy(targetApiKeys, configOptions) {
+  async copy(targetApiKeys, options) {
+    console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
       for (const targetApiKey of targetApiKeys) {
-        responses.push(this.#copyConfigurations(targetApiKey, configOptions))
+        responses.push(this.#copyConfigurations(targetApiKey, options))
       }
       return (await Promise.all(responses)).flat()
     } catch (error) {
@@ -31,13 +36,13 @@ class ConfigManager {
     }
   }
 
-  async #copyConfigurations(targetApiKey, configOptions) {
+  async #copyConfigurations(targetApiKey, options) {
     const responses = []
     try {
       const targetSiteConfiguration = await this.getSiteInformation(targetApiKey)
-      const configurationsToCopy = this.#getConfigurationsToCopy(configOptions)
+      const configurationsToCopy = this.#getConfigurationsToCopy(options)
       for (const config of configurationsToCopy) {
-        responses.push(config.copy(targetApiKey, targetSiteConfiguration))
+        responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
       }
     } catch (error) {
       responses.push(error)
@@ -70,13 +75,20 @@ class ConfigManager {
 
   #initConfigurations() {
     const originDataCenter = this.#originSiteConfiguration.dataCenter
-    this.#configurations.push(new Schema(this.#credentials, this.#originApiKey, originDataCenter))
-    this.#configurations.push(new Social(this.#credentials, this.#originApiKey, originDataCenter))
-    this.#configurations.push(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter))
+    this.#configurations.push(new SchemaOptions(new Schema(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
-  #getConfigurationsToCopy(configOptions) {
-    return this.#configurations
+  #getConfigurationsToCopy(options) {
+    const filteredConfigurations = []
+    const configOptions = new ConfigOptions(options)
+    for (const configuration of this.#configurations) {
+      if (configOptions.shouldBeCopied(configuration)) {
+        filteredConfigurations.push(configuration)
+      }
+    }
+    return filteredConfigurations
   }
 }
 
