@@ -33,7 +33,7 @@ class Social {
     return response.data
   }
 
-  async copy(targetApi, targetSiteConfiguration) {
+  async copy(targetApi, targetSiteConfiguration, options = []) {
     let response = await this.get(this.originApiKey)
 
     if (response.errorCode === 0) {
@@ -42,9 +42,8 @@ class Social {
 
     if (response.context) {
       response['context'] = response.context.replace(/&quot;/g, '"')
+      stringToJson(response, 'context')
     }
-
-    stringToJson(response, 'context')
     return response
   }
 

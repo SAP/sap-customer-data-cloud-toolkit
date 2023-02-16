@@ -84,14 +84,26 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
-    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(4)
     verifyAllResponsesAreOk(response)
     verifyAllContext(response)
+  })
+
+  test('copy data schema only successfully to child site', async () => {
+    await testSchemaOption(schemaId, 0)
+  })
+
+  test('copy data schema only successfully to parent site', async () => {
+    await testSchemaOption(schemaId, 1)
+  })
+
+  test('copy profile schema only successfully', async () => {
+    await testSchemaOption(profileId, 1)
   })
 
   test('copy all unsuccessfully - error getting origin data center', async () => {
@@ -103,7 +115,7 @@ describe('Config Manager test suite', () => {
     }
     axios.mockResolvedValueOnce({ data: mockedResponse })
     await configManager
-      .copy([apiKey], getInfoExpectedResponse(false))
+      .copy([apiKey], getInfoExpectedResponse(true))
       .then(() => {
         // It should not reach here
         expect(1).toEqual(0)
@@ -118,7 +130,7 @@ describe('Config Manager test suite', () => {
     const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
     axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce({ data: mockedResponse })
-    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(1)
     expect(response[0]).toEqual(mockedResponse)
   })
@@ -167,7 +179,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
 
-    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(4)
     CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
     expect(response[0].context.id).toEqual(schemaId)
@@ -175,11 +187,10 @@ describe('Config Manager test suite', () => {
 
     verifyAllResponsesAreOk(response.slice(1))
     verifyAllContext(response)
-
   })
 
   async function executeCopyAllUnsuccessfully(mockedResponse, numberOfExpectedResponses) {
-    const response = await configManager.copy([apiKey], getInfoExpectedResponse(false))
+    const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(numberOfExpectedResponses)
     for (const resp of response) {
       CommonTestData.verifyResponseIsNotOk(resp, mockedResponse)
@@ -192,5 +203,38 @@ describe('Config Manager test suite', () => {
       expect(response.context.id).toBeDefined()
       expect(response.context.targetApiKey).toBeDefined()
     }
+  }
+
+  async function testSchemaOption(option, numberOfChildren) {
+    const schemaOption = {
+      id: 'schema',
+      name: 'schema',
+      value: false,
+      branches: [
+        {
+          id: schemaId,
+          name: schemaId,
+          value: schemaId === option,
+        },
+        {
+          id: profileId,
+          name: profileId,
+          value: profileId === option,
+        },
+      ],
+    }
+    const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(numberOfChildren)
+    axios
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, option, apiKey) })
+    if (numberOfChildren === 0) {
+      axios.mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, option, apiKey) })
+    }
+    const response = await configManager.copy([apiKey], [schemaOption])
+    expect(response.length).toEqual(1)
+    verifyAllResponsesAreOk(response)
+    verifyAllContext(response)
   }
 })

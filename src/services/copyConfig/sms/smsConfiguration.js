@@ -18,7 +18,7 @@ class SmsConfiguration {
     return await this.getSms().get(this.#site, this.#dataCenter)
   }
 
-  async copy(destinationSite, destinationSiteConfiguration) {
+  async copy(destinationSite, destinationSiteConfiguration, option= []) {
     let response = await this.get()
     if (response.errorCode === 0) {
       response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)

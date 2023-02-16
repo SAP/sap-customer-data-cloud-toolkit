@@ -20,6 +20,10 @@ describe('Schema test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
+  const schemaOptions = [
+    { id: schemaId, value: true },
+    { id: profileId, value: true },
+  ]
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -31,7 +35,7 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
-    const responses = await schema.copy(apiKey, dataCenterConfiguration)
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(2)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
     expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
@@ -53,7 +57,7 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
-    const responses = await schema.copy(apiKey, dataCenterConfiguration)
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(2)
     expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
@@ -73,7 +77,7 @@ describe('Schema test suite', () => {
     mockedResponse.context = JSON.stringify({ id: 'schema', targetApiKey: apiKey })
     axios.mockResolvedValueOnce({ data: mockedResponse })
 
-    const response = await schema.copy(apiKey, dataCenterConfiguration)
+    const response = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(response).toEqual(mockedResponse)
     expect(response.context.id).toEqual('schema')
     expect(response.context.targetApiKey).toEqual(`${apiKey}`)
@@ -83,7 +87,7 @@ describe('Schema test suite', () => {
     const mockedDataResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)
     const mockedProfileResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, profileId, apiKey)
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: mockedDataResponse }).mockResolvedValueOnce({ data: mockedProfileResponse })
-    const responses = await schema.copy(apiKey, dataCenterConfiguration)
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey))
     expect(responses[0].context.id).toEqual(`${schemaId}`)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
