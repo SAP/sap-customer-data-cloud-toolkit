@@ -1,5 +1,3 @@
-import { expectedSchemaResponse } from '../schema/dataTest'
-
 export function getSocialsProviders(socialsCredentials) {
   const getSocialsResponse = {
     statusCode: 200,

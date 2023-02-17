@@ -3,6 +3,7 @@ import { getInfoExpectedResponse } from './dataTest'
 import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 import { stringToJson } from '../objectHelper'
+import EmailConfiguration from '../emails/emailConfiguration'
 
 class Info {
   #credentials
@@ -95,15 +96,28 @@ class Info {
         info.branches = []
       }
       return Promise.resolve(info)
-    }
-    else {
+    } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
     }
   }
 
-  #getEmailTemplates() {
-    return Promise.resolve(getInfoExpectedResponse(false)[4])
+  async #getEmailTemplates() {
+    const emailConfiguration = new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter)
+    const response = await emailConfiguration.get()
+    if (response.errorCode === 0) {
+      const info = {
+        id: 'emailTemplates',
+        name: 'emailTemplates',
+        value: false,
+        branches: [],
+      }
+      info.branches.push(...this.#createBranchesObject(response))
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getSmsTemplates() {
@@ -139,6 +153,88 @@ class Info {
       }
     }
     return atLeastOneHasConfig
+  }
+
+  #createBranchesObject(response) {
+    const templatesInfo = []
+    if (response.magicLink) {
+      templatesInfo.push({
+        id: 'magicLink',
+        name: 'MagicLink',
+        value: false,
+      })
+    }
+    if (response.codeVerification) {
+      templatesInfo.push({
+        id: 'etCodeVerification',
+        name: 'CodeVerification',
+        value: false,
+      })
+    }
+    if (response.emailVerification) {
+      templatesInfo.push({
+        id: 'etEmailVerification',
+        name: 'EmailVerification',
+        value: false,
+      })
+    }
+    if (response.emailNotifications.welcomeEmailTemplates) {
+      templatesInfo.push({
+        id: 'newUserWelcome',
+        name: 'NewUserWelcome',
+        value: false,
+      })
+    }
+    if (response.emailNotifications.accountDeletedEmailTemplates) {
+      templatesInfo.push({
+        id: 'accountDeletionConfirmation',
+        name: 'AccountDeletionConfirmation',
+        value: false,
+      })
+    }
+    if (response.preferencesCenter) {
+      templatesInfo.push({
+        id: 'litePreferencesCenter',
+        name: 'LitePreferencesCenter',
+        value: false,
+      })
+    }
+    if (response.doubleOptIn) {
+      templatesInfo.push({
+        id: 'doubleOptInConfirmation',
+        name: 'DoubleOptInConfirmation',
+        value: false,
+      })
+    }
+    if (response.passwordReset) {
+      templatesInfo.push({
+        id: 'etPasswordReset',
+        name: 'PasswordReset',
+        value: false,
+      })
+    }
+    if (response.twoFactorAuth) {
+      templatesInfo.push({
+        id: 'tfaEmailVerification',
+        name: 'TfaEmailVerification',
+        value: false,
+      })
+    }
+    if (response.impossibleTraveler) {
+      templatesInfo.push({
+        id: 'impossibleTraveler',
+        name: 'ImpossibleTraveler',
+        value: false,
+      })
+    }
+    if (response.emailNotifications.confirmationEmailTemplates) {
+      templatesInfo.push({
+        id: 'passwordResetConfirmation',
+        name: 'PasswordResetConfirmation',
+        value: false,
+      })
+    }
+    return templatesInfo
   }
 }
 

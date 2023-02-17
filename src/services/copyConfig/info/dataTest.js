@@ -143,57 +143,57 @@ export function getInfoExpectedResponse(supports) {
     branches: [
       {
         id: 'magicLink',
-        name: 'magicLink',
+        name: 'MagicLink',
         value: supports,
       },
       {
         id: 'etCodeVerification',
-        name: codeVerification,
+        name: 'CodeVerification',
         value: supports,
       },
       {
         id: 'etEmailVerification',
-        name: emailVerification,
+        name: 'EmailVerification',
         value: supports,
       },
       {
         id: 'newUserWelcome',
-        name: 'newUserWelcome',
+        name: 'NewUserWelcome',
         value: supports,
       },
       {
         id: 'accountDeletionConfirmation',
-        name: 'accountDeletionConfirmation',
+        name: 'AccountDeletionConfirmation',
         value: supports,
       },
       {
         id: 'litePreferencesCenter',
-        name: 'litePreferencesCenter',
+        name: 'LitePreferencesCenter',
         value: supports,
       },
       {
         id: 'doubleOptInConfirmation',
-        name: 'doubleOptInConfirmation',
+        name: 'DoubleOptInConfirmation',
         value: supports,
       },
       {
         id: 'etPasswordReset',
-        name: passwordReset,
+        name: 'PasswordReset',
         value: supports,
       },
       {
         id: 'tfaEmailVerification',
-        name: 'tfaEmailVerification',
+        name: 'TfaEmailVerification',
         value: supports,
       },
       {
         id: 'impossibleTraveler',
-        name: 'impossibleTraveler',
+        name: 'ImpossibleTraveler',
         value: supports,
       },
       {
         id: 'passwordResetConfirmation',
-        name: 'passwordResetConfirmation',
+        name: 'PasswordResetConfirmation',
         value: supports,
       },
     ],
