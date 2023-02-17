@@ -3,6 +3,7 @@ import { getInfoExpectedResponse } from './dataTest'
 import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 import { stringToJson } from '../objectHelper'
+import WebSdk from '../websdk/websdk'
 
 class Info {
   #credentials
@@ -25,6 +26,7 @@ class Info {
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getDataflows(),
+      this.#getWebSdk(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)) {
@@ -33,6 +35,25 @@ class Info {
       })
       return response
     })
+  }
+
+  async #getWebSdk() {
+    const webSdk = new WebSdk(this.#credentials, this.#site, this.#dataCenter)
+    const response = await webSdk.get()
+    if (response.errorCode === 0) {
+      const info = {
+        id: 'webSdk',
+        name: 'webSdk',
+        value: false,
+      }
+      if (response.globalConf === '' || response.globalConf === undefined) {
+        info.branches = []
+      }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getSchema() {
@@ -95,8 +116,7 @@ class Info {
         info.branches = []
       }
       return Promise.resolve(info)
-    }
-    else {
+    } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
     }

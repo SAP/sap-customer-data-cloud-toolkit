@@ -136,6 +136,7 @@ export function getInfoExpectedResponse(supports) {
     name: 'socialIdentities',
     value: supports,
   }
+
   const emailTemplates = {
     id: 'emailTemplates',
     name: 'emailTemplates',
@@ -208,7 +209,13 @@ export function getInfoExpectedResponse(supports) {
     name: 'dataflows',
     value: supports,
   }
-  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, dataflows]
+
+  const webSdk = {
+    id: 'webSdk',
+    name: 'webSdk',
+    value: supports,
+  }
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, dataflows, webSdk]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

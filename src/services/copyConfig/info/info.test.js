@@ -6,7 +6,8 @@ import { expectedSchemaResponse } from '../schema/dataTest'
 import { expectedGigyaResponseInvalidAPI } from '../../servicesDataTest'
 import { getSocialsProviders } from '../social/dataTest'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, schemaId, smsTemplatesId, socialIdentitiesId } from '../dataTest'
+import { getSiteConfig } from '../websdk/dataTest'
+import { getExpectedResponseWithContext, getResponseWithContext, schemaId, smsTemplatesId, socialIdentitiesId, webSdkId } from '../dataTest'
 
 jest.mock('axios')
 
@@ -20,6 +21,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
 
     const response = await info.get()
     const expectedResponse = getInfoExpectedResponse(false)
@@ -31,6 +33,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, socialIdentitiesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, smsTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, webSdkId, apiKey) })
     await expect(info.get()).rejects.toEqual([getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)])
   })
 
@@ -40,6 +43,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse[0].branches.splice(1, 1) // remove schema.profileSchema
@@ -52,6 +56,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(0, 1) // remove schema
@@ -63,6 +68,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders('') })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(3, 1) // remove social
@@ -70,15 +76,30 @@ describe('Info test suite', () => {
   })
 
   test('get info except sms successfully', async () => {
-    const mockedResponse = getSmsExpectedResponse
+    const mockedResponse = JSON.parse(JSON.stringify(getSmsExpectedResponse))
     delete mockedResponse.templates
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(5, 1) // remove schema
+    expect(response).toEqual(expectedResponse)
+  })
+
+  test('get info except web sdk successfully', async () => {
+    const mockedResponse = JSON.parse(JSON.stringify(getSiteConfig))
+    delete mockedResponse.globalConf
+    axios
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: mockedResponse })
+    const response = await info.get()
+    const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
+    expectedResponse.splice(7, 1) // remove web sdk
     expect(response).toEqual(expectedResponse)
   })
 })
