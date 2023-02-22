@@ -90,7 +90,7 @@ describe('Email Configuration test suite', () => {
     const mockedResponse = getEmailsExpectedResponseWithNoTemplates()
     if (parentName) {
       mockedResponse[parentName] = {}
-      mockedResponse[parentName][templateName] = getEmailsExpectedResponse[parentName][templateName]
+      mockedResponse[parentName] = getEmailsExpectedResponse[parentName]
     } else {
       mockedResponse[templateName] = getEmailsExpectedResponse[templateName]
     }
@@ -102,8 +102,29 @@ describe('Email Configuration test suite', () => {
     await executeCopy(getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey), getEmailTemplatesInfoForTemplate(externalTemplateName))
 
     expect(spy.mock.calls.length).toBe(1)
-    const expectedTemplate = parentName ? getEmailsExpectedResponse[parentName][templateName] : getEmailsExpectedResponse[templateName]
-    expect(spy).toHaveBeenCalledWith(apiKey, templateName, expectedTemplate, dataCenter)
+    let expectedTemplate
+    if (parentName) {
+      expectedTemplate = JSON.parse(JSON.stringify(getEmailsExpectedResponse))
+      removeOtherTemplates(expectedTemplate, templateName)
+      expectedTemplate = expectedTemplate[parentName]
+    } else {
+      expectedTemplate = getEmailsExpectedResponse[templateName]
+    }
+    const expectedTemplateName = parentName ? `${parentName}.${templateName}` : templateName
+    expect(spy).toHaveBeenCalledWith(apiKey, expectedTemplateName, expectedTemplate, dataCenter)
+  }
+
+  function removeOtherTemplates(response, templateName) {
+    const idx = templateName.indexOf('Templates')
+    const prefix = templateName.substring(0, idx)
+    const emailNotificationsObj = response['emailNotifications']
+    const modifiedEmailNotificationsObj = Object.keys(emailNotificationsObj)
+      .filter((key) => key.startsWith(prefix))
+      .reduce((obj, key) => {
+        obj[key] = emailNotificationsObj[key]
+        return obj
+      }, {})
+    response['emailNotifications'] = modifiedEmailNotificationsObj
   }
 
   function getEmailTemplatesInfoForTemplate(templateName) {

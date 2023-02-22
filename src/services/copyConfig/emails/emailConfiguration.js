@@ -51,7 +51,7 @@ class EmailConfiguration {
     const promises = []
     for (const templateInfo of options.branches) {
       if (templateInfo.value) {
-        promises.push(this.#copyEmailTemplate(destinationSite, options.branches[0].name, dataCenter, response))
+        promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, dataCenter, response))
       }
     }
     return Promise.all(promises)
@@ -62,7 +62,7 @@ class EmailConfiguration {
     const internalTemplateName = emailTranslator.translateExternalName(templateName)
     const templatePath = this.#emailTemplatesInternalPath.get(internalTemplateName)
     const template = this.#getTemplate(response, templatePath)
-    return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, internalTemplateName, template, dataCenter)
+    return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, templatePath, template, dataCenter)
   }
 
   #getTemplate(response, templatePath) {
@@ -70,9 +70,24 @@ class EmailConfiguration {
     if (tokens.length === 1) {
       return response[tokens[0]]
     } else if (tokens.length === 2) {
-      return response[tokens[0]][tokens[1]]
+      const clone = JSON.parse(JSON.stringify(response))
+      this.#removeOtherTemplates(clone, tokens[1])
+      return clone[tokens[0]]
     }
     throw new Error(`Unexpected template path ${templatePath}`)
+  }
+
+  #removeOtherTemplates(response, templateName) {
+    const idx = templateName.indexOf('Templates')
+    const prefix = templateName.substring(0, idx)
+    const emailNotificationsObj = response['emailNotifications']
+    const modifiedEmailNotificationsObj = Object.keys(emailNotificationsObj)
+      .filter((key) => key.startsWith(prefix))
+      .reduce((obj, key) => {
+        obj[key] = emailNotificationsObj[key]
+        return obj
+      }, {})
+    response['emailNotifications'] = modifiedEmailNotificationsObj
   }
 }
 
