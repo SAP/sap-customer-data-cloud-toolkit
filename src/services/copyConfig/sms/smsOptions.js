@@ -4,7 +4,11 @@ class SmsOptions extends Options {
   #smsConfiguration
 
   constructor(smsConfiguration) {
-    super([{ id: 'smsTemplates', value: true }])
+    super({
+      id: 'smsTemplates',
+      name: 'smsTemplates',
+      value: true,
+    })
     this.#smsConfiguration = smsConfiguration
   }
 

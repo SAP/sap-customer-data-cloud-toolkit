@@ -4,6 +4,10 @@ import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 import { stringToJson } from '../objectHelper'
 import EmailConfiguration from '../emails/emailConfiguration'
+import SocialOptions from '../social/socialOptions'
+import SchemaOptions from '../schema/schemaOptions'
+import SmsOptions from '../sms/smsOptions'
+import EmailOptions from '../emails/emailOptions'
 
 class Info {
   #credentials
@@ -37,41 +41,20 @@ class Info {
   }
 
   async #getSchema() {
-    const schema = new Schema(this.#credentials, this.#site, this.#dataCenter)
-    const response = await schema.get()
+    const schemaOptions = new SchemaOptions(new Schema(this.#credentials, this.#site, this.#dataCenter))
+    const response = await schemaOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'schema',
-        name: 'schema',
-        value: false,
-        branches: [],
+      const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
+      if (!response.dataSchema) {
+        info.branches = info.branches.splice(1, 1)
       }
-      if (response.dataSchema) {
-        info.branches.push(this.#generateDataSchema())
-      }
-      if (response.profileSchema) {
-        info.branches.push(this.#generateProfileSchema())
+      if (!response.profileSchema) {
+        info.branches = info.branches.splice(0, 1)
       }
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
-    }
-  }
-
-  #generateDataSchema() {
-    return {
-      id: 'dataSchema',
-      name: 'dataSchema',
-      value: false,
-    }
-  }
-
-  #generateProfileSchema() {
-    return {
-      id: 'profileSchema',
-      name: 'profileSchema',
-      value: false,
     }
   }
 
@@ -84,14 +67,10 @@ class Info {
   }
 
   async #getSocialIdentities() {
-    const social = new Social(this.#credentials, this.#site, this.#dataCenter)
-    const response = await social.get()
+    const socialOptions = new SocialOptions(new Social(this.#credentials, this.#site, this.#dataCenter))
+    const response = await socialOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'socialIdentities',
-        name: 'socialIdentities',
-        value: false,
-      }
+      const info = socialOptions.getOptionsDisabled()
       if (!this.#hasSocialProviders(response.providers)) {
         info.branches = []
       }
@@ -103,16 +82,11 @@ class Info {
   }
 
   async #getEmailTemplates() {
-    const emailConfiguration = new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter)
-    const response = await emailConfiguration.get()
+    const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await emailOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'emailTemplates',
-        name: 'emailTemplates',
-        value: false,
-        branches: [],
-      }
-      info.branches.push(...this.#createBranchesObject(response))
+      const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
+      this.#removeUnsupportedOptions(response, info, emailOptions)
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
@@ -121,17 +95,12 @@ class Info {
   }
 
   async #getSmsTemplates() {
-    const smsConfiguration = new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter)
-    const response = await smsConfiguration.get()
+    const smsOptions = new SmsOptions(new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await smsOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'smsTemplates',
-        name: 'smsTemplates',
-        value: false,
-        branches: [],
-      }
-      if (response.templates) {
-        delete info.branches
+      const info = smsOptions.getOptionsDisabled()
+      if (!response.templates) {
+        info.branches = []
       }
       return Promise.resolve(info)
     } else {
@@ -155,86 +124,40 @@ class Info {
     return atLeastOneHasConfig
   }
 
-  #createBranchesObject(response) {
-    const templatesInfo = []
-    if (response.magicLink) {
-      templatesInfo.push({
-        id: 'magicLink',
-        name: 'MagicLink',
-        value: false,
-      })
+  #removeUnsupportedOptions(response, info, emailOptions) {
+    if (!response.emailNotifications.confirmationEmailTemplates) {
+      emailOptions.removePasswordResetConfirmation(info)
     }
-    if (response.codeVerification) {
-      templatesInfo.push({
-        id: 'etCodeVerification',
-        name: 'CodeVerification',
-        value: false,
-      })
+    if (!response.impossibleTraveler) {
+      emailOptions.removeImpossibleTraveler(info)
     }
-    if (response.emailVerification) {
-      templatesInfo.push({
-        id: 'etEmailVerification',
-        name: 'EmailVerification',
-        value: false,
-      })
+    if (!response.twoFactorAuth) {
+      emailOptions.removeTFAEmailVerification(info)
     }
-    if (response.emailNotifications.welcomeEmailTemplates) {
-      templatesInfo.push({
-        id: 'newUserWelcome',
-        name: 'NewUserWelcome',
-        value: false,
-      })
+    if (!response.passwordReset) {
+      emailOptions.removePasswordReset(info)
     }
-    if (response.emailNotifications.accountDeletedEmailTemplates) {
-      templatesInfo.push({
-        id: 'accountDeletionConfirmation',
-        name: 'AccountDeletionConfirmation',
-        value: false,
-      })
+    if (!response.doubleOptIn) {
+      emailOptions.removeDoubleOptInConfirmation(info)
     }
-    if (response.preferencesCenter) {
-      templatesInfo.push({
-        id: 'litePreferencesCenter',
-        name: 'LitePreferencesCenter',
-        value: false,
-      })
+    if (!response.preferencesCenter) {
+      emailOptions.removeLitePreferencesCenter(info)
     }
-    if (response.doubleOptIn) {
-      templatesInfo.push({
-        id: 'doubleOptInConfirmation',
-        name: 'DoubleOptInConfirmation',
-        value: false,
-      })
+    if (!response.emailNotifications.accountDeletedEmailTemplates) {
+      emailOptions.removeAccountDeletionConfirmation(info)
     }
-    if (response.passwordReset) {
-      templatesInfo.push({
-        id: 'etPasswordReset',
-        name: 'PasswordReset',
-        value: false,
-      })
+    if (!response.emailNotifications.welcomeEmailTemplates) {
+      emailOptions.removeNewUserWelcome(info)
     }
-    if (response.twoFactorAuth) {
-      templatesInfo.push({
-        id: 'tfaEmailVerification',
-        name: 'TfaEmailVerification',
-        value: false,
-      })
+    if (!response.emailVerification) {
+      emailOptions.removeEmailVerification(info)
     }
-    if (response.impossibleTraveler) {
-      templatesInfo.push({
-        id: 'impossibleTraveler',
-        name: 'ImpossibleTraveler',
-        value: false,
-      })
+    if (!response.codeVerification) {
+      emailOptions.removeCodeVerification(info)
     }
-    if (response.emailNotifications.confirmationEmailTemplates) {
-      templatesInfo.push({
-        id: 'passwordResetConfirmation',
-        name: 'PasswordResetConfirmation',
-        value: false,
-      })
+    if (!response.magicLink) {
+      emailOptions.removeMagicLink(info)
     }
-    return templatesInfo
   }
 }
 

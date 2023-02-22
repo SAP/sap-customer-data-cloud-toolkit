@@ -7,11 +7,28 @@ class Options {
     return this.options
   }
 
-  setOptions(id, value) {
-    for (const option of this.getOptions()) {
-      if (option.id === id) {
-        option.value = value
-        break
+  getOptionsDisabled() {
+    const opt = JSON.parse(JSON.stringify(this.options))
+    opt.value = false
+    if (opt.branches) {
+      for (const o of opt.branches) {
+        o.value = false
+      }
+    }
+    return opt
+  }
+
+  setOptions(name, value) {
+    if (this.getOptions().branches) {
+      for (const option of this.getOptions().branches) {
+        if (option.name === name) {
+          option.value = value
+          break
+        }
+      }
+    } else {
+      if (this.getOptions().name === name) {
+        this.getOptions().value = value
       }
     }
   }

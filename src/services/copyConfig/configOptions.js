@@ -7,14 +7,23 @@ class ConfigOptions {
 
   shouldBeCopied(configuration) {
     let result = false
-    for (const option of configuration.getOptions()) {
-      if (this.#isSupported(option.id)) {
-        result = true
-      } else {
-        configuration.setOptions(option.id, false)
+    if (configuration.getOptions().branches) {
+      for (const option of configuration.getOptions().branches) {
+        result |= this.#processOption(option, configuration)
       }
+    } else {
+      result |= this.#processOption(configuration.getOptions(), configuration)
     }
     return result
+  }
+
+  #processOption(option, configuration) {
+    if (this.#isSupported(option.name)) {
+      return true
+    } else {
+      configuration.setOptions(option.name, false)
+      return false
+    }
   }
 
   #isSupported(name) {
@@ -34,7 +43,7 @@ class ConfigOptions {
     if (obj === undefined || value) {
       return value
     }
-    if (obj.id === name) {
+    if (obj.name === name) {
       return obj.value
     }
     return obj.branches !== undefined ? this.#findRecursive(name, obj.branches, value) : value

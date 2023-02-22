@@ -47,10 +47,10 @@ class Schema {
     const isParentSite = this.#isParentSite(destinationSiteConfiguration)
     removePropertyFromObjectCascading(payload, 'subscriptionsSchema') // to be processed later
     removePropertyFromObjectCascading(payload, 'preferencesSchema')
-    if (options[0].value) {
+    if (options.branches[0].value) {
       responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
-    if (options[1].value) {
+    if (options.branches[1].value) {
       responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
     return Promise.all(responses)

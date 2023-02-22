@@ -4,7 +4,11 @@ class SocialOptions extends Options {
   #social
 
   constructor(social) {
-    super([{ id: 'socialIdentities', value: true }])
+    super({
+      id: 'socialIdentities',
+      name: 'socialIdentities',
+      value: true,
+    })
     this.#social = social
   }
 

@@ -25,7 +25,7 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options) {
-    console.log(`options=${JSON.stringify(options)}`)
+    //console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()

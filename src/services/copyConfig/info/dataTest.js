@@ -183,7 +183,7 @@ export function getInfoExpectedResponse(supports) {
       },
       {
         id: 'tfaEmailVerification',
-        name: 'TfaEmailVerification',
+        name: 'TFAEmailVerification',
         value: supports,
       },
       {
