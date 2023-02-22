@@ -9,6 +9,8 @@ import SmsOptions from './sms/smsOptions'
 import SocialOptions from './social/socialOptions'
 import EmailConfiguration from './emails/emailConfiguration'
 import EmailOptions from './emails/emailOptions'
+import WebSdkOptions from "./websdk/webSdkOptions";
+import WebSdk from "./websdk/websdk";
 
 class ConfigManager {
   #configurations = []
@@ -81,6 +83,7 @@ class ConfigManager {
     this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new EmailOptions(new EmailConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new WebSdkOptions(new WebSdk(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {

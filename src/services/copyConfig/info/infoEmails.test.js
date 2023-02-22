@@ -6,6 +6,7 @@ import { expectedSchemaResponse } from '../schema/dataTest'
 import { getSocialsProviders } from '../social/dataTest'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
+import { getSiteConfig } from '../websdk/dataTest'
 
 jest.mock('axios')
 
@@ -81,6 +82,7 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     expectedResponse[4].branches = expectedResponse[4].branches.splice(0, 1)
     expect(response).toEqual(expectedResponse)
@@ -93,6 +95,7 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
     expectedResponse[4].branches.splice(templateIndex, 1)
     expect(response).toEqual(expectedResponse)

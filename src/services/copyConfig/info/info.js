@@ -8,6 +8,8 @@ import SocialOptions from '../social/socialOptions'
 import SchemaOptions from '../schema/schemaOptions'
 import SmsOptions from '../sms/smsOptions'
 import EmailOptions from '../emails/emailOptions'
+import WebSdk from '../websdk/websdk'
+import WebSdkOptions from "../websdk/webSdkOptions";
 
 class Info {
   #credentials
@@ -30,6 +32,7 @@ class Info {
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getDataflows(),
+      this.#getWebSdk(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -42,6 +45,21 @@ class Info {
 
   #hasConfiguration(info) {
     return info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)
+  }
+
+  async #getWebSdk() {
+    const webSdkOptions = new WebSdkOptions(new WebSdk(this.#credentials, this.#site, this.#dataCenter))
+    const response = await webSdkOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
+      if (response.globalConf === '' || response.globalConf === undefined) {
+        webSdkOptions.removeWebSdk(info)
+      }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getSchema() {
