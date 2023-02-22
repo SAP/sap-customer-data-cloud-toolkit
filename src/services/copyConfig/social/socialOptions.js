@@ -15,6 +15,10 @@ class SocialOptions extends Options {
   getConfiguration() {
     return this.#social
   }
+
+  removeSocialProviders(info) {
+    info.branches = []
+  }
 }
 
 export default SocialOptions

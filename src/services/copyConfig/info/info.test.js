@@ -59,7 +59,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse[0].branches.splice(0, 1) // remove schema
+    expectedResponse.splice(0, 1) // remove schema
     expect(response).toEqual(expectedResponse)
   })
 

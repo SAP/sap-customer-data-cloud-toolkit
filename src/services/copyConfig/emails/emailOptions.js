@@ -74,61 +74,47 @@ class EmailOptions extends Options {
   }
 
   removePasswordResetConfirmation(info) {
-    return this.#removeInfo('PasswordResetConfirmation', info)
+    return this.removeInfo('PasswordResetConfirmation', info)
   }
 
   removeImpossibleTraveler(info) {
-    return this.#removeInfo('ImpossibleTraveler', info)
+    return this.removeInfo('ImpossibleTraveler', info)
   }
 
   removeTFAEmailVerification(info) {
-    return this.#removeInfo('TFAEmailVerification', info)
+    return this.removeInfo('TFAEmailVerification', info)
   }
 
   removePasswordReset(info) {
-    return this.#removeInfo('PasswordReset', info)
+    return this.removeInfo('PasswordReset', info)
   }
 
   removeDoubleOptInConfirmation(info) {
-    return this.#removeInfo('DoubleOptInConfirmation', info)
+    return this.removeInfo('DoubleOptInConfirmation', info)
   }
 
   removeLitePreferencesCenter(info) {
-    return this.#removeInfo('LitePreferencesCenter', info)
+    return this.removeInfo('LitePreferencesCenter', info)
   }
 
   removeAccountDeletionConfirmation(info) {
-    return this.#removeInfo('AccountDeletionConfirmation', info)
+    return this.removeInfo('AccountDeletionConfirmation', info)
   }
 
   removeNewUserWelcome(info) {
-    return this.#removeInfo('NewUserWelcome', info)
+    return this.removeInfo('NewUserWelcome', info)
   }
 
   removeEmailVerification(info) {
-    return this.#removeInfo('EmailVerification', info)
+    return this.removeInfo('EmailVerification', info)
   }
 
   removeCodeVerification(info) {
-    return this.#removeInfo('CodeVerification', info)
+    return this.removeInfo('CodeVerification', info)
   }
 
   removeMagicLink(info) {
-    return this.#removeInfo('MagicLink', info)
-  }
-
-  #removeInfo(name, info) {
-    return info.branches.filter(this.#remove(name))
-  }
-
-  #remove(name) {
-    return function (value, index, array) {
-      if (value.name === name) {
-        array.splice(index, 1)
-        return true
-      }
-      return false
-    }
+    return this.removeInfo('MagicLink', info)
   }
 }
 

@@ -32,6 +32,20 @@ class Options {
       }
     }
   }
+
+  removeInfo(name, info) {
+    return info.branches.filter(this.#remove(name))
+  }
+
+  #remove(name) {
+    return function (value, index, array) {
+      if (value.name === name) {
+        array.splice(index, 1)
+        return true
+      }
+      return false
+    }
+  }
 }
 
 export default Options

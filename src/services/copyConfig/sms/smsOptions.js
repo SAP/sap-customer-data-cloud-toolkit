@@ -15,6 +15,10 @@ class SmsOptions extends Options {
   getConfiguration() {
     return this.#smsConfiguration
   }
+
+  removeSmsTemplates(info) {
+    info.branches = []
+  }
 }
 
 export default SmsOptions

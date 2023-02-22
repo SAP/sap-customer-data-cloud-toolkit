@@ -32,12 +32,16 @@ class Info {
       this.#getDataflows(),
     ]).then((infos) => {
       infos.forEach((info) => {
-        if (info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)) {
+        if (this.#hasConfiguration(info)) {
           response.push(info)
         }
       })
       return response
     })
+  }
+
+  #hasConfiguration(info) {
+    return info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)
   }
 
   async #getSchema() {
@@ -46,10 +50,10 @@ class Info {
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
       if (!response.dataSchema) {
-        info.branches = info.branches.splice(1, 1)
+        schemaOptions.removeDataSchema(info)
       }
       if (!response.profileSchema) {
-        info.branches = info.branches.splice(0, 1)
+        schemaOptions.removeProfileSchema(info)
       }
       return Promise.resolve(info)
     } else {
@@ -72,7 +76,7 @@ class Info {
     if (response.errorCode === 0) {
       const info = socialOptions.getOptionsDisabled()
       if (!this.#hasSocialProviders(response.providers)) {
-        info.branches = []
+        socialOptions.removeSocialProviders(info)
       }
       return Promise.resolve(info)
     } else {
@@ -100,7 +104,7 @@ class Info {
     if (response.errorCode === 0) {
       const info = smsOptions.getOptionsDisabled()
       if (!response.templates) {
-        info.branches = []
+        smsOptions.removeSmsTemplates(info)
       }
       return Promise.resolve(info)
     } else {
