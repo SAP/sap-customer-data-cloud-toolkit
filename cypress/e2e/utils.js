@@ -9,6 +9,7 @@ import {
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
   dummyApiKey,
+  mockedGetEmailTemplatesConfigsResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -98,6 +99,7 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
   mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
   mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
+  mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
 }
 
 export function mockSetConfigurationRequests() {
