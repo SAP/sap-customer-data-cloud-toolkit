@@ -59,7 +59,7 @@ const styles = {
     width: '100%',
   },
   currentInfoContainer: {
-    height: '150px',
+    height: '250px',
     width: '45%',
     ...spacing.sapUiMediumMarginBegin,
     ...spacing.sapUiMediumMarginTop,
@@ -75,7 +75,6 @@ const styles = {
   },
   targetInfoContainer: {
     width: '50%',
-
     height: '150px',
     ...spacing.sapUiMediumMarginTop,
     ...spacing.sapUiSmallMarginBegin,
@@ -106,6 +105,9 @@ const styles = {
   busyIndicatorStyle: {
     width: '100%',
     position: 'relative',
+  },
+  targetApiKeyInputStyle: {
+    width: '300px',
   },
 }
 

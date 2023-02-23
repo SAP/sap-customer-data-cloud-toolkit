@@ -1,0 +1,224 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+
+import ConfigManager from '../../services/copyConfig/configManager'
+import SiteFinder from '../../services/search/siteFinder'
+
+import { getApiKey } from '../utils'
+import {
+  findConfiguration,
+  propagateConfigurationState,
+  clearConfigurationsErrors,
+  clearTargetSitesErrors,
+  addErrorToConfigurations,
+  addErrorToTargetApiKey,
+  isTargetSiteDuplicated,
+} from './utils'
+
+const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtended'
+const GET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getConfigurations`
+const SET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/setConfigurations`
+const GET_AVAILABLE_TARGET_API_KEYS = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getAvailableTargetApiKeys`
+const GET_CURRENT_SITE_INFORMATION_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getCurrentSiteInformation`
+const GET_TARGET_SITE_INFORMATION_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getTargetSiteInformation`
+
+export const copyConfigurationExtendedSlice = createSlice({
+  name: COPY_CONFIGURATION_EXTENDED_STATE_NAME,
+  initialState: {
+    configurations: [],
+    errors: [],
+    isLoading: false,
+    targetSites: [],
+    showSuccessMessage: false,
+    availableTargetSites: [],
+    currentSiteInformation: {},
+    showDuplicatedWarning: false,
+  },
+
+  reducers: {
+    addTargetSite(state, action) {
+      if (!isTargetSiteDuplicated(action.payload.apiKey, state.targetSites)) {
+        state.targetSites.push(action.payload)
+        state.showDuplicatedWarning = false
+      } else {
+        state.showDuplicatedWarning = true
+      }
+    },
+    removeTargetSite(state, action) {
+      state.targetSites = state.targetSites.filter((targetSite) => targetSite.apiKey !== action.payload)
+    },
+    setConfigurationStatus(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      propagateConfigurationState(configuration, action.payload.value)
+    },
+    clearConfigurations(state) {
+      state.configurations.forEach((configuration) => {
+        propagateConfigurationState(configuration, false)
+      })
+    },
+    clearErrors(state) {
+      state.errors = []
+      clearConfigurationsErrors(state.configurations)
+      clearTargetSitesErrors(state.targetSites)
+    },
+    clearTargetApiKeys(state) {
+      state.targetSites = []
+    },
+    setShowDuplicatedWarning(state, action) {
+      state.showDuplicatedWarning = action.payload
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(getConfigurations.pending, (state) => {
+      state.isLoading = true
+      state.errors = []
+      state.configurations = []
+    })
+    builder.addCase(getConfigurations.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.configurations = action.payload
+    })
+    builder.addCase(getConfigurations.rejected, (state, action) => {
+      state.isLoading = false
+      state.errors = action.payload
+    })
+    builder.addCase(setConfigurations.pending, (state) => {
+      state.isLoading = true
+      state.errors = []
+      state.showSuccessMessage = false
+    })
+    builder.addCase(setConfigurations.fulfilled, (state, action) => {
+      state.isLoading = false
+      const errors = action.payload.filter((response) => response.errorCode !== 0)
+      if (errors.length) {
+        state.showSuccessMessage = false
+        state.errors = errors
+        addErrorToConfigurations(state.configurations, errors)
+        addErrorToTargetApiKey(state.targetSites, errors)
+      } else {
+        state.showSuccessMessage = true
+      }
+    })
+    builder.addCase(setConfigurations.rejected, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = false
+      state.errors = action.payload
+    })
+    builder.addCase(getAvailableTargetSites.pending, (state) => {
+      state.isLoading = true
+    })
+    builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.availableTargetSites = action.payload
+    })
+    builder.addCase(getAvailableTargetSites.rejected, (state, action) => {
+      state.isLoading = false
+      state.availableTargetSites = []
+      state.errors = [action.payload]
+    })
+    builder.addCase(getCurrentSiteInformation.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.currentSiteInformation = action.payload
+    })
+    builder.addCase(getCurrentSiteInformation.rejected, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = false
+      state.errors = [action.payload]
+    })
+    builder.addCase(getTargetSiteInformation.fulfilled, (state, action) => {
+      state.isLoading = false
+      if (!isTargetSiteDuplicated(action.payload.context.targetApiKey, state.targetSites)) {
+        state.targetSites.push({
+          baseDomain: action.payload.baseDomain,
+          apiKey: action.payload.context.targetApiKey,
+          dataCenter: action.payload.dataCenter,
+          partnerName: action.payload.partnerName,
+          partnerId: action.payload.partnerId,
+        })
+        state.showDuplicatedWarning = false
+      } else {
+        state.showDuplicatedWarning = true
+      }
+    })
+    builder.addCase(getTargetSiteInformation.rejected, (state, action) => {
+      state.showSuccessMessage = false
+      state.isLoading = false
+      state.errors = [action.payload]
+    })
+  },
+})
+
+export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  try {
+    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getConfiguration()
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  try {
+    return await new ConfigManager(credentials, getApiKey(window.location.hash)).copy(
+      state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
+      state.copyConfigurationExtended.configurations
+    )
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFORMATION_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+
+  try {
+    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getSiteInformation(getApiKey(window.location.hash))
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const getTargetSiteInformation = createAsyncThunk(GET_TARGET_SITE_INFORMATION_ACTION, async (targetApiKey, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+
+  try {
+    return await new ConfigManager(credentials, targetApiKey).getSiteInformation(targetApiKey)
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API_KEYS, async (_, { getState, rejectWithValue }) => {
+  try {
+    const state = getState()
+    const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+    return await new SiteFinder(credentials).getAllSites()
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
+export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, setShowDuplicatedWarning } =
+  copyConfigurationExtendedSlice.actions
+
+export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations
+
+export const selectIsLoading = (state) => state.copyConfigurationExtended.isLoading
+
+export const selectErrors = (state) => state.copyConfigurationExtended.errors
+
+export const selectShowSuccessDialog = (state) => state.copyConfigurationExtended.showSuccessMessage
+
+export const selectTargetSites = (state) => state.copyConfigurationExtended.targetSites
+
+export const selectAvailableTargetSites = (state) => state.copyConfigurationExtended.availableTargetSites
+
+export const selectCurrentSiteInformation = (state) => state.copyConfigurationExtended.currentSiteInformation
+
+export const selectShowDuplicatedWarning = (state) => state.copyConfigurationExtended.showDuplicatedWarning
+
+export default copyConfigurationExtendedSlice.reducer

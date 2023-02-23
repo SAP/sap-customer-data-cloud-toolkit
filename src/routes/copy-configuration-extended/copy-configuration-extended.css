@@ -9,3 +9,7 @@
 .current_site {
   font-weight: 700;
 }
+
+#selectedTargetApiKeysList {
+  height: -webkit-fill-available;
+}

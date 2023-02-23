@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import lodash from 'lodash'
 
-import { setConfigurationStatus } from '../../redux/copyConfigurationExtendend/copyConfigurationExtendendSlice'
+import { setConfigurationStatus } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 

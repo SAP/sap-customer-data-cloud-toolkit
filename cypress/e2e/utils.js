@@ -8,6 +8,8 @@ import {
   mockedSetSmsTemplatesResponse,
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
+  mockedUserSitesResponse,
+  mockedGetPartnersResponse,
   dummyApiKey,
   mockedGetEmailTemplatesConfigsResponse,
 } from './dataTest'
@@ -15,6 +17,8 @@ import {
 export function startUp(pageName) {
   cy.visit('')
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
+  mockGetUserSitesRequest()
+  mockGetPartnersRequest()
   cy.contains(pageName).click({ force: true })
   writeCredentials()
 }
@@ -108,6 +112,14 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
 }
 
+export function mockGetUserSitesRequest() {
+  mockResponse(mockedUserSitesResponse, 'POST', 'admin.console.getPagedUserEffectiveSites')
+}
+
+export function mockGetPartnersRequest() {
+  mockResponse(mockedGetPartnersResponse, 'POST', 'admin.console.getPartners')
+}
+
 export function checkErrors(expectedState) {
   cy.get('[icon = error]').should(expectedState)
   cy.get('#errorListContainer').should(expectedState)
@@ -127,4 +139,5 @@ export function setConfigurationCheckBox() {
 
 export function fillTargetApiKeyInput() {
   cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
+  cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }

@@ -15,14 +15,13 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('#currentSiteLabel').should('have.text', dataTest.copyConfigCurrentSiteLabel)
     cy.get('#currentSiteApiKeyLabel').should('have.text', dataTest.copyConfigCurrentSiteApiKeyLabel)
     cy.get('#currentSiteName').should('have.text', dataTest.currentSiteName)
-    cy.get('#destinationSiteLabel').should('have.text', dataTest.copyConfigDestinationSiteLabel)
     cy.get('#targetSitesApisLabel').should('have.text', dataTest.copyConfigTargetSitesApisLabel)
     cy.get('#targetApiKeyInput').should('be.visible')
     cy.get('[title-text = "Select Configuration"]').should('be.visible')
     utils.checkElementsInitialState()
   })
 
-  it('should display success popup after successful copy on save', () => {
+  it('should display success popup after successfully copy on save', () => {
     utils.mockSetConfigurationRequests()
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
@@ -40,7 +39,7 @@ describe('Copy Configuration extended test suite', () => {
     utils.checkElementsInitialState()
   })
 
-  it('should display errors on unsuccessful set configurations and clear them on cancel', () => {
+  it('should display errors on unsuccessfull set configurations and clear them on cancel', () => {
     utils.mockSetConfigurationRequests()
     utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.setSchema')
     utils.fillTargetApiKeyInput()
@@ -50,5 +49,19 @@ describe('Copy Configuration extended test suite', () => {
     utils.checkErrors('be.visible')
     cy.get('#cancelButton').shadow().find('button').click()
     utils.checkErrors('not.exist')
+  })
+
+  it('should delete an added Target Site from the Targe Sites list', () => {
+    utils.fillTargetApiKeyInput()
+    cy.get('#selectedTargetApiKeysList').should('have.length', '1')
+    cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').shadow().find('ui5-button').click()
+    cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').should('not.exist')
+  })
+
+  it('should show Toast warning when adding a duplicated Target Site', () => {
+    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test!')
+    cy.get('#addTargetSiteButton').click()
+    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('{enter}')
+    cy.get('#duplicatedWarningToast').should('have.text', dataTest.expectedDuplicatedToastMessage)
   })
 })

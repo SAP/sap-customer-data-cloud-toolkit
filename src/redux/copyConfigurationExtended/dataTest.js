@@ -40,9 +40,11 @@ export const initialState = {
   configurations: [],
   errors: [],
   isLoading: false,
-  targetApiKeys: [],
+  targetSites: [],
   showSuccessMessage: false,
+  availableTargetSites: [],
   currentSiteInformation: {},
+  showDuplicatedWarning: false,
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
@@ -66,7 +68,7 @@ export const initialStateWithConfigurations = {
   configurations: configurationsMockedResponse,
   errors: [],
   isLoading: false,
-  targetApiKeys: [],
+  targetSites: [],
   showSuccessMessage: false,
 }
 
@@ -85,19 +87,31 @@ export const initialStateWithErrors = {
   ],
   errors: mockedErrorsResponse,
   isLoading: false,
-  targetApiKeys: [{ targetApiKey: dummyTargetApiKey, error: mockedErrorsResponse }],
+  targetSites: [{ apiKey: dummyTargetApiKey, error: mockedErrorsResponse }],
   showSuccessMessage: false,
 }
 
 export const siteConfigResponse = {
   baseDomain: 'a_b_c_dummy_site',
+  dataCenter: 'eu1',
+  context: { targetApiKey: dummyTargetApiKey },
+  partnerName: 'test',
+  partnerId: 123456,
+}
+
+export const expectedTargetSite = {
+  baseDomain: 'a_b_c_dummy_site',
+  dataCenter: 'eu1',
+  apiKey: dummyTargetApiKey,
+  partnerName: 'test',
+  partnerId: 123456,
 }
 
 export const initialStateWithTargetApiKey = {
   configurations: [],
   errors: [],
   isLoading: false,
-  targetApiKeys: [{ targetApiKey: dummyTargetApiKey }],
+  targetSites: [expectedTargetSite],
   showSuccessMessage: false,
 }
 
@@ -105,7 +119,7 @@ export const initialStateWithTargetApiKeyAndConfigurations = {
   configurations: configurationsMockedResponse,
   errors: [],
   isLoading: false,
-  targetApiKeys: [{ targetApiKey: dummyTargetApiKey }],
+  targetSites: [expectedTargetSite],
   showSuccessMessage: false,
 }
 
@@ -117,3 +131,11 @@ export const setConfigSuccessResponse = {
   statusReason: 'OK',
   time: '2023-02-08T12:03:36.046Z',
 }
+
+export const getUserSitesResponse = [
+  {
+    apiKey: dummyTargetApiKey,
+    baseDomain: 'dev.test.com',
+    dataCenter: 'eu1',
+  },
+]
