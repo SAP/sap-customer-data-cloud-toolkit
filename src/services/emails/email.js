@@ -19,8 +19,11 @@ class Email {
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }
+    return await this.getSiteEmailsWithDataCenter(site, dataCenterResponse.dataCenter)
+  }
 
-    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenterResponse.dataCenter, Email.getGetEmailsTemplatesEndpoint())
+  async getSiteEmailsWithDataCenter(site, dataCenter) {
+    const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getGetEmailsTemplatesEndpoint())
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Email.#ERROR_MSG_GET_CONFIG)
@@ -52,15 +55,17 @@ class Email {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
+    parameters.context = JSON.stringify({ id: 'emailTemplates', targetApiKey: apiKey })
 
     return parameters
   }
 
   #setEmailsTemplatesParameters(apiKey, templateName, template) {
+    const tokens = templateName.split('.')
     const parameters = this.#getEmailsTemplatesParameters(apiKey)
     parameters.secret = this.secret
-    parameters[templateName] = JSON.stringify(template)
-
+    parameters[tokens[0]] = JSON.stringify(template)
+    parameters.context = JSON.stringify({ id: tokens[tokens.length - 1], targetApiKey: apiKey })
     return parameters
   }
 

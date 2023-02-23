@@ -1,23 +1,11 @@
 import { expectedSchemaResponse } from '../schema/dataTest'
+import EmailOptions from "../emails/emailOptions";
+import SchemaOptions from "../schema/schemaOptions";
 
 export function getInfoExpectedResponse(supports) {
-  const schema = {
-    id: 'schema',
-    name: 'schema',
-    value: supports,
-    branches: [
-      {
-        id: 'dataSchema',
-        name: 'dataSchema',
-        value: supports,
-      },
-      {
-        id: 'profileSchema',
-        name: 'profileSchema',
-        value: supports,
-      },
-    ],
-  }
+  const schemaOptions = new SchemaOptions(undefined)
+  const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
+
   const screenSets = {
     id: 'screenSets',
     name: 'screenSets',
@@ -137,68 +125,9 @@ export function getInfoExpectedResponse(supports) {
     value: supports,
   }
 
-  const emailTemplates = {
-    id: 'emailTemplates',
-    name: 'emailTemplates',
-    value: supports,
-    branches: [
-      {
-        id: 'magicLink',
-        name: 'magicLink',
-        value: supports,
-      },
-      {
-        id: 'etCodeVerification',
-        name: codeVerification,
-        value: supports,
-      },
-      {
-        id: 'etEmailVerification',
-        name: emailVerification,
-        value: supports,
-      },
-      {
-        id: 'newUserWelcome',
-        name: 'newUserWelcome',
-        value: supports,
-      },
-      {
-        id: 'accountDeletionConfirmation',
-        name: 'accountDeletionConfirmation',
-        value: supports,
-      },
-      {
-        id: 'litePreferencesCenter',
-        name: 'litePreferencesCenter',
-        value: supports,
-      },
-      {
-        id: 'doubleOptInConfirmation',
-        name: 'doubleOptInConfirmation',
-        value: supports,
-      },
-      {
-        id: 'etPasswordReset',
-        name: passwordReset,
-        value: supports,
-      },
-      {
-        id: 'tfaEmailVerification',
-        name: 'tfaEmailVerification',
-        value: supports,
-      },
-      {
-        id: 'impossibleTraveler',
-        name: 'impossibleTraveler',
-        value: supports,
-      },
-      {
-        id: 'passwordResetConfirmation',
-        name: 'passwordResetConfirmation',
-        value: supports,
-      },
-    ],
-  }
+  const emailOptions = new EmailOptions(undefined)
+  const emailTemplates = supports ? emailOptions.getOptions() : emailOptions.getOptionsDisabled()
+
   const smsTemplates = {
     id: 'smsTemplates',
     name: 'smsTemplates',

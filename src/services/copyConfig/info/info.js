@@ -3,7 +3,13 @@ import { getInfoExpectedResponse } from './dataTest'
 import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 import { stringToJson } from '../objectHelper'
+import EmailConfiguration from '../emails/emailConfiguration'
+import SocialOptions from '../social/socialOptions'
+import SchemaOptions from '../schema/schemaOptions'
+import SmsOptions from '../sms/smsOptions'
+import EmailOptions from '../emails/emailOptions'
 import WebSdk from '../websdk/websdk'
+import WebSdkOptions from "../websdk/webSdkOptions";
 
 class Info {
   #credentials
@@ -29,7 +35,7 @@ class Info {
       this.#getWebSdk(),
     ]).then((infos) => {
       infos.forEach((info) => {
-        if (info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)) {
+        if (this.#hasConfiguration(info)) {
           response.push(info)
         }
       })
@@ -37,17 +43,17 @@ class Info {
     })
   }
 
+  #hasConfiguration(info) {
+    return info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)
+  }
+
   async #getWebSdk() {
-    const webSdk = new WebSdk(this.#credentials, this.#site, this.#dataCenter)
-    const response = await webSdk.get()
+    const webSdkOptions = new WebSdkOptions(new WebSdk(this.#credentials, this.#site, this.#dataCenter))
+    const response = await webSdkOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'webSdk',
-        name: 'webSdk',
-        value: false,
-      }
+      const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
       if (response.globalConf === '' || response.globalConf === undefined) {
-        info.branches = []
+        webSdkOptions.removeWebSdk(info)
       }
       return Promise.resolve(info)
     } else {
@@ -57,41 +63,20 @@ class Info {
   }
 
   async #getSchema() {
-    const schema = new Schema(this.#credentials, this.#site, this.#dataCenter)
-    const response = await schema.get()
+    const schemaOptions = new SchemaOptions(new Schema(this.#credentials, this.#site, this.#dataCenter))
+    const response = await schemaOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'schema',
-        name: 'schema',
-        value: false,
-        branches: [],
+      const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
+      if (!response.dataSchema) {
+        schemaOptions.removeDataSchema(info)
       }
-      if (response.dataSchema) {
-        info.branches.push(this.#generateDataSchema())
-      }
-      if (response.profileSchema) {
-        info.branches.push(this.#generateProfileSchema())
+      if (!response.profileSchema) {
+        schemaOptions.removeProfileSchema(info)
       }
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
-    }
-  }
-
-  #generateDataSchema() {
-    return {
-      id: 'dataSchema',
-      name: 'dataSchema',
-      value: false,
-    }
-  }
-
-  #generateProfileSchema() {
-    return {
-      id: 'profileSchema',
-      name: 'profileSchema',
-      value: false,
     }
   }
 
@@ -104,16 +89,12 @@ class Info {
   }
 
   async #getSocialIdentities() {
-    const social = new Social(this.#credentials, this.#site, this.#dataCenter)
-    const response = await social.get()
+    const socialOptions = new SocialOptions(new Social(this.#credentials, this.#site, this.#dataCenter))
+    const response = await socialOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'socialIdentities',
-        name: 'socialIdentities',
-        value: false,
-      }
+      const info = socialOptions.getOptionsDisabled()
       if (!this.#hasSocialProviders(response.providers)) {
-        info.branches = []
+        socialOptions.removeSocialProviders(info)
       }
       return Promise.resolve(info)
     } else {
@@ -122,22 +103,26 @@ class Info {
     }
   }
 
-  #getEmailTemplates() {
-    return Promise.resolve(getInfoExpectedResponse(false)[4])
+  async #getEmailTemplates() {
+    const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await emailOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
+      this.#removeUnsupportedOptions(response, info, emailOptions)
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getSmsTemplates() {
-    const smsConfiguration = new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter)
-    const response = await smsConfiguration.get()
+    const smsOptions = new SmsOptions(new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await smsOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      const info = {
-        id: 'smsTemplates',
-        name: 'smsTemplates',
-        value: false,
-        branches: [],
-      }
-      if (response.templates) {
-        delete info.branches
+      const info = smsOptions.getOptionsDisabled()
+      if (!response.templates) {
+        smsOptions.removeSmsTemplates(info)
       }
       return Promise.resolve(info)
     } else {
@@ -159,6 +144,42 @@ class Info {
       }
     }
     return atLeastOneHasConfig
+  }
+
+  #removeUnsupportedOptions(response, info, emailOptions) {
+    if (!response.emailNotifications.confirmationEmailTemplates) {
+      emailOptions.removePasswordResetConfirmation(info)
+    }
+    if (!response.impossibleTraveler) {
+      emailOptions.removeImpossibleTraveler(info)
+    }
+    if (!response.twoFactorAuth) {
+      emailOptions.removeTFAEmailVerification(info)
+    }
+    if (!response.passwordReset) {
+      emailOptions.removePasswordReset(info)
+    }
+    if (!response.doubleOptIn) {
+      emailOptions.removeDoubleOptInConfirmation(info)
+    }
+    if (!response.preferencesCenter) {
+      emailOptions.removeLitePreferencesCenter(info)
+    }
+    if (!response.emailNotifications.accountDeletedEmailTemplates) {
+      emailOptions.removeAccountDeletionConfirmation(info)
+    }
+    if (!response.emailNotifications.welcomeEmailTemplates) {
+      emailOptions.removeNewUserWelcome(info)
+    }
+    if (!response.emailVerification) {
+      emailOptions.removeEmailVerification(info)
+    }
+    if (!response.codeVerification) {
+      emailOptions.removeCodeVerification(info)
+    }
+    if (!response.magicLink) {
+      emailOptions.removeMagicLink(info)
+    }
   }
 }
 

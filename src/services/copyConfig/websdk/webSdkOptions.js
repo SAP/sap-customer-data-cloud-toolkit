@@ -1,16 +1,24 @@
 import Options from '../options'
 
 class WebSdkOptions extends Options {
-    #webSdk
+  #webSdk
 
-    constructor(webSdk) {
-        super([{ id: 'webSdk', value: true }])
-        this.#webSdk = webSdk
-    }
+  constructor(webSdk) {
+    super({
+      id: 'webSdk',
+      name: 'webSdk',
+      value: true,
+    })
+    this.#webSdk = webSdk
+  }
 
-    getConfiguration() {
-        return this.#webSdk
-    }
+  getConfiguration() {
+    return this.#webSdk
+  }
+
+  removeWebSdk(info) {
+    info.branches = []
+  }
 }
 
 export default WebSdkOptions

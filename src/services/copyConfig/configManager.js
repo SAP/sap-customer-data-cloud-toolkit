@@ -7,6 +7,8 @@ import ConfigOptions from './configOptions'
 import SchemaOptions from './schema/schemaOptions'
 import SmsOptions from './sms/smsOptions'
 import SocialOptions from './social/socialOptions'
+import EmailConfiguration from './emails/emailConfiguration'
+import EmailOptions from './emails/emailOptions'
 import WebSdkOptions from "./websdk/webSdkOptions";
 import WebSdk from "./websdk/websdk";
 
@@ -25,7 +27,7 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options) {
-    console.log(`options=${JSON.stringify(options)}`)
+    //console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
@@ -79,6 +81,7 @@ class ConfigManager {
     const originDataCenter = this.#originSiteConfiguration.dataCenter
     this.#configurations.push(new SchemaOptions(new Schema(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new EmailOptions(new EmailConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new WebSdkOptions(new WebSdk(this.#credentials, this.#originApiKey, originDataCenter)))
   }

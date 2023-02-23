@@ -20,10 +20,12 @@ describe('Schema test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
-  const schemaOptions = [
-    { id: schemaId, value: true },
-    { id: profileId, value: true },
-  ]
+  const schemaOptions = {
+    branches: [
+      { id: schemaId, value: true },
+      { id: profileId, value: true },
+    ],
+  }
 
   beforeEach(() => {
     jest.restoreAllMocks()
