@@ -3,65 +3,78 @@ import Options from '../options'
 class EmailOptions extends Options {
   #emailConfiguration
 
+
   constructor(emailConfiguration) {
+    const emailTemplates = 'emailTemplates'
+    const magicLink = 'agicLink'
+    const codeVerification = 'CodeVerification'
+    const emailVerification = 'EmailVerification'
+    const newUserWelcome = 'ewUserWelcome'
+    const accountDeletionConfirmation = 'ccountDeletionConfirmation'
+    const litePreferencesCenter = 'itePreferencesCenter'
+    const doubleOptInConfirmation = 'oubleOptInConfirmation'
+    const passwordReset = 'PasswordReset'
+    const tfaEmailVerification = 'EmailVerification'
+    const impossibleTraveler = 'mpossibleTraveler'
+    const passwordResetConfirmation = 'asswordResetConfirmation'
     super({
-      id: 'emailTemplates',
-      name: 'emailTemplates',
+      id: emailTemplates,
+      name: emailTemplates,
       value: true,
       branches: [
         {
-          id: 'magicLink',
-          name: 'MagicLink',
+          id: `m${magicLink}`,
+          name: `M${magicLink}`,
           value: true,
         },
         {
-          id: 'etCodeVerification',
-          name: 'CodeVerification',
+          id: `et${codeVerification}`,
+          name: codeVerification,
           value: true,
         },
         {
-          id: 'etEmailVerification',
-          name: 'EmailVerification',
+          id: `et${emailVerification}`,
+          name: emailVerification,
           value: true,
         },
         {
-          id: 'newUserWelcome',
-          name: 'NewUserWelcome',
+          id: `n${newUserWelcome}`,
+          name: `N${newUserWelcome}`,
           value: true,
         },
         {
-          id: 'accountDeletionConfirmation',
-          name: 'AccountDeletionConfirmation',
+          id: `a${accountDeletionConfirmation}`,
+          name: `A${accountDeletionConfirmation}`,
           value: true,
         },
         {
-          id: 'litePreferencesCenter',
-          name: 'LitePreferencesCenter',
+          id: `l${litePreferencesCenter}`,
+          name: `L${litePreferencesCenter}`,
           value: true,
         },
         {
-          id: 'doubleOptInConfirmation',
-          name: 'DoubleOptInConfirmation',
+          id: `d${doubleOptInConfirmation}`,
+          name: `D${doubleOptInConfirmation}`,
           value: true,
         },
         {
-          id: 'etPasswordReset',
-          name: 'PasswordReset',
+          id: `et${passwordReset}`,
+          name: passwordReset,
           value: true,
         },
         {
-          id: 'tfaEmailVerification',
-          name: 'TFAEmailVerification',
+          id: `tfa${tfaEmailVerification}`,
+          name: `TFA${tfaEmailVerification}`,
           value: true,
         },
         {
-          id: 'impossibleTraveler',
-          name: 'ImpossibleTraveler',
+          id: `i${impossibleTraveler}`,
+          name: `I${impossibleTraveler}`,
           value: true,
         },
         {
-          id: 'passwordResetConfirmation',
-          name: 'PasswordResetConfirmation',
+          id: `p${passwordResetConfirmation}`,
+          name: `P${passwordResetConfirmation}`,
           value: true,
         },
       ],
