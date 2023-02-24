@@ -1,46 +1,60 @@
 import { expectedSchemaResponse } from '../schema/dataTest'
-import EmailOptions from "../emails/emailOptions";
-import SchemaOptions from "../schema/schemaOptions";
+import EmailOptions from '../emails/emailOptions'
+import SchemaOptions from '../schema/schemaOptions'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
   const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
 
+  const SCREEN_SET_COLLECTION_DEFAULT = 'Default'
   const screenSets = {
     id: 'screenSets',
     name: 'screenSets',
     value: supports,
     branches: [
       {
-        id: 'default',
-        name: 'default',
+        id: SCREEN_SET_COLLECTION_DEFAULT,
+        name: SCREEN_SET_COLLECTION_DEFAULT,
         value: supports,
         branches: [
           {
-            id: 'defaultLinkAccounts',
-            name: 'defaultLinkAccounts',
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
             value: supports,
           },
           {
-            id: 'defaultLiteRegistration',
-            name: 'defaultLiteRegistration',
-            value: supports,
-          },
-        ],
-      },
-      {
-        id: 'custom',
-        name: 'custom',
-        value: supports,
-        branches: [
-          {
-            id: 'customLinkAccounts',
-            name: 'customLinkAccounts',
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
             value: supports,
           },
           {
-            id: 'customLiteRegistration',
-            name: 'customLiteRegistration',
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
+            value: supports,
+          },
+          {
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
+            value: supports,
+          },
+          {
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
+            value: supports,
+          },
+          {
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
+            value: supports,
+          },
+          {
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
+            value: supports,
+          },
+          {
+            id: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
+            name: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
             value: supports,
           },
         ],

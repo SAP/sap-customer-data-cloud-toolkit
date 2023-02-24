@@ -10,12 +10,19 @@ class Options {
   getOptionsDisabled() {
     const opt = JSON.parse(JSON.stringify(this.options))
     opt.value = false
-    if (opt.branches) {
-      for (const o of opt.branches) {
+    this.#disableOptions(opt)
+    return opt
+  }
+
+  #disableOptions(option) {
+    if (option.branches) {
+      for (const o of option.branches) {
         o.value = false
+        if (o.branches) {
+          this.#disableOptions(o)
+        }
       }
     }
-    return opt
   }
 
   setOptions(name, value) {
