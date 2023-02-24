@@ -9,7 +9,7 @@ import {
   mockedGetSocialsConfigsResponse,
   mockedSetSocialsConfigsResponse,
   dummyApiKey,
-  mockedGetEmailTemplatesConfigsResponse,
+  mockedGetEmailTemplatesConfigsResponse, mockedGetScreenSetResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -97,6 +97,7 @@ export function clickPopUpOkButton(popUpId) {
 
 export function mockGetConfigurationRequests() {
   mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
+  mockResponse(mockedGetScreenSetResponse, 'POST', 'accounts.getScreenSets')
   mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
   mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
   mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
