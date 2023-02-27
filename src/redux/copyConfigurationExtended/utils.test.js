@@ -1,7 +1,15 @@
-import { findConfiguration, propagateConfigurationState, clearConfigurationsErrors, clearTargetApiKeysErrors, addErrorToConfigurations, addErrorToTargetApiKey } from './utils'
-import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey } from './dataTest'
+import {
+  findConfiguration,
+  propagateConfigurationState,
+  clearConfigurationsErrors,
+  clearTargetSitesErrors,
+  addErrorToConfigurations,
+  addErrorToTargetApiKey,
+  isTargetSiteDuplicated,
+} from './utils'
+import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey, dummyTargetApiKey } from './dataTest'
 
-describe('copyConfigurationExtended utils test suite', () => {
+describe('copyConfigurationSlice utils test suite', () => {
   test('should find a first level configuration', () => {
     const configuration = findConfiguration(configurationsMockedResponse, 'smsTemplatesId')
     expect(configuration.name).toEqual('smsTemplates')
@@ -71,10 +79,10 @@ describe('copyConfigurationExtended utils test suite', () => {
     expect(configurationsMockedResponse[0].error).toBeDefined()
   })
 
-  test('should add a targetApiKey error', () => {
-    expect(initialStateWithTargetApiKey.targetApiKeys[0].error).toBe(undefined)
-    addErrorToTargetApiKey(initialStateWithTargetApiKey.targetApiKeys, mockedErrorsResponse)
-    expect(initialStateWithTargetApiKey.targetApiKeys[0].error).toBeDefined()
+  test('should add a target site error', () => {
+    expect(initialStateWithTargetApiKey.targetSites[0].error).toBe(undefined)
+    addErrorToTargetApiKey(initialStateWithTargetApiKey.targetSites, mockedErrorsResponse)
+    expect(initialStateWithTargetApiKey.targetSites[0].error).toBeDefined()
   })
 
   test('should clear configuration error', () => {
@@ -85,9 +93,17 @@ describe('copyConfigurationExtended utils test suite', () => {
   })
 
   test('should clear targetApiKey error', () => {
-    const targetApiKeys = initialStateWithErrors.targetApiKeys
+    const targetApiKeys = initialStateWithErrors.targetSites
     expect(targetApiKeys[0].error).toBeDefined()
-    clearTargetApiKeysErrors(targetApiKeys, mockedErrorsResponse)
+    clearTargetSitesErrors(targetApiKeys, mockedErrorsResponse)
     expect(targetApiKeys[0].error).toBe(undefined)
+  })
+
+  test('should return true if site with api key is duplicated', () => {
+    expect(isTargetSiteDuplicated(dummyTargetApiKey, initialStateWithTargetApiKey.targetSites)).toEqual(true)
+  })
+
+  test('should return false if site with api key is not duplicated', () => {
+    expect(isTargetSiteDuplicated('1234567890', initialStateWithTargetApiKey.targetSites)).toEqual(false)
   })
 })

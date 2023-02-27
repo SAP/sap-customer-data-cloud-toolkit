@@ -1,9 +1,28 @@
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import lodash from 'lodash'
 
-import { Card, CardHeader, Input, InputType, Label, Bar, Title, Text, TitleLevel, FlexBox, Button, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
+import {
+  Card,
+  CardHeader,
+  Input,
+  InputType,
+  Label,
+  Bar,
+  Title,
+  Text,
+  TitleLevel,
+  FlexBox,
+  Button,
+  ValueState,
+  BusyIndicator,
+  List,
+  CustomListItem,
+  SuggestionItem,
+  Toast,
+} from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
@@ -13,25 +32,32 @@ import MessagePopoverButton from '../../components/message-popover-button/messag
 import {
   selectConfigurations,
   getConfigurations,
-  addTargetApiKey,
+  addTargetSite,
+  removeTargetSite,
   setConfigurations,
   clearConfigurations,
   selectShowSuccessDialog,
   selectIsLoading,
-  selectTargetApiKeys,
+  selectTargetSites,
   clearTargetApiKeys,
-  getCurrentSiteInformation,
-  selectCurrentSiteInformation,
   selectErrors,
   clearErrors,
-} from '../../redux/copyConfigurationExtendend/copyConfigurationExtendendSlice'
+  getAvailableTargetSites,
+  selectAvailableTargetSites,
+  getCurrentSiteInformation,
+  getTargetSiteInformation,
+  selectCurrentSiteInformation,
+  selectShowDuplicatedWarning,
+  setShowDuplicatedWarning,
+} from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
-import { cleanTreeVerticalScrolls, areConfigurationsFilled } from './utils'
+import { cleanTreeVerticalScrolls, areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem } from './utils'
 import { getApiKey } from '../../redux/utils'
 
 import '@ui5/webcomponents-icons/dist/arrow-right.js'
+import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 
 import './copy-configuration-extended.css'
 import styles from './copy-configuration-extended.styles'
@@ -43,22 +69,26 @@ const PAGE_TITLE = 'Copy Configuration Extended'
 const CopyConfigurationExtended = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-
-  const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
+  const ref = useRef()
 
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const isLoading = useSelector(selectIsLoading)
-  const targetApiKeys = useSelector(selectTargetApiKeys)
+  const targetSites = useSelector(selectTargetSites)
   const credentials = useSelector(selectCredentials)
   const configurations = useSelector(selectConfigurations)
-  const currentSiteInformation = useSelector(selectCurrentSiteInformation)
   const errors = useSelector(selectErrors)
+  const availableTargetSites = useSelector(selectAvailableTargetSites)
+  const currentSiteInformation = useSelector(selectCurrentSiteInformation)
+  const showDuplicatedWarning = useSelector(selectShowDuplicatedWarning)
+
+  const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
+  const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
 
   useEffect(() => {
     if (areCredentialsFilled(credentials)) {
       dispatch(getConfigurations())
+      dispatch(getAvailableTargetSites())
       dispatch(getCurrentSiteInformation())
-
       cleanTreeVerticalScrolls()
     }
   }, [dispatch, credentials])
@@ -76,9 +106,40 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(clearTargetApiKeys())
     dispatch(clearErrors())
   }
-  const onTargetApiKeysInputChangeHandler = (event) => {
-    setTarketApiKeyInputValue(event.target.value)
-    dispatch(addTargetApiKey(event.target.value))
+
+  const onTargetApiKeysInputHandler = lodash.debounce((event) => {
+    const inputValue = event.target.value
+    console.log(inputValue)
+    setTarketApiKeyInputValue(inputValue)
+    setFilteredAvailableTargetApiKeys(filterTargetSites(inputValue, availableTargetSites))
+  }, 500)
+
+  const onTargetApiKeysInputKeyPressHandler = (event) => {
+    if (event.key === 'Enter') {
+      const inputValue = event.target.value
+      setTarketApiKeyInputValue(inputValue)
+      dispatch(getTargetSiteInformation(inputValue))
+    }
+  }
+
+  const onAddTargetSiteButtonClickHandler = () => {
+    dispatch(getTargetSiteInformation(tarketApiKeyInputValue))
+  }
+
+  const onSuccessDialogAfterCloseHandler = () => {
+    setTarketApiKeyInputValue('')
+    dispatch(clearConfigurations())
+    dispatch(clearTargetApiKeys())
+  }
+
+  const onTarketApiKeyDeleteHandler = (event) => {
+    dispatch(removeTargetSite(extractTargetApiKeyFromTargetSiteListItem(event.detail.item.textContent)))
+  }
+
+  const onSuggestionItemSelectHandler = (event) => {
+    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.description, availableTargetSites)
+    setTarketApiKeyInputValue(targetSite.apiKey)
+    dispatch(addTargetSite(targetSite))
   }
 
   const showSuccessMessage = () => (
@@ -94,14 +155,8 @@ const CopyConfigurationExtended = ({ t }) => {
     </DialogMessageInform>
   )
 
-  const onSuccessDialogAfterCloseHandler = () => {
-    setTarketApiKeyInputValue('')
-    dispatch(clearConfigurations())
-    dispatch(clearTargetApiKeys())
-  }
-
   const disableSaveButton = () => {
-    return targetApiKeys.length === 0 || !areConfigurationsFilled(configurations)
+    return targetSites.length === 0 || !areConfigurationsFilled(configurations)
   }
 
   const showConfigurations = () => {
@@ -137,23 +192,25 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showBusyIndicator = () => {
-    return isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
+    return isLoading || !availableTargetSites.length ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
   }
 
   const showTargetApiKeys = () => {
     return (
-      <ul>
-        {targetApiKeys.map((targetApiKey) => (
-          <li key={targetApiKey.targetApiKey}>
-            <FlexBox>
-              {/* <FlexBox direction="Row" justifyContent="Center"> */}
-              {targetApiKey.targetApiKey}
-              {targetApiKey.error ? <MessagePopoverButton message={targetApiKey.error} /> : ''}
-            </FlexBox>
-          </li>
+      <List id="selectedTargetApiKeysList" growing="Scroll" mode="Delete" indent onItemDelete={onTarketApiKeyDeleteHandler}>
+        {targetSites.map((targetSite) => (
+          <CustomListItem key={targetSite.apiKey}>
+            {targetSite.partnerName ? `${targetSite.baseDomain} - ${targetSite.apiKey} - ${targetSite.partnerName}` : `${targetSite.baseDomain} - ${targetSite.apiKey}`}
+            {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
+          </CustomListItem>
         ))}
-      </ul>
+      </List>
     )
+  }
+
+  const showDuplicatedWarningToast = () => {
+    ref.current.show()
+    dispatch(setShowDuplicatedWarning(false))
   }
 
   return (
@@ -199,23 +256,37 @@ const CopyConfigurationExtended = ({ t }) => {
                 </FlexBox>
 
                 <FlexBox direction="Column" className={classes.targetInfoContainer}>
-                  <FlexBox className={classes.destinationSiteFlexboxStyle}>
-                    <Label id="destinationSiteLabel" className="current_site">
-                      {t('COPY_CONFIGURATION_EXTENDED.DESTINATION_SITE')}
-                    </Label>
-                    <Text> {getApiKey(window.location.hash)} </Text>
-                  </FlexBox>
-
                   <FlexBox className={classes.innerFlexBoxStyle}>
                     <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
-                    <Input id="targetApiKeyInput" onInput={onTargetApiKeysInputChangeHandler} type={InputType.Text} value={tarketApiKeyInputValue}></Input>
+                    <Input
+                      showSuggestions
+                      id="targetApiKeyInput"
+                      onInput={onTargetApiKeysInputHandler}
+                      onKeyPress={onTargetApiKeysInputKeyPressHandler}
+                      type={InputType.Text}
+                      value={tarketApiKeyInputValue}
+                      className={classes.targetApiKeyInputStyle}
+                      onSuggestionItemSelect={onSuggestionItemSelectHandler}
+                    >
+                      {filteredAvailableTargetSites.map((availableTargetSite) => (
+                        <SuggestionItem
+                          key={availableTargetSite.apiKey}
+                          type="Navigation"
+                          text={availableTargetSite.baseDomain}
+                          description={availableTargetSite.apiKey}
+                          additionalText={`${availableTargetSite.partnerName} (${availableTargetSite.partnerId})`}
+                        />
+                      ))}
+                    </Input>
+                    <Button id="addTargetSiteButton" onClick={onAddTargetSiteButtonClickHandler} design="Emphasized">
+                      {t('GLOBAL.ADD')}
+                    </Button>
                   </FlexBox>
-
                   {showTargetApiKeys()}
                 </FlexBox>
               </FlexBox>
-
               {showBusyIndicator()}
+              <Toast id="duplicatedWarningToast" ref={ref} duration={5000} placement={'TopCenter'} children={t('COPY_CONFIGURATION_EXTENDED.TOAST_TEXT')} />
             </Card>
           </div>
         </div>
@@ -253,6 +324,7 @@ const CopyConfigurationExtended = ({ t }) => {
       </div>
 
       {showSuccessMessage()}
+      {showDuplicatedWarning ? showDuplicatedWarningToast() : ''}
     </>
   )
 }

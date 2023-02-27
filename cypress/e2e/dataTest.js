@@ -35,10 +35,9 @@ const copyConfigExtendendTitle = 'Copy Configuration Extended'
 const copyConfigExtendendHeaderText = 'Copy configuration and settings from the current site to multiple target sites.'
 const copyConfigCurrentSiteLabel = 'Current Site:'
 const copyConfigCurrentSiteApiKeyLabel = 'API Key:'
-const copyConfigDestinationSiteLabel = 'Destination Site:'
 const copyConfigTargetSitesApisLabel = 'Target Sites API Keys:'
 const copyConfigSuccessPopupMessage = 'OkAll selected configurations were copied successfully.'
-const dummyApiKey = '4_-DiwrECcjcMVrRyIX8aukA'
+const dummyApiKey = '4DiwrECcjcMVrRyIX8aukA'
 
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
@@ -593,6 +592,127 @@ const mockedSetSchemaErrorResponse = {
   context: `{\"dataSchemaId\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
 
+const mockedUserSitesResponse = {
+  callId: '836882df5e504aa7ae0a1bcfc5e12345',
+  context: '{"partnerId":79512345,"partnerName":"SAP Customer Data Cloud"}',
+  time: '2023-02-14T15:39:49.554Z',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  lastPageSiteId: 991294866795,
+  sites: [
+    {
+      name: 'dev.test.com',
+      apiKey: dummyApiKey,
+      tags: [],
+      datacenter: 'eu1',
+      description: 'Test',
+      siteID: 119557412345,
+      licensesAccountsEnabled: true,
+      enableTags: true,
+      enableReports: true,
+      enableCustomerInsights: true,
+      enableIdentityAccess: true,
+      enableIdentityQueryTool: true,
+      enableDeleteSite: true,
+      isGlobalSite: false,
+      globalSiteSettings: {},
+      group: {
+        masterApiKey: '3_SYpPOsuPreMfPG3iBCqHRy3CUgeouCdhYxkDwLwFnON68Pa6k2riPu1234567890',
+        isGroupMaster: false,
+      },
+    },
+  ],
+  enableCreateSite: true,
+}
+
+const mockedGetPartnersResponse = {
+  callId: 'da7f6c2b4f814745b869e798e5412345',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-14T15:39:48.773Z',
+  partners: [
+    {
+      partner: {
+        PartnerID: 79512345,
+        Name: 'SAP Customer Data Cloud',
+        Enabled: true,
+        Invalidated: false,
+        Homepage: 'www.gigya.com',
+        IsPaying: false,
+        IsCDP: false,
+        Created: '2020-03-09T14:43:52',
+        LastUpdated: '2022-07-22T17:20:32',
+        DefaultDataCenter: 'eu1',
+        Licenses: {
+          ds: {
+            Enabled: true,
+          },
+          gm: {
+            Enabled: false,
+          },
+          b2b: {
+            Enabled: true,
+          },
+          cdp: {
+            Enabled: false,
+          },
+          ids: {
+            Enabled: true,
+          },
+          chat: {
+            Enabled: false,
+          },
+          ecpm: {
+            Enabled: true,
+          },
+          audit: {
+            Enabled: true,
+          },
+          nexus: {
+            Enabled: false,
+            Features: [],
+          },
+          samlIdp: {
+            Enabled: true,
+          },
+          accounts: {
+            Enabled: true,
+            Features: ['insights'],
+          },
+          comments: {
+            Enabled: true,
+          },
+          statusPage: {
+            Enabled: true,
+          },
+          liteAccount: {
+            Enabled: true,
+          },
+          subscriptions: {
+            Enabled: true,
+          },
+          disableAccountLoggedInWebhook: {
+            Enabled: false,
+          },
+        },
+        IsMigratedToSoa: true,
+        IsSapCustomer: true,
+        TenantID: 'test',
+        AuditRetention: 12,
+      },
+      errorCode: 0,
+      statusCode: 200,
+      errorMessage: 'OK',
+    },
+  ],
+}
+
+const expectedDuplicatedToastMessage = 'The Site you are adding is already in the Target Sites List!'
+
 const mockedGetEmailTemplatesConfigsResponse = {
   callId: '83114b1122a742228864025eec2e34f4',
   context: '{"id":"emailTemplates","targetApiKey":"4_3lggIh_zbdldOdiTvrKTyA"}',
@@ -783,7 +903,6 @@ export {
   copyConfigExtendendHeaderText,
   copyConfigCurrentSiteLabel,
   copyConfigCurrentSiteApiKeyLabel,
-  copyConfigDestinationSiteLabel,
   copyConfigTargetSitesApisLabel,
   dummyApiKey,
   mockedSetSchemaResponse,
@@ -793,5 +912,8 @@ export {
   mockedSetSocialsConfigsResponse,
   mockedSetSchemaErrorResponse,
   currentSiteName,
+  mockedUserSitesResponse,
+  mockedGetPartnersResponse,
+  expectedDuplicatedToastMessage,
   mockedGetEmailTemplatesConfigsResponse,
 }

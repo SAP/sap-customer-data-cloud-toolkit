@@ -41,10 +41,10 @@ export const clearConfigurationsErrors = (configurations) => {
   }
 }
 
-export const clearTargetApiKeysErrors = (targetApiKeys) => {
-  targetApiKeys.forEach((targetApiKey) => {
-    if (targetApiKey.error) {
-      targetApiKey.error = undefined
+export const clearTargetSitesErrors = (targetSites) => {
+  targetSites.forEach((targetSite) => {
+    if (targetSite.error) {
+      targetSite.error = undefined
     }
   })
 }
@@ -59,11 +59,11 @@ export const addErrorToConfigurations = (configurations, errors) => {
   spreadErrors(configurations)
 }
 
-export const addErrorToTargetApiKey = (targetApiKeys, errors) => {
-  for (const targetApiKey of targetApiKeys) {
-    const targetApiKeyErrors = errors.filter((error) => error.context.targetApiKey === targetApiKey.targetApiKey)
+export const addErrorToTargetApiKey = (targetSites, errors) => {
+  for (const targetSite of targetSites) {
+    const targetApiKeyErrors = errors.filter((error) => error.context.targetApiKey === targetSite.apiKey)
     if (targetApiKeyErrors.length !== 0) {
-      targetApiKey.error = targetApiKeyErrors
+      targetSite.error = targetApiKeyErrors
     }
   }
 }
@@ -102,4 +102,8 @@ const mergeBranchErrors = (branch) => {
 
 const branchHasErrors = (branch) => {
   return branch.find((configuration) => configuration.error !== undefined) !== undefined
+}
+
+export const isTargetSiteDuplicated = (apiKey, targetSites) => {
+  return targetSites.filter((targetSite) => targetSite.apiKey === apiKey)[0] !== undefined
 }
