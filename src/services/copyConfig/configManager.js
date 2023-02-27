@@ -9,8 +9,10 @@ import SmsOptions from './sms/smsOptions'
 import SocialOptions from './social/socialOptions'
 import EmailConfiguration from './emails/emailConfiguration'
 import EmailOptions from './emails/emailOptions'
-import WebSdkOptions from "./websdk/webSdkOptions";
-import WebSdk from "./websdk/websdk";
+import WebSdkOptions from './websdk/webSdkOptions'
+import WebSdk from './websdk/websdk'
+import ScreenSetOptions from './screenset/screensetOptions'
+import ScreenSet from './screenset/screenset'
 
 class ConfigManager {
   #configurations = []
@@ -80,6 +82,7 @@ class ConfigManager {
   #initConfigurations() {
     const originDataCenter = this.#originSiteConfiguration.dataCenter
     this.#configurations.push(new SchemaOptions(new Schema(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new ScreenSetOptions(new ScreenSet(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new EmailOptions(new EmailConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))

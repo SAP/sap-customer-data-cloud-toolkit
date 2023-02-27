@@ -4,11 +4,60 @@ class ScreenSetOptions extends Options {
   #screenSet
 
   constructor(screenSet) {
+    const SCREEN_SET_COLLECTION_DEFAULT = 'Default'
     super({
       id: 'screenSets',
       name: 'screenSets',
       value: true,
-      branches: [],
+      branches: [
+        {
+          id: SCREEN_SET_COLLECTION_DEFAULT,
+          name: SCREEN_SET_COLLECTION_DEFAULT,
+          value: true,
+          branches: [
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
+              value: true,
+            },
+            {
+              id: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
+              name: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
+              value: true,
+            },
+          ],
+        },
+      ],
     })
     this.#screenSet = screenSet
   }
@@ -18,6 +67,7 @@ class ScreenSetOptions extends Options {
   }
 
   addCollection(screenSets) {
+    this.options.branches = []
     if (screenSets.length === 0) {
       return
     }

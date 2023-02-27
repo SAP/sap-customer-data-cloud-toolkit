@@ -185,10 +185,10 @@ export const expectedScreenSetResponse = {
   ],
 }
 
-export function getScreenSetExpectedBody(apiKey) {
+export function getScreenSetExpectedBody(apiKey, index) {
   const expectedBody = JSON.parse(JSON.stringify(expectedScreenSetResponse))
-  expectedBody.context = { targetApiKey: apiKey, id: expectedScreenSetResponse.screenSets[0].screenSetID }
+  expectedBody.context = { targetApiKey: apiKey, id: expectedScreenSetResponse.screenSets[index].screenSetID }
   delete expectedBody.rawTranslations
   delete expectedBody.compressionType
-  return expectedBody.screenSets[0]
+  return expectedBody.screenSets[index]
 }

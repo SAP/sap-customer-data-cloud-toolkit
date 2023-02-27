@@ -85,9 +85,11 @@ class ScreenSet {
 
   async #copyScreenSets(destinationSite, dataCenter, response, options) {
     const promises = []
-    for (const screenSetInfo of options.branches) {
-      if (screenSetInfo.value) {
-        promises.push(this.#copyScreenSet(destinationSite, screenSetInfo.name, dataCenter, response))
+    for (const screenSetCollectionInfo of options.branches) {
+      for (const screenSetInfo of screenSetCollectionInfo.branches) {
+        if (screenSetInfo.value) {
+          promises.push(this.#copyScreenSet(destinationSite, screenSetInfo.name, dataCenter, response))
+        }
       }
     }
     return Promise.all(promises)
@@ -99,7 +101,7 @@ class ScreenSet {
   }
 
   #getScreenSet(screenSetID, response) {
-    return response.screenSets.find(obj => obj.screenSetID === screenSetID)
+    return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 }
 
