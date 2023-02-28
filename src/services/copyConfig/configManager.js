@@ -3,7 +3,6 @@ import Schema from './schema/schema'
 import Social from './social/social'
 import SmsConfiguration from './sms/smsConfiguration'
 import SiteConfigurator from '../configurator/siteConfigurator'
-import ConfigOptions from './configOptions'
 import SchemaOptions from './schema/schemaOptions'
 import SmsOptions from './sms/smsOptions'
 import SocialOptions from './social/socialOptions'
@@ -64,9 +63,7 @@ class ConfigManager {
     try {
       await this.#init()
       const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
-      const config = await info.get()
-      this.#setScreenSetOptions(config)
-      return config
+      return info.get()
     } catch (error) {
       return Promise.reject(Array.isArray(error) ? error : [error])
     }
@@ -97,22 +94,14 @@ class ConfigManager {
 
   #getConfigurationsToCopy(options) {
     const filteredConfigurations = []
-    const configOptions = new ConfigOptions(options)
     for (const configuration of this.#configurations) {
-      if (configOptions.shouldBeCopied(configuration)) {
+      const option = options.find((opt) => opt.id === configuration.getId())
+      if (option) {
+        configuration.setOptions(option)
         filteredConfigurations.push(configuration)
       }
     }
     return filteredConfigurations
-  }
-
-  #setScreenSetOptions(options) {
-    const screenSetOptionsIndex = 1
-    const screenSetOptions = options.find((config) => config.id === 'screenSets')
-    if (screenSetOptions) {
-      this.#configurations[screenSetOptionsIndex].setOptions(JSON.parse(JSON.stringify(screenSetOptions)))
-      this.#configurations[screenSetOptionsIndex].enableAllOptions()
-    }
   }
 }
 

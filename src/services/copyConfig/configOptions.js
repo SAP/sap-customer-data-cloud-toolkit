@@ -21,7 +21,7 @@ class ConfigOptions {
     if (this.#isSupported(option.name)) {
       return true
     } else {
-      configuration.setOptions(option.name, false)
+      configuration.setOption(option.name, false)
       return false
     }
   }

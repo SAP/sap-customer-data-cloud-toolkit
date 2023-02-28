@@ -30,7 +30,11 @@ class Options {
     this.#setOptionsValue(this.options, true)
   }
 
-  setOptions(name, value) {
+  setOptions(options) {
+    this.options = options
+  }
+
+  setOption(name, value) {
     if (this.getOptions().branches) {
       for (const option of this.getOptions().branches) {
         if (option.name === name) {
@@ -57,6 +61,10 @@ class Options {
       }
       return false
     }
+  }
+
+  getId() {
+    return this.options.id
   }
 }
 

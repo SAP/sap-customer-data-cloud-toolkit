@@ -35,7 +35,6 @@ class ScreenSet {
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
-    debugger
     if (response.errorCode === 0) {
       response = await this.#copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
     }
