@@ -1,3 +1,5 @@
+import { getApiKey } from '../utils'
+
 export const findConfiguration = (configurations, checkBoxId) => {
   for (const configuration of configurations) {
     if (configuration.id === checkBoxId) {
@@ -106,4 +108,8 @@ const branchHasErrors = (branch) => {
 
 export const isTargetSiteDuplicated = (apiKey, targetSites) => {
   return targetSites.filter((targetSite) => targetSite.apiKey === apiKey)[0] !== undefined
+}
+
+export const sourceEqualsTarget = (sourceApiKey) => {
+  return sourceApiKey === getApiKey(window.location.hash)
 }

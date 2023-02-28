@@ -46,7 +46,7 @@ class SiteFinder {
   async #getPartnerSites(partners) {
     const promises = []
     for (const partner of partners) {
-      if (partner.errorCode === 0) {
+      if (partner.errorCode === 0 && !partner.partner.IsCDP) {
         promises.push(this.#getPagedUserEffectiveSites(partner.partner))
       }
     }

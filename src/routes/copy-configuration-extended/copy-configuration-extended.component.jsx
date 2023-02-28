@@ -1,6 +1,6 @@
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import lodash from 'lodash'
 
@@ -21,7 +21,7 @@ import {
   List,
   CustomListItem,
   SuggestionItem,
-  Toast,
+  MessageStrip,
 } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
@@ -47,9 +47,11 @@ import {
   getCurrentSiteInformation,
   getTargetSiteInformation,
   selectCurrentSiteInformation,
-  selectShowDuplicatedWarning,
-  setShowDuplicatedWarning,
+  selectApiCardError,
+  clearApiCardError,
+  selectIsTargetInfoLoading,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
+
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
@@ -69,7 +71,6 @@ const PAGE_TITLE = 'Copy Configuration Extended'
 const CopyConfigurationExtended = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const ref = useRef()
 
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const isLoading = useSelector(selectIsLoading)
@@ -79,7 +80,8 @@ const CopyConfigurationExtended = ({ t }) => {
   const errors = useSelector(selectErrors)
   const availableTargetSites = useSelector(selectAvailableTargetSites)
   const currentSiteInformation = useSelector(selectCurrentSiteInformation)
-  const showDuplicatedWarning = useSelector(selectShowDuplicatedWarning)
+  const apiCardError = useSelector(selectApiCardError)
+  const isTargetInfoLoading = useSelector(selectIsTargetInfoLoading)
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
@@ -119,11 +121,13 @@ const CopyConfigurationExtended = ({ t }) => {
       const inputValue = event.target.value
       setTarketApiKeyInputValue(inputValue)
       dispatch(getTargetSiteInformation(inputValue))
+      setTarketApiKeyInputValue('')
     }
   }
 
   const onAddTargetSiteButtonClickHandler = () => {
     dispatch(getTargetSiteInformation(tarketApiKeyInputValue))
+    setTarketApiKeyInputValue('')
   }
 
   const onSuccessDialogAfterCloseHandler = () => {
@@ -138,7 +142,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const onSuggestionItemSelectHandler = (event) => {
     const targetSite = getTargetSiteByTargetApiKey(event.detail.item.description, availableTargetSites)
-    setTarketApiKeyInputValue(targetSite.apiKey)
+    setTarketApiKeyInputValue('')
     dispatch(addTargetSite(targetSite))
   }
 
@@ -198,19 +202,35 @@ const CopyConfigurationExtended = ({ t }) => {
   const showTargetApiKeys = () => {
     return (
       <List id="selectedTargetApiKeysList" growing="Scroll" mode="Delete" indent onItemDelete={onTarketApiKeyDeleteHandler}>
-        {targetSites.map((targetSite) => (
-          <CustomListItem key={targetSite.apiKey}>
-            {targetSite.partnerName ? `${targetSite.baseDomain} - ${targetSite.apiKey} - ${targetSite.partnerName}` : `${targetSite.baseDomain} - ${targetSite.apiKey}`}
-            {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
-          </CustomListItem>
-        ))}
+        {targetSites.map((targetSite) => {
+          console.log(targetSite)
+          return (
+            <CustomListItem key={targetSite.apiKey}>
+              {targetSite.partnerName ? `${targetSite.baseDomain} - ${targetSite.apiKey} - ${targetSite.partnerName}` : `${targetSite.baseDomain} - ${targetSite.apiKey}`}
+              {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
+            </CustomListItem>
+          )
+        })}
       </List>
     )
   }
 
-  const showDuplicatedWarningToast = () => {
-    ref.current.show()
-    dispatch(setShowDuplicatedWarning(false))
+  const onMessageStripCloseHandler = () => {
+    dispatch(clearApiCardError())
+  }
+
+  const showMessageStripError = () => {
+    return apiCardError ? (
+      <MessageStrip id="messageStripError" design="Negative" onClose={onMessageStripCloseHandler}>
+        {apiCardError.errorMessage}
+      </MessageStrip>
+    ) : (
+      ''
+    )
+  }
+
+  const showGetTargetInfoBusyIndicator = () => {
+    return isTargetInfoLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
   }
 
   return (
@@ -282,11 +302,12 @@ const CopyConfigurationExtended = ({ t }) => {
                       {t('GLOBAL.ADD')}
                     </Button>
                   </FlexBox>
+                  {showGetTargetInfoBusyIndicator()}
+                  {showMessageStripError()}
                   {showTargetApiKeys()}
                 </FlexBox>
               </FlexBox>
               {showBusyIndicator()}
-              <Toast id="duplicatedWarningToast" ref={ref} duration={5000} placement={'TopCenter'} children={t('COPY_CONFIGURATION_EXTENDED.TOAST_TEXT')} />
             </Card>
           </div>
         </div>
@@ -324,7 +345,6 @@ const CopyConfigurationExtended = ({ t }) => {
       </div>
 
       {showSuccessMessage()}
-      {showDuplicatedWarning ? showDuplicatedWarningToast() : ''}
     </>
   )
 }

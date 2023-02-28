@@ -142,6 +142,28 @@ export const expectedGetPartnersResponseOk = {
       statusCode: 200,
       errorMessage: 'OK',
     },
+    {
+      partner: {
+        PartnerID: 33333333,
+        Name: 'SAP Customer Data P',
+        Enabled: true,
+        Invalidated: false,
+        Homepage: '',
+        IsPaying: true,
+        IsCDP: true,
+        Created: '2022-05-17T09:56:43',
+        LastUpdated: '2022-05-18T13:10:27',
+        DefaultDataCenter: 'eu1',
+        Licenses: {},
+        IsMigratedToSoa: true,
+        IsSapCustomer: false,
+        TenantID: 'b2b-internal',
+        AuditRetention: 12,
+      },
+      errorCode: 0,
+      statusCode: 200,
+      errorMessage: 'OK',
+    },
   ],
 }
 
