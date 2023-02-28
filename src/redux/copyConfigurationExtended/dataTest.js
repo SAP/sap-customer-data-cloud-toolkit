@@ -39,12 +39,13 @@ export const configurationsMockedResponse = [
 export const initialState = {
   configurations: [],
   errors: [],
+  apiCardError: undefined,
   isLoading: false,
   targetSites: [],
   showSuccessMessage: false,
   availableTargetSites: [],
   currentSiteInformation: {},
-  showDuplicatedWarning: false,
+  isTargetInfoLoading: false,
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
@@ -139,3 +140,17 @@ export const getUserSitesResponse = [
     dataCenter: 'eu1',
   },
 ]
+
+export const duplicatedWarningMessage = 'The Site you are adding is already in the Target Sites List!'
+
+export const initialStateWithApiCardError = {
+  configurations: [],
+  errors: [],
+  apiCardError: { errorMessage: duplicatedWarningMessage },
+  isLoading: false,
+  targetSites: [],
+  showSuccessMessage: false,
+  availableTargetSites: [],
+  currentSiteInformation: {},
+  isTargetInfoLoading: false,
+}

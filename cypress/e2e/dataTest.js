@@ -90,6 +90,7 @@ const siteConfigResponse = {
   statusReason: 'OK',
   time: '2023-01-20T17:50:26.196Z',
   baseDomain: 'dev.cdc-tools',
+  context: { targetApiKey: 'test' },
   dataCenter: 'eu1',
   trustedSiteURLs: ['*.dev.cdc-tools/*', 'dev.cdc-tools/*'],
   tags: [],
@@ -607,7 +608,7 @@ const mockedUserSitesResponse = {
       apiKey: dummyApiKey,
       tags: [],
       datacenter: 'eu1',
-      description: 'Test',
+      description: 'test',
       siteID: 119557412345,
       licensesAccountsEnabled: true,
       enableTags: true,
@@ -711,7 +712,7 @@ const mockedGetPartnersResponse = {
   ],
 }
 
-const expectedDuplicatedToastMessage = 'The Site you are adding is already in the Target Sites List!'
+const expectedDuplicatedMessage = 'The Site you are adding is already in the Target Sites List!'
 
 const mockedGetEmailTemplatesConfigsResponse = {
   callId: '83114b1122a742228864025eec2e34f4',
@@ -914,6 +915,6 @@ export {
   currentSiteName,
   mockedUserSitesResponse,
   mockedGetPartnersResponse,
-  expectedDuplicatedToastMessage,
+  expectedDuplicatedMessage,
   mockedGetEmailTemplatesConfigsResponse,
 }

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import copyConfigurationExtendedReducer, {
   addTargetSite,
   removeTargetSite,
@@ -10,7 +14,7 @@ import copyConfigurationExtendedReducer, {
   getAvailableTargetSites,
   getCurrentSiteInformation,
   getTargetSiteInformation,
-  setShowDuplicatedWarning,
+  clearApiCardError,
 } from './copyConfigurationExtendedSlice'
 
 import {
@@ -26,6 +30,8 @@ import {
   getUserSitesResponse,
   siteConfigResponse,
   expectedTargetSite,
+  duplicatedWarningMessage,
+  initialStateWithApiCardError,
 } from './dataTest'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
@@ -36,15 +42,15 @@ describe('copyConfigurationExtendedSlice test suite', () => {
   test('should add a target site', () => {
     const newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
     expect(newState.targetSites[0]).toEqual(siteConfigResponse)
-    expect(newState.showDuplicatedWarning).toEqual(false)
+    expect(newState.apiCardError).toBeUndefined()
   })
 
-  test('should update showDuplicatedWarning when adding a duplicated target site', () => {
+  test('should update apiCardError when adding a duplicated target site', () => {
     let newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
     newState = copyConfigurationExtendedReducer(newState, addTargetSite(siteConfigResponse))
     expect(newState.targetSites.length).toEqual(1)
     expect(newState.targetSites[0]).toEqual(siteConfigResponse)
-    expect(newState.showDuplicatedWarning).toEqual(true)
+    expect(newState.apiCardError.errorMessage).toEqual(duplicatedWarningMessage)
   })
 
   test('should remove a target site', () => {
@@ -82,6 +88,11 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(initialStateWithTargetApiKey.targetSites.length).toEqual(1)
     const newState = copyConfigurationExtendedReducer(initialStateWithTargetApiKey, clearTargetApiKeys())
     expect(newState.targetSites.length).toEqual(0)
+  })
+
+  test('should clear apiCardError', () => {
+    const newState = copyConfigurationExtendedReducer(initialStateWithApiCardError, clearApiCardError())
+    expect(newState.apiCardError).toBeUndefined()
   })
 
   test('should update state when getConfigurations is pending', () => {
@@ -150,7 +161,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.availableTargetSites).toEqual([])
-    expect(newState.errors).toEqual([mockedErrorsResponse])
+    expect(newState.apiCardError).toEqual(mockedErrorsResponse)
   })
 
   test('should update state when getCurrentSiteInformation is fulfilled', () => {
@@ -173,19 +184,14 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.targetSites[0]).toEqual(expectedTargetSite)
     expect(newState.isLoading).toEqual(false)
-    expect(newState.showDuplicatedWarning).toEqual(false)
+    expect(newState.apiCardError).toBeUndefined()
   })
 
   test('should update state when getTargetSiteInformation is rejected', () => {
     const action = getTargetSiteInformation.rejected('', '', '', mockedErrorsResponse)
     const newState = copyConfigurationExtendedReducer(initialState, action)
-    expect(newState.errors).toEqual([mockedErrorsResponse])
+    expect(newState.apiCardError).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
-  })
-
-  test('should set showDuplicatedWarning to true', () => {
-    const newState = copyConfigurationExtendedReducer(initialState, setShowDuplicatedWarning(true))
-    expect(newState.showDuplicatedWarning).toEqual(true)
   })
 })

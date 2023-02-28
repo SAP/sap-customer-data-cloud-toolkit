@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import ConfigManager from '../../services/copyConfig/configManager'
 import SiteFinder from '../../services/search/siteFinder'
 
+import i18n from '../../i18n'
+
 import { getApiKey } from '../utils'
 import {
   findConfiguration,
@@ -12,6 +14,7 @@ import {
   addErrorToConfigurations,
   addErrorToTargetApiKey,
   isTargetSiteDuplicated,
+  sourceEqualsTarget,
 } from './utils'
 
 const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtended'
@@ -26,21 +29,26 @@ export const copyConfigurationExtendedSlice = createSlice({
   initialState: {
     configurations: [],
     errors: [],
+    apiCardError: undefined,
     isLoading: false,
     targetSites: [],
     showSuccessMessage: false,
     availableTargetSites: [],
     currentSiteInformation: {},
-    showDuplicatedWarning: false,
+    isTargetInfoLoading: false,
   },
 
   reducers: {
     addTargetSite(state, action) {
-      if (!isTargetSiteDuplicated(action.payload.apiKey, state.targetSites)) {
-        state.targetSites.push(action.payload)
-        state.showDuplicatedWarning = false
+      state.apiCardError = undefined
+      if (sourceEqualsTarget(action.payload.apiKey)) {
+        state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.SOURCE_EQUALS_TARGET_WARNING_TEXT') }
       } else {
-        state.showDuplicatedWarning = true
+        if (!isTargetSiteDuplicated(action.payload.apiKey, state.targetSites)) {
+          state.targetSites.push(action.payload)
+        } else {
+          state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.DUPLICATED_WARNING_TEXT') }
+        }
       }
     },
     removeTargetSite(state, action) {
@@ -57,14 +65,15 @@ export const copyConfigurationExtendedSlice = createSlice({
     },
     clearErrors(state) {
       state.errors = []
+      state.apiCardError = undefined
       clearConfigurationsErrors(state.configurations)
       clearTargetSitesErrors(state.targetSites)
     },
     clearTargetApiKeys(state) {
       state.targetSites = []
     },
-    setShowDuplicatedWarning(state, action) {
-      state.showDuplicatedWarning = action.payload
+    clearApiCardError(state) {
+      state.apiCardError = undefined
     },
   },
   extraReducers: (builder) => {
@@ -108,12 +117,12 @@ export const copyConfigurationExtendedSlice = createSlice({
     })
     builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
       state.isLoading = false
-      state.availableTargetSites = action.payload
+      state.availableTargetSites = action.payload.filter((site) => site.apiKey !== getApiKey(window.location.hash))
     })
     builder.addCase(getAvailableTargetSites.rejected, (state, action) => {
       state.isLoading = false
       state.availableTargetSites = []
-      state.errors = [action.payload]
+      state.apiCardError = action.payload
     })
     builder.addCase(getCurrentSiteInformation.fulfilled, (state, action) => {
       state.isLoading = false
@@ -124,25 +133,32 @@ export const copyConfigurationExtendedSlice = createSlice({
       state.showSuccessMessage = false
       state.errors = [action.payload]
     })
+    builder.addCase(getTargetSiteInformation.pending, (state) => {
+      state.isTargetInfoLoading = true
+    })
     builder.addCase(getTargetSiteInformation.fulfilled, (state, action) => {
-      state.isLoading = false
-      if (!isTargetSiteDuplicated(action.payload.context.targetApiKey, state.targetSites)) {
-        state.targetSites.push({
-          baseDomain: action.payload.baseDomain,
-          apiKey: action.payload.context.targetApiKey,
-          dataCenter: action.payload.dataCenter,
-          partnerName: action.payload.partnerName,
-          partnerId: action.payload.partnerId,
-        })
-        state.showDuplicatedWarning = false
+      state.isTargetInfoLoading = false
+      state.apiCardError = undefined
+      if (sourceEqualsTarget(action.payload.context.targetApiKey)) {
+        state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.SOURCE_EQUALS_TARGET_WARNING_TEXT') }
       } else {
-        state.showDuplicatedWarning = true
+        if (!isTargetSiteDuplicated(action.payload.context.targetApiKey, state.targetSites)) {
+          state.targetSites.push({
+            baseDomain: action.payload.baseDomain,
+            apiKey: action.payload.context.targetApiKey,
+            dataCenter: action.payload.dataCenter,
+            partnerName: action.payload.partnerName,
+            partnerId: action.payload.partnerId,
+          })
+        } else {
+          state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.DUPLICATED_WARNING_TEXT') }
+        }
       }
     })
     builder.addCase(getTargetSiteInformation.rejected, (state, action) => {
       state.showSuccessMessage = false
-      state.isLoading = false
-      state.errors = [action.payload]
+      state.isTargetInfoLoading = false
+      state.apiCardError = action.payload
     })
   },
 })
@@ -202,7 +218,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
   }
 })
 
-export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, setShowDuplicatedWarning } =
+export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, clearApiCardError } =
   copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations
@@ -219,6 +235,8 @@ export const selectAvailableTargetSites = (state) => state.copyConfigurationExte
 
 export const selectCurrentSiteInformation = (state) => state.copyConfigurationExtended.currentSiteInformation
 
-export const selectShowDuplicatedWarning = (state) => state.copyConfigurationExtended.showDuplicatedWarning
+export const selectApiCardError = (state) => state.copyConfigurationExtended.apiCardError
+
+export const selectIsTargetInfoLoading = (state) => state.copyConfigurationExtended.isTargetInfoLoading
 
 export default copyConfigurationExtendedSlice.reducer
