@@ -35,6 +35,7 @@ class ScreenSet {
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
+    debugger
     if (response.errorCode === 0) {
       response = await this.#copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
     }
@@ -57,10 +58,10 @@ class ScreenSet {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters['screenSetID'] = JSON.stringify(body.screenSetID)
-    parameters['html'] = JSON.stringify(body.html)
+    parameters['screenSetID'] = body.screenSetID
+    parameters['html'] = body.html
     if (body.css) {
-      parameters['css'] = JSON.stringify(body.css)
+      parameters['css'] = body.css
     }
     if (body.javascript) {
       parameters['javascript'] = JSON.stringify(body.javascript)
@@ -80,7 +81,7 @@ class ScreenSet {
   }
 
   static getSetScreenSetEndpoint() {
-    return `${ScreenSet.#NAMESPACE}.setScreenSets`
+    return `${ScreenSet.#NAMESPACE}.setScreenSet`
   }
 
   async #copyScreenSets(destinationSite, dataCenter, response, options) {

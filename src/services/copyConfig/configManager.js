@@ -48,7 +48,11 @@ class ConfigManager {
       const targetSiteConfiguration = await this.getSiteInformation(targetApiKey)
       const configurationsToCopy = this.#getConfigurationsToCopy(options)
       for (const config of configurationsToCopy) {
-        responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
+        try {
+          responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
+        } catch (error) {
+          responses.push(error)
+        }
       }
     } catch (error) {
       responses.push(error)
@@ -60,9 +64,11 @@ class ConfigManager {
     try {
       await this.#init()
       const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
-      return info.get()
+      const config = await info.get()
+      this.#setScreenSetOptions(config)
+      return config
     } catch (error) {
-      return Promise.reject([error])
+      return Promise.reject(Array.isArray(error) ? error : [error])
     }
   }
 
@@ -98,6 +104,15 @@ class ConfigManager {
       }
     }
     return filteredConfigurations
+  }
+
+  #setScreenSetOptions(options) {
+    const screenSetOptionsIndex = 1
+    const screenSetOptions = options.find((config) => config.id === 'screenSets')
+    if (screenSetOptions) {
+      this.#configurations[screenSetOptionsIndex].setOptions(JSON.parse(JSON.stringify(screenSetOptions)))
+      this.#configurations[screenSetOptionsIndex].enableAllOptions()
+    }
   }
 }
 

@@ -66,6 +66,10 @@ class ScreenSetOptions extends Options {
     return this.#screenSet
   }
 
+  setOptions(options) {
+    this.options = options
+  }
+
   addCollection(screenSets) {
     this.options.branches = []
     if (screenSets.length === 0) {
