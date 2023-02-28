@@ -5,7 +5,7 @@ import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext } from '../dataTest'
 import ScreenSet from './screenset'
-import ScreenSetOptions from './screensetOptions'
+import { getInfoExpectedResponse } from '../info/dataTest'
 
 jest.mock('axios')
 
@@ -15,7 +15,7 @@ describe('ScreenSets test suite', () => {
   const dataCenter = dataCenterConfiguration.dataCenter
   const screenSet = new ScreenSet(credentials, apiKey, dataCenter)
   const screenSetId = expectedScreenSetResponse.screenSets[0].screenSetID
-  const screenSetOptions = new ScreenSetOptions(screenSet).getOptions()
+  const screenSetOptions = getInfoExpectedResponse(true)[1]
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -77,7 +77,7 @@ describe('ScreenSets test suite', () => {
   })
 
   test('copy single screenset successfully', async () => {
-    const screenSetSingleOptions = new ScreenSetOptions(screenSet).getOptionsDisabled()
+    const screenSetSingleOptions = getInfoExpectedResponse(false)[1]
     screenSetSingleOptions.branches[0].branches[0].value = true
     let spy = jest.spyOn(screenSet, 'set')
     axios.mockResolvedValueOnce({ data: expectedScreenSetResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
