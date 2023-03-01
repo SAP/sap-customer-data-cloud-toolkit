@@ -8,10 +8,10 @@ jest.mock('axios')
 jest.setTimeout(10000)
 
 describe('Web SDK test suite', () => {
-  const webSdk = new WebSdk(credentials.userKey, credentials.secret, 'apiKey', 'us1')
-
   const targetDataCenter = 'us1'
   const targetApiKey = 'targetApiKey'
+
+  const webSdk = new WebSdk(credentials, targetApiKey, 'us1')
 
   test('copy web sdk successfully', async () => {
     axios.mockResolvedValueOnce({ data: WebSDKTestData.getSiteConfig }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, targetApiKey) })

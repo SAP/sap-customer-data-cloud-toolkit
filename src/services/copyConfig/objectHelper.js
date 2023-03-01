@@ -57,6 +57,8 @@ export function stringToJson(obj, property) {
       }
     }
   } else {
-    obj[property] = JSON.parse(obj[property])
+    if(typeof obj[property] === 'string') {
+      obj[property] = JSON.parse(obj[property])
+    }
   }
 }

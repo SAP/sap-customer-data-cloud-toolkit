@@ -54,7 +54,6 @@ class SiteConfigurator {
     parameters.secret = secret
     parameters.includeSiteGroupConfig = true
     parameters.includeGlobalConf = true
-    parameters.context = JSON.stringify({ id: 'webSdk', targetApiKey: apiKey })
     return parameters
   }
 }
