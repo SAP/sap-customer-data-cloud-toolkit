@@ -46,7 +46,7 @@ export function getInfoExpectedResponse(supports) {
         value: supports,
       },
       {
-        id: 'webSdk',
+        id: 'pWebSdk',
         name: 'webSdk',
         value: supports,
       },
