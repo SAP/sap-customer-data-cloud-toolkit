@@ -27,6 +27,7 @@ const GET_TARGET_SITE_INFORMATION_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_
 export const copyConfigurationExtendedSlice = createSlice({
   name: COPY_CONFIGURATION_EXTENDED_STATE_NAME,
   initialState: {
+    currentSiteApiKey: getApiKey(window.location.hash),
     configurations: [],
     errors: [],
     apiCardError: undefined,
@@ -74,6 +75,9 @@ export const copyConfigurationExtendedSlice = createSlice({
     },
     clearApiCardError(state) {
       state.apiCardError = undefined
+    },
+    updateCurrentSiteApiKey(state) {
+      state.currentSiteApiKey = getApiKey(window.location.hash)
     },
   },
   extraReducers: (builder) => {
@@ -166,8 +170,10 @@ export const copyConfigurationExtendedSlice = createSlice({
 export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
+
   try {
-    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getConfiguration()
+    return await new ConfigManager(credentials, currentSiteApiKey).getConfiguration()
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -176,8 +182,10 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
 export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
+
   try {
-    return await new ConfigManager(credentials, getApiKey(window.location.hash)).copy(
+    return await new ConfigManager(credentials, currentSiteApiKey).copy(
       state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
       state.copyConfigurationExtended.configurations
     )
@@ -189,9 +197,10 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
 export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFORMATION_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
 
   try {
-    return await new ConfigManager(credentials, getApiKey(window.location.hash)).getSiteInformation(getApiKey(window.location.hash))
+    return await new ConfigManager(credentials, currentSiteApiKey).getSiteInformation(currentSiteApiKey)
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -218,7 +227,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
   }
 })
 
-export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, clearApiCardError } =
+export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, clearApiCardError, updateCurrentSiteApiKey } =
   copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations
@@ -238,5 +247,7 @@ export const selectCurrentSiteInformation = (state) => state.copyConfigurationEx
 export const selectApiCardError = (state) => state.copyConfigurationExtended.apiCardError
 
 export const selectIsTargetInfoLoading = (state) => state.copyConfigurationExtended.isTargetInfoLoading
+
+export const selectCurrentSiteApiKey = (state) => state.copyConfigurationExtended.currentSiteApiKey
 
 export default copyConfigurationExtendedSlice.reducer
