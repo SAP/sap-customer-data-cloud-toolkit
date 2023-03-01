@@ -47,6 +47,8 @@ import {
   getCurrentSiteInformation,
   getTargetSiteInformation,
   selectCurrentSiteInformation,
+  updateCurrentSiteApiKey,
+  selectCurrentSiteApiKey,
   selectApiCardError,
   clearApiCardError,
   selectIsTargetInfoLoading,
@@ -57,6 +59,8 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import { cleanTreeVerticalScrolls, areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem } from './utils'
 import { getApiKey } from '../../redux/utils'
+
+import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
 import '@ui5/webcomponents-icons/dist/arrow-right.js'
 import '@ui5/webcomponents/dist/features/InputSuggestions.js'
@@ -80,20 +84,27 @@ const CopyConfigurationExtended = ({ t }) => {
   const errors = useSelector(selectErrors)
   const availableTargetSites = useSelector(selectAvailableTargetSites)
   const currentSiteInformation = useSelector(selectCurrentSiteInformation)
+  const currentSiteApiKey = useSelector(selectCurrentSiteApiKey)
   const apiCardError = useSelector(selectApiCardError)
   const isTargetInfoLoading = useSelector(selectIsTargetInfoLoading)
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
 
+  window.onhashchange = () => {
+    if (currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
+      dispatch(updateCurrentSiteApiKey())
+    }
+  }
+
   useEffect(() => {
-    if (areCredentialsFilled(credentials)) {
+    if (areCredentialsFilled(credentials) && currentSiteApiKey) {
       dispatch(getConfigurations())
       dispatch(getAvailableTargetSites())
       dispatch(getCurrentSiteInformation())
       cleanTreeVerticalScrolls()
     }
-  }, [dispatch, credentials])
+  }, [dispatch, credentials, currentSiteApiKey])
 
   const onSaveHandler = () => {
     if (errors.length) {
@@ -267,7 +278,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
                   <FlexBox className={classes.currentApiKeyFlexboxStyle}>
                     <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY')}</Label>
-                    <Text> {getApiKey(window.location.hash)} </Text>
+                    <Text> {currentSiteApiKey} </Text>
                   </FlexBox>
                 </FlexBox>
 

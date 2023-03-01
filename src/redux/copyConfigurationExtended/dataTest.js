@@ -46,6 +46,7 @@ export const initialState = {
   availableTargetSites: [],
   currentSiteInformation: {},
   isTargetInfoLoading: false,
+  currentSiteApiKey: '',
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
