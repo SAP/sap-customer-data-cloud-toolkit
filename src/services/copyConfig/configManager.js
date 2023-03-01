@@ -28,7 +28,7 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options) {
-    //console.log(`options=${JSON.stringify(options)}`)
+    console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
@@ -98,10 +98,35 @@ class ConfigManager {
       const option = options.find((opt) => opt.id === configuration.getId())
       if (option) {
         configuration.setOptions(option)
-        filteredConfigurations.push(configuration)
+        if (this.#hasSomethingToCopy(option)) {
+          filteredConfigurations.push(configuration)
+        }
       }
     }
     return filteredConfigurations
+  }
+
+  #hasSomethingToCopy(options) {
+    return this.#findRecursive([options], false)
+  }
+
+  #findRecursive(objArray, value) {
+    for (const obj of objArray) {
+      if (this.#find(obj, value)) {
+        return true
+      }
+    }
+    return value
+  }
+
+  #find(obj, value) {
+    if (obj === undefined || value) {
+      return value
+    }
+    if (obj.value) {
+      return obj.value
+    }
+    return obj.branches !== undefined ? this.#findRecursive(obj.branches, value) : value
   }
 }
 
