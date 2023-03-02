@@ -9,7 +9,7 @@ import { getSmsExpectedResponse } from '../../sms/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
 import { getSiteConfig } from '../websdk/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, schemaId, smsTemplatesId, socialIdentitiesId, emailTemplatesId, webSdkId } from '../dataTest'
-import { expectedScreenSetResponse } from '../screenset/dataTest'
+import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 
 jest.mock('axios')
 
@@ -21,7 +21,7 @@ describe('Info test suite', () => {
   test('get all info successfully', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -47,7 +47,7 @@ describe('Info test suite', () => {
     const mockedResponse = getExpectedSchemaResponseExcept(['profileSchema'])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -62,7 +62,7 @@ describe('Info test suite', () => {
     const mockedResponse = getExpectedSchemaResponseExcept(['dataSchema', 'profileSchema'])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -74,7 +74,7 @@ describe('Info test suite', () => {
   })
 
   test('get info except screen sets successfully', async () => {
-    const mockedResponse = JSON.parse(JSON.stringify(expectedScreenSetResponse))
+    const mockedResponse = JSON.parse(JSON.stringify(getExpectedScreenSetResponse()))
     mockedResponse.screenSets = []
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
@@ -92,7 +92,7 @@ describe('Info test suite', () => {
   test('get info except social successfully', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders('') })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -108,7 +108,7 @@ describe('Info test suite', () => {
     delete mockedResponse.templates
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: mockedResponse })
@@ -124,7 +124,7 @@ describe('Info test suite', () => {
     delete mockedResponse.globalConf
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })

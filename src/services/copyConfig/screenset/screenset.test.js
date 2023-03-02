@@ -1,5 +1,5 @@
 import { credentials } from '../../servicesDataTest'
-import { expectedScreenSetResponse, getScreenSetExpectedBody } from './dataTest'
+import { getExpectedScreenSetResponse, getScreenSetExpectedBody } from './dataTest'
 import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
@@ -14,7 +14,7 @@ describe('ScreenSets test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const screenSet = new ScreenSet(credentials, apiKey, dataCenter)
-  const screenSetId = expectedScreenSetResponse.screenSets[0].screenSetID
+  const screenSetId = getExpectedScreenSetResponse().screenSets[0].screenSetID
   const screenSetOptions = getInfoExpectedResponse(true)[1]
 
   beforeEach(() => {
@@ -22,6 +22,7 @@ describe('ScreenSets test suite', () => {
   })
 
   test('copy all screen sets successfully', async () => {
+    const expectedScreenSetResponse = getExpectedScreenSetResponse()
     const serverResponse = expectedGigyaResponseOk
     let spy = jest.spyOn(screenSet, 'set')
     axios
@@ -61,6 +62,7 @@ describe('ScreenSets test suite', () => {
   })
 
   test('copy unsuccessfully - error on set data', async () => {
+    const expectedScreenSetResponse = getExpectedScreenSetResponse()
     const serverResponse = expectedGigyaResponseInvalidAPI
     axios
       .mockResolvedValueOnce({ data: expectedScreenSetResponse })
@@ -80,7 +82,7 @@ describe('ScreenSets test suite', () => {
     const screenSetSingleOptions = getInfoExpectedResponse(false)[1]
     screenSetSingleOptions.branches[0].branches[0].value = true
     let spy = jest.spyOn(screenSet, 'set')
-    axios.mockResolvedValueOnce({ data: expectedScreenSetResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
+    axios.mockResolvedValueOnce({ data: getExpectedScreenSetResponse() }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
     const responses = await screenSet.copy(apiKey, dataCenterConfiguration, screenSetSingleOptions)
     expect(responses.length).toBe(1)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey))
@@ -93,7 +95,7 @@ describe('ScreenSets test suite', () => {
 
   function validateResponses(responses, expectedResponse) {
     for (let i = 0; i < responses.length; ++i) {
-      const screenSetId = expectedScreenSetResponse.screenSets[i].screenSetID
+      const screenSetId = getExpectedScreenSetResponse().screenSets[i].screenSetID
       expect(responses[i]).toEqual(getExpectedResponseWithContext(expectedResponse, screenSetId, apiKey))
       expect(responses[i].context.id).toEqual(screenSetId)
       expect(responses[i].context.targetApiKey).toEqual(apiKey)

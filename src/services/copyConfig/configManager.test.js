@@ -10,7 +10,7 @@ import { getSiteConfig } from './websdk/dataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
 import { getEmailsExpectedResponse } from '../emails/dataTest'
 import { getResponseWithContext, profileId, schemaId, smsTemplatesId, socialIdentitiesId, emailTemplatesId, webSdkId } from './dataTest'
-import { expectedScreenSetResponse } from './screenset/dataTest'
+import { getExpectedScreenSetResponse } from './screenset/dataTest'
 
 jest.mock('axios')
 
@@ -29,7 +29,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -64,7 +64,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, 'schema', apiKey) })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -92,7 +92,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -191,7 +191,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
@@ -231,7 +231,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: expectedScreenSetResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
