@@ -3,14 +3,15 @@ import Schema from './schema/schema'
 import Social from './social/social'
 import SmsConfiguration from './sms/smsConfiguration'
 import SiteConfigurator from '../configurator/siteConfigurator'
-import ConfigOptions from './configOptions'
 import SchemaOptions from './schema/schemaOptions'
 import SmsOptions from './sms/smsOptions'
 import SocialOptions from './social/socialOptions'
 import EmailConfiguration from './emails/emailConfiguration'
 import EmailOptions from './emails/emailOptions'
-import WebSdkOptions from "./websdk/webSdkOptions";
-import WebSdk from "./websdk/websdk";
+import WebSdkOptions from './websdk/webSdkOptions'
+import WebSdk from './websdk/websdk'
+import ScreenSetOptions from './screenset/screensetOptions'
+import ScreenSet from './screenset/screenset'
 
 class ConfigManager {
   #configurations = []
@@ -27,7 +28,7 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options) {
-    //console.log(`options=${JSON.stringify(options)}`)
+    console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
@@ -46,7 +47,11 @@ class ConfigManager {
       const targetSiteConfiguration = await this.getSiteInformation(targetApiKey)
       const configurationsToCopy = this.#getConfigurationsToCopy(options)
       for (const config of configurationsToCopy) {
-        responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
+        try {
+          responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
+        } catch (error) {
+          responses.push(error)
+        }
       }
     } catch (error) {
       responses.push(error)
@@ -60,7 +65,7 @@ class ConfigManager {
       const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
       return info.get()
     } catch (error) {
-      return Promise.reject([error])
+      return Promise.reject(Array.isArray(error) ? error : [error])
     }
   }
 
@@ -80,6 +85,7 @@ class ConfigManager {
   #initConfigurations() {
     const originDataCenter = this.#originSiteConfiguration.dataCenter
     this.#configurations.push(new SchemaOptions(new Schema(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new ScreenSetOptions(new ScreenSet(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new EmailOptions(new EmailConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
@@ -88,13 +94,39 @@ class ConfigManager {
 
   #getConfigurationsToCopy(options) {
     const filteredConfigurations = []
-    const configOptions = new ConfigOptions(options)
     for (const configuration of this.#configurations) {
-      if (configOptions.shouldBeCopied(configuration)) {
-        filteredConfigurations.push(configuration)
+      const option = options.find((opt) => opt.id === configuration.getId())
+      if (option) {
+        configuration.setOptions(option)
+        if (this.#hasSomethingToCopy(option)) {
+          filteredConfigurations.push(configuration)
+        }
       }
     }
     return filteredConfigurations
+  }
+
+  #hasSomethingToCopy(options) {
+    return this.#findRecursive([options], false)
+  }
+
+  #findRecursive(objArray, value) {
+    for (const obj of objArray) {
+      if (this.#find(obj, value)) {
+        return true
+      }
+    }
+    return value
+  }
+
+  #find(obj, value) {
+    if (obj === undefined || value) {
+      return value
+    }
+    if (obj.value) {
+      return obj.value
+    }
+    return obj.branches !== undefined ? this.#findRecursive(obj.branches, value) : value
   }
 }
 

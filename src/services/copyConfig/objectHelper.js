@@ -52,9 +52,13 @@ function buildPropertiesPath(propertiesPath) {
 export function stringToJson(obj, property) {
   if (Array.isArray(obj)) {
     for (const instance of obj) {
-      instance[property] = JSON.parse(instance[property])
+      if(typeof instance[property] === 'string') {
+        instance[property] = JSON.parse(instance[property])
+      }
     }
   } else {
-    obj[property] = JSON.parse(obj[property])
+    if(typeof obj[property] === 'string') {
+      obj[property] = JSON.parse(obj[property])
+    }
   }
 }

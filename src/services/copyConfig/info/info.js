@@ -9,7 +9,9 @@ import SchemaOptions from '../schema/schemaOptions'
 import SmsOptions from '../sms/smsOptions'
 import EmailOptions from '../emails/emailOptions'
 import WebSdk from '../websdk/websdk'
-import WebSdkOptions from "../websdk/webSdkOptions";
+import WebSdkOptions from '../websdk/webSdkOptions'
+import ScreenSetOptions from '../screenset/screensetOptions'
+import ScreenSet from '../screenset/screenset'
 
 class Info {
   #credentials
@@ -81,7 +83,16 @@ class Info {
   }
 
   async #getScreenSets() {
-    return Promise.resolve(getInfoExpectedResponse(false)[1])
+    const screenSetOptions = new ScreenSetOptions(new ScreenSet(this.#credentials, this.#site, this.#dataCenter))
+    const response = await screenSetOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      screenSetOptions.addCollection(response.screenSets)
+      const info = JSON.parse(JSON.stringify(screenSetOptions.getOptionsDisabled()))
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getPolicies() {

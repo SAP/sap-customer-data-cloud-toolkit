@@ -1,52 +1,15 @@
 import { expectedSchemaResponse } from '../schema/dataTest'
-import EmailOptions from "../emails/emailOptions";
-import SchemaOptions from "../schema/schemaOptions";
+import EmailOptions from '../emails/emailOptions'
+import SchemaOptions from '../schema/schemaOptions'
+import ScreenSetOptions from '../screenset/screensetOptions'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
   const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
 
-  const screenSets = {
-    id: 'screenSets',
-    name: 'screenSets',
-    value: supports,
-    branches: [
-      {
-        id: 'default',
-        name: 'default',
-        value: supports,
-        branches: [
-          {
-            id: 'defaultLinkAccounts',
-            name: 'defaultLinkAccounts',
-            value: supports,
-          },
-          {
-            id: 'defaultLiteRegistration',
-            name: 'defaultLiteRegistration',
-            value: supports,
-          },
-        ],
-      },
-      {
-        id: 'custom',
-        name: 'custom',
-        value: supports,
-        branches: [
-          {
-            id: 'customLinkAccounts',
-            name: 'customLinkAccounts',
-            value: supports,
-          },
-          {
-            id: 'customLiteRegistration',
-            name: 'customLiteRegistration',
-            value: supports,
-          },
-        ],
-      },
-    ],
-  }
+  const screenSetOptions = new ScreenSetOptions(undefined)
+  const screenSets = supports ? screenSetOptions.getOptions() : screenSetOptions.getOptionsDisabled()
+
   const accountOptions = 'accountOptions'
   const codeVerification = 'codeVerification'
   const emailNotifications = 'emailNotifications'
@@ -83,7 +46,7 @@ export function getInfoExpectedResponse(supports) {
         value: supports,
       },
       {
-        id: 'webSdk',
+        id: 'pWebSdk',
         name: 'webSdk',
         value: supports,
       },

@@ -18,7 +18,9 @@ class WebSdk {
   }
 
   async get() {
-    return await this.siteConfigurator.getSiteConfig(this.originApiKey, this.originDataCenter)
+    const response = await this.siteConfigurator.getSiteConfig(this.originApiKey, this.originDataCenter)
+    response.context = JSON.stringify({ id: 'webSdk', targetApiKey: this.originApiKey })
+    return response
   }
 
   async #set(apiKey, config, targetDataCenter) {
@@ -31,12 +33,14 @@ class WebSdk {
 
   async copy(targetApi, targetSiteConfiguration) {
     let response = await this.get()
-
     if (response.errorCode === 0) {
       response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
-    stringToJson(response, 'context')
 
+    if (response.context) {
+      response['context'] = response.context.replace(/&quot;/g, '"')
+      stringToJson(response, 'context')
+    }
     return response
   }
 

@@ -10,15 +10,31 @@ class Options {
   getOptionsDisabled() {
     const opt = JSON.parse(JSON.stringify(this.options))
     opt.value = false
-    if (opt.branches) {
-      for (const o of opt.branches) {
-        o.value = false
-      }
-    }
+    this.#setOptionsValue(opt, false)
     return opt
   }
 
-  setOptions(name, value) {
+  #setOptionsValue(option, value) {
+    if (option.branches) {
+      for (const o of option.branches) {
+        o.value = value
+        if (o.branches) {
+          this.#setOptionsValue(o, value)
+        }
+      }
+    }
+  }
+
+  enableAllOptions() {
+    this.options.value = true
+    this.#setOptionsValue(this.options, true)
+  }
+
+  setOptions(options) {
+    this.options = options
+  }
+
+  setOption(name, value) {
     if (this.getOptions().branches) {
       for (const option of this.getOptions().branches) {
         if (option.name === name) {
@@ -45,6 +61,10 @@ class Options {
       }
       return false
     }
+  }
+
+  getId() {
+    return this.options.id
   }
 }
 
