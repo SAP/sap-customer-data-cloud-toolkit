@@ -12,6 +12,7 @@ export function getExpectedResponseWithContext(response, id, apiKey) {
 
 export const schemaId = 'dataSchema'
 export const profileId = 'profileSchema'
+export const subscriptionsId = 'subscriptionsSchema'
 export const socialIdentitiesId = 'socialIdentities'
 export const smsTemplatesId = 'smsTemplates'
 export const emailTemplatesId = 'emailTemplates'

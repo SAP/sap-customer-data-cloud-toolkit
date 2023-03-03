@@ -1,3 +1,5 @@
+import { profileId, schemaId, subscriptionsId } from '../dataTest'
+
 export const expectedSchemaResponse = {
   callId: '617d9ce97ce44902afac6083e843d795',
   errorCode: 0,
@@ -70,7 +72,26 @@ export const expectedSchemaResponse = {
     dynamicSchema: true,
   },
   subscriptionsSchema: {
-    fields: {},
+    fields: {
+      subscription1: {
+        email: {
+          type: 'subscription',
+          required: true,
+          doubleOptIn: true,
+          description: 'emails',
+          enableConditionalDoubleOptIn: true,
+        },
+      },
+      subscription2: {
+        email: {
+          type: 'subscription',
+          required: false,
+          doubleOptIn: false,
+          description: 'sub2',
+          enableConditionalDoubleOptIn: false,
+        },
+      },
+    },
   },
   preferencesSchema: {
     fields: {
@@ -90,15 +111,16 @@ export const expectedSchemaResponse = {
 
 export function getDataSchemaExpectedBodyForParentSite(apiKey) {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
-  expectedBody.context = { targetApiKey: apiKey, id: 'dataSchema' }
+  expectedBody.context = { targetApiKey: apiKey, id: schemaId }
   delete expectedBody.profileSchema
+  delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   return expectedBody
 }
 
 export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
-  expectedBody.context = { targetApiKey: apiKey, id: 'profileSchema' }
+  expectedBody.context = { targetApiKey: apiKey, id: profileId }
   const fields = expectedBody.profileSchema.fields
   delete fields.email.allowNull
   delete fields.birthYear.allowNull
@@ -109,6 +131,7 @@ export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.profileSchema.dynamicSchema
 
   delete expectedBody.dataSchema
+  delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   return expectedBody
 }
@@ -120,6 +143,7 @@ export function getDataSchemaExpectedBodyForChildSiteStep1(apiKey) {
   delete fields.subscribe.required
 
   delete expectedBody.profileSchema
+  delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   return expectedBody
 }
@@ -136,6 +160,7 @@ export function getDataSchemaExpectedBodyForChildSiteStep2(apiKey) {
   expectedBody.scope = 'site'
 
   delete expectedBody.profileSchema
+  delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   return expectedBody
 }
@@ -151,6 +176,16 @@ export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
   delete fields.country.required
 
   delete expectedBody.dataSchema
+  delete expectedBody.subscriptionsSchema
+  delete expectedBody.preferencesSchema
+  return expectedBody
+}
+
+export function getSubscriptionsSchemaExpectedBody(apiKey) {
+  const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  expectedBody.context = { targetApiKey: apiKey, id: subscriptionsId }
+  delete expectedBody.dataSchema
+  delete expectedBody.profileSchema
   delete expectedBody.preferencesSchema
   return expectedBody
 }

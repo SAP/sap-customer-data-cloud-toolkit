@@ -7,6 +7,9 @@ class Schema {
   static #ERROR_MSG_GET_CONFIG = 'Error getting schema'
   static #ERROR_MSG_SET_CONFIG = 'Error setting schema'
   static #NAMESPACE = 'accounts'
+  static DATA_SCHEMA = 'dataSchema'
+  static PROFILE_SCHEMA = 'profileSchema'
+  static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
   #credentials
   #site
   #dataCenter
@@ -45,13 +48,15 @@ class Schema {
   async #copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
     const responses = []
     const isParentSite = this.#isParentSite(destinationSiteConfiguration)
-    removePropertyFromObjectCascading(payload, 'subscriptionsSchema') // to be processed later
-    removePropertyFromObjectCascading(payload, 'preferencesSchema')
+    removePropertyFromObjectCascading(payload, 'preferencesSchema') // to be processed later
     if (options.branches[0].value) {
       responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
     if (options.branches[1].value) {
       responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    }
+    if (options.branches[2].value) {
+      responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
     return Promise.all(responses)
   }
@@ -59,8 +64,9 @@ class Schema {
   async #copyDataSchema(destinationSite, dataCenter, payload, isParentSite) {
     let response
     const dataSchemaPayload = JSON.parse(JSON.stringify(payload))
-    removePropertyFromObjectCascading(dataSchemaPayload, 'profileSchema')
-    dataSchemaPayload.context = { targetApiKey: destinationSite, id: 'dataSchema' }
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
     } else {
@@ -72,8 +78,9 @@ class Schema {
   async #copyProfileSchema(destinationSite, dataCenter, payload, isParentSite) {
     let response
     const clonePayload = JSON.parse(JSON.stringify(payload))
-    removePropertyFromObjectCascading(clonePayload, 'dataSchema')
-    clonePayload.context = { targetApiKey: destinationSite, id: 'profileSchema' }
+    removePropertyFromObjectCascading(clonePayload, Schema.DATA_SCHEMA)
+    removePropertyFromObjectCascading(clonePayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
     // the fields 'allowNull' and 'dynamicSchema' cannot be copied
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
@@ -104,6 +111,16 @@ class Schema {
     return response
   }
 
+  async #copySubscriptionsSchema(destinationSite, dataCenter, payload, isParentSite) {
+    let response
+    const subscriptionsSchemaPayload = JSON.parse(JSON.stringify(payload))
+    removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.DATA_SCHEMA)
+    removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.PROFILE_SCHEMA)
+    subscriptionsSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.SUBSCRIPTIONS_SCHEMA }
+    response = await this.set(destinationSite, dataCenter, subscriptionsSchemaPayload)
+    return response
+  }
+
   #isParentSite(site) {
     return site.siteGroupConfig.members !== undefined
   }
@@ -124,10 +141,13 @@ class Schema {
     parameters.secret = this.#credentials.secret
 
     if (body.dataSchema) {
-      parameters['dataSchema'] = JSON.stringify(body.dataSchema)
+      parameters[Schema.DATA_SCHEMA] = JSON.stringify(body.dataSchema)
     }
     if (body.profileSchema) {
-      parameters['profileSchema'] = JSON.stringify(body.profileSchema)
+      parameters[Schema.PROFILE_SCHEMA] = JSON.stringify(body.profileSchema)
+    }
+    if (body.subscriptionsSchema) {
+      parameters[Schema.SUBSCRIPTIONS_SCHEMA] = JSON.stringify(body.subscriptionsSchema)
     }
     if (body.scope) {
       parameters['scope'] = JSON.stringify(body.scope)

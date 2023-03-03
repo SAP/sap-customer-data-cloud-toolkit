@@ -75,6 +75,9 @@ class Info {
       if (!response.profileSchema) {
         schemaOptions.removeProfileSchema(info)
       }
+      if (!response.subscriptionsSchema || Object.keys(response.subscriptionsSchema.fields).length === 0) {
+        schemaOptions.removeSubscriptionsSchema(info)
+      }
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
