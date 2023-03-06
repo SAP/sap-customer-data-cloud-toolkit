@@ -4,6 +4,7 @@ import EmailConfiguration from './emailConfiguration'
 import { getEmailsExpectedResponse, getEmailsExpectedResponseWithNoTemplates } from '../../emails/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, emailTemplatesId } from '../dataTest'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
+import Options from "../options";
 
 jest.mock('axios')
 
@@ -78,7 +79,7 @@ describe('Email Configuration test suite', () => {
   })
 
   async function executeCopy(expectedResponse, emailOptions) {
-    const responses = await emailConfiguration.copy(apiKey, { dataCenter }, emailOptions)
+    const responses = await emailConfiguration.copy(apiKey, { dataCenter }, new Options(emailOptions))
     expect(responses.length).toBe(1)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedResponse, emailTemplatesId, apiKey))
     expect(responses[0].context.id).toEqual(`${emailTemplatesId}`)

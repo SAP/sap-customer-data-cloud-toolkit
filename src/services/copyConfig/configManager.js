@@ -28,7 +28,7 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options) {
-    console.log(`options=${JSON.stringify(options)}`)
+    //console.log(`options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
@@ -48,7 +48,7 @@ class ConfigManager {
       const configurationsToCopy = this.#getConfigurationsToCopy(options)
       for (const config of configurationsToCopy) {
         try {
-          responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config.getOptions()))
+          responses.push(config.getConfiguration().copy(targetApiKey, targetSiteConfiguration, config))
         } catch (error) {
           responses.push(error)
         }

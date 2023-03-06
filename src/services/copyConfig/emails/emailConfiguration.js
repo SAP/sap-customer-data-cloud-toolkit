@@ -49,7 +49,7 @@ class EmailConfiguration {
 
   async #copyEmailTemplates(destinationSite, dataCenter, response, options) {
     const promises = []
-    for (const templateInfo of options.branches) {
+    for (const templateInfo of options.getOptions().branches) {
       if (templateInfo.value) {
         promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, dataCenter, response))
       }

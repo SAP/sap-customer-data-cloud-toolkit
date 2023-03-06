@@ -15,6 +15,7 @@ import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest'
+import Options from "../options";
 
 jest.mock('axios')
 
@@ -23,13 +24,13 @@ describe('Schema test suite', () => {
   const dataCenterConfiguration = getSiteConfigSuccessfullyMultipleMember(1)
   const dataCenter = dataCenterConfiguration.dataCenter
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
-  const schemaOptions = {
+  const schemaOptions = new Options({
     branches: [
       { id: schemaId, name: schemaId, value: true },
       { id: profileId, name: profileId, value: true },
       { id: subscriptionsId, name: subscriptionsId, value: true },
     ],
-  }
+  })
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -129,12 +130,12 @@ describe('Schema test suite', () => {
     delete schemaResponse.subscriptionsSchema.fields.subscription1
     delete schemaResponse.subscriptionsSchema.fields.subscription2
 
-    const schemaOptions = {
+    const schemaOptions = new Options({
       branches: [
         { id: schemaId, name: schemaId, value: true },
         { id: profileId, name: profileId, value: true },
       ],
-    }
+    })
     axios
         .mockResolvedValueOnce({ data: schemaResponse })
         .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
