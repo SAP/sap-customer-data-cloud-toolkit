@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import {
   findConfiguration,
   propagateConfigurationState,
@@ -6,8 +10,12 @@ import {
   addErrorToConfigurations,
   addErrorToTargetApiKey,
   isTargetSiteDuplicated,
+  writeAvailableTargetSitesToLocalStorage,
+  getAvailableTargetSitesFromLocalStorage,
+  removeCurrentSiteApiKeyFromAvailableTargetSites,
 } from './utils'
-import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey, dummyTargetApiKey } from './dataTest'
+
+import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey, dummyTargetApiKey, dummySecretKey } from './dataTest'
 
 describe('copyConfigurationSlice utils test suite', () => {
   test('should find a first level configuration', () => {
@@ -105,5 +113,29 @@ describe('copyConfigurationSlice utils test suite', () => {
 
   test('should return false if site with api key is not duplicated', () => {
     expect(isTargetSiteDuplicated('1234567890', initialStateWithTargetApiKey.targetSites)).toEqual(false)
+  })
+
+  test('should write available target sites to local storage and get them back', () => {
+    writeAvailableTargetSitesToLocalStorage(initialStateWithTargetApiKey.targetSites, dummySecretKey)
+    expect(getAvailableTargetSitesFromLocalStorage(dummySecretKey)).toEqual(initialStateWithTargetApiKey.targetSites)
+  })
+
+  test('should not write available target sites to local storage if they are invalid', () => {
+    localStorage.clear()
+    writeAvailableTargetSitesToLocalStorage()
+    expect(getAvailableTargetSitesFromLocalStorage()).toBeUndefined()
+    writeAvailableTargetSitesToLocalStorage([])
+    expect(getAvailableTargetSitesFromLocalStorage()).toBeUndefined()
+    writeAvailableTargetSitesToLocalStorage({})
+    expect(getAvailableTargetSitesFromLocalStorage()).toBeUndefined()
+  })
+
+  test('should return undefined when there are no target sites in local storage to get', () => {
+    localStorage.clear()
+    expect(getAvailableTargetSitesFromLocalStorage(dummySecretKey)).toBeUndefined()
+  })
+
+  test('should remove current site api key from available target sites', () => {
+    expect(removeCurrentSiteApiKeyFromAvailableTargetSites(initialStateWithTargetApiKey.targetSites, dummyTargetApiKey).length).toEqual(0)
   })
 })

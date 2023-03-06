@@ -19,6 +19,7 @@ export function getInfoExpectedResponse(supports) {
     id: 'policies',
     name: 'policies',
     value: supports,
+    tooltip: 'POLICIES',
     branches: [
       {
         id: accountOptions,

@@ -155,3 +155,10 @@ export const initialStateWithApiCardError = {
   currentSiteInformation: {},
   isTargetInfoLoading: false,
 }
+
+export const dummySecretKey = '1234567890abcdef'
+
+export const getAvailableTargetApiKeysPayload = {
+  availableTargetSites: getUserSitesResponse,
+  secret: dummySecretKey,
+}

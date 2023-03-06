@@ -860,6 +860,8 @@ const mockedGetEmailTemplatesConfigsResponse = {
   },
 }
 
+const policiesPopoverText = 'Copy all policies, or any of the following.'
+
 export {
   baseDomain,
   dropdownOption,
@@ -917,4 +919,5 @@ export {
   mockedGetPartnersResponse,
   expectedDuplicatedMessage,
   mockedGetEmailTemplatesConfigsResponse,
+  policiesPopoverText,
 }

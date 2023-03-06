@@ -32,6 +32,7 @@ import {
   expectedTargetSite,
   duplicatedWarningMessage,
   initialStateWithApiCardError,
+  getAvailableTargetApiKeysPayload,
 } from './dataTest'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
@@ -150,7 +151,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
   })
 
   test('should update state when getAvailableTargetApiKeys is fulfilled', () => {
-    const action = getAvailableTargetSites.fulfilled(getUserSitesResponse)
+    const action = getAvailableTargetSites.fulfilled(getAvailableTargetApiKeysPayload)
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.availableTargetSites).toEqual(getUserSitesResponse)

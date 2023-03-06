@@ -1,4 +1,9 @@
 export const getApiKey = (hash) => {
-  const [, , apiKey] = hash.split('/')
+  let apiKey
+  if (hash.includes('login?returnUrl=')) {
+    apiKey = hash.split('/')[3]
+  } else {
+    apiKey = hash.split('/')[2]
+  }
   return apiKey !== undefined ? apiKey : ''
 }

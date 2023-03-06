@@ -1,4 +1,7 @@
 import { getApiKey } from '../utils'
+import crypto from 'crypto-js'
+
+const LOCAL_STORAGE_AVAILABLE_TARGET_SITES_KEY = 'availableTargetSites'
 
 export const findConfiguration = (configurations, checkBoxId) => {
   for (const configuration of configurations) {
@@ -112,4 +115,40 @@ export const isTargetSiteDuplicated = (apiKey, targetSites) => {
 
 export const sourceEqualsTarget = (sourceApiKey) => {
   return sourceApiKey === getApiKey(window.location.hash)
+}
+
+export const writeAvailableTargetSitesToLocalStorage = (availableTargetSites, key) => {
+  if (Array.isArray(availableTargetSites) && availableTargetSites.length !== 0) {
+    const encryptedData = encryptData(availableTargetSites, key)
+    if (encryptedData) {
+      localStorage.setItem(LOCAL_STORAGE_AVAILABLE_TARGET_SITES_KEY, encryptedData)
+    }
+  }
+}
+
+export const getAvailableTargetSitesFromLocalStorage = (key) => {
+  const encryptedLocalStorageAvailableTargetSitesString = localStorage.getItem(LOCAL_STORAGE_AVAILABLE_TARGET_SITES_KEY)
+  return decryptData(encryptedLocalStorageAvailableTargetSitesString, key)
+}
+
+const encryptData = (dataToEncrypt, key) => {
+  try {
+    const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
+    return crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(encryptedJsonString))
+  } catch (error) {
+    return undefined
+  }
+}
+
+const decryptData = (encryptedData, key) => {
+  try {
+    const decodedData = crypto.enc.Base64.parse(encryptedData).toString(crypto.enc.Utf8)
+    return JSON.parse(crypto.AES.decrypt(decodedData, key).toString(crypto.enc.Utf8))
+  } catch (error) {
+    return undefined
+  }
+}
+
+export const removeCurrentSiteApiKeyFromAvailableTargetSites = (availableTargetSites, currentSiteApiKey) => {
+  return availableTargetSites.filter((site) => site.apiKey !== currentSiteApiKey)
 }
