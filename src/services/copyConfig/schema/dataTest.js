@@ -1,4 +1,5 @@
 import { profileId, schemaId, subscriptionsId } from '../dataTest'
+import { removePropertyFromObjectCascading } from '../objectHelper'
 
 export const expectedSchemaResponse = {
   callId: '617d9ce97ce44902afac6083e843d795',
@@ -181,11 +182,27 @@ export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
   return expectedBody
 }
 
-export function getSubscriptionsSchemaExpectedBody(apiKey) {
+export function getSubscriptionsSchemaExpectedBodyForParentSite(apiKey) {
   const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
   expectedBody.context = { targetApiKey: apiKey, id: subscriptionsId }
   delete expectedBody.dataSchema
   delete expectedBody.profileSchema
   delete expectedBody.preferencesSchema
+  return expectedBody
+}
+
+export function getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey) {
+  const expectedBody = getSubscriptionsSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'required')
+  return expectedBody
+}
+
+export function getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey) {
+  const expectedBody = getSubscriptionsSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'type')
+  removePropertyFromObjectCascading(expectedBody, 'doubleOptIn')
+  removePropertyFromObjectCascading(expectedBody, 'description')
+  removePropertyFromObjectCascading(expectedBody, 'enableConditionalDoubleOptIn')
+  expectedBody.scope = 'site'
   return expectedBody
 }

@@ -117,7 +117,30 @@ class Schema {
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.PROFILE_SCHEMA)
     subscriptionsSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.SUBSCRIPTIONS_SCHEMA }
-    response = await this.set(destinationSite, dataCenter, subscriptionsSchemaPayload)
+    if (isParentSite) {
+      response = await this.set(destinationSite, dataCenter, subscriptionsSchemaPayload)
+    } else {
+      response = await this.#copySubscriptionsSchemaToChildSite(destinationSite, dataCenter, subscriptionsSchemaPayload)
+    }
+    return response
+  }
+
+  async #copySubscriptionsSchemaToChildSite(destinationSite, dataCenter, payload) {
+    let response
+    let clonePayload = JSON.parse(JSON.stringify(payload))
+    // the field 'required' cannot be copied to a child site together with other fields
+    removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'required')
+    response = await this.set(destinationSite, dataCenter, clonePayload)
+    if (response.errorCode === 0) {
+      // the field 'required' can only be copied alone to a child site together with scope=site
+      clonePayload = JSON.parse(JSON.stringify(payload))
+      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'type')
+      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'doubleOptIn')
+      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'description')
+      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'enableConditionalDoubleOptIn')
+      clonePayload['scope'] = 'site'
+      response = await this.set(destinationSite, dataCenter, clonePayload)
+    }
     return response
   }
 
