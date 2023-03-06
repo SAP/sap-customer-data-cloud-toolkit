@@ -2,6 +2,7 @@ import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
 import generateErrorResponse from '../../errors/generateErrorResponse'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
+import Options from "../options";
 
 class Schema {
   static #ERROR_MSG_GET_CONFIG = 'Error getting schema'
@@ -49,13 +50,14 @@ class Schema {
     const responses = []
     const isParentSite = this.#isParentSite(destinationSiteConfiguration)
     removePropertyFromObjectCascading(payload, 'preferencesSchema') // to be processed later
-    if (options.branches[0].value) {
+    const schemaOptions = new Options(options)
+    if (schemaOptions.getOptionValue(Schema.DATA_SCHEMA)) {
       responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
-    if (options.branches[1].value) {
+    if (schemaOptions.getOptionValue(Schema.PROFILE_SCHEMA)) {
       responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
-    if (options.branches[2].value) {
+    if (schemaOptions.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
       responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
     }
     return Promise.all(responses)

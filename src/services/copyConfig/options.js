@@ -66,6 +66,20 @@ class Options {
   getId() {
     return this.options.id
   }
+
+  getOptionValue(optionName) {
+    if (this.getOptions().name === optionName) {
+      return this.getOptions().value
+    }
+    if (this.getOptions().branches) {
+      for (const option of this.getOptions().branches) {
+        if (option.name === optionName) {
+          return option.value
+        }
+      }
+    }
+    return false
+  }
 }
 
 export default Options

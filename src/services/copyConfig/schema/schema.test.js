@@ -25,9 +25,9 @@ describe('Schema test suite', () => {
   const schema = new Schema(CommonTestData.credentials, apiKey, dataCenter)
   const schemaOptions = {
     branches: [
-      { id: schemaId, value: true },
-      { id: profileId, value: true },
-      { id: subscriptionsId, value: true },
+      { id: schemaId, name: schemaId, value: true },
+      { id: profileId, name: profileId, value: true },
+      { id: subscriptionsId, name: subscriptionsId, value: true },
     ],
   }
 
@@ -121,5 +121,35 @@ describe('Schema test suite', () => {
     expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, subscriptionsId, apiKey))
     expect(responses[2].context.id).toEqual(subscriptionsId)
     expect(responses[2].context.targetApiKey).toEqual(apiKey)
+  })
+
+  test('copy all schema except subscriptions to parent site', async () => {
+    let spy = jest.spyOn(schema, 'set')
+    const schemaResponse = expectedSchemaResponse
+    delete schemaResponse.subscriptionsSchema.fields.subscription1
+    delete schemaResponse.subscriptionsSchema.fields.subscription2
+
+    const schemaOptions = {
+      branches: [
+        { id: schemaId, name: schemaId, value: true },
+        { id: profileId, name: profileId, value: true },
+      ],
+    }
+    axios
+        .mockResolvedValueOnce({ data: schemaResponse })
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
+    expect(responses.length).toBe(2)
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[0].context.id).toEqual(schemaId)
+    expect(responses[1].context.id).toEqual(profileId)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
+    expect(responses[1].context.targetApiKey).toEqual(apiKey)
+
+    expect(spy.mock.calls.length).toBe(2)
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
   })
 })
