@@ -173,7 +173,7 @@ class Schema {
       parameters[Schema.SUBSCRIPTIONS_SCHEMA] = JSON.stringify(body.subscriptionsSchema)
     }
     if (body.scope) {
-      parameters['scope'] = JSON.stringify(body.scope)
+      parameters['scope'] = body.scope
     }
     if (body.context) {
       parameters['context'] = JSON.stringify(body.context)
