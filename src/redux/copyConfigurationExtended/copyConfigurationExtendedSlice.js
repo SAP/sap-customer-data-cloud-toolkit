@@ -15,6 +15,9 @@ import {
   addErrorToTargetApiKey,
   isTargetSiteDuplicated,
   sourceEqualsTarget,
+  writeAvailableTargetSitesToLocalStorage,
+  getAvailableTargetSitesFromLocalStorage,
+  removeCurrentSiteApiKeyFromAvailableTargetSites,
 } from './utils'
 
 const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtended'
@@ -79,6 +82,12 @@ export const copyConfigurationExtendedSlice = createSlice({
     updateCurrentSiteApiKey(state) {
       state.currentSiteApiKey = getApiKey(window.location.hash)
     },
+    setAvailableTargetSitesFromLocalStorage(state, action) {
+      const availableTargetSitesFromLocalStorage = getAvailableTargetSitesFromLocalStorage(action.payload)
+      if (availableTargetSitesFromLocalStorage) {
+        state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(availableTargetSitesFromLocalStorage, state.currentSiteApiKey)
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getConfigurations.pending, (state) => {
@@ -121,7 +130,8 @@ export const copyConfigurationExtendedSlice = createSlice({
     })
     builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
       state.isLoading = false
-      state.availableTargetSites = action.payload.filter((site) => site.apiKey !== getApiKey(window.location.hash))
+      state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(action.payload.availableTargetSites, state.currentSiteApiKey)
+      writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
     })
     builder.addCase(getAvailableTargetSites.rejected, (state, action) => {
       state.isLoading = false
@@ -221,14 +231,24 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
   try {
     const state = getState()
     const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
-    return await new SiteFinder(credentials).getAllSites()
+    const availableTargetSites = await new SiteFinder(credentials).getAllSites()
+    return { availableTargetSites: availableTargetSites, secret: credentials.secret }
   } catch (error) {
     return rejectWithValue(error)
   }
 })
 
-export const { addTargetSite, removeTargetSite, setConfigurationStatus, clearConfigurations, clearErrors, clearTargetApiKeys, clearApiCardError, updateCurrentSiteApiKey } =
-  copyConfigurationExtendedSlice.actions
+export const {
+  addTargetSite,
+  removeTargetSite,
+  setConfigurationStatus,
+  clearConfigurations,
+  clearErrors,
+  clearTargetApiKeys,
+  clearApiCardError,
+  updateCurrentSiteApiKey,
+  setAvailableTargetSitesFromLocalStorage,
+} = copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations
 

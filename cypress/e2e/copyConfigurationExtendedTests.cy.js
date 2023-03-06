@@ -53,17 +53,25 @@ describe('Copy Configuration extended test suite', () => {
 
   it('should delete an added Target Site from the Targe Sites list', () => {
     utils.fillTargetApiKeyInput()
-    cy.get('#selectedTargetApiKeysList').should('have.length', '1')
+    utils.checkTargetSitesList()
     cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').shadow().find('ui5-button').click()
     cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').should('not.exist')
   })
 
   it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {
-    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test{enter}')
+    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
+    cy.wait(1000)
+    cy.get('#addTargetSiteButton').click()
+    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.wait(1000)
     cy.get('#addTargetSiteButton').click()
     cy.get('#messageStripError').should('have.text', dataTest.expectedDuplicatedMessage)
     cy.get('#messageStripError').shadow().find('ui5-button').click()
     cy.get('#messageStripError').should('not.exist')
+  })
+
+  it('should add a Target Site to the Targe Sites list on pressing Enter', () => {
+    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
+    utils.checkTargetSitesList()
   })
 })

@@ -52,12 +52,20 @@ import {
   selectApiCardError,
   clearApiCardError,
   selectIsTargetInfoLoading,
+  setAvailableTargetSitesFromLocalStorage,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
-import { cleanTreeVerticalScrolls, areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem } from './utils'
+import {
+  cleanTreeVerticalScrolls,
+  areConfigurationsFilled,
+  filterTargetSites,
+  getTargetSiteByTargetApiKey,
+  extractTargetApiKeyFromTargetSiteListItem,
+  findStringInAvailableTargetSites,
+} from './utils'
 import { getApiKey } from '../../redux/utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
@@ -99,6 +107,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   useEffect(() => {
     if (areCredentialsFilled(credentials) && currentSiteApiKey) {
+      dispatch(setAvailableTargetSitesFromLocalStorage(credentials.secretKey))
       dispatch(getConfigurations())
       dispatch(getAvailableTargetSites())
       dispatch(getCurrentSiteInformation())
@@ -128,8 +137,8 @@ const CopyConfigurationExtended = ({ t }) => {
   }, 500)
 
   const onTargetApiKeysInputKeyPressHandler = (event) => {
-    if (event.key === 'Enter') {
-      const inputValue = event.target.value
+    const inputValue = event.target.value
+    if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, availableTargetSites)) {
       setTarketApiKeyInputValue(inputValue)
       dispatch(getTargetSiteInformation(inputValue))
       setTarketApiKeyInputValue('')

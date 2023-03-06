@@ -147,3 +147,7 @@ export function fillTargetApiKeyInput() {
   cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
+
+export function checkTargetSitesList() {
+  cy.get('#selectedTargetApiKeysList').should('have.length', '1')
+}

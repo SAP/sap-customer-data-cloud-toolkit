@@ -48,3 +48,7 @@ export const getTargetSiteByTargetApiKey = (targetApiKey, availableTargetSites) 
 export const extractTargetApiKeyFromTargetSiteListItem = (targetSiteListItem) => {
   return targetSiteListItem.split(' ')[2]
 }
+
+export const findStringInAvailableTargetSites = (string, targetSites) => {
+  return targetSites.filter((targetSite) => targetSiteContainsString(string, targetSite)).length !== 0
+}

@@ -1,4 +1,4 @@
-import { areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem } from './utils'
+import { areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem, findStringInAvailableTargetSites } from './utils'
 import { configurationsMockedResponse } from '../../redux/copyConfigurationExtended/dataTest'
 import { mockedAvailableTargetApiKeys, targetSiteListItem } from './dataTest'
 
@@ -55,5 +55,16 @@ describe('copyConfigurationExtended utils test suite', () => {
   test('should extract target api key from target site list item', () => {
     const targetApiKey = extractTargetApiKeyFromTargetSiteListItem(targetSiteListItem)
     expect(targetApiKey).toEqual(mockedAvailableTargetApiKeys[0].apiKey)
+  })
+
+  test('should return true if a string exists in available target sites list', () => {
+    expect(findStringInAvailableTargetSites('123455', mockedAvailableTargetApiKeys)).toEqual(true)
+    expect(findStringInAvailableTargetSites('uvwxy', mockedAvailableTargetApiKeys)).toEqual(true)
+    expect(findStringInAvailableTargetSites('555', mockedAvailableTargetApiKeys)).toEqual(true)
+    expect(findStringInAvailableTargetSites('Partner 5', mockedAvailableTargetApiKeys)).toEqual(true)
+  })
+
+  test('should return false if a string do not exists in available target sites list', () => {
+    expect(findStringInAvailableTargetSites(',./.,', mockedAvailableTargetApiKeys)).toEqual(false)
   })
 })
