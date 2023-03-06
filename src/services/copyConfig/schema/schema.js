@@ -47,7 +47,7 @@ class Schema {
 
   async #copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
     const responses = []
-    const isParentSite = this.#isParentSite(destinationSiteConfiguration)
+    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     removePropertyFromObjectCascading(payload, 'preferencesSchema') // to be processed later
     if (options.getOptionValue(Schema.DATA_SCHEMA)) {
       responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
@@ -144,8 +144,8 @@ class Schema {
     return response
   }
 
-  #isParentSite(site) {
-    return site.siteGroupConfig.members !== undefined
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
   #getSchemaParameters(apiKey) {
