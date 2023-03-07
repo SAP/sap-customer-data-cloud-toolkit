@@ -64,6 +64,9 @@ function getSiteConfigSuccessfullyMultipleMember(numberOfMembers) {
   for (let i = 0; i < numberOfMembers; ++i) {
     getSiteConfig.siteGroupConfig.members.push(apiKey)
   }
+  if (numberOfMembers === 0) {
+    getSiteConfig.siteGroupOwner = 'parentApiKey'
+  }
   return getSiteConfig
 }
 

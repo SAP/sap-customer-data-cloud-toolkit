@@ -3,6 +3,7 @@ import Options from '../options'
 class SchemaOptions extends Options {
   static DATA_SCHEMA = 'dataSchema'
   static PROFILE_SCHEMA = 'profileSchema'
+  static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
   #schema
 
   constructor(schema) {
@@ -21,6 +22,11 @@ class SchemaOptions extends Options {
           name: SchemaOptions.PROFILE_SCHEMA,
           value: true,
         },
+        {
+          id: SchemaOptions.SUBSCRIPTIONS_SCHEMA,
+          name: SchemaOptions.SUBSCRIPTIONS_SCHEMA,
+          value: true,
+        }
       ],
     })
     this.#schema = schema
@@ -36,6 +42,10 @@ class SchemaOptions extends Options {
 
   removeProfileSchema(info) {
     return this.removeInfo(SchemaOptions.PROFILE_SCHEMA, info)
+  }
+
+  removeSubscriptionsSchema(info) {
+    return this.removeInfo(SchemaOptions.SUBSCRIPTIONS_SCHEMA, info)
   }
 }
 

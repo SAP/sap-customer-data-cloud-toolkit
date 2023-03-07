@@ -8,7 +8,17 @@ import { getSocialsProviders } from '../social/dataTest'
 import { getSmsExpectedResponse } from '../../sms/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
 import { getSiteConfig } from '../websdk/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, schemaId, smsTemplatesId, socialIdentitiesId, emailTemplatesId, webSdkId } from '../dataTest'
+import {
+  getExpectedResponseWithContext,
+  getResponseWithContext,
+  schemaId,
+  smsTemplatesId,
+  socialIdentitiesId,
+  emailTemplatesId,
+  webSdkId,
+  profileId,
+  subscriptionsId,
+} from '../dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 
 jest.mock('axios')
@@ -59,7 +69,7 @@ describe('Info test suite', () => {
   })
 
   test('get info except schema successfully', async () => {
-    const mockedResponse = getExpectedSchemaResponseExcept(['dataSchema', 'profileSchema'])
+    const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
