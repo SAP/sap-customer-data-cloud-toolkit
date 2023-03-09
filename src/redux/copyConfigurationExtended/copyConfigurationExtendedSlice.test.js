@@ -11,7 +11,6 @@ import copyConfigurationExtendedReducer, {
   getConfigurations,
   setConfigurations,
   clearTargetApiKeys,
-  getAvailableTargetSites,
   getCurrentSiteInformation,
   getTargetSiteInformation,
   clearApiCardError,
@@ -27,12 +26,10 @@ import {
   mockedErrorsResponse,
   setConfigSuccessResponse,
   initialStateWithTargetApiKeyAndConfigurations,
-  getUserSitesResponse,
   siteConfigResponse,
   expectedTargetSite,
   duplicatedWarningMessage,
   initialStateWithApiCardError,
-  getAvailableTargetApiKeysPayload,
 } from './dataTest'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
@@ -148,21 +145,6 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
-  })
-
-  test('should update state when getAvailableTargetApiKeys is fulfilled', () => {
-    const action = getAvailableTargetSites.fulfilled(getAvailableTargetApiKeysPayload)
-    const newState = copyConfigurationExtendedReducer(initialState, action)
-    expect(newState.isLoading).toEqual(false)
-    expect(newState.availableTargetSites).toEqual(getUserSitesResponse)
-  })
-
-  test('should update state when getAvailableTargetApiKeys is rejected', () => {
-    const action = getAvailableTargetSites.rejected('', '', '', mockedErrorsResponse)
-    const newState = copyConfigurationExtendedReducer(initialState, action)
-    expect(newState.isLoading).toEqual(false)
-    expect(newState.availableTargetSites).toEqual([])
-    expect(newState.apiCardError).toEqual(mockedErrorsResponse)
   })
 
   test('should update state when getCurrentSiteInformation is fulfilled', () => {

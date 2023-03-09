@@ -42,7 +42,6 @@ import {
   clearTargetApiKeys,
   selectErrors,
   clearErrors,
-  getAvailableTargetSites,
   selectAvailableTargetSites,
   getCurrentSiteInformation,
   getTargetSiteInformation,
@@ -53,6 +52,7 @@ import {
   clearApiCardError,
   selectIsTargetInfoLoading,
   setAvailableTargetSitesFromLocalStorage,
+  getAvailableTargetSites,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -107,9 +107,9 @@ const CopyConfigurationExtended = ({ t }) => {
 
   useEffect(() => {
     if (areCredentialsFilled(credentials) && currentSiteApiKey) {
+      dispatch(getAvailableTargetSites())
       dispatch(setAvailableTargetSitesFromLocalStorage(credentials.secretKey))
       dispatch(getConfigurations())
-      dispatch(getAvailableTargetSites())
       dispatch(getCurrentSiteInformation())
       cleanTreeVerticalScrolls()
     }
@@ -140,14 +140,19 @@ const CopyConfigurationExtended = ({ t }) => {
     const inputValue = event.target.value
     if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, availableTargetSites)) {
       setTarketApiKeyInputValue(inputValue)
-      dispatch(getTargetSiteInformation(inputValue))
-      setTarketApiKeyInputValue('')
+      processInput(inputValue)
     }
   }
 
   const onAddTargetSiteButtonClickHandler = () => {
-    dispatch(getTargetSiteInformation(tarketApiKeyInputValue))
-    setTarketApiKeyInputValue('')
+    processInput(tarketApiKeyInputValue)
+  }
+
+  const processInput = (inputValue) => {
+    if (inputValue && inputValue !== '') {
+      dispatch(getTargetSiteInformation(inputValue))
+      setTarketApiKeyInputValue('')
+    }
   }
 
   const onSuccessDialogAfterCloseHandler = () => {

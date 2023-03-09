@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import ConfigManager from '../../services/copyConfig/configManager'
-import SiteFinder from '../../services/search/siteFinder'
+import SiteFinderPaginated from '../../services/search/siteFinderPaginated'
 
 import i18n from '../../i18n'
 
@@ -26,6 +26,8 @@ const SET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/set
 const GET_AVAILABLE_TARGET_API_KEYS = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getAvailableTargetApiKeys`
 const GET_CURRENT_SITE_INFORMATION_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getCurrentSiteInformation`
 const GET_TARGET_SITE_INFORMATION_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getTargetSiteInformation`
+
+let areAvailableTargetSitesLoading = false
 
 export const copyConfigurationExtendedSlice = createSlice({
   name: COPY_CONFIGURATION_EXTENDED_STATE_NAME,
@@ -87,6 +89,12 @@ export const copyConfigurationExtendedSlice = createSlice({
       if (availableTargetSitesFromLocalStorage) {
         state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(availableTargetSitesFromLocalStorage, state.currentSiteApiKey)
       }
+      areAvailableTargetSitesLoading = true
+    },
+    setAvailableTargetSites(state, action) {
+      state.availableTargetSites = action.payload.availableTargetSites
+      areAvailableTargetSitesLoading = false
+      writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
     },
   },
   extraReducers: (builder) => {
@@ -125,19 +133,17 @@ export const copyConfigurationExtendedSlice = createSlice({
       state.showSuccessMessage = false
       state.errors = action.payload
     })
-    builder.addCase(getAvailableTargetSites.pending, (state) => {
-      state.isLoading = true
-    })
     builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
-      state.isLoading = false
-      state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(action.payload.availableTargetSites, state.currentSiteApiKey)
-      writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
+      if (action.payload.availableTargetSites) {
+        state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(action.payload.availableTargetSites, state.currentSiteApiKey)
+        writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
+      }
     })
     builder.addCase(getAvailableTargetSites.rejected, (state, action) => {
-      state.isLoading = false
       state.availableTargetSites = []
       state.apiCardError = action.payload
     })
+
     builder.addCase(getCurrentSiteInformation.fulfilled, (state, action) => {
       state.isLoading = false
       state.currentSiteInformation = action.payload
@@ -204,6 +210,30 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   }
 })
 
+export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API_KEYS, async (_, { getState, rejectWithValue }) => {
+  try {
+    if (!areAvailableTargetSitesLoading) {
+      const parallelRequestsAllowed = 5
+      const state = getState()
+      const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+      console.time('getAvailableTargetSites')
+      const siteFinderPaginated = new SiteFinderPaginated(credentials, parallelRequestsAllowed)
+      let response = await siteFinderPaginated.getFirstPage()
+      const availableTargetSites = []
+      availableTargetSites.push(...response)
+      while ((response = await siteFinderPaginated.getNextPage()) !== undefined) {
+        availableTargetSites.push(...response)
+      }
+      console.timeEnd('getAvailableTargetSites')
+      return { availableTargetSites: availableTargetSites, secret: credentials.secret }
+    } else {
+      return []
+    }
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
 export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFORMATION_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
@@ -227,17 +257,6 @@ export const getTargetSiteInformation = createAsyncThunk(GET_TARGET_SITE_INFORMA
   }
 })
 
-export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API_KEYS, async (_, { getState, rejectWithValue }) => {
-  try {
-    const state = getState()
-    const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
-    const availableTargetSites = await new SiteFinder(credentials).getAllSites()
-    return { availableTargetSites: availableTargetSites, secret: credentials.secret }
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
-
 export const {
   addTargetSite,
   removeTargetSite,
@@ -248,6 +267,7 @@ export const {
   clearApiCardError,
   updateCurrentSiteApiKey,
   setAvailableTargetSitesFromLocalStorage,
+  setAvailableTargetSites,
 } = copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations
