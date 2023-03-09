@@ -10,6 +10,8 @@ import SmsOptions from '../sms/smsOptions'
 import EmailOptions from '../emails/emailOptions'
 import WebSdk from '../websdk/websdk'
 import WebSdkOptions from '../websdk/webSdkOptions'
+import Policy from '../policies/policies'
+import PolicyOptions from '../policies/policyOptions'
 import ScreenSetOptions from '../screenset/screensetOptions'
 import ScreenSet from '../screenset/screenset'
 
@@ -98,10 +100,6 @@ class Info {
     }
   }
 
-  async #getPolicies() {
-    return Promise.resolve(getInfoExpectedResponse(false)[2])
-  }
-
   async #getSocialIdentities() {
     const socialOptions = new SocialOptions(new Social(this.#credentials, this.#site, this.#dataCenter))
     const response = await socialOptions.getConfiguration().get()
@@ -120,6 +118,7 @@ class Info {
   async #getEmailTemplates() {
     const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await emailOptions.getConfiguration().get()
+
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
       this.#removeUnsupportedOptions(response, info, emailOptions)
@@ -159,7 +158,19 @@ class Info {
     }
     return atLeastOneHasConfig
   }
+  async #getPolicies() {
+    const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
+    const response = await policyOptions.getConfiguration().get()
 
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
+      this.#removeUnsupportedPolicies(response, info, policyOptions)
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
+  }
   #removeUnsupportedOptions(response, info, emailOptions) {
     if (!response.emailNotifications.confirmationEmailTemplates) {
       emailOptions.removePasswordResetConfirmation(info)
@@ -193,6 +204,45 @@ class Info {
     }
     if (!response.magicLink) {
       emailOptions.removeMagicLink(info)
+    }
+  }
+
+  #removeUnsupportedPolicies(response, info, policyOptions) {
+    if (!response.accountOptions) {
+      policyOptions.removeAccountOptions(info)
+    }
+    if (!response.codeVerification) {
+      policyOptions.removeCodeVerification(info)
+    }
+    if (!response.emailNotifications) {
+      policyOptions.removeEmailNotification(info)
+    }
+    if (!response.emailVerification) {
+      policyOptions.removeEmailVerification(info)
+    }
+    if (!response.federation) {
+      policyOptions.removeFederation(info)
+    }
+    if (!response.passwordComplexity) {
+      policyOptions.removePasswordComplexity(info)
+    }
+    if (!response.gigyaPlugins) {
+      policyOptions.removeWebSdk(info)
+    }
+    if (!response.passwordReset) {
+      policyOptions.removePasswordReset(info)
+    }
+    if (!response.profilePhoto) {
+      policyOptions.removeProfilePhoto(info)
+    }
+    if (!response.registration) {
+      policyOptions.removeRegistration(info)
+    }
+    if (!response.security) {
+      policyOptions.removeSecurity(info)
+    }
+    if (!response.twoFactorAuth) {
+      policyOptions.removeTwoFactorAuth(info)
     }
   }
 }

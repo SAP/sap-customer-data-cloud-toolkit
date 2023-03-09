@@ -12,74 +12,99 @@ export function getInfoExpectedResponse(supports) {
 
   const accountOptions = 'accountOptions'
   const codeVerification = 'codeVerification'
-  const emailNotifications = 'emailNotifications'
+  const emailNotification = 'emailNotifications'
+  const gigyaPlugins = 'Web Sdk'
   const emailVerification = 'emailVerification'
+  const federation = 'federation'
+  const passwordComplexity = 'passwordComplexity'
   const passwordReset = 'passwordReset'
+  const profilePhoto = 'profilePhoto'
+  const registration = 'registration'
+  const security = 'security'
+  const twoFactorAuth = 'twoFactorAuth'
   const policies = {
-    id: 'policies',
-    name: 'policies',
+    id: 'policy',
+    name: 'policy',
     value: supports,
     tooltip: 'POLICIES',
     branches: [
       {
         id: accountOptions,
-        name: accountOptions,
+        name: 'AccountOptions',
         value: supports,
+        tooltip: 'POLICIES_ACCOUNT_OPTIONS',
       },
       {
         id: codeVerification,
-        name: codeVerification,
+        name: 'CodeVerification',
         value: supports,
+        tooltip: 'CODE_VERIFICATION',
       },
       {
-        id: emailNotifications,
-        name: emailNotifications,
+        id: emailNotification,
+        name: 'EmailNotifications',
         value: supports,
+
+        tooltip: 'POLICIES_EMAIL_NOTIFICATIONS',
       },
       {
         id: emailVerification,
-        name: emailVerification,
+        name: 'EmailVerification',
         value: supports,
+
+        tooltip: 'POLICIES_EMAIL_VERIFICATION',
       },
       {
-        id: 'federation',
-        name: 'federation',
+        id: federation,
+        name: 'Federation',
         value: supports,
+
+        tooltip: 'POLICIES_FEDERATION',
+      },
+
+      {
+        id: passwordComplexity,
+        name: 'PasswordComplexity',
+        value: supports,
+
+        tooltip: 'POLICIES_PASSWORD_COMPLEXITY',
       },
       {
-        id: 'pWebSdk',
-        name: 'webSdk',
+        id: 'gigyaPlugins',
+        name: gigyaPlugins,
         value: supports,
-      },
-      {
-        id: 'passwordComplexity',
-        name: 'passwordComplexity',
-        value: supports,
+
+        tooltip: 'POLICIES_WEBSDK',
       },
       {
         id: passwordReset,
-        name: passwordReset,
+        name: 'passwordReset',
         value: supports,
+        tooltip: 'POLICIES_PASSWORD_RESET',
       },
       {
-        id: 'defaultProfilePhotoDimensions',
-        name: 'defaultProfilePhotoDimensions',
+        id: profilePhoto,
+        name: 'profilePhoto',
         value: supports,
+        tooltip: 'POLICIES_DEFAULT_PROFILE_PHOTO_DIMENSIONS',
       },
       {
-        id: 'registration',
-        name: 'registration',
+        id: registration,
+        name: 'Registration',
         value: supports,
+        tooltip: 'POLICIES_REGISTRATION',
       },
       {
-        id: 'security',
-        name: 'security',
+        id: security,
+        name: 'Security',
         value: supports,
+        tooltip: 'POLICIES_SECURITY',
       },
       {
-        id: 'twoFactorAuthenticationProviders',
-        name: 'twoFactorAuthenticationProviders',
+        id: twoFactorAuth,
+        name: 'TwoFactorAuth',
         value: supports,
+        tooltip: 'POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS',
       },
     ],
   }

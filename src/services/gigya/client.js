@@ -16,6 +16,7 @@ const client = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       data: new URLSearchParams(body),
     }
+
     let response
     let retryCounter = 0
     do {

@@ -33,8 +33,6 @@ module.exports = defineConfig({
 
   component: {
     setupNodeEvents(on, config) {
-      console.log('setupNodeEvents for components')
-
       require('@bahmutov/cypress-code-coverage/plugin')(on, config)
 
       return config

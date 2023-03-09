@@ -12,6 +12,8 @@ import WebSdkOptions from './websdk/webSdkOptions'
 import WebSdk from './websdk/websdk'
 import ScreenSetOptions from './screenset/screensetOptions'
 import ScreenSet from './screenset/screenset'
+import PolicyOptions from './policies/policyOptions'
+import Policy from './policies/policies'
 
 class ConfigManager {
   #configurations = []
@@ -35,6 +37,7 @@ class ConfigManager {
       for (const targetApiKey of targetApiKeys) {
         responses.push(this.#copyConfigurations(targetApiKey, options))
       }
+
       return (await Promise.all(responses)).flat()
     } catch (error) {
       return Promise.reject([error])
@@ -56,6 +59,7 @@ class ConfigManager {
     } catch (error) {
       responses.push(error)
     }
+
     return (await Promise.all(responses)).flat()
   }
 
@@ -86,6 +90,7 @@ class ConfigManager {
     const originDataCenter = this.#originSiteConfiguration.dataCenter
     this.#configurations.push(new SchemaOptions(new Schema(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new ScreenSetOptions(new ScreenSet(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new PolicyOptions(new Policy(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SocialOptions(new Social(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new EmailOptions(new EmailConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
