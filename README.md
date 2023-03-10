@@ -23,7 +23,9 @@ App created to extend the existing functionality of the SAP Customer Data Cloud 
 
 1. `git clone https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension.git`
 2. `npm install`
-3. `npm run start`
+3. `Create the environment variables REACT_APP_USERKEY and REACT_APP_SECRET with your user key and secret values, 
+   to avoid to set them multiple times during the application execution`
+4. `npm run start`
 
 ## Cypress UI tests
 

@@ -5,7 +5,8 @@ import ZipManager from '../zip/zipManager'
 import * as CommonTestData from '../servicesDataTest'
 import * as ConfiguratorTestData from '../configurator/dataTest'
 import JSZip from 'jszip'
-import {errorCallback} from "../servicesDataTest";
+import { errorCallback } from '../servicesDataTest'
+import SiteConfigurator from '../configurator/siteConfigurator'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -67,7 +68,7 @@ describe('Emails Manager test suite', () => {
   })
 
   test('4 - export error getting data center', async () => {
-    const err = CommonTestData.createErrorObject('Error configuring site')
+    const err = CommonTestData.createErrorObject(SiteConfigurator.ERROR_MSG_CONFIG)
     axios.mockImplementation(() => {
       throw err
     })
@@ -189,7 +190,7 @@ describe('Emails Manager test suite', () => {
   })
 
   test('9.1 - import error getting data center', async () => {
-    const err = CommonTestData.createErrorObject('Error configuring site')
+    const err = CommonTestData.createErrorObject(SiteConfigurator.ERROR_MSG_CONFIG)
     axios.mockImplementation(() => {
       throw err
     })
