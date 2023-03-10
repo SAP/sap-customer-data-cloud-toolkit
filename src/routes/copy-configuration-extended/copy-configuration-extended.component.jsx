@@ -21,7 +21,9 @@ import {
   List,
   CustomListItem,
   SuggestionItem,
-  MessageStrip, Icon, Popover,
+  MessageStrip,
+  Icon,
+  Popover,
 } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
@@ -72,6 +74,7 @@ import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
 import '@ui5/webcomponents-icons/dist/arrow-right.js'
 import '@ui5/webcomponents/dist/features/InputSuggestions.js'
+import '@ui5/webcomponents-icons/dist/information.js'
 
 import './copy-configuration-extended.css'
 import styles from './copy-configuration-extended.styles'
@@ -326,12 +329,12 @@ const CopyConfigurationExtended = ({ t }) => {
                   <FlexBox className={classes.innerFlexBoxStyle}>
                     <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
                     <Icon
-                        id="targetSiteTooltipIcon"
-                        name="message-information"
-                        design="Information"
-                        onMouseOver={onMouseOverHandler}
-                        onMouseOut={onMouseOutHandler}
-                        className={classes.tooltipIconStyle}
+                      id="targetSiteTooltipIcon"
+                      name="information"
+                      design="Information"
+                      onMouseOver={onMouseOverHandler}
+                      onMouseOut={onMouseOutHandler}
+                      className={classes.tooltipIconStyle}
                     />
                     <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
                       {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}

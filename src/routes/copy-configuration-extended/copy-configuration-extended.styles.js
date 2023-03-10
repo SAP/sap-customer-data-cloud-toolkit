@@ -39,11 +39,10 @@ const styles = {
   },
   innerFlexBoxStyle: {
     ...spacing.sapUiSmallMarginBegin,
-
     ...spacing.sapUiSmallMarginBottom,
     ...spacing.sapUiSmallMarginEnd,
-
     lineHeight: '30px',
+    display: 'block',
   },
   apiKeyFlexBoxStyle: {
     gap: '10px',
