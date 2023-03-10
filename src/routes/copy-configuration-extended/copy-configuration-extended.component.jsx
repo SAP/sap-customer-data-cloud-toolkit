@@ -99,6 +99,9 @@ const CopyConfigurationExtended = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
 
+  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
+  const [tooltipTarget, setTooltipTarget] = useState('')
+
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
       dispatch(updateCurrentSiteApiKey())
@@ -261,8 +264,7 @@ const CopyConfigurationExtended = ({ t }) => {
   const showGetTargetInfoBusyIndicator = () => {
     return isTargetInfoLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
   }
-  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
-  const [tooltipTarget, setTooltipTarget] = useState('')
+
   const onMouseOverHandler = (event) => {
     if (event.target.shadowRoot) {
       setTooltipTarget(event.target.shadowRoot.host.id)
