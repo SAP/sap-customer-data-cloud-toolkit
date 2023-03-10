@@ -22,6 +22,7 @@
   "COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION": "Select Configuration",
   "COPY_CONFIGURATION_EXTENDED.SOURCE_EQUALS_TARGET_WARNING_TEXT": "Target API key is the same as the Source!",
   "COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS": "Target Sites API Keys:",
+  "COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP": "Recent created sites might take a while to be displayed in the list, however you can just copy and paste the API Key",
   "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download SAP Customer Data Cloud Toolbox v{{version}}",
   "CREDENTIALS_POPOVER.NEW_VERSION": "A new version is available!",
   "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "SAP Customer Data Cloud Toolbox",

@@ -14,6 +14,7 @@ import {
   mockedGetEmailTemplatesConfigsResponse,
   policiesPopoverText,
   mockedGetScreenSetResponse,
+  targetSitePopoverText,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -137,6 +138,9 @@ export function checkElementsInitialState() {
   cy.get('#policiesPopover').should('have.text', policiesPopoverText)
   cy.get('#saveButton').shadow().find('button').should('be.disabled')
   cy.get('#cancelButton').shadow().find('button').should('be.enabled')
+  cy.get('#targetSiteTooltipIcon').should('exist')
+  cy.get('#targetSiteTooltipIcon').realHover()
+  cy.get('#targetSitePopover').should('have.text', targetSitePopoverText)
 }
 
 export function setConfigurationCheckBox() {

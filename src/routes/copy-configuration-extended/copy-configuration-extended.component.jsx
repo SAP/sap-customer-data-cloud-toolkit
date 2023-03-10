@@ -21,7 +21,7 @@ import {
   List,
   CustomListItem,
   SuggestionItem,
-  MessageStrip,
+  MessageStrip, Icon, Popover,
 } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
@@ -257,6 +257,22 @@ const CopyConfigurationExtended = ({ t }) => {
   const showGetTargetInfoBusyIndicator = () => {
     return isTargetInfoLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
   }
+  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
+  const [tooltipTarget, setTooltipTarget] = useState('')
+  const onMouseOverHandler = (event) => {
+    if (event.target.shadowRoot) {
+      setTooltipTarget(event.target.shadowRoot.host.id)
+      setIsMouseOverIcon(true)
+    }
+  }
+
+  const onMouseOutHandler = () => {
+    setIsMouseOverIcon(false)
+  }
+
+  const openPopover = () => {
+    return isMouseOverIcon && tooltipTarget === `targetSiteTooltipIcon`
+  }
 
   return (
     <>
@@ -303,6 +319,17 @@ const CopyConfigurationExtended = ({ t }) => {
                 <FlexBox direction="Column" className={classes.targetInfoContainer}>
                   <FlexBox className={classes.innerFlexBoxStyle}>
                     <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
+                    <Icon
+                        id="targetSiteTooltipIcon"
+                        name="message-information"
+                        design="Information"
+                        onMouseOver={onMouseOverHandler}
+                        onMouseOut={onMouseOutHandler}
+                        className={classes.tooltipIconStyle}
+                    />
+                    <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
+                      {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
+                    </Popover>
                     <Input
                       showSuggestions
                       id="targetApiKeyInput"

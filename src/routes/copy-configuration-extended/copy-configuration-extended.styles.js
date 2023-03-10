@@ -109,6 +109,10 @@ const styles = {
   targetApiKeyInputStyle: {
     width: '300px',
   },
+  tooltipIconStyle: {
+    alignSelf: 'center',
+    marginLeft: '6px',
+  },
 }
 
 export default styles
