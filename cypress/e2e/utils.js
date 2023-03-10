@@ -12,14 +12,17 @@ import {
   mockedGetPartnersResponse,
   dummyApiKey,
   mockedGetEmailTemplatesConfigsResponse,
+  mockPolicyResponse,
   policiesPopoverText,
   mockedGetScreenSetResponse,
   targetSitePopoverText,
+  mockedSetPolicyResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
   cy.visit('')
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
+  mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
   mockGetUserSitesRequest()
   mockGetPartnersRequest()
   cy.contains(pageName).click({ force: true })
@@ -112,6 +115,7 @@ export function mockGetConfigurationRequests() {
 
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
+  mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
   mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
 }
@@ -133,9 +137,9 @@ export function checkElementsInitialState() {
   cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
   cy.get('ui5-tree').should('be.visible')
   cy.get('ui5-tree').eq(0).find('ui5-checkbox').should('not.be.checked')
-  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').should('exist')
-  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').realHover()
-  cy.get('#policiesPopover').should('have.text', policiesPopoverText)
+  cy.get('ui5-tree').eq(2).find('#policyTooltipIcon').should('exist')
+  cy.get('ui5-tree').eq(2).find('#policyTooltipIcon').realHover()
+  cy.get('#policyPopover').should('have.text', policiesPopoverText)
   cy.get('#saveButton').shadow().find('button').should('be.disabled')
   cy.get('#cancelButton').shadow().find('button').should('be.enabled')
   cy.get('#targetSiteTooltipIcon').should('exist')

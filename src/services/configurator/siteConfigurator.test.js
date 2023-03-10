@@ -50,7 +50,7 @@ describe('Site configurator test suite', () => {
   })
 
   test('send request to invalid url', async () => {
-    const err = CommonTestData.createErrorObject('Error configuring site')
+    const err = CommonTestData.createErrorObject(SiteConfigurator.ERROR_MSG_CONFIG)
     axios.mockImplementation(() => {
       throw err
     })

@@ -8,8 +8,8 @@ export const credentialsSlice = createSlice({
   name: CREDENTIALS_SLICE_STATE_NAME,
   initialState: {
     credentials: {
-      userKey: '',
-      secretKey: '',
+      userKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_USERKEY}` : '',
+      secretKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_SECRET}` : '',
     },
     isPopUpOpen: false,
   },
