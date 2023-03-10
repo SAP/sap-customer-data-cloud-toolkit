@@ -99,13 +99,17 @@ const CopyConfigurationExtended = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
 
-  window.onhashchange = () => {
-    if (currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
+  window.navigation.onnavigate = (event) => {
+    if (event.navigationType === 'replace' && currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
       dispatch(updateCurrentSiteApiKey())
     }
   }
 
   useEffect(() => {
+    if (currentSiteApiKey === '') {
+      dispatch(updateCurrentSiteApiKey())
+    }
+
     if (areCredentialsFilled(credentials) && currentSiteApiKey) {
       dispatch(getAvailableTargetSites())
       dispatch(setAvailableTargetSitesFromLocalStorage(credentials.secretKey))

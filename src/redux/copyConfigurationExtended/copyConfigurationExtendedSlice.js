@@ -216,7 +216,6 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
       const parallelRequestsAllowed = 5
       const state = getState()
       const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
-      console.time('getAvailableTargetSites')
       const siteFinderPaginated = new SiteFinderPaginated(credentials, parallelRequestsAllowed)
       let response = await siteFinderPaginated.getFirstPage()
       const availableTargetSites = []
@@ -224,7 +223,6 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
       while ((response = await siteFinderPaginated.getNextPage()) !== undefined) {
         availableTargetSites.push(...response)
       }
-      console.timeEnd('getAvailableTargetSites')
       return { availableTargetSites: availableTargetSites, secret: credentials.secret }
     } else {
       return []
