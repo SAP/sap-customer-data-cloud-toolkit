@@ -42,6 +42,7 @@ describe('Copy Configuration extended test suite', () => {
   it('should display errors on unsuccessfull set configurations and clear them on cancel', () => {
     utils.mockSetConfigurationRequests()
     utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.setSchema')
+    utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.getPolicies')
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
     utils.checkErrors('not.exist')

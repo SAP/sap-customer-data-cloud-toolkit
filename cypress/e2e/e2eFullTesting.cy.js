@@ -5,7 +5,7 @@ import * as dataTest from './dataTest'
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
     utils.resizeObserverLoopErrRe()
-    cy.visit(dataTest.consoleUrl)
+    cy.visit()
 
     cy.get('[name ="username"]', { timeout: 10000 }).eq(2).type(Cypress.env('userName'))
     cy.get('[name="password"]').eq(3).type(Cypress.env('passWord'))
