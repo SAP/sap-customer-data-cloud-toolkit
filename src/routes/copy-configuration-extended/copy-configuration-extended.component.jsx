@@ -22,6 +22,8 @@ import {
   CustomListItem,
   SuggestionItem,
   MessageStrip,
+  Icon,
+  Popover,
 } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
@@ -72,6 +74,7 @@ import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
 import '@ui5/webcomponents-icons/dist/arrow-right.js'
 import '@ui5/webcomponents/dist/features/InputSuggestions.js'
+import '@ui5/webcomponents-icons/dist/information.js'
 
 import './copy-configuration-extended.css'
 import styles from './copy-configuration-extended.styles'
@@ -98,6 +101,9 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
+
+  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
+  const [tooltipTarget, setTooltipTarget] = useState('')
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
@@ -262,6 +268,21 @@ const CopyConfigurationExtended = ({ t }) => {
     return isTargetInfoLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
   }
 
+  const onMouseOverHandler = (event) => {
+    if (event.target.shadowRoot) {
+      setTooltipTarget(event.target.shadowRoot.host.id)
+      setIsMouseOverIcon(true)
+    }
+  }
+
+  const onMouseOutHandler = () => {
+    setIsMouseOverIcon(false)
+  }
+
+  const openPopover = () => {
+    return isMouseOverIcon && tooltipTarget === `targetSiteTooltipIcon`
+  }
+
   return (
     <>
       <Bar
@@ -307,6 +328,17 @@ const CopyConfigurationExtended = ({ t }) => {
                 <FlexBox direction="Column" className={classes.targetInfoContainer}>
                   <FlexBox className={classes.innerFlexBoxStyle}>
                     <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
+                    <Icon
+                      id="targetSiteTooltipIcon"
+                      name="information"
+                      design="Information"
+                      onMouseOver={onMouseOverHandler}
+                      onMouseOut={onMouseOutHandler}
+                      className={classes.tooltipIconStyle}
+                    />
+                    <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
+                      {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
+                    </Popover>
                     <Input
                       showSuggestions
                       id="targetApiKeyInput"
