@@ -15,6 +15,7 @@ import {
   Text,
   TitleLevel,
   FlexBox,
+  Grid,
   Button,
   ValueState,
   BusyIndicator,
@@ -60,19 +61,14 @@ import {
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
-import {
-  cleanTreeVerticalScrolls,
-  areConfigurationsFilled,
-  filterTargetSites,
-  getTargetSiteByTargetApiKey,
-  extractTargetApiKeyFromTargetSiteListItem,
-  findStringInAvailableTargetSites,
-} from './utils'
+
+import { cleanTreeVerticalScrolls, areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, findStringInAvailableTargetSites } from './utils'
 import { getApiKey } from '../../redux/utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
-import '@ui5/webcomponents-icons/dist/arrow-right.js'
+import '@ui5/webcomponents-icons/dist/slim-arrow-right.js'
+import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
@@ -141,7 +137,6 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const onTargetApiKeysInputHandler = lodash.debounce((event) => {
     const inputValue = event.target.value
-    console.log(inputValue)
     setTarketApiKeyInputValue(inputValue)
     setFilteredAvailableTargetApiKeys(filterTargetSites(inputValue, availableTargetSites))
   }, 500)
@@ -172,11 +167,11 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const onTarketApiKeyDeleteHandler = (event) => {
-    dispatch(removeTargetSite(extractTargetApiKeyFromTargetSiteListItem(event.detail.item.textContent)))
+    dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
   const onSuggestionItemSelectHandler = (event) => {
-    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.description, availableTargetSites)
+    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.additionalText, availableTargetSites)
     setTarketApiKeyInputValue('')
     dispatch(addTargetSite(targetSite))
   }
@@ -236,16 +231,48 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const showTargetApiKeys = () => {
     return (
-      <List id="selectedTargetApiKeysList" growing="Scroll" mode="Delete" indent onItemDelete={onTarketApiKeyDeleteHandler}>
-        {targetSites.map((targetSite) => {
-          console.log(targetSite)
-          return (
-            <CustomListItem key={targetSite.apiKey}>
-              {targetSite.partnerName ? `${targetSite.baseDomain} - ${targetSite.apiKey} - ${targetSite.partnerName}` : `${targetSite.baseDomain} - ${targetSite.apiKey}`}
-              {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
-            </CustomListItem>
-          )
-        })}
+      <List id="selectedTargetApiKeysList" mode="Delete" onItemDelete={onTarketApiKeyDeleteHandler}>
+        {targetSites.map((targetSite) => (
+          <CustomListItem key={targetSite.apiKey} className={classes.targetSitesListItem} data-apikey={targetSite.apiKey}>
+            <FlexBox>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <Label>{t('COPY_CONFIGURATION_EXTENDED.SITE_DOMAIN')}</Label>
+                    </td>
+                    <td>
+                      <Text>{targetSite.baseDomain}</Text>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <Label>{t('COPY_CONFIGURATION_EXTENDED.API_KEY')}</Label>
+                    </td>
+                    <td>
+                      <Text>{targetSite.apiKey}</Text>
+                    </td>
+                  </tr>
+                  {targetSite.partnerName ? (
+                    <tr>
+                      <td>
+                        <Label>{t('COPY_CONFIGURATION_EXTENDED.PARTNER')}</Label>
+                      </td>
+                      <td>
+                        <Text>
+                          {targetSite.partnerName} ({targetSite.partnerId})
+                        </Text>
+                      </td>
+                    </tr>
+                  ) : (
+                    ''
+                  )}
+                </tbody>
+              </table>
+            </FlexBox>
+            {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
+          </CustomListItem>
+        ))}
       </List>
     )
   }
@@ -305,69 +332,111 @@ const CopyConfigurationExtended = ({ t }) => {
               </Text>
             </FlexBox>
 
-            <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.APIS')} />}>
-              <FlexBox className={classes.container}>
-                <FlexBox direction="Column" className={classes.currentInfoContainer}>
-                  <FlexBox justifyContent="Start" className={classes.currentSiteFlexboxStyle}>
-                    <Label id="currentSiteLabel" className="current_site">
-                      {t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE')}
-                    </Label>
-                    <Text id="currentSiteName"> {currentSiteInformation.baseDomain} </Text>
-                  </FlexBox>
+            <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_TARGET_SITES')} />}>
+              <Grid>
+                <>
+                  <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
+                    <Title level="H3" className={classes.currentInfoContainerTitle}>
+                      {t('COPY_CONFIGURATION_EXTENDED.FROM')}
+                    </Title>
 
-                  <FlexBox className={classes.currentApiKeyFlexboxStyle}>
-                    <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.CURRENT_SITE_API_KEY')}</Label>
-                    <Text> {currentSiteApiKey} </Text>
-                  </FlexBox>
-                </FlexBox>
+                    <Card className={classes.currentInfoContainerCard}>
+                      <table className={classes.currentInfoContainerCardTable}>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <Label id="currentSiteLabel">{t('COPY_CONFIGURATION_EXTENDED.SITE_DOMAIN')}</Label>
+                            </td>
+                            <td>
+                              <Text id="currentSiteName">{currentSiteInformation.baseDomain}</Text>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.API_KEY')}</Label>
+                            </td>
+                            <td>
+                              <Text> {currentSiteApiKey} </Text>
+                            </td>
+                          </tr>
+                          {/* <tr>
+                            <td>
+                              <Label>{t('COPY_CONFIGURATION_EXTENDED.PARTNER')}</Label>
+                            </td>
+                            <td>
+                              <Text>Partner Name Here (99999999)</Text>
+                            </td>
+                          </tr> */}
+                        </tbody>
+                      </table>
+                    </Card>
+                  </div>
 
-                <FlexBox justifyContent="Center" alignItems="Start" className={classes.iconContainer}>
-                  <ui5-icon class={classes.iconStyle} name="arrow-right"></ui5-icon>
-                </FlexBox>
+                  <div className={classes.iconContainer} data-layout-span="XL2 L2 M2 S2">
+                    <ui5-icon class={classes.iconContainerIcon} name="slim-arrow-right"></ui5-icon>
+                  </div>
 
-                <FlexBox direction="Column" className={classes.targetInfoContainer}>
-                  <FlexBox className={classes.innerFlexBoxStyle}>
-                    <Label id="targetSitesApisLabel">{t('COPY_CONFIGURATION_EXTENDED.TARGET_SITES_APIS')}</Label>
-                    <Icon
-                      id="targetSiteTooltipIcon"
-                      name="information"
-                      design="Information"
-                      onMouseOver={onMouseOverHandler}
-                      onMouseOut={onMouseOutHandler}
-                      className={classes.tooltipIconStyle}
-                    />
-                    <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
-                      {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
-                    </Popover>
-                    <Input
-                      showSuggestions
-                      id="targetApiKeyInput"
-                      onInput={onTargetApiKeysInputHandler}
-                      onKeyPress={onTargetApiKeysInputKeyPressHandler}
-                      type={InputType.Text}
-                      value={tarketApiKeyInputValue}
-                      className={classes.targetApiKeyInputStyle}
-                      onSuggestionItemSelect={onSuggestionItemSelectHandler}
-                    >
-                      {filteredAvailableTargetSites.map((availableTargetSite) => (
-                        <SuggestionItem
-                          key={availableTargetSite.apiKey}
-                          type="Navigation"
-                          text={availableTargetSite.baseDomain}
-                          description={availableTargetSite.apiKey}
-                          additionalText={`${availableTargetSite.partnerName} (${availableTargetSite.partnerId})`}
-                        />
-                      ))}
-                    </Input>
-                    <Button id="addTargetSiteButton" onClick={onAddTargetSiteButtonClickHandler} design="Emphasized">
-                      {t('GLOBAL.ADD')}
-                    </Button>
-                  </FlexBox>
-                  {showGetTargetInfoBusyIndicator()}
-                  {showMessageStripError()}
-                  {showTargetApiKeys()}
-                </FlexBox>
-              </FlexBox>
+                  <div className={classes.targetInfoContainer} data-layout-span="XL5 L5 M5 S5">
+                    <FlexBox justifyContent="SpaceBetween">
+                      <Title level="H3" className={classes.targetInfoContainerTitle}>
+                        {t('COPY_CONFIGURATION_EXTENDED.TO')}
+                      </Title>
+                      <Icon
+                        id="targetSiteTooltipIcon"
+                        name="information"
+                        design="Information"
+                        onMouseOver={onMouseOverHandler}
+                        onMouseOut={onMouseOutHandler}
+                        className={classes.tooltipIconStyle}
+                      />
+                      <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
+                        {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
+                      </Popover>
+                    </FlexBox>
+
+                    <Card>
+                      <div className={classes.targetInfoContainerInputContainer}>
+                        <Input
+                          showSuggestions
+                          id="targetApiKeyInput"
+                          onInput={onTargetApiKeysInputHandler}
+                          onKeyPress={onTargetApiKeysInputKeyPressHandler}
+                          type={InputType.Text}
+                          value={tarketApiKeyInputValue}
+                          className={classes.targetInfoContainerInput}
+                          onSuggestionItemSelect={onSuggestionItemSelectHandler}
+                          placeholder={t('COPY_CONFIGURATION_EXTENDED.ENTER_API_KEY_OR_SITE_DOMAIN')}
+                        >
+                          {filteredAvailableTargetSites.map((availableTargetSite) => (
+                            <SuggestionItem
+                              key={availableTargetSite.apiKey}
+                              // type="Navigation"
+                              text={availableTargetSite.baseDomain}
+                              additionalText={availableTargetSite.apiKey}
+                              description={`${availableTargetSite.partnerName} (${availableTargetSite.partnerId})`}
+                            />
+                          ))}
+                          <Button id="addTargetSiteButton" slot="icon" icon="add" onClick={onAddTargetSiteButtonClickHandler} design="Transparent"></Button>
+                        </Input>
+
+                        {showGetTargetInfoBusyIndicator()}
+                        {showMessageStripError()}
+                      </div>
+                    </Card>
+
+                    {targetSites.length ? (
+                      <>
+                        <Title level={TitleLevel.H5} className={classes.targetSitesListTitle}>
+                          {t('COPY_CONFIGURATION_EXTENDED.TARGET_LIST')}
+                        </Title>
+                        <Card className={classes.targetSitesListContainer}>{showTargetApiKeys()}</Card>{' '}
+                      </>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                </>
+              </Grid>
               {showBusyIndicator()}
             </Card>
           </div>

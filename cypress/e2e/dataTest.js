@@ -1,7 +1,6 @@
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
-
-const currentSiteName = ' dev.cdc-tools '
+const currentSiteName = 'dev.cdc-tools'
 const baseDomainName = 'e2e_testing'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
@@ -33,7 +32,7 @@ const smsTemplatesImportErrorHeaderMessage = 'Error - SMS templates were not imp
 const copyConfigExtendendMenuOption = 'Copy Config. Extended'
 const copyConfigExtendendTitle = 'Copy Configuration Extended'
 const copyConfigExtendendHeaderText = 'Copy configuration and settings from the current site to multiple target sites.'
-const copyConfigCurrentSiteLabel = 'Current Site:'
+const copyConfigCurrentSiteLabel = 'Site Domain:'
 const copyConfigCurrentSiteApiKeyLabel = 'API Key:'
 const copyConfigTargetSitesApisLabel = 'Target Sites API Keys:'
 const copyConfigSuccessPopupMessage = 'OkAll selected configurations were copied successfully.'

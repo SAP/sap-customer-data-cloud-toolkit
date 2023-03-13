@@ -176,6 +176,7 @@ export const copyConfigurationExtendedSlice = createSlice({
       }
     })
     builder.addCase(getTargetSiteInformation.rejected, (state, action) => {
+      console.log({ action })
       state.showSuccessMessage = false
       state.isTargetInfoLoading = false
       state.apiCardError = action.payload

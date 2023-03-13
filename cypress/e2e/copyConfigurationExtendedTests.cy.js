@@ -11,11 +11,10 @@ describe('Copy Configuration extended test suite', () => {
   it('should display all expected elements', () => {
     cy.get('ui5-title').eq(1).should('have.text', dataTest.copyConfigExtendendTitle)
     cy.get('#copyConfigExtendedHeaderText').should('have.text', dataTest.copyConfigExtendendHeaderText)
-    cy.get('[title-text = APIs]').should('be.visible')
+    cy.get('[title-text = "Select Target Sites"]').should('be.visible')
     cy.get('#currentSiteLabel').should('have.text', dataTest.copyConfigCurrentSiteLabel)
     cy.get('#currentSiteApiKeyLabel').should('have.text', dataTest.copyConfigCurrentSiteApiKeyLabel)
     cy.get('#currentSiteName').should('have.text', dataTest.currentSiteName)
-    cy.get('#targetSitesApisLabel').should('have.text', dataTest.copyConfigTargetSitesApisLabel)
     cy.get('#targetApiKeyInput').should('be.visible')
     cy.get('[title-text = "Select Configuration"]').should('be.visible')
     utils.checkElementsInitialState()
@@ -56,7 +55,7 @@ describe('Copy Configuration extended test suite', () => {
     utils.fillTargetApiKeyInput()
     utils.checkTargetSitesList()
     cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').shadow().find('ui5-button').click()
-    cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').should('not.exist')
+    cy.get('#selectedTargetApiKeysList').should('not.exist')
   })
 
   it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {

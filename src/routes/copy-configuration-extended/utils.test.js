@@ -1,6 +1,6 @@
-import { areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, extractTargetApiKeyFromTargetSiteListItem, findStringInAvailableTargetSites } from './utils'
+import { areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, findStringInAvailableTargetSites } from './utils'
 import { configurationsMockedResponse } from '../../redux/copyConfigurationExtended/dataTest'
-import { mockedAvailableTargetApiKeys, targetSiteListItem } from './dataTest'
+import { mockedAvailableTargetApiKeys } from './dataTest'
 
 describe('copyConfigurationExtended utils test suite', () => {
   test('return false if no checkboxes are filled', () => {
@@ -50,11 +50,6 @@ describe('copyConfigurationExtended utils test suite', () => {
   test('should return undefined when getting a target site from an unexisting target api key', () => {
     const targetSite = getTargetSiteByTargetApiKey('999999', mockedAvailableTargetApiKeys)
     expect(targetSite).toBeUndefined()
-  })
-
-  test('should extract target api key from target site list item', () => {
-    const targetApiKey = extractTargetApiKeyFromTargetSiteListItem(targetSiteListItem)
-    expect(targetApiKey).toEqual(mockedAvailableTargetApiKeys[0].apiKey)
   })
 
   test('should return true if a string exists in available target sites list', () => {

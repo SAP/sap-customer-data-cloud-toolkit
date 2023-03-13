@@ -37,13 +37,6 @@ const styles = {
     color: 'var(--sapNeutralElementColor)',
     ...spacing.sapUiTinyMarginBegin,
   },
-  innerFlexBoxStyle: {
-    ...spacing.sapUiSmallMarginBegin,
-    ...spacing.sapUiSmallMarginBottom,
-    ...spacing.sapUiSmallMarginEnd,
-    lineHeight: '30px',
-    display: 'block',
-  },
   apiKeyFlexBoxStyle: {
     gap: '10px',
     ...spacing.sapUiSmallMarginBegin,
@@ -53,47 +46,55 @@ const styles = {
   targetApiKeyFlexBoxStyle: {
     marginLeft: '300px',
   },
-  container: {
-    height: '100 %',
-    width: '100%',
-  },
   currentInfoContainer: {
-    height: '250px',
-    width: '45%',
     ...spacing.sapUiMediumMarginBegin,
     ...spacing.sapUiMediumMarginTop,
-    ...spacing.sapUiSmallMargin,
   },
-  currentSiteFlexboxStyle: {
-    ...spacing.sapUiSmallMarginTop,
-    gap: '30px',
+  currentInfoContainerTitle: {
+    ...spacing.sapUiSmallMarginBottom,
   },
-  currentApiKeyFlexboxStyle: {
-    ...spacing.sapUiTinyMarginTop,
-    gap: '62px',
+  currentInfoContainerCard: {
+    ...spacing.sapUiMediumMarginBottom,
+  },
+  currentInfoContainerCardTable: {
+    ...spacing.sapUiContentPadding,
   },
   targetInfoContainer: {
-    width: '50%',
-    height: '150px',
+    ...spacing.sapUiMediumMarginEnd,
     ...spacing.sapUiMediumMarginTop,
-    ...spacing.sapUiSmallMarginBegin,
   },
-  destinationSiteFlexboxStyle: {
+  targetInfoContainerTitle: {
+    ...spacing.sapUiSmallMarginBottom,
+  },
+  targetInfoContainerInputContainer: {
+    ...spacing.sapUiContentPadding,
+  },
+  targetInfoContainerInput: {
+    width: '100%',
+  },
+  targetSitesListTitle: {
     ...spacing.sapUiSmallMarginTop,
-    ...spacing.sapUiSmallMarginBegin,
-    gap: '25px',
+  },
+  targetSitesListContainer: {
+    ...spacing.sapUiSmallMarginTop,
+    ...spacing.sapUiMediumMarginBottom,
+  },
+  targetSitesListItem: {
+    ...spacing.sapUiContentPadding,
   },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMarginBottom,
   },
   iconContainer: {
-    width: '10%',
-    ...spacing.sapUiLargeMarginTop,
-    ...spacing.sapUiLargeMarginEnd,
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    height: '100%',
+    ...spacing.sapUiSmallMarginTop,
   },
-  iconStyle: {
-    height: '30px',
-    width: '30px',
+  iconContainerIcon: {
+    height: '50px',
+    width: '50px',
   },
   errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,

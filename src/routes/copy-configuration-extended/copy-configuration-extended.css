@@ -5,11 +5,3 @@
   --ui5-listitem-selected-border-bottom: 0 !important;
   --ui5-listitem-border-bottom: 0 !important;
 }
-
-.current_site {
-  font-weight: 700;
-}
-
-#selectedTargetApiKeysList {
-  height: -webkit-fill-available;
-}
