@@ -68,7 +68,6 @@ describe('Info Policy test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
     const response = await info.get()
-    //const sliceRes = response[2].branches.splice(templateIndex, 1)
 
     expectedResponse[2].branches.splice(templateIndex, 1)
     expect(response).toEqual(expectedResponse)

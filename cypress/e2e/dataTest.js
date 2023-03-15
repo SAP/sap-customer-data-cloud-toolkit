@@ -952,7 +952,7 @@ const mockedGetEmailTemplatesConfigsResponse = {
 }
 
 const policiesPopoverText = 'Copy all policies, or any of the following.'
-const targetSitePopoverText = 'Recent created sites might take a while to be displayed in the list, however you can just copy and paste the API Key'
+const targetSitePopoverText = 'Recently created sites might take a while to be displayed in the list, however you can just copy and paste the API Key'
 
 export {
   baseDomain,

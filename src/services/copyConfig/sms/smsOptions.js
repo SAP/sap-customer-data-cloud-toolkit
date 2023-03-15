@@ -6,7 +6,8 @@ class SmsOptions extends Options {
   constructor(smsConfiguration) {
     super({
       id: 'smsTemplates',
-      name: 'smsTemplates',
+      name: 'SMS Templates',
+      formatName: false,
       value: true,
     })
     this.#smsConfiguration = smsConfiguration

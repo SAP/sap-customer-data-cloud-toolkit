@@ -50,7 +50,12 @@ const ConfigurationTree = ({ id, name, value, error, branches, tooltip, t }) => 
         key={treeNode.id}
         content={
           <FlexBox direction="Row" justifyContent="Center">
-            <CheckBox id={`${treeNode.id}`} text={`${lodash.startCase(treeNode.name)}`} checked={treeNode.value} onChange={onCheckBoxStateChangeHandler} />
+            <CheckBox
+              id={`${treeNode.id}`}
+              text={treeNode.formatName === false ? treeNode.name : `${lodash.startCase(treeNode.name)}`}
+              checked={treeNode.value}
+              onChange={onCheckBoxStateChangeHandler}
+            />
             {treeNode.tooltip ? (
               <>
                 <Icon

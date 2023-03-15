@@ -2,6 +2,7 @@ import Options from '../options'
 
 class PolicyOptions extends Options {
   #policy
+  static #twoFactorAuth = 'TwoFactorAuthenticationProviders'
 
   constructor(policy) {
     const accountOptions = 'accountOptions'
@@ -15,10 +16,9 @@ class PolicyOptions extends Options {
     const profilePhoto = 'profilePhoto'
     const registration = 'registration'
     const security = 'security'
-    const twoFactorAuth = 'twoFactorAuth'
     super({
-      id: 'policy',
-      name: 'policy',
+      id: 'policies',
+      name: 'policies',
       value: true,
       tooltip: 'POLICIES',
       branches: [
@@ -95,8 +95,8 @@ class PolicyOptions extends Options {
           tooltip: 'POLICIES_SECURITY',
         },
         {
-          id: twoFactorAuth,
-          name: 'TwoFactorAuth',
+          id: 'twoFactorAuth',
+          name: PolicyOptions.#twoFactorAuth,
           value: true,
           tooltip: 'POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS',
         },
@@ -142,7 +142,7 @@ class PolicyOptions extends Options {
     return this.removeInfo('Security', info)
   }
   removeTwoFactorAuth(info) {
-    return this.removeInfo('TwoFactorAuth', info)
+    return this.removeInfo(PolicyOptions.#twoFactorAuth, info)
   }
   removeWebSdk(info) {
     return this.removeInfo('Web Sdk', info)
