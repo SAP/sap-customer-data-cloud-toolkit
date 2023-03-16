@@ -7,8 +7,9 @@ class ScreenSetOptions extends Options {
     const SCREEN_SET_COLLECTION_DEFAULT = 'Default'
     super({
       id: 'screenSets',
-      name: 'screenSets',
+      name: 'Screen-Sets',
       value: true,
+      formatName: false,
       branches: [
         {
           id: SCREEN_SET_COLLECTION_DEFAULT,

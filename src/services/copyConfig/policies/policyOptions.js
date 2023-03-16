@@ -3,6 +3,7 @@ import Options from '../options'
 class PolicyOptions extends Options {
   #policy
   static #twoFactorAuth = 'TwoFactorAuthenticationProviders'
+  static #profilePhoto = 'defaultProfilePhotoDimensions'
 
   constructor(policy) {
     const accountOptions = 'accountOptions'
@@ -13,7 +14,6 @@ class PolicyOptions extends Options {
     const federation = 'federation'
     const passwordComplexity = 'passwordComplexity'
     const passwordReset = 'passwordReset'
-    const profilePhoto = 'profilePhoto'
     const registration = 'registration'
     const security = 'security'
     super({
@@ -77,8 +77,8 @@ class PolicyOptions extends Options {
           tooltip: 'POLICIES_PASSWORD_RESET',
         },
         {
-          id: profilePhoto,
-          name: 'profilePhoto',
+          id: 'profilePhoto',
+          name: PolicyOptions.#profilePhoto,
           value: true,
           tooltip: 'POLICIES_DEFAULT_PROFILE_PHOTO_DIMENSIONS',
         },
@@ -133,7 +133,7 @@ class PolicyOptions extends Options {
     return this.removeInfo('passwordReset', info)
   }
   removeProfilePhoto(info) {
-    return this.removeInfo('profilePhoto', info)
+    return this.removeInfo(PolicyOptions.#profilePhoto, info)
   }
   removeRegistration(info) {
     return this.removeInfo('Registration', info)

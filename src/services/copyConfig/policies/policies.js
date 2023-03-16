@@ -1,7 +1,7 @@
 import generateErrorResponse from '../../errors/generateErrorResponse'
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
-import { stringToJson } from '../objectHelper'
+import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
 
 class Policy {
   static #NAMESPACE = 'accounts'
@@ -39,7 +39,7 @@ class Policy {
 
     this.#cleanResponse(response)
     if (response.errorCode === 0) {
-      response = await this.set(targetApi, this.#removeUnecessaryFields(response, options), targetDataCenter.dataCenter)
+      response = await this.#copyPolicies(targetApi, targetDataCenter, response, options)
     }
     if (response.context) {
       response['context'] = response.context.replace(/&quot;/g, '"')
@@ -48,6 +48,64 @@ class Policy {
 
     return response
   }
+
+  async #copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
+    const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
+    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
+    if (isParentSite) {
+      return this.set(destinationSite, filteredResponse, destinationSiteConfiguration.dataCenter)
+    } else {
+      return this.#copyPoliciesToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, filteredResponse)
+    }
+  }
+
+  async #copyPoliciesToChildSite(destinationSite, dataCenter, response) {
+    this.#prepareAccountOptionsToChildSite(response)
+    this.#prepareRegistrationToChildSite(response)
+    this.#prepareTwoFactorAuthToChildSite(response)
+    this.#prepareSecurityToChildSite(response)
+    delete response.authentication
+    delete response.passwordComplexity
+    delete response.profilePhoto
+    delete response.federation
+    return this.set(destinationSite, response, dataCenter)
+  }
+
+  #prepareSecurityToChildSite(response) {
+    if (response.security) {
+      removePropertyFromObjectCascading(response.security, 'passwordChangeInterval')
+      removePropertyFromObjectCascading(response.security, 'passwordHistorySize')
+    }
+  }
+
+  #prepareTwoFactorAuthToChildSite(response) {
+    if (response.twoFactorAuth) {
+      removePropertyFromObjectCascading(response.twoFactorAuth, 'providers')
+    }
+  }
+
+  #prepareRegistrationToChildSite(response) {
+    if (response.registration) {
+      removePropertyFromObjectCascading(response.registration, 'requireSecurityQuestion')
+      removePropertyFromObjectCascading(response.registration, 'requireLoginID')
+      removePropertyFromObjectCascading(response.registration, 'enforceCoppa')
+    }
+  }
+
+  #prepareAccountOptionsToChildSite(response) {
+    if (response.accountOptions) {
+      removePropertyFromObjectCascading(response.accountOptions, 'allowUnverifiedLogin')
+      removePropertyFromObjectCascading(response.accountOptions, 'preventLoginIDHarvesting')
+      removePropertyFromObjectCascading(response.accountOptions, 'defaultLanguage')
+      removePropertyFromObjectCascading(response.accountOptions, 'loginIdentifiers')
+      removePropertyFromObjectCascading(response.accountOptions, 'loginIdentifierConflict')
+    }
+  }
+
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
+  }
+
   #deleteOptions(response, options) {
     for (const templateInfo of options.branches) {
       if (!templateInfo.value) {
@@ -68,11 +126,7 @@ class Policy {
   }
 
   #cleanResponse(response) {
-    delete response['authentication']
-    delete response['doubleOptIn']
-    delete response['preferencesCenter']
     delete response['rba']
-
     if (response['security']) {
       delete response['security'].accountLockout
       delete response['security'].captcha
@@ -94,17 +148,39 @@ class Policy {
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
     parameters.secret = this.secret
-    parameters.accountOptions = JSON.stringify(config.accountOptions)
-    parameters.emailNotifications = JSON.stringify(config.emailNotifications)
-    parameters.emailVerification = JSON.stringify(config.emailVerification)
-    parameters.gigyaPlugins = JSON.stringify(config.gigyaPlugins)
-    parameters.passwordComplexity = JSON.stringify(config.passwordComplexity)
-    parameters.passwordReset = JSON.stringify(config.passwordReset)
-    parameters.profilePhoto = JSON.stringify(config.profilePhoto)
-    parameters.registration = JSON.stringify(config.registration)
-    parameters.security = JSON.stringify(config.security)
-    parameters.twoFactorAuth = JSON.stringify(config.twoFactorAuth)
-    parameters.federation = JSON.stringify(config.federation)
+    if (config.accountOptions) {
+      parameters.accountOptions = JSON.stringify(config.accountOptions)
+    }
+    if (config.emailNotifications) {
+      parameters.emailNotifications = JSON.stringify(config.emailNotifications)
+    }
+    if (config.emailVerification) {
+      parameters.emailVerification = JSON.stringify(config.emailVerification)
+    }
+    if (config.gigyaPlugins) {
+      parameters.gigyaPlugins = JSON.stringify(config.gigyaPlugins)
+    }
+    if (config.passwordComplexity) {
+      parameters.passwordComplexity = JSON.stringify(config.passwordComplexity)
+    }
+    if (config.passwordReset) {
+      parameters.passwordReset = JSON.stringify(config.passwordReset)
+    }
+    if (config.profilePhoto) {
+      parameters.profilePhoto = JSON.stringify(config.profilePhoto)
+    }
+    if (config.registration) {
+      parameters.registration = JSON.stringify(config.registration)
+    }
+    if (config.security) {
+      parameters.security = JSON.stringify(config.security)
+    }
+    if (config.twoFactorAuth) {
+      parameters.twoFactorAuth = JSON.stringify(config.twoFactorAuth)
+    }
+    if (config.federation) {
+      parameters.federation = JSON.stringify(config.federation)
+    }
     parameters.context = JSON.stringify({ id: 'policy', targetApiKey: apiKey })
     parameters.format = 'json'
 
