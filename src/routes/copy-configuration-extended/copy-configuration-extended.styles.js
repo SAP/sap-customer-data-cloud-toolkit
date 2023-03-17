@@ -31,6 +31,10 @@ const styles = {
   },
   selectConfigurationInnerDivStyle: {
     ...spacing.sapUiTinyMargin,
+    '--sapList_AlternatingBackground': 'white',
+    '--sapList_SelectionBackgroundColor': 'white',
+    '--ui5-listitem-selected-border-bottom': '0',
+    '--ui5-listitem-border-bottom': '0',
   },
 
   componentTextStyle: {

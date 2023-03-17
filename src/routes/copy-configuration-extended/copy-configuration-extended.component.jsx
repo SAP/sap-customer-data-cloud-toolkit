@@ -72,7 +72,6 @@ import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
-import './copy-configuration-extended.css'
 import styles from './copy-configuration-extended.styles'
 
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
