@@ -74,4 +74,15 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
     utils.checkTargetSitesList()
   })
+
+  it('should select and unselect all configurations', () => {
+    cy.get('#selectAllCheckbox').should('not.be.checked')
+    cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
+    cy.get('#selectAllCheckbox').realClick()
+    cy.get('#selectAllCheckbox').should('have.prop', 'checked')
+    cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('have.prop', 'checked'))
+    cy.get('#selectAllCheckbox').realClick()
+    cy.get('#selectAllCheckbox').should('not.be.checked')
+    cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
+  })
 })

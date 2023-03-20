@@ -25,6 +25,7 @@ import {
   MessageStrip,
   Icon,
   Popover,
+  CheckBox,
 } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
@@ -56,6 +57,7 @@ import {
   selectIsTargetInfoLoading,
   setAvailableTargetSitesFromLocalStorage,
   getAvailableTargetSites,
+  setConfigurationStatus,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -175,6 +177,14 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(addTargetSite(targetSite))
   }
 
+  const onSelectAllCheckboxChangeHandler = (event) => {
+    const value = event.srcElement.checked
+    configurations.forEach((configuration) => {
+      const checkBoxId = configuration.id
+      dispatch(setConfigurationStatus({ checkBoxId, value }))
+    })
+  }
+
   const showSuccessMessage = () => (
     <DialogMessageInform
       open={showSuccessDialog}
@@ -196,7 +206,14 @@ const CopyConfigurationExtended = ({ t }) => {
     return configurations.length ? (
       <div className={classes.selectConfigurationOuterDivStyle}>
         <div className={classes.selectConfigurationInnerDivStyle}>
-          <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')} />}>
+          <Card
+            header={
+              <CardHeader
+                titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')}
+                action={<CheckBox id="selectAllCheckbox" text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')} onChange={onSelectAllCheckboxChangeHandler} />}
+              />
+            }
+          >
             <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
               {configurations.map((configuration) => (
                 <ConfigurationTree key={configuration.id} {...configuration} />
