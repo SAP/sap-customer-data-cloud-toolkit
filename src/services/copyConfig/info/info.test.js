@@ -157,7 +157,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse.splice(7, 1) // remove web sdk
+    expectedResponse.splice(6, 1) // remove web sdk
     expect(response).toEqual(expectedResponse)
   })
 })
