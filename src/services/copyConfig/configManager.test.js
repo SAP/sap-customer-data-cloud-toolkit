@@ -50,15 +50,16 @@ describe('Config Manager test suite', () => {
       details: mockedResponse.errorDetails,
     }
     axios.mockResolvedValueOnce({ data: mockedResponse })
+    let errorThrown
     await configManager
       .getConfiguration()
-      .then(() => {
-        // It should not reach here
-        expect(1).toEqual(0)
-      })
+      .then(() => {})
       .catch((error) => {
-        errorCallback(error[0], err)
-        verifyAllContext(error)
+        errorThrown = error
+      })
+      .finally(() => {
+        errorCallback(errorThrown[0], err)
+        verifyAllContext(errorThrown)
       })
   })
 
@@ -78,15 +79,16 @@ describe('Config Manager test suite', () => {
       code: mockedResponse.errorCode,
       details: mockedResponse.errorDetails,
     }
+    let errorThrown
     await configManager
       .getConfiguration()
-      .then(() => {
-        // It should not reach here
-        expect(1).toEqual(0)
-      })
+      .then(() => {})
       .catch((error) => {
-        errorCallback(error[0], err)
-        verifyAllContext(error)
+        errorThrown = error
+      })
+      .finally(() => {
+        errorCallback(errorThrown[0], err)
+        verifyAllContext(errorThrown)
       })
   })
 
