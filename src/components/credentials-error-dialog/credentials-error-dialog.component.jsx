@@ -1,5 +1,5 @@
 import { ValueState, Text } from '@ui5/webcomponents-react'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
@@ -26,4 +26,4 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
   )
 }
 
-export default withNamespaces()(CredentialsErrorDialog)
+export default withTranslation()(CredentialsErrorDialog)

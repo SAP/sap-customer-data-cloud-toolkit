@@ -1,5 +1,5 @@
 import i18n from 'i18next'
-import { reactI18nextModule } from 'react-i18next'
+import { initReactI18next } from 'react-i18next'
 
 import translationEN from './locales/en/translation.json'
 
@@ -9,7 +9,7 @@ const resources = {
   },
 }
 
-i18n.use(reactI18nextModule).init({
+i18n.use(initReactI18next).init({
   resources,
   lng: 'en',
   keySeparator: false,

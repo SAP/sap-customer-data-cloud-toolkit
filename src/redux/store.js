@@ -7,6 +7,7 @@ import emailReducer from './emails/emailSlice'
 import smsReducer from './sms/smsSlice'
 import credentialsReducer from './credentials/credentialsSlice'
 import versionReducer from './version/versionSlice'
+import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 export default configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export default configureStore({
     sms: smsReducer,
     credentials: credentialsReducer,
     version: versionReducer,
+    copyConfigurationExtended: copyConfigurationExtendedReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

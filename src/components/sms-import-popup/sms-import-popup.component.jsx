@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { Dialog, Button, Label, BusyIndicator } from '@ui5/webcomponents-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
@@ -105,4 +105,4 @@ const SmsImportPopup = ({ t }) => {
   )
 }
 
-export default withNamespaces()(SmsImportPopup)
+export default withTranslation()(SmsImportPopup)

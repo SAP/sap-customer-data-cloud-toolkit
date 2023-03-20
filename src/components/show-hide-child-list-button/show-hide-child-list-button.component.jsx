@@ -1,4 +1,4 @@
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { Button } from '@ui5/webcomponents-react'
 
 const ShowHideChildListButton = ({ icon, tooltipKey, onClickHandler, t }) => {
@@ -16,4 +16,4 @@ const ShowHideChildListButton = ({ icon, tooltipKey, onClickHandler, t }) => {
   )
 }
 
-export default withNamespaces()(ShowHideChildListButton)
+export default withTranslation()(ShowHideChildListButton)

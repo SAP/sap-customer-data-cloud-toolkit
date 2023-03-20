@@ -3,21 +3,19 @@ import UrlBuilder from '../gigya/urlBuilder'
 import generateErrorResponse from '../errors/generateErrorResponse'
 
 class SiteConfigurator {
-  static #ERROR_MSG_CONFIG = 'Error configuring site'
+  static ERROR_MSG_CONFIG = 'Invalid ApiKey parameter'
   static #NAMESPACE = 'admin'
 
-  constructor(userKey, secret, dataCenter) {
+  constructor(userKey, secret) {
     this.userKey = userKey
     this.secret = secret
-    this.dataCenter = dataCenter
   }
 
-  async connect(parentApiKey, childApiKey) {
-    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getSetEndpoint())
+  async connect(parentApiKey, childApiKey, dataCenter) {
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getSetEndpoint())
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {
-      //console.log(`error=${error}`)
-      return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
+      return generateErrorResponse(error, SiteConfigurator.ERROR_MSG_CONFIG)
     })
   }
 
@@ -38,12 +36,12 @@ class SiteConfigurator {
     return 'admin.getSiteConfig'
   }
 
-  async getSiteConfig(apiKey) {
-    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, this.dataCenter, SiteConfigurator.getGetEndpoint())
+  async getSiteConfig(apiKey, dataCenter) {
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getGetEndpoint())
 
     const response = await client.post(url, this.#siteConfigParameters(apiKey, this.userKey, this.secret)).catch(function (error) {
-      //console.log(`error=${error}`)
-      return generateErrorResponse(error, SiteConfigurator.#ERROR_MSG_CONFIG)
+      //console.log(`error=${JSON.stringify(error)}`)
+      return generateErrorResponse(error, SiteConfigurator.ERROR_MSG_CONFIG)
     })
     return response.data
   }
@@ -54,6 +52,7 @@ class SiteConfigurator {
     parameters.userKey = userKey
     parameters.secret = secret
     parameters.includeSiteGroupConfig = true
+    parameters.includeGlobalConf = true
     return parameters
   }
 }

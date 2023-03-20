@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JavaScript-modules-diagram</ID>
+  <OriginalElement>/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js</OriginalElement>
+  <nodes>
+    <node x="456.0" y="305.0">/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#CredentialsPopoverButton#414;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#EmailTemplates#142;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SiteDeployer#68;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SmsTemplates#222;</node>
+    <node x="640.0" y="234.0">/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/components/credentials-popover-button/credentials-popover-button.component.jsx</node>
+    <node x="0.0" y="292.0">/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/email-templates/email-templates.component.jsx</node>
+    <node x="381.0" y="620.0">/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/site-deployer/site-deployer.component.jsx</node>
+    <node x="368.0" y="-25.04092339979013">/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/sms-templates/sms-templates.component.jsx</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#CredentialsPopoverButton#414;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#EmailTemplates#142;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SiteDeployer#68;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SmsTemplates#222;" target="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/email-templates/email-templates.component.jsx" relationship="">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#CredentialsPopoverButton#414;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#EmailTemplates#142;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SiteDeployer#68;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SmsTemplates#222;" target="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/site-deployer/site-deployer.component.jsx" relationship="">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#CredentialsPopoverButton#414;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#EmailTemplates#142;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SiteDeployer#68;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SmsTemplates#222;" target="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/components/credentials-popover-button/credentials-popover-button.component.jsx" relationship="">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#CredentialsPopoverButton#414;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#EmailTemplates#142;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SiteDeployer#68;/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/App.js#SmsTemplates#222;" target="/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/sms-templates/sms-templates.component.jsx" relationship="">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.7587579617834395" showDependencies="false" x="618.0" y="325.0" />
+  <SelectedNodes>
+    <node>/Users/I558372/Documents/CDC Toolbox/cdc-tools-chrome-extension/src/routes/sms-templates/sms-templates.component.jsx</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>All</Category>
+  </Categories>
+  <VISIBILITY>Details</VISIBILITY>
+</Diagram>
+

@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { withNamespaces } from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import { Input, InputType, Button, TableRow, TableCell, Text, ActionSheet } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
@@ -107,4 +107,4 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
   )
 }
 
-export default withNamespaces()(SitesTableChildRow)
+export default withTranslation()(SitesTableChildRow)

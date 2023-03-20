@@ -62,11 +62,11 @@ class SiteManager {
   }
 
   async #createSiteAndConnect(site, parentApiKey) {
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, site.dataCenter)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret)
     let childResponse = (await this.#createSite(site)).data
     childResponse = this.#enrichResponse(childResponse, site.tempId, true)
     if (this.#isSuccessful(childResponse)) {
-      const scResponse = (await siteConfigurator.connect(parentApiKey, childResponse.apiKey)).data
+      const scResponse = (await siteConfigurator.connect(parentApiKey, childResponse.apiKey, site.dataCenter)).data
       if (!this.#isSuccessful(scResponse)) {
         childResponse = this.#mergeErrorResponse(childResponse, scResponse)
       }
@@ -132,9 +132,9 @@ class SiteManager {
   async #deleteSite(targetApiKey) {
     //console.log(`Deleting site ${targetApiKey}`)
     const responses = []
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, undefined)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret)
 
-    const siteConfig = await siteConfigurator.getSiteConfig(targetApiKey)
+    const siteConfig = await siteConfigurator.getSiteConfig(targetApiKey, 'us1')
     if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
       this.#addApiKeyToResponse(siteConfig, targetApiKey)
       responses.push(siteConfig)

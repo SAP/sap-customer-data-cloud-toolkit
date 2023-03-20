@@ -23,5 +23,5 @@ export const MENU_ELEMENTS = [
   { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
   { name: 'Email Templates', route: ROUTE_EMAIL_TEMPLATES },
   { name: 'SMS Templates', route: ROUTE_SMS_TEMPLATES },
-  // { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
+  { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
 ]

@@ -1,48 +1,47 @@
+import { expectedSchemaResponse } from '../schema/dataTest'
+import EmailOptions from '../emails/emailOptions'
+import SchemaOptions from '../schema/schemaOptions'
+import ScreenSetOptions from '../screenset/screensetOptions'
+import PolicyOptions from '../policies/policyOptions'
+
 export function getInfoExpectedResponse(supports) {
-  return {
-    schema: {
-      data: supports,
-      profile: supports,
-    },
-    screenSets: {
-      default: {
-        defaultLinkAccounts: supports,
-        defaultLiteRegistration: supports,
-      },
-      custom: {
-        customLinkAccounts: supports,
-        customLiteRegistration: supports,
-      },
-    },
-    policies: {
-      accountOptions: supports,
-      codeVerification: supports,
-      emailNotifications: supports,
-      emailVerification: supports,
-      federation: supports,
-      webSdk: supports,
-      passwordComplexity: supports,
-      passwordReset: supports,
-      defaultProfilePhotoDimensions: supports,
-      registration: supports,
-      security: supports,
-      twoFactorAuthenticationProviders: supports,
-    },
-    socialIdentities: supports,
-    emailTemplates: {
-      magicLink: supports,
-      codeVerification: supports,
-      emailVerification: supports,
-      newUserWelcome: supports,
-      accountDeletionConfirmation: supports,
-      litePreferencesCenter: supports,
-      doubleOptInConfirmation: supports,
-      passwordReset: supports,
-      tfaEmailVerification: supports,
-      impossibleTraveler: supports,
-      passwordResetConfirmation: supports,
-    },
-    smsTemplates: supports,
-    dataflows: supports,
+  const schemaOptions = new SchemaOptions(undefined)
+  const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
+
+  const screenSetOptions = new ScreenSetOptions(undefined)
+  const screenSets = supports ? screenSetOptions.getOptions() : screenSetOptions.getOptionsDisabled()
+
+  const policiesOptions = new PolicyOptions(undefined)
+  const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()
+
+  const socialIdentities = {
+    id: 'socialIdentities',
+    name: 'socialIdentities',
+    value: supports,
   }
+
+  const emailOptions = new EmailOptions(undefined)
+  const emailTemplates = supports ? emailOptions.getOptions() : emailOptions.getOptionsDisabled()
+
+  const smsTemplates = {
+    id: 'smsTemplates',
+    name: 'SMS Templates',
+    formatName: false,
+    value: supports,
+  }
+
+  const webSdk = {
+    id: 'webSdk',
+    name: 'webSdk',
+    value: supports,
+  }
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk]
+}
+
+export function getExpectedSchemaResponseExcept(exceptions) {
+  const response = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  exceptions.forEach((exception) => {
+    delete response[exception]
+  })
+  return response
 }

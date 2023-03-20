@@ -1,7 +1,30 @@
 /* eslint-disable no-undef */
 
+import {
+  siteConfigResponse,
+  mockedGetSchemaResponse,
+  mockedSetSchemaResponse,
+  mockedGetSmsConfigsResponse,
+  mockedSetSmsTemplatesResponse,
+  mockedGetSocialsConfigsResponse,
+  mockedSetSocialsConfigsResponse,
+  mockedUserSitesResponse,
+  mockedGetPartnersResponse,
+  dummyApiKey,
+  mockedGetEmailTemplatesConfigsResponse,
+  mockPolicyResponse,
+  policiesPopoverText,
+  mockedGetScreenSetResponse,
+  targetSitePopoverText,
+  mockedSetPolicyResponse,
+} from './dataTest'
+
 export function startUp(pageName) {
   cy.visit('')
+  mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
+  mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
+  mockGetUserSitesRequest()
+  mockGetPartnersRequest()
   cy.contains(pageName).click({ force: true })
   writeCredentials()
 }
@@ -12,7 +35,6 @@ export function writeCredentials() {
   openPopoverButton.click({ force: true })
   cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('AFww+F466MSR', { force: true })
   cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
-
   openPopoverButton.click({ force: true })
 }
 
@@ -81,4 +103,59 @@ export function getSaveButton() {
 
 export function clickPopUpOkButton(popUpId) {
   return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
+}
+
+export function mockGetConfigurationRequests() {
+  mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
+  mockResponse(mockedGetScreenSetResponse, 'POST', 'accounts.getScreenSets')
+  mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
+  mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
+  mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
+}
+
+export function mockSetConfigurationRequests() {
+  mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
+  mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
+  mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
+  mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
+}
+
+export function mockGetUserSitesRequest() {
+  mockResponse(mockedUserSitesResponse, 'POST', 'admin.console.getPagedUserEffectiveSites')
+}
+
+export function mockGetPartnersRequest() {
+  mockResponse(mockedGetPartnersResponse, 'POST', 'admin.console.getPartners')
+}
+
+export function checkErrors(expectedState) {
+  cy.get('[icon = error]').should(expectedState)
+  cy.get('#errorListContainer').should(expectedState)
+}
+
+export function checkElementsInitialState() {
+  cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
+  cy.get('ui5-tree').should('be.visible')
+  cy.get('ui5-tree').eq(0).find('ui5-checkbox').should('not.be.checked')
+  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').should('exist')
+  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').realHover()
+  cy.get('#policiesPopover').should('have.text', policiesPopoverText)
+  cy.get('#saveButton').shadow().find('button').should('be.disabled')
+  cy.get('#cancelButton').shadow().find('button').should('be.enabled')
+  cy.get('#targetSiteTooltipIcon').should('exist')
+  cy.get('#targetSiteTooltipIcon').realHover()
+  cy.get('#targetSitePopover').should('have.text', targetSitePopoverText)
+}
+
+export function setConfigurationCheckBox() {
+  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+}
+
+export function fillTargetApiKeyInput() {
+  cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
+  cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
+}
+
+export function checkTargetSitesList() {
+  cy.get('#selectedTargetApiKeysList').should('have.length', '1')
 }
