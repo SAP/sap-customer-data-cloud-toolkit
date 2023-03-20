@@ -1,5 +1,4 @@
 import Schema from '../schema/schema'
-import { getInfoExpectedResponse } from './dataTest'
 import Social from '../social/social'
 import SmsConfiguration from '../sms/smsConfiguration'
 import { stringToJson } from '../objectHelper'
@@ -35,7 +34,6 @@ class Info {
       this.#getSocialIdentities(),
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
-      this.#getDataflows(),
       this.#getWebSdk(),
     ]).then((infos) => {
       infos.forEach((info) => {
@@ -142,10 +140,6 @@ class Info {
       stringToJson(response, 'context')
       return Promise.reject([response])
     }
-  }
-
-  #getDataflows() {
-    return Promise.resolve(getInfoExpectedResponse(false)[6])
   }
 
   #hasSocialProviders(providers) {

@@ -29,18 +29,13 @@ export function getInfoExpectedResponse(supports) {
     formatName: false,
     value: supports,
   }
-  const dataflows = {
-    id: 'dataflows',
-    name: 'dataflows',
-    value: supports,
-  }
 
   const webSdk = {
     id: 'webSdk',
     name: 'webSdk',
     value: supports,
   }
-  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, dataflows, webSdk]
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {
