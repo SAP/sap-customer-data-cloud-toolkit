@@ -13,6 +13,8 @@ import Policy from '../policies/policies'
 import PolicyOptions from '../policies/policyOptions'
 import ScreenSetOptions from '../screenset/screensetOptions'
 import ScreenSet from '../screenset/screenset'
+import ConsentConfiguration from '../consent/consentConfiguration'
+import ConsentOptions from '../consent/consentOptions'
 
 class Info {
   #credentials
@@ -35,6 +37,7 @@ class Info {
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getWebSdk(),
+      this.#getConsents(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -56,6 +59,21 @@ class Info {
       const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
       if (response.globalConf === '' || response.globalConf === undefined) {
         webSdkOptions.removeWebSdk(info)
+      }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
+  }
+
+  async #getConsents() {
+    const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await consentOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
+      if (Object.keys(response.preferences).length === 0) {
+        consentOptions.removeConsent(info)
       }
       return Promise.resolve(info)
     } else {

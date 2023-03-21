@@ -35,7 +35,13 @@ export function getInfoExpectedResponse(supports) {
     name: 'webSdk',
     value: supports,
   }
-  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk]
+
+  const consent = {
+    id: 'consent',
+    name: 'consent',
+    value: supports,
+  }
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, consent]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {
