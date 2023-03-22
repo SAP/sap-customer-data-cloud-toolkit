@@ -17,12 +17,14 @@ import {
   mockedGetScreenSetResponse,
   targetSitePopoverText,
   mockedSetPolicyResponse,
+  mockedGetPolicyResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
   cy.visit('')
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
+
   mockGetUserSitesRequest()
   mockGetPartnersRequest()
   cy.contains(pageName).click({ force: true })
@@ -63,10 +65,13 @@ export function resizeObserverLoopErrRe() {
 }
 
 export function getBaseDomain(baseDomain, timeout) {
+  cy.wait(10000)
+  cy.get('#cdctools-baseDomain').should('be.visible')
   return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
+  cy.wait(10000)
   cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).click()
   cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).click()
   return cy
@@ -79,8 +84,9 @@ export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
     .should('have.text', chosenDataCenter)
 }
 
-export function getSiteStructure(optionNumber) {
-  cy.get('#cdctools-siteStructure').click()
+export function getSiteStructure(optionNumber, timeout) {
+  cy.get('#cdctools-siteStructure', { timeout: timeout }).should('be.visible')
+  cy.get('#cdctools-siteStructure', { timeout: timeout }).click()
   return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
 
@@ -102,13 +108,16 @@ export function getSaveButton() {
 }
 
 export function clickPopUpOkButton(popUpId) {
+  cy.get('.show-cdc-tools-app-container').find(popUpId).should('be.visible')
   return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
 }
 
 export function mockGetConfigurationRequests() {
   mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
   mockResponse(mockedGetScreenSetResponse, 'POST', 'accounts.getScreenSets')
+  mockResponse(mockedGetPolicyResponse, 'POST', 'accounts.getPolicies')
   mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
+  mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
   mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
 }
@@ -117,6 +126,7 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
   mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
   mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
+
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
 }
 
