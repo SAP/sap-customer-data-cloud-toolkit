@@ -17,47 +17,81 @@ class LegalStatement {
     this.#dataCenter = dataCenter
   }
 
-  async get() {
+  async get(consentId, language) {
     const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, this.#dataCenter, LegalStatement.getGetLegalStatementEndpoint())
-    const res = await client.post(url, this.#getLegalStatementParameters(this.#site)).catch(function (error) {
+    const res = await client.post(url, this.#getLegalStatementParameters(this.#site, consentId, language)).catch(function (error) {
       return generateErrorResponse(error, LegalStatement.#ERROR_MSG_GET_CONFIG)
     })
     return res.data
   }
 
-  async set(site, dataCenter, body) {
+  async set(site, dataCenter, consentId, language, legalStatements) {
     const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, dataCenter, LegalStatement.getSetLegalStatementEndpoint())
-    const res = await client.post(url, this.#setLegalStatementParameters(site, body)).catch(function (error) {
+    const res = await client.post(url, this.#setLegalStatementParameters(site, consentId, language, legalStatements)).catch(function (error) {
       return generateErrorResponse(error, LegalStatement.#ERROR_MSG_SET_CONFIG)
     })
     return res.data
   }
 
-  async copy(destinationSite, destinationSiteConfiguration) {
-    let response = await this.get()
-    if (response.errorCode === 0) {
-      response = await this.set(destinationSite, destinationSiteConfiguration.dataCenter, response)
+  async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages) {
+    let response
+    for (const language of consentLanguages) {
+      response = await this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language)
+      if (response.errorCode !== 0) {
+        break
+      }
     }
     stringToJson(response, 'context')
     return response
   }
 
-  #getLegalStatementParameters(apiKey) {
+  async #copyLegalStatement(destinationSite, dataCenter, consentId, language) {
+    let response = await this.get(consentId, language)
+    if (response.errorCode === 0) {
+      this.#removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
+      response = await this.set(destinationSite, dataCenter, consentId, language, response.legalStatements)
+    }
+    return response
+  }
+
+  #removeLegalStatementsWithStatus(legalStatements, status) {
+    const type = legalStatements.dates ? 'dates' : legalStatements.versions ? 'versions' : undefined
+    if (!type) {
+      return
+    }
+    const statementsToDelete = []
+    for (const statements of Object.keys(legalStatements[type])) {
+      //for(const statement of statements) {
+      if (legalStatements[type][statements].LegalStatementStatus === status) {
+        statementsToDelete.push(statements)
+      }
+      //}
+    }
+    for (const statementToDelete of statementsToDelete) {
+      delete legalStatements[type][statementToDelete]
+    }
+  }
+
+  #getLegalStatementParameters(apiKey, consentId, language) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
+    parameters.consentId = consentId
+    parameters.lang = language
     parameters.context = JSON.stringify({ id: 'legalStatement', targetApiKey: apiKey })
 
     return parameters
   }
 
-  #setLegalStatementParameters(apiKey, body) {
+  #setLegalStatementParameters(apiKey, consentId, language, legalStatements) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters['preferences'] = body.preferences
+    parameters['lang'] = language
+    parameters['consentId'] = consentId
+    parameters['legalStatements'] = JSON.stringify(legalStatements)
     parameters['context'] = JSON.stringify({ id: 'legalStatement', targetApiKey: apiKey })
     return parameters
   }

@@ -36,7 +36,11 @@ class ConsentStatement {
   async copy(destinationSite, destinationSiteConfiguration) {
     let response = await this.get()
     if (response.errorCode === 0) {
+      const getResponse = JSON.parse(JSON.stringify(response))
       response = await this.set(destinationSite, destinationSiteConfiguration.dataCenter, response)
+      if (response.errorCode === 0) {
+        this.#injectConsentStatementInfo(response, getResponse)
+      }
     }
     stringToJson(response, 'context')
     return response
@@ -57,7 +61,7 @@ class ConsentStatement {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters['preferences'] = body.preferences
+    parameters['preferences'] = JSON.stringify(body.preferences)
     parameters['context'] = JSON.stringify({ id: 'consentStatement', targetApiKey: apiKey })
     return parameters
   }
@@ -68,6 +72,13 @@ class ConsentStatement {
 
   static getSetConsentStatementEndpoint() {
     return `${ConsentStatement.#NAMESPACE}.setConsentsStatements`
+  }
+
+  #injectConsentStatementInfo(response, getResponse) {
+    response['consents'] = []
+    for (const consentId of Object.keys(getResponse.preferences)) {
+      response.consents.push({ id: consentId, langs: getResponse.preferences[consentId].langs })
+    }
   }
 }
 

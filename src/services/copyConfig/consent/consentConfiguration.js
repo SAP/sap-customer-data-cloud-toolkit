@@ -26,9 +26,20 @@ class ConsentConfiguration {
     }
     let response = await this.#consentStatement.copy(destinationSite, destinationSiteConfiguration, options)
     if (response.errorCode === 0) {
-      response = await this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, options)
+      response = await this.#copyLegalStatements(destinationSite, destinationSiteConfiguration, response.consents)
     }
     response.context.id = 'consents'
+    return response
+  }
+
+  async #copyLegalStatements(destinationSite, destinationSiteConfiguration, consents) {
+    let response
+    for (const consent of consents) {
+      response = await this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, consent.id, consent.langs)
+      if (response.errorCode !== 0) {
+        break
+      }
+    }
     return response
   }
 }
