@@ -12,16 +12,16 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.siteDeployerIconName)
 
     testSiteDeployer(dataTest.baseDomainName)
-    // // Navigating to the Site that was created
+    // // // Navigating to the Site that was created
     navigateToChosenSite(dataTest.baseDomainName)
     // Email export and import use cases
     getSelectedOption(dataTest.emailTemplatesIconName)
     testImportExportEmailTemplatesFirstUseCase()
     testImportExportEmailTemplatesSecondCase()
     testImportExportEmailTemplatesThirdCase()
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
 
     getSelectedOption(dataTest.smsTemplatesOption)
     testImportExportSmsFirstUseCaseTemplates()
@@ -37,12 +37,16 @@ describe('All features full Test Suite', () => {
     //  - Copy Web Sdk
     navigateToChosenSite(dataTest.templateSiteName)
     copyConfigTesting()
-    // // // Navigating to the Site that was altered
-    // // //Change to the desired site and check the changes
+    // // // // Navigating to the Site that was altered
+    // // // //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.baseDomainName)
-    // // //Change to web sdk and check the changes
+    // // // //Change to web sdk and check the changes
     getSelectedOption('Web SDK Configuration')
     cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
+    // Check email template changes
+    getSelectedOption(dataTest.emailTemplatesIconName)
+    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
+
     // // // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
@@ -67,12 +71,13 @@ describe('All features full Test Suite', () => {
   }
   function copyConfigTesting() {
     //Copy Web SDK to desired site
-    getSelectedOption(dataTest.emailTemplatesIconName)
+    getSelectedOption(dataTest.copyConfigExtendendMenuOption)
 
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type('e2e')
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
     cy.get('#webSdk').click()
+    cy.get('#emailTemplates').click()
     cy.get('#saveButton').click()
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
@@ -198,7 +203,7 @@ describe('All features full Test Suite', () => {
       .find('[placeholder="Search"]')
       .click()
       .clear({ force: true })
-      .type(siteName, { force: true })
+      .type(siteName)
 
     cy.get('main-app')
       .shadow()
@@ -208,7 +213,7 @@ describe('All features full Test Suite', () => {
       .find('[class ="fd-table__body"]')
       .find('[class ="fd-link base-domain"]')
       .eq(0)
-      .click({ force: true })
+      .click()
     cy.wait(10000)
   }
   function deleteSiteCreated() {
@@ -223,8 +228,9 @@ describe('All features full Test Suite', () => {
       .eq(3)
       .find('sslct-site-actions')
       .find('[class ="fd-popover-custom"]')
-      .click()
-    cy.get('.delete_menu_item').click({ force: true })
+      .find('button')
+      .click({ force: true })
+    cy.get('.delete_menu_item').click()
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
     cy.get('.fd-form__control').click()
     cy.get('.fd-bar__right').eq(1).find('button').eq(1).click()
