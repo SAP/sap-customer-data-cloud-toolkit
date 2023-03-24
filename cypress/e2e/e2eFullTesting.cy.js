@@ -47,6 +47,15 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.emailTemplatesIconName)
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
 
+     // // // //Check sms template changes
+    getSelectedOption(dataTest.smsTemplatesIconName)
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('be.visible')
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('have.text', 'TFA')
+    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="languages_list_container"]')
+        .eq(1).find('[role="list"]')
+        .debug()
+        .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
+
     // // // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
@@ -78,6 +87,7 @@ describe('All features full Test Suite', () => {
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
     cy.get('#webSdk').click()
     cy.get('#emailTemplates').click()
+    cy.get('#smsTemplates').click()
     cy.get('#saveButton').click()
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
