@@ -54,7 +54,7 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="languages_list_container"]')
         .eq(1).find('[role="list"]')
         .debug()
-        .should('have.text', ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) ')
+        .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
 
     // // // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
