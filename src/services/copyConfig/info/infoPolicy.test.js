@@ -9,6 +9,7 @@ import { getSiteConfig } from '../websdk/dataTest'
 import { getPolicyConfig } from '../policies/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
+import { getConsentStatementExpectedResponse } from '../consent/dataTest'
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {
@@ -67,6 +68,7 @@ describe('Info Policy test suite', () => {
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
     const response = await info.get()
 
     expectedResponse[2].branches.splice(templateIndex, 1)

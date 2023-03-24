@@ -17,6 +17,8 @@ import {
   mockedGetScreenSetResponse,
   targetSitePopoverText,
   mockedSetPolicyResponse,
+  mockedGetConsentStatementExpectedResponse,
+  mockedSetConsentResponse,
   mockedGetPolicyResponse,
 } from './dataTest'
 
@@ -120,6 +122,7 @@ export function mockGetConfigurationRequests() {
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
   mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
+  mockResponse(mockedGetConsentStatementExpectedResponse, 'POST', 'accounts.getConsentsStatements')
 }
 
 export function mockSetConfigurationRequests() {
@@ -128,6 +131,8 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
 
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
+  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setConsentsStatements')
+  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
 }
 
 export function mockGetUserSitesRequest() {

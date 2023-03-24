@@ -1,7 +1,7 @@
 import Sms from './sms'
 import ZipManager from '../zip/zipManager'
 import _ from 'lodash'
-import generateErrorResponse from '../errors/generateErrorResponse'
+import generateErrorResponse, { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse'
 
 class SmsManager {
   static TEMPLATE_FILE_EXTENSION = '.txt'
@@ -57,7 +57,7 @@ class SmsManager {
       }
     }
     const error = {
-      code: 1,
+      code: ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES,
       details: `Zip file does not contains any SMS template files. Please export the templates again.`,
     }
     throw error
@@ -71,8 +71,8 @@ class SmsManager {
       `${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`,
     ]
     let idx = -1
-    for (let i = 0; i < folders.length; ++i) {
-      idx = filePath.indexOf(folders[i])
+    for (const folder of folders) {
+      idx = filePath.indexOf(folder)
       if (idx !== -1) {
         break
       }

@@ -1119,6 +1119,43 @@ const mockedGetEmailTemplatesConfigsResponse = {
   },
 }
 
+const mockedGetConsentStatementExpectedResponse = {
+  callId: '5fa3a71a78f44d289bc12d545d18b102',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-03-21T11:46:39.403Z',
+  preferences: {
+    'terms.termsConsentId1': {
+      isActive: true,
+      isMandatory: true,
+      langs: ['en'],
+      customData: [],
+      consentVaultRetentionPeriod: 36,
+      defaultLang: 'en',
+      enforceLocaleReconsent: false,
+    },
+    'terms.consentId2': {
+      isActive: false,
+      isMandatory: true,
+      langs: ['en'],
+      consentVaultRetentionPeriod: 36,
+      enforceLocaleReconsent: true,
+    },
+  },
+}
+
+const mockedSetConsentResponse = {
+  callId: 'f88bef4a500440a2914e17c0c1177276',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-03T22:14:38.103Z',
+  context: `{\"targetApiKey\":\"${dummyApiKey}\",\"id\":\"consent\"}`,
+}
+
 const policiesPopoverText = 'Copy all policies, or any of the following.'
 const targetSitePopoverText = 'Recently created sites might take a while to be displayed in the list, however you can just copy and paste the API Key'
 
@@ -1182,6 +1219,8 @@ export {
   policiesPopoverText,
   targetSitePopoverText,
   mockedSetPolicyResponse,
+  mockedGetConsentStatementExpectedResponse,
+  mockedSetConsentResponse,
   mockedGetPolicyResponse,
   mockedSiteConfig,
   successMessageHeader,

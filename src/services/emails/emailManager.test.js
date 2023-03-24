@@ -7,6 +7,7 @@ import * as ConfiguratorTestData from '../configurator/dataTest'
 import JSZip from 'jszip'
 import { errorCallback } from '../servicesDataTest'
 import SiteConfigurator from '../configurator/siteConfigurator'
+import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../errors/generateErrorResponse'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -131,7 +132,7 @@ describe('Emails Manager test suite', () => {
     const validEmailsResponse = await emailManager.validateEmailTemplates(zipContent)
     expect(validEmailsResponse.length).toBe(1)
     expect(validEmailsResponse[0].errorCode).toBe(0)
-    expect(validEmailsResponse[0].severity).toBe(EmailManager.ERROR_SEVERITY_INFO)
+    expect(validEmailsResponse[0].severity).toBe(ERROR_SEVERITY_INFO)
 
     const response = await emailManager.import(apiKey, zipContent)
     //console.log('response=' + JSON.stringify(response))
@@ -246,7 +247,7 @@ describe('Emails Manager test suite', () => {
       message: 'Error validating email templates',
       code: 'InvalidXml',
       details: `Error on template file cdc-toolbox-email-templates/MagicLink/en.html. Extra text at the end on line 18`,
-      severity: EmailManager.ERROR_SEVERITY_WARNING,
+      severity: ERROR_SEVERITY_WARNING,
     }
     const zipContent = await createZipContentWithTemplateError(EmailsTestData.emailTemplate + 'x')
     await emailManager.validateEmailTemplates(zipContent).catch((error) => {
@@ -281,7 +282,7 @@ describe('Emails Manager test suite', () => {
       message: 'Error importing email templates',
       code: 1,
       details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
-      severity: EmailManager.ERROR_SEVERITY_ERROR,
+      severity: ERROR_SEVERITY_ERROR,
     }
     const zipContent = await createZipContentEmpty()
 
@@ -295,7 +296,7 @@ describe('Emails Manager test suite', () => {
       message: 'Error validating email templates',
       code: 1,
       details: `Zip file does not contains the metadata file .impexMetadata.json. Please export the email templates again.`,
-      severity: EmailManager.ERROR_SEVERITY_ERROR,
+      severity: ERROR_SEVERITY_ERROR,
     }
     const zipContent = await createZipContentEmpty()
 
