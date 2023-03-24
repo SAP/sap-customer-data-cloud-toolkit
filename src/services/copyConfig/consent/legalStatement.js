@@ -53,7 +53,7 @@ class LegalStatement {
   }
 
   #removeLegalStatementsWithStatus(legalStatements, status) {
-    const type = legalStatements.dates ? 'dates' : legalStatements.versions ? 'versions' : undefined
+    const type = LegalStatement.#getLegalStatementType(legalStatements)
     if (!type) {
       return
     }
@@ -71,6 +71,16 @@ class LegalStatement {
       legalStatements.minDocVersion = legalStatements.publishedDocVersion
       legalStatements.currentDocVersion = legalStatements.publishedDocVersion
     }
+  }
+
+  static #getLegalStatementType(legalStatement) {
+    let type
+    if (legalStatement.dates) {
+      type = 'dates'
+    } else if (legalStatement.versions) {
+      type = 'versions'
+    }
+    return type
   }
 
   #getLegalStatementParameters(apiKey, consentId, language) {

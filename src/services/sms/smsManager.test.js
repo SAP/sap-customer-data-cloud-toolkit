@@ -6,6 +6,7 @@ import { credentials } from '../servicesDataTest'
 import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './dataTest'
 import * as CommonTestData from '../servicesDataTest'
 import JSZip from 'jszip'
+import { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse'
 
 jest.mock('axios')
 jest.setTimeout(30000)
@@ -68,7 +69,7 @@ describe('Sms Manager test suite', () => {
   test('5 - import no templates', async () => {
     const zipContent = await createZipContentEmpty()
     const expectedError = {
-      errorCode: 1,
+      errorCode: ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES,
       errorDetails: 'Zip file does not contains any SMS template files. Please export the templates again.',
       errorMessage: 'Error importing SMS templates',
     }

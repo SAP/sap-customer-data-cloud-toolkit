@@ -1,6 +1,7 @@
 import ConsentStatement from './consentStatement'
 import LegalStatement from './legalStatement'
 import { stringToJson } from '../objectHelper'
+import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
 
 class ConsentConfiguration {
   #credentials
@@ -51,12 +52,14 @@ class ConsentConfiguration {
 
   static #addSeverityToResponses(responses) {
     return responses.map((response) => {
-      if (response.errorCode === 0) {
-        response.severity = 'info'
-      } else if (response.errorCode === 400009 && response.errorDetails.startsWith('There is already legal statement for ')) {
-        response.severity = 'warning'
-      } else if (response.errorCode !== 0) {
-        response.severity = 'error'
+      if (response.severity === undefined) {
+        if (response.errorCode === 0) {
+          response.severity = ERROR_SEVERITY_INFO
+        } else if (response.errorCode === 400009 && response.errorDetails.startsWith('There is already legal statement for ')) {
+          response.severity = ERROR_SEVERITY_WARNING
+        } else if (response.errorCode !== 0) {
+          response.severity = ERROR_SEVERITY_ERROR
+        }
       }
       return response
     })
@@ -72,12 +75,23 @@ class ConsentConfiguration {
 
   async #copyConsentStatement(destinationSite, destinationSiteConfiguration, consent) {
     const responses = []
-    const response = await this.#consentStatement.set(destinationSite, destinationSiteConfiguration.dataCenter, consent)
-    responses.push(response)
-    if (response.errorCode === 0) {
-      responses.push(...(await this.#copyLegalStatements(destinationSite, destinationSiteConfiguration, consent)))
+    let response
+    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
+    if (isParentSite) {
+      response = await this.#consentStatement.set(destinationSite, destinationSiteConfiguration.dataCenter, consent)
+      responses.push(response)
+      if (response.errorCode === 0) {
+        responses.push(...(await this.#copyLegalStatements(destinationSite, destinationSiteConfiguration, consent)))
+      }
+    } else {
+      response = await this.#copyConsentToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, consent)
+      responses.push(response)
     }
     return responses
+  }
+
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
   async #copyLegalStatements(destinationSite, destinationSiteConfiguration, consent) {
@@ -88,6 +102,41 @@ class ConsentConfiguration {
 
   static #getConsentId(consent) {
     return Object.keys(consent)[0]
+  }
+
+  static #createConsentForChildSite(consent) {
+    const childConsent = JSON.parse(JSON.stringify(consent))
+    const consentId = ConsentConfiguration.#getConsentId(childConsent.preferences)
+    // for a child site only the field isActive is allowed on the payload
+    childConsent.preferences[consentId] = { isActive: childConsent.preferences[consentId].isActive }
+    return childConsent
+  }
+
+  async #copyConsentToChildSite(destinationSite, dataCenter, consent) {
+    let response
+    const consentPayload = ConsentConfiguration.#createConsentForChildSite(consent)
+    if (await this.#siteContainsConsent(destinationSite, dataCenter, consent)) {
+      response = await this.#consentStatement.set(destinationSite, dataCenter, consentPayload)
+    } else {
+      response = {
+        errorCode: ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE,
+        errorDetails: 'Cannot change consents on child site if the consents do not exist on parent site. Please copy the consents to the parent site first.',
+        errorMessage: 'Cannot copy consents to the destination site',
+        statusCode: 412,
+        statusReason: 'Precondition Failed',
+        time: Date.now(),
+        severity: ERROR_SEVERITY_WARNING,
+        context: { targetApiKey: destinationSite, id: 'consent_consentStatement_' + ConsentConfiguration.#getConsentId(consent.preferences) },
+      }
+    }
+    return response
+  }
+
+  async #siteContainsConsent(destinationSite, dataCenter, consent) {
+    const destinationConsentStatement = new ConsentStatement(this.#credentials, destinationSite, dataCenter)
+    const existingConsents = await destinationConsentStatement.get()
+    const filteredConsents = Object.keys(existingConsents.preferences).filter((id) => id === ConsentConfiguration.#getConsentId(consent.preferences))
+    return filteredConsents.length > 0
   }
 }
 

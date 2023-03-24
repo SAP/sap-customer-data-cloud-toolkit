@@ -1,3 +1,5 @@
+import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+
 export const getConsentStatementExpectedResponse = {
   callId: '5fa3a71a78f44d289bc12d545d18b102',
   errorCode: 0,
@@ -64,4 +66,14 @@ export const legalConsentAlreadyExists = {
   statusCode: 400,
   statusReason: 'Bad Request',
   time: '2023-03-23T17:08:31.487Z',
+}
+
+export const cannotChangeConsentsOnChildSite = {
+  errorCode: ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE,
+  errorDetails: 'Cannot change consents on child site if the consents do not exist on parent site. Please copy the consents to the parent site first.',
+  errorMessage: 'Cannot copy consents to the destination site',
+  statusCode: 412,
+  statusReason: 'Precondition Failed',
+  time: Date.now(),
+  severity: ERROR_SEVERITY_WARNING,
 }

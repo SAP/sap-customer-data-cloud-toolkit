@@ -2,7 +2,12 @@ import EmailTemplateNameTranslator from './emailTemplateNameTranslator'
 import Email from './email'
 import ZipManager from '../zip/zipManager'
 import XmlValidator from '../validator/xmlValidator'
-import generateErrorResponse from '../errors/generateErrorResponse'
+import generateErrorResponse, {
+  ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_METADATA_FILE,
+  ERROR_SEVERITY_ERROR,
+  ERROR_SEVERITY_INFO,
+  ERROR_SEVERITY_WARNING,
+} from '../errors/generateErrorResponse'
 import GigyaManager from '../gigya/gigyaManager'
 
 class EmailManager {
@@ -10,9 +15,6 @@ class EmailManager {
   static #IMPORT_EXPORT_METADATA_FILE_NAME = '.impexMetadata.json'
   static TEMPLATE_FILE_EXTENSION = '.html'
   static #zipIgnoreBaseFolders = ['__MACOSX']
-  static ERROR_SEVERITY_ERROR = 'error'
-  static ERROR_SEVERITY_WARNING = 'warning'
-  static ERROR_SEVERITY_INFO = 'info'
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
@@ -121,7 +123,7 @@ class EmailManager {
       zipContentMap = await this.#readZipContent(zipContent)
     } catch (error) {
       const userError = generateErrorResponse(error, 'Error importing email templates').data
-      userError.severity = EmailManager.ERROR_SEVERITY_ERROR
+      userError.severity = ERROR_SEVERITY_ERROR
       return Promise.reject([userError])
     }
     const metadataObj = JSON.parse(zipContentMap.get(`${this.zipBaseFolderInfo.zipBaseFolder}${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`))
@@ -136,7 +138,7 @@ class EmailManager {
       zipContentMap = await this.#readZipContent(zipContent)
     } catch (error) {
       const userError = generateErrorResponse(error, 'Error validating email templates').data
-      userError.severity = EmailManager.ERROR_SEVERITY_ERROR
+      userError.severity = ERROR_SEVERITY_ERROR
       return Promise.reject([userError])
     }
     const errors = this.#validateEmailTemplates(zipContentMap)
@@ -165,7 +167,7 @@ class EmailManager {
       }
     }
     const error = {
-      code: 1,
+      code: ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_METADATA_FILE,
       details: `Zip file does not contains the metadata file ${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}. Please export the email templates again.`,
     }
     throw error
@@ -277,14 +279,14 @@ class EmailManager {
           error.code = result.err.code
           error.details = `Error on template file ${filename}. ${result.err.msg} on line ${result.err.line}`
           const userError = generateErrorResponse(error, 'Error validating email templates').data
-          userError.severity = EmailManager.ERROR_SEVERITY_WARNING
+          userError.severity = ERROR_SEVERITY_WARNING
           response.push(userError)
         }
       }
     }
     if (response.length === 0) {
       error.errorCode = 0
-      error.severity = EmailManager.ERROR_SEVERITY_INFO
+      error.severity = ERROR_SEVERITY_INFO
       response.push(error)
     }
     return response

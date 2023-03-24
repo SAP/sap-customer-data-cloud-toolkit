@@ -1,9 +1,16 @@
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest'
 import { getResponseWithContext } from '../dataTest'
-import { getConsentStatementExpectedResponse, getLegalStatementExpectedResponse, legalConsentAlreadyExists } from './dataTest'
+import {
+  cannotChangeConsentsOnChildSite,
+  getConsentStatementExpectedResponse,
+  getLegalStatementExpectedResponse,
+  getNoConsentStatementExpectedResponse,
+  legalConsentAlreadyExists,
+} from './dataTest'
 import ConsentConfiguration from './consentConfiguration'
 import ConsentOptions from './consentOptions'
+import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
 
 jest.mock('axios')
 
@@ -18,7 +25,7 @@ describe('ConsentConfiguration test suite', () => {
     expect(responses.length).toEqual(0)
   })
 
-  test('copy successfully', async () => {
+  test('copy successfully to parent site', async () => {
     axios
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.termsConsentId1', apiKey) })
@@ -36,8 +43,27 @@ describe('ConsentConfiguration test suite', () => {
       verifyResponseIsOk(response)
       expect(response.context.targetApiKey).toEqual(`${apiKey}`)
       expect(response.context.id.startsWith('consent_')).toBeTruthy()
-      expect(response.severity).toEqual('info')
+      expect(response.severity).toEqual(ERROR_SEVERITY_INFO)
     })
+  })
+
+  test('copy successfully to child site', async () => {
+    axios
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.termsConsentId1', apiKey) })
+
+    const responses = await consentConfiguration.copy(apiKey, { dataCenter, siteGroupOwner: apiKey + 'x' }, consentOptions.getOptions())
+    expect(responses.length).toEqual(2)
+    verifyResponseIsOk(responses[0])
+    expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
+    expect(responses[0].context.id.startsWith('consent_')).toBeTruthy()
+    expect(responses[0].severity).toEqual(ERROR_SEVERITY_INFO)
+    verifyResponseIsNotOk(responses[1], cannotChangeConsentsOnChildSite)
+    expect(responses[1].context.targetApiKey).toEqual(`${apiKey}`)
+    expect(responses[1].context.id.startsWith('consent_')).toBeTruthy()
+    expect(responses[1].severity).toEqual(ERROR_SEVERITY_WARNING)
   })
 
   test('copy unsuccessfully - error on get', async () => {
@@ -49,7 +75,7 @@ describe('ConsentConfiguration test suite', () => {
     verifyResponseIsNotOk(responses[0], expectedGigyaResponseInvalidAPI)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
     expect(responses[0].context.id).toEqual('consent_consentStatement_get')
-    expect(responses[0].severity).toEqual('error')
+    expect(responses[0].severity).toEqual(ERROR_SEVERITY_ERROR)
   })
 
   test('copy unsuccessfully - error on first consent set', async () => {
@@ -68,12 +94,12 @@ describe('ConsentConfiguration test suite', () => {
     verifyResponseIsNotOk(responses[0], legalConsentAlreadyExists)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
     expect(responses[0].context.id).toEqual('consent_consentStatement_get')
-    expect(responses[0].severity).toEqual('warning')
+    expect(responses[0].severity).toEqual(ERROR_SEVERITY_WARNING)
     responses.splice(1, 3).forEach((response) => {
       verifyResponseIsOk(response)
       expect(response.context.targetApiKey).toEqual(`${apiKey}`)
       expect(response.context.id.startsWith('consent_')).toBeTruthy()
-      expect(response.severity).toEqual('info')
+      expect(response.severity).toEqual(ERROR_SEVERITY_INFO)
     })
   })
 
@@ -94,16 +120,16 @@ describe('ConsentConfiguration test suite', () => {
     verifyResponseIsOk(responses[0])
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
     expect(responses[0].context.id.startsWith('consent_')).toBeTruthy()
-    expect(responses[0].severity).toEqual('info')
+    expect(responses[0].severity).toEqual(ERROR_SEVERITY_INFO)
     verifyResponseIsNotOk(responses[1], expectedGigyaResponseInvalidAPI)
     expect(responses[1].context.targetApiKey).toEqual(`${apiKey}`)
     expect(responses[1].context.id).toEqual('consent_legalStatement_terms.termsConsentId1_en')
-    expect(responses[1].severity).toEqual('error')
+    expect(responses[1].severity).toEqual(ERROR_SEVERITY_ERROR)
     responses.splice(2, 3).forEach((response) => {
       verifyResponseIsOk(response)
       expect(response.context.targetApiKey).toEqual(`${apiKey}`)
       expect(response.context.id.startsWith('consent_')).toBeTruthy()
-      expect(response.severity).toEqual('info')
+      expect(response.severity).toEqual(ERROR_SEVERITY_INFO)
     })
   })
 })
