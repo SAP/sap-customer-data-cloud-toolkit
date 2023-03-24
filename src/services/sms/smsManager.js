@@ -71,8 +71,8 @@ class SmsManager {
       `${SmsManager.TEMPLATE_TYPE_OTP}/${SmsManager.TEMPLATE_SUBTYPE_COUNTRY}/`,
     ]
     let idx = -1
-    for (let i = 0; i < folders.length; ++i) {
-      idx = filePath.indexOf(folders[i])
+    for (const folder of folders) {
+      idx = filePath.indexOf(folder)
       if (idx !== -1) {
         break
       }

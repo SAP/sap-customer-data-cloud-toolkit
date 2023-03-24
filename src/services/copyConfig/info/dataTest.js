@@ -38,7 +38,7 @@ export function getInfoExpectedResponse(supports) {
 
   const consent = {
     id: 'consent',
-    name: 'consent',
+    name: 'consentStatements',
     value: supports,
   }
   return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, consent]

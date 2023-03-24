@@ -6,7 +6,7 @@ class ConsentOptions extends Options {
   constructor(consentConfiguration) {
     super({
       id: 'consent',
-      name: 'consent',
+      name: 'consentStatements',
       value: true,
     })
     this.#consentConfiguration = consentConfiguration

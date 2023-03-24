@@ -34,15 +34,13 @@ class LegalStatement {
   }
 
   async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages) {
-    let response
+    const promises = []
     for (const language of consentLanguages) {
-      response = await this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language)
-      if (response.errorCode !== 0) {
-        break
-      }
+      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language))
     }
-    stringToJson(response, 'context')
-    return response
+    const responses = await Promise.all(promises)
+    stringToJson(responses, 'context')
+    return responses
   }
 
   async #copyLegalStatement(destinationSite, dataCenter, consentId, language) {
@@ -61,14 +59,17 @@ class LegalStatement {
     }
     const statementsToDelete = []
     for (const statements of Object.keys(legalStatements[type])) {
-      //for(const statement of statements) {
       if (legalStatements[type][statements].LegalStatementStatus === status) {
         statementsToDelete.push(statements)
       }
-      //}
     }
     for (const statementToDelete of statementsToDelete) {
       delete legalStatements[type][statementToDelete]
+    }
+    if (statementsToDelete.length > 0) {
+      // to avoid that minDocVersion references a deleted ${status} version
+      legalStatements.minDocVersion = legalStatements.publishedDocVersion
+      legalStatements.currentDocVersion = legalStatements.publishedDocVersion
     }
   }
 
@@ -79,20 +80,13 @@ class LegalStatement {
     parameters.secret = this.#credentials.secret
     parameters.consentId = consentId
     parameters.lang = language
-    parameters.context = JSON.stringify({ id: 'legalStatement', targetApiKey: apiKey })
-
+    parameters.context = JSON.stringify({ id: `consent_legalStatement_${consentId}_${language}`, targetApiKey: apiKey })
     return parameters
   }
 
   #setLegalStatementParameters(apiKey, consentId, language, legalStatements) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters['lang'] = language
-    parameters['consentId'] = consentId
-    parameters['legalStatements'] = JSON.stringify(legalStatements)
-    parameters['context'] = JSON.stringify({ id: 'legalStatement', targetApiKey: apiKey })
+    const parameters = Object.assign({}, this.#getLegalStatementParameters(apiKey, consentId, language))
+    parameters.legalStatements = JSON.stringify(legalStatements)
     return parameters
   }
 

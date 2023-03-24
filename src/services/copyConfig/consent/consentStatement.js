@@ -1,7 +1,6 @@
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
 import generateErrorResponse from '../../errors/generateErrorResponse'
-import { stringToJson } from '../objectHelper'
 
 class ConsentStatement {
   static #ERROR_MSG_GET_CONFIG = 'Error getting consent statements'
@@ -33,36 +32,20 @@ class ConsentStatement {
     return res.data
   }
 
-  async copy(destinationSite, destinationSiteConfiguration) {
-    let response = await this.get()
-    if (response.errorCode === 0) {
-      const getResponse = JSON.parse(JSON.stringify(response))
-      response = await this.set(destinationSite, destinationSiteConfiguration.dataCenter, response)
-      if (response.errorCode === 0) {
-        this.#injectConsentStatementInfo(response, getResponse)
-      }
-    }
-    stringToJson(response, 'context')
-    return response
-  }
-
   #getConsentStatementParameters(apiKey) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters.context = JSON.stringify({ id: 'consentStatement', targetApiKey: apiKey })
+    parameters.context = JSON.stringify({ id: 'consent_consentStatement_get', targetApiKey: apiKey })
 
     return parameters
   }
 
   #setConsentStatementParameters(apiKey, body) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters['preferences'] = JSON.stringify(body.preferences)
-    parameters['context'] = JSON.stringify({ id: 'consentStatement', targetApiKey: apiKey })
+    const parameters = Object.assign({}, this.#getConsentStatementParameters(apiKey))
+    parameters.preferences = JSON.stringify(body.preferences)
+    parameters.context = JSON.stringify({ id: `consent_consentStatement_${Object.keys(body.preferences)[0]}`, targetApiKey: apiKey })
     return parameters
   }
 
@@ -72,13 +55,6 @@ class ConsentStatement {
 
   static getSetConsentStatementEndpoint() {
     return `${ConsentStatement.#NAMESPACE}.setConsentsStatements`
-  }
-
-  #injectConsentStatementInfo(response, getResponse) {
-    response['consents'] = []
-    for (const consentId of Object.keys(getResponse.preferences)) {
-      response.consents.push({ id: consentId, langs: getResponse.preferences[consentId].langs })
-    }
   }
 }
 
