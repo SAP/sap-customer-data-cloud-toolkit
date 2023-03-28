@@ -152,10 +152,10 @@ class Policy {
       parameters.accountOptions = JSON.stringify(config.accountOptions)
       parameters.context = JSON.stringify({ id: 'accountOptions', targetApiKey: apiKey })
     }
-    // if (config.authentication) {
-    //   parameters.authentication = JSON.stringify(config.authentication)
-    //   parameters.context = JSON.stringify({ id: 'authentication', targetApiKey: apiKey })
-    // }
+    if (config.authentication) {
+      parameters.authentication = JSON.stringify(config.authentication)
+      parameters.context = JSON.stringify({ id: 'authentication', targetApiKey: apiKey })
+    }
     if (config.emailNotifications) {
       parameters.emailNotifications = JSON.stringify(config.emailNotifications)
       parameters.context = JSON.stringify({ id: 'emailNotifications', targetApiKey: apiKey })
@@ -195,6 +195,14 @@ class Policy {
     if (config.federation) {
       parameters.federation = JSON.stringify(config.federation)
       parameters.context = JSON.stringify({ id: 'federation', targetApiKey: apiKey })
+    }
+    if (config.doubleOptIn) {
+      parameters.doubleOptIn = JSON.stringify(config.doubleOptIn)
+      parameters.context = JSON.stringify({ id: 'doubleOptIn', targetApiKey: apiKey })
+    }
+    if (config.preferencesCenter) {
+      parameters.preferencesCenter = JSON.stringify(config.preferencesCenter)
+      parameters.context = JSON.stringify({ id: 'preferencesCenter', targetApiKey: apiKey })
     }
     parameters.format = 'json'
 

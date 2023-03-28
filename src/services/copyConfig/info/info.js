@@ -188,6 +188,9 @@ class Info {
     if (!response.accountOptions) {
       policyOptions.removeAccountOptions(info)
     }
+    if (!response.authentication) {
+      policyOptions.removeAuthentication(info)
+    }
     if (!response.codeVerification) {
       policyOptions.removeCodeVerification(info)
     }
@@ -220,6 +223,12 @@ class Info {
     }
     if (!response.twoFactorAuth) {
       policyOptions.removeTwoFactorAuth(info)
+    }
+    if (!response.doubleOptIn) {
+      policyOptions.removeDoubleOptIn(info)
+    }
+    if (!response.preferencesCenter) {
+      policyOptions.removePreferencesCenter(info)
     }
   }
 }

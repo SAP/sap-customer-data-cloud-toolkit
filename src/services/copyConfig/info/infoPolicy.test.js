@@ -58,6 +58,19 @@ describe('Info Policy test suite', () => {
   test('get policy info successfully except two Factor Authentication', async () => {
     await executeInfoPolicyTest('twoFactorAuth', 11)
   })
+
+  test('get policy info successfully except authentication', async () => {
+    await executeInfoPolicyTest('authentication', 12)
+  })
+
+  test('get policy info successfully except doubleOptIn', async () => {
+    await executeInfoPolicyTest('doubleOptIn', 13)
+  })
+
+  test('get policy info successfully except preferencesCenter', async () => {
+    await executeInfoPolicyTest('preferencesCenter', 14)
+  })
+
   async function executeInfoPolicyTest(templateNames, templateIndex) {
     const mockedResponse = getExpectedPolicyResponseExcept(templateNames)
     axios

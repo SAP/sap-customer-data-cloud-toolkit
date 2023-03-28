@@ -5,7 +5,7 @@ class PolicyOptions extends Options {
   static #twoFactorAuth = 'TwoFactorAuthenticationProviders'
   static #profilePhoto = 'defaultProfilePhotoDimensions'
   static #accountOptions = 'accountOptions'
-  //static #authentication = 'authentication'
+  static #authentication = 'authentication'
   static #codeVerification = 'codeVerification'
   static #emailNotifications = 'emailNotifications'
   static #emailVerification = 'emailVerification'
@@ -15,13 +15,16 @@ class PolicyOptions extends Options {
   static #registration = 'registration'
   static #security = 'security'
   static #webSdk = 'Web Sdk'
+  static #doubleOptIn = 'doubleOptIn'
+  static #preferencesCenter = 'preferencesCenter'
 
   constructor(policy) {
+    const policies = 'policies'
     super({
-      id: 'policies',
-      name: 'policies',
+      id: policies,
+      name: policies,
       value: true,
-      tooltip: 'POLICIES',
+      tooltip: policies.toUpperCase(),
       branches: [
         {
           id: PolicyOptions.#accountOptions,
@@ -29,12 +32,6 @@ class PolicyOptions extends Options {
           value: true,
           tooltip: 'POLICIES_ACCOUNT_OPTIONS',
         },
-        // {
-        //   id: PolicyOptions.#authentication,
-        //   name: PolicyOptions.#authentication,
-        //   value: true,
-        //   tooltip: 'POLICIES_AUTHENTICATION',
-        // },
         {
           id: `p${PolicyOptions.#codeVerification}`,
           name: PolicyOptions.#codeVerification,
@@ -107,6 +104,24 @@ class PolicyOptions extends Options {
           value: true,
           tooltip: 'POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS',
         },
+        {
+          id: PolicyOptions.#authentication,
+          name: PolicyOptions.#authentication,
+          value: true,
+          tooltip: 'POLICIES_AUTHENTICATION',
+        },
+        {
+          id: `p${PolicyOptions.#doubleOptIn}`,
+          name: PolicyOptions.#doubleOptIn,
+          value: true,
+          tooltip: 'POLICIES_DOUBLE_OPT_IN',
+        },
+        {
+          id: `p${PolicyOptions.#preferencesCenter}`,
+          name: PolicyOptions.#preferencesCenter,
+          value: true,
+          tooltip: 'POLICIES_PREFERENCES_CENTER',
+        },
       ],
     })
     this.#policy = policy
@@ -117,6 +132,15 @@ class PolicyOptions extends Options {
   }
   removeAccountOptions(info) {
     return this.removeInfo(PolicyOptions.#accountOptions, info)
+  }
+  removeAuthentication(info) {
+    return this.removeInfo(PolicyOptions.#authentication, info)
+  }
+  removeDoubleOptIn(info) {
+    return this.removeInfo(PolicyOptions.#doubleOptIn, info)
+  }
+  removePreferencesCenter(info) {
+    return this.removeInfo(PolicyOptions.#preferencesCenter, info)
   }
   removeCodeVerification(info) {
     return this.removeInfo(PolicyOptions.#codeVerification, info)
