@@ -45,16 +45,21 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
     // Check email template changes
     getSelectedOption(dataTest.emailTemplatesIconName)
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
+    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '6')
 
-     // // // //Check sms template changes
+    //  // // //Check sms template changes
     getSelectedOption(dataTest.smsTemplatesIconName)
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('be.visible')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('have.text', 'TFA')
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="languages_list_container"]')
-        .eq(1).find('[role="list"]')
-        .debug()
-        .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
+    cy.get('main-app')
+      .shadow()
+      .find('sms-templates-web-app')
+      .shadow()
+      .find('[class="languages_list_container"]')
+      .eq(1)
+      .find('[role="list"]')
+      .debug()
+      .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
 
     // // // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
@@ -85,14 +90,14 @@ describe('All features full Test Suite', () => {
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type('e2e')
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
-    cy.get('#webSdk').click()
-    cy.get('#emailTemplates').click()
-    cy.get('#smsTemplates').click()
+    cy.get('#selectAllCheckbox').shadow().find('[class="ui5-checkbox-inner"]').click()
+
     cy.get('#saveButton').click()
+    cy.wait(40000)
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
-    cy.wait(10000)
+    cy.wait(1000)
   }
 
   function testImportExportEmailTemplatesFirstUseCase() {
