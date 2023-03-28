@@ -1,5 +1,4 @@
 import { expectedSchemaResponse } from '../schema/dataTest'
-import EmailOptions from '../emails/emailOptions'
 import SchemaOptions from '../schema/schemaOptions'
 import PolicyOptions from '../policies/policyOptions'
 
@@ -82,8 +81,71 @@ export function getInfoExpectedResponse(supports) {
     value: supports,
   }
 
-  const emailOptions = new EmailOptions(undefined)
-  const emailTemplates = supports ? emailOptions.getOptions() : emailOptions.getOptionsDisabled()
+  const emailTemplates = {
+    id: 'emailTemplates',
+    name: 'emailTemplates',
+    value: supports,
+    branches: [
+      {
+        id: 'confirmationEmailTemplates',
+        name: 'PasswordResetConfirmation',
+        value: supports,
+      },
+      {
+        id: 'impossibleTraveler',
+        name: 'ImpossibleTraveler',
+        value: supports,
+      },
+      {
+        id: 'twoFactorAuth',
+        name: 'TFAEmailVerification',
+        value: supports,
+      },
+      {
+        //id: 'etPasswordReset',
+        id: 'passwordReset',
+        name: 'PasswordReset',
+        value: supports,
+      },
+      {
+        id: 'doubleOptIn',
+        name: 'DoubleOptInConfirmation',
+        value: supports,
+      },
+      {
+        id: 'preferencesCenter',
+        name: 'LitePreferencesCenter',
+        value: supports,
+      },
+      {
+        id: 'accountDeletedEmailTemplates',
+        name: 'AccountDeletionConfirmation',
+        value: supports,
+      },
+      {
+        id: 'welcomeEmailTemplates',
+        name: 'NewUserWelcome',
+        value: supports,
+      },
+      {
+        //id: 'etEmailVerification',
+        id: 'emailVerification',
+        name: 'EmailVerification',
+        value: supports,
+      },
+      {
+        //id: 'etCodeVerification',
+        id: 'codeVerification',
+        name: 'CodeVerification',
+        value: supports,
+      },
+      {
+        id: 'magicLink',
+        name: 'MagicLink',
+        value: supports,
+      },
+    ],
+  }
 
   const smsTemplates = {
     id: 'smsTemplates',

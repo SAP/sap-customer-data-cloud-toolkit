@@ -150,38 +150,52 @@ class Policy {
     parameters.secret = this.secret
     if (config.accountOptions) {
       parameters.accountOptions = JSON.stringify(config.accountOptions)
+      parameters.context = JSON.stringify({ id: 'accountOptions', targetApiKey: apiKey })
     }
+    // if (config.authentication) {
+    //   parameters.authentication = JSON.stringify(config.authentication)
+    //   parameters.context = JSON.stringify({ id: 'authentication', targetApiKey: apiKey })
+    // }
     if (config.emailNotifications) {
       parameters.emailNotifications = JSON.stringify(config.emailNotifications)
+      parameters.context = JSON.stringify({ id: 'emailNotifications', targetApiKey: apiKey })
     }
     if (config.emailVerification) {
       parameters.emailVerification = JSON.stringify(config.emailVerification)
+      parameters.context = JSON.stringify({ id: 'pemailVerification', targetApiKey: apiKey })
     }
     if (config.gigyaPlugins) {
       parameters.gigyaPlugins = JSON.stringify(config.gigyaPlugins)
+      parameters.context = JSON.stringify({ id: 'gigyaPlugins', targetApiKey: apiKey })
     }
     if (config.passwordComplexity) {
       parameters.passwordComplexity = JSON.stringify(config.passwordComplexity)
+      parameters.context = JSON.stringify({ id: 'passwordComplexity', targetApiKey: apiKey })
     }
     if (config.passwordReset) {
       parameters.passwordReset = JSON.stringify(config.passwordReset)
+      parameters.context = JSON.stringify({ id: 'ppasswordReset', targetApiKey: apiKey })
     }
     if (config.profilePhoto) {
       parameters.profilePhoto = JSON.stringify(config.profilePhoto)
+      parameters.context = JSON.stringify({ id: 'profilePhoto', targetApiKey: apiKey })
     }
     if (config.registration) {
       parameters.registration = JSON.stringify(config.registration)
+      parameters.context = JSON.stringify({ id: 'registration', targetApiKey: apiKey })
     }
     if (config.security) {
       parameters.security = JSON.stringify(config.security)
+      parameters.context = JSON.stringify({ id: 'security', targetApiKey: apiKey })
     }
     if (config.twoFactorAuth) {
       parameters.twoFactorAuth = JSON.stringify(config.twoFactorAuth)
+      parameters.context = JSON.stringify({ id: 'pTwoFactorAuth', targetApiKey: apiKey })
     }
     if (config.federation) {
       parameters.federation = JSON.stringify(config.federation)
+      parameters.context = JSON.stringify({ id: 'federation', targetApiKey: apiKey })
     }
-    parameters.context = JSON.stringify({ id: 'policy', targetApiKey: apiKey })
     parameters.format = 'json'
 
     return parameters

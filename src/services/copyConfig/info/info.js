@@ -136,8 +136,8 @@ class Info {
     const response = await emailOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
+      emailOptions.addEmails(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
-      this.#removeUnsupportedOptions(response, info, emailOptions)
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
@@ -181,41 +181,6 @@ class Info {
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
-    }
-  }
-  #removeUnsupportedOptions(response, info, emailOptions) {
-    if (!response.emailNotifications.confirmationEmailTemplates) {
-      emailOptions.removePasswordResetConfirmation(info)
-    }
-    if (!response.impossibleTraveler) {
-      emailOptions.removeImpossibleTraveler(info)
-    }
-    if (!response.twoFactorAuth) {
-      emailOptions.removeTFAEmailVerification(info)
-    }
-    if (!response.passwordReset) {
-      emailOptions.removePasswordReset(info)
-    }
-    if (!response.doubleOptIn) {
-      emailOptions.removeDoubleOptInConfirmation(info)
-    }
-    if (!response.preferencesCenter) {
-      emailOptions.removeLitePreferencesCenter(info)
-    }
-    if (!response.emailNotifications.accountDeletedEmailTemplates) {
-      emailOptions.removeAccountDeletionConfirmation(info)
-    }
-    if (!response.emailNotifications.welcomeEmailTemplates) {
-      emailOptions.removeNewUserWelcome(info)
-    }
-    if (!response.emailVerification) {
-      emailOptions.removeEmailVerification(info)
-    }
-    if (!response.codeVerification) {
-      emailOptions.removeCodeVerification(info)
-    }
-    if (!response.magicLink) {
-      emailOptions.removeMagicLink(info)
     }
   }
 
