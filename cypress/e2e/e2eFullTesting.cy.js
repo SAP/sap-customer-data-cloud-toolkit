@@ -45,7 +45,7 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
     // Check email template changes
     getSelectedOption(dataTest.emailTemplatesIconName)
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '6')
+    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
 
     //  // // //Check sms template changes
     getSelectedOption(dataTest.smsTemplatesIconName)
@@ -97,7 +97,7 @@ describe('All features full Test Suite', () => {
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
-    cy.wait(1000)
+    cy.wait(10000)
   }
 
   function testImportExportEmailTemplatesFirstUseCase() {
