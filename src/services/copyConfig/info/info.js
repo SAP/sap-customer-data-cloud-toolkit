@@ -76,10 +76,18 @@ class Info {
         consentOptions.removeConsent(info)
       }
       return Promise.resolve(info)
+    } else if (this.#consentsNotMigrated(response)) {
+      const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
+      consentOptions.removeConsent(info)
+      return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
     }
+  }
+
+  #consentsNotMigrated(response) {
+    return response.errorCode === 400096 && response.errorDetails.includes("has not migrated it's consent data")
   }
 
   async #getSchema() {

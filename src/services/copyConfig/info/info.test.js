@@ -23,7 +23,7 @@ import {
   consentId,
 } from '../dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
-import { getConsentStatementExpectedResponse } from '../consent/dataTest'
+import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest'
 
 jest.mock('axios')
 
@@ -167,7 +167,15 @@ describe('Info test suite', () => {
   })
 
   test('get info except consent successfully', async () => {
-    const mockedResponse = JSON.parse(JSON.stringify(getConsentStatementExpectedResponse))
+    await testConsents(getConsentStatementExpectedResponse)
+  })
+
+  test('get info except consent successfully, because not migrated', async () => {
+    await testConsents(getConsentStatementNotMigratedResponse)
+  })
+
+  async function testConsents(serverResponse) {
+    const mockedResponse = JSON.parse(JSON.stringify(serverResponse))
     mockedResponse.preferences = {}
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
@@ -182,5 +190,5 @@ describe('Info test suite', () => {
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(7, 1) // remove consent
     expect(response).toEqual(expectedResponse)
-  })
+  }
 })
