@@ -24,23 +24,23 @@ describe('Info Email Templates test suite', () => {
   })
 
   test('get emails info successfully except magicLink', async () => {
-    await executeInfoEmailsTest(['magicLink'], 10)
+    await executeInfoEmailsTest(['magicLink'], 0)
   })
 
   test('get emails info successfully except codeVerification', async () => {
-    await executeInfoEmailsTest(['codeVerification'], 9)
+    await executeInfoEmailsTest(['codeVerification'], 1)
   })
 
   test('get emails info successfully except emailVerification', async () => {
-    await executeInfoEmailsTest(['emailVerification'], 8)
+    await executeInfoEmailsTest(['emailVerification'], 2)
   })
 
   test('get emails info successfully except welcomeEmailTemplates', async () => {
-    await executeInfoEmailsTest(['emailNotifications.welcomeEmailTemplates'], 7)
+    await executeInfoEmailsTest(['emailNotifications.welcomeEmailTemplates'], 3)
   })
 
   test('get emails info successfully except accountDeletedEmailTemplates', async () => {
-    await executeInfoEmailsTest(['emailNotifications.accountDeletedEmailTemplates'], 6)
+    await executeInfoEmailsTest(['emailNotifications.accountDeletedEmailTemplates'], 4)
   })
 
   test('get emails info successfully except preferencesCenter', async () => {
@@ -48,23 +48,23 @@ describe('Info Email Templates test suite', () => {
   })
 
   test('get emails info successfully except doubleOptIn', async () => {
-    await executeInfoEmailsTest(['doubleOptIn'], 4)
+    await executeInfoEmailsTest(['doubleOptIn'], 6)
   })
 
   test('get emails info successfully except passwordReset', async () => {
-    await executeInfoEmailsTest(['passwordReset'], 3)
+    await executeInfoEmailsTest(['passwordReset'], 7)
   })
 
   test('get emails info successfully except twoFactorAuth', async () => {
-    await executeInfoEmailsTest(['twoFactorAuth'], 2)
+    await executeInfoEmailsTest(['twoFactorAuth'], 8)
   })
 
   test('get emails info successfully except impossibleTraveler', async () => {
-    await executeInfoEmailsTest(['impossibleTraveler'], 1)
+    await executeInfoEmailsTest(['impossibleTraveler'], 9)
   })
 
   test('get emails info successfully except confirmationEmailTemplates', async () => {
-    await executeInfoEmailsTest(['emailNotifications.confirmationEmailTemplates'], 0)
+    await executeInfoEmailsTest(['emailNotifications.confirmationEmailTemplates'], 10)
   })
 
   test('get emails info successfully only magicLink', async () => {
@@ -90,7 +90,7 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
     const response = await info.get()
-    expectedResponse[4].branches = expectedResponse[4].branches.splice(10, 1)
+    expectedResponse[4].branches = expectedResponse[4].branches.splice(0, 1)
     expect(response).toEqual(expectedResponse)
   })
 

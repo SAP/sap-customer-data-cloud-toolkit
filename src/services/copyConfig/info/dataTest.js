@@ -1,6 +1,7 @@
 import { expectedSchemaResponse } from '../schema/dataTest'
 import SchemaOptions from '../schema/schemaOptions'
 import PolicyOptions from '../policies/policyOptions'
+import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
@@ -18,68 +19,7 @@ export function getInfoExpectedResponse(supports) {
     value: supports,
   }
 
-  const emailTemplates = {
-    id: 'emailTemplates',
-    name: 'emailTemplates',
-    value: supports,
-    branches: [
-      {
-        id: 'confirmationEmailTemplates',
-        name: 'PasswordResetConfirmation',
-        value: supports,
-      },
-      {
-        id: 'impossibleTraveler',
-        name: 'ImpossibleTraveler',
-        value: supports,
-      },
-      {
-        id: 'twoFactorAuth',
-        name: 'TFAEmailVerification',
-        value: supports,
-      },
-      {
-        id: 'passwordReset',
-        name: 'PasswordReset',
-        value: supports,
-      },
-      {
-        id: 'doubleOptIn',
-        name: 'DoubleOptInConfirmation',
-        value: supports,
-      },
-      {
-        id: 'preferencesCenter',
-        name: 'LitePreferencesCenter',
-        value: supports,
-      },
-      {
-        id: 'accountDeletedEmailTemplates',
-        name: 'AccountDeletionConfirmation',
-        value: supports,
-      },
-      {
-        id: 'welcomeEmailTemplates',
-        name: 'NewUserWelcome',
-        value: supports,
-      },
-      {
-        id: 'emailVerification',
-        name: 'EmailVerification',
-        value: supports,
-      },
-      {
-        id: 'codeVerification',
-        name: 'CodeVerification',
-        value: supports,
-      },
-      {
-        id: 'magicLink',
-        name: 'MagicLink',
-        value: supports,
-      },
-    ],
-  }
+  const emailTemplates = createEmailTemplates(supports)
 
   const smsTemplates = {
     id: 'smsTemplates',
@@ -150,4 +90,22 @@ function createScreenSetCollection(collection, value) {
     screenSets.branches[0].branches.push(createScreenSet(collection, name, value))
   }
   return screenSets
+}
+
+function createEmailTemplates(value) {
+  const emailTemplates = {
+    id: 'emailTemplates',
+    name: 'emailTemplates',
+    value: value,
+    branches: [],
+  }
+  const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
+  for (const emailInternalName of emailTemplateNameTranslator.getInternalNames()) {
+    emailTemplates.branches.push({
+      id: emailInternalName,
+      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
+      value: value,
+    })
+  }
+  return emailTemplates
 }

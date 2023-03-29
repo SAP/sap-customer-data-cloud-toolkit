@@ -21,72 +21,8 @@ class EmailOptions extends Options {
 
   addEmails(response) {
     const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
-    if (response.emailNotifications.confirmationEmailTemplates) {
-      const id = 'confirmationEmailTemplates'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.impossibleTraveler) {
-      const id = 'impossibleTraveler'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.twoFactorAuth) {
-      const id = 'twoFactorAuth'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.passwordReset) {
-      const id = 'passwordReset'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.doubleOptIn) {
-      const id = 'doubleOptIn'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.preferencesCenter) {
-      const id = 'preferencesCenter'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.emailNotifications.accountDeletedEmailTemplates) {
-      const id = 'accountDeletedEmailTemplates'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.emailNotifications.welcomeEmailTemplates) {
-      const id = 'welcomeEmailTemplates'
-      this.options.branches.push({
-        id: id,
-        name: emailTemplateNameTranslator.translateInternalName(id),
-        value: true,
-      })
-    }
-    if (response.emailVerification) {
-      const id = 'emailVerification'
+    if (response.magicLink) {
+      const id = 'magicLink'
       this.options.branches.push({
         id: id,
         name: emailTemplateNameTranslator.translateInternalName(id),
@@ -101,8 +37,72 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.magicLink) {
-      const id = 'magicLink'
+    if (response.emailVerification) {
+      const id = 'emailVerification'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.emailNotifications.welcomeEmailTemplates) {
+      const id = 'welcomeEmailTemplates'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.emailNotifications.accountDeletedEmailTemplates) {
+      const id = 'accountDeletedEmailTemplates'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.preferencesCenter) {
+      const id = 'preferencesCenter'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.doubleOptIn) {
+      const id = 'doubleOptIn'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.passwordReset) {
+      const id = 'passwordReset'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.twoFactorAuth) {
+      const id = 'twoFactorAuth'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.impossibleTraveler) {
+      const id = 'impossibleTraveler'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.emailNotifications.confirmationEmailTemplates) {
+      const id = 'confirmationEmailTemplates'
       this.options.branches.push({
         id: id,
         name: emailTemplateNameTranslator.translateInternalName(id),
