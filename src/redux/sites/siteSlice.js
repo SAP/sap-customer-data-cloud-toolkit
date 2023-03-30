@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
+import ConfigManager from '../../services/copyConfig/configManager'
 
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
@@ -136,10 +137,11 @@ export const {
 
 export default siteSlice.reducer
 
-export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState }) => {
+export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState, rejectWithValue }) => {
   try {
     const state = getState()
-    return await new SiteManager({
+    const sitesConfigurations = state.siteDeployerCopyConfiguration.sitesConfigurations
+    let responses = await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: utils.getPartnerId(window.location.hash),
       userKey: state.credentials.credentials.userKey,
@@ -147,8 +149,24 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     }).create({
       sites,
     })
+
+    const copyConfigPromises = []
+    const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+
+    responses
+      .filter(({ errorCode }) => errorCode === 0)
+      .forEach((okResponse) => {
+        const siteConfiguration = sitesConfigurations.filter((siteConfiguration) => siteConfiguration.siteId === okResponse.tempId)[0]
+        if (siteConfiguration) {
+          copyConfigPromises.push(new ConfigManager(credentials, siteConfiguration.sourceSites[0].apiKey).copy([okResponse.apiKey], siteConfiguration.configurations))
+        }
+      })
+
+    const copyConfigurationResponses = await Promise.all(copyConfigPromises)
+
+    return [...responses, ...copyConfigurationResponses].flat()
   } catch (error) {
-    return error
+    return rejectWithValue(error)
   }
 })
 

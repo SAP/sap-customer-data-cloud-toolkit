@@ -7,13 +7,19 @@ import styles from './dialog-message-confirm.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessageConfirm' })
 
-const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error, confirmButtonClickHandler, t, ...otherProps }) => {
+const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error, confirmButtonClickHandler, confirmButtonText, disableSaveButton, t, ...otherProps }) => {
   const [dialogIsOpen, setDialogIsOpen] = useState(open)
   const classes = useStyles()
 
   useEffect(() => {
     setDialogIsOpen(open)
   }, [open])
+
+  const onBeforeCloseHandler = (event) => {
+    if (event.detail.escPressed) {
+      event.preventDefault()
+    }
+  }
 
   return (
     <>
@@ -26,8 +32,14 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
             design="Footer"
             endContent={
               <div>
-                <Button id="confirmButton" onClick={confirmButtonClickHandler} design="Emphasized" className={classes.confirmButtonStyle}>
-                  {t('GLOBAL.CONTINUE')}
+                <Button
+                  id="confirmButton"
+                  onClick={confirmButtonClickHandler}
+                  design="Emphasized"
+                  className={classes.confirmButtonStyle}
+                  disabled={disableSaveButton ? disableSaveButton() : false}
+                >
+                  {confirmButtonText ? confirmButtonText : t('GLOBAL.CONTINUE')}
                 </Button>
 
                 <Button id="cancelButton" onClick={() => setDialogIsOpen(false)} className={classes.closeButtonStyle}>
@@ -37,6 +49,7 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
             }
           />
         }
+        onBeforeClose={onBeforeCloseHandler}
         {...otherProps}
       >
         {children}

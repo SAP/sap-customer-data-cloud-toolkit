@@ -75,7 +75,7 @@ const ManualRemovalPopup = ({ t }) => {
             >
               {sitesToDeleteManually.map((siteToDeleteManually) => {
                 return (
-                  <TableRow>
+                  <TableRow key={siteToDeleteManually.siteId}>
                     <TableCell>
                       <Label>{siteToDeleteManually.baseDomain}</Label>
                     </TableCell>

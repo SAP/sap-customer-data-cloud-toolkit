@@ -19,6 +19,9 @@ const styles = {
   actionSheetOuterDivStyle: {
     position: 'relative',
   },
+  addConfigButtonStyle: {
+    width: '70%',
+  },
 }
 
 export default styles

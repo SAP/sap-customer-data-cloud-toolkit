@@ -39,7 +39,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
 
   test('should add a target site', () => {
     const newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
-    expect(newState.targetSites[0]).toEqual(siteConfigResponse)
+    expect(newState.targetSites[0]).toEqual(siteConfigResponse.targetSite)
     expect(newState.apiCardError).toBeUndefined()
   })
 
@@ -47,7 +47,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     let newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
     newState = copyConfigurationExtendedReducer(newState, addTargetSite(siteConfigResponse))
     expect(newState.targetSites.length).toEqual(1)
-    expect(newState.targetSites[0]).toEqual(siteConfigResponse)
+    expect(newState.targetSites[0]).toEqual(siteConfigResponse.targetSite)
     expect(newState.apiCardError.errorMessage).toEqual(duplicatedWarningMessage)
   })
 
@@ -163,7 +163,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
   })
 
   test('should update state when getTargetSiteInformation is fulfilled', () => {
-    const action = getTargetSiteInformation.fulfilled(siteConfigResponse)
+    const action = getTargetSiteInformation.fulfilled(siteConfigResponse.targetSite)
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.targetSites[0]).toEqual(expectedTargetSite)
     expect(newState.isLoading).toEqual(false)

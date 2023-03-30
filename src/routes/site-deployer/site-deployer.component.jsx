@@ -43,6 +43,7 @@ import {
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
 import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import SitesTable from '../../components/sites-table/sites-table.component'
@@ -305,7 +306,7 @@ const SiteDeployer = ({ t }) => {
         {showErrorsList(errors)}
         <div className={classes.saveCancelButtonsOuterDivStyle}>
           <div className={classes.saveCancelButtonsInnerDivStyle}>
-            <Card>{showSaveCancelButtons()}</Card>
+            <Card id="saveCancelCard">{showSaveCancelButtons()}</Card>
           </div>
         </div>
         {showSuccessMessage()}
