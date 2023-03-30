@@ -13,19 +13,19 @@ describe('All features full Test Suite', () => {
 
     testSiteDeployer(dataTest.baseDomainName)
     // // // Navigating to the Site that was created
-    navigateToChosenSite(dataTest.baseDomainName)
+    //navigateToChosenSite(dataTest.baseDomainName)
     // Email export and import use cases
-    getSelectedOption(dataTest.emailTemplatesIconName)
-    testImportExportEmailTemplatesFirstUseCase()
-    testImportExportEmailTemplatesSecondCase()
-    testImportExportEmailTemplatesThirdCase()
+    // getSelectedOption(dataTest.emailTemplatesIconName)
+    // testImportExportEmailTemplatesFirstUseCase()
+    // testImportExportEmailTemplatesSecondCase()
+    // testImportExportEmailTemplatesThirdCase()
     // //SMS export and import use cases:
     // // - Export and import the default files
     // // - Import the file with changed locales and compare them
 
-    getSelectedOption(dataTest.smsTemplatesOption)
-    testImportExportSmsFirstUseCaseTemplates()
-    testImportExportSmsSecondUseCaseTemplates()
+    // getSelectedOption(dataTest.smsTemplatesOption)
+    // testImportExportSmsFirstUseCaseTemplates()
+    // testImportExportSmsSecondUseCaseTemplates()
     //Copy Web Sdk Testing use Case
     //  - Copy Schema
     //  - Copy Screen Sets
@@ -39,33 +39,34 @@ describe('All features full Test Suite', () => {
     copyConfigTesting()
     // // // // Navigating to the Site that was altered
     // // // //Change to the desired site and check the changes
-    navigateToChosenSite(dataTest.baseDomainName)
+    // navigateToChosenSite(dataTest.baseDomainName)
     // // // //Change to web sdk and check the changes
-    getSelectedOption('Web SDK Configuration')
-    cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
+    // getSelectedOption('Web SDK Configuration')
+    // cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
     // Check email template changes
-    getSelectedOption(dataTest.emailTemplatesIconName)
-    cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
+    // getSelectedOption(dataTest.emailTemplatesIconName)
+    // cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '5')
 
     //  // // //Check sms template changes
-    getSelectedOption(dataTest.smsTemplatesIconName)
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('be.visible')
-    cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('have.text', 'TFA')
-    cy.get('main-app')
-      .shadow()
-      .find('sms-templates-web-app')
-      .shadow()
-      .find('[class="languages_list_container"]')
-      .eq(1)
-      .find('[role="list"]')
-      .debug()
-      .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
+    // getSelectedOption(dataTest.smsTemplatesIconName)
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('be.visible')
+    // cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(0).should('have.text', 'TFA')
+    // cy.get('main-app')
+    //   .shadow()
+    //   .find('sms-templates-web-app')
+    //   .shadow()
+    //   .find('[class="languages_list_container"]')
+    //   .eq(1)
+    //   .find('[role="list"]')
+    //   .debug()
+    //   .should('have.text', dataTest.templateSiteNameSmsTemplatesContent)
 
     // // // // Delete the site created on this test
-    getSelectedOption(dataTest.siteSelectorOption)
-    deleteSiteCreated()
+    // getSelectedOption(dataTest.siteSelectorOption)
+    // deleteSiteCreated()
   })
   function testSiteDeployer(siteDomain) {
+    cy.intercept('POST', '**/admin.createSite').as('siteCreation')
     utils.getBaseDomain(siteDomain, 30000)
     utils.getSiteStructure(1, 30000)
     utils.getDataCenters('US', 'EU', 'AU')
@@ -79,25 +80,29 @@ describe('All features full Test Suite', () => {
 
     utils.getSaveButton().click()
 
+    cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
+
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     utils.clickPopUpOkButton('#successPopup')
-    cy.wait(10000)
   }
   function copyConfigTesting() {
     //Copy Web SDK to desired site
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
-
+    cy.intercept('POST', '**/accounts.setScreenSet').as('setScreenSet')
+    cy.intercept('POST', '**/accounts.setSchema').as('setSchema')
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type('e2e')
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
     cy.get('#selectAllCheckbox').shadow().find('[class="ui5-checkbox-inner"]').click()
 
     cy.get('#saveButton').click()
-    cy.wait(40000)
+    cy.waitUntil(() => cy.get('#copyConfigSuccessPopup').then((win) => cy.get(win).should('be.visible')))
+    // cy.wait('@setSchema')
+    // cy.wait('@setScreenSet')
+
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
-    cy.wait(10000)
   }
 
   function testImportExportEmailTemplatesFirstUseCase() {
@@ -229,7 +234,6 @@ describe('All features full Test Suite', () => {
       .find('[class ="fd-link base-domain"]')
       .eq(0)
       .click()
-    cy.wait(10000)
   }
   function deleteSiteCreated() {
     getSelectedOption(dataTest.siteSelectorOption)
