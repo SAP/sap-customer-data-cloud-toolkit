@@ -18,7 +18,8 @@ class ScreenSetOptions extends Options {
     return this.#screenSet
   }
 
-  addCollection(screenSets) {
+  addCollection(response) {
+    const screenSets = response.screenSets
     this.options.branches = []
     if (screenSets.length === 0) {
       return

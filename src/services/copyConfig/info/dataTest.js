@@ -39,7 +39,13 @@ export function getInfoExpectedResponse(supports) {
     name: 'consentStatements',
     value: supports,
   }
-  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, consent]
+
+  const communicationTopics = {
+    id: 'communicationTopics',
+    name: 'communicationTopics',
+    value: supports,
+  }
+  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, consent, communicationTopics]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

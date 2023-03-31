@@ -21,7 +21,7 @@ class Schema {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, this.#dataCenter, Schema.getGetSchemaEndpoint())
+    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, this.#dataCenter, Schema.#getGetSchemaEndpoint())
     const res = await client.post(url, this.#getSchemaParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, Schema.#ERROR_MSG_GET_CONFIG)
     })
@@ -29,7 +29,7 @@ class Schema {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.getSetSchemaEndpoint())
+    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getSetSchemaEndpoint())
     const res = await client.post(url, this.#setSchemaParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Schema.#ERROR_MSG_SET_CONFIG)
     })
@@ -181,12 +181,30 @@ class Schema {
     return parameters
   }
 
-  static getGetSchemaEndpoint() {
+  static #getGetSchemaEndpoint() {
     return `${Schema.#NAMESPACE}.getSchema`
   }
 
-  static getSetSchemaEndpoint() {
+  static #getSetSchemaEndpoint() {
     return `${Schema.#NAMESPACE}.setSchema`
+  }
+
+  static hasDataSchema(response) {
+    //return response.dataSchema !== undefined && Object.keys(response.dataSchema).length > 0
+    return Schema.#has(response.dataSchema)
+  }
+
+  static hasProfileSchema(response) {
+    return Schema.#has(response.profileSchema)
+    //return response.profileSchema !== undefined && Object.keys(response.profileSchema).length > 0
+  }
+
+  static hasSubscriptionsSchema(response) {
+    return Schema.#has(response.subscriptionsSchema)
+  }
+
+  static #has(property) {
+    return property !== undefined && Object.keys(property).length > 0
   }
 }
 

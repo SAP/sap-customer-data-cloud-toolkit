@@ -15,6 +15,8 @@ import ScreenSetOptions from '../screenset/screensetOptions'
 import ScreenSet from '../screenset/screenset'
 import ConsentConfiguration from '../consent/consentConfiguration'
 import ConsentOptions from '../consent/consentOptions'
+import Communication from '../communication/communication'
+import CommunicationOptions from '../communication/communicationOptions'
 
 class Info {
   #credentials
@@ -38,6 +40,7 @@ class Info {
       this.#getSmsTemplates(),
       this.#getWebSdk(),
       this.#getConsents(),
+      this.#getCommunicationTopics(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -57,7 +60,7 @@ class Info {
     const response = await webSdkOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
-      if (response.globalConf === '' || response.globalConf === undefined) {
+      if (!WebSdk.hasWebSdk(response)) {
         webSdkOptions.removeWebSdk(info)
       }
       return Promise.resolve(info)
@@ -72,7 +75,7 @@ class Info {
     const response = await consentOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
-      if (Object.keys(response.preferences).length === 0) {
+      if (!ConsentConfiguration.hasConsents(response)) {
         consentOptions.removeConsent(info)
       }
       return Promise.resolve(info)
@@ -95,13 +98,14 @@ class Info {
     const response = await schemaOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
-      if (!response.dataSchema) {
+      if (!Schema.hasDataSchema(response)) {
         schemaOptions.removeDataSchema(info)
       }
-      if (!response.profileSchema) {
+      if (!Schema.hasProfileSchema(response)) {
         schemaOptions.removeProfileSchema(info)
       }
-      if (!response.subscriptionsSchema || Object.keys(response.subscriptionsSchema.fields).length === 0) {
+      //if (!response.subscriptionsSchema || Object.keys(response.subscriptionsSchema.fields).length === 0) {
+      if (!Schema.hasSubscriptionsSchema(response)) {
         schemaOptions.removeSubscriptionsSchema(info)
       }
       return Promise.resolve(info)
@@ -115,7 +119,7 @@ class Info {
     const screenSetOptions = new ScreenSetOptions(new ScreenSet(this.#credentials, this.#site, this.#dataCenter))
     const response = await screenSetOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      screenSetOptions.addCollection(response.screenSets)
+      screenSetOptions.addCollection(response)
       const info = JSON.parse(JSON.stringify(screenSetOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
@@ -129,7 +133,7 @@ class Info {
     const response = await socialOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = socialOptions.getOptionsDisabled()
-      if (!this.#hasSocialProviders(response.providers)) {
+      if (!Social.hasSocialProviders(response)) {
         socialOptions.removeSocialProviders(info)
       }
       return Promise.resolve(info)
@@ -158,7 +162,7 @@ class Info {
     const response = await smsOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = smsOptions.getOptionsDisabled()
-      if (!response.templates) {
+      if (!SmsConfiguration.hasSmsTemplates(response)) {
         smsOptions.removeSmsTemplates(info)
       }
       return Promise.resolve(info)
@@ -168,16 +172,6 @@ class Info {
     }
   }
 
-  #hasSocialProviders(providers) {
-    let atLeastOneHasConfig = false
-    for (const key in providers) {
-      if (!Object.values(providers[key].app).every((x) => x === '')) {
-        atLeastOneHasConfig = true
-        break
-      }
-    }
-    return atLeastOneHasConfig
-  }
   async #getPolicies() {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
@@ -237,6 +231,21 @@ class Info {
     }
     if (!response.preferencesCenter) {
       policyOptions.removePreferencesCenter(info)
+    }
+  }
+
+  async #getCommunicationTopics() {
+    const communicationOptions = new CommunicationOptions(new Communication(this.#credentials, this.#site, this.#dataCenter))
+    const response = await communicationOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(communicationOptions.getOptionsDisabled()))
+      if (!Communication.hasCommunicationTopics(response)) {
+        communicationOptions.removeCommunication(info)
+      }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
     }
   }
 }
