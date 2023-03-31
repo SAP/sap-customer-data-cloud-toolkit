@@ -60,25 +60,3 @@ export function getNoChannelsExpectedResponse() {
   return response
 }
 
-
-// export const channel = {
-//     "callId": "3bd8cd0e4d494aac8fd29542eaf2e7a1",
-//     "errorCode": 400009,
-//     "errorDetails": "Setting channels is prohibited on child site.",
-//     "errorMessage": "Validation error",
-//     "apiVersion": 2,
-//     "statusCode": 400,
-//     "statusReason": "Bad Request",
-//     "time": "2023-03-29T14:32:19.580Z"
-// }
-//
-// export const topic = {
-//     "callId": "de80a0d270d641118ebd5c5ddf3f2b36",
-//     "errorCode": 400009,
-//     "errorDetails": "NoIva_WiFi : Only IsActive can modified in child site.",
-//     "errorMessage": "Validation error",
-//     "apiVersion": 2,
-//     "statusCode": 400,
-//     "statusReason": "Bad Request",
-//     "time": "2023-03-29T14:43:15.199Z"
-// }
