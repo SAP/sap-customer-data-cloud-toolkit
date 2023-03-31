@@ -20,6 +20,9 @@ import {
   mockedGetConsentStatementExpectedResponse,
   mockedSetConsentResponse,
   mockedGetPolicyResponse,
+  mockedGetCommunicationTopicsExpectedResponse,
+  mockedSetCommunicationResponse,
+  mockedGetCommunicationChannelsExpectedResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -125,6 +128,8 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
   mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
   mockResponse(mockedGetConsentStatementExpectedResponse, 'POST', 'accounts.getConsentsStatements')
+  mockResponse(mockedGetCommunicationChannelsExpectedResponse, 'POST', 'accounts.communication.getChannels')
+  mockResponse(mockedGetCommunicationTopicsExpectedResponse, 'POST', 'accounts.communication.getTopicSettings')
 }
 
 export function mockSetConfigurationRequests() {
@@ -135,6 +140,8 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
   mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setConsentsStatements')
   mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
+  mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
+  mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setTopicSettings')
 }
 
 export function mockGetUserSitesRequest() {

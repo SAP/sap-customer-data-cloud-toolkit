@@ -16,6 +16,8 @@ import PolicyOptions from './policies/policyOptions'
 import Policy from './policies/policies'
 import ConsentOptions from './consent/consentOptions'
 import ConsentConfiguration from './consent/consentConfiguration'
+import CommunicationOptions from './communication/communicationOptions'
+import Communication from './communication/communication'
 
 class ConfigManager {
   #configurations = []
@@ -98,6 +100,7 @@ class ConfigManager {
     this.#configurations.push(new SmsOptions(new SmsConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new WebSdkOptions(new WebSdk(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new CommunicationOptions(new Communication(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {

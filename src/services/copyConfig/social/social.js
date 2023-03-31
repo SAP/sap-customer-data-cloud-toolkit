@@ -74,5 +74,17 @@ class Social {
     }
     return parameters
   }
+
+  static hasSocialProviders(response) {
+    const providers = response.providers
+    let atLeastOneHasConfig = false
+    for (const key in providers) {
+      if (!Object.values(providers[key].app).every((x) => x === '')) {
+        atLeastOneHasConfig = true
+        break
+      }
+    }
+    return atLeastOneHasConfig
+  }
 }
 export default Social

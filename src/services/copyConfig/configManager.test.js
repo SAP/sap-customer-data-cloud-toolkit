@@ -11,8 +11,22 @@ import { getSmsExpectedResponse } from '../sms/dataTest'
 import { getEmailsExpectedResponse } from '../emails/dataTest'
 import { getExpectedScreenSetResponse } from './screenset/dataTest'
 import { getPolicyConfig } from './policies/dataTest'
-import { getResponseWithContext, profileId, schemaId, smsTemplatesId, socialIdentitiesId, emailTemplatesId, webSdkId, policyId, subscriptionsId, consentId } from './dataTest'
+import {
+  getResponseWithContext,
+  profileId,
+  schemaId,
+  smsTemplatesId,
+  socialIdentitiesId,
+  emailTemplatesId,
+  webSdkId,
+  policyId,
+  subscriptionsId,
+  consentId,
+  channelId,
+  topicId,
+} from './dataTest'
 import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest'
+import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest'
 
 jest.mock('axios')
 
@@ -21,8 +35,6 @@ const screenSetId = 'screenSet'
 
 describe('Config Manager test suite', () => {
   let configManager
-  const consentStatementId = 'consent_consentStatement'
-  const legalStatementId = 'consent_legalStatement'
 
   beforeEach(() => {
     configManager = new ConfigManager(CommonTestData.credentials, apiKey)
@@ -40,6 +52,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -78,6 +91,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const err = {
       message: mockedResponse.errorMessage,
       code: mockedResponse.errorCode,
@@ -109,6 +123,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
@@ -122,6 +137,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
@@ -135,9 +152,13 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
+
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
 
-    expect(response.length).toEqual(26)
+    expect(response.length).toEqual(30)
     verifyAllResponsesAreOk(response)
     verifyAllContext(response)
   })
@@ -197,13 +218,15 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, webSdkId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, consentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, channelId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, topicId, apiKey) })
 
-    await executeCopyAllUnsuccessfully(ConfiguratorTestData.scExpectedGigyaResponseNotOk, 8)
+    await executeCopyAllUnsuccessfully(ConfiguratorTestData.scExpectedGigyaResponseNotOk, 10)
   })
 
   test('copy all unsuccessfully - error setting info', async () => {
     const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
-    const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
+    const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1)
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
@@ -215,6 +238,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, subscriptionsId, apiKey) })
@@ -228,6 +252,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, socialIdentitiesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, channelId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, emailTemplatesId, apiKey) })
@@ -241,9 +267,11 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, webSdkId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, consentId, apiKey) })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, topicId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, topicId, apiKey) })
 
-    await executeCopyAllUnsuccessfully(mockedResponse, 26)
+    await executeCopyAllUnsuccessfully(mockedResponse, 30)
   })
 
   test('copy all unsuccessfully - error on single copy', async () => {
@@ -260,6 +288,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
@@ -273,6 +302,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
@@ -286,13 +317,12 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, consentStatementId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, consentStatementId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, legalStatementId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, legalStatementId, apiKey) })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
 
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
-    expect(response.length).toEqual(26)
+    expect(response.length).toEqual(30)
     CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
     expect(response[0].context.id).toEqual(schemaId)
     expect(response[0].context.targetApiKey).toEqual(apiKey)
