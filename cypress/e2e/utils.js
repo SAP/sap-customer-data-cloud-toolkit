@@ -70,13 +70,11 @@ export function resizeObserverLoopErrRe() {
 }
 
 export function getBaseDomain(baseDomain, timeout) {
-  cy.wait(10000)
   cy.get('#cdctools-baseDomain').should('be.visible')
   return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
-  cy.wait(10000)
   cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).click()
   cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).click()
   return cy
@@ -109,7 +107,11 @@ export function getCreateButton() {
 }
 
 export function getSaveButton() {
-  return cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#save-main')
+  return cy.get('#saveCancelCard').find('#save-main')
+}
+
+export function getCancelButton() {
+  return cy.get('#saveCancelCard').find('#cancel-main')
 }
 
 export function clickPopUpOkButton(popUpId) {
@@ -180,4 +182,44 @@ export function fillTargetApiKeyInput() {
 
 export function checkTargetSitesList() {
   cy.get('#selectedTargetApiKeysList').should('have.length', '1')
+}
+
+export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOption) {
+  cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
+  cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
+  cy.get('#dataCenterSelect').click()
+  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
+}
+
+export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
+  cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
+  cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
+}
+
+export function createChild() {
+  getIcon(0)
+  cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
+}
+export function getIcon(iconNumber) {
+  return cy.get('[icon ="overflow"]').eq(iconNumber).click()
+}
+
+function getSiteConfigButton(buttonId) {
+  return cy.get('ui5-table-row').eq(0).find('#sitesCopyConfigurationButtonPannelGrid').find(buttonId)
+}
+
+export function getAddSiteConfigButton() {
+  return getSiteConfigButton('#addSiteConfigButton')
+}
+
+export function getEditSiteConfigButton() {
+  return getSiteConfigButton('#editSiteConfigButton')
+}
+
+export function getDeclineSiteConfigButton() {
+  return getSiteConfigButton('#declineSiteConfigButton')
+}
+
+export function getSiteCopyConfigurationDialog() {
+  return cy.get('#siteCopyConfigurationDialog')
 }

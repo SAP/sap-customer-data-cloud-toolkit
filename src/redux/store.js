@@ -8,6 +8,7 @@ import smsReducer from './sms/smsSlice'
 import credentialsReducer from './credentials/credentialsSlice'
 import versionReducer from './version/versionSlice'
 import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
+import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
 export default configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export default configureStore({
     credentials: credentialsReducer,
     version: versionReducer,
     copyConfigurationExtended: copyConfigurationExtendedReducer,
+    siteDeployerCopyConfiguration: siteDeployerCopyConfigurationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

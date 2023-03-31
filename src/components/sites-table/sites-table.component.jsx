@@ -46,6 +46,9 @@ export const SitesTable = ({ t }) => {
               <TableColumn>
                 <Label>{t('GLOBAL.DATA_CENTER')}</Label>
               </TableColumn>
+              <TableColumn>
+                <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
+              </TableColumn>
               <TableColumn className={classes.addParentSiteColumnStyle}>
                 <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
               </TableColumn>

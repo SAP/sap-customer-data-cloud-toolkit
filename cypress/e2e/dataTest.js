@@ -40,6 +40,9 @@ const dummyApiKey = '4DiwrECcjcMVrRyIX8aukA'
 const successMessageHeader = 'Success'
 const webSdkCopyTest = 'TEST_WEB_SDK_COPY'
 const templateSiteName = '_cdc-toolbox-source-templates_'
+const targetSiteDomainName = 'target.test.site.com'
+const target2SiteDomainName = 'target2.test.site.com'
+const webSDKConfiguration = 'Web SDK Configuration'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
 
 const gigyaURL = 'console.gigya.com'
@@ -1297,4 +1300,7 @@ export {
   templateSiteName,
   gigyaURL,
   templateSiteNameSmsTemplatesContent,
+  targetSiteDomainName,
+  target2SiteDomainName,
+  webSDKConfiguration
 }
