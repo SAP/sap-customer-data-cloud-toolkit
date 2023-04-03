@@ -44,6 +44,10 @@ const targetSiteDomainName = 'target.test.site.com'
 const target2SiteDomainName = 'target2.test.site.com'
 const webSDKConfiguration = 'Web SDK Configuration'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
+const schemadataTestFieldOne = ' data_test_schema '
+const schemadataTestFieldTwo = ' data_test_schema_2 '
+const accountsSchemaOption = 'Accounts Schema'
+const webSdkOption = 'Web SDK Configuration'
 
 const gigyaURL = 'console.gigya.com'
 const errorToManualRemoveSiteMessage = {
@@ -1300,7 +1304,10 @@ export {
   templateSiteName,
   gigyaURL,
   templateSiteNameSmsTemplatesContent,
+  schemadataTestFieldOne,
+  schemadataTestFieldTwo,
+  accountsSchemaOption,
   targetSiteDomainName,
   target2SiteDomainName,
-  webSDKConfiguration
+  webSDKConfiguration,
 }
