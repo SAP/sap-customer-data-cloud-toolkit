@@ -53,5 +53,9 @@ class WebSdk {
     parameters.context = JSON.stringify({ id: 'webSdk', targetApiKey: apiKey })
     return parameters
   }
+
+  static hasWebSdk(response) {
+    return !(response.globalConf === '' || response.globalConf === undefined)
+  }
 }
 export default WebSdk

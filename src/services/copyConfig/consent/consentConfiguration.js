@@ -135,8 +135,15 @@ class ConsentConfiguration {
   async #siteContainsConsent(destinationSite, dataCenter, consent) {
     const destinationConsentStatement = new ConsentStatement(this.#credentials, destinationSite, dataCenter)
     const existingConsents = await destinationConsentStatement.get()
+    if(existingConsents.errorCode && existingConsents.errorCode !== 0) {
+      return false
+    }
     const filteredConsents = Object.keys(existingConsents.preferences).filter((id) => id === ConsentConfiguration.#getConsentId(consent.preferences))
     return filteredConsents.length > 0
+  }
+
+  static hasConsents(response) {
+    return Object.keys(response.preferences).length > 0
   }
 }
 

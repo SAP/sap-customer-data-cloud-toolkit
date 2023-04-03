@@ -4,70 +4,12 @@ class ScreenSetOptions extends Options {
   #screenSet
 
   constructor(screenSet) {
-    const SCREEN_SET_COLLECTION_DEFAULT = 'Default'
     super({
       id: 'screenSets',
       name: 'Screen-Sets',
       value: true,
       formatName: false,
-      branches: [
-        {
-          id: SCREEN_SET_COLLECTION_DEFAULT,
-          name: SCREEN_SET_COLLECTION_DEFAULT,
-          value: true,
-          formatName: false,
-          branches: [
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-LinkAccounts`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-LiteRegistration`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-OrganizationRegistration`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-PasswordlessLogin`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-ProfileUpdate`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-ReAuthentication`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-RegistrationLogin`,
-              formatName: false,
-              value: true,
-            },
-            {
-              id: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
-              name: `${SCREEN_SET_COLLECTION_DEFAULT}-Subscriptions`,
-              formatName: false,
-              value: true,
-            },
-          ],
-        },
-      ],
+      branches: [],
     })
     this.#screenSet = screenSet
   }
@@ -76,7 +18,8 @@ class ScreenSetOptions extends Options {
     return this.#screenSet
   }
 
-  addCollection(screenSets) {
+  addCollection(response) {
+    const screenSets = response.screenSets
     this.options.branches = []
     if (screenSets.length === 0) {
       return

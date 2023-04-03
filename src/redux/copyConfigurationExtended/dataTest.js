@@ -47,6 +47,7 @@ export const initialState = {
   currentSiteInformation: {},
   isTargetInfoLoading: false,
   currentSiteApiKey: '',
+  unfilteredAvailableTargetSites: [],
 }
 
 export const dummyTargetApiKey = 'asdlkjpoiqwekjhdsfbvc'
@@ -94,11 +95,14 @@ export const initialStateWithErrors = {
 }
 
 export const siteConfigResponse = {
-  baseDomain: 'a_b_c_dummy_site',
-  dataCenter: 'eu1',
-  context: { targetApiKey: dummyTargetApiKey },
-  partnerName: 'test',
-  partnerId: 123456,
+  targetSite: {
+    baseDomain: 'a_b_c_dummy_site',
+    apiKey: dummyTargetApiKey,
+    dataCenter: 'eu1',
+    context: { targetApiKey: dummyTargetApiKey },
+    partnerName: 'test',
+    partnerId: 123456,
+  },
 }
 
 export const expectedTargetSite = {

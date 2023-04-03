@@ -27,6 +27,17 @@ export const getConsentStatementExpectedResponse = {
   },
 }
 
+export const getConsentStatementNotMigratedResponse = {
+  callId: '5ccc0cb3f5d144d4884d5ecf64ed0a83',
+  errorCode: 400096,
+  errorDetails: "GetConsentsStatements SiteId: 00000001 has not migrated it's consent data",
+  errorMessage: 'Not supported',
+  apiVersion: 2,
+  statusCode: 400,
+  statusReason: 'Bad Request',
+  time: '2023-03-20T17:38:23.590Z',
+}
+
 export function getNoConsentStatementExpectedResponse() {
   const response = JSON.parse(JSON.stringify(getConsentStatementExpectedResponse))
   response.preferences = {}

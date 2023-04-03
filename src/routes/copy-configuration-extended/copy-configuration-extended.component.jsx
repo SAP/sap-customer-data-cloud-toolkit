@@ -1,37 +1,16 @@
+import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import lodash from 'lodash'
 
-import {
-  Card,
-  CardHeader,
-  Input,
-  InputType,
-  Label,
-  Bar,
-  Title,
-  Text,
-  TitleLevel,
-  FlexBox,
-  Grid,
-  Button,
-  ValueState,
-  BusyIndicator,
-  List,
-  CustomListItem,
-  SuggestionItem,
-  MessageStrip,
-  Icon,
-  Popover,
-  CheckBox,
-} from '@ui5/webcomponents-react'
+import { Card, CardHeader, Label, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, ValueState, BusyIndicator, MessageStrip } from '@ui5/webcomponents-react'
 
-import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import MessageList from '../../components/message-list/message-list.component'
-import MessagePopoverButton from '../../components/message-popover-button/message-popover-button.component'
+import SearchSitesInput from '../../components/search-sites-input/search-sites-input.component'
+import SiteConfigurations from '../../components/site-configurations/site-configurations.component'
+import TargetSitesTooltipIcon from '../../components/target-sites-tooltip-icon/target-sites-tooltip-icon.component'
+import TargetApiKeysList from '../../components/target-api-keys-list/target-api-keys-list.component'
 
 import {
   selectConfigurations,
@@ -64,7 +43,7 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
-import { cleanTreeVerticalScrolls, areConfigurationsFilled, filterTargetSites, getTargetSiteByTargetApiKey, findStringInAvailableTargetSites } from './utils'
+import { cleanTreeVerticalScrolls, areConfigurationsFilled } from './utils'
 import { getApiKey } from '../../redux/utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
@@ -97,10 +76,7 @@ const CopyConfigurationExtended = ({ t }) => {
   const isTargetInfoLoading = useSelector(selectIsTargetInfoLoading)
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
-  const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
-
-  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
-  const [tooltipTarget, setTooltipTarget] = useState('')
+  const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
@@ -134,51 +110,23 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
     dispatch(clearErrors())
-  }
-
-  const onTargetApiKeysInputHandler = lodash.debounce((event) => {
-    const inputValue = event.target.value
-    setTarketApiKeyInputValue(inputValue)
-    setFilteredAvailableTargetApiKeys(filterTargetSites(inputValue, availableTargetSites))
-  }, 500)
-
-  const onTargetApiKeysInputKeyPressHandler = (event) => {
-    const inputValue = event.target.value
-    if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, availableTargetSites)) {
-      setTarketApiKeyInputValue(inputValue)
-      processInput(inputValue)
-    }
-  }
-
-  const onAddTargetSiteButtonClickHandler = () => {
-    processInput(tarketApiKeyInputValue)
-  }
-
-  const processInput = (inputValue) => {
-    if (inputValue && inputValue !== '') {
-      dispatch(getTargetSiteInformation(inputValue))
-      setTarketApiKeyInputValue('')
-    }
+    setSelectAllCheckboxState(false)
   }
 
   const onSuccessDialogAfterCloseHandler = () => {
     setTarketApiKeyInputValue('')
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
+    setSelectAllCheckboxState(false)
   }
 
   const onTarketApiKeyDeleteHandler = (event) => {
     dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
-  const onSuggestionItemSelectHandler = (event) => {
-    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.additionalText, availableTargetSites)
-    setTarketApiKeyInputValue('')
-    dispatch(addTargetSite(targetSite))
-  }
-
   const onSelectAllCheckboxChangeHandler = (event) => {
     const value = event.srcElement.checked
+    setSelectAllCheckboxState(value)
     configurations.forEach((configuration) => {
       const checkBoxId = configuration.id
       dispatch(setConfigurationStatus({ checkBoxId, value }))
@@ -203,27 +151,13 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showConfigurations = () => {
-    return configurations.length ? (
-      <div className={classes.selectConfigurationOuterDivStyle}>
-        <div className={classes.selectConfigurationInnerDivStyle}>
-          <Card
-            header={
-              <CardHeader
-                titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')}
-                action={<CheckBox id="selectAllCheckbox" text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')} onChange={onSelectAllCheckboxChangeHandler} />}
-              />
-            }
-          >
-            <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
-              {configurations.map((configuration) => (
-                <ConfigurationTree key={configuration.id} {...configuration} />
-              ))}
-            </FlexBox>
-          </Card>
-        </div>
-      </div>
-    ) : (
-      ''
+    return (
+      <SiteConfigurations
+        configurations={configurations}
+        selectAllCheckboxState={selectAllCheckboxState}
+        onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
+        setConfigurationStatus={setConfigurationStatus}
+      />
     )
   }
 
@@ -246,51 +180,7 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showTargetApiKeys = () => {
-    return (
-      <List id="selectedTargetApiKeysList" mode="Delete" onItemDelete={onTarketApiKeyDeleteHandler}>
-        {targetSites.map((targetSite) => (
-          <CustomListItem key={targetSite.apiKey} className={classes.targetSitesListItem} data-apikey={targetSite.apiKey}>
-            <FlexBox>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>
-                      <Label>{t('COPY_CONFIGURATION_EXTENDED.SITE_DOMAIN')}</Label>
-                    </td>
-                    <td>
-                      <Text>{targetSite.baseDomain}</Text>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <Label>{t('COPY_CONFIGURATION_EXTENDED.API_KEY')}</Label>
-                    </td>
-                    <td>
-                      <Text>{targetSite.apiKey}</Text>
-                    </td>
-                  </tr>
-                  {targetSite.partnerName ? (
-                    <tr>
-                      <td>
-                        <Label>{t('COPY_CONFIGURATION_EXTENDED.PARTNER')}</Label>
-                      </td>
-                      <td>
-                        <Text>
-                          {targetSite.partnerName} ({targetSite.partnerId})
-                        </Text>
-                      </td>
-                    </tr>
-                  ) : (
-                    ''
-                  )}
-                </tbody>
-              </table>
-            </FlexBox>
-            {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
-          </CustomListItem>
-        ))}
-      </List>
-    )
+    return <TargetApiKeysList id="copyConfigurationExtendedTargets" targetSites={targetSites} onTarketApiKeyDeleteHandler={onTarketApiKeyDeleteHandler} />
   }
 
   const onMessageStripCloseHandler = () => {
@@ -309,21 +199,6 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const showGetTargetInfoBusyIndicator = () => {
     return isTargetInfoLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
-  }
-
-  const onMouseOverHandler = (event) => {
-    if (event.target.shadowRoot) {
-      setTooltipTarget(event.target.shadowRoot.host.id)
-      setIsMouseOverIcon(true)
-    }
-  }
-
-  const onMouseOutHandler = () => {
-    setIsMouseOverIcon(false)
-  }
-
-  const openPopover = () => {
-    return isMouseOverIcon && tooltipTarget === `targetSiteTooltipIcon`
   }
 
   return (
@@ -393,48 +268,15 @@ const CopyConfigurationExtended = ({ t }) => {
                   </div>
 
                   <div className={classes.targetInfoContainer} data-layout-span="XL5 L5 M5 S5">
-                    <FlexBox justifyContent="SpaceBetween">
-                      <Title level="H3" className={classes.targetInfoContainerTitle}>
-                        {t('COPY_CONFIGURATION_EXTENDED.TO')}
-                      </Title>
-                      <Icon
-                        id="targetSiteTooltipIcon"
-                        name="information"
-                        design="Information"
-                        onMouseOver={onMouseOverHandler}
-                        onMouseOut={onMouseOutHandler}
-                        className={classes.tooltipIconStyle}
-                      />
-                      <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
-                        {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
-                      </Popover>
-                    </FlexBox>
-
+                    <TargetSitesTooltipIcon title={t('COPY_CONFIGURATION_EXTENDED.TO')} />
                     <Card>
                       <div className={classes.targetInfoContainerInputContainer}>
-                        <Input
-                          showSuggestions
-                          id="targetApiKeyInput"
-                          onInput={onTargetApiKeysInputHandler}
-                          onKeyPress={onTargetApiKeysInputKeyPressHandler}
-                          type={InputType.Text}
-                          value={tarketApiKeyInputValue}
-                          className={classes.targetInfoContainerInput}
-                          onSuggestionItemSelect={onSuggestionItemSelectHandler}
-                          placeholder={t('COPY_CONFIGURATION_EXTENDED.ENTER_API_KEY_OR_SITE_DOMAIN')}
-                        >
-                          {filteredAvailableTargetSites.map((availableTargetSite) => (
-                            <SuggestionItem
-                              key={availableTargetSite.apiKey}
-                              // type="Navigation"
-                              text={availableTargetSite.baseDomain}
-                              additionalText={availableTargetSite.apiKey}
-                              description={`${availableTargetSite.partnerName} (${availableTargetSite.partnerId})`}
-                            />
-                          ))}
-                          <Button id="addTargetSiteButton" slot="icon" icon="add" onClick={onAddTargetSiteButtonClickHandler} design="Transparent"></Button>
-                        </Input>
-
+                        <SearchSitesInput
+                          tarketApiKeyInputValue={tarketApiKeyInputValue}
+                          setTarketApiKeyInputValue={setTarketApiKeyInputValue}
+                          addTargetSite={addTargetSite}
+                          getTargetSiteInformation={getTargetSiteInformation}
+                        />
                         {showGetTargetInfoBusyIndicator()}
                         {showMessageStripError()}
                       </div>
@@ -457,11 +299,8 @@ const CopyConfigurationExtended = ({ t }) => {
             </Card>
           </div>
         </div>
-
         {showConfigurations()}
-
         {showErrorList()}
-
         <div className={classes.selectConfigurationOuterDivStyle}>
           <div className={classes.selectConfigurationInnerDivStyle}>
             <Card>

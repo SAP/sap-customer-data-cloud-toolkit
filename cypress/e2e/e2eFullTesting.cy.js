@@ -61,9 +61,9 @@ describe('All features full Test Suite', () => {
   function copyConfigTesting() {
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
-    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type('e2e')
-    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
-    cy.get('#selectAllCheckbox').shadow().find('[class="ui5-checkbox-inner"]').click()
+    targetSites.forEach(addSiteToTargetList)
+    cy.get('ui5-list').find('ui5-li-custom').should('have.length', targetSites.length)
+    cy.get('#selectAllCheckbox').click()
 
     cy.get('#saveButton').click()
     cy.waitUntil(() => cy.get('#copyConfigSuccessPopup').then((win) => cy.get(win).should('be.visible')))
@@ -71,6 +71,13 @@ describe('All features full Test Suite', () => {
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
+  }
+  function addSiteToTargetList(target) {
+    cy.get('input').first().focus()
+    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
+    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
+    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
+    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
   }
 
   function testImportExportEmailTemplatesFirstUseCase() {
@@ -280,7 +287,7 @@ describe('All features full Test Suite', () => {
     checkWebSdk()
   }
   function checkWebSdk() {
-    getSelectedOption(dataTest.webSdkOption)
+    getSelectedOption(dataTest.webSDKConfiguration)
     cy.get('main-app').shadow().find('web-sdk-configuration-app').shadow().find('web-sdk-configuration-container').find('fd-layout-panel').eq(0).contains(dataTest.webSdkCopyTest)
   }
   function checkEmailTemplates() {

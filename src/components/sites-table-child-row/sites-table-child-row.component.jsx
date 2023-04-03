@@ -8,13 +8,17 @@ import { deleteChild, updateChildBaseDomain, updateChildDescription, selectError
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import SitesCopyConfigurationButtonPannel from '../../components/sites-copy-configuration-button-pannel/sites-copy-configuration-button-pannel.component'
+
 import styles from './sites-table-child-row.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTableChildRow' })
 
 const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description, tags, dataCenter, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
+
   const dispatch = useDispatch()
+
   const dataCenters = useSelector(selectDataCenters)
   const errorList = useSelector((state) => selectErrors(state))
   const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
@@ -89,6 +93,10 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
 
         <TableCell>
           <Text className={classes.childDataCenterCellStyle}>{getDataCenterLabel(dataCenter)}</Text>
+        </TableCell>
+
+        <TableCell>
+          <SitesCopyConfigurationButtonPannel siteId={tempId} />
         </TableCell>
 
         <TableCell className={classes.actionSheetTableCellStyle}>

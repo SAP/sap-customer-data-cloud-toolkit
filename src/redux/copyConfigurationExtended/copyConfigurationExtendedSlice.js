@@ -42,16 +42,18 @@ export const copyConfigurationExtendedSlice = createSlice({
     availableTargetSites: [],
     currentSiteInformation: {},
     isTargetInfoLoading: false,
+    unfilteredAvailableTargetSites: [],
   },
 
   reducers: {
     addTargetSite(state, action) {
       state.apiCardError = undefined
-      if (sourceEqualsTarget(action.payload.apiKey)) {
+      const targetSite = action.payload.targetSite
+      if (sourceEqualsTarget(targetSite.apiKey)) {
         state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.SOURCE_EQUALS_TARGET_WARNING_TEXT') }
       } else {
-        if (!isTargetSiteDuplicated(action.payload.apiKey, state.targetSites)) {
-          state.targetSites.push(action.payload)
+        if (!isTargetSiteDuplicated(action.payload.targetSite.apiKey, state.targetSites)) {
+          state.targetSites.push(targetSite)
         } else {
           state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.DUPLICATED_WARNING_TEXT') }
         }
@@ -87,6 +89,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     setAvailableTargetSitesFromLocalStorage(state, action) {
       const availableTargetSitesFromLocalStorage = getAvailableTargetSitesFromLocalStorage(action.payload)
       if (availableTargetSitesFromLocalStorage) {
+        state.unfilteredAvailableTargetSites = availableTargetSitesFromLocalStorage
         state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(availableTargetSitesFromLocalStorage, state.currentSiteApiKey)
       }
       areAvailableTargetSitesLoading = true
@@ -135,6 +138,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     })
     builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
       if (action.payload.availableTargetSites) {
+        state.unfilteredAvailableTargetSites = action.payload.availableTargetSites
         state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(action.payload.availableTargetSites, state.currentSiteApiKey)
         writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
       }
@@ -176,7 +180,6 @@ export const copyConfigurationExtendedSlice = createSlice({
       }
     })
     builder.addCase(getTargetSiteInformation.rejected, (state, action) => {
-      console.log({ action })
       state.showSuccessMessage = false
       state.isTargetInfoLoading = false
       state.apiCardError = action.payload
@@ -288,5 +291,7 @@ export const selectApiCardError = (state) => state.copyConfigurationExtended.api
 export const selectIsTargetInfoLoading = (state) => state.copyConfigurationExtended.isTargetInfoLoading
 
 export const selectCurrentSiteApiKey = (state) => state.copyConfigurationExtended.currentSiteApiKey
+
+export const selectUnfilteredAvailableTargetSites = (state) => state.copyConfigurationExtended.unfilteredAvailableTargetSites
 
 export default copyConfigurationExtendedSlice.reducer
