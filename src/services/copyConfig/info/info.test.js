@@ -22,7 +22,6 @@ import {
   subscriptionsId,
   consentId,
   channelId,
-  topicId,
 } from '../dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest'
@@ -197,15 +196,15 @@ describe('Info test suite', () => {
     const mockedResponse = JSON.parse(JSON.stringify(channelsExpectedResponse))
     mockedResponse.Channels = {}
     axios
-        .mockResolvedValueOnce({ data: expectedSchemaResponse })
-        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
-        .mockResolvedValueOnce({ data: getPolicyConfig })
-        .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
-        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSiteConfig })
-        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-        .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+      .mockResolvedValueOnce({ data: getPolicyConfig })
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: mockedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(8, 1) // remove communication topics

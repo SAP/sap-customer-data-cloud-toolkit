@@ -24,8 +24,15 @@ import sitesReducer, {
 import { getPartnerId } from './utils'
 
 import * as data from './dataTest'
+import { Tracker } from '../../tracker/tracker'
 
 describe('Site slice test suite', () => {
+  let tracker
+
+  beforeEach(() => {
+    tracker = jest.spyOn(Tracker, 'reportUsage')
+  })
+
   test('should return initial state', () => {
     expect(sitesReducer(undefined, { type: undefined })).toEqual(data.initialState)
   })
@@ -159,11 +166,13 @@ describe('Site slice test suite', () => {
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should set isLoading to false when createSites is rejected', () => {
     const newState = sitesReducer(data.initialState, { type: createSites.rejected.type })
     expect(newState.isLoading).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should clear errors', () => {
@@ -181,6 +190,7 @@ describe('Site slice test suite', () => {
     expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
+    expect(tracker).toHaveBeenCalled()
   })
 
   test('should have fulfilled createSites with errors', () => {
@@ -189,6 +199,7 @@ describe('Site slice test suite', () => {
     expect(newState.sites.length).toEqual(0)
     expect(newState.errors.length).toEqual(1)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should select a Parent site by id', () => {

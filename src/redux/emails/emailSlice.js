@@ -5,6 +5,7 @@ import EmailManager from '../../services/emails/emailManager'
 import { getApiKey } from '../utils'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
+import { Tracker } from '../../tracker/tracker'
 
 const EMAILS_SLICE_STATE_NAME = 'emails'
 const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'email-templates'
@@ -54,6 +55,7 @@ export const emailSlice = createSlice({
     builder.addCase(getEmailTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
       state.exportFile = new File([action.payload], EXPORT_EMAIL_TEMPLATES_FILE_NAME, { type: ZIP_FILE_MIME_TYPE })
+      Tracker.reportUsage()
     })
     builder.addCase(getEmailTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
@@ -76,6 +78,7 @@ export const emailSlice = createSlice({
       } else {
         state.importedEmailTemplatesCount = action.payload.length
         state.showSuccessDialog = true
+        Tracker.reportUsage()
       }
       state.isImportPopupOpen = false
     })

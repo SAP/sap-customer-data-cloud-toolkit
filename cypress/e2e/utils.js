@@ -26,7 +26,11 @@ import {
 } from './dataTest'
 
 export function startUp(pageName) {
-  cy.visit('')
+  cy.visit('', {
+    onBeforeLoad(win) {
+      cy.stub(win, 'open')
+    },
+  })
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
 
