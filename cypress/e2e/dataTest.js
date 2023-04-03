@@ -41,6 +41,10 @@ const successMessageHeader = 'Success'
 const webSdkCopyTest = 'TEST_WEB_SDK_COPY'
 const templateSiteName = '_cdc-toolbox-source-templates_'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
+const schemadataTestFieldOne = ' data_test_schema '
+const schemadataTestFieldTwo = ' data_test_schema_2 '
+const accountsSchemaOption = 'Accounts Schema'
+const webSdkOption = 'Web SDK Configuration'
 
 const gigyaURL = 'console.gigya.com'
 const errorToManualRemoveSiteMessage = {
@@ -1227,5 +1231,9 @@ export {
   webSdkCopyTest,
   templateSiteName,
   gigyaURL,
-  templateSiteNameSmsTemplatesContent
+  templateSiteNameSmsTemplatesContent,
+  schemadataTestFieldOne,
+  schemadataTestFieldTwo,
+  accountsSchemaOption,
+  webSdkOption,
 }
