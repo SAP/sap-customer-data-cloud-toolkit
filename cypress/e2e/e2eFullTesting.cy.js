@@ -330,7 +330,7 @@ describe('All features full Test Suite', () => {
       .should('have.text', dataTest.schemadataTestFieldTwo)
   }
   function checkSocial() {
-    getSelectedOption('Connect')
+    getSelectedOption(dataTest.identityConnectOption)
     cy.get('main-app').shadow().find('connect-app').shadow().find('nav').find('[class="fd-tabs__item identity-providers-tab"]').click()
     cy.get('main-app').shadow().find('connect-app').shadow().find('[class="fd-row"]').should('have.length', 3)
   }
