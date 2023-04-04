@@ -31,11 +31,11 @@ describe('All features full Test Suite', () => {
     // //Copy configurations to test site
 
     // navigateToChosenSite(dataTest.templateSiteName)
-    // const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
+    const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
     // copyConfigTesting(targetSites)
     // // Navigating to the Site that was altered
     // //Change to the desired site and check the changes
-    navigateToChosenSite('target.test.site.com')
+    navigateToChosenSite('dataTest.baseDomainName')
     targetSites.forEach(validateChanges)
     // // Delete the site created on this test
     // getSelectedOption(dataTest.siteSelectorOption)
@@ -329,5 +329,5 @@ describe('All features full Test Suite', () => {
       .eq(2)
       .should('have.text', dataTest.schemadataTestFieldTwo)
   }
-  function checkSocial
+  function checkSocial() {}
 })

@@ -8,7 +8,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-  // defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
@@ -25,7 +25,7 @@ module.exports = defineConfig({
       return {
         config,
 
-        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
+        //excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
         //excludeSpecPattern: ['cypress/e2e/emailTemplatesTests.cy.js', 'cypress/e2e/smsTemplatesTests.cy.js', 'cypress/e2e/siteDeployerTests.cy.js'],
       }
     },
