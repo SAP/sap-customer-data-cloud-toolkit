@@ -19,9 +19,9 @@ describe('All features full Test Suite', () => {
     testImportExportEmailTemplatesFirstUseCase()
     testImportExportEmailTemplatesSecondCase()
     testImportExportEmailTemplatesThirdCase()
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
 
     getSelectedOption(dataTest.smsTemplatesOption)
     testImportExportSmsFirstUseCaseTemplates()
