@@ -14,28 +14,30 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.siteDeployerIconName)
 
     testSiteDeployer(dataTest.baseDomainName)
-    // Navigating to the Site that was created
-    navigateToChosenSite(dataTest.baseDomainName, ' Site Settings of prod.us.parent.e2e_testing')
-    // Email export and import use cases
+    // // Navigating to the Site that was created
+    navigateToChosenSite(dataTest.baseDomainName)
+    // // Email export and import use cases
     getSelectedOption(dataTest.emailTemplatesIconName)
     testImportExportEmailTemplatesFirstUseCase()
     testImportExportEmailTemplatesSecondCase()
     testImportExportEmailTemplatesThirdCase()
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
 
     getSelectedOption(dataTest.smsTemplatesOption)
     testImportExportSmsFirstUseCaseTemplates()
     testImportExportSmsSecondUseCaseTemplates()
     //Copy configurations to test site
+
     navigateToChosenSite(dataTest.templateSiteName)
-    copyConfigTesting()
-    // Navigating to the Site that was altered
-    //Change to the desired site and check the changes
+    const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
+    copyConfigTesting(targetSites)
+    // // Navigating to the Site that was altered
+    // //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.baseDomainName)
-    validateChanges()
-    // Delete the site created on this test
+    targetSites.forEach(validateChanges)
+    // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
   })
@@ -58,7 +60,7 @@ describe('All features full Test Suite', () => {
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     utils.clickPopUpOkButton('#successPopup')
   }
-  function copyConfigTesting() {
+  function copyConfigTesting(targetSites) {
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     targetSites.forEach(addSiteToTargetList)
