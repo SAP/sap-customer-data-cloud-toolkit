@@ -11,7 +11,7 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    // getSelectedOption(dataTest.siteDeployerIconName)
+    //getSelectedOption(dataTest.siteDeployerIconName)
 
     // testSiteDeployer(dataTest.baseDomainName)
     // // // Navigating to the Site that was created
@@ -35,7 +35,7 @@ describe('All features full Test Suite', () => {
     // copyConfigTesting(targetSites)
     // // Navigating to the Site that was altered
     // //Change to the desired site and check the changes
-    navigateToChosenSite('dataTest.baseDomainName')
+    navigateToChosenSite(dataTest.targetSiteDomainName)
     targetSites.forEach(validateChanges)
     // // Delete the site created on this test
     // getSelectedOption(dataTest.siteSelectorOption)
@@ -287,6 +287,8 @@ describe('All features full Test Suite', () => {
     checkSmsTemplates()
     // Change to web sdk and check the changes
     checkWebSdk()
+    // Check if identity Providers where copied successfully
+    checkSocial()
   }
   function checkWebSdk() {
     getSelectedOption(dataTest.webSDKConfiguration)
@@ -329,5 +331,9 @@ describe('All features full Test Suite', () => {
       .eq(2)
       .should('have.text', dataTest.schemadataTestFieldTwo)
   }
-  function checkSocial() {}
+  function checkSocial() {
+    getSelectedOption('Connect')
+    cy.get('main-app').shadow().find('connect-app').shadow().find('nav').find('[class="fd-tabs__item identity-providers-tab"]').click()
+    cy.get('main-app').shadow().find('connect-app').shadow().find('[class="fd-row"]').should('have.length', 3)
+  }
 })
