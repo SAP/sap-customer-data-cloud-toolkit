@@ -14,29 +14,30 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.siteDeployerIconName)
 
     testSiteDeployer(dataTest.baseDomainName)
-    // Navigating to the Site that was created
-    navigateToChosenSite(dataTest.baseDomainName, ' Site Settings of prod.us.parent.e2e_testing')
-    // Email export and import use cases
+    // // Navigating to the Site that was created
+    navigateToChosenSite(dataTest.baseDomainName)
+    // // Email export and import use cases
     getSelectedOption(dataTest.emailTemplatesIconName)
     testImportExportEmailTemplatesFirstUseCase()
     testImportExportEmailTemplatesSecondCase()
     testImportExportEmailTemplatesThirdCase()
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
 
     getSelectedOption(dataTest.smsTemplatesOption)
     testImportExportSmsFirstUseCaseTemplates()
     testImportExportSmsSecondUseCaseTemplates()
     //Copy configurations to test site
+
     navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
     copyConfigTesting(targetSites)
-    // Navigating to the Site that was altered
-    //Change to the desired site and check the changes
+    // // Navigating to the Site that was altered
+    // //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.baseDomainName)
     targetSites.forEach(validateChanges)
-    // Delete the site created on this test
+    // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
   })
