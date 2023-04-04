@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
-import { single } from 'rxjs'
-import { func } from 'prop-types'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
@@ -11,35 +9,35 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    //getSelectedOption(dataTest.siteDeployerIconName)
+    getSelectedOption(dataTest.siteDeployerIconName)
 
-    // testSiteDeployer(dataTest.baseDomainName)
-    // // // Navigating to the Site that was created
-    // navigateToChosenSite(dataTest.baseDomainName)
-    // // // Email export and import use cases
-    // getSelectedOption(dataTest.emailTemplatesIconName)
-    // testImportExportEmailTemplatesFirstUseCase()
-    // testImportExportEmailTemplatesSecondCase()
-    // testImportExportEmailTemplatesThirdCase()
-    // // //SMS export and import use cases:
-    // // // - Export and import the default files
-    // // // - Import the file with changed locales and compare them
+    testSiteDeployer(dataTest.baseDomainName)
+    // Navigating to the Site that was created
+    navigateToChosenSite(dataTest.baseDomainName)
+    // Email export and import use cases
+    getSelectedOption(dataTest.emailTemplatesIconName)
+    testImportExportEmailTemplatesFirstUseCase()
+    testImportExportEmailTemplatesSecondCase()
+    testImportExportEmailTemplatesThirdCase()
+    //SMS export and import use cases:
+    // - Export and import the default files
+    // - Import the file with changed locales and compare them
 
-    // getSelectedOption(dataTest.smsTemplatesOption)
-    // testImportExportSmsFirstUseCaseTemplates()
-    // testImportExportSmsSecondUseCaseTemplates()
-    // //Copy configurations to test site
+    getSelectedOption(dataTest.smsTemplatesOption)
+    testImportExportSmsFirstUseCaseTemplates()
+    testImportExportSmsSecondUseCaseTemplates()
+    //Copy configurations to test site
 
-    // navigateToChosenSite(dataTest.templateSiteName)
+    navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
-    // copyConfigTesting(targetSites)
-    // // Navigating to the Site that was altered
-    // //Change to the desired site and check the changes
+    copyConfigTesting(targetSites)
+    // Navigating to the Site that was altered
+    //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.targetSiteDomainName)
     targetSites.forEach(validateChanges)
-    // // Delete the site created on this test
-    // getSelectedOption(dataTest.siteSelectorOption)
-    // deleteSiteCreated()
+    // Delete the site created on this test
+    getSelectedOption(dataTest.siteSelectorOption)
+    deleteSiteCreated()
   })
   function testSiteDeployer(siteDomain) {
     utils.getBaseDomain(siteDomain, 30000)
