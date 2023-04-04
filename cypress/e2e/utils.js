@@ -27,8 +27,8 @@ import {
 
 export function startUp(pageName) {
   cy.visit('', {
-    onBeforeLoad(win) {
-      cy.stub(win, 'open')
+    onBeforeLoad(window) {
+      cy.stub(window, 'open').as('windowOpenStub')
     },
   })
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
