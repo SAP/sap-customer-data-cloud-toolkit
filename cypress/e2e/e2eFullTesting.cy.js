@@ -30,11 +30,12 @@ describe('All features full Test Suite', () => {
     testImportExportSmsSecondUseCaseTemplates()
     //Copy configurations to test site
     navigateToChosenSite(dataTest.templateSiteName)
-    copyConfigTesting()
+    const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
+    copyConfigTesting(targetSites)
     // Navigating to the Site that was altered
     //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.baseDomainName)
-    validateChanges()
+    targetSites.forEach(validateChanges)
     // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
@@ -57,8 +58,9 @@ describe('All features full Test Suite', () => {
 
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     utils.clickPopUpOkButton('#successPopup')
+    cy.window().its('open').should('be.called')
   }
-  function copyConfigTesting() {
+  function copyConfigTesting(targetSites) {
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     targetSites.forEach(addSiteToTargetList)
@@ -71,6 +73,7 @@ describe('All features full Test Suite', () => {
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
+    cy.window().its('open').should('be.called')
   }
   function addSiteToTargetList(target) {
     cy.get('input').first().focus()
@@ -101,6 +104,7 @@ describe('All features full Test Suite', () => {
     cy.get('#emailTemplatesErrorPopup').find('#closeButton').click({ force: true })
     utils.clickPopUpOkButton('#successPopup')
     cy.waitUntil(() => cy.get('#exportAllEmailTemplatesButton').then((win) => cy.get(win).should('be.visible')))
+    cy.window().its('open').should('be.called')
   }
   function testImportExportEmailTemplatesSecondCase() {
     //Email Templates - Second Use Case
@@ -131,6 +135,7 @@ describe('All features full Test Suite', () => {
     cy.get('.cdk-overlay-container').find('fd-option').eq(0).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').should('be.visible')
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '6')
+    cy.window().its('open').should('be.called')
   }
   function testImportExportEmailTemplatesThirdCase() {
     // Email Templates - Third Use Case
@@ -158,6 +163,7 @@ describe('All features full Test Suite', () => {
     cy.get('#emailTemplatesErrorPopup').find('#closeButton').click({ force: true })
 
     cy.get('body').find('#openPopoverButton').click({ force: true })
+    cy.window().its('open').should('not.be.called')
   }
 
   function testImportExportSmsFirstUseCaseTemplates() {
@@ -184,6 +190,7 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-list__title"]')
       .click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '40')
+    cy.window().its('open').should('be.called')
   }
   function testImportExportSmsSecondUseCaseTemplates() {
     // SMS Templates - Second Use Case
@@ -209,6 +216,7 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-list__title"]')
       .click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '40')
+    cy.window().its('open').should('be.called')
   }
 
   function navigateToChosenSite(siteName) {
@@ -259,7 +267,11 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(optionName).click({ force: true })
   }
   function loginToGigya(URL) {
-    cy.visit('https://' + URL)
+    cy.visit('https://' + URL, {
+      onBeforeLoad(win) {
+        cy.stub(win, 'open')
+      },
+    })
 
     cy.get('[name ="username"]', { timeout: 10000 }).eq(2).type(Cypress.env('userName'))
     cy.get('[name="password"]').eq(3).type(Cypress.env('passWord'))
