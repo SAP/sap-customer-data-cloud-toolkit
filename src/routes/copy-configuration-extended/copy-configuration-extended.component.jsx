@@ -79,8 +79,15 @@ const CopyConfigurationExtended = ({ t }) => {
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
 
   window.navigation.onnavigate = (event) => {
-    if (event.navigationType === 'replace' && currentSiteApiKey !== getApiKey(window.location.hash) && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
-      dispatch(updateCurrentSiteApiKey())
+    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
+      if (currentSiteApiKey !== getApiKey(window.location.hash)) {
+        dispatch(updateCurrentSiteApiKey())
+      }
+
+      if (areCredentialsFilled(credentials) && currentSiteApiKey) {
+        dispatch(getConfigurations())
+        cleanTreeVerticalScrolls()
+      }
     }
   }
 
