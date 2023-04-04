@@ -8,7 +8,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-  // defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
