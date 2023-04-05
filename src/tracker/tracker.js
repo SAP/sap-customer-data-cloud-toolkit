@@ -12,5 +12,5 @@ Just fill the project name and click "send" to report 1 usage of ${Tracker.appli
 Project name: `
 
 Tracker.reportUsage = function () {
-  window.open(`mailto:${Tracker.distributionList}?subject=${Tracker.subject}&body=${Tracker.body}`, '_parent')
+  window.open(`mailto:${Tracker.distributionList}?subject=${Tracker.subject}&body=${Tracker.body}`)
 }
