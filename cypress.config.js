@@ -26,7 +26,7 @@ module.exports = defineConfig({
         config,
 
         excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
-        //excludeSpecPattern: ['cypress/e2e/emailTemplatesTests.cy.js', 'cypress/e2e/smsTemplatesTests.cy.js', 'cypress/e2e/siteDeployerTests.cy.js'],
+        //excludeSpecPattern: ['cypress/e2e/emailTemplatesTests.cy.js', 'cypress/e2e/smsTemplatesTests.cy.js', 'cypress/e2e/siteDeployerTests.cy.js', 'cypress/e2e/siteDeployerCopyConfigurationTests.cy.js'],
       }
     },
   },

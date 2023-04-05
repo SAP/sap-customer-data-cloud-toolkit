@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 import ConfigManager from '../../services/copyConfig/configManager'
+import { Tracker } from '../../tracker/tracker'
 
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
@@ -107,6 +108,7 @@ export const siteSlice = createSlice({
       } else {
         state.showSuccessDialog = true
         state.sites = []
+        Tracker.reportUsage()
       }
     })
     builder.addCase(createSites.rejected, (state, action) => {

@@ -52,7 +52,6 @@ describe('Communication test suite', () => {
   })
 
   test('copy unsuccessfully - error on get', async () => {
-    const mockedResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_channel_get', apiKey)
     axios
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_channel_get', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_topic_get', apiKey) })

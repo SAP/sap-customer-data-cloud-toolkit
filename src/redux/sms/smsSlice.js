@@ -5,6 +5,7 @@ import SmsManager from '../../services/sms/smsManager'
 
 import { errorConditions } from '../errorConditions'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
+import { Tracker } from '../../tracker/tracker'
 
 const SMS_SLICE_STATE_NAME = 'sms'
 const EXPORT_SMS_TEMPLATES_FILE_NAME = 'sms-templates'
@@ -43,6 +44,7 @@ export const smsSlice = createSlice({
     builder.addCase(getSmsTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
       state.exportFile = new File([action.payload], EXPORT_SMS_TEMPLATES_FILE_NAME, { type: ZIP_FILE_MIME_TYPE })
+      Tracker.reportUsage()
     })
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
@@ -60,6 +62,7 @@ export const smsSlice = createSlice({
         state.showSuccessDialog = false
       } else {
         state.showSuccessDialog = true
+        Tracker.reportUsage()
       }
       state.isImportPopupOpen = false
     })

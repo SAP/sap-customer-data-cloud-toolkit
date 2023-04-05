@@ -14,10 +14,17 @@ import EmailManager from '../../services/emails/emailManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
+import { Tracker } from '../../tracker/tracker'
 
 jest.mock('../../services/emails/emailManager')
 
 describe('Email slice test suite', () => {
+  let tracker
+
+  beforeEach(() => {
+    tracker = jest.spyOn(Tracker, 'reportUsage')
+  })
+
   test('should return initial state', () => {
     expect(emailReducer(undefined, { type: undefined })).toEqual(data.initialState)
   })
@@ -57,12 +64,14 @@ describe('Email slice test suite', () => {
     const dispatch = jest.fn()
     await getEmailTemplatesArrayBuffer()(dispatch)
     expect(dispatch).toBeCalled()
+    //expect(tracker).toHaveBeenCalled() can't verify because the caller is being mocked due to the File object
   })
 
   test('should update isLoading while getEmailTemplatesArrayBuffer is pending', async () => {
     const action = getEmailTemplatesArrayBuffer.pending
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getEmailTemplatesArrayBuffer is rejected', async () => {
@@ -70,6 +79,7 @@ describe('Email slice test suite', () => {
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.errorCondition).toEqual(errorConditions.exportError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state while sendEmailTemplatesArrayBuffer is pending', () => {
@@ -78,6 +88,7 @@ describe('Email slice test suite', () => {
     expect(newState.isLoading).toEqual(true)
     expect(newState.importedEmailTemplatesCount).toEqual(0)
     expect(newState.totalEmailTemplatesToImportCount).toEqual(0)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendEmailTemplatesArrayBuffer is rejected', () => {
@@ -88,6 +99,7 @@ describe('Email slice test suite', () => {
     expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)
     expect(newState.importedEmailTemplatesCount).toEqual(0)
     expect(newState.totalEmailTemplatesToImportCount).toEqual(0)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendEmailTemplatesArrayBuffer is fullfilled with errors', () => {
@@ -99,6 +111,7 @@ describe('Email slice test suite', () => {
     expect(newState.showSuccessDialog).toEqual(false)
     expect(newState.totalEmailTemplatesToImportCount).toEqual(1)
     expect(newState.errorCondition).toEqual(errorConditions.importWithCountError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendEmailTemplatesArrayBuffer is fullfilled without errors', () => {
@@ -108,6 +121,7 @@ describe('Email slice test suite', () => {
     expect(newState.errors).toEqual([])
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(true)
+    expect(tracker).toHaveBeenCalled()
   })
 
   test('should update state when validateEmailTemplates is fullfilled', () => {
@@ -115,6 +129,7 @@ describe('Email slice test suite', () => {
     const newState = emailReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.isImportFileValid).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when validateEmailTemplates is rejected', () => {
@@ -123,5 +138,6 @@ describe('Email slice test suite', () => {
     expect(newState.isLoading).toEqual(false)
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.isImportFileValid).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 })
