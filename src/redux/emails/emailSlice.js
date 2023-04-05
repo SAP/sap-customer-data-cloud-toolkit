@@ -5,6 +5,7 @@ import EmailManager from '../../services/emails/emailManager'
 import { getApiKey } from '../utils'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
+import { ERROR_SEVERITY_WARNING } from '../../services/errors/generateErrorResponse'
 
 const EMAILS_SLICE_STATE_NAME = 'emails'
 const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'email-templates'
@@ -93,7 +94,7 @@ export const emailSlice = createSlice({
     })
     builder.addCase(validateEmailTemplates.rejected, (state, action) => {
       state.isLoading = false
-      const warnings = action.payload.filter((error) => error.severity === EmailManager.ERROR_SEVERITY_WARNING)
+      const warnings = action.payload.filter((error) => error.severity === ERROR_SEVERITY_WARNING)
       if (warnings.length !== 0) {
         state.validationWarnings = action.payload
       } else {

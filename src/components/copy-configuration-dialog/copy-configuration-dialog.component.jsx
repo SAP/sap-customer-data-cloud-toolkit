@@ -29,6 +29,12 @@ import {
   selectIsSourceInfoLoading,
   clearApiCardError,
   selectErrors,
+  selectSiteId,
+  selectEdit,
+  selectIsCopyConfigurationDialogOpen,
+  setIsCopyConfigurationDialogOpen,
+  selectSourceSiteAdded,
+  clearErrors,
 } from '../../redux/siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
 import { areConfigurationsFilled } from '../../routes/copy-configuration-extended/utils'
@@ -36,16 +42,20 @@ import { areConfigurationsFilled } from '../../routes/copy-configuration-extende
 import styles from '../../routes/copy-configuration-extended/copy-configuration-extended.styles'
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationDialog' })
 
-const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDialogOpen, onAfterCloseHandler, t }) => {
+const CopyConfigurationDialog = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
+  const siteId = useSelector(selectSiteId)
+  const edit = useSelector(selectEdit)
+  const open = useSelector(selectIsCopyConfigurationDialogOpen)
   const configurations = useSelector(selectSourceConfigurations(siteId))
   const sourceSites = useSelector(selectSourceSites(siteId))
   const isLoading = useSelector(selectIsLoading)
   const apiCardError = useSelector(selectApiCardError)
   const isSourceInfoLoading = useSelector(selectIsSourceInfoLoading)
   const errors = useSelector(selectErrors)
+  const sourceSiteAdded = useSelector(selectSourceSiteAdded)
 
   const [initialConfigurations, setInitialConfigurations] = useState([])
   const [initialSourceSites, setInitialSourceSites] = useState([])
@@ -54,25 +64,21 @@ const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDia
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (edit) {
-      if ((!initialConfigurations.length || saving) && configurations.length) {
-        setInitialConfigurations(configurations)
-      }
-      if ((!initialSourceSites.length || saving) && sourceSites.length) {
-        setInitialSourceSites(sourceSites)
-      }
+    if (open && edit) {
+      setInitialConfigurations(configurations)
+      setInitialSourceSites(sourceSites)
     }
-  }, [initialConfigurations.length, initialSourceSites.length, configurations, sourceSites, edit, saving])
+  }, [open]) //eslint-disable-line
 
   useEffect(() => {
-    if (sourceSites && sourceSites.length) {
+    if (sourceSiteAdded && sourceSites.length) {
       dispatch(getSourceSiteConfigurations(siteId))
     }
-  }, [dispatch, sourceSites, siteId])
+  }, [dispatch, sourceSiteAdded]) //eslint-disable-line
 
   const onSaveHandler = () => {
     setSaving(true)
-    setIsCopyConfigurationDialogOpen(false)
+    dispatch(setIsCopyConfigurationDialogOpen(false))
   }
 
   const onSelectAllCheckboxChangeHandler = (event) => {
@@ -84,7 +90,7 @@ const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDia
     })
   }
 
-  const onSourceApiKeyDeleteHandler = (event) => {
+  const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))
     dispatch(clearSourceConfigurations(siteId))
     setSelectAllCheckboxState(false)
@@ -102,9 +108,10 @@ const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDia
     } else {
       setSaving(false)
     }
-    onAfterCloseHandler()
-    setSelectAllCheckboxState(false)
+    dispatch(setIsCopyConfigurationDialogOpen(false))
     dispatch(clearApiCardError())
+    dispatch(clearErrors())
+    setSelectAllCheckboxState(false)
   }
 
   const showConfigurations = () => {
@@ -120,6 +127,7 @@ const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDia
   }
 
   const showSourceApiKeys = () => {
+    // debugger
     return <TargetApiKeysList targetSites={sourceSites} onTarketApiKeyDeleteHandler={onSourceApiKeyDeleteHandler} />
   }
 
@@ -188,7 +196,7 @@ const CopyConfigurationDialog = ({ siteId, edit, open, setIsCopyConfigurationDia
                 <>
                   <div className={classes.targetInfoContainer} data-layout-span="XL6 L6 M6 S6">
                     <TargetSitesTooltipIcon title="" />
-                    <Card>
+                    <Card id="copyConfigurationDialogSearchSitesInputCard">
                       <div className={classes.targetInfoContainerInputContainer}>
                         <SearchSitesInput
                           siteId={siteId}

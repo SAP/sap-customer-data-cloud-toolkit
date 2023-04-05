@@ -26,3 +26,16 @@ const returnSitesProperty = (sitesConfigurations, siteId, property) => {
   }
   return []
 }
+
+export const addSourceSiteInternal = (sitesConfigurations, siteId, sourceSite) => {
+  const siteConfiguration = getConfiguration(sitesConfigurations, siteId)
+  if (!siteConfiguration) {
+    sitesConfigurations.push({
+      siteId: siteId,
+      sourceSites: [sourceSite],
+      configurations: [],
+    })
+  } else {
+    siteConfiguration.sourceSites = [sourceSite]
+  }
+}
