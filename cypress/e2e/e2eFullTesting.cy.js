@@ -1,8 +1,6 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
-import { single } from 'rxjs'
-import { func } from 'prop-types'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
@@ -14,9 +12,9 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.siteDeployerIconName)
 
     testSiteDeployer(dataTest.baseDomainName)
-    // // Navigating to the Site that was created
+    // Navigating to the Site that was created
     navigateToChosenSite(dataTest.baseDomainName)
-    // // Email export and import use cases
+    // Email export and import use cases
     getSelectedOption(dataTest.emailTemplatesIconName)
     testImportExportEmailTemplatesFirstUseCase()
     testImportExportEmailTemplatesSecondCase()
@@ -33,11 +31,11 @@ describe('All features full Test Suite', () => {
     navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
     copyConfigTesting(targetSites)
-    // // Navigating to the Site that was altered
-    // //Change to the desired site and check the changes
-    navigateToChosenSite(dataTest.baseDomainName)
+    // Navigating to the Site that was altered
+    //Change to the desired site and check the changes
+    navigateToChosenSite(dataTest.targetSiteDomainName)
     targetSites.forEach(validateChanges)
-    // // Delete the site created on this test
+    // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
   })
@@ -287,6 +285,8 @@ describe('All features full Test Suite', () => {
     checkSmsTemplates()
     // Change to web sdk and check the changes
     checkWebSdk()
+    // Check if identity Providers where copied successfully
+    checkSocial()
   }
   function checkWebSdk() {
     getSelectedOption(dataTest.webSDKConfiguration)
@@ -328,5 +328,10 @@ describe('All features full Test Suite', () => {
       .find('[class="fd-tree__row"]')
       .eq(2)
       .should('have.text', dataTest.schemadataTestFieldTwo)
+  }
+  function checkSocial() {
+    getSelectedOption(dataTest.identityConnectOption)
+    cy.get('main-app').shadow().find('connect-app').shadow().find('nav').find('[class="fd-tabs__item identity-providers-tab"]').click()
+    cy.get('main-app').shadow().find('connect-app').shadow().find('[class="fd-row"]').should('have.length', 3)
   }
 })

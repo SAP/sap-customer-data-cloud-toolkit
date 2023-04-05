@@ -47,7 +47,7 @@ const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 language
 const schemadataTestFieldOne = ' data_test_schema '
 const schemadataTestFieldTwo = ' data_test_schema_2 '
 const accountsSchemaOption = 'Accounts Schema'
-const webSdkOption = 'Web SDK Configuration'
+const identityConnectOption = 'Connect'
 
 const gigyaURL = 'console.gigya.com'
 const errorToManualRemoveSiteMessage = {
@@ -1310,4 +1310,5 @@ export {
   targetSiteDomainName,
   target2SiteDomainName,
   webSDKConfiguration,
+  identityConnectOption,
 }
