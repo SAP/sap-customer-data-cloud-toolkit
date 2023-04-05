@@ -214,7 +214,7 @@ const CopyConfigurationExtended = ({ t }) => {
         design="Header"
         startContent={
           <>
-            <Title level={TitleLevel.H3} className={classes.titleStyle}>
+            <Title id="copyConfigurationExtendedPageTitle" level={TitleLevel.H3} className={classes.titleStyle}>
               <span className={classes.titleSpanStyle}>{PAGE_TITLE}</span>
             </Title>
           </>
@@ -276,7 +276,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
                   <div className={classes.targetInfoContainer} data-layout-span="XL5 L5 M5 S5">
                     <TargetSitesTooltipIcon title={t('COPY_CONFIGURATION_EXTENDED.TO')} />
-                    <Card>
+                    <Card id="copyConfigurationExtendedSearchSitesInputCard">
                       <div className={classes.targetInfoContainerInputContainer}>
                         <SearchSitesInput
                           tarketApiKeyInputValue={tarketApiKeyInputValue}
@@ -317,7 +317,7 @@ const CopyConfigurationExtended = ({ t }) => {
                   <div>
                     <Button
                       type="submit"
-                      id="saveButton"
+                      id="copyConfigExtendedSaveButton"
                       className="fd-button fd-button--emphasized fd-button--compact"
                       onClick={onSaveHandler}
                       design="Emphasized"
@@ -325,7 +325,7 @@ const CopyConfigurationExtended = ({ t }) => {
                     >
                       {t('GLOBAL.SAVE')}
                     </Button>
-                    <Button type="button" id="cancelButton" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
+                    <Button type="button" id="copyConfigExtendedCancelButton" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
                       {t('GLOBAL.CANCEL')}
                     </Button>
                   </div>

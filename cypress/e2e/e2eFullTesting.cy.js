@@ -74,8 +74,8 @@ describe('All features full Test Suite', () => {
   }
   function addSiteToTargetList(target) {
     cy.get('input').first().focus()
-    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
-    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
   }

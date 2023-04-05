@@ -21,7 +21,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
   const availableTargetSites = useSelector(selectAvailableTargetSites)
   const unfilteredAvailableTargetSites = useSelector(selectUnfilteredAvailableTargetSites)
 
-  const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(availableTargetSites)
+  const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(unfilteredAvailableTargetSites)
 
   const onTargetApiKeysInputHandler = lodash.debounce((event) => {
     const inputValue = event.target.value
@@ -35,14 +35,14 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
 
   const onTargetApiKeysInputKeyPressHandler = (event) => {
     const inputValue = event.target.value
-    if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, availableTargetSites)) {
+    if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, filteredAvailableTargetSites)) {
       setTargetApiKeyInputValue(inputValue)
       processInput(inputValue)
     }
   }
 
   const onSuggestionItemSelectHandler = (event) => {
-    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.additionalText, availableTargetSites)
+    const targetSite = getTargetSiteByTargetApiKey(event.detail.item.additionalText, filteredAvailableTargetSites)
     setTargetApiKeyInputValue('')
     if (siteId) {
       dispatch(addTargetSite({ siteId, targetSite }))
@@ -69,7 +69,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
   return (
     <Input
       showSuggestions
-      id="targetApiKeyInput"
+      id="apiKeyInput"
       onInput={onTargetApiKeysInputHandler}
       onKeyPress={onTargetApiKeysInputKeyPressHandler}
       type={InputType.Text}
