@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import ConfigManager from '../../services/copyConfig/configManager'
 import { findConfiguration, propagateConfigurationState } from '../copyConfigurationExtended/utils'
 
-import { filterConfiguration, getConfiguration, returnSourceConfigurations, returnSourceSites } from './utils'
+import { filterConfiguration, getConfiguration, returnSourceConfigurations, returnSourceSites, addSourceSiteInternal } from './utils'
 
 const SITE_DEPLOYER_COPY_CONFIGURATION_STATE_NAME = 'siteDeployerCopyConfiguration'
 const GET_SOURCE_SITE_INFORMATION_ACTION = 'siteDeployerCopyConfiguration/getSourceSiteInformation'
@@ -17,6 +17,10 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
     isSourceInfoLoading: false,
     errors: [],
     apiCardError: undefined,
+    siteId: '',
+    edit: false,
+    isCopyConfigurationDialogOpen: false,
+    sourceSiteAdded: false,
   },
   reducers: {
     removeSiteConfigurations(state, action) {
@@ -28,21 +32,8 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
     },
     addSourceSite(state, action) {
       state.apiCardError = undefined
-      const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
-      if (!siteConfiguration) {
-        state.sitesConfigurations.push({
-          siteId: action.payload.siteId,
-          sourceSites: [action.payload.targetSite],
-          configurations: [],
-        })
-      } else {
-        if (siteConfiguration.sourceSites) {
-          siteConfiguration.sourceSites = []
-          siteConfiguration.sourceSites.push(action.payload.targetSite)
-        } else {
-          siteConfiguration.sourceSites = [action.payload.targetSite]
-        }
-      }
+      addSourceSiteInternal(state.sitesConfigurations, action.payload.siteId, action.payload.targetSite)
+      state.sourceSiteAdded = true
     },
     setConfigurationStatus(state, action) {
       const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
@@ -61,22 +52,39 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
       const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
       siteConfiguration.sourceSites = action.payload.sourceSites
     },
+    clearErrors(state) {
+      state.errors = []
+    },
     clearApiCardError(state) {
       state.apiCardError = undefined
+    },
+    setSiteId(state, action) {
+      state.siteId = action.payload
+    },
+    setEdit(state, action) {
+      state.edit = action.payload
+    },
+    setIsCopyConfigurationDialogOpen(state, action) {
+      state.isCopyConfigurationDialogOpen = action.payload
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getSourceSiteConfigurations.pending, (state) => {
       state.isLoading = true
+      state.sourceSiteAdded = false
     })
     builder.addCase(getSourceSiteConfigurations.fulfilled, (state, action) => {
       state.isLoading = false
+      state.sourceSiteAdded = false
       const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
       siteConfiguration.configurations = action.payload.configurations
     })
     builder.addCase(getSourceSiteConfigurations.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
+      state.errors = action.payload.error
+      const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
+      siteConfiguration.configurations = []
+      state.sourceSiteAdded = false
     })
     builder.addCase(getSourceSiteInformation.pending, (state) => {
       state.isSourceInfoLoading = true
@@ -91,22 +99,8 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
         partnerName: action.payload.siteInformation.partnerName,
         partnerId: action.payload.siteInformation.partnerId,
       }
-
-      const siteConfiguration = getConfiguration(state.sitesConfigurations, action.payload.siteId)
-      if (!siteConfiguration) {
-        state.sitesConfigurations.push({
-          siteId: action.payload.siteId,
-          sourceSites: [sourceSite],
-          configurations: [],
-        })
-      } else {
-        if (siteConfiguration.sourceSites) {
-          siteConfiguration.sourceSites = []
-          siteConfiguration.sourceSites.push(sourceSite)
-        } else {
-          siteConfiguration.sourceSites = [sourceSite]
-        }
-      }
+      addSourceSiteInternal(state.sitesConfigurations, action.payload.siteId, sourceSite)
+      state.sourceSiteAdded = true
     })
     builder.addCase(getSourceSiteInformation.rejected, (state, action) => {
       state.isSourceInfoLoading = false
@@ -137,7 +131,7 @@ export const getSourceSiteConfigurations = createAsyncThunk(GET_SOURCE_SITE_INFO
     const configurations = await new ConfigManager(credentials, sourceSiteApiKey).getConfiguration()
     return { siteId: siteId, configurations: configurations }
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue({ siteId: siteId, error: error })
   }
 })
 
@@ -150,6 +144,10 @@ export const {
   setSourceConfigurations,
   setSourceSites,
   clearApiCardError,
+  setSiteId,
+  setEdit,
+  setIsCopyConfigurationDialogOpen,
+  clearErrors,
 } = siteDeployerCopyConfigurationSlice.actions
 
 export default siteDeployerCopyConfigurationSlice.reducer
@@ -167,3 +165,11 @@ export const selectApiCardError = (state) => state.siteDeployerCopyConfiguration
 export const selectIsSourceInfoLoading = (state) => state.siteDeployerCopyConfiguration.isSourceInfoLoading
 
 export const selectErrors = (state) => state.siteDeployerCopyConfiguration.errors
+
+export const selectSiteId = (state) => state.siteDeployerCopyConfiguration.siteId
+
+export const selectEdit = (state) => state.siteDeployerCopyConfiguration.edit
+
+export const selectIsCopyConfigurationDialogOpen = (state) => state.siteDeployerCopyConfiguration.isCopyConfigurationDialogOpen
+
+export const selectSourceSiteAdded = (state) => state.siteDeployerCopyConfiguration.sourceSiteAdded

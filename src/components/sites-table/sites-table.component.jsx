@@ -11,18 +11,21 @@ import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 import '@ui5/webcomponents-fiori/dist/illustrations/EmptyList'
 
-import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
+import CopyConfigurationDialog from '../copy-configuration-dialog/copy-configuration-dialog.component'
 import ParentSiteTableRow from '../sites-table-parent-row/sites-table-parent-row.component'
+
+import { addNewParent, selectSites, selectErrors } from '../../redux/sites/siteSlice'
+
 import styles from './sites-table.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'SitesTable' })
 
 export const SitesTable = ({ t }) => {
+  const dispatch = useDispatch()
   const classes = useStyles()
+
   const sitesStructure = useSelector(selectSites)
   const errorList = useSelector((state) => selectErrors(state))
-
-  const dispatch = useDispatch()
 
   const onAddParentSiteHandler = () => {
     dispatch(addNewParent())
@@ -30,47 +33,54 @@ export const SitesTable = ({ t }) => {
 
   const showErrorTableColumn = (list) => (list.length ? <TableColumn className={classes.errorTableColumnStyle}></TableColumn> : '')
 
-  return (
-    <Fragment>
-      {sitesStructure.length ? (
-        <Table
-          columns={
-            <>
-              {showErrorTableColumn(errorList)}
-              <TableColumn>
-                <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
-              </TableColumn>
-              <TableColumn>
-                <Label>{t('GLOBAL.DESCRIPTION')}</Label>
-              </TableColumn>
-              <TableColumn>
-                <Label>{t('GLOBAL.DATA_CENTER')}</Label>
-              </TableColumn>
-              <TableColumn>
-                <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
-              </TableColumn>
-              <TableColumn className={classes.addParentSiteColumnStyle}>
-                <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
-              </TableColumn>
-            </>
-          }
-        >
-          {sitesStructure.map((site) => (
-            <ParentSiteTableRow key={site.tempId} {...site} />
-          ))}
-        </Table>
-      ) : (
-        <Bar className={classes.illustratedMessageBarStyle}>
-          <IllustratedMessage size="Dialog" name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
-        </Bar>
-      )}
+  const showCopyConfigDialog = () => {
+    return <CopyConfigurationDialog />
+  }
 
-      <div className={classes.addParentButtonOuterDivStyle}>
-        <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
-          {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
-        </Button>
-      </div>
-    </Fragment>
+  return (
+    <>
+      <Fragment>
+        {sitesStructure.length ? (
+          <Table
+            columns={
+              <>
+                {showErrorTableColumn(errorList)}
+                <TableColumn>
+                  <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
+                </TableColumn>
+                <TableColumn>
+                  <Label>{t('GLOBAL.DESCRIPTION')}</Label>
+                </TableColumn>
+                <TableColumn>
+                  <Label>{t('GLOBAL.DATA_CENTER')}</Label>
+                </TableColumn>
+                <TableColumn>
+                  <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
+                </TableColumn>
+                <TableColumn className={classes.addParentSiteColumnStyle}>
+                  <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
+                </TableColumn>
+              </>
+            }
+          >
+            {sitesStructure.map((site) => (
+              <ParentSiteTableRow key={site.tempId} {...site} />
+            ))}
+          </Table>
+        ) : (
+          <Bar className={classes.illustratedMessageBarStyle}>
+            <IllustratedMessage size="Dialog" name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
+          </Bar>
+        )}
+
+        <div className={classes.addParentButtonOuterDivStyle}>
+          <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
+            {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
+          </Button>
+        </div>
+        {showCopyConfigDialog()}
+      </Fragment>
+    </>
   )
 }
 

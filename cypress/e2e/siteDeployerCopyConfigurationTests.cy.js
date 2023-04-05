@@ -19,7 +19,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.getDeclineSiteConfigButton().shadow().find('button').should('be.disabled')
     utils.getAddSiteConfigButton().click()
     utils.getSiteCopyConfigurationDialog().should('be.visible')
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#confirmButton').click()
@@ -30,7 +30,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should not set a site configuration on cancel', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#cancelButton').click()
@@ -41,7 +41,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should remove a site configuration', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#confirmButton').click()
@@ -53,7 +53,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should update a site configuration on edit save', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#confirmButton').click()
@@ -67,7 +67,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should not update a site configuration on edit cancel', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#confirmButton').click()
@@ -81,7 +81,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should update the source site when adding a second source site', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     utils.checkTargetSitesList()
     cy.get('#addTargetSiteButton').click()
     utils.checkTargetSitesList()
@@ -89,7 +89,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should clear site configurations when removing the source site', () => {
     utils.getAddSiteConfigButton().click()
-    utils.fillTargetApiKeyInput()
+    utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#siteConfigurationsCard').should('be.visible')

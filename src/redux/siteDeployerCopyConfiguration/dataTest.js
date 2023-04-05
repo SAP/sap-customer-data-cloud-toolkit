@@ -42,6 +42,10 @@ export const initialState = {
   isSourceInfoLoading: false,
   errors: [],
   apiCardError: undefined,
+  siteId: '',
+  edit: false,
+  isCopyConfigurationDialogOpen: false,
+  sourceSiteAdded: false,
 }
 
 export const stateWithConfigurations = {
@@ -49,6 +53,16 @@ export const stateWithConfigurations = {
   isLoading: false,
   isSourceInfoLoading: false,
   errors: [],
+  apiCardError: undefined,
+}
+
+export const dummyError = { message: 'I am a dummy error' }
+
+export const stateWithErrors = {
+  sitesConfigurations: sitesConfigurations,
+  isLoading: false,
+  isSourceInfoLoading: false,
+  errors: [dummyError],
   apiCardError: undefined,
 }
 

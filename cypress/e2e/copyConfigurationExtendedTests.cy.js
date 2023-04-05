@@ -9,13 +9,13 @@ describe('Copy Configuration extended test suite', () => {
   })
 
   it('should display all expected elements', () => {
-    cy.get('ui5-title').eq(1).should('have.text', dataTest.copyConfigExtendendTitle)
+    cy.get('#copyConfigurationExtendedPageTitle').should('have.text', dataTest.copyConfigExtendendTitle)
     cy.get('#copyConfigExtendedHeaderText').should('have.text', dataTest.copyConfigExtendendHeaderText)
     cy.get('[title-text = "Select Target Sites"]').should('be.visible')
     cy.get('#currentSiteLabel').should('have.text', dataTest.copyConfigCurrentSiteLabel)
     cy.get('#currentSiteApiKeyLabel').should('have.text', dataTest.copyConfigCurrentSiteApiKeyLabel)
     cy.get('#currentSiteName').should('have.text', dataTest.currentSiteName)
-    cy.get('#targetApiKeyInput').should('be.visible')
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').should('be.visible')
     cy.get('[title-text = "Select Configuration"]').should('be.visible')
     utils.checkElementsInitialState()
   })
@@ -24,8 +24,8 @@ describe('Copy Configuration extended test suite', () => {
     utils.mockSetConfigurationRequests()
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
-    cy.get('#saveButton').shadow().find('button').should('be.enabled')
-    cy.get('#saveButton').click()
+    cy.get('#copyConfigExtendedSaveButton').shadow().find('button').should('be.enabled')
+    cy.get('#copyConfigExtendedSaveButton').click()
     cy.get('#copyConfigSuccessPopup').should('have.text', dataTest.copyConfigSuccessPopupMessage)
     cy.get('#copyConfigSuccessPopup').find('#closeButton').click()
     utils.checkElementsInitialState()
@@ -34,7 +34,7 @@ describe('Copy Configuration extended test suite', () => {
   it('should clear target api keys and checkboxes, and disable save button on cancel', () => {
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
-    cy.get('#cancelButton').click()
+    cy.get('#copyConfigExtendedCancelButton').click()
     utils.checkElementsInitialState()
   })
 
@@ -45,9 +45,9 @@ describe('Copy Configuration extended test suite', () => {
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
     utils.checkErrors('not.exist')
-    cy.get('#saveButton').click()
+    cy.get('#copyConfigExtendedSaveButton').click()
     utils.checkErrors('be.visible')
-    cy.get('#cancelButton').shadow().find('button').click()
+    cy.get('#copyConfigExtendedCancelButton').shadow().find('button').click()
     utils.checkErrors('not.exist')
   })
 
@@ -59,19 +59,19 @@ describe('Copy Configuration extended test suite', () => {
   })
 
   it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {
-    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.wait(1000)
-    cy.get('#addTargetSiteButton').click()
-    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#addTargetSiteButton').click()
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.wait(1000)
-    cy.get('#addTargetSiteButton').click()
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#addTargetSiteButton').click()
     cy.get('#messageStripError').should('have.text', dataTest.expectedDuplicatedMessage)
     cy.get('#messageStripError').shadow().find('ui5-button').click()
     cy.get('#messageStripError').should('not.exist')
   })
 
   it('should add a Target Site to the Targe Sites list on pressing Enter', () => {
-    cy.get('#targetApiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
     utils.checkTargetSitesList()
   })
 

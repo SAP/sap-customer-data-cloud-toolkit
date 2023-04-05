@@ -9,32 +9,32 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    // getSelectedOption(dataTest.siteDeployerIconName)
+    getSelectedOption(dataTest.siteDeployerIconName)
 
-    // testSiteDeployer(dataTest.baseDomainName)
+    testSiteDeployer(dataTest.baseDomainName)
     // Navigating to the Site that was created
-    // navigateToChosenSite(dataTest.baseDomainName)
+    navigateToChosenSite(dataTest.baseDomainName)
     // Email export and import use cases
-    // getSelectedOption(dataTest.emailTemplatesIconName)
-    // testImportExportEmailTemplatesFirstUseCase()
-    // testImportExportEmailTemplatesSecondCase()
-    // testImportExportEmailTemplatesThirdCase()
+    getSelectedOption(dataTest.emailTemplatesIconName)
+    testImportExportEmailTemplatesFirstUseCase()
+    testImportExportEmailTemplatesSecondCase()
+    testImportExportEmailTemplatesThirdCase()
     // //SMS export and import use cases:
     // // - Export and import the default files
     // // - Import the file with changed locales and compare them
 
-    // getSelectedOption(dataTest.smsTemplatesOption)
-    // testImportExportSmsFirstUseCaseTemplates()
-    // testImportExportSmsSecondUseCaseTemplates()
+    getSelectedOption(dataTest.smsTemplatesOption)
+    testImportExportSmsFirstUseCaseTemplates()
+    testImportExportSmsSecondUseCaseTemplates()
     //Copy configurations to test site
 
-    // navigateToChosenSite(dataTest.templateSiteName)
+    navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
-    // copyConfigTesting(targetSites)
+    copyConfigTesting(targetSites)
     // Navigating to the Site that was altered
     //Change to the desired site and check the changes
     navigateToChosenSite(dataTest.baseDomainName)
-    // targetSites.forEach(validateChanges)
+    targetSites.forEach(validateChanges)
     // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
@@ -48,6 +48,7 @@ describe('All features full Test Suite', () => {
     cy.get('ui5-table-row')
       .its('length')
       .then((n) => {
+        cy.log(n)
         utils.deleteChildSite(n)
       })
 
@@ -74,8 +75,8 @@ describe('All features full Test Suite', () => {
   }
   function addSiteToTargetList(target) {
     cy.get('input').first().focus()
-    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
-    cy.get('#targetApiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
   }
@@ -231,7 +232,7 @@ describe('All features full Test Suite', () => {
       .find('site-selector-web-app')
       .shadow()
       .find('[class ="fd-table__body"]')
-      .find('[class ="fd-link base-domain"]')
+      .find('[class ="site-domain fd-table__cell"]')
       .eq(0)
       .click()
   }
@@ -255,6 +256,7 @@ describe('All features full Test Suite', () => {
 
   function getSelectedOption(optionName) {
     cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(optionName).click({ force: true })
+    cy.wait(10000)
   }
   function loginToGigya(URL) {
     cy.visit('https://' + URL)
