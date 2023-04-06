@@ -19,6 +19,7 @@ import {
   getAvailableTargetSitesFromLocalStorage,
   removeCurrentSiteApiKeyFromAvailableTargetSites,
 } from './utils'
+import { Tracker } from '../../tracker/tracker'
 
 const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtended'
 const GET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getConfigurations`
@@ -129,6 +130,7 @@ export const copyConfigurationExtendedSlice = createSlice({
         addErrorToTargetApiKey(state.targetSites, errors)
       } else {
         state.showSuccessMessage = true
+        Tracker.reportUsage()
       }
     })
     builder.addCase(setConfigurations.rejected, (state, action) => {

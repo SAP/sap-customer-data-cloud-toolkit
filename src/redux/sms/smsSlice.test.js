@@ -3,10 +3,17 @@ import SmsManager from '../../services/sms/smsManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
+import { Tracker } from '../../tracker/tracker'
 
 jest.mock('../../services/sms/smsManager')
 
 describe('Site slice test suite', () => {
+  let tracker
+
+  beforeEach(() => {
+    tracker = jest.spyOn(Tracker, 'reportUsage')
+  })
+
   test('should return initial state', () => {
     expect(smsReducer(undefined, { type: undefined })).toEqual(data.initialState)
   })
@@ -36,12 +43,14 @@ describe('Site slice test suite', () => {
     const dispatch = jest.fn()
     await getSmsTemplatesArrayBuffer()(dispatch)
     expect(dispatch).toBeCalled()
+    //expect(tracker).toHaveBeenCalled() can't verify because the caller is being mocked due to the File object
   })
 
   test('should update isLoading while getSmsTemplatesArrayBuffer is pending', async () => {
     const action = getSmsTemplatesArrayBuffer.pending
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getSmsTemplatesArrayBuffer is rejected', async () => {
@@ -49,12 +58,14 @@ describe('Site slice test suite', () => {
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.errorCondition).toEqual(errorConditions.exportError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state while sendSmsTemplatesArrayBuffer is pending', () => {
     const action = sendSmsTemplatesArrayBuffer.pending
     const newState = smsReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendSmsTemplatesArrayBuffer is rejected', () => {
@@ -63,6 +74,7 @@ describe('Site slice test suite', () => {
     expect(newState.isLoading).toEqual(false)
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendSmsTemplatesArrayBuffer is fullfilled with errors', () => {
@@ -73,6 +85,7 @@ describe('Site slice test suite', () => {
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(false)
     expect(newState.errorCondition).toEqual(errorConditions.importWithoutCountError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when sendSmsTemplatesArrayBuffer is fullfilled without errors', () => {
@@ -82,5 +95,6 @@ describe('Site slice test suite', () => {
     expect(newState.errors).toEqual([])
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(true)
+    expect(tracker).toHaveBeenCalled()
   })
 })

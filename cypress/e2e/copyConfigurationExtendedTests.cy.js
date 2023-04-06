@@ -18,6 +18,7 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').should('be.visible')
     cy.get('[title-text = "Select Configuration"]').should('be.visible')
     utils.checkElementsInitialState()
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should display success popup after successfully copy on save', () => {
@@ -29,6 +30,7 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('#copyConfigSuccessPopup').should('have.text', dataTest.copyConfigSuccessPopupMessage)
     cy.get('#copyConfigSuccessPopup').find('#closeButton').click()
     utils.checkElementsInitialState()
+    cy.get('@windowOpenStub').should('be.called')
   })
 
   it('should clear target api keys and checkboxes, and disable save button on cancel', () => {
@@ -36,6 +38,7 @@ describe('Copy Configuration extended test suite', () => {
     utils.setConfigurationCheckBox()
     cy.get('#copyConfigExtendedCancelButton').click()
     utils.checkElementsInitialState()
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should display errors on unsuccessfull set configurations and clear them on cancel', () => {
@@ -49,6 +52,7 @@ describe('Copy Configuration extended test suite', () => {
     utils.checkErrors('be.visible')
     cy.get('#copyConfigExtendedCancelButton').shadow().find('button').click()
     utils.checkErrors('not.exist')
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should delete an added Target Site from the Targe Sites list', () => {

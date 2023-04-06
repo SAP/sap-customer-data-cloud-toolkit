@@ -26,32 +26,35 @@ import {
 } from './dataTest'
 
 export function startUp(pageName) {
-  cy.visit('')
+  cy.visit('', {
+    onBeforeLoad(window) {
+      cy.stub(window, 'open').as('windowOpenStub')
+    },
+  })
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
-
   mockGetUserSitesRequest()
   mockGetPartnersRequest()
-  cy.contains(pageName).click({ force: true })
+  cy.contains(pageName).realClick()
   writeCredentials()
 }
 
 export function writeCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
-  openPopoverButton.click({ force: true })
+  openPopoverButton.realClick()
   cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('AFww+F466MSR', { force: true })
   cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
-  openPopoverButton.click({ force: true })
+  openPopoverButton.realClick()
 }
 
 export function clearCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
-  openPopoverButton.click()
+  openPopoverButton.realClick()
   cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
   cy.get('#secretKey').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
-  openPopoverButton.click()
+  openPopoverButton.realClick()
 }
 
 export function mockResponse(response, method, url) {
@@ -75,8 +78,8 @@ export function getBaseDomain(baseDomain, timeout) {
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
-  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).click()
-  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).click()
+  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).realClick()
+  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).realClick()
   return cy
     .get('#cdctools-dataCenter')
     .shadow()
@@ -96,7 +99,7 @@ export function getSiteStructure(optionNumber, timeout) {
 export function deleteChildSite(length) {
   for (let i = length - 1; i >= 0; i--) {
     if (i % 2 === 0 && i > 0) {
-      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).click({ force: true })
+      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).realClick()
     }
   }
 }
@@ -115,7 +118,7 @@ export function getCancelButton() {
 
 export function clickPopUpOkButton(popUpId) {
   cy.get('.show-cdc-tools-app-container').find(popUpId).should('be.visible')
-  return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').click({ force: true })
+  return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').realClick()
 }
 
 export function mockGetConfigurationRequests() {
@@ -192,7 +195,7 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
   cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.get('#dataCenterSelect').click()
-  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
+  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
 }
 
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
@@ -202,10 +205,10 @@ export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
 
 export function createChild() {
   getIcon(0)
-  cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
+  cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').realClick()
 }
 export function getIcon(iconNumber) {
-  return cy.get('[icon ="overflow"]').eq(iconNumber).click()
+  return cy.get('[icon ="overflow"]').eq(iconNumber).realClick()
 }
 
 function getSiteConfigButton(buttonId) {

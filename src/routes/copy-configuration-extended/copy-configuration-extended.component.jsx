@@ -88,6 +88,16 @@ const CopyConfigurationExtended = ({ t }) => {
         dispatch(getConfigurations())
         cleanTreeVerticalScrolls()
       }
+
+      if (errors) {
+        dispatch(clearErrors())
+      }
+
+      if (targetSites) {
+        dispatch(clearTargetApiKeys())
+      }
+
+      setSelectAllCheckboxState(false)
     }
   }
 

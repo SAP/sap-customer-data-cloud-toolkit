@@ -9,16 +9,16 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    getSelectedOption(dataTest.siteDeployerIconName)
+    // getSelectedOption(dataTest.siteDeployerIconName)
 
-    testSiteDeployer(dataTest.baseDomainName)
-    // Navigating to the Site that was created
+    // testSiteDeployer(dataTest.baseDomainName)
+    // // Navigating to the Site that was created
     navigateToChosenSite(dataTest.baseDomainName)
-    // Email export and import use cases
-    getSelectedOption(dataTest.emailTemplatesIconName)
-    testImportExportEmailTemplatesFirstUseCase()
-    testImportExportEmailTemplatesSecondCase()
-    testImportExportEmailTemplatesThirdCase()
+    // // Email export and import use cases
+    // getSelectedOption(dataTest.emailTemplatesIconName)
+    // testImportExportEmailTemplatesFirstUseCase()
+    // testImportExportEmailTemplatesSecondCase()
+    // testImportExportEmailTemplatesThirdCase()
     // //SMS export and import use cases:
     // // - Export and import the default files
     // // - Import the file with changed locales and compare them

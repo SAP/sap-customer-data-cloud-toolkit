@@ -21,7 +21,7 @@ class SmsConfiguration {
   async copy(destinationSite, destinationSiteConfiguration, option = []) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response)
+      response = await this.getSms().set(destinationSite, destinationSiteConfiguration.dataCenter, response.templates)
     }
     stringToJson(response, 'context')
     return response

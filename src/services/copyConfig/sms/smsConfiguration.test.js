@@ -23,7 +23,7 @@ describe('Sms Configuration test suite', () => {
     await executeTest(expectedGigyaResponseOk)
 
     expect(spy.mock.calls.length).toBe(1)
-    expect(spy).toHaveBeenCalledWith(apiKey, dataCenter, expectCallArgument)
+    expect(spy).toHaveBeenCalledWith(apiKey, dataCenter, expectCallArgument.templates)
   })
 
   test('copy unsuccessfully - error on get', async () => {
