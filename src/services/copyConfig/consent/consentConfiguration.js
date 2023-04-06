@@ -2,6 +2,7 @@ import ConsentStatement from './consentStatement'
 import LegalStatement from './legalStatement'
 import { stringToJson } from '../objectHelper'
 import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+import ConsentDefaultLanguage from './consentDefaultLanguage'
 
 class ConsentConfiguration {
   #credentials
@@ -9,6 +10,7 @@ class ConsentConfiguration {
   #dataCenter
   #consentStatement
   #legalStatement
+  #consentDefaultLanguage
 
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
@@ -16,6 +18,7 @@ class ConsentConfiguration {
     this.#dataCenter = dataCenter
     this.#consentStatement = new ConsentStatement(credentials, site, dataCenter)
     this.#legalStatement = new LegalStatement(credentials, site, dataCenter)
+    this.#consentDefaultLanguage = new ConsentDefaultLanguage(credentials, site, dataCenter)
   }
 
   async get() {
@@ -76,9 +79,15 @@ class ConsentConfiguration {
   async #copyConsentStatement(destinationSite, destinationSiteConfiguration, consent) {
     const responses = []
     let response
-    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
+    const isParentSite = !ConsentConfiguration.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {
       response = await this.#consentStatement.set(destinationSite, destinationSiteConfiguration.dataCenter, consent)
+      if (response.errorCode === 0 && ConsentConfiguration.#hasDefaultLanguage(consent)) {
+        const defaultLanguageResponse = await this.#consentDefaultLanguage.set(destinationSite, destinationSiteConfiguration.dataCenter, consent)
+        if (defaultLanguageResponse.errorCode !== 0) {
+          response = defaultLanguageResponse
+        }
+      }
       responses.push(response)
       if (response.errorCode === 0) {
         responses.push(...(await this.#copyLegalStatements(destinationSite, destinationSiteConfiguration, consent)))
@@ -90,8 +99,13 @@ class ConsentConfiguration {
     return responses
   }
 
-  #isChildSite(siteInfo, siteApiKey) {
+  static #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
+  }
+
+  static #hasDefaultLanguage(consent) {
+    const consentId = ConsentConfiguration.#getConsentId(consent.preferences)
+    return consent.preferences[consentId].defaultLang !== undefined
   }
 
   async #copyLegalStatements(destinationSite, destinationSiteConfiguration, consent) {
@@ -135,7 +149,7 @@ class ConsentConfiguration {
   async #siteContainsConsent(destinationSite, dataCenter, consent) {
     const destinationConsentStatement = new ConsentStatement(this.#credentials, destinationSite, dataCenter)
     const existingConsents = await destinationConsentStatement.get()
-    if(existingConsents.errorCode && existingConsents.errorCode !== 0) {
+    if (existingConsents.errorCode && existingConsents.errorCode !== 0) {
       return false
     }
     const filteredConsents = Object.keys(existingConsents.preferences).filter((id) => id === ConsentConfiguration.#getConsentId(consent.preferences))
