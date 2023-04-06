@@ -19,11 +19,22 @@ export function removePropertyFromObjectCascading(object, property) {
 function deleteProperty(object, propertyPath, property) {
   let pointer = object
   const tokens = propertyPath.split('.')
-  for (const token of tokens) {
-    if (token !== property) {
-      pointer = pointer[token]
+  let objectName
+  for (let i = 0; i < tokens.length; ++i) {
+    if (!objectName) {
+      objectName = tokens[i]
+    }
+    if (objectName !== property) {
+      if (pointer[objectName]) {
+        pointer = pointer[objectName]
+        objectName = undefined
+      } else {
+        if (i + 1 < tokens.length) {
+          objectName += `.${tokens[i + 1]}`
+        }
+      }
     } else {
-      delete pointer[token]
+      delete pointer[tokens[i]]
       const idx = propertyPath.search(property)
       return propertyPath.substring(0, idx + property.length)
     }
@@ -52,12 +63,12 @@ function buildPropertiesPath(propertiesPath) {
 export function stringToJson(obj, property) {
   if (Array.isArray(obj)) {
     for (const instance of obj) {
-      if(typeof instance[property] === 'string') {
+      if (typeof instance[property] === 'string') {
         instance[property] = JSON.parse(instance[property])
       }
     }
   } else {
-    if(typeof obj[property] === 'string') {
+    if (typeof obj[property] === 'string') {
       obj[property] = JSON.parse(obj[property])
     }
   }
