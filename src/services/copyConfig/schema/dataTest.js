@@ -52,6 +52,14 @@ export const expectedSchemaResponse = {
         writeAccess: 'clientModify',
         encrypt: 'AES',
       },
+      gender: {
+        required: true,
+        format: "regex('^[fmu]{1}$')",
+        type: 'string',
+        allowNull: true,
+        writeAccess: 'clientModify',
+        encrypt: 'AES',
+      },
     },
     dynamicSchema: false,
   },
@@ -129,6 +137,8 @@ export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   delete fields.lastName.allowNull
   delete fields.zip.allowNull
   delete fields.country.allowNull
+  delete fields.gender.allowNull
+  delete fields.gender.format
   delete expectedBody.profileSchema.dynamicSchema
 
   delete expectedBody.dataSchema
@@ -175,6 +185,7 @@ export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
   delete fields.lastName.required
   delete fields.zip.required
   delete fields.country.required
+  delete fields.gender.required
 
   delete expectedBody.dataSchema
   delete expectedBody.subscriptionsSchema
