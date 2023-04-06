@@ -15,7 +15,7 @@ const MessageList = ({ messages, type }) => {
       }}
     >
       {messages.map((message) => (
-        <MessageListItem key={message.callId ? message.callId : generateUUID()} message={message} type={type} />
+        <MessageListItem key={message.callId ? message.callId : generateUUID()} message={message} type={message.severity} />
       ))}
     </MessageView>
   )

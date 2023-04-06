@@ -4,6 +4,7 @@ import { createUseStyles } from 'react-jss'
 import { Label, Text, FlexBox, CustomListItem } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../../components/message-popover-button/message-popover-button.component'
+import { getHighestSeverity } from '../configuration-tree/utils'
 
 import styles from './target-api-key-item.styles'
 
@@ -49,7 +50,7 @@ const TargetApiKeyItem = ({ targetSite, t }) => {
           </tbody>
         </table>
       </FlexBox>
-      {targetSite.error ? <MessagePopoverButton message={targetSite.error} /> : ''}
+      {targetSite.error ? <MessagePopoverButton message={targetSite.error} type={getHighestSeverity(targetSite.error)} /> : ''}
     </CustomListItem>
   )
 }

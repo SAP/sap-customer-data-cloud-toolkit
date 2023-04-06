@@ -76,7 +76,10 @@ export const addErrorToConfigurations = (configurations, errors) => {
     const checkBoxId = mapSpecialCheckboxId(error.context.id)
     const configuration = findConfiguration(configurations, checkBoxId)
     if (configuration) {
-      configuration.error = error
+      if (!configuration.error) {
+        configuration.error = []
+      }
+      configuration.error.push(error)
     }
   }
   spreadErrors(configurations)
@@ -95,7 +98,7 @@ const spreadErrors = (configurations) => {
   for (const configuration of configurations) {
     const err = getRootErrors(configuration)
     if (err && err.length !== 0) {
-      configuration.error = err
+      configuration.error = err.flat()
     }
   }
 }
