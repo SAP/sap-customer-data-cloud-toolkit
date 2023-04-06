@@ -20,7 +20,7 @@ const MessagePopoverButton = ({ message, type = ValueState.Error }) => {
         }}
       />
       <ResponsivePopover ref={ref}>
-        <MessageList messages={Array.isArray(message) ? message : [message]} />
+        <MessageList messages={Array.isArray(message) ? message : [message]} type={type} />
       </ResponsivePopover>
     </>
   )

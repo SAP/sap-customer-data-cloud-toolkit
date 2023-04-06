@@ -855,6 +855,7 @@ const mockedSetSchemaErrorResponse = {
   statusCode: 200,
   errorMessage: 'Test error',
   statusReason: 'Error',
+  severity: 'Error',
   time: '2023-02-08T12:03:36.046Z',
   context: `{\"dataSchemaId\":\"${dummyApiKey}\",\"id\":\"dataSchema\"}`,
 }
