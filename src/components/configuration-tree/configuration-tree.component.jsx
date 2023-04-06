@@ -7,6 +7,7 @@ import lodash from 'lodash'
 import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import { getHighestSeverity } from './utils'
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
 import './configuration-tree.component.css'
@@ -47,6 +48,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
   }
 
   const expandTree = (treeNode) => {
+    // debugger
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -75,7 +77,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             ) : (
               ''
             )}
-            {treeNode.error ? <MessagePopoverButton message={treeNode.error} /> : ''}
+            {treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''}
           </FlexBox>
         }
       >
