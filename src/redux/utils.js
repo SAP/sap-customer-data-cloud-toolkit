@@ -7,3 +7,7 @@ export const getApiKey = (hash) => {
   }
   return apiKey !== undefined ? apiKey : ''
 }
+
+export const getErrorAsArray = (error) => {
+  return Array.isArray(error) ? error : [error]
+}

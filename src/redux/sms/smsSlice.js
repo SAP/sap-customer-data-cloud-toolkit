@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { getApiKey } from '../utils'
+import { getApiKey, getErrorAsArray } from '../utils'
 import SmsManager from '../../services/sms/smsManager'
 
 import { errorConditions } from '../errorConditions'
@@ -83,7 +83,7 @@ export const getSmsTemplatesArrayBuffer = createAsyncThunk(EXPORT_SMS_TEMPLATES_
       secret: state.credentials.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -95,7 +95,7 @@ export const sendSmsTemplatesArrayBuffer = createAsyncThunk(IMPORT_SMS_TEMPLATES
       secret: state.credentials.credentials.secretKey,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 

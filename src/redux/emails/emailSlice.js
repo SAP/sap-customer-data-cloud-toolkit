@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import EmailManager from '../../services/emails/emailManager'
 
-import { getApiKey } from '../utils'
+import { getApiKey, getErrorAsArray } from '../utils'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
 import { Tracker } from '../../tracker/tracker'
@@ -116,7 +116,7 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk(EXPORT_EMAIL_TEMPLA
       secret: state.credentials.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -128,7 +128,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk(IMPORT_EMAIL_TEMPL
       secret: state.credentials.credentials.secretKey,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -140,7 +140,7 @@ export const validateEmailTemplates = createAsyncThunk(VALIDATE_EMAIL_TEMPLATES_
       secret: state.credentials.credentials.secretKey,
     }).validateEmailTemplates(zipContent)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 

@@ -5,7 +5,8 @@ import SiteFinderPaginated from '../../services/search/siteFinderPaginated'
 
 import i18n from '../../i18n'
 
-import { getApiKey } from '../utils'
+import { getApiKey, getErrorAsArray } from '../utils'
+
 import {
   findConfiguration,
   propagateConfigurationState,
@@ -157,7 +158,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     builder.addCase(getCurrentSiteInformation.rejected, (state, action) => {
       state.isLoading = false
       state.showSuccessMessage = false
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
     builder.addCase(getTargetSiteInformation.pending, (state) => {
       state.isTargetInfoLoading = true
@@ -197,7 +198,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).getConfiguration()
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -212,7 +213,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
       state.copyConfigurationExtended.configurations
     )
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -234,7 +235,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
       return []
     }
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -246,7 +247,7 @@ export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFOR
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).getSiteInformation(currentSiteApiKey)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
