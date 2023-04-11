@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, Grid } from '@ui5/webcomponents-react'
+import { Button, FlexBox } from '@ui5/webcomponents-react'
 
 import {
   selectSitesConfigurations,
@@ -12,7 +12,7 @@ import {
 
 import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/edit.js'
-import '@ui5/webcomponents-icons/dist/decline.js'
+import '@ui5/webcomponents-icons/dist/delete.js'
 
 const SitesCopyConfigurationButtonPannel = ({ siteId }) => {
   const dispatch = useDispatch()
@@ -41,11 +41,16 @@ const SitesCopyConfigurationButtonPannel = ({ siteId }) => {
 
   return (
     <>
-      <Grid id="sitesCopyConfigurationButtonPannelGrid">
-        <Button id="addSiteConfigButton" icon="add" design="Transparent" disabled={hasConfig()} onClick={onAddConfigButtonClickHandler} />
-        <Button id="editSiteConfigButton" icon="edit" design="Transparent" disabled={!hasConfig()} onClick={onEditConfigButtonClickHandler} />
-        <Button id="declineSiteConfigButton" icon="decline" design="Transparent" disabled={!hasConfig()} onClick={onRemoveConfigButtonClickHandler} />
-      </Grid>
+      <FlexBox id="sitesCopyConfigurationButtonPannelGrid" justifyContent="Start">
+        {!hasConfig() ? (
+          <Button id="addSiteConfigButton" icon="add" design="Transparent" onClick={onAddConfigButtonClickHandler} />
+        ) : (
+          <>
+            <Button id="editSiteConfigButton" icon="edit" design="Transparent" onClick={onEditConfigButtonClickHandler} />
+            <Button id="declineSiteConfigButton" icon="delete" design="Transparent" onClick={onRemoveConfigButtonClickHandler} />
+          </>
+        )}
+      </FlexBox>
     </>
   )
 }

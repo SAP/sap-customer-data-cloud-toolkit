@@ -85,7 +85,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('#addParentButton').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
-    utils.getSaveButton().click()
+    utils.getSaveButton().realClick()
     const errorPopup = cy.get('#errorPopup')
     errorPopup.should('be.visible')
     errorPopup.should('have.text', dataTest.missingCredentialsErrorMessage)

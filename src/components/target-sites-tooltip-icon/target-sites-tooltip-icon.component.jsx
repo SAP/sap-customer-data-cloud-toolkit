@@ -1,31 +1,30 @@
-import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { Title, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
+
+import { setIsMouseOverIcon, selectIsMouseOverIcon } from '../../redux/targetSitesTooltipIcon/targetSitesTooltipIconSlice'
 
 import styles from './target-sites-tooltip-icon.styles'
 const useStyles = createUseStyles(styles, { name: 'TargetSitesTooltipIcon' })
 
 const TargetSitesTooltipIcon = ({ title, t }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
 
-  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
-  const [tooltipTarget, setTooltipTarget] = useState('')
+  const isMouseOverIcon = useSelector(selectIsMouseOverIcon)
 
   const onMouseOverHandler = (event) => {
-    if (event.target.shadowRoot) {
-      setTooltipTarget(event.target.shadowRoot.host.id)
-      setIsMouseOverIcon(true)
-    }
+    dispatch(setIsMouseOverIcon(true))
   }
 
   const onMouseOutHandler = () => {
-    setIsMouseOverIcon(false)
+    dispatch(setIsMouseOverIcon(false))
   }
 
   const openPopover = () => {
-    return isMouseOverIcon && tooltipTarget === `targetSiteTooltipIcon`
+    return isMouseOverIcon
   }
 
   return (
@@ -34,14 +33,14 @@ const TargetSitesTooltipIcon = ({ title, t }) => {
         {title}
       </Title>
       <Icon
-        id="targetSiteTooltipIcon"
+        id={`${title}targetSiteTooltipIcon`}
         name="information"
         design="Information"
         onMouseOver={onMouseOverHandler}
         onMouseOut={onMouseOutHandler}
         className={classes.tooltipIconStyle}
       />
-      <Popover id="targetSitePopover" opener="targetSiteTooltipIcon" open={openPopover()}>
+      <Popover id={`${title}targetSitePopover`} opener={`${title}targetSiteTooltipIcon`} open={openPopover()}>
         {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
       </Popover>
     </FlexBox>

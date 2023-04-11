@@ -29,7 +29,7 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
         className={classes.errorDialogStyle}
         footer={
           <Bar
-            design="Footer"
+            design="Header"
             endContent={
               <div>
                 <Button

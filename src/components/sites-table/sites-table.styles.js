@@ -11,6 +11,10 @@ const styles = {
   },
   addParentButtonOuterDivStyle: { textAlign: 'center' },
   addParentButtonStyle: { display: 'block' },
+  siteDomainColumnStyle: { width: '40%' },
+  descriptionColumnStyle: { width: '40%' },
+  dataCenterColumnStyle: { width: '100px' },
+  copyConfigurationColumnStyle: { width: '12%' },
 }
 
 export default styles

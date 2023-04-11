@@ -15,15 +15,15 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should set site configuration on save', () => {
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
-    utils.getEditSiteConfigButton().shadow().find('button').should('be.disabled')
-    utils.getDeclineSiteConfigButton().shadow().find('button').should('be.disabled')
+    utils.getEditSiteConfigButton().should('not.exist')
+    utils.getDeclineSiteConfigButton().should('not.exist')
     utils.getAddSiteConfigButton().click()
     utils.getSiteCopyConfigurationDialog().should('be.visible')
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
     cy.get('#confirmButton').click()
-    utils.getAddSiteConfigButton().shadow().find('button').should('be.disabled')
+    utils.getAddSiteConfigButton().should('not.exist')
     utils.getEditSiteConfigButton().shadow().find('button').should('be.enabled')
     utils.getDeclineSiteConfigButton().shadow().find('button').should('be.enabled')
   })
@@ -35,8 +35,8 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.setConfigurationCheckBox()
     cy.get('#cancelButton').click()
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
-    utils.getEditSiteConfigButton().shadow().find('button').should('be.disabled')
-    utils.getDeclineSiteConfigButton().shadow().find('button').should('be.disabled')
+    utils.getEditSiteConfigButton().should('not.exist')
+    utils.getDeclineSiteConfigButton().should('not.exist')
   })
 
   it('should remove a site configuration', () => {
@@ -47,8 +47,8 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     cy.get('#confirmButton').click()
     utils.getDeclineSiteConfigButton().click()
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
-    utils.getEditSiteConfigButton().shadow().find('button').should('be.disabled')
-    utils.getDeclineSiteConfigButton().shadow().find('button').should('be.disabled')
+    utils.getEditSiteConfigButton().should('not.exist')
+    utils.getDeclineSiteConfigButton().should('not.exist')
   })
 
   it('should update a site configuration on edit save', () => {

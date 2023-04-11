@@ -66,6 +66,10 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
     }
   }
 
+  const getPlaceHolderText = () => {
+    return siteId ? t('COPY_CONFIGURATION_EXTENDED.ENTER_SOURCE_API_KEY_OR_SITE_DOMAIN') : t('COPY_CONFIGURATION_EXTENDED.ENTER_TARGET_API_KEY_OR_SITE_DOMAIN')
+  }
+
   return (
     <Input
       showSuggestions
@@ -76,7 +80,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
       value={tarketApiKeyInputValue}
       className={classes.targetInfoContainerInput}
       onSuggestionItemSelect={onSuggestionItemSelectHandler}
-      placeholder={t('COPY_CONFIGURATION_EXTENDED.ENTER_API_KEY_OR_SITE_DOMAIN')}
+      placeholder={getPlaceHolderText()}
     >
       {filteredAvailableTargetSites.map((availableTargetSite) => (
         <SuggestionItem

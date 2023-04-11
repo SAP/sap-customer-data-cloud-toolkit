@@ -45,16 +45,16 @@ export const SitesTable = ({ t }) => {
             columns={
               <>
                 {showErrorTableColumn(errorList)}
-                <TableColumn>
+                <TableColumn className={classes.siteDomainColumnStyle}>
                   <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
                 </TableColumn>
-                <TableColumn>
+                <TableColumn className={classes.descriptionColumnStyle}>
                   <Label>{t('GLOBAL.DESCRIPTION')}</Label>
                 </TableColumn>
-                <TableColumn>
+                <TableColumn className={classes.dataCenterColumnStyle}>
                   <Label>{t('GLOBAL.DATA_CENTER')}</Label>
                 </TableColumn>
-                <TableColumn>
+                <TableColumn className={classes.copyConfigurationColumnStyle}>
                   <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
                 </TableColumn>
                 <TableColumn className={classes.addParentSiteColumnStyle}>
