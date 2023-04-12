@@ -81,9 +81,7 @@ class Schema {
     removePropertyFromObjectCascading(clonePayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.SUBSCRIPTIONS_SCHEMA)
     clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
-    // the fields 'allowNull' and 'dynamicSchema' cannot be copied
-    removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
-    removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
+    Schema.#removeUnsuportedProfileSchemaFields(clonePayload)
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, clonePayload)
     } else {
@@ -91,6 +89,16 @@ class Schema {
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
     return response
+  }
+
+  static #removeUnsuportedProfileSchemaFields(clonePayload) {
+    // the fields 'allowNull' and 'dynamicSchema' cannot be copied
+    removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
+    removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
+    removePropertyFromObjectCascading(clonePayload.profileSchema.fields.gender, 'format')
+    if (clonePayload.profileSchema.fields.lastLoginLocation) {
+      removePropertyFromObjectCascading(clonePayload.profileSchema.fields.lastLoginLocation.coordinates, 'type')
+    }
   }
 
   async #copyDataSchemaToChildSite(destinationSite, dataCenter, payload) {

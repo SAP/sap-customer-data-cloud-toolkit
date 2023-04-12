@@ -4,6 +4,7 @@ import ConfigManager from '../../services/copyConfig/configManager'
 import { findConfiguration, propagateConfigurationState } from '../copyConfigurationExtended/utils'
 
 import { filterConfiguration, getConfiguration, returnSourceConfigurations, returnSourceSites, addSourceSiteInternal } from './utils'
+import { getErrorAsArray } from '../utils'
 
 const SITE_DEPLOYER_COPY_CONFIGURATION_STATE_NAME = 'siteDeployerCopyConfiguration'
 const GET_SOURCE_SITE_INFORMATION_ACTION = 'siteDeployerCopyConfiguration/getSourceSiteInformation'
@@ -131,7 +132,7 @@ export const getSourceSiteConfigurations = createAsyncThunk(GET_SOURCE_SITE_INFO
     const configurations = await new ConfigManager(credentials, sourceSiteApiKey).getConfiguration()
     return { siteId: siteId, configurations: configurations }
   } catch (error) {
-    return rejectWithValue({ siteId: siteId, error: error })
+    return rejectWithValue({ siteId: siteId, error: getErrorAsArray(error) })
   }
 })
 

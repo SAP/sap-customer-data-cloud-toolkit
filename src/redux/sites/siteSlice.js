@@ -4,6 +4,7 @@ import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 import ConfigManager from '../../services/copyConfig/configManager'
 import { Tracker } from '../../tracker/tracker'
+import { getErrorAsArray } from '../utils'
 
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
@@ -113,7 +114,7 @@ export const siteSlice = createSlice({
     })
     builder.addCase(createSites.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = [action]
+      state.errors = action.payload
       utils.addRequiredManualRemovalInformation(state, action, selectSiteById)
     })
   },
@@ -168,7 +169,7 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
 
     return [...responses, ...copyConfigurationResponses].flat()
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 

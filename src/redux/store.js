@@ -9,6 +9,7 @@ import credentialsReducer from './credentials/credentialsSlice'
 import versionReducer from './version/versionSlice'
 import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
 import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
+import targetSitesTooltipIconReducer from './targetSitesTooltipIcon/targetSitesTooltipIconSlice'
 
 export default configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export default configureStore({
     version: versionReducer,
     copyConfigurationExtended: copyConfigurationExtendedReducer,
     siteDeployerCopyConfiguration: siteDeployerCopyConfigurationReducer,
+    targetSitesTooltipIcon: targetSitesTooltipIconReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

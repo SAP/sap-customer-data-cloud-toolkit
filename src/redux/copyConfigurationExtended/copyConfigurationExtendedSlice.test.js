@@ -172,7 +172,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
   test('should update state when getCurrentSiteInformation is rejected', () => {
     const action = getCurrentSiteInformation.rejected('', '', '', mockedErrorsResponse)
     const newState = copyConfigurationExtendedReducer(initialState, action)
-    expect(newState.errors).toEqual([mockedErrorsResponse])
+    expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
     expect(tracker).not.toHaveBeenCalled()

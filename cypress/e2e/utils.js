@@ -183,7 +183,7 @@ export function fillTargetApiKeyInput() {
 }
 
 export function fillSourceApiKeyInput() {
-  cy.get('#copyConfigurationDialogSearchSitesInputCard').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
+  cy.get('#siteCopyConfigurationDialog').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
 

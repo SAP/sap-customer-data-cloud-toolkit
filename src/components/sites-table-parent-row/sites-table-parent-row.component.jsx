@@ -145,7 +145,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         </TableCell>
 
         <TableCell>
-          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter}>
+          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter} style={{ width: '50px' }}>
             {dataCentersSelect.map(({ label, value }) => (
               <Option key={label} data-value={value} selected={label === dataCenter || value === dataCenter}>
                 {label}

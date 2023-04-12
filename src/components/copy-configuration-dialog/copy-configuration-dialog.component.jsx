@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import { Card, CardHeader, Title, Text, TitleLevel, FlexBox, Grid, ValueState, BusyIndicator, MessageStrip } from '@ui5/webcomponents-react'
+import { Card, ValueState, BusyIndicator, MessageStrip } from '@ui5/webcomponents-react'
 
 import DialogMessageConfirm from '../../components/dialog-message-confirm/dialog-message-confirm.component'
 import SearchSitesInput from '../../components/search-sites-input/search-sites-input.component'
@@ -127,12 +127,11 @@ const CopyConfigurationDialog = ({ t }) => {
   }
 
   const showSourceApiKeys = () => {
-    // debugger
     return <TargetApiKeysList targetSites={sourceSites} onTarketApiKeyDeleteHandler={onSourceApiKeyDeleteHandler} />
   }
 
   const showBusyIndicator = () => {
-    return isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : ''
+    return isLoading ? <BusyIndicator active delay="1" className={classes.inPopupBusyIndicatorStyle} /> : ''
   }
 
   const disableSaveButton = () => {
@@ -181,56 +180,39 @@ const CopyConfigurationDialog = ({ t }) => {
       confirmButtonText={t('GLOBAL.SAVE')}
       onAfterClose={onDialogMessageConfirmAfterCloseHandle}
       disableSaveButton={disableSaveButton}
+      className={classes.siteCopyConfigurationDialogStyle}
     >
-      <div className={classes.outerDivStyle}>
-        <div className={classes.headerOuterDivStyle}>
-          <div className={classes.headerInnerDivStyle}>
-            <FlexBox className={classes.headerTextFlexboxStyle}>
-              <Text id="copyConfigDialogHeaderText" className={classes.componentTextStyle}>
-                {t('COPY_CONFIGURATION_DIALOG.HEADER_TEXT')}
-              </Text>
-            </FlexBox>
-
-            <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_DIALOG.SELECT_SOURCE_SITE')} />}>
-              <Grid>
-                <>
-                  <div className={classes.targetInfoContainer} data-layout-span="XL6 L6 M6 S6">
-                    <TargetSitesTooltipIcon title="" />
-                    <Card id="copyConfigurationDialogSearchSitesInputCard">
-                      <div className={classes.targetInfoContainerInputContainer}>
-                        <SearchSitesInput
-                          siteId={siteId}
-                          tarketApiKeyInputValue={tarketApiKeyInputValue}
-                          setTarketApiKeyInputValue={setTarketApiKeyInputValue}
-                          addTargetSite={addSourceSite}
-                          getTargetSiteInformation={getSourceSiteInformation}
-                        />
-                        {showGetTargetInfoBusyIndicator()}
-                        {showMessageStripError()}
-                      </div>
-                    </Card>
-                  </div>
-                  <div className={classes.targetInfoContainer} data-layout-span="XL6 L6 M6 S6">
-                    {sourceSites && sourceSites.length ? (
-                      <>
-                        <Title level={TitleLevel.H5} className={classes.targetSitesListTitle}>
-                          {t('COPY_CONFIGURATION_DIALOG.SOURCE_SITE')}
-                        </Title>
-                        <Card className={classes.targetSitesListContainer}>{showSourceApiKeys()}</Card>{' '}
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                </>
-              </Grid>
-              {showBusyIndicator()}
-            </Card>
+      <div className={classes.headerOuterDivStyle}>
+        <div className={classes.headerInnerDivStyle}>
+          <div className={classes.targetSitesTooltipIconDivStyle}>
+            <TargetSitesTooltipIcon title="" />
           </div>
+          <div>
+            <SearchSitesInput
+              siteId={siteId}
+              tarketApiKeyInputValue={tarketApiKeyInputValue}
+              setTarketApiKeyInputValue={setTarketApiKeyInputValue}
+              addTargetSite={addSourceSite}
+              getTargetSiteInformation={getSourceSiteInformation}
+            />
+            {showGetTargetInfoBusyIndicator()}
+            {showMessageStripError()}
+          </div>
+
+          <div>
+            {sourceSites && sourceSites.length ? (
+              <>
+                <Card className={classes.inPopupTargetSitesListContainer}>{showSourceApiKeys()}</Card>{' '}
+              </>
+            ) : (
+              ''
+            )}
+          </div>
+          {showBusyIndicator()}
         </div>
-        {showConfigurations()}
-        {showErrorList()}
       </div>
+      {showConfigurations()}
+      {showErrorList()}
     </DialogMessageConfirm>
   )
 }

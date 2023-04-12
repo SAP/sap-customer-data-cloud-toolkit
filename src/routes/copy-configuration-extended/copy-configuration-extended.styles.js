@@ -67,6 +67,9 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiMediumMarginBottom,
   },
+  inPopupTargetSitesListContainer: {
+    ...spacing.sapUiSmallMarginTop,
+  },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMarginBottom,
   },
@@ -90,9 +93,21 @@ const styles = {
   busyIndicatorStyle: {
     width: '100%',
     position: 'relative',
+    ...spacing.sapUiMediumMarginTopBottom,
+  },
+  inPopupBusyIndicatorStyle: {
+    width: '100%',
+    position: 'relative',
+    ...spacing.sapUiSmallMarginTop,
   },
   targetApiKeyInputStyle: {
     width: '300px',
+  },
+  siteCopyConfigurationDialogStyle: {
+    minWidth: '720px',
+  },
+  targetSitesTooltipIconDivStyle: {
+    marginTop: '-35px',
   },
 }
 

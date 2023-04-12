@@ -312,10 +312,10 @@ const CopyConfigurationExtended = ({ t }) => {
                   </div>
                 </>
               </Grid>
-              {showBusyIndicator()}
             </Card>
           </div>
         </div>
+        {showBusyIndicator()}
         {showConfigurations()}
         {showErrorList()}
         <div className={classes.selectConfigurationOuterDivStyle}>
