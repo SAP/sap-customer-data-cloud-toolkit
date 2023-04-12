@@ -9,19 +9,19 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    // getSelectedOption(dataTest.siteDeployerIconName)
+    getSelectedOption(dataTest.siteDeployerIconName)
 
-    // testSiteDeployer(dataTest.baseDomainName)
-    // // Navigating to the Site that was created
+    testSiteDeployer(dataTest.baseDomainName)
+    // Navigating to the Site that was created
     navigateToChosenSite(dataTest.baseDomainName)
-    // // Email export and import use cases
-    // getSelectedOption(dataTest.emailTemplatesIconName)
-    // testImportExportEmailTemplatesFirstUseCase()
-    // testImportExportEmailTemplatesSecondCase()
-    // testImportExportEmailTemplatesThirdCase()
-    // //SMS export and import use cases:
-    // // - Export and import the default files
-    // // - Import the file with changed locales and compare them
+    // Email export and import use cases
+    getSelectedOption(dataTest.emailTemplatesIconName)
+    testImportExportEmailTemplatesFirstUseCase()
+    testImportExportEmailTemplatesSecondCase()
+    testImportExportEmailTemplatesThirdCase()
+    //SMS export and import use cases:
+    // - Export and import the default files
+    // - Import the file with changed locales and compare them
 
     getSelectedOption(dataTest.smsTemplatesOption)
     testImportExportSmsFirstUseCaseTemplates()
@@ -61,12 +61,13 @@ describe('All features full Test Suite', () => {
   }
   function copyConfigTesting(targetSites) {
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
+
     cy.get('#currentSiteName').should('have.text', dataTest.templateSiteName)
     targetSites.forEach(addSiteToTargetList)
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', targetSites.length)
     cy.get('#selectAllCheckbox').click()
 
-    cy.get('#saveButton').click()
+    cy.get('#copyConfigExtendedSaveButton').click()
     cy.waitUntil(() => cy.get('#copyConfigSuccessPopup').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('#copyConfigSuccessPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
@@ -74,9 +75,17 @@ describe('All features full Test Suite', () => {
     cy.get('#copyConfigSuccessPopup').find('ui5-bar').find('[id="closeButton"]').click()
   }
   function addSiteToTargetList(target) {
-    cy.get('input').first().focus()
-    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(target)
-    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
+    cy.get('#currentSiteName').click()
+    cy.waitUntil(() =>
+      cy
+        .get('#copyConfigurationExtendedSearchSitesInputCard')
+        .find('[id="apiKeyInput"]')
+        .shadow()
+        .find('[class="ui5-input-inner"]')
+        .then((win) => cy.get(win).should('not.have.attr', 'disabled').get(win).type(target))
+    )
+
+    cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('[id="apiKeyInput"]').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
   }
@@ -94,13 +103,19 @@ describe('All features full Test Suite', () => {
     cy.get('#zipFileInput').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
+    cy.waitUntil(() => cy.get('#emailTemplatesValidationErrorPopup').then((win) => cy.get(win).should('be.visible').find('[id="confirmButton"]').click()))
+    cy.waitUntil(() =>
+      cy
+        .get('.App')
+
+        .find('[id="successPopup"]')
+        .eq(1)
+        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
+    )
 
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('fd-card-content').find('[class="fd-popover__control"]').eq(0).click({ force: true })
     cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
-    cy.get('#emailTemplatesErrorPopup').should('be.visible')
-    cy.get('#emailTemplatesErrorPopup').find('#closeButton').click({ force: true })
-    utils.clickPopUpOkButton('#successPopup')
     cy.waitUntil(() => cy.get('#exportAllEmailTemplatesButton').then((win) => cy.get(win).should('be.visible')))
   }
   function testImportExportEmailTemplatesSecondCase() {
@@ -113,7 +128,17 @@ describe('All features full Test Suite', () => {
     cy.get('#zipFileInput').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('#emailsImportPopup').find('[id ="importZipButton"]').click()
     cy.get('#confirmButton').click({ force: true })
-    utils.clickPopUpOkButton('#successPopup')
+
+    cy.get('#emailTemplatesValidationErrorPopup').find('#confirmButton').click({ force: true })
+    cy.waitUntil(() =>
+      cy
+        .get('.App')
+
+        .find('[id="successPopup"]')
+        .eq(1)
+        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
+    )
+
     cy.waitUntil(() =>
       cy
         .get('main-app')
@@ -170,8 +195,8 @@ describe('All features full Test Suite', () => {
     cy.get('#importAllSmsTemplatesButton').click({ force: true })
     cy.get('#zipFileInput').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.smsExampleFile}`, { force: true })
     cy.get('#importZipButton').click({ force: true })
-    cy.get('#smsTemplatesErrorPopup').should('be.visible')
-    cy.get('#smsTemplatesErrorPopup').find('#closeButton').click({ force: true })
+    cy.get('.show-cdc-tools-app-container > #successPopup').should('be.visible')
+    cy.get('.show-cdc-tools-app-container > #successPopup').find('#closeButton').click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('be.visible')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('have.text', 'OTP')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).find('a').click({ force: true })
@@ -194,8 +219,8 @@ describe('All features full Test Suite', () => {
     cy.waitUntil(() => cy.get('#smsImportPopup').then((win) => cy.get(win).should('be.visible')))
     cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click({ force: true })
-    cy.get('#smsTemplatesErrorPopup').should('be.visible')
-    cy.get('#smsTemplatesErrorPopup').find('#closeButton').click({ force: true })
+    cy.get('.show-cdc-tools-app-container > #successPopup').should('be.visible')
+    cy.get('.show-cdc-tools-app-container > #successPopup').find('#closeButton').click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('be.visible')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('have.text', 'OTP')
@@ -226,28 +251,40 @@ describe('All features full Test Suite', () => {
         .find('[placeholder="Search"]')
         .then((input) => cy.get(input).should('not.be.disabled').clear().type(siteName, { force: true }))
     )
-    cy.get('main-app')
-      .shadow()
-      .find('[class ="app-area"]')
-      .find('site-selector-web-app')
-      .shadow()
-      .find('[class ="fd-table__body"]')
-      .find('[class ="site-domain fd-table__cell"]')
-      .eq(0)
-      .click()
+    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(0).click()
+    cy.wait(5000)
   }
   function deleteSiteCreated() {
     getSelectedOption(dataTest.siteSelectorOption)
+    //delete child
     cy.get('main-app')
       .shadow()
       .find('[class ="app-area"]')
       .find('site-selector-web-app')
       .shadow()
       .find('sslct-site-actions')
-      .find('[class ="fd-popover-custom"]')
+      .eq(1)
+      .find('fd-popover-control')
       .find('button')
+      .click()
+
+    cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').click()
+    cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
+    cy.get('.fd-form__control').click()
+    cy.get('.fd-bar__right').eq(1).find('button').eq(1).click()
+
+    //delete parent
+    cy.get('main-app')
+      .shadow()
+      .find('[class ="app-area"]')
+      .find('site-selector-web-app')
+      .shadow()
+      .find('sslct-site-actions')
       .eq(0)
-      .click({ force: true })
+      .find('fd-popover-control')
+      .find('button')
+      .click()
+
     cy.get('.delete_menu_item').click()
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
     cy.get('.fd-form__control').click()
