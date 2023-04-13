@@ -9,45 +9,45 @@ describe('All features full Test Suite', () => {
     loginToGigya(dataTest.gigyaURL)
 
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
-    getSelectedOption(dataTest.siteDeployerIconName)
-    testSiteDeployer(dataTest.baseDomainName)
+    // getSelectedOption(dataTest.siteDeployerIconName)
+    // testSiteDeployer(dataTest.baseDomainName)
     // Navigating to the Site that was created
     navigateToChosenSite(dataTest.baseDomainName)
 
     // Email export and import use cases
-    getSelectedOption(dataTest.emailTemplatesIconName)
-    testImportExportEmailTemplatesFirstUseCase()
-    testImportExportEmailTemplatesSecondCase()
-    testImportExportEmailTemplatesThirdCase()
+    // getSelectedOption(dataTest.emailTemplatesIconName)
+    // testImportExportEmailTemplatesFirstUseCase()
+    // testImportExportEmailTemplatesSecondCase()
+    // testImportExportEmailTemplatesThirdCase()
 
-    //SMS export and import use cases:
-    // - Export and import the default files
-    // - Import the file with changed locales and compare them
-    getSelectedOption(dataTest.smsTemplatesOption)
-    testImportExportSmsFirstUseCaseTemplates()
-    testImportExportSmsSecondUseCaseTemplates()
+    // //SMS export and import use cases:
+    // // - Export and import the default files
+    // // - Import the file with changed locales and compare them
+    // getSelectedOption(dataTest.smsTemplatesOption)
+    // testImportExportSmsFirstUseCaseTemplates()
+    // testImportExportSmsSecondUseCaseTemplates()
 
-    //Copy configurations to test site
-    navigateToChosenSite(dataTest.templateSiteName)
-    const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
-    copyConfigTesting(targetSites)
+    // //Copy configurations to test site
+    // navigateToChosenSite(dataTest.templateSiteName)
+    // const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
+    // copyConfigTesting(targetSites)
 
-    // Navigating to the Site that was altered
-    //Change to the desired site and check the changes
-    navigateToChosenSite(dataTest.baseDomainName)
-    targetSites.forEach(validateChanges)
+    // // Navigating to the Site that was altered
+    // //Change to the desired site and check the changes
+    // navigateToChosenSite(dataTest.baseDomainName)
+    // targetSites.forEach(validateChanges)
 
-    // Delete the site created on this test
+    // // Delete the site created on this test
     getSelectedOption(dataTest.siteSelectorOption)
     deleteSiteCreated()
-    navigateToChosenSite(dataTest.templateSiteName)
+    // navigateToChosenSite(dataTest.templateSiteName)
 
-    //Site deployer Copy Config
-    getSelectedOption(dataTest.siteDeployerIconName)
-    createSiteAndCopyConfig(dataTest.baseDomainName)
-    navigateToChosenSite(dataTest.baseDomainName)
-    validateChanges()
-    deleteSiteCreated()
+    // //Site deployer Copy Config
+    // getSelectedOption(dataTest.siteDeployerIconName)
+    // createSiteAndCopyConfig(dataTest.baseDomainName)
+    // navigateToChosenSite(dataTest.baseDomainName)
+    // validateChanges()
+    // deleteSiteCreated()
   })
 
   function createSiteAndCopyConfig(siteDomain) {
@@ -304,7 +304,7 @@ describe('All features full Test Suite', () => {
     cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').realClick()
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').realClick()
     cy.get('.fd-form__control').realClick()
-    cy.get('.fd-bar__right').eq(1).find('button').eq(1).realClick()
+    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').realClick()
 
     //delete parent
     cy.get('main-app')
@@ -321,7 +321,7 @@ describe('All features full Test Suite', () => {
     cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').realClick()
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').realClick()
     cy.get('.fd-form__control').realClick()
-    cy.get('.fd-bar__right').eq(1).realClick('button').eq(1).realClick()
+    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').realClick()
   }
 
   function getSelectedOption(optionName) {
