@@ -46,6 +46,7 @@ class ScreenSet {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.include = 'screenSetID,html,css,javascript,translations,metadata'
     parameters.context = JSON.stringify({ id: 'screenSet', targetApiKey: apiKey })
 

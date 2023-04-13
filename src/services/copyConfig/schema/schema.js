@@ -96,8 +96,9 @@ class Schema {
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
     removePropertyFromObjectCascading(clonePayload.profileSchema.fields.gender, 'format')
-    if (clonePayload.profileSchema.fields.lastLoginLocation) {
-      removePropertyFromObjectCascading(clonePayload.profileSchema.fields.lastLoginLocation.coordinates, 'type')
+    if (clonePayload.profileSchema.fields['lastLoginLocation.coordinates.lat']) {
+      removePropertyFromObjectCascading(clonePayload.profileSchema.fields['lastLoginLocation.coordinates.lat'], 'type')
+      removePropertyFromObjectCascading(clonePayload.profileSchema.fields['lastLoginLocation.coordinates.lon'], 'type')
     }
   }
 
@@ -113,6 +114,7 @@ class Schema {
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'type')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'writeAccess')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'allowNull')
+      removePropertyFromObjectCascading(clonePayload.dataSchema, 'subType')
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
@@ -160,16 +162,14 @@ class Schema {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.context = JSON.stringify({ id: 'schema', targetApiKey: apiKey })
 
     return parameters
   }
 
   #setSchemaParameters(apiKey, body) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
+    const parameters = Object.assign({}, this.#getSchemaParameters(apiKey))
 
     if (body.dataSchema) {
       parameters[Schema.DATA_SCHEMA] = JSON.stringify(body.dataSchema)
