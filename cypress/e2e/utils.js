@@ -99,7 +99,7 @@ export function getSiteStructure(optionNumber, timeout) {
 export function deleteChildSite(length) {
   for (let i = length - 1; i >= 0; i--) {
     if (i % 2 === 0 && i > 0) {
-      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).realClick()
+      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).click({ force: true })
     }
   }
 }
