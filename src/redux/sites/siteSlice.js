@@ -100,22 +100,30 @@ export const siteSlice = createSlice({
     })
     builder.addCase(createSites.fulfilled, (state, action) => {
       state.isLoading = false
-      const errors = action.payload.filter(({ errorCode }) => errorCode !== 0)
+      const errors = action.payload.responses.filter(({ errorCode }) => errorCode !== 0)
       if (errors.length) {
         state.errors = errors.map((error) => {
-          return utils.errorMapper(error, state, selectSiteById)
+          return utils.errorMapper(error, state.sites, selectSiteById)
         })
-        utils.addRequiredManualRemovalInformation(state, action, selectSiteById)
+        utils.addRequiredManualRemovalInformation(state, action.payload.responses)
       } else {
-        state.showSuccessDialog = true
-        state.sites = []
-        Tracker.reportUsage()
+        if (action.payload.copyConfigurationResponses.length) {
+          const copyConfigErrors = action.payload.copyConfigurationResponses.filter(({ errorCode }) => errorCode !== 0)
+          if (copyConfigErrors.length) {
+            utils.addSiteDomainToCopyConfigError(copyConfigErrors, action.payload.responses, state.sites)
+            state.errors = [utils.getCreationSuccessMessage(), ...copyConfigErrors]
+          }
+        } else {
+          state.showSuccessDialog = true
+          state.sites = []
+          Tracker.reportUsage()
+        }
       }
     })
     builder.addCase(createSites.rejected, (state, action) => {
       state.isLoading = false
-      state.errors = action.payload
-      utils.addRequiredManualRemovalInformation(state, action, selectSiteById)
+      state.errors = action.payload.responses
+      utils.addRequiredManualRemovalInformation(state, action.payload.responses)
     })
   },
 })
@@ -167,36 +175,26 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
 
     const copyConfigurationResponses = await Promise.all(copyConfigPromises)
 
-    return [...responses, ...copyConfigurationResponses].flat()
+    return { responses, copyConfigurationResponses: copyConfigurationResponses.flat() }
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(error))
+    return rejectWithValue({ responses: getErrorAsArray(error) })
   }
 })
 
 export const selectSites = (state) => state.sites.sites
 
-export const selectSiteById = (state, tempId) => {
-  const sites = selectSites(state)
-
-  for (const parentSite of sites) {
-    if (parentSite.tempId === tempId) {
-      return parentSite
-    }
-    if (parentSite.childSites && parentSite.childSites.length) {
-      for (const childSite of parentSite.childSites) {
-        if (childSite.tempId === tempId) {
-          return childSite
-        }
-      }
-    }
-  }
-
-  return undefined
-}
+export const selectSiteById = (state, tempId) => utils.selectSiteById(state.sites, tempId)
 
 export const selectErrors = (state) => state.sites.errors
 
-export const selectErrorBySiteTempId = (state, tempId) => selectErrors(state).find((error) => error.site.tempId === tempId)
+export const selectErrorBySiteTempId = (state, tempId) =>
+  selectErrors(state).find((error) => {
+    if (error.site && error.site.tempId) {
+      return error.site.tempId === tempId
+    } else {
+      return false
+    }
+  })
 
 export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
 

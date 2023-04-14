@@ -19,6 +19,8 @@ const stateWithParentWithNoChild = {
     },
   ],
   isLoading: false,
+  showSuccessDialog: false,
+  sitesToDeleteManually: [],
 }
 
 const stateWithParentWithChild = {
@@ -109,6 +111,20 @@ const dataToAddParentFromStructure = {
   ],
 }
 
+const dummyError = { tempId: '1234', errorCode: 400 }
+
+const dummySiteResponse = {
+  apiKey: 'abcd',
+  errorCode: 0,
+  tempId: '1234',
+}
+
+const dummyCopyConfigurationResponse = {
+  errorCode: 400,
+  errorMessage: 'test error message',
+  context: { targetApiKey: 'abcd' },
+}
+
 export {
   initialState,
   stateWithParentWithNoChild,
@@ -118,4 +134,7 @@ export {
   childToUpdate,
   stateWithSitesToRemoveManually,
   dataToAddParentFromStructure,
+  dummyError,
+  dummySiteResponse,
+  dummyCopyConfigurationResponse,
 }

@@ -7,6 +7,14 @@ describe('configuration tree utils test suite', () => {
     expect(getHighestSeverity(errorObject)).toEqual(ERROR_SEVERITY_ERROR)
   })
 
+  test('should return severity error if error object does not have a severity property', () => {
+    expect(getHighestSeverity({})).toEqual(ERROR_SEVERITY_ERROR)
+  })
+
+  test('should return severity error if error array does not have a severity property', () => {
+    expect(getHighestSeverity([{}])).toEqual(ERROR_SEVERITY_ERROR)
+  })
+
   test('should return severity error from an error array with all severities', () => {
     expect(getHighestSeverity(errorsWithAllSeverities)).toEqual(ERROR_SEVERITY_ERROR)
   })

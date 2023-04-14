@@ -8,7 +8,7 @@ describe('Site Deployer Test Suite', () => {
     utils.startUp(dataTest.siteDeployerIconName)
   })
 
-  it('Creating 3 parent sites with different datacenters', () => {
+  it('Should create 3 parent sites with different datacenters', () => {
     utils.getBaseDomain(dataTest.baseDomain, 0)
     utils.getSiteStructure(1)
     cy.get('#cdctools-siteStructure').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
@@ -19,7 +19,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(6).should('have.value', `dev.us.parent.${dataTest.baseDomain}`)
   })
 
-  it('Create 3 parent sites (dev, stag, prod) with US datacenter', () => {
+  it('Should create 3 parent sites (dev, stag, prod) with US datacenter', () => {
     utils.getCreateButton().should('be.disabled')
     utils.getDataCenters('US', 'EU', 'AU')
     utils.getBaseDomain(dataTest.baseDomain, 0)

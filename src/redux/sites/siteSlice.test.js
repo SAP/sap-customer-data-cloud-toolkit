@@ -21,7 +21,7 @@ import sitesReducer, {
   clearSitesToDeleteManually,
 } from './siteSlice'
 
-import { getPartnerId } from './utils'
+import { getPartnerId, getCreationSuccessMessage } from './utils'
 
 import * as data from './dataTest'
 import { Tracker } from '../../tracker/tracker'
@@ -162,7 +162,8 @@ describe('Site slice test suite', () => {
   })
 
   test('should set isLoading to true while createSites is pending', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.pending.type })
+    const action = createSites.pending
+    const newState = sitesReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
@@ -170,7 +171,8 @@ describe('Site slice test suite', () => {
   })
 
   test('should set isLoading to false when createSites is rejected', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.rejected.type })
+    const action = createSites.rejected('', '', '', [{ errorCode: 400 }])
+    const newState = sitesReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(tracker).not.toHaveBeenCalled()
   })
@@ -185,35 +187,51 @@ describe('Site slice test suite', () => {
     expect(newState.showSuccessDialog).toEqual(true)
   })
 
+  test('should have fulfilled createSites with errors', () => {
+    const action = createSites.fulfilled({ responses: [data.dummyError], copyConfigurationResponses: [] })
+    const newState = sitesReducer(data.initialState, action)
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.errors.length).toEqual(1)
+    expect(newState.errors[0].errorCode).toEqual(data.dummyError.errorCode)
+    expect(newState.showSuccessDialog).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should have fulfilled createSites with copyConfigurationResponses errors', () => {
+    const action = createSites.fulfilled({ responses: [data.dummySiteResponse], copyConfigurationResponses: [data.dummyCopyConfigurationResponse] })
+    const newState = sitesReducer(data.stateWithParentWithNoChild, action)
+    expect(newState.isLoading).toEqual(false)
+    expect(newState.sites.length).toEqual(1)
+    expect(newState.errors.length).toEqual(2)
+    expect(newState.errors[0].errorMessage).toEqual(getCreationSuccessMessage().errorMessage)
+    expect(newState.errors[1].errorCode).toEqual(data.dummyError.errorCode)
+    expect(newState.showSuccessDialog).toEqual(false)
+    expect(newState.sitesToDeleteManually).toEqual([])
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
   test('should have fulfilled createSites without errors', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [] })
+    const action = createSites.fulfilled({ responses: [], copyConfigurationResponses: [] })
+    const newState = sitesReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
     expect(tracker).toHaveBeenCalled()
   })
 
-  test('should have fulfilled createSites with errors', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
-    expect(newState.isLoading).toEqual(false)
-    expect(newState.sites.length).toEqual(0)
-    expect(newState.errors.length).toEqual(1)
-    expect(newState.showSuccessDialog).toEqual(false)
-    expect(tracker).not.toHaveBeenCalled()
-  })
-
   test('should select a Parent site by id', () => {
-    const parentSite = selectSiteById({ sites: data.stateWithParentWithChild }, '1234')
+    const parentSite = selectSiteById({ sites: data.stateWithParentWithChild.sites }, '1234')
     expect(parentSite).not.toBe(undefined)
   })
 
   test('should select a Child site by id', () => {
-    const childSite = selectSiteById({ sites: data.stateWithParentWithChild }, '5678')
+    const childSite = selectSiteById({ sites: data.stateWithParentWithChild.sites }, '5678')
     expect(childSite).not.toBe(undefined)
   })
 
   test('should return undefiend on getting site by unexisting id', () => {
-    const site = selectSiteById({ sites: data.stateWithParentWithChild }, 'abc')
+    const site = selectSiteById({ sites: data.stateWithParentWithChild.sites }, 'abc')
     expect(site).toBe(undefined)
   })
 

@@ -48,7 +48,6 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
   }
 
   const expandTree = (treeNode) => {
-    // debugger
     return (
       <TreeItemCustom
         key={treeNode.id}
