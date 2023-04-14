@@ -51,27 +51,28 @@ describe('All features full Test Suite', () => {
   })
 
   function createSiteAndCopyConfig(siteDomain) {
-    utils.getBaseDomain(siteDomain, 30000)
-    utils.getSiteStructure(1, 30000)
-    utils.getDataCenters('US', 'EU', 'AU')
-    utils.getCreateButton().click()
-    cy.get('ui5-table-row').should('have.length', '6')
-    cy.get('ui5-table-row')
-      .its('length')
-      .then((n) => {
-        cy.log(n)
-        utils.deleteChildSite(n)
-      })
 
-    cy.get('ui5-table-row').find('#addSiteConfigButton').eq(0).click()
+    cy.get('#addParentButton').click()
 
-    cy.get('#siteCopyConfigurationDialog').find('div > ui5-input').shadow().find('div > input').focus().type(dataTest.templateSiteName)
-    cy.get('#siteCopyConfigurationDialog').find('div > ui5-input').shadow().find('div > input').focus().type('{enter}')
+    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
+    cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
+    cy.get('#dataCenterSelect').click()
+    cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(2).click()
+
+    cy.get('#addSiteConfigButton').click()
+
+    cy.get('input').first().focus()
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(dataTest.templateSiteName)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', dataTest.templateSiteName)
+    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', dataTest.templateSiteName)
+    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
+
+    cy.get('ui5-list').find('ui5-li-custom').should('have.length', 1)
     cy.get('#selectAllCheckbox').click()
     cy.get('#confirmButton').click()
 
     utils.getSaveButton().click()
-    cy.wait(5000)
+
     cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
