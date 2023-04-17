@@ -43,7 +43,7 @@ describe('All features full Test Suite', () => {
     // Site deployer Copy Config
     getSelectedOption(dataTest.siteDeployerIconName)
     createSiteAndCopyConfig(dataTest.baseDomainName)
-    navigateToChosenSite(dataTest.baseDomainName)
+
     validateChanges(dataTest.baseDomainName)
     deleteSiteCreated()
   })
