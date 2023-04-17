@@ -112,6 +112,10 @@ export const siteSlice = createSlice({
           if (copyConfigErrors.length) {
             utils.addSiteDomainToCopyConfigError(copyConfigErrors, action.payload.responses, state.sites)
             state.errors = [utils.getCreationSuccessMessage(), ...copyConfigErrors]
+          } else {
+            state.showSuccessDialog = true
+            state.sites = []
+            Tracker.reportUsage()
           }
         } else {
           state.showSuccessDialog = true
