@@ -78,8 +78,10 @@ export function getBaseDomain(baseDomain, timeout) {
 }
 
 export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
-  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeFirst}]`).realClick()
-  cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).realClick()
+  cy.get('#cdctools-dataCenter').shadow().find('ui5-icon').realClick()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
+  // cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).realClick()
   return cy
     .get('#cdctools-dataCenter')
     .shadow()
