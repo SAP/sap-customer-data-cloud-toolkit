@@ -44,12 +44,11 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.siteDeployerIconName)
     createSiteAndCopyConfig(dataTest.baseDomainName)
     navigateToChosenSite(dataTest.baseDomainName)
-    validateChanges()
+    validateChanges(dataTest.baseDomainName)
     deleteSiteCreated()
   })
 
   function createSiteAndCopyConfig(siteDomain) {
-
     cy.get('#addParentButton').click()
 
     cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
