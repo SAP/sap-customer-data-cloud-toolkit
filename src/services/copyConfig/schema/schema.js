@@ -77,6 +77,7 @@ class Schema {
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
     const responses = await this.#removeFromThePayloadObjectsWithDifferentTypes(destinationSite, dataCenter, dataSchemaPayload)
     if (responses.length === 0 || responses[0].errorCode === ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE) {
+      removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
       } else {
@@ -155,14 +156,29 @@ class Schema {
     response = await this.set(destinationSite, dataCenter, clonePayload)
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
-      clonePayload = JSON.parse(JSON.stringify(payload))
-      removePropertyFromObjectCascading(clonePayload.dataSchema, 'type')
-      removePropertyFromObjectCascading(clonePayload.dataSchema, 'writeAccess')
-      removePropertyFromObjectCascading(clonePayload.dataSchema, 'allowNull')
+      clonePayload = this.#createDataPayloadWithRequiredOnly(payload, 'dataSchema')
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
     return response
+  }
+
+  #createDataPayloadWithRequiredOnly(payload, schemaName) {
+    const clonePayload = JSON.parse(JSON.stringify(payload))
+    for(const field of Object.keys(clonePayload[schemaName].fields)) {
+      clonePayload[schemaName].fields[field] = { 'required' : clonePayload[schemaName].fields[field].required }
+    }
+    return clonePayload
+  }
+
+  #createSubscriptionsPayloadWithRequiredOnly(payload, schemaName) {
+    const clonePayload = JSON.parse(JSON.stringify(payload))
+    for(const subscription of Object.keys(clonePayload[schemaName].fields)) {
+      for(const field of Object.keys(clonePayload[schemaName].fields[subscription])) {
+        clonePayload[schemaName].fields[subscription][field] = {'required': clonePayload[schemaName].fields[subscription][field].required}
+      }
+    }
+    return clonePayload
   }
 
   async #copySubscriptionsSchema(destinationSite, dataCenter, payload, isParentSite) {
@@ -187,11 +203,7 @@ class Schema {
     response = await this.set(destinationSite, dataCenter, clonePayload)
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
-      clonePayload = JSON.parse(JSON.stringify(payload))
-      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'type')
-      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'doubleOptIn')
-      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'description')
-      removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'enableConditionalDoubleOptIn')
+      clonePayload = this.#createSubscriptionsPayloadWithRequiredOnly(payload, 'subscriptionsSchema')
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
