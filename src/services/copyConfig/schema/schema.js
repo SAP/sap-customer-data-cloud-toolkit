@@ -1,6 +1,6 @@
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
-import generateErrorResponse from '../../errors/generateErrorResponse'
+import generateErrorResponse, { ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
 
 class Schema {
@@ -21,11 +21,19 @@ class Schema {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, this.#dataCenter, Schema.#getGetSchemaEndpoint())
-    const res = await client.post(url, this.#getSchemaParameters(this.#site)).catch(function (error) {
+    return await this.#_get(this.#site, this.#dataCenter)
+  }
+
+  async #_get(site, dataCenter) {
+    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getGetSchemaEndpoint())
+    const res = await client.post(url, this.#getSchemaParameters(site)).catch(function (error) {
       return generateErrorResponse(error, Schema.#ERROR_MSG_GET_CONFIG)
     })
     return res.data
+  }
+
+  async #getSchemaOfSite(site, dataCenter) {
+    return await this.#_get(site, dataCenter)
   }
 
   async set(site, dataCenter, body) {
@@ -39,7 +47,7 @@ class Schema {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#copySchema(destinationSite, destinationSiteConfiguration, response, options)
+      response = (await this.#copySchema(destinationSite, destinationSiteConfiguration, response, options)).flat()
     }
     stringToJson(response, 'context')
     return response
@@ -67,12 +75,49 @@ class Schema {
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
-    if (isParentSite) {
-      response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
-    } else {
-      response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
+    const responses = await this.#removeFromThePayloadObjectsWithDifferentTypes(destinationSite, dataCenter, dataSchemaPayload)
+    if (responses.length === 0 || responses[0].errorCode === ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE) {
+      if (isParentSite) {
+        response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
+      } else {
+        response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
+      }
+      responses.unshift(response)
     }
-    return response
+    return responses
+  }
+
+  async #removeFromThePayloadObjectsWithDifferentTypes(destinationSite, dataCenter, dataSchemaPayload) {
+    const responses = []
+    const destinationSiteSchema = await this.#getSchemaOfSite(destinationSite, dataCenter)
+    if (destinationSiteSchema.errorCode === 0) {
+      for (const schemaObjKey of Object.keys(destinationSiteSchema.dataSchema.fields)) {
+        if (this.#typeIsDifferent(dataSchemaPayload, destinationSiteSchema, schemaObjKey)) {
+          delete dataSchemaPayload.dataSchema.fields[schemaObjKey]
+          responses.push({
+            errorCode: ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE,
+            errorDetails: "Data schema field already exists on the destination site with a different type. It won't be copied",
+            errorMessage: `Cannot copy data schema field "${schemaObjKey}"`,
+            statusCode: 412,
+            statusReason: 'Precondition Failed',
+            time: Date.now(),
+            severity: ERROR_SEVERITY_WARNING,
+            context: { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA },
+          })
+        }
+      }
+    } else {
+      responses.push(destinationSiteSchema)
+    }
+    return responses
+  }
+
+  #typeIsDifferent(dataSchemaPayload, destinationSiteSchema, schemaObjKey) {
+    const schemaObj = dataSchemaPayload.dataSchema.fields[schemaObjKey]
+    if (schemaObj) {
+      return schemaObj.type !== destinationSiteSchema.dataSchema.fields[schemaObjKey].type
+    }
+    return false
   }
 
   async #copyProfileSchema(destinationSite, dataCenter, payload, isParentSite) {
@@ -114,7 +159,6 @@ class Schema {
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'type')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'writeAccess')
       removePropertyFromObjectCascading(clonePayload.dataSchema, 'allowNull')
-      removePropertyFromObjectCascading(clonePayload.dataSchema, 'subType')
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
@@ -198,13 +242,11 @@ class Schema {
   }
 
   static hasDataSchema(response) {
-    //return response.dataSchema !== undefined && Object.keys(response.dataSchema).length > 0
     return Schema.#has(response.dataSchema)
   }
 
   static hasProfileSchema(response) {
     return Schema.#has(response.profileSchema)
-    //return response.profileSchema !== undefined && Object.keys(response.profileSchema).length > 0
   }
 
   static hasSubscriptionsSchema(response) {

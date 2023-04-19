@@ -55,6 +55,7 @@ describe('Info test suite', () => {
   test('get all info unsuccessfully', async () => {
     axios
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'screenSet', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, socialIdentitiesId, apiKey) })
