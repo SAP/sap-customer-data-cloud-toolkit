@@ -112,11 +112,13 @@ const SiteDeployer = ({ t }) => {
   })
 
   const onSaveHandler = () => {
-    if (areCredentialsFilled(credentials)) {
-      setShowCredentialsErrorDialog(false)
-      dispatch(createSites(sites))
-    } else {
-      setShowCredentialsErrorDialog(true)
+    if (!checkSitesRequiredFields(sites)) {
+      if (areCredentialsFilled(credentials)) {
+        setShowCredentialsErrorDialog(false)
+        dispatch(createSites(sites))
+      } else {
+        setShowCredentialsErrorDialog(true)
+      }
     }
   }
 

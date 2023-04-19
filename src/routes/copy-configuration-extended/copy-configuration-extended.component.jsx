@@ -116,10 +116,12 @@ const CopyConfigurationExtended = ({ t }) => {
   }, [dispatch, credentials, currentSiteApiKey])
 
   const onSaveHandler = () => {
-    if (errors.length) {
-      dispatch(clearErrors())
+    if (!disableSaveButton()) {
+      if (errors.length) {
+        dispatch(clearErrors())
+      }
+      dispatch(setConfigurations())
     }
-    dispatch(setConfigurations())
   }
 
   const onCancelHandler = () => {

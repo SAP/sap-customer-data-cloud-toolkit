@@ -109,6 +109,12 @@ const styles = {
   targetSitesTooltipIconDivStyle: {
     marginTop: '-35px',
   },
+  selectConfigurationOuterDivStyle: {
+    ...spacing.sapUiSmallMargin,
+  },
+  selectConfigurationInnerDivStyle: {
+    ...spacing.sapUiTinyMargin,
+  },
 }
 
 export default styles
