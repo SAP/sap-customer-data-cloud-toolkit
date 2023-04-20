@@ -2,6 +2,7 @@ const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const currentSiteName = 'dev.cdc-tools'
 const baseDomainName = 'target_sites'
+const childOfBaseDomainName = 'target_sites.child'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
 const parentBaseDomain = 'Manually add parent site'
@@ -1312,4 +1313,5 @@ export {
   target2SiteDomainName,
   webSDKConfiguration,
   identityConnectOption,
+  childOfBaseDomainName,
 }

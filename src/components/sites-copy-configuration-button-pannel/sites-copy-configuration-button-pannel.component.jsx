@@ -43,7 +43,7 @@ const SitesCopyConfigurationButtonPannel = ({ siteId }) => {
     <>
       <FlexBox id="sitesCopyConfigurationButtonPannelGrid" justifyContent="Start">
         {!hasConfig() ? (
-          <Button id="addSiteConfigButton" icon="add" design="Transparent" onClick={onAddConfigButtonClickHandler} />
+          <Button id="addSiteConfigButton" icon="add" design="Transparent" onClick={onAddConfigButtonClickHandler} data-cy="addSiteConfigButton"/>
         ) : (
           <>
             <Button id="editSiteConfigButton" icon="edit" design="Transparent" onClick={onEditConfigButtonClickHandler} />
