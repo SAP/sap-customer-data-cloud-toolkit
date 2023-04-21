@@ -22,6 +22,7 @@ class ScreenSet {
     const res = await client.post(url, this.#getScreenSetParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_GET_CONFIG)
     })
+
     return res.data
   }
 
@@ -30,15 +31,18 @@ class ScreenSet {
     const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_SET_CONFIG)
     })
+
     return res.data
   }
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
+
     if (response.errorCode === 0) {
       response = await this.#copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
     }
     stringToJson(response, 'context')
+
     return response
   }
 
@@ -48,6 +52,7 @@ class ScreenSet {
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
     parameters.include = 'screenSetID,html,css,javascript,translations,metadata'
+
     parameters.context = JSON.stringify({ id: 'screenSet', targetApiKey: apiKey })
 
     return parameters
@@ -64,7 +69,7 @@ class ScreenSet {
       parameters['css'] = body.css
     }
     if (body.javascript) {
-      parameters['javascript'] = JSON.stringify(body.javascript)
+      parameters['javascript'] = body.javascript
     }
     if (body.translations) {
       parameters['translations'] = JSON.stringify(body.translations)
