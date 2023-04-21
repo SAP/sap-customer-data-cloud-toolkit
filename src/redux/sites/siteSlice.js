@@ -2,8 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
-import ConfigManager from '../../services/copyConfig/configManager'
-import { Tracker } from '../../tracker/tracker'
 import { getErrorAsArray } from '../utils'
 
 const SITES_SLICE_STATE_NAME = 'sites'
@@ -17,6 +15,7 @@ export const siteSlice = createSlice({
     errors: [],
     showSuccessDialog: false,
     sitesToDeleteManually: [],
+    progressIndicatorValue: 0,
   },
   reducers: {
     addNewParent: (state) => {
@@ -91,41 +90,30 @@ export const siteSlice = createSlice({
     setShowSuccessDialog: (state, action) => {
       state.showSuccessDialog = action.payload
     },
+    setProgressIndicatorValue: (state, action) => {
+      state.progressIndicatorValue = action.payload
+    },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createSites.pending, (state) => {
       state.errors = []
       state.isLoading = true
       state.showSuccessDialog = false
+      state.progressIndicatorValue = 0
     })
     builder.addCase(createSites.fulfilled, (state, action) => {
-      state.isLoading = false
-      const errors = action.payload.responses.filter(({ errorCode }) => errorCode !== 0)
-      if (errors.length) {
-        state.errors = errors.map((error) => {
-          return utils.errorMapper(error, state.sites, selectSiteById)
-        })
-        utils.addRequiredManualRemovalInformation(state, action.payload.responses)
+      state.progressIndicatorValue = 100
+      const errors = utils.getResponseErrors(action.payload.responses)
+      if (!utils.isArrayEmpty(errors)) {
+        utils.processSitesCreationErrors(state, errors, action.payload.responses)
       } else {
-        if (action.payload.copyConfigurationResponses.length) {
-          const copyConfigErrors = action.payload.copyConfigurationResponses.filter(({ errorCode }) => errorCode !== 0)
-          if (copyConfigErrors.length) {
-            utils.addSiteDomainToCopyConfigError(copyConfigErrors, action.payload.responses, state.sites)
-            state.errors = [utils.getCreationSuccessMessage(), ...copyConfigErrors]
-          } else {
-            state.showSuccessDialog = true
-            state.sites = []
-            Tracker.reportUsage()
-          }
-        } else {
-          state.showSuccessDialog = true
-          state.sites = []
-          Tracker.reportUsage()
-        }
+        utils.processSuccessSitesCreation(state, action.payload.responses, action.payload.copyConfigurationResponses)
       }
     })
     builder.addCase(createSites.rejected, (state, action) => {
-      state.isLoading = false
       state.errors = action.payload.responses
       utils.addRequiredManualRemovalInformation(state, action.payload.responses)
     })
@@ -148,15 +136,18 @@ export const {
   clearErrors,
   setShowSuccessDialog,
   clearSitesToDeleteManually,
+  setProgressIndicatorValue,
+  setIsLoading,
 } = siteSlice.actions
 
 export default siteSlice.reducer
 
-export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState, rejectWithValue }) => {
+export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
-    const sitesConfigurations = state.siteDeployerCopyConfiguration.sitesConfigurations
-    let responses = await new SiteManager({
+    let progressIndicatorValue = 10
+    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const responses = await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: utils.getPartnerId(window.location.hash),
       userKey: state.credentials.credentials.userKey,
@@ -164,22 +155,12 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     }).create({
       sites,
     })
-
-    const copyConfigPromises = []
-    const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
-
-    responses
-      .filter(({ errorCode }) => errorCode === 0)
-      .forEach((okResponse) => {
-        const siteConfiguration = sitesConfigurations.filter((siteConfiguration) => siteConfiguration.siteId === okResponse.tempId)[0]
-        if (siteConfiguration) {
-          copyConfigPromises.push(new ConfigManager(credentials, siteConfiguration.sourceSites[0].apiKey).copy([okResponse.apiKey], siteConfiguration.configurations))
-        }
-      })
-
-    const copyConfigurationResponses = await Promise.all(copyConfigPromises)
-
-    return { responses, copyConfigurationResponses: copyConfigurationResponses.flat() }
+    progressIndicatorValue = 20
+    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const okResponses = utils.getOkResponses(responses)
+    const copyConfigurationPromises = utils.getCopyConfigurationPromises(state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const copyConfigurationResponses = await Promise.all(copyConfigurationPromises)
+    return utils.buildSitesCreationFulfilledResponse(responses, copyConfigurationResponses)
   } catch (error) {
     return rejectWithValue({ responses: getErrorAsArray(error) })
   }
@@ -205,3 +186,5 @@ export const selectShowSuccessDialog = (state) => state.sites.showSuccessDialog
 export const selectLoadingState = (state) => state.sites.isLoading
 
 export const selectSitesToDeleteManually = (state) => state.sites.sitesToDeleteManually
+
+export const selectProgressIndicatorValue = (state) => state.sites.progressIndicatorValue

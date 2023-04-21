@@ -19,14 +19,15 @@ import {
   TitleLevel,
   FlexBox,
   Button,
-  BusyIndicator,
   ValueState,
+  ProgressIndicator,
 } from '@ui5/webcomponents-react'
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
 import '@ui5/webcomponents-icons/dist/add.js'
 import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
+import '@ui5/webcomponents-icons/dist/hint.js'
 
 import {
   addParentFromStructure,
@@ -38,6 +39,8 @@ import {
   selectErrors,
   selectShowSuccessDialog,
   selectSitesToDeleteManually,
+  selectProgressIndicatorValue,
+  setIsLoading,
 } from '../../redux/sites/siteSlice'
 
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
@@ -99,6 +102,7 @@ const SiteDeployer = ({ t }) => {
   const credentials = useSelector(selectCredentials)
   const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
   const structures = useSelector(selectSiteStructures)
+  const progressIndicatorValue = useSelector(selectProgressIndicatorValue)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
@@ -109,6 +113,18 @@ const SiteDeployer = ({ t }) => {
 
   useEffect(() => {
     dispatch(updateCredentialsAsync())
+  })
+
+  useEffect(() => {
+    if (document.querySelector('ui5-progress-indicator')) {
+      new ResizeObserver(() => {
+        if (document.querySelector('ui5-progress-indicator')) {
+          if (document.querySelector('ui5-progress-indicator').shadowRoot.querySelectorAll('div')[2].offsetWidth === 0 && isLoading) {
+            dispatch(setIsLoading(false))
+          }
+        }
+      }).observe(document.querySelector('ui5-progress-indicator').shadowRoot.querySelectorAll('div')[2])
+    }
   })
 
   const onSaveHandler = () => {
@@ -204,9 +220,7 @@ const SiteDeployer = ({ t }) => {
   }
 
   const showErrorsList = (messages) =>
-    !messages.length ? (
-      ''
-    ) : (
+    messages.length && !isLoading ? (
       <div className={classes.errorListOuterDivStyle}>
         <div className={classes.errorListInnerDivStyle}>
           <Card>
@@ -214,11 +228,13 @@ const SiteDeployer = ({ t }) => {
           </Card>
         </div>
       </div>
+    ) : (
+      ''
     )
 
   const showSuccessMessage = () => (
     <DialogMessageInform
-      open={showSuccessDialog}
+      open={showSuccessDialog && !isLoading}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
       closeButtonContent={t('GLOBAL.OK')}
@@ -228,6 +244,10 @@ const SiteDeployer = ({ t }) => {
       <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
   )
+
+  const showProgressBar = () => {
+    return <div>{<ProgressIndicator value={progressIndicatorValue} valueState={ValueState.Information} className={classes.progressIndicatorStyle} />}</div>
+  }
 
   return (
     <>
@@ -300,7 +320,7 @@ const SiteDeployer = ({ t }) => {
         <div className={classes.siteCreationPreviewCardOuterDivStyle}>
           <div className={classes.siteCreationPreviewCardInnerDivStyle}>
             <Card header={<CardHeader titleText={t('SITE_DEPLOYER_COMPONENT.SITE_CREATION_PREVIEW')} subtitleText={t('SITE_DEPLOYER_COMPONENT.ADD_OR_REMOVE_SITES')}></CardHeader>}>
-              {isLoading ? <BusyIndicator active delay="1" className={classes.busyIndicatorStyle} /> : <SitesTable />}
+              {isLoading ? showProgressBar() : <SitesTable />}
             </Card>
           </div>
         </div>

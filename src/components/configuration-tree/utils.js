@@ -17,14 +17,22 @@ export const getHighestSeverity = (errors) => {
 }
 
 const severityExists = (errors) => {
-  return errors.filter((error) => error.severity !== undefined).length
+  return errors.filter((error) => errorHasSeverity(error)).length
+}
+
+const errorHasSeverity = (error) => {
+  return error.severity !== undefined
 }
 
 const updateHighestSeverity = (errors) => {
   let severity = 0
   for (const error of errors) {
-    if (severity < severityToInteger[error.severity]) {
-      severity = severityToInteger[error.severity]
+    if (!errorHasSeverity(error)) {
+      severity = 2
+    } else {
+      if (severity < severityToInteger[error.severity]) {
+        severity = severityToInteger[error.severity]
+      }
     }
   }
   return severity

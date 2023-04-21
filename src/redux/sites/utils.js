@@ -1,5 +1,7 @@
 import { generateUUID } from '../../utils/generateUUID'
 import i18n from '../../i18n'
+import ConfigManager from '../../services/copyConfig/configManager'
+import { Tracker } from '../../tracker/tracker'
 
 const DATA_CENTER_PLACEHOLDER = '{{dataCenter}}'
 const BASE_DOMAIN_PLACEHOLDER = '{{baseDomain}}'
@@ -104,6 +106,85 @@ const addSiteDomainToCopyConfigError = (copyConfigErrors, siteResponses, sites) 
   }
 }
 
+const getResponseErrors = (responses) => {
+  return responses.filter(({ errorCode }) => errorCode !== 0)
+}
+
+const getOkResponses = (responses) => {
+  return responses.filter(({ errorCode }) => errorCode === 0)
+}
+
+const isArrayEmpty = (array) => {
+  return !array.length
+}
+
+const finalizeSitesCreation = (state) => {
+  state.showSuccessDialog = true
+  state.sites = []
+  Tracker.reportUsage()
+}
+
+const processSuccessSitesCreation = (state, responses, copyConfigurationResponses) => {
+  if (!isArrayEmpty(copyConfigurationResponses)) {
+    const copyConfigErrors = getResponseErrors(copyConfigurationResponses)
+    if (!isArrayEmpty(copyConfigErrors)) {
+      processCopyConfigErrors(state, copyConfigErrors, responses)
+    } else {
+      finalizeSitesCreation(state)
+    }
+  } else {
+    finalizeSitesCreation(state)
+  }
+}
+
+const processCopyConfigErrors = (state, copyConfigErrors, responses) => {
+  addSiteDomainToCopyConfigError(copyConfigErrors, responses, state.sites)
+  state.errors = [getCreationSuccessMessage(), ...copyConfigErrors]
+}
+
+const processSitesCreationErrors = (state, errors, responses) => {
+  state.errors = errors.map((error) => {
+    return errorMapper(error, state.sites)
+  })
+  addRequiredManualRemovalInformation(state, responses)
+}
+
+const generateCredentialsObject = (state) => {
+  return { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+}
+
+const updateProgressIndicatorValue = (newValue, dispatch, setProgressIndicatorValue) => {
+  dispatch(setProgressIndicatorValue(newValue))
+}
+
+const calculateProgressIncrement = (okResponses) => {
+  return 80 / (okResponses.length !== 0 ? okResponses.length : 1)
+}
+
+const getCopyConfigurationPromises = (state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue) => {
+  const copyConfigurationPromises = []
+  const credentials = generateCredentialsObject(state)
+  const sitesConfigurations = state.siteDeployerCopyConfiguration.sitesConfigurations
+  const progressIncrement = calculateProgressIncrement(okResponses)
+  okResponses.forEach((okResponse) => {
+    const siteConfiguration = sitesConfigurations.filter((siteConfiguration) => siteConfiguration.siteId === okResponse.tempId)[0]
+    if (siteConfiguration) {
+      copyConfigurationPromises.push(
+        new ConfigManager(credentials, siteConfiguration.sourceSites[0].apiKey).copy([okResponse.apiKey], siteConfiguration.configurations).then((copyConfigurationResponse) => {
+          progressIndicatorValue += progressIncrement
+          updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+          return copyConfigurationResponse
+        })
+      )
+    }
+  })
+  return copyConfigurationPromises
+}
+
+const buildSitesCreationFulfilledResponse = (responses, copyConfigurationResponses) => {
+  return { responses, copyConfigurationResponses: copyConfigurationResponses.flat() }
+}
+
 export {
   getNewSite,
   getSiteFromStructure,
@@ -115,4 +196,14 @@ export {
   getCreationSuccessMessage,
   addSiteDomainToCopyConfigError,
   selectSiteById,
+  getResponseErrors,
+  isArrayEmpty,
+  processSuccessSitesCreation,
+  processSitesCreationErrors,
+  getOkResponses,
+  generateCredentialsObject,
+  updateProgressIndicatorValue,
+  calculateProgressIncrement,
+  getCopyConfigurationPromises,
+  buildSitesCreationFulfilledResponse,
 }

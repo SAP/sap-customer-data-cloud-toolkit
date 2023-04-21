@@ -4,6 +4,7 @@ const initialState = {
   errors: [],
   showSuccessDialog: false,
   sitesToDeleteManually: [],
+  progressIndicatorValue: 0,
 }
 
 const stateWithParentWithNoChild = {

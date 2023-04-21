@@ -19,6 +19,8 @@ import sitesReducer, {
   setShowSuccessDialog,
   selectSiteById,
   clearSitesToDeleteManually,
+  setProgressIndicatorValue,
+  setIsLoading,
 } from './siteSlice'
 
 import { getPartnerId, getCreationSuccessMessage } from './utils'
@@ -161,19 +163,21 @@ describe('Site slice test suite', () => {
     expect(getPartnerId(hash)).toEqual(expectedPartnerId)
   })
 
-  test('should set isLoading to true while createSites is pending', () => {
+  test('should update state while createSites is pending', () => {
     const action = createSites.pending
     const newState = sitesReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(newState.progressIndicatorValue).toEqual(0)
     expect(tracker).not.toHaveBeenCalled()
   })
 
-  test('should set isLoading to false when createSites is rejected', () => {
-    const action = createSites.rejected('', '', '', [{ errorCode: 400 }])
+  test('should update state when createSites is rejected', () => {
+    const action = createSites.rejected('', '', '', { responses: [data.dummyError] })
     const newState = sitesReducer(data.initialState, action)
-    expect(newState.isLoading).toEqual(false)
+    expect(newState.errors.length).toEqual(1)
+    expect(newState.errors[0]).toEqual(data.dummyError)
     expect(tracker).not.toHaveBeenCalled()
   })
 
@@ -190,7 +194,6 @@ describe('Site slice test suite', () => {
   test('should have fulfilled createSites with errors', () => {
     const action = createSites.fulfilled({ responses: [data.dummyError], copyConfigurationResponses: [] })
     const newState = sitesReducer(data.initialState, action)
-    expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.errors.length).toEqual(1)
     expect(newState.errors[0].errorCode).toEqual(data.dummyError.errorCode)
@@ -201,7 +204,6 @@ describe('Site slice test suite', () => {
   test('should have fulfilled createSites with copyConfigurationResponses errors', () => {
     const action = createSites.fulfilled({ responses: [data.dummySiteResponse], copyConfigurationResponses: [data.dummyCopyConfigurationResponse] })
     const newState = sitesReducer(data.stateWithParentWithNoChild, action)
-    expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(1)
     expect(newState.errors.length).toEqual(2)
     expect(newState.errors[0].errorMessage).toEqual(getCreationSuccessMessage().errorMessage)
@@ -214,9 +216,9 @@ describe('Site slice test suite', () => {
   test('should have fulfilled createSites without errors', () => {
     const action = createSites.fulfilled({ responses: [], copyConfigurationResponses: [] })
     const newState = sitesReducer(data.initialState, action)
-    expect(newState.isLoading).toEqual(false)
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
+    expect(newState.progressIndicatorValue).toEqual(100)
     expect(tracker).toHaveBeenCalled()
   })
 
@@ -239,5 +241,16 @@ describe('Site slice test suite', () => {
     expect(data.stateWithSitesToRemoveManually.sitesToDeleteManually).not.toEqual([])
     const newState = sitesReducer(data.stateWithSitesToRemoveManually, clearSitesToDeleteManually())
     expect(newState.sitesToDeleteManually).toEqual([])
+  })
+
+  test('should set progress indicator value', () => {
+    const testProgressIndicatorValue = 50
+    const newState = sitesReducer(data.initialState, setProgressIndicatorValue(testProgressIndicatorValue))
+    expect(newState.progressIndicatorValue).toEqual(testProgressIndicatorValue)
+  })
+
+  test('should set isLoading to true', () => {
+    const newState = sitesReducer(data.initialState, setIsLoading(true))
+    expect(newState.isLoading).toEqual(true)
   })
 })
