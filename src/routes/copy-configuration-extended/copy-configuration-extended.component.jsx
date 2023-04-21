@@ -125,11 +125,13 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const onCancelHandler = () => {
-    setTarketApiKeyInputValue('')
-    dispatch(clearConfigurations())
-    dispatch(clearTargetApiKeys())
-    dispatch(clearErrors())
-    setSelectAllCheckboxState(false)
+    if (!isLoading) {
+      setTarketApiKeyInputValue('')
+      dispatch(clearConfigurations())
+      dispatch(clearTargetApiKeys())
+      dispatch(clearErrors())
+      setSelectAllCheckboxState(false)
+    }
   }
 
   const onSuccessDialogAfterCloseHandler = () => {
@@ -166,7 +168,7 @@ const CopyConfigurationExtended = ({ t }) => {
   )
 
   const disableSaveButton = () => {
-    return targetSites.length === 0 || !areConfigurationsFilled(configurations)
+    return targetSites.length === 0 || !areConfigurationsFilled(configurations) || isLoading
   }
 
   const showConfigurations = () => {
@@ -337,7 +339,13 @@ const CopyConfigurationExtended = ({ t }) => {
                     >
                       {t('GLOBAL.SAVE')}
                     </Button>
-                    <Button type="button" id="copyConfigExtendedCancelButton" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
+                    <Button
+                      type="button"
+                      id="copyConfigExtendedCancelButton"
+                      className="fd-button fd-button--transparent fd-button--compact"
+                      onClick={onCancelHandler}
+                      disabled={isLoading}
+                    >
                       {t('GLOBAL.CANCEL')}
                     </Button>
                   </div>

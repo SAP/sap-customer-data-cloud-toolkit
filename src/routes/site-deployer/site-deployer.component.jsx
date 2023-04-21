@@ -128,7 +128,7 @@ const SiteDeployer = ({ t }) => {
   })
 
   const onSaveHandler = () => {
-    if (!checkSitesRequiredFields(sites)) {
+    if (!checkSitesRequiredFields(sites) && !isLoading) {
       if (areCredentialsFilled(credentials)) {
         setShowCredentialsErrorDialog(false)
         dispatch(createSites(sites))
@@ -139,8 +139,10 @@ const SiteDeployer = ({ t }) => {
   }
 
   const onCancelHandler = () => {
-    dispatch(clearSites())
-    dispatch(clearErrors())
+    if (!isLoading) {
+      dispatch(clearSites())
+      dispatch(clearErrors())
+    }
   }
 
   const onCreateHandler = () => {
@@ -203,10 +205,22 @@ const SiteDeployer = ({ t }) => {
         design="FloatingFooter"
         endContent={
           <div>
-            <Button disabled={checkSitesRequiredFields(sites)} type="submit" id="save-main" className="fd-button fd-button--emphasized fd-button--compact" onClick={onSaveHandler}>
+            <Button
+              disabled={checkSitesRequiredFields(sites) || isLoading}
+              type="submit"
+              id="save-main"
+              className="fd-button fd-button--emphasized fd-button--compact"
+              onClick={onSaveHandler}
+            >
               {t('GLOBAL.SAVE')}
             </Button>
-            <Button disabled={!checkSitesExist(sites)} type="button" id="cancel-main" className="fd-button fd-button--transparent fd-button--compact" onClick={onCancelHandler}>
+            <Button
+              disabled={!checkSitesExist(sites) || isLoading}
+              type="button"
+              id="cancel-main"
+              className="fd-button fd-button--transparent fd-button--compact"
+              onClick={onCancelHandler}
+            >
               {t('GLOBAL.CANCEL')}
             </Button>
           </div>
