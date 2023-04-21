@@ -1,14 +1,12 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
-import {debug} from "prettier/doc";
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
     utils.resizeObserverLoopErrRe()
 
     loginToGigya(dataTest.gigyaURL)
-/*
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
     getSelectedOption(dataTest.siteDeployerIconName)
     testSiteDeployer(dataTest.baseDomainName)
@@ -44,8 +42,8 @@ describe('All features full Test Suite', () => {
     // Site deployer Copy Config
     getSelectedOption(dataTest.siteDeployerIconName)
     createSiteAndCopyConfig(dataTest.baseDomainName, dataTest.childOfBaseDomainName)
-    const siteDeployerTargetSites = [dataTest.baseDomainName, dataTest.childOfBaseDomainName]
-    siteDeployerTargetSites.forEach(validateChanges)*/
+    validateChanges(dataTest.baseDomainName, false)
+    validateChanges(dataTest.childOfBaseDomainName, true)
     navigateToChosenSite(dataTest.baseDomainName)
     deleteSiteCreated()
   })
@@ -308,7 +306,8 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '40')
   }
 
-  function navigateToChosenSite(siteName) {
+  function navigateToChosenSite(siteName, childSite) {
+    let index = childSite === true ? 1 : 0
     getSelectedOption(dataTest.siteSelectorOption)
 
     cy.waitUntil(() =>
@@ -322,7 +321,7 @@ describe('All features full Test Suite', () => {
         .find('[placeholder="Search"]')
         .then((input) => cy.get(input).should('not.be.disabled').clear().focus().type(siteName))
     )
-    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(0).click()
+    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(index).click()
     cy.wait(5000)
   }
 
@@ -332,9 +331,9 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('sslct-site-actions').eq(1).find('fd-popover-control > button').click()
 
     cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').click({force: true})
-    cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').realClick()
+    cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click({force: true})
     cy.get('.fd-form__control').click()
-    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').realClick()
+    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').click({force: true})
 
     //delete parent
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('sslct-site-list').find('tbody').should('have.length', 1)
@@ -344,7 +343,7 @@ describe('All features full Test Suite', () => {
       cy
         .get(' .cdk-overlay-pane')
         .find('[class = "fd-popover__popper"]')
-        .then((input) => cy.get(input).should('be.visible').get(input).find('ul > li').get('.delete_menu_item').realClick())
+        .then((input) => cy.get(input).find('ul > li').get('.delete_menu_item').click({force: true}))
     )
 
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
@@ -364,8 +363,8 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
   }
 
-  function validateChanges(domainName) {
-    navigateToChosenSite(domainName)
+  function validateChanges(domainName, childSite) {
+    navigateToChosenSite(domainName, childSite)
     //Copy Web Sdk Testing use Case
     //  - Copy Schema
     //  - Copy Screen Sets
