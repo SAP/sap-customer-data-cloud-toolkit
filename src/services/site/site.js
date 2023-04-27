@@ -4,6 +4,7 @@ import generateErrorResponse from '../errors/generateErrorResponse'
 
 class Site {
   static #ERROR_MSG_CREATE = 'Error creating site'
+  static #ERROR_MSG_MIGRATE = 'Error migrating site consents'
   static #ERROR_MSG_DELETE = 'Error deleting site'
   static #NAMESPACE = 'admin'
 
@@ -64,6 +65,24 @@ class Site {
     if (deleteToken !== undefined) {
       parameters.deleteToken = deleteToken
     }
+    return parameters
+  }
+
+  async migrateConsentFlow(apiKey, dataCenter) {
+    const namespace = 'accounts'
+    const url = UrlBuilder.buildUrl(namespace, dataCenter, `${namespace}.migrateConsentFlow`)
+    const payload = this.#createMigrateConsentFlowPayload(apiKey)
+    return client.post(url, payload).catch(function (error) {
+      return generateErrorResponse(error, Site.#ERROR_MSG_MIGRATE)
+    })
+  }
+
+  #createMigrateConsentFlowPayload(apiKey) {
+    const parameters = Object.assign({})
+    parameters.apiKey = apiKey
+    parameters.userKey = this.userKey
+    parameters.secret = this.secret
+    parameters.MigrateSite = true
     return parameters
   }
 }
