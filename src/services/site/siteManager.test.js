@@ -16,7 +16,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - single parent', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios.mockResolvedValueOnce(mockedResponse).mockResolvedValueOnce(mockedResponse)
 
@@ -47,7 +47,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - parent with one child', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -129,7 +129,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - parent with two children', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -174,7 +174,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - two parent with two children', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -238,7 +238,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error on parent', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
 
     const request = TestData.createParentWithOneChildRequest()
@@ -252,7 +252,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - different data centers', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -308,7 +308,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -338,7 +338,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error creating 2nd hierarchy', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -388,7 +388,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error creating 1st hierarchy', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
       .mockResolvedValueOnce(mockedResponse)
@@ -438,7 +438,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error on rollback', async () => {
-    const spy = await jest.spyOn(siteManager.siteService, 'migrateConsentFlow')
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })

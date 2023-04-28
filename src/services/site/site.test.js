@@ -96,29 +96,6 @@ describe('Service Site test suite', () => {
     CommonTestData.verifyResponseIsNotOk(response, TestData.sdDeleteGroupSitesFirst)
   })
 
-  test('migrate site successfully', async () => {
-    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-
-    const siteService = new Site(credentials.partnerId, credentials.userKey, credentials.secret)
-    const response = await siteService.migrateConsentFlow('apiKey', 'eu1')
-
-    verifyResponseIsOk(response.data)
-  })
-
-  test('migrate site exception', async () => {
-    const err = CommonTestData.createErrorObject('Error migrating site consents')
-    axios.mockImplementation(() => {
-      throw err
-    })
-
-    const siteService = new Site(credentials)
-    const response = await siteService.migrateConsentFlow('apiKey', 'eu1')
-
-    expect(response.data.errorCode).toEqual(err.code)
-    expect(response.data.errorMessage).toEqual(err.message)
-    expect(response.data.time).toBeDefined()
-  })
-
   async function createSites(request, expectedResponseFromServer, siteParams) {
     const mockedResponse = { data: expectedResponseFromServer }
     axios.mockResolvedValue(mockedResponse)
