@@ -50,6 +50,7 @@ describe('Site Deployer Test Suite', () => {
   it('Should add a single Parent Site Manually with success message', () => {
     utils.resizeObserverLoopErrRe()
     utils.mockResponse(servicesDataTest.expectedGigyaResponseOk, 'POST', 'admin.createSite')
+    utils.mockResponse(servicesDataTest.expectedGigyaResponseOk, 'POST', 'accounts.migrateConsentFlow')
     cy.get('#addParentButton').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')

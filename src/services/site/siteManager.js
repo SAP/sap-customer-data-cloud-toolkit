@@ -1,10 +1,12 @@
 import Site from './site'
 import SiteConfigurator from '../configurator/siteConfigurator'
+import SiteMigrator from './siteMigrator'
 
 class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
     this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
+    this.siteMigrator = new SiteMigrator(credentials.userKey, credentials.secret)
   }
 
   async create(siteHierarchy) {
@@ -74,14 +76,18 @@ class SiteManager {
     return childResponse
   }
 
-  #createSite(site) {
+  async #createSite(site) {
     const body = {
       baseDomain: site.baseDomain,
       description: site.description,
       dataCenter: site.dataCenter,
     }
     //console.log(`Creating site ${site.baseDomain}`)
-    return this.siteService.create(body)
+    const response = await this.siteService.create(body)
+    if (this.#isSuccessful(response.data)) {
+      await this.siteMigrator.migrateConsentFlow(response.data.apiKey, site.dataCenter)
+    }
+    return response
   }
 
   #enrichResponse(response, id, isChildSite) {
