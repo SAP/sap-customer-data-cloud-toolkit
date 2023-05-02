@@ -92,7 +92,6 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox()
-    // cy.get('#siteConfigurationsCard').should('be.visible')
     cy.get('#selectedTargetApiKeysList').find('ui5-li-custom').shadow().find('ui5-button').click()
     cy.get('#selectedTargetApiKeysList').should('not.exist')
     cy.get('#siteConfigurationsCard').should('not.be.visible')
