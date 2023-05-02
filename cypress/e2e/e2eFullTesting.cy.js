@@ -7,7 +7,6 @@ describe('All features full Test Suite', () => {
     utils.resizeObserverLoopErrRe()
 
     loginToGigya(dataTest.gigyaURL)
-
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
     getSelectedOption(dataTest.siteDeployerIconName)
     testSiteDeployer(dataTest.baseDomainName)
@@ -42,39 +41,53 @@ describe('All features full Test Suite', () => {
 
     // Site deployer Copy Config
     getSelectedOption(dataTest.siteDeployerIconName)
-    createSiteAndCopyConfig(dataTest.baseDomainName)
-
-    validateChanges(dataTest.baseDomainName)
+    createSiteAndCopyConfig(dataTest.baseDomainName, dataTest.childOfBaseDomainName)
+    validateChanges(dataTest.baseDomainName, false)
+    validateChanges(dataTest.childOfBaseDomainName, true)
+    navigateToChosenSite(dataTest.baseDomainName)
     deleteSiteCreated()
   })
 
-  function createSiteAndCopyConfig(siteDomain) {
+  function createSiteAndCopyConfig(pareSiteDomain, childSiteDomain) {
+    // Add parent site
     cy.get('#addParentButton').click()
-
-    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
-    cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDomain).should('have.value', siteDomain)
+    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(pareSiteDomain).should('have.value', pareSiteDomain)
+    cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(pareSiteDomain).should('have.value', pareSiteDomain)
     cy.get('#dataCenterSelect').click()
     cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(2).click()
 
-    cy.get('#addSiteConfigButton').click()
+    // add copy config to parent
+    addCopyConfigFrom(dataTest.templateSiteName)
 
+    // add child
+    cy.get('[data-cy="parentRowActionSheetOpener"]').click()
+    cy.get('[data-cy="createChildSiteAction"]').click()
+    cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childSiteDomain).should('have.value', childSiteDomain)
+    cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childSiteDomain).should('have.value', childSiteDomain)
+
+    // add copy config to child
+    addCopyConfigFrom(dataTest.templateSiteName)
+
+    utils.getSaveButton().click()
+    cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
+    cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
+
+    cy.get('#successPopup').find('ui5-bar').find('[id="closeButton"]').click()
+    //utils.clickPopUpOkButton('#successPopup')
+  }
+
+  function addCopyConfigFrom(templateSiteName) {
+    cy.get('[data-cy="addSiteConfigButton"]').click()
     cy.get('input').first().focus()
-    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(dataTest.templateSiteName)
-    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', dataTest.templateSiteName)
-    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', dataTest.templateSiteName)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').type(templateSiteName)
+    cy.get('#apiKeyInput').shadow().find('[class="ui5-input-inner"]').should('have.value', templateSiteName)
+    cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', templateSiteName)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
-
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', 1)
     cy.get('#selectAllCheckbox').click()
     cy.get('#confirmButton').click()
-
-    utils.getSaveButton().click()
-
-    cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
-
-    cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
-    utils.clickPopUpOkButton('#successPopup')
   }
+
   function testSiteDeployer(siteDomain) {
     utils.getBaseDomain(siteDomain, 30000)
     utils.getSiteStructure(1, 30000)
@@ -289,7 +302,8 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="langauge-item"]').should('have.length', '40')
   }
 
-  function navigateToChosenSite(siteName) {
+  function navigateToChosenSite(siteName, childSite) {
+    let index = childSite === true ? 1 : 0
     getSelectedOption(dataTest.siteSelectorOption)
 
     cy.waitUntil(() =>
@@ -303,7 +317,7 @@ describe('All features full Test Suite', () => {
         .find('[placeholder="Search"]')
         .then((input) => cy.get(input).should('not.be.disabled').clear().focus().type(siteName))
     )
-    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(0).click()
+    cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(index).click()
     cy.wait(5000)
   }
 
@@ -312,10 +326,10 @@ describe('All features full Test Suite', () => {
     //delete child
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('sslct-site-actions').eq(1).find('fd-popover-control > button').click()
 
-    cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').realClick()
-    cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').realClick()
+    cy.get('.fd-popover__popper').find('ul > li').get('.delete_menu_item').click({force: true})
+    cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click({force: true})
     cy.get('.fd-form__control').click()
-    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').realClick()
+    cy.get('.fd-bar__right > :nth-child(2) > .fd-button').click({force: true})
 
     //delete parent
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('sslct-site-list').find('tbody').should('have.length', 1)
@@ -325,7 +339,7 @@ describe('All features full Test Suite', () => {
       cy
         .get(' .cdk-overlay-pane')
         .find('[class = "fd-popover__popper"]')
-        .then((input) => cy.get(input).should('be.visible').get(input).find('ul > li').get('.delete_menu_item').realClick())
+        .then((input) => cy.get(input).find('ul > li').get('.delete_menu_item').click({force: true}))
     )
 
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
@@ -345,8 +359,8 @@ describe('All features full Test Suite', () => {
     cy.get('[class = "gigya-input-submit"]').eq(8).click()
   }
 
-  function validateChanges(domainName) {
-    navigateToChosenSite(domainName)
+  function validateChanges(domainName, childSite) {
+    navigateToChosenSite(domainName, childSite)
     //Copy Web Sdk Testing use Case
     //  - Copy Schema
     //  - Copy Screen Sets
