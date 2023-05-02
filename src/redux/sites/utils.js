@@ -158,7 +158,7 @@ const updateProgressIndicatorValue = (newValue, dispatch, setProgressIndicatorVa
 }
 
 const calculateProgressIncrement = (okResponses) => {
-  return 80 / (okResponses.length !== 0 ? okResponses.length : 1)
+  return 40 / (okResponses.length !== 0 ? okResponses.length : 1)
 }
 
 const getCopyConfigurationPromises = (state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue) => {

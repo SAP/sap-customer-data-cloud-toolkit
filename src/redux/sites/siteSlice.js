@@ -157,10 +157,19 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     })
     progressIndicatorValue = 20
     utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+
     const okResponses = utils.getOkResponses(responses)
-    const copyConfigurationPromises = utils.getCopyConfigurationPromises(state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
-    const copyConfigurationResponses = await Promise.all(copyConfigurationPromises)
-    return utils.buildSitesCreationFulfilledResponse(responses, copyConfigurationResponses)
+
+    const parentSitesOkResponses = okResponses.filter((response) => response.isChildSite === false)
+    const childSitesOkResponses = okResponses.filter((response) => response.isChildSite === true)
+
+    const parentsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, parentSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const parentsCopyConfigurationResponses = await Promise.all(parentsCopyConfigurationPromises)
+
+    const childsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, childSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const childsCopyConfigurationResponses = await Promise.all(childsCopyConfigurationPromises)
+
+    return utils.buildSitesCreationFulfilledResponse(responses, [parentsCopyConfigurationResponses.flat(), childsCopyConfigurationResponses.flat()])
   } catch (error) {
     return rejectWithValue({ responses: getErrorAsArray(error) })
   }
