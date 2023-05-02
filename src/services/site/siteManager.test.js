@@ -11,31 +11,34 @@ describe('Site manager async test suite', () => {
 
   const siteManager = new SiteManager(credentials)
 
-  afterEach(() => {
-    jest.clearAllMocks()
+  beforeEach(() => {
+    jest.restoreAllMocks()
   })
 
   test('create site successfully - single parent', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
-    axios.mockResolvedValue(mockedResponse)
+    axios.mockResolvedValueOnce(mockedResponse).mockResolvedValueOnce(mockedResponse)
 
     const request = TestData.createSingleParentRequest()
 
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
+    expect(spy).toHaveBeenCalled()
     verifyAllResponsesAreOk(response)
   })
+
   test('create site successfully - single parent - rate limit', async () => {
-    let spy = await jest.spyOn(client, 'wait')
+    const spy = await jest.spyOn(client, 'wait')
 
     const mockedResponse = { data: TestData.expectedGigyaResponseOk }
-    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit }).mockResolvedValueOnce(mockedResponse)
+    axios.mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit }).mockResolvedValueOnce(mockedResponse).mockResolvedValueOnce(mockedResponse)
 
     const request = TestData.createSingleParentRequest()
 
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(1)
@@ -44,25 +47,33 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - parent with one child', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithOneChildRequest()
-    let response = await siteManager.create(request)
+    const response = await siteManager.create(request)
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(2)
+    expect(spy).toHaveBeenCalledTimes(2)
     verifyAllResponsesAreOk(response)
   })
-  test('create site successfully - parent with one child - rate limit', async () => {
-    let spy = await jest.spyOn(client, 'wait')
 
+  test('create site successfully - parent with one child - rate limit', async () => {
+    const spy = await jest.spyOn(client, 'wait')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
     const request = TestData.createParentWithOneChildRequest()
@@ -76,30 +87,32 @@ describe('Site manager async test suite', () => {
 
   // In this test case, it is assumed that the rate limit error continues until reaching the max number of attempts and making rollback impossible.
   test('create site unsuccessfully - rate limit retries excedeed', async () => {
-    let spy = await jest.spyOn(client, 'wait')
+    const spy = await jest.spyOn(client, 'wait')
+    const mockedResponse = { data: TestData.expectedGigyaErrorApiRateLimit }
 
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -116,10 +129,15 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - parent with two children', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
@@ -128,16 +146,21 @@ describe('Site manager async test suite', () => {
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(3)
+    expect(spy).toHaveBeenCalledTimes(3)
     verifyAllResponsesAreOk(response)
   })
 
   test('create site successfully - parent with two children - rate limit', async () => {
     let spy = jest.spyOn(client, 'wait')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
 
@@ -151,13 +174,21 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site successfully - two parent with two children', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
@@ -168,21 +199,29 @@ describe('Site manager async test suite', () => {
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(response.length).toEqual(6)
+    expect(spy).toHaveBeenCalledTimes(6)
     verifyAllResponsesAreOk(response)
   })
 
   test('create site successfully - two parent with two children - rate limit', async () => {
-    let spy = jest.spyOn(client, 'wait')
+    const spy = jest.spyOn(client, 'wait')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
 
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
@@ -199,6 +238,7 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - error on parent', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     axios.mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
 
     const request = TestData.createParentWithOneChildRequest()
@@ -208,12 +248,17 @@ describe('Site manager async test suite', () => {
     expect(response.length).toEqual(1)
     expectResponseIsNotOk(response[0], TestData.expectedGigyaResponseNoBaseDomain, false, TestData.Endpoints.SITE_CREATE)
     expect(response[0].apiKey).toBeUndefined()
+    expect(spy).toHaveBeenCalledTimes(0)
   })
 
   test('create site unsuccessfully - different data centers', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
@@ -229,14 +274,18 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[0], true)
     expectResponseIsNotOk(response[1], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[1].apiKey).toBeDefined()
+    expect(spy).toHaveBeenCalledTimes(2)
   })
 
   test('create site unsuccessfully - different data centers - rate limit', async () => {
-    let spy = jest.spyOn(client, 'wait')
+    const spy = jest.spyOn(client, 'wait')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaErrorApiRateLimit })
@@ -259,11 +308,17 @@ describe('Site manager async test suite', () => {
   })
 
   test('create site unsuccessfully - invalid data centers on 2nd child', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -277,18 +332,27 @@ describe('Site manager async test suite', () => {
     expect(response.length).toEqual(3)
     expectResponseIsOk(response[0], true)
     expectResponseIsOk(response[1], true)
-    expectResponseIsNotOk(response[2], TestData.expectedGigyaResponseInvalidDataCenter, false, TestData.Endpoints.SITE_CREATE)
-    expect(response[2].apiKey).toBeUndefined()
+    expectResponseIsNotOk(response[2], TestData.expectedGigyaResponseInvalidDataCenter, false, TestData.Endpoints.SITE_CONFIG)
+    expect(response[2].apiKey).toBeDefined()
+    expect(spy).toHaveBeenCalledTimes(3)
   })
 
   test('create site unsuccessfully - error creating 2nd hierarchy', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
@@ -320,16 +384,25 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[4], true)
     expectResponseIsNotOk(response[5], ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter, true, TestData.Endpoints.SITE_CONFIG)
     expect(response[5].apiKey).toBeDefined()
+    expect(spy).toHaveBeenCalledTimes(6)
   })
 
   test('create site unsuccessfully - error creating 1st hierarchy', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
+    const mockedResponse = { data: TestData.expectedGigyaResponseOk }
     axios
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
+      .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseWithDifferentDataCenter })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
@@ -361,10 +434,13 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[4], true)
     expectResponseIsOk(response[5], true)
     expect(response[1].apiKey).toBeDefined()
+    expect(spy).toHaveBeenCalledTimes(6)
   })
 
   test('create site unsuccessfully - error on rollback', async () => {
+    const spy = await jest.spyOn(siteManager.siteMigrator, 'migrateConsentFlow')
     axios
+      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseNoBaseDomain })
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
@@ -379,6 +455,7 @@ describe('Site manager async test suite', () => {
     expectResponseIsOk(response[0], false)
     expectResponseIsNotOk(response[1], TestData.expectedGigyaResponseNoBaseDomain, false, TestData.Endpoints.SITE_CREATE)
     expect(response[1].apiKey).toBeUndefined()
+    expect(spy).toHaveBeenCalledTimes(1)
   })
 
   test('delete single site with site manager', async () => {

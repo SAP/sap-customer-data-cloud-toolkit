@@ -36,7 +36,12 @@ module.exports = defineConfig({
       }
     },
   },
-
+  "retries": { // Default is 0
+    // Configure retry attempts for `cypress run`.
+    "runMode": 1,
+    // Configure retry attempts for `cypress open`
+    "openMode": 0
+  },
   component: {
     setupNodeEvents(on, config) {
       require('@bahmutov/cypress-code-coverage/plugin')(on, config)

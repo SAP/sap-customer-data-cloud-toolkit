@@ -104,7 +104,6 @@ class Info {
       if (!Schema.hasProfileSchema(response)) {
         schemaOptions.removeProfileSchema(info)
       }
-      //if (!response.subscriptionsSchema || Object.keys(response.subscriptionsSchema.fields).length === 0) {
       if (!Schema.hasSubscriptionsSchema(response)) {
         schemaOptions.removeSubscriptionsSchema(info)
       }

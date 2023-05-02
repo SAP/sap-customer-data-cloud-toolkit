@@ -80,9 +80,10 @@ const styles = {
     right: 0,
     margin: 0,
   },
-  busyIndicatorStyle: {
-    width: '100%',
-    padding: '100px 0',
+  progressIndicatorStyle: {
+    width: '98%',
+    position: 'relative',
+    margin: 'var(--_ui5_card_header_padding)',
   },
   errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,

@@ -1,4 +1,7 @@
 import { generateUUID } from '../../utils/generateUUID'
+import i18n from '../../i18n'
+import ConfigManager from '../../services/copyConfig/configManager'
+import { Tracker } from '../../tracker/tracker'
 
 const DATA_CENTER_PLACEHOLDER = '{{dataCenter}}'
 const BASE_DOMAIN_PLACEHOLDER = '{{baseDomain}}'
@@ -39,10 +42,10 @@ const getPartnerId = (hash) => {
 
 const getSiteById = (sites, tempId) => sites.filter((site) => site.tempId === tempId)[0]
 
-const addRequiredManualRemovalInformation = (state, action, selectSiteById) => {
-  if (action.payload) {
-    state.sitesToDeleteManually = action.payload.filter(requiredManualRemovalResponseFilter).map((siteToDeleteManually) => {
-      return siteToDeleteManuallyMapper(siteToDeleteManually, state, selectSiteById)
+const addRequiredManualRemovalInformation = (state, responses) => {
+  if (responses) {
+    state.sitesToDeleteManually = responses.filter(requiredManualRemovalResponseFilter).map((siteToDeleteManually) => {
+      return siteToDeleteManuallyMapper(siteToDeleteManually, state.sites)
     })
   }
 }
@@ -54,8 +57,8 @@ const requiredManualRemovalResponseFilter = (response) => {
   )
 }
 
-const siteToDeleteManuallyMapper = (siteToDeleteManually, state, selectSiteById) => {
-  const siteToDeleteBaseDomain = selectSiteById({ sites: state }, siteToDeleteManually.tempId).baseDomain
+const siteToDeleteManuallyMapper = (siteToDeleteManually, sites) => {
+  const siteToDeleteBaseDomain = selectSiteById(sites, siteToDeleteManually.tempId).baseDomain
   siteToDeleteManually = {
     baseDomain: siteToDeleteBaseDomain,
     siteId: siteToDeleteManually.siteID,
@@ -64,11 +67,143 @@ const siteToDeleteManuallyMapper = (siteToDeleteManually, state, selectSiteById)
   return siteToDeleteManually
 }
 
-const errorMapper = (error, state, selectSiteById) => {
-  error = { ...error, site: { ...selectSiteById({ sites: state }, error.tempId) } }
+const errorMapper = (error, sites) => {
+  error = { ...error, site: { ...selectSiteById(sites, error.tempId) } }
   delete error.tempId
   delete error.site.childSites
   return error
 }
 
-export { getNewSite, getSiteFromStructure, getSiteById, getNewSiteChild, addRequiredManualRemovalInformation, getPartnerId, errorMapper }
+const getCreationSuccessMessage = () => {
+  return {
+    errorMessage: i18n.t('SITE_DEPLOYER_COMPONENT.SUCCESS_WITH_COPY_CONFIG_ERRORS'),
+    severity: 'Success',
+  }
+}
+
+const selectSiteById = (sites, tempId) => {
+  for (const parentSite of sites) {
+    if (parentSite.tempId === tempId) {
+      return parentSite
+    }
+    if (parentSite.childSites && parentSite.childSites.length) {
+      for (const childSite of parentSite.childSites) {
+        if (childSite.tempId === tempId) {
+          return childSite
+        }
+      }
+    }
+  }
+
+  return undefined
+}
+
+const addSiteDomainToCopyConfigError = (copyConfigErrors, siteResponses, sites) => {
+  for (const copyConfigError of copyConfigErrors) {
+    const tempId = siteResponses.filter((siteResponse) => siteResponse.apiKey === copyConfigError.context.targetApiKey)[0].tempId
+    const siteDomain = selectSiteById(sites, tempId).baseDomain
+    copyConfigError.errorMessage = `${siteDomain} - ${copyConfigError.errorMessage}`
+  }
+}
+
+const getResponseErrors = (responses) => {
+  return responses.filter(({ errorCode }) => errorCode !== 0)
+}
+
+const getOkResponses = (responses) => {
+  return responses.filter(({ errorCode }) => errorCode === 0)
+}
+
+const isArrayEmpty = (array) => {
+  return !array.length
+}
+
+const finalizeSitesCreation = (state) => {
+  state.showSuccessDialog = true
+  state.sites = []
+  Tracker.reportUsage()
+}
+
+const processSuccessSitesCreation = (state, responses, copyConfigurationResponses) => {
+  if (!isArrayEmpty(copyConfigurationResponses)) {
+    const copyConfigErrors = getResponseErrors(copyConfigurationResponses)
+    if (!isArrayEmpty(copyConfigErrors)) {
+      processCopyConfigErrors(state, copyConfigErrors, responses)
+    } else {
+      finalizeSitesCreation(state)
+    }
+  } else {
+    finalizeSitesCreation(state)
+  }
+}
+
+const processCopyConfigErrors = (state, copyConfigErrors, responses) => {
+  addSiteDomainToCopyConfigError(copyConfigErrors, responses, state.sites)
+  state.errors = [getCreationSuccessMessage(), ...copyConfigErrors]
+}
+
+const processSitesCreationErrors = (state, errors, responses) => {
+  state.errors = errors.map((error) => {
+    return errorMapper(error, state.sites)
+  })
+  addRequiredManualRemovalInformation(state, responses)
+}
+
+const generateCredentialsObject = (state) => {
+  return { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+}
+
+const updateProgressIndicatorValue = (newValue, dispatch, setProgressIndicatorValue) => {
+  dispatch(setProgressIndicatorValue(newValue))
+}
+
+const calculateProgressIncrement = (okResponses) => {
+  return 80 / (okResponses.length !== 0 ? okResponses.length : 1)
+}
+
+const getCopyConfigurationPromises = (state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue) => {
+  const copyConfigurationPromises = []
+  const credentials = generateCredentialsObject(state)
+  const sitesConfigurations = state.siteDeployerCopyConfiguration.sitesConfigurations
+  const progressIncrement = calculateProgressIncrement(okResponses)
+  okResponses.forEach((okResponse) => {
+    const siteConfiguration = sitesConfigurations.filter((siteConfiguration) => siteConfiguration.siteId === okResponse.tempId)[0]
+    if (siteConfiguration) {
+      copyConfigurationPromises.push(
+        new ConfigManager(credentials, siteConfiguration.sourceSites[0].apiKey).copy([okResponse.apiKey], siteConfiguration.configurations).then((copyConfigurationResponse) => {
+          progressIndicatorValue += progressIncrement
+          updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+          return copyConfigurationResponse
+        })
+      )
+    }
+  })
+  return copyConfigurationPromises
+}
+
+const buildSitesCreationFulfilledResponse = (responses, copyConfigurationResponses) => {
+  return { responses, copyConfigurationResponses: copyConfigurationResponses.flat() }
+}
+
+export {
+  getNewSite,
+  getSiteFromStructure,
+  getSiteById,
+  getNewSiteChild,
+  addRequiredManualRemovalInformation,
+  getPartnerId,
+  errorMapper,
+  getCreationSuccessMessage,
+  addSiteDomainToCopyConfigError,
+  selectSiteById,
+  getResponseErrors,
+  isArrayEmpty,
+  processSuccessSitesCreation,
+  processSitesCreationErrors,
+  getOkResponses,
+  generateCredentialsObject,
+  updateProgressIndicatorValue,
+  calculateProgressIncrement,
+  getCopyConfigurationPromises,
+  buildSitesCreationFulfilledResponse,
+}

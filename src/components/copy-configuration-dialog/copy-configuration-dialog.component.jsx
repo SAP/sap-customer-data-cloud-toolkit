@@ -77,8 +77,10 @@ const CopyConfigurationDialog = ({ t }) => {
   }, [dispatch, sourceSiteAdded]) //eslint-disable-line
 
   const onSaveHandler = () => {
-    setSaving(true)
-    dispatch(setIsCopyConfigurationDialogOpen(false))
+    if (!disableSaveButton()) {
+      setSaving(true)
+      dispatch(setIsCopyConfigurationDialogOpen(false))
+    }
   }
 
   const onSelectAllCheckboxChangeHandler = (event) => {
