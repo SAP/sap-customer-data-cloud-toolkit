@@ -49,8 +49,9 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#successPopup').shadow().find('#ui5-popup-header').should('have.text', 'Success')
-    utils.clickPopUpOkButton('#successPopup')
+    cy.wait(1500)
     cy.get('@windowOpenStub').should('be.called')
+    utils.clickPopUpOkButton('#successPopup')
   })
 
   it('should show credentials error dialog on export', () => {

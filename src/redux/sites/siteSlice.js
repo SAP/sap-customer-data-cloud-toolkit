@@ -97,9 +97,7 @@ export const siteSlice = createSlice({
     setIsLoading: (state, action) => {
       state.isLoading = action.payload
       if (!state.isLoading && state.showSuccessDialog) {
-        setTimeout(() => {
-          Tracker.reportUsage()
-        }, 1000)
+        Tracker.reportUsage()
       }
     },
   },
