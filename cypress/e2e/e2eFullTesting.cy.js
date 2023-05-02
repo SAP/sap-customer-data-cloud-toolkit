@@ -81,12 +81,8 @@ describe('All features full Test Suite', () => {
     utils.getDataCenters('US', 'EU', 'AU')
     utils.getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '6')
-    cy.get('ui5-table-row')
-      .its('length')
-      .then((n) => {
-        cy.log(n)
-        utils.deleteChildSite(n)
-      })
+    utils.deleteChildSite(6)
+    utils.deleteChildSite(4)
 
     utils.getSaveButton().click()
 

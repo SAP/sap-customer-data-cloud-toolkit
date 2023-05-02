@@ -77,11 +77,10 @@ export function getBaseDomain(baseDomain, timeout) {
   return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
 }
 
-export function getDataCenters(chosenDataCenter, removeFirst, removeSecond) {
+export function getDataCenters(chosenDataCenter) {
   cy.get('#cdctools-dataCenter').shadow().find('ui5-icon').realClick()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
-  // cy.get('#cdctools-dataCenter').shadow().find('.ui5-multi-combobox-tokenizer').find(`[text = ${removeSecond}]`).realClick()
   return cy
     .get('#cdctools-dataCenter')
     .shadow()
@@ -99,11 +98,8 @@ export function getSiteStructure(optionNumber, timeout) {
 }
 
 export function deleteChildSite(length) {
-  for (let i = length - 1; i >= 0; i--) {
-    if (i % 2 === 0 && i > 0) {
-      cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).click({ force: true })
-    }
-  }
+  cy.get('ui5-table-row').eq(0).find('ui5-table-cell').eq(4).find('ui5-button').shadow().find('button').click()
+  cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).shadow().find('button').realClick()
 }
 
 export function getCreateButton() {
