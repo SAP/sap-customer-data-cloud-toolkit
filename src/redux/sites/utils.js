@@ -1,7 +1,6 @@
 import { generateUUID } from '../../utils/generateUUID'
 import i18n from '../../i18n'
 import ConfigManager from '../../services/copyConfig/configManager'
-import { Tracker } from '../../tracker/tracker'
 
 const DATA_CENTER_PLACEHOLDER = '{{dataCenter}}'
 const BASE_DOMAIN_PLACEHOLDER = '{{baseDomain}}'
@@ -121,7 +120,6 @@ const isArrayEmpty = (array) => {
 const finalizeSitesCreation = (state) => {
   state.showSuccessDialog = true
   state.sites = []
-  Tracker.reportUsage()
 }
 
 const processSuccessSitesCreation = (state, responses, copyConfigurationResponses) => {
