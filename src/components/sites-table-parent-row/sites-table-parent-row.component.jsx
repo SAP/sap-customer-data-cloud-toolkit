@@ -161,10 +161,10 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         <TableCell className={classes.actionSheetTableCellStyle}>
           <div className={classes.actionSheetOuterDivStyle}>
             <>
-              <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
+              <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`} data-cy="parentRowActionSheetOpener"></Button>
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
-                <Button onClick={onAddChildHandler}>{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
-                <Button onClick={onDeleteParentHandler}>{t('GLOBAL.DELETE')}</Button>
+                <Button onClick={onAddChildHandler} data-cy="createChildSiteAction">{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
+                <Button onClick={onDeleteParentHandler} data-cy="deleteChildSiteAction">{t('GLOBAL.DELETE')}</Button>
               </ActionSheet>
             </>
           </div>
