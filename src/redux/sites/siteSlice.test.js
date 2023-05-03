@@ -219,7 +219,7 @@ describe('Site slice test suite', () => {
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
     expect(newState.progressIndicatorValue).toEqual(100)
-    expect(tracker).toHaveBeenCalled()
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should select a Parent site by id', () => {
@@ -252,5 +252,12 @@ describe('Site slice test suite', () => {
   test('should set isLoading to true', () => {
     const newState = sitesReducer(data.initialState, setIsLoading(true))
     expect(newState.isLoading).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should call Tracker.reportUsage()', () => {
+    data.initialState.showSuccessDialog = true
+    sitesReducer(data.initialState, setIsLoading(false))
+    expect(tracker).toHaveBeenCalled()
   })
 })

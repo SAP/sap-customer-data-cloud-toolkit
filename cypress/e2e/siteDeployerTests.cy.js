@@ -58,8 +58,9 @@ describe('Site Deployer Test Suite', () => {
     const successPopup = cy.get('#successPopup')
     successPopup.should('be.visible')
     successPopup.should('have.text', dataTest.expectedSuccessMessage)
-    utils.clickPopUpOkButton('#successPopup')
+    cy.wait(1500)
     cy.get('@windowOpenStub').should('be.called')
+    utils.clickPopUpOkButton('#successPopup')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {

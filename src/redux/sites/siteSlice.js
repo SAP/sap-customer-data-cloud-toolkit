@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 import { getErrorAsArray } from '../utils'
+import { Tracker } from '../../tracker/tracker'
 
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
@@ -95,6 +96,9 @@ export const siteSlice = createSlice({
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload
+      if (!state.isLoading && state.showSuccessDialog) {
+        Tracker.reportUsage()
+      }
     },
   },
   extraReducers: (builder) => {
@@ -157,10 +161,19 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     })
     progressIndicatorValue = 20
     utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+
     const okResponses = utils.getOkResponses(responses)
-    const copyConfigurationPromises = utils.getCopyConfigurationPromises(state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
-    const copyConfigurationResponses = await Promise.all(copyConfigurationPromises)
-    return utils.buildSitesCreationFulfilledResponse(responses, copyConfigurationResponses)
+
+    const parentSitesOkResponses = okResponses.filter((response) => response.isChildSite === false)
+    const childSitesOkResponses = okResponses.filter((response) => response.isChildSite === true)
+
+    const parentsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, parentSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const parentsCopyConfigurationResponses = await Promise.all(parentsCopyConfigurationPromises)
+
+    const childsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, childSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const childsCopyConfigurationResponses = await Promise.all(childsCopyConfigurationPromises)
+
+    return utils.buildSitesCreationFulfilledResponse(responses, [parentsCopyConfigurationResponses.flat(), childsCopyConfigurationResponses.flat()])
   } catch (error) {
     return rejectWithValue({ responses: getErrorAsArray(error) })
   }
