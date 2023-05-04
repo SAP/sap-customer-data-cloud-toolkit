@@ -10,7 +10,7 @@ import { getPolicyConfig } from '../policies/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 import { getConsentStatementExpectedResponse } from '../consent/dataTest'
-import {channelsExpectedResponse} from "../communication/dataTest";
+import { channelsExpectedResponse } from '../communication/dataTest'
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {
@@ -76,17 +76,18 @@ describe('Info Policy test suite', () => {
     const mockedResponse = getExpectedPolicyResponseExcept(templateNames)
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
+
     const response = await info.get()
 
-    expectedResponse[2].branches.splice(templateIndex, 1)
+    expectedResponse[4].branches.splice(templateIndex, 1)
     expect(response).toEqual(expectedResponse)
   }
 

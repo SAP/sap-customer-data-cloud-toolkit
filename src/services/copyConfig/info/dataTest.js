@@ -45,7 +45,7 @@ export function getInfoExpectedResponse(supports) {
     name: 'communicationTopics',
     value: supports,
   }
-  return [schema, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, consent, communicationTopics]
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

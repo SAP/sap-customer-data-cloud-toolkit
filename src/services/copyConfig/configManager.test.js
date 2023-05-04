@@ -46,14 +46,14 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -85,14 +85,14 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, 'schema', apiKey) })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const err = {
       message: mockedResponse.errorMessage,
       code: mockedResponse.errorCode,
