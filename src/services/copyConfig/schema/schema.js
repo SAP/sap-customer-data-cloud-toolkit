@@ -152,7 +152,7 @@ class Schema {
     let response
     let clonePayload = JSON.parse(JSON.stringify(payload))
     // the field 'required' cannot be copied to a child site together with other fields
-    removePropertyFromObjectCascading(clonePayload.dataSchema, 'required')
+    removePropertyFromObjectCascading(clonePayload.dataSchema.fields, 'required')
     response = await this.set(destinationSite, dataCenter, clonePayload)
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
