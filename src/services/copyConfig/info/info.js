@@ -33,14 +33,14 @@ class Info {
     const response = []
     return Promise.all([
       this.#getSchema(),
+      this.#getConsents(),
+      this.#getCommunicationTopics(),
       this.#getScreenSets(),
       this.#getPolicies(),
       this.#getSocialIdentities(),
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getWebSdk(),
-      this.#getConsents(),
-      this.#getCommunicationTopics(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
