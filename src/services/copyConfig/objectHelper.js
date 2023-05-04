@@ -35,11 +35,20 @@ function deleteProperty(object, propertyPath, property) {
       }
     } else {
       delete pointer[tokens[i]]
-      const idx = propertyPath.search(property)
+      const idx = getPropertyIndex(i, tokens)
       return propertyPath.substring(0, idx + property.length)
     }
   }
   return undefined
+}
+
+function getPropertyIndex(tokenPosition, tokens) {
+  let index = 0
+  for (const token of tokens.slice(0, tokenPosition)) {
+    index += token.length
+    index += 1 // count '.'
+  }
+  return index
 }
 
 function buildPropertiesPath(propertiesPath) {
