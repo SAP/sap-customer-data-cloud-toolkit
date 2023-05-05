@@ -151,26 +151,24 @@ const generateCredentialsObject = (state) => {
   return { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
 }
 
-const updateProgressIndicatorValue = (newValue, dispatch, setProgressIndicatorValue) => {
-  dispatch(setProgressIndicatorValue(newValue))
-}
-
 const calculateProgressIncrement = (okResponses) => {
   return 40 / (okResponses.length !== 0 ? okResponses.length : 1)
 }
 
-const getCopyConfigurationPromises = (state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue) => {
+const getCopyConfigurationPromises = (state, okResponses, dispatch, setProgressIndicatorValue) => {
   const copyConfigurationPromises = []
   const credentials = generateCredentialsObject(state)
   const sitesConfigurations = state.siteDeployerCopyConfiguration.sitesConfigurations
   const progressIncrement = calculateProgressIncrement(okResponses)
+  let newProgressIndicatorValue = state.sites.progressIndicatorValue
+
   okResponses.forEach((okResponse) => {
     const siteConfiguration = sitesConfigurations.filter((siteConfiguration) => siteConfiguration.siteId === okResponse.tempId)[0]
     if (siteConfiguration) {
       copyConfigurationPromises.push(
         new ConfigManager(credentials, siteConfiguration.sourceSites[0].apiKey).copy([okResponse.apiKey], siteConfiguration.configurations).then((copyConfigurationResponse) => {
-          progressIndicatorValue += progressIncrement
-          updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+          newProgressIndicatorValue += progressIncrement
+          dispatch(setProgressIndicatorValue(newProgressIndicatorValue))
           return copyConfigurationResponse
         })
       )
@@ -200,7 +198,6 @@ export {
   processSitesCreationErrors,
   getOkResponses,
   generateCredentialsObject,
-  updateProgressIndicatorValue,
   calculateProgressIncrement,
   getCopyConfigurationPromises,
   buildSitesCreationFulfilledResponse,

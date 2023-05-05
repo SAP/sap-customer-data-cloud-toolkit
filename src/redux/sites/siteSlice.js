@@ -149,8 +149,8 @@ export default siteSlice.reducer
 export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
-    let progressIndicatorValue = 10
-    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    dispatch(setProgressIndicatorValue(10))
+
     const responses = await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: utils.getPartnerId(window.location.hash),
@@ -159,18 +159,18 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     }).create({
       sites,
     })
-    progressIndicatorValue = 20
-    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+
+    dispatch(setProgressIndicatorValue(20))
 
     const okResponses = utils.getOkResponses(responses)
 
     const parentSitesOkResponses = okResponses.filter((response) => response.isChildSite === false)
     const childSitesOkResponses = okResponses.filter((response) => response.isChildSite === true)
 
-    const parentsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, parentSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const parentsCopyConfigurationPromises = utils.getCopyConfigurationPromises(getState(), parentSitesOkResponses, dispatch, setProgressIndicatorValue)
     const parentsCopyConfigurationResponses = await Promise.all(parentsCopyConfigurationPromises)
 
-    const childsCopyConfigurationPromises = utils.getCopyConfigurationPromises(state, childSitesOkResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    const childsCopyConfigurationPromises = utils.getCopyConfigurationPromises(getState(), childSitesOkResponses, dispatch, setProgressIndicatorValue)
     const childsCopyConfigurationResponses = await Promise.all(childsCopyConfigurationPromises)
 
     return utils.buildSitesCreationFulfilledResponse(responses, [parentsCopyConfigurationResponses.flat(), childsCopyConfigurationResponses.flat()])
