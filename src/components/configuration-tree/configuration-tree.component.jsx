@@ -4,11 +4,10 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import lodash from 'lodash'
 
-import { setConfigurationStatus } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
-
 import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import { getHighestSeverity } from './utils'
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
 import './configuration-tree.component.css'
@@ -16,7 +15,7 @@ import styles from './configuration-tree.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
-const ConfigurationTree = ({ id, name, value, error, branches, tooltip, t }) => {
+const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
@@ -26,7 +25,11 @@ const ConfigurationTree = ({ id, name, value, error, branches, tooltip, t }) => 
   const onCheckBoxStateChangeHandler = (event) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
-    dispatch(setConfigurationStatus({ checkBoxId, value }))
+    if (siteId) {
+      dispatch(setConfigurationStatus({ siteId, checkBoxId, value }))
+    } else {
+      dispatch(setConfigurationStatus({ checkBoxId, value }))
+    }
   }
 
   const onMouseOverHandler = (event) => {
@@ -73,7 +76,7 @@ const ConfigurationTree = ({ id, name, value, error, branches, tooltip, t }) => 
             ) : (
               ''
             )}
-            {treeNode.error ? <MessagePopoverButton message={treeNode.error} /> : ''}
+            {treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''}
           </FlexBox>
         }
       >

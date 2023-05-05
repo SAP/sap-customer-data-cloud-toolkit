@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-import { getApiKey } from '../utils'
+import { getApiKey, getErrorAsArray } from '../utils'
 import SmsManager from '../../services/sms/smsManager'
 
 import { errorConditions } from '../errorConditions'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
+import { Tracker } from '../../tracker/tracker'
 
 const SMS_SLICE_STATE_NAME = 'sms'
 const EXPORT_SMS_TEMPLATES_FILE_NAME = 'sms-templates'
@@ -43,6 +44,7 @@ export const smsSlice = createSlice({
     builder.addCase(getSmsTemplatesArrayBuffer.fulfilled, (state, action) => {
       state.isLoading = false
       state.exportFile = new File([action.payload], EXPORT_SMS_TEMPLATES_FILE_NAME, { type: ZIP_FILE_MIME_TYPE })
+      Tracker.reportUsage()
     })
     builder.addCase(getSmsTemplatesArrayBuffer.rejected, (state, action) => {
       state.isLoading = false
@@ -60,6 +62,7 @@ export const smsSlice = createSlice({
         state.showSuccessDialog = false
       } else {
         state.showSuccessDialog = true
+        Tracker.reportUsage()
       }
       state.isImportPopupOpen = false
     })
@@ -80,7 +83,7 @@ export const getSmsTemplatesArrayBuffer = createAsyncThunk(EXPORT_SMS_TEMPLATES_
       secret: state.credentials.credentials.secretKey,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -92,7 +95,7 @@ export const sendSmsTemplatesArrayBuffer = createAsyncThunk(IMPORT_SMS_TEMPLATES
       secret: state.credentials.credentials.secretKey,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 

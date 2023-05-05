@@ -31,15 +31,22 @@ import {
   duplicatedWarningMessage,
   initialStateWithApiCardError,
 } from './dataTest'
+import { Tracker } from '../../tracker/tracker'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
+  let tracker
+
+  beforeEach(() => {
+    tracker = jest.spyOn(Tracker, 'reportUsage')
+  })
+
   test('should return initial state', () => {
     expect(copyConfigurationExtendedReducer(undefined, { type: undefined })).toEqual(initialState)
   })
 
   test('should add a target site', () => {
     const newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
-    expect(newState.targetSites[0]).toEqual(siteConfigResponse)
+    expect(newState.targetSites[0]).toEqual(siteConfigResponse.targetSite)
     expect(newState.apiCardError).toBeUndefined()
   })
 
@@ -47,7 +54,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     let newState = copyConfigurationExtendedReducer(initialState, addTargetSite(siteConfigResponse))
     newState = copyConfigurationExtendedReducer(newState, addTargetSite(siteConfigResponse))
     expect(newState.targetSites.length).toEqual(1)
-    expect(newState.targetSites[0]).toEqual(siteConfigResponse)
+    expect(newState.targetSites[0]).toEqual(siteConfigResponse.targetSite)
     expect(newState.apiCardError.errorMessage).toEqual(duplicatedWarningMessage)
   })
 
@@ -99,6 +106,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.configurations.length).toEqual(0)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getConfigurations is fulfilled', () => {
@@ -106,6 +114,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.configurations).toEqual(configurationsMockedResponse)
     expect(newState.isLoading).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getConfigurations is rejected', () => {
@@ -113,6 +122,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when setConfigurations is pending', () => {
@@ -121,6 +131,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.configurations.length).toEqual(0)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when setConfigurations is fulfilled with success', () => {
@@ -128,6 +139,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(true)
+    expect(tracker).toHaveBeenCalled()
   })
 
   test('should update state when setConfigurations is fulfilled with errors', () => {
@@ -137,6 +149,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.showSuccessMessage).toEqual(false)
     expect(newState.configurations[0].error).toBeDefined()
     expect(newState.targetSites[0].error).toBeDefined()
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when setConfigurations is rejected', () => {
@@ -145,6 +158,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getCurrentSiteInformation is fulfilled', () => {
@@ -152,22 +166,25 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.currentSiteInformation.baseDomain).toEqual(siteConfigResponse.baseDomain)
     expect(newState.isLoading).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getCurrentSiteInformation is rejected', () => {
     const action = getCurrentSiteInformation.rejected('', '', '', mockedErrorsResponse)
     const newState = copyConfigurationExtendedReducer(initialState, action)
-    expect(newState.errors).toEqual([mockedErrorsResponse])
+    expect(newState.errors).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getTargetSiteInformation is fulfilled', () => {
-    const action = getTargetSiteInformation.fulfilled(siteConfigResponse)
+    const action = getTargetSiteInformation.fulfilled(siteConfigResponse.targetSite)
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.targetSites[0]).toEqual(expectedTargetSite)
     expect(newState.isLoading).toEqual(false)
     expect(newState.apiCardError).toBeUndefined()
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when getTargetSiteInformation is rejected', () => {
@@ -176,5 +193,6 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.apiCardError).toEqual(mockedErrorsResponse)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
   })
 })

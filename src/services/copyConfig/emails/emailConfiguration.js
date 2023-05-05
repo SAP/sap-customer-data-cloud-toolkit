@@ -37,7 +37,7 @@ class EmailConfiguration {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#copyEmailTemplates(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
+      response = await this.#copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options)
     }
     stringToJson(response, 'context')
     return Array.isArray(response) ? response : [response]
@@ -47,22 +47,30 @@ class EmailConfiguration {
     return this.#email
   }
 
-  async #copyEmailTemplates(destinationSite, dataCenter, response, options) {
+  async #copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
     for (const templateInfo of options.getOptions().branches) {
       if (templateInfo.value) {
-        promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, dataCenter, response))
+        promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, destinationSiteConfiguration, response))
       }
     }
     return Promise.all(promises)
   }
 
-  #copyEmailTemplate(destinationSite, templateName, dataCenter, response) {
+  #copyEmailTemplate(destinationSite, templateName, destinationSiteConfiguration, response) {
     const emailTranslator = new EmailTemplateNameTranslator()
     const internalTemplateName = emailTranslator.translateExternalName(templateName)
     const templatePath = this.#emailTemplatesInternalPath.get(internalTemplateName)
     const template = this.#getTemplate(response, templatePath)
-    return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, templatePath, template, dataCenter)
+    if (internalTemplateName === 'twoFactorAuth' && this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
+      // cannot override providers on child site
+      delete template.providers
+    }
+    return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, templatePath, template, destinationSiteConfiguration.dataCenter)
+  }
+
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
   #getTemplate(response, templatePath) {

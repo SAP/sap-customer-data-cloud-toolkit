@@ -19,16 +19,36 @@ export function removePropertyFromObjectCascading(object, property) {
 function deleteProperty(object, propertyPath, property) {
   let pointer = object
   const tokens = propertyPath.split('.')
-  for (const token of tokens) {
-    if (token !== property) {
-      pointer = pointer[token]
+  let objectName
+  for (let i = 0; i < tokens.length; ++i) {
+    if (!objectName) {
+      objectName = tokens[i]
+    }
+    if (objectName !== property) {
+      if (pointer[objectName]) {
+        pointer = pointer[objectName]
+        objectName = undefined
+      } else {
+        if (i + 1 < tokens.length) {
+          objectName += `.${tokens[i + 1]}`
+        }
+      }
     } else {
-      delete pointer[token]
-      const idx = propertyPath.search(property)
+      delete pointer[tokens[i]]
+      const idx = getPropertyIndex(i, tokens)
       return propertyPath.substring(0, idx + property.length)
     }
   }
   return undefined
+}
+
+function getPropertyIndex(tokenPosition, tokens) {
+  let index = 0
+  for (const token of tokens.slice(0, tokenPosition)) {
+    index += token.length
+    index += 1 // count '.'
+  }
+  return index
 }
 
 function buildPropertiesPath(propertiesPath) {
@@ -52,12 +72,12 @@ function buildPropertiesPath(propertiesPath) {
 export function stringToJson(obj, property) {
   if (Array.isArray(obj)) {
     for (const instance of obj) {
-      if(typeof instance[property] === 'string') {
+      if (typeof instance[property] === 'string') {
         instance[property] = JSON.parse(instance[property])
       }
     }
   } else {
-    if(typeof obj[property] === 'string') {
+    if (typeof obj[property] === 'string') {
       obj[property] = JSON.parse(obj[property])
     }
   }

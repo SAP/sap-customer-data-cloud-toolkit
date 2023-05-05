@@ -19,13 +19,22 @@ import sitesReducer, {
   setShowSuccessDialog,
   selectSiteById,
   clearSitesToDeleteManually,
+  setProgressIndicatorValue,
+  setIsLoading,
 } from './siteSlice'
 
-import { getPartnerId } from './utils'
+import { getPartnerId, getCreationSuccessMessage } from './utils'
 
 import * as data from './dataTest'
+import { Tracker } from '../../tracker/tracker'
 
 describe('Site slice test suite', () => {
+  let tracker
+
+  beforeEach(() => {
+    tracker = jest.spyOn(Tracker, 'reportUsage')
+  })
+
   test('should return initial state', () => {
     expect(sitesReducer(undefined, { type: undefined })).toEqual(data.initialState)
   })
@@ -154,16 +163,22 @@ describe('Site slice test suite', () => {
     expect(getPartnerId(hash)).toEqual(expectedPartnerId)
   })
 
-  test('should set isLoading to true while createSites is pending', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.pending.type })
+  test('should update state while createSites is pending', () => {
+    const action = createSites.pending
+    const newState = sitesReducer(data.initialState, action)
     expect(newState.isLoading).toEqual(true)
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(newState.progressIndicatorValue).toEqual(0)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
-  test('should set isLoading to false when createSites is rejected', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.rejected.type })
-    expect(newState.isLoading).toEqual(false)
+  test('should update state when createSites is rejected', () => {
+    const action = createSites.rejected('', '', '', { responses: [data.dummyError] })
+    const newState = sitesReducer(data.initialState, action)
+    expect(newState.errors.length).toEqual(1)
+    expect(newState.errors[0]).toEqual(data.dummyError)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should clear errors', () => {
@@ -176,33 +191,49 @@ describe('Site slice test suite', () => {
     expect(newState.showSuccessDialog).toEqual(true)
   })
 
-  test('should have fulfilled createSites without errors', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [] })
-    expect(newState.isLoading).toEqual(false)
-    expect(newState.sites.length).toEqual(0)
-    expect(newState.showSuccessDialog).toEqual(true)
-  })
-
   test('should have fulfilled createSites with errors', () => {
-    const newState = sitesReducer(data.initialState, { type: createSites.fulfilled.type, payload: [{ errorCode: 400 }] })
-    expect(newState.isLoading).toEqual(false)
+    const action = createSites.fulfilled({ responses: [data.dummyError], copyConfigurationResponses: [] })
+    const newState = sitesReducer(data.initialState, action)
     expect(newState.sites.length).toEqual(0)
     expect(newState.errors.length).toEqual(1)
+    expect(newState.errors[0].errorCode).toEqual(data.dummyError.errorCode)
     expect(newState.showSuccessDialog).toEqual(false)
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should have fulfilled createSites with copyConfigurationResponses errors', () => {
+    const action = createSites.fulfilled({ responses: [data.dummySiteResponse], copyConfigurationResponses: [data.dummyCopyConfigurationResponse] })
+    const newState = sitesReducer(data.stateWithParentWithNoChild, action)
+    expect(newState.sites.length).toEqual(1)
+    expect(newState.errors.length).toEqual(2)
+    expect(newState.errors[0].errorMessage).toEqual(getCreationSuccessMessage().errorMessage)
+    expect(newState.errors[1].errorCode).toEqual(data.dummyError.errorCode)
+    expect(newState.showSuccessDialog).toEqual(false)
+    expect(newState.sitesToDeleteManually).toEqual([])
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should have fulfilled createSites without errors', () => {
+    const action = createSites.fulfilled({ responses: [], copyConfigurationResponses: [] })
+    const newState = sitesReducer(data.initialState, action)
+    expect(newState.sites.length).toEqual(0)
+    expect(newState.showSuccessDialog).toEqual(true)
+    expect(newState.progressIndicatorValue).toEqual(100)
+    expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should select a Parent site by id', () => {
-    const parentSite = selectSiteById({ sites: data.stateWithParentWithChild }, '1234')
+    const parentSite = selectSiteById({ sites: data.stateWithParentWithChild.sites }, '1234')
     expect(parentSite).not.toBe(undefined)
   })
 
   test('should select a Child site by id', () => {
-    const childSite = selectSiteById({ sites: data.stateWithParentWithChild }, '5678')
+    const childSite = selectSiteById({ sites: data.stateWithParentWithChild.sites }, '5678')
     expect(childSite).not.toBe(undefined)
   })
 
   test('should return undefiend on getting site by unexisting id', () => {
-    const site = selectSiteById({ sites: data.stateWithParentWithChild }, 'abc')
+    const site = selectSiteById({ sites: data.stateWithParentWithChild.sites }, 'abc')
     expect(site).toBe(undefined)
   })
 
@@ -210,5 +241,23 @@ describe('Site slice test suite', () => {
     expect(data.stateWithSitesToRemoveManually.sitesToDeleteManually).not.toEqual([])
     const newState = sitesReducer(data.stateWithSitesToRemoveManually, clearSitesToDeleteManually())
     expect(newState.sitesToDeleteManually).toEqual([])
+  })
+
+  test('should set progress indicator value', () => {
+    const testProgressIndicatorValue = 50
+    const newState = sitesReducer(data.initialState, setProgressIndicatorValue(testProgressIndicatorValue))
+    expect(newState.progressIndicatorValue).toEqual(testProgressIndicatorValue)
+  })
+
+  test('should set isLoading to true', () => {
+    const newState = sitesReducer(data.initialState, setIsLoading(true))
+    expect(newState.isLoading).toEqual(true)
+    expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should call Tracker.reportUsage()', () => {
+    data.initialState.showSuccessDialog = true
+    sitesReducer(data.initialState, setIsLoading(false))
+    expect(tracker).toHaveBeenCalled()
   })
 })

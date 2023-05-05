@@ -9,6 +9,10 @@ export const cleanTreeVerticalScrolls = () => {
 }
 
 export const areConfigurationsFilled = (configurations) => {
+  if (!configurations) {
+    return false
+  }
+
   for (const configuration of configurations) {
     if (configuration.value === true) {
       return true
@@ -21,30 +25,4 @@ export const areConfigurationsFilled = (configurations) => {
     }
   }
   return false
-}
-
-const targetSiteContainsString = (string, availableTargetSite) => {
-  return (
-    availableTargetSite.baseDomain.includes(string) ||
-    availableTargetSite.apiKey.includes(string) ||
-    availableTargetSite.partnerName.includes(string) ||
-    availableTargetSite.partnerId.toString().includes(string)
-  )
-}
-
-export const filterTargetSites = (string, targetSites) => {
-  if (string.length > 2) {
-    const filteredTargetSites = targetSites.filter((targetSite) => targetSiteContainsString(string, targetSite))
-    return filteredTargetSites
-  } else {
-    return []
-  }
-}
-
-export const getTargetSiteByTargetApiKey = (targetApiKey, availableTargetSites) => {
-  return availableTargetSites.filter((availableTargetSite) => availableTargetSite.apiKey === targetApiKey)[0]
-}
-
-export const findStringInAvailableTargetSites = (string, targetSites) => {
-  return targetSites.filter((targetSite) => targetSiteContainsString(string, targetSite)).length !== 0
 }

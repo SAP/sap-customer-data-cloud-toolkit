@@ -54,11 +54,32 @@ export const clearTargetSitesErrors = (targetSites) => {
   })
 }
 
+const mapSpecialCheckboxId = (checkBoxId) => {
+  const COMMUNICATION_PREFIX = 'communication'
+  const COMMUNICATION_CHECKBOX_ID = 'communicationTopics'
+  const CONSENT_PREFIX = 'consent'
+  const CONSENT_CHECKBOX_ID = 'consent'
+  let mappedCheckboxId = checkBoxId
+
+  if (checkBoxId.startsWith(COMMUNICATION_PREFIX)) {
+    mappedCheckboxId = COMMUNICATION_CHECKBOX_ID
+  }
+
+  if (checkBoxId.startsWith(CONSENT_PREFIX)) {
+    mappedCheckboxId = CONSENT_CHECKBOX_ID
+  }
+  return mappedCheckboxId
+}
+
 export const addErrorToConfigurations = (configurations, errors) => {
   for (const error of errors) {
-    const configuration = findConfiguration(configurations, error.context.id)
+    const checkBoxId = mapSpecialCheckboxId(error.context.id)
+    const configuration = findConfiguration(configurations, checkBoxId)
     if (configuration) {
-      configuration.error = error
+      if (!configuration.error) {
+        configuration.error = []
+      }
+      configuration.error.push(error)
     }
   }
   spreadErrors(configurations)
@@ -77,7 +98,7 @@ const spreadErrors = (configurations) => {
   for (const configuration of configurations) {
     const err = getRootErrors(configuration)
     if (err && err.length !== 0) {
-      configuration.error = err
+      configuration.error = err.flat()
     }
   }
 }

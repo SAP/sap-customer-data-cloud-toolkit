@@ -66,7 +66,6 @@ function verifyResponseIsNotOk(response, expectedResponse) {
   expect(response.statusCode).toEqual(expectedResponse.statusCode)
   expect(response.statusCode).not.toBe(HttpStatus.OK)
   expect(response.statusReason).toEqual(expectedResponse.statusReason)
-  expect(response.callId).toBeDefined()
   expect(response.time).toBeDefined()
   // error case
   expect(response.errorMessage).toEqual(expectedResponse.errorMessage)

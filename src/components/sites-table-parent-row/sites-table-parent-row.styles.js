@@ -13,13 +13,17 @@ const styles = {
     width: '100%',
   },
   dataCenterSelectStyle: {
-    width: '100%',
+    width: '50px',
+    minWidth: '100px',
   },
   actionSheetTableCellStyle: {
     textAlign: 'right',
   },
   actionSheetOuterDivStyle: {
     position: 'relative',
+  },
+  addConfigButtonStyle: {
+    width: '70%',
   },
 }
 

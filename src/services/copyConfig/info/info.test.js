@@ -20,8 +20,12 @@ import {
   policyId,
   profileId,
   subscriptionsId,
+  consentId,
+  channelId,
 } from '../dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
+import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest'
+import { channelsExpectedResponse, topicsExpectedResponse } from '../communication/dataTest'
 
 jest.mock('axios')
 
@@ -32,12 +36,16 @@ describe('Info test suite', () => {
   test('get all info successfully', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
 
     const response = await info.get()
     const expectedResponse = getInfoExpectedResponse(false)
@@ -47,6 +55,9 @@ describe('Info test suite', () => {
 
   test('get all info unsuccessfully', async () => {
     axios
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, consentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'screenSet', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, policyId, apiKey) })
@@ -62,13 +73,16 @@ describe('Info test suite', () => {
     const mockedResponse = getExpectedSchemaResponseExcept(['profileSchema'])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
-
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse[0].branches.splice(1, 1) // remove schema.profileSchema
@@ -79,13 +93,16 @@ describe('Info test suite', () => {
     const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
-
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(0, 1) // remove schema
@@ -97,32 +114,37 @@ describe('Info test suite', () => {
     mockedResponse.screenSets = []
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getPolicyConfig })
-
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse.splice(1, 1) // remove screen sets
+    expectedResponse.splice(3, 1) // remove screen sets
     expect(response).toEqual(expectedResponse)
   })
 
   test('get info except social successfully', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
-
       .mockResolvedValueOnce({ data: getSocialsProviders('') })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse.splice(3, 1) // remove social
+    expectedResponse.splice(5, 1) // remove social
     expect(response).toEqual(expectedResponse)
   })
 
@@ -131,16 +153,19 @@ describe('Info test suite', () => {
     delete mockedResponse.templates
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
-
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse.splice(5, 1) // remove smsTemplates
+    expectedResponse.splice(7, 1) // remove smsTemplates
     expect(response).toEqual(expectedResponse)
   })
 
@@ -149,15 +174,67 @@ describe('Info test suite', () => {
     delete mockedResponse.globalConf
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: mockedResponse })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
-    expectedResponse.splice(6, 1) // remove web sdk
+    expectedResponse.splice(8, 1) // remove web sdk
     expect(response).toEqual(expectedResponse)
   })
+
+  test('get info except consent successfully', async () => {
+    await testConsents(getConsentStatementExpectedResponse)
+  })
+
+  test('get info except consent successfully, because not migrated', async () => {
+    await testConsents(getConsentStatementNotMigratedResponse)
+  })
+
+  test('get info except communication topics successfully', async () => {
+    const mockedResponse = JSON.parse(JSON.stringify(channelsExpectedResponse))
+    mockedResponse.Channels = {}
+    axios
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+      .mockResolvedValueOnce({ data: getPolicyConfig })
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
+
+    const response = await info.get()
+    const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
+    expectedResponse.splice(2, 1) // remove communication topics
+    expect(response).toEqual(expectedResponse)
+  })
+
+  async function testConsents(serverResponse) {
+    const mockedResponse = JSON.parse(JSON.stringify(serverResponse))
+    mockedResponse.preferences = {}
+    axios
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: mockedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
+      .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+      .mockResolvedValueOnce({ data: getPolicyConfig })
+      .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
+      .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+    const response = await info.get()
+    const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
+    expectedResponse.splice(1, 1) // remove consent
+    expect(response).toEqual(expectedResponse)
+  }
 })

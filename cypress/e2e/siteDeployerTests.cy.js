@@ -8,7 +8,7 @@ describe('Site Deployer Test Suite', () => {
     utils.startUp(dataTest.siteDeployerIconName)
   })
 
-  it('Creating 3 parent sites with different datacenters', () => {
+  it('Should create 3 parent sites with different datacenters', () => {
     utils.getBaseDomain(dataTest.baseDomain, 0)
     utils.getSiteStructure(1)
     cy.get('#cdctools-siteStructure').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
@@ -19,7 +19,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(6).should('have.value', `dev.us.parent.${dataTest.baseDomain}`)
   })
 
-  it('Create 3 parent sites (dev, stag, prod) with US datacenter', () => {
+  it('Should create 3 parent sites (dev, stag, prod) with US datacenter', () => {
     utils.getCreateButton().should('be.disabled')
     utils.getDataCenters('US', 'EU', 'AU')
     utils.getBaseDomain(dataTest.baseDomain, 0)
@@ -31,7 +31,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-row').should('have.length', '6')
     cy.get('ui5-table-cell').find('[id ="baseDomainInput"]').eq(0).should('have.value', `dev.us.parent.${dataTest.baseDomain}`)
     utils.getSaveButton().should('not.be.disabled')
-    cy.get('ui5-card').eq(2).shadow().get('ui5-bar').eq(2).find('[class ="ui5-bar-content"]').find('#cancel-main').click()
+    utils.getCancelButton().click()
     cy.get('ui5-table-row').should('have.length', '0')
   })
 
@@ -39,41 +39,45 @@ describe('Site Deployer Test Suite', () => {
     utils.resizeObserverLoopErrRe()
     utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
-    writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
+    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().click()
     cy.get('#messageList').should('have.text', dataTest.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('Should add a single Parent Site Manually with success message', () => {
     utils.resizeObserverLoopErrRe()
     utils.mockResponse(servicesDataTest.expectedGigyaResponseOk, 'POST', 'admin.createSite')
+    utils.mockResponse(servicesDataTest.expectedGigyaResponseOk, 'POST', 'accounts.migrateConsentFlow')
     cy.get('#addParentButton').click()
-    writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
+    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().click()
     const successPopup = cy.get('#successPopup')
     successPopup.should('be.visible')
     successPopup.should('have.text', dataTest.expectedSuccessMessage)
+    cy.wait(1500)
+    cy.get('@windowOpenStub').should('be.called')
     utils.clickPopUpOkButton('#successPopup')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
     utils.resizeObserverLoopErrRe()
     cy.get('#addParentButton').click()
-    writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
+    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     cy.get('ui5-table-row').should('have.length', 1)
-    createChild()
+    utils.createChild()
     cy.get('ui5-table-row').should('have.length', 2)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Hide Child Sites"]').click()
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
-    writeChildrenSiteTable(dataTest.childrenBaseDomain, dataTest.childrenSiteDescription)
+    utils.writeChildrenSiteTable(dataTest.childrenBaseDomain, dataTest.childrenSiteDescription)
     cy.get('#dataCenterSelect').shadow().find('[class ="ui5-select-root ui5-input-focusable-element"]').find('[class ="ui5-select-label-root"]').should('have.text', 'EU')
     utils.getSaveButton().should('not.be.disabled')
-    getIcon(0)
+    utils.getIcon(0)
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 0)
   })
@@ -81,9 +85,9 @@ describe('Site Deployer Test Suite', () => {
   it('Should show error Popup when Credentials are empty', () => {
     utils.clearCredentials()
     cy.get('#addParentButton').click()
-    writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
+    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
-    utils.getSaveButton().click()
+    utils.getSaveButton().realClick()
     const errorPopup = cy.get('#errorPopup')
     errorPopup.should('be.visible')
     errorPopup.should('have.text', dataTest.missingCredentialsErrorMessage)
@@ -94,32 +98,13 @@ describe('Site Deployer Test Suite', () => {
     utils.resizeObserverLoopErrRe()
     utils.mockResponse(dataTest.errorToManualRemoveSiteMessage, 'POST', 'admin.createSite')
     cy.get('#addParentButton').click()
-    writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
+    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().click()
     cy.get('#manualRemovalPopup').should('be.visible')
     cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').shadow().find('.ui5-button-root').should('be.disabled')
     cy.get('#manualRemovalPopup').find('#manualRemovalCheckbox').click()
     cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').shadow().find('.ui5-button-root').should('not.be.disabled')
     cy.get('#manualRemovalPopup').find('#manualRemovalConfirmButton').click()
+    cy.get('@windowOpenStub').should('not.be.called')
   })
-
-  function writeParentSiteTable(baseDomain, siteDescription, dataCenterOption) {
-    cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
-    cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
-    cy.get('#dataCenterSelect').click()
-    cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).click()
-  }
-
-  function writeChildrenSiteTable(childrenDomain, childrenDescription) {
-    cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
-    cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
-  }
-
-  function createChild() {
-    getIcon(0)
-    cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').click()
-  }
-  function getIcon(iconNumber) {
-    return cy.get('[icon ="overflow"]').eq(iconNumber).click()
-  }
 })

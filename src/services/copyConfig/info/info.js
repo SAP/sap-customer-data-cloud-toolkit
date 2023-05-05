@@ -13,6 +13,10 @@ import Policy from '../policies/policies'
 import PolicyOptions from '../policies/policyOptions'
 import ScreenSetOptions from '../screenset/screensetOptions'
 import ScreenSet from '../screenset/screenset'
+import ConsentConfiguration from '../consent/consentConfiguration'
+import ConsentOptions from '../consent/consentOptions'
+import Communication from '../communication/communication'
+import CommunicationOptions from '../communication/communicationOptions'
 
 class Info {
   #credentials
@@ -29,6 +33,8 @@ class Info {
     const response = []
     return Promise.all([
       this.#getSchema(),
+      this.#getConsents(),
+      this.#getCommunicationTopics(),
       this.#getScreenSets(),
       this.#getPolicies(),
       this.#getSocialIdentities(),
@@ -54,7 +60,7 @@ class Info {
     const response = await webSdkOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
-      if (response.globalConf === '' || response.globalConf === undefined) {
+      if (!WebSdk.hasWebSdk(response)) {
         webSdkOptions.removeWebSdk(info)
       }
       return Promise.resolve(info)
@@ -64,18 +70,41 @@ class Info {
     }
   }
 
+  async #getConsents() {
+    const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await consentOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
+      if (!ConsentConfiguration.hasConsents(response)) {
+        consentOptions.removeConsent(info)
+      }
+      return Promise.resolve(info)
+    } else if (this.#consentsNotMigrated(response)) {
+      const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
+      consentOptions.removeConsent(info)
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
+  }
+
+  #consentsNotMigrated(response) {
+    return response.errorCode === 400096 && response.errorDetails.includes("has not migrated it's consent data")
+  }
+
   async #getSchema() {
     const schemaOptions = new SchemaOptions(new Schema(this.#credentials, this.#site, this.#dataCenter))
     const response = await schemaOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
-      if (!response.dataSchema) {
+      if (!Schema.hasDataSchema(response)) {
         schemaOptions.removeDataSchema(info)
       }
-      if (!response.profileSchema) {
+      if (!Schema.hasProfileSchema(response)) {
         schemaOptions.removeProfileSchema(info)
       }
-      if (!response.subscriptionsSchema || Object.keys(response.subscriptionsSchema.fields).length === 0) {
+      if (!Schema.hasSubscriptionsSchema(response)) {
         schemaOptions.removeSubscriptionsSchema(info)
       }
       return Promise.resolve(info)
@@ -89,7 +118,7 @@ class Info {
     const screenSetOptions = new ScreenSetOptions(new ScreenSet(this.#credentials, this.#site, this.#dataCenter))
     const response = await screenSetOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      screenSetOptions.addCollection(response.screenSets)
+      screenSetOptions.addCollection(response)
       const info = JSON.parse(JSON.stringify(screenSetOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
@@ -103,7 +132,7 @@ class Info {
     const response = await socialOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = socialOptions.getOptionsDisabled()
-      if (!this.#hasSocialProviders(response.providers)) {
+      if (!Social.hasSocialProviders(response)) {
         socialOptions.removeSocialProviders(info)
       }
       return Promise.resolve(info)
@@ -118,8 +147,8 @@ class Info {
     const response = await emailOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
+      emailOptions.addEmails(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
-      this.#removeUnsupportedOptions(response, info, emailOptions)
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
@@ -132,7 +161,7 @@ class Info {
     const response = await smsOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = smsOptions.getOptionsDisabled()
-      if (!response.templates) {
+      if (!SmsConfiguration.hasSmsTemplates(response)) {
         smsOptions.removeSmsTemplates(info)
       }
       return Promise.resolve(info)
@@ -142,16 +171,6 @@ class Info {
     }
   }
 
-  #hasSocialProviders(providers) {
-    let atLeastOneHasConfig = false
-    for (const key in providers) {
-      if (!Object.values(providers[key].app).every((x) => x === '')) {
-        atLeastOneHasConfig = true
-        break
-      }
-    }
-    return atLeastOneHasConfig
-  }
   async #getPolicies() {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
@@ -165,45 +184,13 @@ class Info {
       return Promise.reject([response])
     }
   }
-  #removeUnsupportedOptions(response, info, emailOptions) {
-    if (!response.emailNotifications.confirmationEmailTemplates) {
-      emailOptions.removePasswordResetConfirmation(info)
-    }
-    if (!response.impossibleTraveler) {
-      emailOptions.removeImpossibleTraveler(info)
-    }
-    if (!response.twoFactorAuth) {
-      emailOptions.removeTFAEmailVerification(info)
-    }
-    if (!response.passwordReset) {
-      emailOptions.removePasswordReset(info)
-    }
-    if (!response.doubleOptIn) {
-      emailOptions.removeDoubleOptInConfirmation(info)
-    }
-    if (!response.preferencesCenter) {
-      emailOptions.removeLitePreferencesCenter(info)
-    }
-    if (!response.emailNotifications.accountDeletedEmailTemplates) {
-      emailOptions.removeAccountDeletionConfirmation(info)
-    }
-    if (!response.emailNotifications.welcomeEmailTemplates) {
-      emailOptions.removeNewUserWelcome(info)
-    }
-    if (!response.emailVerification) {
-      emailOptions.removeEmailVerification(info)
-    }
-    if (!response.codeVerification) {
-      emailOptions.removeCodeVerification(info)
-    }
-    if (!response.magicLink) {
-      emailOptions.removeMagicLink(info)
-    }
-  }
 
   #removeUnsupportedPolicies(response, info, policyOptions) {
     if (!response.accountOptions) {
       policyOptions.removeAccountOptions(info)
+    }
+    if (!response.authentication) {
+      policyOptions.removeAuthentication(info)
     }
     if (!response.codeVerification) {
       policyOptions.removeCodeVerification(info)
@@ -237,6 +224,27 @@ class Info {
     }
     if (!response.twoFactorAuth) {
       policyOptions.removeTwoFactorAuth(info)
+    }
+    if (!response.doubleOptIn) {
+      policyOptions.removeDoubleOptIn(info)
+    }
+    if (!response.preferencesCenter) {
+      policyOptions.removePreferencesCenter(info)
+    }
+  }
+
+  async #getCommunicationTopics() {
+    const communicationOptions = new CommunicationOptions(new Communication(this.#credentials, this.#site, this.#dataCenter))
+    const response = await communicationOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      const info = JSON.parse(JSON.stringify(communicationOptions.getOptionsDisabled()))
+      if (!Communication.hasCommunicationTopics(response)) {
+        communicationOptions.removeCommunication(info)
+      }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
     }
   }
 }

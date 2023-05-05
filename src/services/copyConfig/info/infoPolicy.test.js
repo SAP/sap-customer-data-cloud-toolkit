@@ -9,6 +9,8 @@ import { getSiteConfig } from '../websdk/dataTest'
 import { getPolicyConfig } from '../policies/dataTest'
 import { getEmailsExpectedResponse } from '../../emails/dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
+import { getConsentStatementExpectedResponse } from '../consent/dataTest'
+import { channelsExpectedResponse } from '../communication/dataTest'
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {
@@ -57,19 +59,35 @@ describe('Info Policy test suite', () => {
   test('get policy info successfully except two Factor Authentication', async () => {
     await executeInfoPolicyTest('twoFactorAuth', 11)
   })
+
+  test('get policy info successfully except authentication', async () => {
+    await executeInfoPolicyTest('authentication', 12)
+  })
+
+  test('get policy info successfully except doubleOptIn', async () => {
+    await executeInfoPolicyTest('doubleOptIn', 13)
+  })
+
+  test('get policy info successfully except preferencesCenter', async () => {
+    await executeInfoPolicyTest('preferencesCenter', 14)
+  })
+
   async function executeInfoPolicyTest(templateNames, templateIndex) {
     const mockedResponse = getExpectedPolicyResponseExcept(templateNames)
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+
     const response = await info.get()
 
-    expectedResponse[2].branches.splice(templateIndex, 1)
+    expectedResponse[4].branches.splice(templateIndex, 1)
     expect(response).toEqual(expectedResponse)
   }
 

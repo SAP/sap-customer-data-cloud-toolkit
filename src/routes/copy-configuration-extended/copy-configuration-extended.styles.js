@@ -26,17 +26,6 @@ const styles = {
   headerInnerDivStyle: {
     ...spacing.sapUiTinyMargin,
   },
-  selectConfigurationOuterDivStyle: {
-    ...spacing.sapUiSmallMargin,
-  },
-  selectConfigurationInnerDivStyle: {
-    ...spacing.sapUiTinyMargin,
-    '--sapList_AlternatingBackground': 'white',
-    '--sapList_SelectionBackgroundColor': 'white',
-    '--ui5-listitem-selected-border-bottom': '0',
-    '--ui5-listitem-border-bottom': '0',
-  },
-
   componentTextStyle: {
     color: 'var(--sapNeutralElementColor)',
     ...spacing.sapUiTinyMarginBegin,
@@ -67,14 +56,9 @@ const styles = {
     ...spacing.sapUiMediumMarginEnd,
     ...spacing.sapUiMediumMarginTop,
   },
-  targetInfoContainerTitle: {
-    ...spacing.sapUiSmallMarginBottom,
-  },
+
   targetInfoContainerInputContainer: {
     ...spacing.sapUiContentPadding,
-  },
-  targetInfoContainerInput: {
-    width: '100%',
   },
   targetSitesListTitle: {
     ...spacing.sapUiSmallMarginTop,
@@ -83,8 +67,8 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiMediumMarginBottom,
   },
-  targetSitesListItem: {
-    ...spacing.sapUiContentPadding,
+  inPopupTargetSitesListContainer: {
+    ...spacing.sapUiSmallMarginTop,
   },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMarginBottom,
@@ -109,13 +93,27 @@ const styles = {
   busyIndicatorStyle: {
     width: '100%',
     position: 'relative',
+    ...spacing.sapUiMediumMarginTopBottom,
+  },
+  inPopupBusyIndicatorStyle: {
+    width: '100%',
+    position: 'relative',
+    ...spacing.sapUiSmallMarginTop,
   },
   targetApiKeyInputStyle: {
     width: '300px',
   },
-  tooltipIconStyle: {
-    alignSelf: 'center',
-    marginLeft: '6px',
+  siteCopyConfigurationDialogStyle: {
+    minWidth: '720px',
+  },
+  targetSitesTooltipIconDivStyle: {
+    marginTop: '-35px',
+  },
+  selectConfigurationOuterDivStyle: {
+    ...spacing.sapUiSmallMargin,
+  },
+  selectConfigurationInnerDivStyle: {
+    ...spacing.sapUiTinyMargin,
   },
 }
 

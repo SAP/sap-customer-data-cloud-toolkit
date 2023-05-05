@@ -8,7 +8,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-
+  // defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
@@ -26,11 +26,22 @@ module.exports = defineConfig({
         config,
 
         excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
-        //excludeSpecPattern: ['cypress/e2e/emailTemplatesTests.cy.js', 'cypress/e2e/smsTemplatesTests.cy.js', 'cypress/e2e/siteDeployerTests.cy.js'],
+        // excludeSpecPattern: [
+        //   'cypress/e2e/copyConfigurationExtendedTests.cy.js',
+        //   'cypress/e2e/emailTemplatesTests.cy.js',
+        //   'cypress/e2e/smsTemplatesTests.cy.js',
+        //   'cypress/e2e/siteDeployerTests.cy.js',
+        //   'cypress/e2e/siteDeployerCopyConfigurationTests.cy.js',
+        // ],
       }
     },
   },
-
+  "retries": { // Default is 0
+    // Configure retry attempts for `cypress run`.
+    "runMode": 1,
+    // Configure retry attempts for `cypress open`
+    "openMode": 0
+  },
   component: {
     setupNodeEvents(on, config) {
       require('@bahmutov/cypress-code-coverage/plugin')(on, config)

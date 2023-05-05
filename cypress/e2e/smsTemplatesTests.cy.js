@@ -35,6 +35,7 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#smsTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', dataTest.smsTemplatesImportErrorHeaderMessage)
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should show success popup on import', () => {
@@ -48,6 +49,8 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
     cy.get('#successPopup').shadow().find('#ui5-popup-header').should('have.text', 'Success')
+    cy.wait(1500)
+    cy.get('@windowOpenStub').should('be.called')
     utils.clickPopUpOkButton('#successPopup')
   })
 
@@ -56,6 +59,7 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#exportAllSmsTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
     utils.clickPopUpOkButton('#errorPopup')
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should show credentials error dialog on import', () => {
@@ -64,5 +68,6 @@ describe('SMS Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(dataTest.smsExampleFile)
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
+    cy.get('@windowOpenStub').should('not.be.called')
   })
 })

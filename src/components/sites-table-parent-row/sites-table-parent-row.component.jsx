@@ -4,17 +4,18 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { Input, InputType, Select, Option, Button, TableRow, TableCell, ActionSheet } from '@ui5/webcomponents-react'
+
 import '@ui5/webcomponents-icons/dist/navigation-down-arrow.js'
 import '@ui5/webcomponents-icons/dist/navigation-right-arrow.js'
-import '@ui5/webcomponents-icons/dist/add.js'
-import '@ui5/webcomponents-icons/dist/decline.js'
 import '@ui5/webcomponents-icons/dist/overflow.js'
 
 import { deleteParent, updateParentBaseDomain, updateParentDescription, updateParentDataCenter, addChild, selectErrors, selectErrorBySiteTempId } from '../../redux/sites/siteSlice'
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
+
 import ChildTableRow from '../sites-table-child-row/sites-table-child-row.component'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import ShowHideChildListButton from '../show-hide-child-list-button/show-hide-child-list-button.component'
+import SitesCopyConfigurationButtonPannel from '../../components/sites-copy-configuration-button-pannel/sites-copy-configuration-button-pannel.component'
 
 import styles from './sites-table-parent-row.styles.js'
 
@@ -23,9 +24,10 @@ const useStyles = createUseStyles(styles, { name: 'SitesTableParentRow' })
 const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter, childSites, t }) => {
   const [isActionSheetOpen, setActionSheetOpen] = useState(false)
   const [isChildListOpen, setChildListOpen] = useState(true)
-  const classes = useStyles()
 
+  const classes = useStyles()
   const dispatch = useDispatch()
+
   const dataCenters = useSelector(selectDataCenters)
   const errorList = useSelector((state) => selectErrors(state))
   const error = useSelector((state) => selectErrorBySiteTempId(state, tempId))
@@ -143,7 +145,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         </TableCell>
 
         <TableCell>
-          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter}>
+          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter} style={{ width: '50px' }}>
             {dataCentersSelect.map(({ label, value }) => (
               <Option key={label} data-value={value} selected={label === dataCenter || value === dataCenter}>
                 {label}
@@ -152,13 +154,17 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
           </Select>
         </TableCell>
 
+        <TableCell>
+          <SitesCopyConfigurationButtonPannel siteId={tempId} />
+        </TableCell>
+
         <TableCell className={classes.actionSheetTableCellStyle}>
           <div className={classes.actionSheetOuterDivStyle}>
             <>
-              <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`}></Button>
+              <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`} data-cy="parentRowActionSheetOpener"></Button>
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
-                <Button onClick={onAddChildHandler}>{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
-                <Button onClick={onDeleteParentHandler}>{t('GLOBAL.DELETE')}</Button>
+                <Button onClick={onAddChildHandler} data-cy="createChildSiteAction">{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
+                <Button onClick={onDeleteParentHandler} data-cy="deleteChildSiteAction">{t('GLOBAL.DELETE')}</Button>
               </ActionSheet>
             </>
           </div>

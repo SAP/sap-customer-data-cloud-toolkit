@@ -17,6 +17,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', dataTest.emailTemplatesExportErrorHeaderMessage)
     cy.get('#messageList').should('have.text', dataTest.emailTemplatesExportErrorMessageDetail)
+    cy.window().its('open').should('not.be.called')
   })
 
   it('should show error on import button', () => {
@@ -28,8 +29,10 @@ describe('Email Templates Test Suite', () => {
     cy.get('#zipFileInput').attachFile(dataTest.emailExampleFile)
     cy.get('#importZipButton').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('#importZipButton').click()
-    cy.get('#emailTemplatesValidationErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Warning')
-    cy.get('#emailTemplatesValidationErrorPopup').find('[id="messageList"]').should('have.text', dataTest.importEmailTemplatesErrorMessage)
+
+    cy.get('#emailTemplatesErrorPopup').shadow().find('#ui5-popup-header').should('have.text', 'Error - 9 of 9 email templates were not imported')
+    cy.get('#emailTemplatesErrorPopup').find('[id="messageList"]').should('have.text', dataTest.importEmailTemplatesErrorMessage)
+    cy.window().its('open').should('not.be.called')
   })
 
   it('should show credentials error dialog on export', () => {
@@ -37,6 +40,7 @@ describe('Email Templates Test Suite', () => {
     cy.get('#exportAllEmailTemplatesButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
     utils.clickPopUpOkButton('#errorPopup')
+    cy.window().its('open').should('not.be.called')
   })
 
   it('should show credentials error dialog on import', () => {
@@ -46,5 +50,6 @@ describe('Email Templates Test Suite', () => {
     cy.get('#importZipButton').click()
     cy.get('#errorPopup').should('have.text', dataTest.missingCredentialsErrorMessage)
     cy.get('#errorPopup').find('#closeButton').click({ force: true })
+    cy.window().its('open').should('not.be.called')
   })
 })

@@ -15,7 +15,8 @@ import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest'
-import Options from "../options";
+import Options from '../options'
+import { ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE } from '../../errors/generateErrorResponse'
 
 jest.mock('axios')
 
@@ -40,25 +41,26 @@ describe('Schema test suite', () => {
     let spy = jest.spyOn(schema, 'set')
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(3)
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
-    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
-    expect(responses[0].context.id).toEqual(schemaId)
-    expect(responses[1].context.id).toEqual(profileId)
-    expect(responses[2].context.id).toEqual(subscriptionsId)
+    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
+    expect(responses[1].context.id).toEqual(schemaId)
+    expect(responses[2].context.id).toEqual(profileId)
+    expect(responses[0].context.id).toEqual(subscriptionsId)
     expect(responses[0].context.targetApiKey).toEqual(apiKey)
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
     expect(responses[2].context.targetApiKey).toEqual(apiKey)
 
     expect(spy.mock.calls.length).toBe(3)
-    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
   })
 
   test('copy successfully to child site', async () => {
@@ -66,11 +68,13 @@ describe('Schema test suite', () => {
     let spy = jest.spyOn(schema, 'set')
     axios
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedSchemaResponse)) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedSchemaResponse)) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(3)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
@@ -79,16 +83,49 @@ describe('Schema test suite', () => {
     expect(responses[0].context.id).toEqual(schemaId)
     expect(responses[1].context.id).toEqual(profileId)
     expect(responses[2].context.id).toEqual(subscriptionsId)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
     expect(responses[2].context.targetApiKey).toEqual(apiKey)
-    expect(responses[0].context.targetApiKey).toEqual(apiKey)
 
     expect(spy.mock.calls.length).toBe(5)
-    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSite(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep1(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
+  })
+
+  test('copy successfully to a site with the same field with different type', async () => {
+    let spy = jest.spyOn(schema, 'set')
+    const schemaResponseWithDifferentType = JSON.parse(JSON.stringify(expectedSchemaResponse))
+    schemaResponseWithDifferentType.dataSchema.fields.terms.type = 'long'
+    axios
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: schemaResponseWithDifferentType })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
+    expect(responses.length).toBe(4)
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[1].errorCode).toEqual(ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE)
+    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[3]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
+    expect(responses[0].context.id).toEqual(schemaId)
+    expect(responses[1].context.id).toEqual(schemaId)
+    expect(responses[2].context.id).toEqual(profileId)
+    expect(responses[3].context.id).toEqual(subscriptionsId)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
+    expect(responses[1].context.targetApiKey).toEqual(apiKey)
+    expect(responses[2].context.targetApiKey).toEqual(apiKey)
+    expect(responses[3].context.targetApiKey).toEqual(apiKey)
+
+    expect(spy.mock.calls.length).toBe(3)
+    const expectedSchemaBodyWithDifferentType = getDataSchemaExpectedBodyForParentSite(apiKey)
+    delete expectedSchemaBodyWithDifferentType.dataSchema.fields.terms
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, expectedSchemaBodyWithDifferentType)
   })
 
   test('copy unsuccessfully - error on get', async () => {
@@ -137,9 +174,10 @@ describe('Schema test suite', () => {
       ],
     })
     axios
-        .mockResolvedValueOnce({ data: schemaResponse })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
-        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: schemaResponse })
+      .mockResolvedValueOnce({ data: schemaResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(2)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
@@ -150,7 +188,7 @@ describe('Schema test suite', () => {
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
 
     expect(spy.mock.calls.length).toBe(2)
-    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
   })
 })

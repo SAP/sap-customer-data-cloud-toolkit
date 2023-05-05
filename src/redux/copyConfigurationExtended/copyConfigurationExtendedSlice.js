@@ -5,7 +5,8 @@ import SiteFinderPaginated from '../../services/search/siteFinderPaginated'
 
 import i18n from '../../i18n'
 
-import { getApiKey } from '../utils'
+import { getApiKey, getErrorAsArray } from '../utils'
+
 import {
   findConfiguration,
   propagateConfigurationState,
@@ -19,6 +20,7 @@ import {
   getAvailableTargetSitesFromLocalStorage,
   removeCurrentSiteApiKeyFromAvailableTargetSites,
 } from './utils'
+import { Tracker } from '../../tracker/tracker'
 
 const COPY_CONFIGURATION_EXTENDED_STATE_NAME = 'copyConfigurationExtended'
 const GET_CONFIGURATIONS_ACTION = `${COPY_CONFIGURATION_EXTENDED_STATE_NAME}/getConfigurations`
@@ -42,16 +44,18 @@ export const copyConfigurationExtendedSlice = createSlice({
     availableTargetSites: [],
     currentSiteInformation: {},
     isTargetInfoLoading: false,
+    unfilteredAvailableTargetSites: [],
   },
 
   reducers: {
     addTargetSite(state, action) {
       state.apiCardError = undefined
-      if (sourceEqualsTarget(action.payload.apiKey)) {
+      const targetSite = action.payload.targetSite
+      if (sourceEqualsTarget(targetSite.apiKey)) {
         state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.SOURCE_EQUALS_TARGET_WARNING_TEXT') }
       } else {
-        if (!isTargetSiteDuplicated(action.payload.apiKey, state.targetSites)) {
-          state.targetSites.push(action.payload)
+        if (!isTargetSiteDuplicated(action.payload.targetSite.apiKey, state.targetSites)) {
+          state.targetSites.push(targetSite)
         } else {
           state.apiCardError = { errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.DUPLICATED_WARNING_TEXT') }
         }
@@ -87,6 +91,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     setAvailableTargetSitesFromLocalStorage(state, action) {
       const availableTargetSitesFromLocalStorage = getAvailableTargetSitesFromLocalStorage(action.payload)
       if (availableTargetSitesFromLocalStorage) {
+        state.unfilteredAvailableTargetSites = availableTargetSitesFromLocalStorage
         state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(availableTargetSitesFromLocalStorage, state.currentSiteApiKey)
       }
       areAvailableTargetSitesLoading = true
@@ -126,6 +131,7 @@ export const copyConfigurationExtendedSlice = createSlice({
         addErrorToTargetApiKey(state.targetSites, errors)
       } else {
         state.showSuccessMessage = true
+        Tracker.reportUsage()
       }
     })
     builder.addCase(setConfigurations.rejected, (state, action) => {
@@ -135,6 +141,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     })
     builder.addCase(getAvailableTargetSites.fulfilled, (state, action) => {
       if (action.payload.availableTargetSites) {
+        state.unfilteredAvailableTargetSites = action.payload.availableTargetSites
         state.availableTargetSites = removeCurrentSiteApiKeyFromAvailableTargetSites(action.payload.availableTargetSites, state.currentSiteApiKey)
         writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
       }
@@ -151,7 +158,7 @@ export const copyConfigurationExtendedSlice = createSlice({
     builder.addCase(getCurrentSiteInformation.rejected, (state, action) => {
       state.isLoading = false
       state.showSuccessMessage = false
-      state.errors = [action.payload]
+      state.errors = action.payload
     })
     builder.addCase(getTargetSiteInformation.pending, (state) => {
       state.isTargetInfoLoading = true
@@ -176,7 +183,6 @@ export const copyConfigurationExtendedSlice = createSlice({
       }
     })
     builder.addCase(getTargetSiteInformation.rejected, (state, action) => {
-      console.log({ action })
       state.showSuccessMessage = false
       state.isTargetInfoLoading = false
       state.apiCardError = action.payload
@@ -192,7 +198,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).getConfiguration()
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -207,7 +213,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
       state.copyConfigurationExtended.configurations
     )
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -229,7 +235,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
       return []
     }
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -241,7 +247,7 @@ export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFOR
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).getSiteInformation(currentSiteApiKey)
   } catch (error) {
-    return rejectWithValue(error)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -288,5 +294,7 @@ export const selectApiCardError = (state) => state.copyConfigurationExtended.api
 export const selectIsTargetInfoLoading = (state) => state.copyConfigurationExtended.isTargetInfoLoading
 
 export const selectCurrentSiteApiKey = (state) => state.copyConfigurationExtended.currentSiteApiKey
+
+export const selectUnfilteredAvailableTargetSites = (state) => state.copyConfigurationExtended.unfilteredAvailableTargetSites
 
 export default copyConfigurationExtendedSlice.reducer
