@@ -19,6 +19,7 @@ import {
   writeAvailableTargetSitesToLocalStorage,
   getAvailableTargetSitesFromLocalStorage,
   removeCurrentSiteApiKeyFromAvailableTargetSites,
+  checkDataflowVariables,
 } from './utils'
 import { Tracker } from '../../tracker/tracker'
 
@@ -100,6 +101,15 @@ export const copyConfigurationExtendedSlice = createSlice({
       state.availableTargetSites = action.payload.availableTargetSites
       areAvailableTargetSitesLoading = false
       writeAvailableTargetSitesToLocalStorage(action.payload.availableTargetSites, action.payload.secret)
+    },
+    setDataflowVariableValue(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      const variable = configuration.variables.filter((variable) => variable.variable === action.payload.variable)[0]
+      variable.value = action.payload.value
+    },
+    setDataflowVariableValues(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.variables = action.payload.variables
     },
   },
   extraReducers: (builder) => {
@@ -207,6 +217,12 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
 
+  const responses = checkDataflowVariables(state.copyConfigurationExtended.configurations)
+
+  if (responses.length) {
+    return responses
+  }
+
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).copy(
       state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
@@ -273,6 +289,8 @@ export const {
   updateCurrentSiteApiKey,
   setAvailableTargetSitesFromLocalStorage,
   setAvailableTargetSites,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
 } = copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations

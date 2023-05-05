@@ -1,5 +1,7 @@
-import { getApiKey } from '../utils'
 import crypto from 'crypto-js'
+import i18n from '../../i18n'
+import { getApiKey } from '../utils'
+import { areAllVariablesSet } from '../../components/dataflow-settings/utils'
 
 const LOCAL_STORAGE_AVAILABLE_TARGET_SITES_KEY = 'availableTargetSites'
 
@@ -172,4 +174,27 @@ const decryptData = (encryptedData, key) => {
 
 export const removeCurrentSiteApiKeyFromAvailableTargetSites = (availableTargetSites, currentSiteApiKey) => {
   return availableTargetSites.filter((site) => site.apiKey !== currentSiteApiKey)
+}
+
+export const checkDataflowVariables = (configurations) => {
+  let responses = []
+  const dataflowsRoot = configurations.filter((configuration) => configuration.id === 'dataflows')[0]
+
+  let dataflows = []
+  if (dataflowsRoot) {
+    dataflows = dataflowsRoot.branches
+  }
+
+  for (const dataflow of dataflows) {
+    if (dataflow.value && dataflow.variables && !areAllVariablesSet(dataflow.variables)) {
+      responses.push({
+        errorCode: 400,
+        errorMessage: i18n.t('COPY_CONFIGURATION_EXTENDED.DATAFLOWS_VARIALBLES_ERROR_MESSAGE'),
+        errorDetails: i18n.t('COPY_CONFIGURATION_EXTENDED.DATAFLOWS_VARIALBLES_ERROR_DETAIL', { dataflowId: dataflow.id }),
+        context: { id: dataflow.id },
+      })
+    }
+  }
+
+  return responses
 }

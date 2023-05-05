@@ -9,7 +9,16 @@ import styles from './site-configurations.styles'
 
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
-const SiteConfigurations = ({ siteId, configurations, selectAllCheckboxState, onSelectAllCheckboxChangeHandler, setConfigurationStatus, t }) => {
+const SiteConfigurations = ({
+  siteId,
+  configurations,
+  selectAllCheckboxState,
+  onSelectAllCheckboxChangeHandler,
+  setConfigurationStatus,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  t,
+}) => {
   const classes = useStyles()
 
   return configurations && configurations.length ? (
@@ -28,7 +37,14 @@ const SiteConfigurations = ({ siteId, configurations, selectAllCheckboxState, on
         >
           <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
             {configurations.map((configuration) => (
-              <ConfigurationTree key={configuration.id} {...configuration} siteId={siteId} setConfigurationStatus={setConfigurationStatus} />
+              <ConfigurationTree
+                key={configuration.id}
+                {...configuration}
+                siteId={siteId}
+                setConfigurationStatus={setConfigurationStatus}
+                setDataflowVariableValue={setDataflowVariableValue}
+                setDataflowVariableValues={setDataflowVariableValues}
+              />
             ))}
           </FlexBox>
         </Card>

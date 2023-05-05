@@ -45,7 +45,36 @@ export function getInfoExpectedResponse(supports) {
     name: 'communicationTopics',
     value: supports,
   }
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk]
+
+  const dataflows = {
+    id: 'dataflows',
+    name: 'dataflows',
+    value: supports,
+    branches: [
+      {
+        id: 'dataflow1',
+        name: 'dataflow1',
+        value: supports,
+        variables: [{ variable: 'variabletest1', value: '' }],
+      },
+      {
+        id: 'dataflow2',
+        name: 'dataflow2',
+        value: supports,
+        variables: [
+          { variable: 'variabletest2', value: '' },
+          { variable: 'variabletest3', value: '' },
+        ],
+      },
+      {
+        id: 'dataflow3',
+        name: 'dataflow3',
+        value: supports,
+      },
+    ],
+  }
+
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

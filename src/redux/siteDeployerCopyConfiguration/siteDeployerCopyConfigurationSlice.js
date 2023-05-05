@@ -68,6 +68,20 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
     setIsCopyConfigurationDialogOpen(state, action) {
       state.isCopyConfigurationDialogOpen = action.payload
     },
+    setDataflowVariableValue(state, action) {
+      const siteConfiguration = getConfiguration(state.sitesConfigurations, state.siteId)
+      const configuration = findConfiguration(siteConfiguration.configurations, action.payload.checkBoxId)
+      const variable = configuration.variables.filter((variable) => variable.variable === action.payload.variable)[0]
+      variable.value = action.payload.value
+    },
+    setDataflowVariableValues(state, action) {
+      const siteConfiguration = getConfiguration(state.sitesConfigurations, state.siteId)
+      const configuration = findConfiguration(siteConfiguration.configurations, action.payload.checkBoxId)
+      configuration.variables = action.payload.variables
+    },
+    setErrors(state, action) {
+      state.errors = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getSourceSiteConfigurations.pending, (state) => {
@@ -149,6 +163,9 @@ export const {
   setEdit,
   setIsCopyConfigurationDialogOpen,
   clearErrors,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  setErrors,
 } = siteDeployerCopyConfigurationSlice.actions
 
 export default siteDeployerCopyConfigurationSlice.reducer

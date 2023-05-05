@@ -41,6 +41,7 @@ class Info {
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getWebSdk(),
+      this.#getMockedDataflows(), // Replace this mock function call for real function call when it is implemented
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -53,6 +54,37 @@ class Info {
 
   #hasConfiguration(info) {
     return info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)
+  }
+
+  // Remove this mock function when real function is implemented
+  async #getMockedDataflows() {
+    return Promise.resolve({
+      id: 'dataflows',
+      name: 'dataflows',
+      value: false,
+      branches: [
+        {
+          id: 'dataflow1',
+          name: 'dataflow1',
+          value: false,
+          variables: [{ variable: 'variabletest1', value: '' }],
+        },
+        {
+          id: 'dataflow2',
+          name: 'dataflow2',
+          value: false,
+          variables: [
+            { variable: 'variabletest2', value: '' },
+            { variable: 'variabletest3', value: '' },
+          ],
+        },
+        {
+          id: 'dataflow3',
+          name: 'dataflow3',
+          value: false,
+        },
+      ],
+    })
   }
 
   async #getWebSdk() {

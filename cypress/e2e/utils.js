@@ -171,8 +171,12 @@ export function checkElementsInitialState() {
   cy.get('#targetSitePopover').should('have.text', targetSitePopoverText)
 }
 
-export function setConfigurationCheckBox() {
-  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+export function setConfigurationCheckBox(parent) {
+  if (parent) {
+    cy.get(parent).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+  } else {
+    cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+  }
 }
 
 export function fillTargetApiKeyInput() {
@@ -181,7 +185,7 @@ export function fillTargetApiKeyInput() {
 }
 
 export function fillSourceApiKeyInput() {
-  cy.get('#siteCopyConfigurationDialog').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().type(dummyApiKey)
+  cy.get('#siteCopyConfigurationDialog').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
 

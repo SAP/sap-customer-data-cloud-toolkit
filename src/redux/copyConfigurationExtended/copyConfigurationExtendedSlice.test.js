@@ -14,6 +14,8 @@ import copyConfigurationExtendedReducer, {
   getCurrentSiteInformation,
   getTargetSiteInformation,
   clearApiCardError,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
 } from './copyConfigurationExtendedSlice'
 
 import {
@@ -30,6 +32,7 @@ import {
   expectedTargetSite,
   duplicatedWarningMessage,
   initialStateWithApiCardError,
+  initialStateWithDataflows,
 } from './dataTest'
 import { Tracker } from '../../tracker/tracker'
 
@@ -194,5 +197,26 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(false)
     expect(tracker).not.toHaveBeenCalled()
+  })
+
+  test('should set a dataflow variable value', () => {
+    const newDataflowVariableValue = 'newDataflowVariableValue'
+    const newState = copyConfigurationExtendedReducer(
+      initialStateWithDataflows,
+      setDataflowVariableValue({ checkBoxId: 'dataflow1', variable: 'var1', value: newDataflowVariableValue })
+    )
+    expect(newState.configurations[0].branches[0].variables[0].value).toEqual(newDataflowVariableValue)
+  })
+
+  test('should set dataflow variables', () => {
+    const newDataflowVariables = [{ variable: 'new variable', value: 'test' }]
+    const newState = copyConfigurationExtendedReducer(
+      initialStateWithDataflows,
+      setDataflowVariableValues({
+        checkBoxId: 'dataflow2',
+        variables: newDataflowVariables,
+      })
+    )
+    expect(newState.configurations[0].branches[1].variables).toEqual(newDataflowVariables)
   })
 })

@@ -35,9 +35,14 @@ import {
   setIsCopyConfigurationDialogOpen,
   selectSourceSiteAdded,
   clearErrors,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  setErrors,
 } from '../../redux/siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
 import { areConfigurationsFilled } from '../../routes/copy-configuration-extended/utils'
+
+import { checkDataflowVariables } from '../../redux/copyConfigurationExtended/utils'
 
 import styles from '../../routes/copy-configuration-extended/copy-configuration-extended.styles'
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationDialog' })
@@ -78,8 +83,13 @@ const CopyConfigurationDialog = ({ t }) => {
 
   const onSaveHandler = () => {
     if (!disableSaveButton()) {
-      setSaving(true)
-      dispatch(setIsCopyConfigurationDialogOpen(false))
+      const responses = checkDataflowVariables(configurations)
+      if (responses.length) {
+        dispatch(setErrors(responses))
+      } else {
+        setSaving(true)
+        dispatch(setIsCopyConfigurationDialogOpen(false))
+      }
     }
   }
 
@@ -124,6 +134,8 @@ const CopyConfigurationDialog = ({ t }) => {
         selectAllCheckboxState={selectAllCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
+        setDataflowVariableValue={setDataflowVariableValue}
+        setDataflowVariableValues={setDataflowVariableValues}
       />
     )
   }
