@@ -161,8 +161,8 @@ export function checkElementsInitialState() {
   cy.get('[data-cy ="apiKeyInput"]').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
   cy.get('ui5-tree').should('be.visible')
   cy.get('ui5-tree').eq(0).find('ui5-checkbox').should('not.be.checked')
-  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').should('exist')
-  cy.get('ui5-tree').eq(2).find('#policiesTooltipIcon').realHover()
+  cy.get('ui5-tree').eq(4).find('#policiesTooltipIcon').should('exist')
+  cy.get('ui5-tree').eq(4).find('#policiesTooltipIcon').realHover()
   cy.get('#policiesPopover').should('have.text', policiesPopoverText)
   cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.disabled')
   cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').should('be.enabled')
@@ -171,8 +171,12 @@ export function checkElementsInitialState() {
   cy.get('[data-cy ="targetSitePopover"]').should('have.text', targetSitePopoverText)
 }
 
-export function setConfigurationCheckBox() {
-  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+export function setConfigurationCheckBox(parent) {
+  if (parent) {
+    cy.get(parent).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+  } else {
+    cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+  }
 }
 
 export function fillTargetApiKeyInput() {

@@ -31,6 +31,7 @@ describe('Copy Configuration extended test suite', () => {
     cy.get(' [data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.copyConfigSuccessPopupMessage)
     cy.get(' [data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
     utils.checkElementsInitialState()
+    cy.wait(1500)
     cy.get('@windowOpenStub').should('be.called')
   })
 

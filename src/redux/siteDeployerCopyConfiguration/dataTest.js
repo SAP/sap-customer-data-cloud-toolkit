@@ -1,6 +1,8 @@
+export const siteId = 'dcdd5bcc-0c9d-40f3-897b-cbb07138d0f7'
+
 export const sitesConfigurations = [
   {
-    siteId: 'dcdd5bcc-0c9d-40f3-897b-cbb07138d0f7',
+    siteId: siteId,
     sourceSites: [
       {
         apiKey: '4_tskE-LFxBm0-MJyvw0VoAA',
@@ -28,11 +30,18 @@ export const sitesConfigurations = [
           },
         ],
       },
+      {
+        id: 'dataflows',
+        name: 'schema',
+        value: true,
+        branches: [
+          { id: 'dataflow1', name: 'dataflow1', value: true, variables: [{ variable: 'var1', value: 'test1' }] },
+          { id: 'dataflow2', name: 'dataflow2', value: true, variables: [{ variable: 'var2', value: '' }] },
+        ],
+      },
     ],
   },
 ]
-
-export const siteId = 'dcdd5bcc-0c9d-40f3-897b-cbb07138d0f7'
 
 export const testString = 'test'
 
@@ -54,6 +63,7 @@ export const stateWithConfigurations = {
   isSourceInfoLoading: false,
   errors: [],
   apiCardError: undefined,
+  siteId: siteId,
 }
 
 export const dummyError = { message: 'I am a dummy error' }

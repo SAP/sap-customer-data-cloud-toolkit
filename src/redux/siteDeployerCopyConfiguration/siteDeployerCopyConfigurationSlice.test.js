@@ -12,6 +12,9 @@ import siteDeployerCopyConfigurationSliceReducer, {
   setEdit,
   setIsCopyConfigurationDialogOpen,
   clearErrors,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  setErrors,
 } from './siteDeployerCopyConfigurationSlice'
 
 import { initialState, stateWithConfigurations, siteId, testSourceSite, testConfiguration, siteInformation, stateWithErrors, dummyError } from './dataTest'
@@ -172,5 +175,31 @@ describe('siteDeployerCopyConfigurationSlice test suite', () => {
   test('should set isCopyConfigurationDialogOpen', () => {
     const newState = siteDeployerCopyConfigurationSliceReducer(initialState, setIsCopyConfigurationDialogOpen(true))
     expect(newState.isCopyConfigurationDialogOpen).toEqual(true)
+  })
+
+  test('should set a dataflow variable value', () => {
+    const newDataflowVariableValue = 'newDataflowVariableValue'
+    const newState = siteDeployerCopyConfigurationSliceReducer(
+      stateWithConfigurations,
+      setDataflowVariableValue({ checkBoxId: 'dataflow1', variable: 'var1', value: newDataflowVariableValue })
+    )
+    expect(newState.sitesConfigurations[0].configurations[1].branches[0].variables[0].value).toEqual(newDataflowVariableValue)
+  })
+
+  test('should set dataflow variables', () => {
+    const newDataflowVariables = [{ variable: 'new variable', value: 'test' }]
+    const newState = siteDeployerCopyConfigurationSliceReducer(
+      stateWithConfigurations,
+      setDataflowVariableValues({
+        checkBoxId: 'dataflow2',
+        variables: newDataflowVariables,
+      })
+    )
+    expect(newState.sitesConfigurations[0].configurations[1].branches[1].variables).toEqual(newDataflowVariables)
+  })
+
+  test('should set state errors', () => {
+    const newState = siteDeployerCopyConfigurationSliceReducer(initialState, setErrors([dummyError]))
+    expect(newState.errors[0]).toEqual(dummyError)
   })
 })

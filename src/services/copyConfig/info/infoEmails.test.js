@@ -10,7 +10,7 @@ import { getSiteConfig } from '../websdk/dataTest'
 import { getPolicyConfig } from '../policies/dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 import { getConsentStatementExpectedResponse } from '../consent/dataTest'
-import {channelsExpectedResponse, topicsExpectedResponse} from "../communication/dataTest";
+import { channelsExpectedResponse, topicsExpectedResponse } from '../communication/dataTest'
 
 jest.mock('axios')
 
@@ -83,17 +83,18 @@ describe('Info Email Templates test suite', () => {
     ])
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
-    expectedResponse[4].branches = expectedResponse[4].branches.splice(0, 1)
+    const emailsIndex = 6
+    expectedResponse[emailsIndex].branches = expectedResponse[emailsIndex].branches.splice(0, 1)
     expect(response).toEqual(expectedResponse)
   })
 
@@ -101,17 +102,17 @@ describe('Info Email Templates test suite', () => {
     const mockedResponse = getExpectedEmailsResponseExcept(templateNames)
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
-    expectedResponse[4].branches.splice(templateIndex, 1)
+    expectedResponse[6].branches.splice(templateIndex, 1)
 
     expect(response).toEqual(expectedResponse)
   }

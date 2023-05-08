@@ -18,6 +18,7 @@ import ConsentOptions from './consent/consentOptions'
 import ConsentConfiguration from './consent/consentConfiguration'
 import CommunicationOptions from './communication/communicationOptions'
 import Communication from './communication/communication'
+import ParentChildSorter from './parentChildSorter'
 
 class ConfigManager {
   #configurations = []
@@ -33,19 +34,27 @@ class ConfigManager {
     this.#originSiteConfiguration = undefined
   }
 
-  async copy(targetApiKeys, options) {
-    //console.log(`options=${JSON.stringify(options)}`)
+  async copy(targetApiKeys, options, sorter = new ParentChildSorter(this.#credentials)) {
+    //console.log(`targetApiKeys=${targetApiKeys}, options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
-      for (const targetApiKey of targetApiKeys) {
-        responses.push(this.#copyConfigurations(targetApiKey, options))
+      const sortedTargetApiKeys = await sorter.sort(targetApiKeys)
+      for (const priorityGroupTargetApiKeys of sortedTargetApiKeys) {
+        responses.push(await this.#copyForTargetApiGroup(priorityGroupTargetApiKeys, options))
       }
-
       return (await Promise.all(responses)).flat()
     } catch (error) {
       return Promise.reject([error])
     }
+  }
+
+  async #copyForTargetApiGroup(priorityGroupTargetApiKeys, options) {
+    const responses = []
+    for (const targetApiKey of priorityGroupTargetApiKeys) {
+      responses.push(this.#copyConfigurations(targetApiKey, options))
+    }
+    return (await Promise.all(responses)).flat()
   }
 
   async #copyConfigurations(targetApiKey, options) {

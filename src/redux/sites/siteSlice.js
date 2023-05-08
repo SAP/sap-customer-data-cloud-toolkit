@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 import { getErrorAsArray } from '../utils'
+import { Tracker } from '../../tracker/tracker'
 
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
@@ -95,6 +96,9 @@ export const siteSlice = createSlice({
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload
+      if (!state.isLoading && state.showSuccessDialog) {
+        Tracker.reportUsage()
+      }
     },
   },
   extraReducers: (builder) => {
@@ -145,8 +149,8 @@ export default siteSlice.reducer
 export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, { getState, rejectWithValue, dispatch }) => {
   try {
     const state = getState()
-    let progressIndicatorValue = 10
-    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+    dispatch(setProgressIndicatorValue(10))
+
     const responses = await new SiteManager({
       // window.location.hash starts with #/<partnerId>/...
       partnerID: utils.getPartnerId(window.location.hash),
@@ -155,12 +159,21 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
     }).create({
       sites,
     })
-    progressIndicatorValue = 20
-    utils.updateProgressIndicatorValue(progressIndicatorValue, dispatch, setProgressIndicatorValue)
+
+    dispatch(setProgressIndicatorValue(20))
+
     const okResponses = utils.getOkResponses(responses)
-    const copyConfigurationPromises = utils.getCopyConfigurationPromises(state, okResponses, progressIndicatorValue, dispatch, setProgressIndicatorValue)
-    const copyConfigurationResponses = await Promise.all(copyConfigurationPromises)
-    return utils.buildSitesCreationFulfilledResponse(responses, copyConfigurationResponses)
+
+    const parentSitesOkResponses = okResponses.filter((response) => response.isChildSite === false)
+    const childSitesOkResponses = okResponses.filter((response) => response.isChildSite === true)
+
+    const parentsCopyConfigurationPromises = utils.getCopyConfigurationPromises(getState(), parentSitesOkResponses, dispatch, setProgressIndicatorValue)
+    const parentsCopyConfigurationResponses = await Promise.all(parentsCopyConfigurationPromises)
+
+    const childsCopyConfigurationPromises = utils.getCopyConfigurationPromises(getState(), childSitesOkResponses, dispatch, setProgressIndicatorValue)
+    const childsCopyConfigurationResponses = await Promise.all(childsCopyConfigurationPromises)
+
+    return utils.buildSitesCreationFulfilledResponse(responses, [parentsCopyConfigurationResponses.flat(), childsCopyConfigurationResponses.flat()])
   } catch (error) {
     return rejectWithValue({ responses: getErrorAsArray(error) })
   }

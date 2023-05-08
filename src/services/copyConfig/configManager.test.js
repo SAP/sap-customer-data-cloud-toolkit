@@ -27,6 +27,7 @@ import {
 } from './dataTest'
 import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest'
 import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest'
+import Sorter from './sorter'
 
 jest.mock('axios')
 
@@ -45,14 +46,14 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -84,14 +85,14 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, 'schema', apiKey) })
+      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+      .mockResolvedValueOnce({ data: channelsExpectedResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
       .mockResolvedValueOnce({ data: getSocialsProviders(socialsKeys) })
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
-      .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: channelsExpectedResponse })
     const err = {
       message: mockedResponse.errorMessage,
       code: mockedResponse.errorCode,
@@ -115,6 +116,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
@@ -200,7 +202,10 @@ describe('Config Manager test suite', () => {
   test('copy all unsuccessfully - error getting destination data center', async () => {
     const mockedResponse = ConfiguratorTestData.scExpectedGigyaResponseNotOk
     const mockedDataCenterResponse = ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0)
-    axios.mockResolvedValueOnce({ data: mockedDataCenterResponse }).mockResolvedValueOnce({ data: mockedResponse })
+    axios
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
+      .mockResolvedValueOnce({ data: mockedResponse })
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(1)
     expect(response[0]).toEqual(mockedResponse)
@@ -211,6 +216,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, policyId, apiKey) })
@@ -231,6 +237,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
@@ -281,6 +288,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
       .mockResolvedValueOnce({ data: getPolicyConfig })
@@ -333,6 +341,48 @@ describe('Config Manager test suite', () => {
     verifyAllContext(response)
   })
 
+  test('copy to several targets successfully, with default sorter', async () => {
+    const mockedDataCenterResponse = { data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) }
+    axios
+      .mockResolvedValueOnce(mockedDataCenterResponse)
+      .mockResolvedValueOnce(mockedDataCenterResponse)
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
+
+    const options = getInfoExpectedResponse(false)
+    options[5].value = true
+    const response = await configManager.copy([apiKey, 'childApiKey'], options, new Sorter())
+
+    expect(response.length).toEqual(2)
+    verifyAllResponsesAreOk(response)
+    verifyAllContext(response)
+  })
+
+  test('copy to several targets successfully, with ParentChild sorter', async () => {
+    const mockedDataCenterResponse = { data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) }
+    axios
+      .mockResolvedValueOnce(mockedDataCenterResponse) // origin site info
+      .mockResolvedValueOnce(mockedDataCenterResponse) // target site info to know if it's parent
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }) // target site info to know if it's parent or child
+      .mockResolvedValueOnce(mockedDataCenterResponse) // target parent site info
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse }) // get sms
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) }) // set sms
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }) // target child site info
+      .mockResolvedValueOnce({ data: getSmsExpectedResponse }) // get sms
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) }) // set sms
+
+    const options = getInfoExpectedResponse(false)
+    options[5].value = true
+    const response = await configManager.copy([apiKey, 'childApiKey'], options)
+
+    expect(response.length).toEqual(2)
+    verifyAllResponsesAreOk(response)
+    verifyAllContext(response)
+  })
+
   async function executeCopyAllUnsuccessfully(mockedResponse, numberOfExpectedResponses) {
     const response = await configManager.copy([apiKey], getInfoExpectedResponse(true))
     expect(response.length).toEqual(numberOfExpectedResponses)
@@ -376,6 +426,7 @@ describe('Config Manager test suite', () => {
     axios
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
+      .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
     if (option === schemaId) {
       axios.mockResolvedValueOnce({ data: expectedSchemaResponse })

@@ -65,6 +65,7 @@ describe('Site Deployer Test Suite', () => {
 
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
     cy.get('@windowOpenStub').should('be.called')
+    utils.clickPopUpOkButton('#successPopup')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {

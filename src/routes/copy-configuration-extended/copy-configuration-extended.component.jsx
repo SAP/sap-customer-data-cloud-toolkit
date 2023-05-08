@@ -37,6 +37,8 @@ import {
   setAvailableTargetSitesFromLocalStorage,
   getAvailableTargetSites,
   setConfigurationStatus,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -179,6 +181,8 @@ const CopyConfigurationExtended = ({ t }) => {
         selectAllCheckboxState={selectAllCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
+        setDataflowVariableValue={setDataflowVariableValue}
+        setDataflowVariableValues={setDataflowVariableValues}
       />
     )
   }

@@ -166,3 +166,27 @@ export const getAvailableTargetApiKeysPayload = {
   availableTargetSites: getUserSitesResponse,
   secret: dummySecretKey,
 }
+
+export const configurationsWithDataflows = [
+  {
+    id: 'dataflows',
+    name: 'schema',
+    value: true,
+    branches: [
+      { id: 'dataflow1', name: 'dataflow1', value: true, variables: [{ variable: 'var1', value: 'test1' }] },
+      { id: 'dataflow2', name: 'dataflow2', value: true, variables: [{ variable: 'var2', value: '' }] },
+    ],
+  },
+]
+
+export const initialStateWithDataflows = {
+  configurations: configurationsWithDataflows,
+  errors: [],
+  apiCardError: undefined,
+  isLoading: false,
+  targetSites: [],
+  showSuccessMessage: false,
+  availableTargetSites: [],
+  currentSiteInformation: {},
+  isTargetInfoLoading: false,
+}

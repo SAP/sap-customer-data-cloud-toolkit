@@ -82,6 +82,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
       className={classes.targetInfoContainerInput}
       onSuggestionItemSelect={onSuggestionItemSelectHandler}
       placeholder={getPlaceHolderText()}
+      noTypeahead={true}
     >
       {filteredAvailableTargetSites.map((availableTargetSite) => (
         <SuggestionItem

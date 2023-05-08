@@ -7,6 +7,7 @@ import lodash from 'lodash'
 import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
+import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
 import { getHighestSeverity } from './utils'
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
@@ -15,7 +16,7 @@ import styles from './configuration-tree.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
-const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, t }) => {
+const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setDataflowVariableValue, setDataflowVariableValues, t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
@@ -47,6 +48,18 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
     return isMouseOverIcon && tooltipTarget === `${id}TooltipIcon`
   }
 
+  const showError = (treeNode) => {
+    return treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''
+  }
+
+  const showDataflowSettings = (treeNode) => {
+    return treeNode.value && treeNode.variables ? (
+      <DataflowSettings dataFlowTreeNode={treeNode} setDataflowVariableValue={setDataflowVariableValue} setDataflowVariableValues={setDataflowVariableValues} />
+    ) : (
+      ''
+    )
+  }
+
   const expandTree = (treeNode) => {
     return (
       <TreeItemCustom
@@ -76,7 +89,8 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             ) : (
               ''
             )}
-            {treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''}
+            {showDataflowSettings(treeNode)}
+            {showError(treeNode)}
           </FlexBox>
         }
       >

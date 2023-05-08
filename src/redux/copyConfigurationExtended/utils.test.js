@@ -13,9 +13,18 @@ import {
   writeAvailableTargetSitesToLocalStorage,
   getAvailableTargetSitesFromLocalStorage,
   removeCurrentSiteApiKeyFromAvailableTargetSites,
+  checkDataflowVariables,
 } from './utils'
 
-import { configurationsMockedResponse, initialStateWithErrors, mockedErrorsResponse, initialStateWithTargetApiKey, dummyTargetApiKey, dummySecretKey } from './dataTest'
+import {
+  configurationsMockedResponse,
+  initialStateWithErrors,
+  mockedErrorsResponse,
+  initialStateWithTargetApiKey,
+  dummyTargetApiKey,
+  dummySecretKey,
+  configurationsWithDataflows,
+} from './dataTest'
 
 describe('copyConfigurationSlice utils test suite', () => {
   test('should find a first level configuration', () => {
@@ -137,5 +146,11 @@ describe('copyConfigurationSlice utils test suite', () => {
 
   test('should remove current site api key from available target sites', () => {
     expect(removeCurrentSiteApiKeyFromAvailableTargetSites(initialStateWithTargetApiKey.targetSites, dummyTargetApiKey).length).toEqual(0)
+  })
+
+  test('should return error response when dataflow variables are empty', () => {
+    const responses = checkDataflowVariables(configurationsWithDataflows)
+    expect(responses.length).toEqual(1)
+    expect(responses[0].context.id).toEqual(configurationsWithDataflows[0].branches[1].id)
   })
 })
