@@ -162,6 +162,7 @@ const CopyConfigurationExtended = ({ t }) => {
       closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="copyConfigSuccessPopup"
+      data-cy="copyConfigSuccessPopup"
     >
       <Text>{t('COPY_CONFIGURATION_EXTENDED.COPY_SUCCESS_MESSAGE')}</Text>
     </DialogMessageInform>
@@ -186,7 +187,7 @@ const CopyConfigurationExtended = ({ t }) => {
     return errors.length ? (
       <div className={classes.errorListOuterDivStyle}>
         <div className={classes.errorListInnerDivStyle}>
-          <Card id="errorListContainer">
+          <Card id="errorListContainer" data-cy="errorListContainer">
             <MessageList messages={errors} />
           </Card>
         </div>
@@ -210,7 +211,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const showMessageStripError = () => {
     return apiCardError ? (
-      <MessageStrip id="messageStripError" design="Negative" onClose={onMessageStripCloseHandler}>
+      <MessageStrip id="messageStripError" data-cy="messageStripError" design="Negative" onClose={onMessageStripCloseHandler}>
         {apiCardError.errorMessage}
       </MessageStrip>
     ) : (
@@ -228,7 +229,7 @@ const CopyConfigurationExtended = ({ t }) => {
         design="Header"
         startContent={
           <>
-            <Title id="copyConfigurationExtendedPageTitle" level={TitleLevel.H3} className={classes.titleStyle}>
+            <Title id="copyConfigurationExtendedPageTitle" data-cy="copyConfigurationExtendedPageTitle" level={TitleLevel.H3} className={classes.titleStyle}>
               <span className={classes.titleSpanStyle}>{PAGE_TITLE}</span>
             </Title>
           </>
@@ -239,7 +240,7 @@ const CopyConfigurationExtended = ({ t }) => {
         <div className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>
             <FlexBox className={classes.headerTextFlexboxStyle}>
-              <Text id="copyConfigExtendedHeaderText" className={classes.componentTextStyle}>
+              <Text id="copyConfigExtendedHeaderText" data-cy="copyConfigExtendedHeaderText" className={classes.componentTextStyle}>
                 {t('COPY_CONFIGURATION_EXTENDED.HEADER_TEXT')}
               </Text>
             </FlexBox>
@@ -257,15 +258,21 @@ const CopyConfigurationExtended = ({ t }) => {
                         <tbody>
                           <tr>
                             <td>
-                              <Label id="currentSiteLabel">{t('COPY_CONFIGURATION_EXTENDED.SITE_DOMAIN')}</Label>
+                              <Label id="currentSiteLabel" data-cy="currentSiteLabel">
+                                {t('COPY_CONFIGURATION_EXTENDED.SITE_DOMAIN')}
+                              </Label>
                             </td>
                             <td>
-                              <Text id="currentSiteName">{currentSiteInformation.baseDomain}</Text>
+                              <Text id="currentSiteName" data-cy="currentSiteName">
+                                {currentSiteInformation.baseDomain}
+                              </Text>
                             </td>
                           </tr>
                           <tr>
                             <td>
-                              <Label id="currentSiteApiKeyLabel">{t('COPY_CONFIGURATION_EXTENDED.API_KEY')}</Label>
+                              <Label id="currentSiteApiKeyLabel" data-cy="currentSiteApiKeyLabel">
+                                {t('COPY_CONFIGURATION_EXTENDED.API_KEY')}
+                              </Label>
                             </td>
                             <td>
                               <Text> {currentSiteApiKey} </Text>
@@ -290,7 +297,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
                   <div className={classes.targetInfoContainer} data-layout-span="XL5 L5 M5 S5">
                     <TargetSitesTooltipIcon title={t('COPY_CONFIGURATION_EXTENDED.TO')} />
-                    <Card id="copyConfigurationExtendedSearchSitesInputCard">
+                    <Card id="copyConfigurationExtendedSearchSitesInputCard" data-cy="copyConfigurationExtendedSearchSitesInputCard">
                       <div className={classes.targetInfoContainerInputContainer}>
                         <SearchSitesInput
                           tarketApiKeyInputValue={tarketApiKeyInputValue}
@@ -334,6 +341,7 @@ const CopyConfigurationExtended = ({ t }) => {
                       id="copyConfigExtendedSaveButton"
                       className="fd-button fd-button--emphasized fd-button--compact"
                       onClick={onSaveHandler}
+                      data-cy="copyConfigExtendedSaveButton"
                       design="Emphasized"
                       disabled={disableSaveButton()}
                     >
@@ -342,6 +350,7 @@ const CopyConfigurationExtended = ({ t }) => {
                     <Button
                       type="button"
                       id="copyConfigExtendedCancelButton"
+                      data-cy="copyConfigExtendedCancelButton"
                       className="fd-button fd-button--transparent fd-button--compact"
                       onClick={onCancelHandler}
                       disabled={isLoading}

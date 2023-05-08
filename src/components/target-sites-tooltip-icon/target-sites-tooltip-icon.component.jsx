@@ -34,13 +34,14 @@ const TargetSitesTooltipIcon = ({ title, t }) => {
       </Title>
       <Icon
         id={`${title}targetSiteTooltipIcon`}
+        data-cy="targetSiteTooltipIcon"
         name="information"
         design="Information"
         onMouseOver={onMouseOverHandler}
         onMouseOut={onMouseOutHandler}
         className={classes.tooltipIconStyle}
       />
-      <Popover id={`${title}targetSitePopover`} opener={`${title}targetSiteTooltipIcon`} open={openPopover()}>
+      <Popover id={`${title}targetSitePopover`} data-cy="targetSitePopover" opener={`${title}targetSiteTooltipIcon`} open={openPopover()}>
         {t(`COPY_CONFIGURATION_EXTENDED.TARGET_SITES_TOOLTIP`)}
       </Popover>
     </FlexBox>

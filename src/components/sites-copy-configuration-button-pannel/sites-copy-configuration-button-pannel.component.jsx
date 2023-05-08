@@ -41,13 +41,13 @@ const SitesCopyConfigurationButtonPannel = ({ siteId }) => {
 
   return (
     <>
-      <FlexBox id="sitesCopyConfigurationButtonPannelGrid" justifyContent="Start">
+      <FlexBox id="sitesCopyConfigurationButtonPannelGrid" data-cy="sitesCopyConfigurationButtonPannelGrid" justifyContent="Start">
         {!hasConfig() ? (
-          <Button id="addSiteConfigButton" icon="add" design="Transparent" onClick={onAddConfigButtonClickHandler} data-cy="addSiteConfigButton"/>
+          <Button id="addSiteConfigButton" data-cy="addSiteConfigButton" icon="add" design="Transparent" onClick={onAddConfigButtonClickHandler} />
         ) : (
           <>
-            <Button id="editSiteConfigButton" icon="edit" design="Transparent" onClick={onEditConfigButtonClickHandler} />
-            <Button id="declineSiteConfigButton" icon="delete" design="Transparent" onClick={onRemoveConfigButtonClickHandler} />
+            <Button id="editSiteConfigButton" data-cy="editSiteConfigButton" icon="edit" design="Transparent" onClick={onEditConfigButtonClickHandler} />
+            <Button id="declineSiteConfigButton" data-cy="declineSiteConfigButton" icon="delete" design="Transparent" onClick={onRemoveConfigButtonClickHandler} />
           </>
         )}
       </FlexBox>

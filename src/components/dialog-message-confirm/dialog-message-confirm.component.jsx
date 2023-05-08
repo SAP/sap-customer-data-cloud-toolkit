@@ -34,6 +34,7 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
               <div>
                 <Button
                   id="confirmButton"
+                  data-cy="confirmButton"
                   onClick={confirmButtonClickHandler}
                   design="Emphasized"
                   className={classes.confirmButtonStyle}
@@ -42,7 +43,7 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
                   {confirmButtonText ? confirmButtonText : t('GLOBAL.CONTINUE')}
                 </Button>
 
-                <Button id="cancelButton" onClick={() => setDialogIsOpen(false)} className={classes.closeButtonStyle}>
+                <Button id="cancelButton" data-cy="cancelButton" onClick={() => setDialogIsOpen(false)} className={classes.closeButtonStyle}>
                   {t('GLOBAL.CANCEL')}
                 </Button>
               </div>

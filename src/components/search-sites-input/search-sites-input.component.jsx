@@ -74,6 +74,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
     <Input
       showSuggestions
       id="apiKeyInput"
+      data-cy="apiKeyInput"
       onInput={onTargetApiKeysInputHandler}
       onKeyPress={onTargetApiKeysInputKeyPressHandler}
       type={InputType.Text}
@@ -91,7 +92,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
           type="Navigation"
         />
       ))}
-      <Button id="addTargetSiteButton" slot="icon" icon="add" onClick={onAddTargetSiteButtonClickHandler} design="Transparent"></Button>
+      <Button id="addTargetSiteButton" data-cy="addTargetSiteButton" slot="icon" icon="add" onClick={onAddTargetSiteButtonClickHandler} design="Transparent"></Button>
     </Input>
   )
 }

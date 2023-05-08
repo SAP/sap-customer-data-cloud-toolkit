@@ -209,6 +209,7 @@ const SiteDeployer = ({ t }) => {
               disabled={checkSitesRequiredFields(sites) || isLoading}
               type="submit"
               id="save-main"
+              data-cy="save-main"
               className="fd-button fd-button--emphasized fd-button--compact"
               onClick={onSaveHandler}
             >
@@ -218,6 +219,7 @@ const SiteDeployer = ({ t }) => {
               disabled={!checkSitesExist(sites) || isLoading}
               type="button"
               id="cancel-main"
+              data-cy="cancel-main"
               className="fd-button fd-button--transparent fd-button--compact"
               onClick={onCancelHandler}
             >
@@ -254,6 +256,7 @@ const SiteDeployer = ({ t }) => {
       closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="successPopup"
+      data-cy="siteDeployersuccessPopup"
     >
       <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
@@ -290,6 +293,7 @@ const SiteDeployer = ({ t }) => {
                     type={InputType.Text}
                     className={classes.baseDomainInputStyle}
                     placeholder={t('SITE_DEPLOYER_COMPONENT.SITE_DOMAIN_EXAMPLE')}
+                    data-cy="cdctools-baseDomain"
                     onInput={(event) => {
                       onBaseDomainChange(event)
                     }}
@@ -299,7 +303,12 @@ const SiteDeployer = ({ t }) => {
                   <Label for="cdctools-dataCenter" className={classes.dataCentersLabelStyle}>
                     {t('SITE_DEPLOYER_COMPONENT.CHOOSE_DATA_CENTER')}
                   </Label>
-                  <MultiComboBox id="cdctools-dataCenter" className={classes.dataCentersMultiComboBoxStyle} onSelectionChange={(event) => checkDataCentersSelected(event)}>
+                  <MultiComboBox
+                    id="cdctools-dataCenter"
+                    className={classes.dataCentersMultiComboBoxStyle}
+                    onSelectionChange={(event) => checkDataCentersSelected(event)}
+                    data-cy="cdctools-dataCenter"
+                  >
                     {dataCenters.map(({ label }) => (
                       <MultiComboBoxItem key={label} text={label} selected />
                     ))}
@@ -312,7 +321,7 @@ const SiteDeployer = ({ t }) => {
                   {t('SITE_DEPLOYER_COMPONENT.SELECT_SITE_STRUCTURE')}
                 </Label>
 
-                <Select id="cdctools-siteStructure" className={classes.siteStructureSelectStyle} onChange={onChangeSiteStructure} required="true">
+                <Select id="cdctools-siteStructure" className={classes.siteStructureSelectStyle} onChange={onChangeSiteStructure} data-cy="cdctools-siteStructure" required="true">
                   <Option></Option>
                   {structures.map(({ _id, name }) => (
                     <Option key={_id} value={_id} data-value={_id}>
@@ -323,7 +332,15 @@ const SiteDeployer = ({ t }) => {
               </div>
               <div className={classes.createButtonOuterDivStyle}>
                 <Bar design="Footer" className={classes.createButtonBarStyle}>
-                  <Button id="createButton" disabled={checkRequiredFields()} onClick={onCreateHandler} icon="add" design="Transparent" className={classes.createButtonStyle}>
+                  <Button
+                    id="createButton"
+                    disabled={checkRequiredFields()}
+                    onClick={onCreateHandler}
+                    icon="add"
+                    design="Transparent"
+                    data-cy="createButton"
+                    className={classes.createButtonStyle}
+                  >
                     {t('SITE_DEPLOYER_COMPONENT.CREATE_STRUCTURE')}
                   </Button>
                 </Bar>
@@ -342,7 +359,9 @@ const SiteDeployer = ({ t }) => {
         {showErrorsList(errors)}
         <div className={classes.saveCancelButtonsOuterDivStyle}>
           <div className={classes.saveCancelButtonsInnerDivStyle}>
-            <Card id="saveCancelCard">{showSaveCancelButtons()}</Card>
+            <Card id="saveCancelCard" data-cy="saveCancelCard">
+              {showSaveCancelButtons()}
+            </Card>
           </div>
         </div>
         {showSuccessMessage()}

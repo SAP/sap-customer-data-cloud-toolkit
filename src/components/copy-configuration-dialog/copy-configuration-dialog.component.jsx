@@ -175,6 +175,7 @@ const CopyConfigurationDialog = ({ t }) => {
   return (
     <DialogMessageConfirm
       id="siteCopyConfigurationDialog"
+      data-cy="siteCopyConfigurationDialog"
       open={open}
       state={ValueState.None}
       headerText={t('GLOBAL.COPY_CONFIGURATION')}

@@ -8,7 +8,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-  // defaultCommandTimeout: 30000,
+  defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
@@ -36,11 +36,12 @@ module.exports = defineConfig({
       }
     },
   },
-  "retries": { // Default is 0
+  retries: {
+    // Default is 0
     // Configure retry attempts for `cypress run`.
-    "runMode": 1,
+    runMode: 1,
     // Configure retry attempts for `cypress open`
-    "openMode": 0
+    openMode: 0,
   },
   component: {
     setupNodeEvents(on, config) {

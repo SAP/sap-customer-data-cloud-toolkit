@@ -103,6 +103,7 @@ const SmsTemplates = ({ t }) => {
       state={ValueState.Error}
       closeButtonContent="Ok"
       id="smsTemplatesErrorPopup"
+      data-cy="smsTemplatesErrorPopup"
       onAfterClose={onAfterCloseErrorDialogHandler}
     >
       <MessageList messages={errors} />
@@ -117,6 +118,7 @@ const SmsTemplates = ({ t }) => {
       onAfterClose={() => document.location.reload()}
       closeButtonContent="Ok"
       id="successPopup"
+      data-cy="smsSuccessPopup"
     >
       <Text>{t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
@@ -128,11 +130,21 @@ const SmsTemplates = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <div>
-            <Button id="exportAllSmsTemplatesButton" className="fd-button fd-button--compact" onClick={onExportAllSmsTemplatesButtonClickHandler}>
+            <Button
+              id="exportAllSmsTemplatesButton"
+              data-cy="exportAllSmsTemplatesButton"
+              className="fd-button fd-button--compact"
+              onClick={onExportAllSmsTemplatesButtonClickHandler}
+            >
               {t('GLOBAL.EXPORT_ALL')}
             </Button>
 
-            <Button id="importAllSmsTemplatesButton" className={classes.importAllButtonStyle} onClick={onImportAllSmsTemplatesButtonClickHandler}>
+            <Button
+              id="importAllSmsTemplatesButton"
+              data-cy="importAllSmsTemplatesButton"
+              className={classes.importAllButtonStyle}
+              onClick={onImportAllSmsTemplatesButtonClickHandler}
+            >
               {t('GLOBAL.IMPORT_ALL')}
             </Button>
           </div>

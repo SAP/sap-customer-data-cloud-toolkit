@@ -100,6 +100,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
           )}
           <Input
             id="baseDomainInput"
+            data-cy="baseDomainInput"
             type={InputType.Text}
             className={classes.baseDomainInputWithChildsStyle}
             value={baseDomain}
@@ -111,6 +112,7 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
       return (
         <Input
           id="baseDomainInput"
+          data-cy="baseDomainInput"
           type={InputType.Text}
           className={classes.baseDomainInputWithoutChildsStyle}
           value={baseDomain}
@@ -141,11 +143,18 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
         <TableCell>{checkChildSitesView()}</TableCell>
 
         <TableCell>
-          <Input type={InputType.Text} id="descriptionInput" className={classes.descriptionInputStyle} value={description} onInput={(event) => onChangeParentDescription(event)} />
+          <Input
+            type={InputType.Text}
+            id="descriptionInput"
+            data-cy="descriptionInput"
+            className={classes.descriptionInputStyle}
+            value={description}
+            onInput={(event) => onChangeParentDescription(event)}
+          />
         </TableCell>
 
         <TableCell>
-          <Select id="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter} style={{ width: '50px' }}>
+          <Select id="dataCenterSelect" data-cy="dataCenterSelect" className={classes.dataCenterSelectStyle} onChange={onChangeDataCenter} style={{ width: '50px' }}>
             {dataCentersSelect.map(({ label, value }) => (
               <Option key={label} data-value={value} selected={label === dataCenter || value === dataCenter}>
                 {label}
@@ -163,8 +172,12 @@ const SitesTableParentRow = ({ tempId, baseDomain, description, tags, dataCenter
             <>
               <Button icon="overflow" design="Transparent" onClick={actionSheetOpenerHandler} id={`actionSheetOpener${tempId}`} data-cy="parentRowActionSheetOpener"></Button>
               <ActionSheet opener={`actionSheetOpener${tempId}`} open={isActionSheetOpen} placementType="Bottom" onAfterClose={actionSheetOnAfterCloseHandler}>
-                <Button onClick={onAddChildHandler} data-cy="createChildSiteAction">{t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}</Button>
-                <Button onClick={onDeleteParentHandler} data-cy="deleteChildSiteAction">{t('GLOBAL.DELETE')}</Button>
+                <Button onClick={onAddChildHandler} data-cy="createChildSiteAction">
+                  {t('SITE_TABLE_PARENT_COMPONENT.CREATE_CHILD_SITE')}
+                </Button>
+                <Button onClick={onDeleteParentHandler} data-cy="deleteChildSiteAction">
+                  {t('GLOBAL.DELETE')}
+                </Button>
               </ActionSheet>
             </>
           </div>

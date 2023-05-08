@@ -78,12 +78,20 @@ const SitesTableChildRow = ({ parentSiteTempId, tempId, baseDomain, description,
       <TableRow>
         {showErrorTableCell(errorList, error)}
         <TableCell>
-          <Input id="childBaseDomainInput" type={InputType.Text} className={classes.childBaseDomainInputStyle} value={baseDomain} onInput={(event) => onChangeChildDomain(event)} />
+          <Input
+            id="childBaseDomainInput"
+            data-cy="childBaseDomainInput"
+            type={InputType.Text}
+            className={classes.childBaseDomainInputStyle}
+            value={baseDomain}
+            onInput={(event) => onChangeChildDomain(event)}
+          />
         </TableCell>
 
         <TableCell>
           <Input
             id="childDescriptionInput"
+            data-cy="childDescriptionInput"
             type={InputType.Text}
             className={classes.childDescriptionInputStyle}
             value={description}
