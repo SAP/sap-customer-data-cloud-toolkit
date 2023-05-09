@@ -74,7 +74,7 @@ export const SitesTable = ({ t }) => {
         )}
 
         <div className={classes.addParentButtonOuterDivStyle}>
-          <Button id="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
+          <Button id="addParentButton" data-cy="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
             {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
           </Button>
         </div>

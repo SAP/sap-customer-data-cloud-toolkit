@@ -75,16 +75,16 @@ export function resizeObserverLoopErrRe() {
 }
 
 export function getBaseDomain(baseDomain, timeout) {
-  cy.get('#cdctools-baseDomain').should('be.visible')
-  return cy.get('#cdctools-baseDomain', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain, { force: true }).should('have.value', baseDomain)
+  cy.get('[data-cy ="cdctools-baseDomain"]').should('be.visible')
+  return cy.get(' [data-cy ="cdctools-baseDomain"]', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter) {
-  cy.get('#cdctools-dataCenter').shadow().find('ui5-icon').realClick()
+  cy.get('[data-cy ="cdctools-dataCenter"]').shadow().find('ui5-icon').realClick()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
   return cy
-    .get('#cdctools-dataCenter')
+    .get('[data-cy ="cdctools-dataCenter"]')
     .shadow()
     .find('.ui5-multi-combobox-tokenizer')
     .find(`[text = ${chosenDataCenter}]`)
@@ -94,8 +94,8 @@ export function getDataCenters(chosenDataCenter) {
 }
 
 export function getSiteStructure(optionNumber, timeout) {
-  cy.get('#cdctools-siteStructure', { timeout: timeout }).should('be.visible')
-  cy.get('#cdctools-siteStructure', { timeout: timeout }).click()
+  cy.get(' [data-cy ="cdctools-siteStructure"]').should('be.visible')
+  cy.get(' [data-cy ="cdctools-siteStructure"]', { timeout: timeout }).click()
   return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
 
@@ -105,20 +105,20 @@ export function deleteChildSite(length) {
 }
 
 export function getCreateButton() {
-  return cy.get('body').find('#createButton').shadow().find('.ui5-button-root')
+  return cy.get(' [data-cy ="createButton"]').shadow().find('.ui5-button-root')
 }
 
 export function getSaveButton() {
-  return cy.get('#saveCancelCard').find('#save-main')
+  return cy.get(' [data-cy ="save-main"]')
 }
 
 export function getCancelButton() {
-  return cy.get('#saveCancelCard').find('#cancel-main')
+  return cy.get(' [data-cy ="cancel-main"]')
 }
 
 export function clickPopUpOkButton(popUpId) {
-  cy.get('.show-cdc-tools-app-container').find(popUpId).should('be.visible')
-  return cy.get('.show-cdc-tools-app-container').find(popUpId).find('ui5-bar').find('ui5-button').realClick()
+  cy.get(`[data-cy =${popUpId}]`).should('be.visible')
+  return cy.get(`[data-cy =${popUpId}]`).find('ui5-bar').find('ui5-button').realClick()
 }
 
 export function mockGetConfigurationRequests() {
@@ -156,55 +156,56 @@ export function mockGetPartnersRequest() {
 
 export function checkErrors(expectedState) {
   cy.get('[icon = error]').should(expectedState)
-  cy.get('#errorListContainer').should(expectedState)
+  cy.get('[data-cy ="errorListContainer"]').should(expectedState)
 }
 
 export function checkElementsInitialState() {
-  cy.get('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
+  cy.get('[data-cy ="apiKeyInput"]').shadow().find('[class = "ui5-input-inner"]').should('have.text', '')
   cy.get('ui5-tree').should('be.visible')
   cy.get('ui5-tree').eq(0).find('ui5-checkbox').should('not.be.checked')
   cy.get('ui5-tree').eq(4).find('#policiesTooltipIcon').should('exist')
   cy.get('ui5-tree').eq(4).find('#policiesTooltipIcon').realHover()
   cy.get('#policiesPopover').should('have.text', policiesPopoverText)
-  cy.get('#copyConfigExtendedSaveButton').shadow().find('button').should('be.disabled')
-  cy.get('#copyConfigExtendedCancelButton').shadow().find('button').should('be.enabled')
-  cy.get('#targetSiteTooltipIcon').should('exist')
-  cy.get('#targetSiteTooltipIcon').realHover()
-  cy.get('#targetSitePopover').should('have.text', targetSitePopoverText)
+  cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.disabled')
+  cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').should('be.enabled')
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).should('exist')
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).realHover()
+  cy.get('[data-cy ="targetSitePopover"]').eq(1).should('have.text', targetSitePopoverText)
 }
 
 export function setConfigurationCheckBox(parent) {
   if (parent) {
-    cy.get(parent).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+    cy.get(`[data-cy =${parent}]`).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
   } else {
     cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
   }
 }
 
 export function fillTargetApiKeyInput() {
-  cy.get('#copyConfigurationExtendedSearchSitesInputCard').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
+  cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
 
 export function fillSourceApiKeyInput() {
-  cy.get('#siteCopyConfigurationDialog').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
+  cy.get('[data-cy ="siteCopyConfigurationDialog"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().focus().type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
 
 export function checkTargetSitesList() {
-  cy.get('#selectedTargetApiKeysList').should('have.length', '1')
+  cy.get('[data-cy ="selectedTargetApiKeysList"]').should('have.length', '1')
 }
 
 export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOption) {
-  cy.get('#baseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
-  cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
-  cy.get('#dataCenterSelect').click()
+  cy.get('[data-cy ="baseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
+  cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
+  cy.get('[data-cy ="dataCenterSelect"]').click()
+
   cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
 }
 
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
-  cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
-  cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
+  cy.get('[data-cy ="childBaseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
+  cy.get('[data-cy ="childDescriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
 }
 
 export function createChild() {
@@ -216,21 +217,21 @@ export function getIcon(iconNumber) {
 }
 
 function getSiteConfigButton(buttonId) {
-  return cy.get('ui5-table-row').eq(0).find('#sitesCopyConfigurationButtonPannelGrid').find(buttonId)
+  return cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
 }
 
 export function getAddSiteConfigButton() {
-  return getSiteConfigButton('#addSiteConfigButton')
+  return getSiteConfigButton('addSiteConfigButton')
 }
 
 export function getEditSiteConfigButton() {
-  return getSiteConfigButton('#editSiteConfigButton')
+  return getSiteConfigButton('editSiteConfigButton')
 }
 
 export function getDeclineSiteConfigButton() {
-  return getSiteConfigButton('#declineSiteConfigButton')
+  return getSiteConfigButton('declineSiteConfigButton')
 }
 
 export function getSiteCopyConfigurationDialog() {
-  return cy.get('#siteCopyConfigurationDialog')
+  return cy.get('[data-cy ="siteCopyConfigurationDialog"]')
 }

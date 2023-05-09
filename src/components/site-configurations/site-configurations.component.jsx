@@ -26,11 +26,18 @@ const SiteConfigurations = ({
       <div className={classes.selectConfigurationInnerDivStyle}>
         <Card
           id="siteConfigurationsCard"
+          data-cy="siteConfigurationsCard"
           header={
             <CardHeader
               titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')}
               action={
-                <CheckBox id="selectAllCheckbox" checked={selectAllCheckboxState} text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')} onChange={onSelectAllCheckboxChangeHandler} />
+                <CheckBox
+                  id="selectAllCheckbox"
+                  data-cy="selectAllCheckbox"
+                  checked={selectAllCheckboxState}
+                  text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')}
+                  onChange={onSelectAllCheckboxChangeHandler}
+                />
               }
             />
           }

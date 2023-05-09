@@ -65,6 +65,7 @@ const SmsImportPopup = ({ t }) => {
       open={isImportPopupOpen}
       onAfterClose={onCloseSmsImportPopup}
       id="smsImportPopup"
+      data-cy="smsImportPopup"
       header={
         <div id="header" className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>{t('SMS_IMPORT_POPUP.POPUP_HEADER')}</div>
@@ -79,17 +80,17 @@ const SmsImportPopup = ({ t }) => {
             <Label id="specifyFileLabel">{t('SMS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
           </div>
           <div>
-            <input id="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
+            <input id="zipFileInput" data-cy="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
           </div>
         </div>
       }
       footer={
         <div className={classes.footerOuterDivStyle}>
-          <Button id="importZipButton" className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
+          <Button id="importZipButton" data-cy="importZipButton" className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
             {t('GLOBAL.IMPORT')}
           </Button>
 
-          <Button id="cancelImportZipButton" className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
+          <Button id="cancelImportZipButton" data-cy="cancelImportZipButton" className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
             {t('GLOBAL.CANCEL')}
           </Button>
         </div>

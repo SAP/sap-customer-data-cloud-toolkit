@@ -113,6 +113,7 @@ const EmailTemplates = ({ t }) => {
       state={ValueState.Error}
       closeButtonContent={t('GLOBAL.OK')}
       id="emailTemplatesErrorPopup"
+      data-cy="emailTemplatesErrorPopup"
       onAfterClose={onAfterCloseErrorDialogHandler}
     >
       <MessageList messages={errors} />
@@ -127,6 +128,7 @@ const EmailTemplates = ({ t }) => {
       onAfterClose={onAfterCloseSuccessDialogHandler}
       closeButtonContent={t('GLOBAL.OK')}
       id="successPopup"
+      data-cy="emailSuccessPopup"
     >
       <Text>{t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}</Text>
     </DialogMessageInform>
@@ -138,11 +140,21 @@ const EmailTemplates = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <div>
-            <Button id="exportAllEmailTemplatesButton" className="fd-button fd-button--compact" onClick={onExportAllEmailTemplatesButtonClickHandler}>
+            <Button
+              id="exportAllEmailTemplatesButton"
+              data-cy="exportAllEmailTemplatesButton"
+              className="fd-button fd-button--compact"
+              onClick={onExportAllEmailTemplatesButtonClickHandler}
+            >
               {t('GLOBAL.EXPORT_ALL')}
             </Button>
 
-            <Button id="importAllEmailTemplatesButton" className={classes.importAllButtonStyle} onClick={onImportAllEmailTemplatesButtonClickHandler}>
+            <Button
+              id="importAllEmailTemplatesButton"
+              data-cy="importAllEmailTemplatesButton"
+              className={classes.importAllButtonStyle}
+              onClick={onImportAllEmailTemplatesButtonClickHandler}
+            >
               {t('GLOBAL.IMPORT_ALL')}
             </Button>
           </div>

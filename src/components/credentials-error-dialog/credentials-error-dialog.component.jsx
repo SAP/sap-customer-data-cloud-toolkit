@@ -20,6 +20,7 @@ const CredentialsErrorDialog = ({ open, onAfterCloseHandle, t }) => {
       className={classes.dialogMessageStyle}
       onAfterClose={() => onAfterCloseHandle()}
       id="errorPopup"
+      data-cy="credentialErrorPopup"
     >
       <Text>{t('SITE_DEPLOYER_COMPONENT.INSERT_CREDENTIALS')}</Text>
     </DialogMessageInform>
