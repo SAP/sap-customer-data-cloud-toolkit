@@ -65,10 +65,10 @@ describe('Copy Configuration extended test suite', () => {
   })
 
   it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {
-    cy.get(' [data-cy ="apiKeyInput"]').eq(1).shadow().find('[class = "ui5-input-inner"]').type('test')
+    cy.get(' [data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.wait(1000)
     cy.get(' [data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#addTargetSiteButton').click()
-    cy.get(' [data-cy ="apiKeyInput"]').eq(1).shadow().find('[class = "ui5-input-inner"]').type('test')
+    cy.get(' [data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.wait(1000)
     cy.get(' [data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#addTargetSiteButton').click()
     cy.get(' [data-cy ="messageStripError"]').should('have.text', dataTest.expectedDuplicatedMessage)
@@ -77,7 +77,7 @@ describe('Copy Configuration extended test suite', () => {
   })
 
   it('should add a Target Site to the Targe Sites list on pressing Enter', () => {
-    cy.get(' [data-cy ="apiKeyInput"]').eq(1).shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
+    cy.get(' [data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('cdc{enter}')
     utils.checkTargetSitesList()
   })
 
