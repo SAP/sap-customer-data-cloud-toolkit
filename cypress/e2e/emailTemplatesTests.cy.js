@@ -32,7 +32,7 @@ describe('Email Templates Test Suite', () => {
     cy.get(' [data-cy ="emailImportZipButton"]').click()
 
     cy.get(' [data-cy ="emailTemplatesErrorPopup"]').shadow().find('header').should('have.text', 'Error')
-    cy.get(' [data-cy ="messageList"]').should('have.text', dataTest.importEmailTemplatesErrorMessage)
+    cy.get(' [data-cy ="messageList"]').eq(0).should('have.text', dataTest.importEmailTemplatesErrorMessage)
     cy.window().its('open').should('not.be.called')
   })
 

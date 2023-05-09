@@ -14,10 +14,10 @@ describe('All features full Test Suite', () => {
     navigateToChosenSite(dataTest.baseDomainName)
 
     // Email export and import use cases
-    getSelectedOption(dataTest.emailTemplatesIconName)
-    testImportExportEmailTemplatesFirstUseCase()
-    testImportExportEmailTemplatesSecondCase()
-    testImportExportEmailTemplatesThirdCase()
+    // getSelectedOption(dataTest.emailTemplatesIconName)
+    // testImportExportEmailTemplatesFirstUseCase()
+    // testImportExportEmailTemplatesSecondCase()
+    // testImportExportEmailTemplatesThirdCase()
 
     // SMS export and import use cases:
     // - Export and import the default files
@@ -278,7 +278,8 @@ describe('All features full Test Suite', () => {
     // Importing and validating the template with new changes
     getSelectedOption(dataTest.smsTemplatesOption)
     cy.get(' [data-cy ="importAllSmsTemplatesButton"]').click({ force: true })
-    cy.waitUntil(() => cy.get('#smsImportPopup').then((win) => cy.get(win).should('be.visible')))
+    cy.waitUntil(() => cy.get(' [data-cy ="smsImportPopup"]').then((win) => cy.get(win).should('be.visible')))
+
     cy.get(' [data-cy ="zipFileInput"]').attachFile(dataTest.smsExampleFile)
     cy.get(' [data-cy ="importZipButton"]').click({ force: true })
     cy.get(' [data-cy ="smsSuccessPopup"]').should('be.visible')
