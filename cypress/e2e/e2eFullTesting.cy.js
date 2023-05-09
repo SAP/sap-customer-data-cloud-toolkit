@@ -14,10 +14,10 @@ describe('All features full Test Suite', () => {
     navigateToChosenSite(dataTest.baseDomainName)
 
     // Email export and import use cases
-    // getSelectedOption(dataTest.emailTemplatesIconName)
-    // testImportExportEmailTemplatesFirstUseCase()
-    // testImportExportEmailTemplatesSecondCase()
-    // testImportExportEmailTemplatesThirdCase()
+    getSelectedOption(dataTest.emailTemplatesIconName)
+    testImportExportEmailTemplatesFirstUseCase()
+    testImportExportEmailTemplatesSecondCase()
+    testImportExportEmailTemplatesThirdCase()
 
     // SMS export and import use cases:
     // - Export and import the default files
@@ -85,8 +85,8 @@ describe('All features full Test Suite', () => {
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', templateSiteName)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', 1)
-    cy.get(' [data-cy ="selectAllCheckbox"]').click()
-    cy.get(' [data-cy ="confirmButton"]').click()
+    cy.get('[data-cy ="selectAllCheckbox"]').click()
+    cy.get('[data-cy ="confirmButton"]').click()
   }
 
   function testSiteDeployer(siteDomain) {
@@ -100,38 +100,38 @@ describe('All features full Test Suite', () => {
 
     utils.getSaveButton().click()
 
-    cy.waitUntil(() => cy.get(' [data-cy ="siteDeployersuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
+    cy.waitUntil(() => cy.get('[data-cy ="siteDeployersuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="siteDeployersuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
+    cy.get('[data-cy ="siteDeployersuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
   }
   function copyConfigTesting(targetSites) {
     getSelectedOption(dataTest.copyConfigExtendendMenuOption)
-    cy.get(' [data-cy ="currentSiteName"]')
-    cy.get(' [data-cy ="currentSiteName"]').should('have.text', dataTest.templateSiteName)
+    cy.get('[data-cy ="currentSiteName"]')
+    cy.get('[data-cy ="currentSiteName"]').should('have.text', dataTest.templateSiteName)
     targetSites.forEach(addSiteToTargetList)
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', targetSites.length)
-    cy.get(' [data-cy ="selectAllCheckbox"]').click()
+    cy.get('[data-cy ="selectAllCheckbox"]').click()
 
-    cy.get(' [data-cy ="copyConfigExtendedSaveButton"]').click()
-    cy.waitUntil(() => cy.get(' [data-cy ="copyConfigSuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
+    cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
+    cy.waitUntil(() => cy.get('[data-cy ="copyConfigSuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="copyConfigSuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
+    cy.get('[data-cy ="copyConfigSuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
-    cy.get(' [data-cy ="copyConfigSuccessPopup"]').find('ui5-bar').find('[id="closeButton"]').click()
+    cy.get('[data-cy ="copyConfigSuccessPopup"]').find('ui5-bar').find('[id="closeButton"]').click()
   }
   function addSiteToTargetList(target) {
-    cy.get(' [data-cy ="currentSiteName"]').click()
+    cy.get('[data-cy ="currentSiteName"]').click()
     cy.waitUntil(() =>
       cy
-        .get(' [data-cy ="copyConfigurationExtendedSearchSitesInputCard"]')
+        .get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]')
         .find('[id="apiKeyInput"]')
         .shadow()
         .find('[class="ui5-input-inner"]')
         .then((win) => cy.get(win).should('not.have.attr', 'disabled').get(win).type(target))
     )
 
-    cy.get(' [data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('[id="apiKeyInput"]').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('[id="apiKeyInput"]').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
   }
@@ -140,18 +140,18 @@ describe('All features full Test Suite', () => {
     // Email Templates -  First Use Case
     // Exporting and Importing the original template
 
-    cy.waitUntil(() => cy.get(' [data-cy ="exportAllEmailTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
-    cy.get(' [data-cy ="exportAllEmailTemplatesButton"]').realClick()
-    cy.get(' [data-cy ="importAllEmailTemplatesButton"]').realClick()
-    cy.waitUntil(() => cy.get(' [data-cy ="emailsImportPopup"]').then((win) => cy.get(win).should('be.visible')))
+    cy.waitUntil(() => cy.get('[data-cy ="exportAllEmailTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
+    cy.get('[data-cy ="exportAllEmailTemplatesButton"]').realClick()
+    cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
+    cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
-    cy.get(' [data-cy ="emailsImportPopup"]').find('[id ="importZipButton"]').click()
-    cy.get(' [data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
+    cy.get('[data-cy ="importPopup"]').find('[id ="importZipButton"]').click()
+    cy.get('[data-cy ="confirmButton"]').realClick()
     cy.waitUntil(() => cy.get('#emailTemplatesValidationErrorPopup').then((win) => cy.get(win).should('be.visible').find('[id="confirmButton"]').click()))
     cy.waitUntil(() =>
       cy
-        .get(' [data-cy ="emailSuccessPopup"]')
+        .get('[data-cy ="emailSuccessPopup"]')
 
         .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
     )
@@ -179,22 +179,22 @@ describe('All features full Test Suite', () => {
     )
     cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
-    cy.waitUntil(() => cy.get(' [data-cy ="exportAllEmailTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
+    cy.waitUntil(() => cy.get('[data-cy ="exportAllEmailTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
   }
   function testImportExportEmailTemplatesSecondCase() {
     //Email Templates - Second Use Case
     //Importing the test template with added languages
 
-    cy.get(' [data-cy ="importAllEmailTemplatesButton"]').realClick()
-    cy.waitUntil(() => cy.get(' [data-cy ="emailsImportPopup"]').then((win) => cy.get(win).should('be.visible')))
+    cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
+    cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
-    cy.get(' [data-cy ="emailsImportPopup"]').find('[id ="importZipButton"]').click()
-    cy.get(' [data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
+    cy.get('[data-cy ="importPopup"]').find('[id ="importZipButton"]').click()
+    cy.get('[data-cy ="confirmButton"]').realClick()
     cy.get('#emailTemplatesValidationErrorPopup').find('#confirmButton').realClick()
     cy.waitUntil(() =>
       cy
-        .get(' [data-cy ="emailSuccessPopup"]')
+        .get('[data-cy ="emailSuccessPopup"]')
 
         .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
     )
@@ -229,35 +229,35 @@ describe('All features full Test Suite', () => {
     // Email Templates - Third Use Case
     // Validating the error by using a bad userKey
 
-    cy.get(' [data-cy ="openPopoverButton"]').realClick()
+    cy.get('[data-cy ="openPopoverButton"]').realClick()
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
-    cy.get(' [data-cy ="importAllEmailTemplatesButton"]').realClick()
-    cy.get(' [data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
-    cy.get(' [data-cy ="emailImportZipButton"]').click()
-    cy.get(' [data-cy ="confirmButton"]').realClick()
-    cy.get(' [data-cy ="emailTemplatesErrorPopup"]').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', dataTest.unauthorizedUser)
+    cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
+    cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
+    cy.get('[data-cy ="importZipButton"]').click()
+    cy.get('[data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="emailTemplatesErrorPopup"]').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', dataTest.unauthorizedUser)
 
-    cy.get(' [data-cy ="emailTemplatesErrorPopup"]').should('be.visible')
-    cy.get(' [data-cy ="emailTemplatesErrorPopup"]').find('#closeButton').realClick()
-    cy.get(' [data-cy ="openPopoverButton"]').realClick()
+    cy.get('[data-cy ="emailTemplatesErrorPopup"]').should('be.visible')
+    cy.get('[data-cy ="emailTemplatesErrorPopup"]').find('#closeButton').realClick()
+    cy.get('[data-cy ="openPopoverButton"]').realClick()
     cy.waitUntil(() => cy.get('#credentialsResponsivePopover').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('{backspace}', { force: true })
-    cy.get(' [data-cy ="emailTemplatesErrorPopup"]').find('#closeButton').realClick()
-    cy.get(' [data-cy ="openPopoverButton"]').realClick()
+    cy.get('[data-cy ="emailTemplatesErrorPopup"]').find('#closeButton').realClick()
+    cy.get('[data-cy ="openPopoverButton"]').realClick()
   }
 
   function testImportExportSmsFirstUseCaseTemplates() {
     // SMS Templates - First Use Case
     // Exporting and Importing the original template
-    cy.waitUntil(() => cy.get(' [data-cy ="exportAllSmsTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
+    cy.waitUntil(() => cy.get('[data-cy ="exportAllSmsTemplatesButton"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="exportAllSmsTemplatesButton"]').click({ force: true })
-    cy.get(' [data-cy ="importAllSmsTemplatesButton"]').click({ force: true })
-    cy.get(' [data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.smsExampleFile}`, { force: true })
-    cy.get(' [data-cy ="importZipButton"]').click({ force: true })
-    cy.get(' [data-cy ="smsSuccessPopup"]').should('be.visible')
-    cy.get(' [data-cy ="smsSuccessPopup"]').find('#closeButton').click({ force: true })
+    cy.get('[data-cy ="exportAllSmsTemplatesButton"]').click({ force: true })
+    cy.get('[data-cy ="importAllSmsTemplatesButton"]').click({ force: true })
+    cy.get('[data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.smsExampleFile}`, { force: true })
+    cy.get('[data-cy ="importZipButton"]').click({ force: true })
+    cy.get('[data-cy ="smsSuccessPopup"]').should('be.visible')
+    cy.get('[data-cy ="smsSuccessPopup"]').find('#closeButton').click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('be.visible')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('have.text', 'OTP')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).find('a').click({ force: true })
@@ -277,13 +277,13 @@ describe('All features full Test Suite', () => {
     // SMS Templates - Second Use Case
     // Importing and validating the template with new changes
     getSelectedOption(dataTest.smsTemplatesOption)
-    cy.get(' [data-cy ="importAllSmsTemplatesButton"]').click({ force: true })
-    cy.waitUntil(() => cy.get(' [data-cy ="smsImportPopup"]').then((win) => cy.get(win).should('be.visible')))
+    cy.get('[data-cy ="importAllSmsTemplatesButton"]').click({ force: true })
+    cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
 
-    cy.get(' [data-cy ="zipFileInput"]').attachFile(dataTest.smsExampleFile)
-    cy.get(' [data-cy ="importZipButton"]').click({ force: true })
-    cy.get(' [data-cy ="smsSuccessPopup"]').should('be.visible')
-    cy.get(' [data-cy ="smsSuccessPopup"]').find('#closeButton').click({ force: true })
+    cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.smsExampleFile)
+    cy.get('[data-cy ="importZipButton"]').click({ force: true })
+    cy.get('[data-cy ="smsSuccessPopup"]').should('be.visible')
+    cy.get('[data-cy ="smsSuccessPopup"]').find('#closeButton').click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('button').eq(0).click({ force: true })
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('be.visible')
     cy.get('main-app').shadow().find('sms-templates-web-app').shadow().find('[class="fd-tabs__item"]').eq(1).should('have.text', 'OTP')

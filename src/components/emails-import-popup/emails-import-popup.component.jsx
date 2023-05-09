@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Dialog, Button, Label, ValueState, BusyIndicator } from '@ui5/webcomponents-react'
+import { ValueState, BusyIndicator } from '@ui5/webcomponents-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 import DialogMessageConfirm from '../../components/dialog-message-confirm/dialog-message-confirm.component'
 import MessageList from '../../components/message-list/message-list.component'
+import ImportPopup from '../import-popup/import-popup.component'
 
 import {
   selectIsImportPopupOpen,
@@ -90,7 +91,6 @@ const EmailsImportPopup = ({ t }) => {
   const showValidationWarningList = () => (
     <DialogMessageConfirm
       open={showValidationWarnings}
-      className={classes.errorDialogStyle}
       headerText={t('GLOBAL.WARNING')}
       state={ValueState.Warning}
       closeButtonContent={t('GLOBAL.CANCEL')}
@@ -105,42 +105,16 @@ const EmailsImportPopup = ({ t }) => {
 
   const showDialog = () => {
     return (
-      <Dialog
-        className="ui-dialog"
-        open={isImportPopupOpen}
-        onAfterClose={onCloseEmailImportPopup}
-        id="emailsImportPopup"
-        data-cy="emailsImportPopup"
-        header={
-          <div id="header" className={classes.headerOuterDivStyle}>
-            <div className={classes.headerInnerDivStyle}>{t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}</div>
-            <div>
-              <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseEmailImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
-            </div>
-          </div>
-        }
-        children={
-          <div>
-            <div className={classes.specifyFileLableStyle}>
-              <Label id="specifyFileLabel">{t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}</Label>
-            </div>
-            <div>
-              <input id="zipFileInput" data-cy="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
-            </div>
-          </div>
-        }
-        footer={
-          <div className={classes.footerOuterDivStyle}>
-            <Button id="importZipButton" data-cy="emailImportZipButton" className="btn dialog-button-1" onClick={onImportButtonClickHandler} disabled={!importFile}>
-              {t('GLOBAL.IMPORT')}
-            </Button>
-
-            <Button id="cancelImportZipButton" data-cy="cancelImportZipButton" className="btn dialog-button-2" onClick={onCancelImportButtonClickHandler}>
-              {t('GLOBAL.CANCEL')}
-            </Button>
-          </div>
-        }
-      ></Dialog>
+      <ImportPopup
+        isImportPopupOpen={isImportPopupOpen}
+        onCloseImportPopup={onCloseEmailImportPopup}
+        popupHeader={t('EMAILS_IMPORT_POPUP.POPUP_HEADER')}
+        specifyFileLabel={t('EMAILS_IMPORT_POPUP.SPECIFY_FILE')}
+        onFileUploadButtonClickHandler={onFileUploadButtonClickHandler}
+        onImportButtonClickHandler={onImportButtonClickHandler}
+        importFile={importFile}
+        onCancelImportButtonClickHandler={onCancelImportButtonClickHandler}
+      />
     )
   }
 
