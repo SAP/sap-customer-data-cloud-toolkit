@@ -11,6 +11,7 @@ import { getPolicyConfig } from '../policies/dataTest'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 import { getConsentStatementExpectedResponse } from '../consent/dataTest'
 import { channelsExpectedResponse, topicsExpectedResponse } from '../communication/dataTest'
+import { getExpectedWebhookResponse } from '../webhook/dataTest'
 
 jest.mock('axios')
 
@@ -91,6 +92,7 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const emailsIndex = 6
@@ -110,6 +112,7 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     expectedResponse[6].branches.splice(templateIndex, 1)
