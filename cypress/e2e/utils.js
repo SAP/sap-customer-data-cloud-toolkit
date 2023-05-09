@@ -23,6 +23,8 @@ import {
   mockedGetCommunicationTopicsExpectedResponse,
   mockedSetCommunicationResponse,
   mockedGetCommunicationChannelsExpectedResponse,
+  mockedGetWebhookExpectedResponse,
+  mockedSetWebhookResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -130,18 +132,18 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetConsentStatementExpectedResponse, 'POST', 'accounts.getConsentsStatements')
   mockResponse(mockedGetCommunicationChannelsExpectedResponse, 'POST', 'accounts.communication.getChannels')
   mockResponse(mockedGetCommunicationTopicsExpectedResponse, 'POST', 'accounts.communication.getTopicSettings')
+  mockResponse(mockedGetWebhookExpectedResponse, 'POST', 'accounts.webhooks.getAll')
 }
 
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
   mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
   mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
-
   mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
   mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setConsentsStatements')
   mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
   mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
-  mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setTopicSettings')
+  mockResponse(mockedSetWebhookResponse, 'POST', 'accounts.webhooks.set')
 }
 
 export function mockGetUserSitesRequest() {
