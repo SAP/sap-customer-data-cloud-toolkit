@@ -17,6 +17,8 @@ import ConsentConfiguration from '../consent/consentConfiguration'
 import ConsentOptions from '../consent/consentOptions'
 import Communication from '../communication/communication'
 import CommunicationOptions from '../communication/communicationOptions'
+import Webhook from '../webhook/webhook'
+import WebhookOptions from '../webhook/webhookOptions'
 
 class Info {
   #credentials
@@ -42,6 +44,7 @@ class Info {
       this.#getSmsTemplates(),
       this.#getWebSdk(),
       this.#getMockedDataflows(), // Replace this mock function call for real function call when it is implemented
+      this.#getWebhooks(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -273,6 +276,19 @@ class Info {
       if (!Communication.hasCommunicationTopics(response)) {
         communicationOptions.removeCommunication(info)
       }
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
+  }
+
+  async #getWebhooks() {
+    const webhookOptions = new WebhookOptions(new Webhook(this.#credentials, this.#site, this.#dataCenter))
+    const response = await webhookOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      webhookOptions.addWebhooks(response)
+      const info = JSON.parse(JSON.stringify(webhookOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')

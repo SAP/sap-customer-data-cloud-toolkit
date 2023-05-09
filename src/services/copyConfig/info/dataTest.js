@@ -74,7 +74,28 @@ export function getInfoExpectedResponse(supports) {
     ],
   }
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows]
+  const webhooks = {
+    id: 'Webhooks',
+    name: 'Webhooks',
+    value: supports,
+    formatName: false,
+    branches: [
+      {
+        id: 'webhook1',
+        name: 'webhook1',
+        value: supports,
+        formatName: false,
+      },
+      {
+        id: 'webhook2',
+        name: 'webhook2',
+        value: supports,
+        formatName: false,
+      },
+    ],
+  }
+
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {
