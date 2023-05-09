@@ -65,7 +65,6 @@ describe('Site Deployer Test Suite', () => {
 
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
     cy.get('@windowOpenStub').should('be.called')
-    utils.clickPopUpOkButton('#successPopup')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
@@ -98,10 +97,10 @@ describe('Site Deployer Test Suite', () => {
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().should('not.be.disabled')
     utils.getSaveButton().realClick()
-    const errorPopup = cy.get('[data-cy ="errorPopup"]').eq(0)
+    const errorPopup = cy.get('[data-cy ="credentialErrorPopup"]').eq(0)
     errorPopup.should('be.visible')
     errorPopup.should('have.text', dataTest.missingCredentialsErrorMessage)
-    utils.clickPopUpOkButton('errorPopup')
+    utils.clickPopUpOkButton('credentialErrorPopup')
   })
 
   it('Should show Manual Removal Popup', () => {
@@ -110,7 +109,7 @@ describe('Site Deployer Test Suite', () => {
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
     utils.getSaveButton().click()
-    cy.get('#manualRemovalPopup').should('be.visible')
+    cy.get('[data-cy ="manualRemovalPopup"]').should('be.visible')
     cy.get('[data-cy ="manualRemovalConfirmButton"]').shadow().find('.ui5-button-root').should('be.disabled')
     cy.get('[data-cy ="manualRemovalCheckbox"]').click()
     cy.get('[data-cy ="manualRemovalConfirmButton"]').shadow().find('.ui5-button-root').should('not.be.disabled')

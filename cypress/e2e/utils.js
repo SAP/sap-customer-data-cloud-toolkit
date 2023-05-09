@@ -166,14 +166,14 @@ export function checkElementsInitialState() {
   cy.get('#policiesPopover').should('have.text', policiesPopoverText)
   cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.disabled')
   cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').should('be.enabled')
-  cy.get('[data-cy ="targetSiteTooltipIcon"]').should('exist')
-  cy.get('[data-cy ="targetSiteTooltipIcon"]').realHover()
-  cy.get('[data-cy ="targetSitePopover"]').should('have.text', targetSitePopoverText)
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).should('exist')
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).realHover()
+  cy.get('[data-cy ="targetSitePopover"]').eq(1).should('have.text', targetSitePopoverText)
 }
 
 export function setConfigurationCheckBox(parent) {
   if (parent) {
-    cy.get(parent).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+    cy.get(`[data-cy =${parent}]`).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
   } else {
     cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
   }
@@ -185,7 +185,7 @@ export function fillTargetApiKeyInput() {
 }
 
 export function fillSourceApiKeyInput() {
-  cy.get('[data-cy ="siteCopyConfigurationDialog"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().type(dummyApiKey)
+  cy.get('[data-cy ="siteCopyConfigurationDialog"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().focus().type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
 }
 
@@ -215,7 +215,7 @@ export function getIcon(iconNumber) {
 }
 
 function getSiteConfigButton(buttonId) {
-  return cy.get('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
+  return cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
 }
 
 export function getAddSiteConfigButton() {

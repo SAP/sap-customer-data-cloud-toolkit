@@ -4,6 +4,7 @@ import { createUseStyles } from 'react-jss'
 import { withTranslation } from 'react-i18next'
 
 import styles from './dialog-message-confirm.styles.js'
+import { createPortal } from 'react-dom'
 
 const useStyles = createUseStyles(styles, { name: 'DialogMessageConfirm' })
 
@@ -23,38 +24,42 @@ const DialogMessageConfirm = ({ children, open = true, state = ValueState.Error,
 
   return (
     <>
-      <Dialog
-        open={dialogIsOpen}
-        state={state}
-        className={classes.errorDialogStyle}
-        footer={
-          <Bar
-            design="Header"
-            endContent={
-              <div>
-                <Button
-                  id="confirmButton"
-                  data-cy="confirmButton"
-                  onClick={confirmButtonClickHandler}
-                  design="Emphasized"
-                  className={classes.confirmButtonStyle}
-                  disabled={disableSaveButton ? disableSaveButton() : false}
-                >
-                  {confirmButtonText ? confirmButtonText : t('GLOBAL.CONTINUE')}
-                </Button>
+      {createPortal(
+        <Dialog
+          initialFocus="cancelButton"
+          open={dialogIsOpen}
+          state={state}
+          className={classes.errorDialogStyle}
+          footer={
+            <Bar
+              design="Header"
+              endContent={
+                <div>
+                  <Button
+                    id="confirmButton"
+                    onClick={confirmButtonClickHandler}
+                    design="Emphasized"
+                    className={classes.confirmButtonStyle}
+                    disabled={disableSaveButton ? disableSaveButton() : false}
+                    data-cy="dialogMessageConfirmConfirmButton"
+                  >
+                    {confirmButtonText ? confirmButtonText : t('GLOBAL.CONTINUE')}
+                  </Button>
 
-                <Button id="cancelButton" data-cy="cancelButton" onClick={() => setDialogIsOpen(false)} className={classes.closeButtonStyle}>
-                  {t('GLOBAL.CANCEL')}
-                </Button>
-              </div>
-            }
-          />
-        }
-        onBeforeClose={onBeforeCloseHandler}
-        {...otherProps}
-      >
-        {children}
-      </Dialog>
+                  <Button id="cancelButton" onClick={() => setDialogIsOpen(false)} className={classes.closeButtonStyle} data-cy="dialogMessageConfirmCancelButton">
+                    {t('GLOBAL.CANCEL')}
+                  </Button>
+                </div>
+              }
+            />
+          }
+          onBeforeClose={onBeforeCloseHandler}
+          {...otherProps}
+        >
+          {children}
+        </Dialog>,
+        document.body
+      )}
     </>
   )
 }
