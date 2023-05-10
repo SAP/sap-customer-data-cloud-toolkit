@@ -40,6 +40,7 @@ const CredentialsPopoverButton = ({ t }) => {
     <>
       <Button
         id="openPopoverButton"
+        data-cy="openPopoverButton"
         className="fd-button fd-shellbar__button"
         onClick={openPopoverButtonClickHandler}
         icon="fridge"

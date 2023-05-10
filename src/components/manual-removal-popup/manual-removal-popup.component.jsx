@@ -49,6 +49,7 @@ const ManualRemovalPopup = ({ t }) => {
     <>
       <Dialog
         id="manualRemovalPopup"
+        data-cy="manualRemovalPopup"
         headerText={t('MANUAL_REMOVAL_POPUP.MANUAL_ACTION_REQUIRED')}
         open={dialogIsOpen}
         state={ValueState.Warning}
@@ -92,10 +93,16 @@ const ManualRemovalPopup = ({ t }) => {
             <Bar
               design="Subheader"
               startContent={
-                <CheckBox id="manualRemovalCheckbox" text={t('MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT')} onChange={onCheckBoxChangeHandler} checked={checkBoxIsChecked}></CheckBox>
+                <CheckBox
+                  id="manualRemovalCheckbox"
+                  data-cy="manualRemovalCheckbox"
+                  text={t('MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT')}
+                  onChange={onCheckBoxChangeHandler}
+                  checked={checkBoxIsChecked}
+                ></CheckBox>
               }
               endContent={
-                <Button id="manualRemovalConfirmButton" onClick={onConfirmHandler} design="Emphasized" disabled={!checkBoxIsChecked}>
+                <Button id="manualRemovalConfirmButton" data-cy="manualRemovalConfirmButton" onClick={onConfirmHandler} design="Emphasized" disabled={!checkBoxIsChecked}>
                   {t('GLOBAL.CONFIRM')}
                 </Button>
               }

@@ -7,6 +7,7 @@ const MessageList = ({ messages, type }) => {
   return (
     <MessageView
       id="messageList"
+      data-cy="messageList"
       showDetailsPageHeader={true}
       onItemSelect={(e) => {
         // Fix to add horizontal scroll to message details

@@ -21,7 +21,7 @@ const MessageListItem = ({ message, type = 'Error' }) => {
   }
 
   return (
-    <MessageItem titleText={titleText} subtitleText={subtitleText} type={type}>
+    <MessageItem titleText={titleText} data-cy="messageItem" subtitleText={subtitleText} type={type}>
       <pre>{JSON.stringify(message, null, 2)}</pre>
     </MessageItem>
   )
