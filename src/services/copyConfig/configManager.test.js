@@ -29,6 +29,7 @@ import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedRespo
 import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest'
 import Sorter from './sorter'
 import { getExpectedWebhookResponse } from './webhook/dataTest'
+import { getExpectedExtensionResponse } from './extension/dataTest'
 
 jest.mock('axios')
 
@@ -56,6 +57,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedExtensionResponse() })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -96,6 +98,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedExtensionResponse() })
     const err = {
       message: mockedResponse.errorMessage,
       code: mockedResponse.errorCode,
@@ -163,7 +166,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
-    disableWebhooks(infoExpectedResponse)
+    disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
 
     expect(response.length).toEqual(30)
@@ -337,7 +340,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
-    disableWebhooks(infoExpectedResponse)
+    disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(30)
     CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
@@ -392,7 +395,7 @@ describe('Config Manager test suite', () => {
 
   async function executeCopyAllUnsuccessfully(mockedResponse, numberOfExpectedResponses) {
     const infoExpectedResponse = getInfoExpectedResponse(true)
-    disableWebhooks(infoExpectedResponse)
+    disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(numberOfExpectedResponses)
     for (const resp of response) {
@@ -451,10 +454,23 @@ describe('Config Manager test suite', () => {
   }
 })
 
+function disableFeatures(infoExpectedResponse) {
+  disableWebhooks(infoExpectedResponse)
+  disableExtensions(infoExpectedResponse)
+}
+
 function disableWebhooks(infoExpectedResponse) {
   // webhooks have their own tests, there is no need to add complexity to this test suite
   const webhookIndex = 10
   infoExpectedResponse[webhookIndex].value = false
   infoExpectedResponse[webhookIndex].branches[0].value = false
   infoExpectedResponse[webhookIndex].branches[1].value = false
+}
+
+function disableExtensions(infoExpectedResponse) {
+  // extensions have their own tests, there is no need to add complexity to this test suite
+  const extensionIndex = 11
+  infoExpectedResponse[extensionIndex].value = false
+  infoExpectedResponse[extensionIndex].branches[0].value = false
+  infoExpectedResponse[extensionIndex].branches[1].value = false
 }

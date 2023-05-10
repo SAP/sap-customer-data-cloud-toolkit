@@ -19,6 +19,8 @@ import Communication from '../communication/communication'
 import CommunicationOptions from '../communication/communicationOptions'
 import Webhook from '../webhook/webhook'
 import WebhookOptions from '../webhook/webhookOptions'
+import ExtensionOptions from '../extension/extensionOptions'
+import Extension from '../extension/extension'
 
 class Info {
   #credentials
@@ -45,6 +47,7 @@ class Info {
       this.#getWebSdk(),
       this.#getMockedDataflows(), // Replace this mock function call for real function call when it is implemented
       this.#getWebhooks(),
+      this.#getExtensions(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (this.#hasConfiguration(info)) {
@@ -289,6 +292,19 @@ class Info {
     if (response.errorCode === 0) {
       webhookOptions.addWebhooks(response)
       const info = JSON.parse(JSON.stringify(webhookOptions.getOptionsDisabled()))
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
+  }
+
+  async #getExtensions() {
+    const extensionOptions = new ExtensionOptions(new Extension(this.#credentials, this.#site, this.#dataCenter))
+    const response = await extensionOptions.getConfiguration().get()
+    if (response.errorCode === 0) {
+      extensionOptions.addExtensions(response)
+      const info = JSON.parse(JSON.stringify(extensionOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')

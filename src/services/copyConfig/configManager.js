@@ -21,6 +21,8 @@ import Communication from './communication/communication'
 import ParentChildSorter from './parentChildSorter'
 import Webhook from './webhook/webhook'
 import WebhookOptions from './webhook/webhookOptions'
+import ExtensionOptions from './extension/extensionOptions'
+import Extension from './extension/extension'
 
 class ConfigManager {
   #configurations = []
@@ -113,6 +115,7 @@ class ConfigManager {
     this.#configurations.push(new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new CommunicationOptions(new Communication(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new WebhookOptions(new Webhook(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new ExtensionOptions(new Extension(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {
