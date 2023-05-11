@@ -95,7 +95,28 @@ export function getInfoExpectedResponse(supports) {
     ],
   }
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks]
+  const extensions = {
+    id: 'Extensions',
+    name: 'Extensions',
+    value: supports,
+    formatName: false,
+    branches: [
+      {
+        id: 'OnBeforeAccountsRegister',
+        name: 'OnBeforeAccountsRegister',
+        value: supports,
+        formatName: false,
+      },
+      {
+        id: 'OnBeforeAccountsLogin',
+        name: 'OnBeforeAccountsLogin',
+        value: supports,
+        formatName: false,
+      },
+    ],
+  }
+
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

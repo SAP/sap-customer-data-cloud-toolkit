@@ -1302,6 +1302,99 @@ const mockedSetWebhookResponse = {
   context: `{\"targetApiKey\":\"${dummyApiKey}\",\"id\":\"webhook_\"}`,
 }
 
+const mockedGetExtensionExpectedResponse = {
+  callId: '502acc0be4e442a2b42207b1b394ce89',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-01T12:00:00.757Z',
+  context: 'id: extensions, targetApiKey: apiKey',
+  result: [
+    {
+      created: '2023-05-09T09:06:24.6322028Z',
+      lastModified: '2023-05-09T09:06:30.1555859Z',
+      extensionFuncUrl: 'url',
+      description: 'extension description',
+      timeout: 1000,
+      fallback: 'IgnoreAllErrors',
+      headers: [
+        {
+          name: 'Header1',
+          value: 'Header1Value',
+        },
+      ],
+      integration: 'Generic',
+      id: '025b280361734074ac4dab4534000001',
+      extensionPoint: 'OnBeforeAccountsRegister',
+      friendlyName: 'extension1',
+      enabled: true,
+    },
+    {
+      created: '2023-05-09T09:06:24.6322028Z',
+      lastModified: '2023-05-09T09:06:30.1555859Z',
+      extensionFuncUrl: 'url',
+      description: 'extension description',
+      timeout: 1000,
+      fallback: 'IgnoreAllErrors',
+      headers: [
+        {
+          name: 'Header21',
+          value: 'Header21Value',
+        },
+        {
+          name: 'Header2',
+          value: 'Header2Value',
+        },
+      ],
+      integration: 'Generic',
+      id: '025b280361734074ac4dab4534000002',
+      extensionPoint: 'OnBeforeAccountsLogin',
+      friendlyName: 'extension2',
+      enabled: false,
+    },
+  ],
+}
+
+const mockedCreateExtensionExpectedResponse = {
+  callId: '502acc0be4e442a2b42207b1b394ce89',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-01T12:00:00.757Z',
+  context: 'id: extensions, targetApiKey: apiKey',
+  result: {
+    created: '2023-05-09T09:06:24.6322028Z',
+    lastModified: '2023-05-09T09:06:30.1555859Z',
+    extensionFuncUrl: 'url',
+    description: 'extension description',
+    timeout: 1000,
+    fallback: 'IgnoreAllErrors',
+    headers: [
+      {
+        name: 'Header1',
+        value: 'Header1Value',
+      },
+    ],
+    integration: 'Generic',
+    id: '025b280361734074ac4dab4534000001',
+    extensionPoint: 'OnBeforeAccountsRegister',
+    friendlyName: 'extension1',
+    enabled: true,
+  },
+}
+
+const mockedSetExtensionResponse = {
+  callId: 'f88bef4a500440a2914e17c0c1177276',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-03T22:14:38.103Z',
+  context: `{\"targetApiKey\":\"${dummyApiKey}\",\"id\":\"extensions_\"}`,
+}
+
 const policiesPopoverText = 'Copy all policies, or any of the following.'
 const targetSitePopoverText = 'Recently created sites might take a while to be displayed in the list, however you can just copy and paste the API Key'
 
@@ -1372,6 +1465,9 @@ export {
   mockedGetWebhookExpectedResponse,
   mockedSetCommunicationResponse,
   mockedSetWebhookResponse,
+  mockedGetExtensionExpectedResponse,
+  mockedCreateExtensionExpectedResponse,
+  mockedSetExtensionResponse,
   mockedGetPolicyResponse,
   mockedSiteConfig,
   successMessageHeader,

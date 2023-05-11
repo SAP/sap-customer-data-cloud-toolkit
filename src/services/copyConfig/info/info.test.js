@@ -27,6 +27,7 @@ import { getExpectedScreenSetResponse } from '../screenset/dataTest'
 import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest'
 import { channelsExpectedResponse, topicsExpectedResponse } from '../communication/dataTest'
 import { getExpectedWebhookResponse } from '../webhook/dataTest'
+import { getExpectedListExtensionResponse } from '../extension/dataTest'
 
 jest.mock('axios')
 
@@ -46,6 +47,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
 
     const response = await info.get()
@@ -66,6 +68,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, webSdkId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'extensions', apiKey) })
 
     await expect(info.get()).rejects.toEqual([getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)])
   })
@@ -83,6 +86,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -103,6 +107,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
 
     const response = await info.get()
@@ -125,6 +130,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -144,6 +150,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -165,6 +172,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -186,6 +194,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -215,6 +224,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
 
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -236,6 +246,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
