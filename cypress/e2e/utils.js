@@ -25,6 +25,9 @@ import {
   mockedGetCommunicationChannelsExpectedResponse,
   mockedGetWebhookExpectedResponse,
   mockedSetWebhookResponse,
+  mockedGetExtensionExpectedResponse,
+  mockedCreateExtensionExpectedResponse,
+  mockedSetExtensionResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -133,6 +136,8 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetCommunicationChannelsExpectedResponse, 'POST', 'accounts.communication.getChannels')
   mockResponse(mockedGetCommunicationTopicsExpectedResponse, 'POST', 'accounts.communication.getTopicSettings')
   mockResponse(mockedGetWebhookExpectedResponse, 'POST', 'accounts.webhooks.getAll')
+  mockResponse(mockedGetExtensionExpectedResponse, 'POST', 'accounts.extensions.list')
+  mockResponse(mockedCreateExtensionExpectedResponse, 'POST', 'accounts.extensions.create')
 }
 
 export function mockSetConfigurationRequests() {
@@ -144,6 +149,7 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
   mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
   mockResponse(mockedSetWebhookResponse, 'POST', 'accounts.webhooks.set')
+  mockResponse(mockedSetExtensionResponse, 'POST', 'accounts.extensions.modify')
 }
 
 export function mockGetUserSitesRequest() {
