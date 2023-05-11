@@ -4,7 +4,7 @@ import { getResponseWithContext } from '../dataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import Options from '../options'
 import Extension from './extension'
-import { getChildExtensionExpectedBody, getEmptyExtensionResponse, getExpectedExtensionResponse } from './dataTest'
+import { getChildExtensionExpectedBody, getEmptyExtensionResponse, getExpectedCreateExtensionResponse, getExpectedListExtensionResponse } from './dataTest'
 
 jest.mock('axios')
 
@@ -20,13 +20,13 @@ describe('Extensions test suite', () => {
     formatName: false,
     branches: [
       {
-        id: getExpectedExtensionResponse().result[0].extensionPoint,
-        name: getExpectedExtensionResponse().result[0].extensionPoint,
+        id: getExpectedListExtensionResponse().result[0].extensionPoint,
+        name: getExpectedListExtensionResponse().result[0].extensionPoint,
         value: true,
       },
       {
-        id: getExpectedExtensionResponse().result[1].extensionPoint,
-        name: getExpectedExtensionResponse().result[1].extensionPoint,
+        id: getExpectedListExtensionResponse().result[1].extensionPoint,
+        name: getExpectedListExtensionResponse().result[1].extensionPoint,
         value: true,
       },
     ],
@@ -37,19 +37,19 @@ describe('Extensions test suite', () => {
   })
 
   test('copy all extensions successfully - create on parent site', async () => {
-    await testOnParent(dataCenterConfiguration, 'create', getEmptyExtensionResponse(), getExpectedExtensionResponse().result)
+    await testOnParent(dataCenterConfiguration, 'create', getEmptyExtensionResponse(), getExpectedListExtensionResponse().result)
   })
 
-  test('copy all extensions successfully - set on parent site', async () => {
-    await testOnParent(dataCenterConfiguration, 'set', getExpectedExtensionResponse(), getExpectedExtensionResponse().result)
+  test('copy all extensions successfully - modify on parent site', async () => {
+    await testOnParent(dataCenterConfiguration, 'set', getExpectedListExtensionResponse(), getExpectedListExtensionResponse().result)
   })
 
   test('copy all extensions successfully - create on child site', async () => {
-    await testOnParent(getSiteConfigSuccessfullyMultipleMember(0), 'create', getEmptyExtensionResponse(), getExpectedExtensionResponse().result)
+    await testOnParent(getSiteConfigSuccessfullyMultipleMember(0), 'create', getEmptyExtensionResponse(), getExpectedListExtensionResponse().result)
   })
 
-  test('copy all extensions successfully - set on child site', async () => {
-    await testOnParent(getSiteConfigSuccessfullyMultipleMember(0), 'set', getExpectedExtensionResponse(), getChildExtensionExpectedBody(apiKey))
+  test('copy all extensions successfully - modify on child site', async () => {
+    await testOnParent(getSiteConfigSuccessfullyMultipleMember(0), 'set', getExpectedListExtensionResponse(), getChildExtensionExpectedBody(apiKey))
   })
 
   test('copy unsuccessfully - error on get extensions from source site', async () => {
@@ -66,7 +66,7 @@ describe('Extensions test suite', () => {
   test('copy unsuccessfully - error on get extensions from destination site', async () => {
     const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
     mockedResponse.context = JSON.stringify({ id: extensionId, targetApiKey: apiKey })
-    axios.mockResolvedValueOnce({ data: getExpectedExtensionResponse() }).mockResolvedValueOnce({ data: mockedResponse })
+    axios.mockResolvedValueOnce({ data: getExpectedListExtensionResponse() }).mockResolvedValueOnce({ data: mockedResponse })
 
     const responses = await extension.copy(apiKey, dataCenterConfiguration, extensionOptions)
     expect(responses.length).toBe(1)
@@ -75,9 +75,9 @@ describe('Extensions test suite', () => {
     expect(responses[0].context.targetApiKey).toEqual(apiKey)
   })
 
-  test('copy unsuccessfully - error on first set on parent site', async () => {
+  test('copy unsuccessfully - error on first modify on parent site', async () => {
     let spy = jest.spyOn(extension, 'set')
-    const expectedExtensionResponse = getExpectedExtensionResponse()
+    const expectedExtensionResponse = getExpectedListExtensionResponse()
     const context = `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`
     const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
     mockedResponse.context = JSON.stringify({ id: context, targetApiKey: apiKey })
@@ -98,13 +98,21 @@ describe('Extensions test suite', () => {
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
 
     expect(spy.mock.calls.length).toBe(expectedExtensionResponse.result.length)
-    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenterConfiguration.dataCenter, getExpectedExtensionResponse().result[0])
-    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenterConfiguration.dataCenter, getExpectedExtensionResponse().result[1])
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenterConfiguration.dataCenter, getExpectedListExtensionResponse().result[0])
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenterConfiguration.dataCenter, getExpectedListExtensionResponse().result[1])
   })
 
-  test('copy unsuccessfully - error on first set on child site', async () => {
+  test('copy unsuccessfully - error on create on parent site', async () => {
+    await testErrorCreateOnParentSite(false)
+  })
+
+  test('copy unsuccessfully - error on modify after create on parent site', async () => {
+    await testErrorCreateOnParentSite(true)
+  })
+
+  test('copy unsuccessfully - error on first modify on child site', async () => {
     let spy = jest.spyOn(extension, 'set')
-    const expectedExtensionResponse = getExpectedExtensionResponse()
+    const expectedExtensionResponse = getExpectedListExtensionResponse()
     const context = `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`
     const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
     mockedResponse.context = JSON.stringify({ id: context, targetApiKey: apiKey })
@@ -130,14 +138,25 @@ describe('Extensions test suite', () => {
   })
 
   async function testOnParent(dataCenterConfiguration, methodSpied, destinationSiteExtensionsResponse, extensionExpectedBodies) {
-    const expectedExtensionResponse = getExpectedExtensionResponse()
-    const serverResponse = expectedGigyaResponseOk
+    const expectedExtensionResponse = getExpectedListExtensionResponse()
     let spy = jest.spyOn(extension, methodSpied)
-    axios
-      .mockResolvedValueOnce({ data: expectedExtensionResponse })
-      .mockResolvedValueOnce({ data: destinationSiteExtensionsResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, `${extensionId}_${expectedExtensionResponse.result[1].extensionPoint}`, apiKey) })
+    axios.mockResolvedValueOnce({ data: expectedExtensionResponse }).mockResolvedValueOnce({ data: destinationSiteExtensionsResponse })
+    if (methodSpied === 'create') {
+      axios
+        .mockResolvedValueOnce({
+          data: getResponseWithContext(getExpectedCreateExtensionResponse(0), `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`, apiKey),
+        })
+        .mockResolvedValueOnce({
+          data: getResponseWithContext(getExpectedCreateExtensionResponse(1), `${extensionId}_${expectedExtensionResponse.result[1].extensionPoint}`, apiKey),
+        })
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`, apiKey) })
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, `${extensionId}_${expectedExtensionResponse.result[1].extensionPoint}`, apiKey) })
+    } else {
+      axios
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`, apiKey) })
+        .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, `${extensionId}_${expectedExtensionResponse.result[1].extensionPoint}`, apiKey) })
+    }
+
     const responses = await extension.copy(apiKey, dataCenterConfiguration, extensionOptions)
     expect(responses.length).toBe(expectedExtensionResponse.result.length)
     verifyAllResponsesAreOk(responses)
@@ -145,5 +164,30 @@ describe('Extensions test suite', () => {
     expect(spy.mock.calls.length).toBe(expectedExtensionResponse.result.length)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenterConfiguration.dataCenter, extensionExpectedBodies[0])
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenterConfiguration.dataCenter, extensionExpectedBodies[1])
+  }
+
+  async function testErrorCreateOnParentSite(errorOnModifyStep) {
+    let spy = jest.spyOn(extension, 'create')
+    const expectedExtensionResponse = getExpectedListExtensionResponse()
+    const extensionOptionsOnlyOne = new Options(JSON.parse(JSON.stringify(extensionOptions.getOptions())))
+    extensionOptionsOnlyOne.getOptions().branches[1].value = false
+    const context = `${extensionId}_${expectedExtensionResponse.result[0].extensionPoint}`
+    const mockedResponse = JSON.parse(JSON.stringify(expectedGigyaResponseInvalidAPI))
+    mockedResponse.context = JSON.stringify({ id: context, targetApiKey: apiKey })
+    axios.mockResolvedValueOnce({ data: expectedExtensionResponse }).mockResolvedValueOnce({ data: getEmptyExtensionResponse() })
+
+    if (errorOnModifyStep) {
+      axios.mockResolvedValueOnce({ data: getExpectedCreateExtensionResponse(0) })
+    }
+    axios.mockResolvedValueOnce({ data: mockedResponse })
+
+    const responses = await extension.copy(apiKey, dataCenterConfiguration, extensionOptionsOnlyOne)
+    expect(responses.length).toBe(expectedExtensionResponse.result.length - 1)
+    expect(responses[0]).toEqual(mockedResponse)
+    expect(responses[0].context.id).toEqual(context)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
+
+    expect(spy.mock.calls.length).toBe(expectedExtensionResponse.result.length - 1)
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenterConfiguration.dataCenter, getExpectedListExtensionResponse().result[0])
   }
 })

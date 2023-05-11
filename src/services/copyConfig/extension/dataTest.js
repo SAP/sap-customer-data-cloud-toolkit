@@ -1,4 +1,4 @@
-export function getExpectedExtensionResponse() {
+export function getExpectedListExtensionResponse() {
   return {
     callId: '502acc0be4e442a2b42207b1b394ce89',
     errorCode: 0,
@@ -6,6 +6,7 @@ export function getExpectedExtensionResponse() {
     statusCode: 200,
     statusReason: 'OK',
     time: '2023-01-01T12:00:00.757Z',
+    context: 'id: extensions, targetApiKey: apiKey',
     result: [
       {
         created: '2023-05-09T09:06:24.6322028Z',
@@ -53,8 +54,15 @@ export function getExpectedExtensionResponse() {
   }
 }
 
+export function getExpectedCreateExtensionResponse(index) {
+  const listResponse = getExpectedListExtensionResponse()
+  const response = JSON.parse(JSON.stringify(listResponse))
+  response.result = listResponse.result[index]
+  return response
+}
+
 export function getExtensionExpectedBody(apiKey) {
-  const expectedExtensionResponse = getExpectedExtensionResponse()
+  const expectedExtensionResponse = getExpectedListExtensionResponse()
   const expectedBody = JSON.parse(JSON.stringify(expectedExtensionResponse))
   expectedBody.result[0].context = { targetApiKey: apiKey, id: expectedExtensionResponse.result[0].extensionPoint }
   expectedBody.result[1].context = { targetApiKey: apiKey, id: expectedExtensionResponse.result[1].extensionPoint }
@@ -62,7 +70,7 @@ export function getExtensionExpectedBody(apiKey) {
 }
 
 export function getChildExtensionExpectedBody(apiKey) {
-  const expectedExtensionResponse = getExpectedExtensionResponse()
+  const expectedExtensionResponse = getExpectedListExtensionResponse()
   const expectedBody = []
   expectedBody.push({
     id: expectedExtensionResponse.result[0].id,

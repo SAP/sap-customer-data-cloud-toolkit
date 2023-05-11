@@ -61,7 +61,9 @@ class Extension {
 
   #createExtensionParameters(apiKey, body) {
     const parameters = Object.assign({}, this.#getExtensionParameters(apiKey))
-    parameters.extensionFuncUrl = body.extensionFuncUrl
+    if (body.extensionFuncUrl) {
+      parameters.extensionFuncUrl = body.extensionFuncUrl
+    }
     if (body.extensionPoint) {
       parameters.extensionPoint = body.extensionPoint
     }
@@ -87,6 +89,15 @@ class Extension {
     }
     if (body.timeout) {
       parameters.timeout = body.timeout
+    }
+    if (body.fallback) {
+      parameters.fallback = body.fallback
+    }
+    if (body.integration) {
+      parameters.integration = body.integration
+    }
+    if (body.description) {
+      parameters.description = body.description
     }
     return parameters
   }
@@ -134,21 +145,22 @@ class Extension {
       sourceSiteExtension.id = destinationSiteExtension.id
       return this.set(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension)
     } else {
-      return this.create(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension)
-      // const payload = {
-      //   enabled: sourceSiteExtension.enabled,
-      //   headers: sourceSiteExtension.headers,
-      //   timeout: sourceSiteExtension.timeout,
-      //   fallback: sourceSiteExtension.fallback
-      // }
-      // return this.#createExtension(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension, payload)
+      const payload = {
+        enabled: sourceSiteExtension.enabled,
+        headers: sourceSiteExtension.headers,
+        timeout: sourceSiteExtension.timeout,
+        fallback: sourceSiteExtension.fallback,
+        integration: sourceSiteExtension.integration,
+        description: sourceSiteExtension.description
+      }
+      return this.#createExtension(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension, payload)
     }
   }
 
   async #createExtension(destinationSite, dataCenter, sourceSiteExtension, payload) {
     let response = await this.create(destinationSite, dataCenter, sourceSiteExtension)
     if (response.errorCode === 0) {
-      // modify what can't be created
+      // modify what can't be specified during create
       payload.id = response.result.id
       payload.context = response.context
       response = await this.set(destinationSite, dataCenter, payload)
@@ -164,8 +176,12 @@ class Extension {
       sourceSiteExtension.id = destinationSiteExtension.id
       return this.set(destinationSite, destinationSiteConfiguration.dataCenter, Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite))
     } else {
-      return this.create(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension)
-      //return this.#createExtension(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension, Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite))
+      return this.#createExtension(
+        destinationSite,
+        destinationSiteConfiguration.dataCenter,
+        sourceSiteExtension,
+        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite)
+      )
     }
   }
 

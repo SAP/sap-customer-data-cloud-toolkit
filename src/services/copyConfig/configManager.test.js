@@ -29,7 +29,7 @@ import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedRespo
 import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest'
 import Sorter from './sorter'
 import { getExpectedWebhookResponse } from './webhook/dataTest'
-import { getExpectedExtensionResponse } from './extension/dataTest'
+import { getExpectedListExtensionResponse } from './extension/dataTest'
 
 jest.mock('axios')
 
@@ -57,7 +57,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
-      .mockResolvedValueOnce({ data: getExpectedExtensionResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -98,7 +98,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
-      .mockResolvedValueOnce({ data: getExpectedExtensionResponse() })
+      .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
     const err = {
       message: mockedResponse.errorMessage,
       code: mockedResponse.errorCode,
