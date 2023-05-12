@@ -44,6 +44,7 @@ const templateSiteName = '_cdc-toolbox-source-templates_'
 const targetSiteDomainName = 'prod.us.target_sites'
 const target2SiteDomainName = 'target_sites'
 const webSDKConfiguration = 'Web SDK Configuration'
+const webhooksOption = 'Webhooks'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
 const schemadataTestFieldOne = ' data_test_schema '
 const schemadataTestFieldTwo = ' data_test_schema_2 '
@@ -1483,4 +1484,5 @@ export {
   webSDKConfiguration,
   identityConnectOption,
   childOfBaseDomainName,
+  webhooksOption,
 }
