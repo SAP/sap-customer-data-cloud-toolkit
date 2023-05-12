@@ -1,7 +1,11 @@
-/*!
- * Fundamental Library Styles v0.21.0-rc.92
- * Copyright (c) 2022 SAP SE or an SAP affiliate company.
- * Licensed under Apache License 2.0 (https://github.com/SAP/fundamental-styles/blob/main/LICENSE)
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company.
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of SAP
+ * ("Confidential Information"). You shall not disclose such Confidential
+ * Information and shall use it only in accordance with the terms of the
+ * license agreement you entered into with SAP.
  */
 .fd-button {
   font-size: 0.875rem;

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company.
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of SAP
+ * ("Confidential Information"). You shall not disclose such Confidential
+ * Information and shall use it only in accordance with the terms of the
+ * license agreement you entered into with SAP.
+ */
+
 export const channelsExpectedResponse = {
   callId: '18c123bde80c4e989d95c98718cb1b9f',
   errorCode: 0,

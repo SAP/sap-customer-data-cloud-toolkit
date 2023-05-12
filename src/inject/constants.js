@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company.
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of SAP
+ * ("Confidential Information"). You shall not disclose such Confidential
+ * Information and shall use it only in accordance with the terms of the
+ * license agreement you entered into with SAP.
+ */
+
 export const TENANT_ID_CLASS = 'fd-info-label__text'
 export const ADMIN_BUTTON_SELECTOR = '.fd-nested-list__icon.sap-icon--action-settings'
 export const ADMIN_BUTTON_CLASSES = 'fd-nested-list__icon sap-icon--action-settings'
