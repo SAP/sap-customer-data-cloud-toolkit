@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2023 SAP SE or an SAP affiliate company.
+ * All rights reserved.
+ *
+ * This software is the confidential and proprietary information of SAP
+ * ("Confidential Information"). You shall not disclose such Confidential
+ * Information and shall use it only in accordance with the terms of the
+ * license agreement you entered into with SAP.
+ */
+
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const currentSiteName = 'dev.cdc-tools'
@@ -44,6 +54,7 @@ const templateSiteName = '_cdc-toolbox-source-templates_'
 const targetSiteDomainName = 'prod.us.target_sites'
 const target2SiteDomainName = 'target_sites'
 const webSDKConfiguration = 'Web SDK Configuration'
+const webhooksOption = 'Webhooks'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
 const schemadataTestFieldOne = ' data_test_schema '
 const schemadataTestFieldTwo = ' data_test_schema_2 '
@@ -1483,4 +1494,5 @@ export {
   webSDKConfiguration,
   identityConnectOption,
   childOfBaseDomainName,
+  webhooksOption,
 }
