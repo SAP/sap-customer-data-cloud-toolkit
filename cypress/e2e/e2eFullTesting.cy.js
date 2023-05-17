@@ -37,7 +37,7 @@ describe('All features full Test Suite', () => {
     testImportExportSmsSecondUseCaseTemplates()
 
     // Copy configurations to test site
-    navigateToChosenSite(dataTest.templateSiteName)
+    // navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
     copyConfigTesting(targetSites)
 
@@ -122,13 +122,27 @@ describe('All features full Test Suite', () => {
     targetSites.forEach(addSiteToTargetList)
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', targetSites.length)
     cy.get('[data-cy ="selectAllCheckbox"]').click()
-
+    writeDatasetVariable('test1','test2','test3')
     cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
     cy.waitUntil(() => cy.get('[data-cy ="copyConfigSuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('[data-cy ="copyConfigSuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
 
     cy.get('[data-cy ="copyConfigSuccessPopup"]').find('ui5-bar').find('[id="closeButton"]').click()
+  }
+  function writeDatasetVariable(variable1,variable2,variable3){
+    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('li').eq(0).find('ui5-icon').click()
+    //write dataflow1
+    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(1).find('ui5-button').click()
+    cy.get('[data-cy ="dataflowVariableInput"]').eq(0).shadow().find('[class="ui5-input-inner"]').type(variable1)
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(1).click()
+    //write dataflow2
+    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-button').click()
+    cy.get('[data-cy ="dataflowVariableInput"]').eq(1).shadow().find('[class="ui5-input-inner"]').type(variable2)
+  
+     //write dataflow3
+    cy.get('[data-cy ="dataflowVariableInput"]').eq(2).shadow().find('[class="ui5-input-inner"]').type(variable3)
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(2).click()
   }
   function addSiteToTargetList(target) {
     cy.get('[data-cy ="currentSiteName"]').click()
@@ -156,8 +170,8 @@ describe('All features full Test Suite', () => {
     cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('[data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
-    cy.get('[data-cy ="importPopup"]').find('[id ="importZipButton"]').click()
-    cy.get('[data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="importPopup"]').find('[data-cy ="importZipButton"]').click()
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').realClick()
     cy.waitUntil(() => cy.get('#emailTemplatesValidationErrorPopup').then((win) => cy.get(win).should('be.visible').find('[id="confirmButton"]').click()))
     cy.waitUntil(() =>
       cy
@@ -199,8 +213,8 @@ describe('All features full Test Suite', () => {
     cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
 
     cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
-    cy.get('[data-cy ="importPopup"]').find('[id ="importZipButton"]').click()
-    cy.get('[data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="importPopup"]').find('[data-cy ="importZipButton"]').click()
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').realClick()
     cy.get('#emailTemplatesValidationErrorPopup').find('#confirmButton').realClick()
     cy.waitUntil(() =>
       cy
@@ -244,7 +258,7 @@ describe('All features full Test Suite', () => {
     cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
     cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('[data-cy ="importZipButton"]').click()
-    cy.get('[data-cy ="confirmButton"]').realClick()
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').realClick()
     cy.get('[data-cy ="emailTemplatesErrorPopup"]').find('[id="messageList"]').find('[data-title="Unauthorized user"]').should('have.text', dataTest.unauthorizedUser)
 
     cy.get('[data-cy ="emailTemplatesErrorPopup"]').should('be.visible')
@@ -313,7 +327,7 @@ describe('All features full Test Suite', () => {
   function navigateToChosenSite(siteName, childSite) {
     let index = childSite === true ? 1 : 0
     getSelectedOption(dataTest.siteSelectorOption)
-
+    
     cy.waitUntil(() =>
       cy
         .get('main-app')
