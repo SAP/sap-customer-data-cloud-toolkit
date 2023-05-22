@@ -38,6 +38,10 @@ import {
   mockedGetExtensionExpectedResponse,
   mockedCreateExtensionExpectedResponse,
   mockedSetExtensionResponse,
+  mockedSearchDataflowsResponse,
+  mockedSetDataflowResponse,
+  mockedCreateDataflowResponse,
+  mockedSearchDataflowsEmptyResponse,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -58,8 +62,8 @@ export function writeCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
   openPopoverButton.realClick()
-  cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('AFww+F466MSR', { force: true })
-  cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('dr8XCkty9Mu7yaPH94BfEgxP8lZXRTRP', { force: true })
+  cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
+  cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('d', { force: true })
   openPopoverButton.realClick()
 }
 
@@ -76,6 +80,19 @@ export function mockResponse(response, method, url) {
   cy.intercept(method, url, {
     body: response,
   })
+}
+
+let interceptCount = true
+export function mockSearchResponse(response, method, url) {
+  cy.intercept(method, url, (req) => {
+      if (interceptCount) {
+        interceptCount = false       
+        req.reply({ body: mockedSearchDataflowsResponse })
+      } else {
+        interceptCount = true;
+        req.reply({body: mockedSearchDataflowsEmptyResponse})
+      }
+  })  
 }
 
 export function resizeObserverLoopErrRe() {
@@ -148,6 +165,7 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetWebhookExpectedResponse, 'POST', 'accounts.webhooks.getAll')
   mockResponse(mockedGetExtensionExpectedResponse, 'POST', 'accounts.extensions.list')
   mockResponse(mockedCreateExtensionExpectedResponse, 'POST', 'accounts.extensions.create')
+  mockSearchResponse(mockedSearchDataflowsResponse, 'POST', 'idx.search')
 }
 
 export function mockSetConfigurationRequests() {
@@ -160,6 +178,8 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
   mockResponse(mockedSetWebhookResponse, 'POST', 'accounts.webhooks.set')
   mockResponse(mockedSetExtensionResponse, 'POST', 'accounts.extensions.modify')
+  mockResponse(mockedSetDataflowResponse, 'POST', 'idx.setDataflow')
+  mockSearchResponse(mockedCreateDataflowResponse, 'POST', 'idx.createDataflow')
 }
 
 export function mockGetUserSitesRequest() {
@@ -200,6 +220,7 @@ export function setConfigurationCheckBox(parent) {
 export function fillTargetApiKeyInput() {
   cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
+
 }
 
 export function fillSourceApiKeyInput() {
@@ -215,7 +236,6 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="baseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.get('[data-cy ="dataCenterSelect"]').click()
-
   cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
 }
 
@@ -233,7 +253,8 @@ export function getIcon(iconNumber) {
 }
 
 function getSiteConfigButton(buttonId) {
-  return cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
+  return  cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
+
 }
 
 export function getAddSiteConfigButton() {
@@ -251,3 +272,4 @@ export function getDeclineSiteConfigButton() {
 export function getSiteCopyConfigurationDialog() {
   return cy.get('[data-cy ="siteCopyConfigurationDialog"]')
 }
+

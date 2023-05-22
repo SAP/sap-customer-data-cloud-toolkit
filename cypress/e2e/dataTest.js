@@ -1403,8 +1403,191 @@ const mockedSetExtensionResponse = {
   statusCode: 200,
   statusReason: 'OK',
   time: '2023-02-03T22:14:38.103Z',
-  context: `{\"targetApiKey\":\"${dummyApiKey}\",\"id\":\"extensions_\"}`,
+  context: `{"targetApiKey":"${dummyApiKey}","id":"extensions_"}`,
 }
+
+const mockedGigyaResponseOk = {
+  statusCode: 200,
+  errorCode: 0,
+  statusReason: 'OK',
+  callId: 'callId',
+  apiVersion: 2,
+  time: Date.now(),
+}
+
+const mockedSearchDataflowsResponse = {
+  callId: '5e9c715e909a48c883aef5cf00000000',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-01T10:42:04.934Z',
+  resultCount: 2,
+  totalCount: 2,
+  result: [
+    {
+      apiKey: 'apiKey',
+      siteId: 12345,
+      id: 'df1',
+      name: 'dataflow1',
+      status: 'published',
+      description: 'workflow description',
+      steps: [
+        {
+          id: 'stepId0',
+          type: 'file.empty',
+          params: {
+            fileName: 'gigya.ok',
+          },
+        },
+      ],
+      version: 1,
+      createTime: '2023-05-12T09:15:15.175Z',
+      updateTime: '2023-05-12T09:15:15.175Z',
+      updatedByName: 'User Name',
+      updatedByEmail: 'user.name@sap.com',
+    },
+    {
+      apiKey: 'apiKey',
+      siteId: 12345,
+      id: 'df2',
+      name: 'dataflow2',
+      status: 'published',
+      description: 'sftp > parse > injectJobId > importLiteAccount > format > sftp',
+      steps: [
+        {
+          id: 'Read files from SFTP',
+          type: 'datasource.read.sftp',
+          params: {
+            host: '{{hostname}}',
+            username: '{{username}}',
+            password: '********',
+            fileNameRegex: '.*.json',
+            port: 22,
+            sortOrder: 'ASC',
+            sortBy: 'time',
+            timeout: 60,
+          },
+          next: ['parse JSON'],
+        },
+        {
+          id: 'parse JSON',
+          type: 'file.parse.json',
+          params: {
+            addFilename: false,
+          },
+          next: ['record.evaluate'],
+        },
+        {
+          id: 'Import Lite Account',
+          type: 'datasource.write.gigya.generic',
+          params: {
+            apiMethod: 'accounts.importLiteAccount',
+            maxConnections: 20,
+            apiParams: [
+              {
+                sourceField: 'profile',
+                paramName: 'profile',
+                value: '',
+              },
+              {
+                sourceField: 'data',
+                paramName: 'data',
+                value: '',
+              },
+              {
+                sourceField: 'email',
+                paramName: 'email',
+                value: '',
+              },
+              {
+                sourceField: '{{mobile}}',
+                paramName: '{{mobile}}',
+                value: '{{phoneNumber}}',
+              },
+            ],
+            addResponse: false,
+            userKey: '{{userKey}}',
+            secret: '********',
+            privateKey: '********',
+          },
+          next: [],
+          error: ['Format Error File'],
+        },
+        {
+          id: 'Format Error File',
+          type: 'file.format.json',
+          params: {
+            fileName: 'import_lite_{{accounts}}_errors_${now}.json',
+            maxFileSize: 5000,
+            createEmptyFile: false,
+            wrapField: '{{wrapField}}',
+          },
+          next: ['Save errors to SFTP'],
+        },
+        {
+          id: 'Save errors to SFTP',
+          type: 'datasource.write.sftp',
+          params: {
+            host: '{{hostname}}',
+            username: '{{username}}',
+            password: '********',
+            port: 22,
+            remotePath: 'errors',
+            temporaryUploadExtension: true,
+            timeout: 60,
+          },
+        },
+        {
+          id: 'injectJobId',
+          type: 'field.add',
+          params: {
+            fields: [
+              {
+                field: 'data.idxImportId',
+                value: '${jobId}',
+              },
+              {
+                field: 'data.injectValue',
+                value: '{{injectValue}}',
+              },
+            ],
+          },
+          next: ['Import Lite Account'],
+        },
+        {
+          id: 'record.evaluate',
+          type: 'record.evaluate',
+          params: {
+            script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgY29uc29sZS5sb2coJ3t7aG9zdG5hbWV9fScpDQogICAgcmV0dXJuIHJlY29yZDsNCn0=',
+            ECMAScriptVersion: '12',
+            notifyLastRecord: false,
+          },
+          next: ['injectJobId'],
+        },
+      ],
+      version: 4,
+      createTime: '2023-05-12T08:50:59.434Z',
+      updateTime: '2023-05-12T10:05:24.786Z',
+      updatedByName: 'User Name',
+      updatedByEmail: 'user.name@sap.com',
+    },
+  ],
+}
+
+const mockedSearchDataflowsEmptyResponse = {
+  callId: '5e9c715e909a48c883aef5cf00000000',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-01-01T10:42:04.934Z',
+  resultCount: 0,
+}
+
+const mockedCreateDataflowResponse = Object.assign(mockedGigyaResponseOk, { id: mockedSearchDataflowsResponse.result[0].id })
+
+const mockedSetDataflowResponse = Object.assign(mockedGigyaResponseOk, { version: mockedSearchDataflowsResponse.result[0].version + 1 })
 
 const policiesPopoverText = 'Copy all policies, or any of the following.'
 const targetSitePopoverText = 'Recently created sites might take a while to be displayed in the list, however you can just copy and paste the API Key'
@@ -1479,6 +1662,10 @@ export {
   mockedGetExtensionExpectedResponse,
   mockedCreateExtensionExpectedResponse,
   mockedSetExtensionResponse,
+  mockedSearchDataflowsResponse,
+  mockedSearchDataflowsEmptyResponse,
+  mockedCreateDataflowResponse,
+  mockedSetDataflowResponse,
   mockedGetPolicyResponse,
   mockedSiteConfig,
   successMessageHeader,

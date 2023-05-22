@@ -60,26 +60,29 @@ export function getInfoExpectedResponse(supports) {
     id: 'dataflows',
     name: 'dataflows',
     value: supports,
+    formatName: true,
     branches: [
       {
         id: 'dataflow1',
         name: 'dataflow1',
         value: supports,
-        variables: [{ variable: 'variabletest1', value: '' }],
+        formatName: false,
       },
       {
         id: 'dataflow2',
         name: 'dataflow2',
         value: supports,
+        formatName: false,
         variables: [
-          { variable: 'variabletest2', value: '' },
-          { variable: 'variabletest3', value: '' },
+          { variable: '{{hostname}}', value: '' },
+          { variable: '{{username}}', value: '' },
+          { variable: '{{mobile}}', value: '' },
+          { variable: '{{phoneNumber}}', value: '' },
+          { variable: '{{userKey}}', value: '' },
+          { variable: '{{accounts}}', value: '' },
+          { variable: '{{wrapField}}', value: '' },
+          { variable: '{{injectValue}}', value: '' },
         ],
-      },
-      {
-        id: 'dataflow3',
-        name: 'dataflow3',
-        value: supports,
       },
     ],
   }
