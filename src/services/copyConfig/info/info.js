@@ -31,6 +31,8 @@ import Webhook from '../webhook/webhook'
 import WebhookOptions from '../webhook/webhookOptions'
 import ExtensionOptions from '../extension/extensionOptions'
 import Extension from '../extension/extension'
+import DataflowOptions from '../dataflow/dataflowOptions'
+import Dataflow from '../dataflow/dataflow'
 
 class Info {
   #credentials
@@ -55,12 +57,12 @@ class Info {
       this.#getEmailTemplates(),
       this.#getSmsTemplates(),
       this.#getWebSdk(),
-      this.#getMockedDataflows(), // Replace this mock function call for real function call when it is implemented
+      this.#getDataflows(),
       this.#getWebhooks(),
       this.#getExtensions(),
     ]).then((infos) => {
       infos.forEach((info) => {
-        if (this.#hasConfiguration(info)) {
+        if (Info.#hasConfiguration(info)) {
           response.push(info)
         }
       })
@@ -68,39 +70,21 @@ class Info {
     })
   }
 
-  #hasConfiguration(info) {
-    return info.branches === undefined || (info.branches !== undefined && info.branches.length > 0)
+  static #hasConfiguration(info) {
+    return info.branches === undefined || info.branches.length > 0
   }
 
-  // Remove this mock function when real function is implemented
-  async #getMockedDataflows() {
-    return Promise.resolve({
-      id: 'dataflows',
-      name: 'dataflows',
-      value: false,
-      branches: [
-        {
-          id: 'dataflow1',
-          name: 'dataflow1',
-          value: false,
-          variables: [{ variable: 'variabletest1', value: '' }],
-        },
-        {
-          id: 'dataflow2',
-          name: 'dataflow2',
-          value: false,
-          variables: [
-            { variable: 'variabletest2', value: '' },
-            { variable: 'variabletest3', value: '' },
-          ],
-        },
-        {
-          id: 'dataflow3',
-          name: 'dataflow3',
-          value: false,
-        },
-      ],
-    })
+  async #getDataflows() {
+    const dataflowOptions = new DataflowOptions(new Dataflow(this.#credentials, this.#site, this.#dataCenter))
+    const response = await dataflowOptions.getConfiguration().search()
+    if (response.errorCode === 0) {
+      dataflowOptions.add(response)
+      const info = JSON.parse(JSON.stringify(dataflowOptions.getOptionsDisabled()))
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
+    }
   }
 
   async #getWebSdk() {
@@ -127,7 +111,7 @@ class Info {
         consentOptions.removeConsent(info)
       }
       return Promise.resolve(info)
-    } else if (this.#consentsNotMigrated(response)) {
+    } else if (Info.#consentsNotMigrated(response)) {
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
       consentOptions.removeConsent(info)
       return Promise.resolve(info)
@@ -137,7 +121,7 @@ class Info {
     }
   }
 
-  #consentsNotMigrated(response) {
+  static #consentsNotMigrated(response) {
     return response.errorCode === 400096 && response.errorDetails.includes("has not migrated it's consent data")
   }
 
@@ -225,7 +209,7 @@ class Info {
 
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
-      this.#removeUnsupportedPolicies(response, info, policyOptions)
+      Info.#removeUnsupportedPolicies(response, info, policyOptions)
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
@@ -233,7 +217,7 @@ class Info {
     }
   }
 
-  #removeUnsupportedPolicies(response, info, policyOptions) {
+  static #removeUnsupportedPolicies(response, info, policyOptions) {
     if (!response.accountOptions) {
       policyOptions.removeAccountOptions(info)
     }

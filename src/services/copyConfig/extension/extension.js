@@ -16,6 +16,7 @@ import { stringToJson } from '../objectHelper'
 class Extension {
   static #ERROR_MSG_GET_CONFIG = 'Error getting extensions'
   static #ERROR_MSG_SET_CONFIG = 'Error setting extensions'
+  static #ERROR_MSG_CREATE_CONFIG = 'Error creating extensions'
   static #NAMESPACE = 'accounts'
   #credentials
   #site
@@ -46,7 +47,7 @@ class Extension {
   async create(site, dataCenter, body) {
     const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getCreateExtensionEndpoint())
     const res = await client.post(url, this.#createExtensionParameters(site, body)).catch(function (error) {
-      return generateErrorResponse(error, Extension.#ERROR_MSG_SET_CONFIG)
+      return generateErrorResponse(error, Extension.#ERROR_MSG_CREATE_CONFIG)
     })
     return res.data
   }
@@ -161,7 +162,7 @@ class Extension {
         timeout: sourceSiteExtension.timeout,
         fallback: sourceSiteExtension.fallback,
         integration: sourceSiteExtension.integration,
-        description: sourceSiteExtension.description
+        description: sourceSiteExtension.description,
       }
       return this.#createExtension(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteExtension, payload)
     }

@@ -151,7 +151,6 @@ export const getSourceSiteConfigurations = createAsyncThunk(GET_SOURCE_SITE_INFO
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
   const sourceSiteApiKey = getConfiguration(state.siteDeployerCopyConfiguration.sitesConfigurations, siteId).sourceSites[0].apiKey
-
   try {
     const configurations = await new ConfigManager(credentials, sourceSiteApiKey).getConfiguration()
     return { siteId: siteId, configurations: configurations }

@@ -23,6 +23,7 @@ import { getConsentStatementExpectedResponse } from '../consent/dataTest'
 import { channelsExpectedResponse } from '../communication/dataTest'
 import { getExpectedWebhookResponse } from '../webhook/dataTest'
 import { getExpectedListExtensionResponse } from '../extension/dataTest'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest'
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {
@@ -96,6 +97,8 @@ describe('Info Policy test suite', () => {
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+      .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
 

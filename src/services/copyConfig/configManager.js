@@ -33,6 +33,8 @@ import Webhook from './webhook/webhook'
 import WebhookOptions from './webhook/webhookOptions'
 import ExtensionOptions from './extension/extensionOptions'
 import Extension from './extension/extension'
+import Dataflow from './dataflow/dataflow'
+import DataflowOptions from './dataflow/dataflowOptions'
 
 class ConfigManager {
   #configurations = []
@@ -126,6 +128,7 @@ class ConfigManager {
     this.#configurations.push(new CommunicationOptions(new Communication(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new WebhookOptions(new Webhook(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new ExtensionOptions(new Extension(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new DataflowOptions(new Dataflow(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {

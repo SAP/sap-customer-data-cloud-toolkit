@@ -40,6 +40,7 @@ import { channelsExpectedResponse, topicsExpectedResponse } from './communicatio
 import Sorter from './sorter'
 import { getExpectedWebhookResponse } from './webhook/dataTest'
 import { getExpectedListExtensionResponse } from './extension/dataTest'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from './dataflow/dataTest'
 
 jest.mock('axios')
 
@@ -66,6 +67,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+      .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
     const response = await configManager.getConfiguration()
@@ -107,6 +110,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+      .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
     const err = {
@@ -465,22 +470,26 @@ describe('Config Manager test suite', () => {
 })
 
 function disableFeatures(infoExpectedResponse) {
+  disableDataflows(infoExpectedResponse)
   disableWebhooks(infoExpectedResponse)
   disableExtensions(infoExpectedResponse)
 }
 
 function disableWebhooks(infoExpectedResponse) {
-  // webhooks have their own tests, there is no need to add complexity to this test suite
-  const webhookIndex = 10
-  infoExpectedResponse[webhookIndex].value = false
-  infoExpectedResponse[webhookIndex].branches[0].value = false
-  infoExpectedResponse[webhookIndex].branches[1].value = false
+  disableFeature(infoExpectedResponse, 10)
 }
 
 function disableExtensions(infoExpectedResponse) {
-  // extensions have their own tests, there is no need to add complexity to this test suite
-  const extensionIndex = 11
-  infoExpectedResponse[extensionIndex].value = false
-  infoExpectedResponse[extensionIndex].branches[0].value = false
-  infoExpectedResponse[extensionIndex].branches[1].value = false
+  disableFeature(infoExpectedResponse, 11)
+}
+
+function disableDataflows(infoExpectedResponse) {
+  disableFeature(infoExpectedResponse, 9)
+}
+
+function disableFeature(infoExpectedResponse, featureIndex) {
+  // the feature have their own tests, there is no need to add complexity to this test suite
+  infoExpectedResponse[featureIndex].value = false
+  infoExpectedResponse[featureIndex].branches[0].value = false
+  infoExpectedResponse[featureIndex].branches[1].value = false
 }

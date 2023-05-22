@@ -23,6 +23,7 @@ import { getConsentStatementExpectedResponse } from '../consent/dataTest'
 import { channelsExpectedResponse, topicsExpectedResponse } from '../communication/dataTest'
 import { getExpectedWebhookResponse } from '../webhook/dataTest'
 import { getExpectedListExtensionResponse } from '../extension/dataTest'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest'
 
 jest.mock('axios')
 
@@ -103,6 +104,8 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+      .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
@@ -124,6 +127,8 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getSmsExpectedResponse })
       .mockResolvedValueOnce({ data: getSiteConfig })
+      .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+      .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
