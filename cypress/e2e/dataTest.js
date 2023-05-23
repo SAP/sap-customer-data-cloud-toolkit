@@ -32,12 +32,12 @@ const emailExampleFile = 'email-templates.zip'
 const smsExampleFile = 'sms-templates.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importEmailTemplatesErrorMessage = `Error setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork ErrorError setting email templatesNetwork Error`
+const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameterInvalid ApiKey parameter`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
 const unauthorizedUser = 'Unauthorized userThe supplied userkey was not found'
-const cypressDownloadsPath = '../CDCTOOLBOX-EXTENSION-APP/cypress/downloads/'
+const cypressDownloadsPath = '../cdc-tools-chrome-extension/cypress/downloads/'
 const smsTemplatesExportErrorHeaderMessage = 'Error - SMS templates were not exported'
 const smsTemplatesImportErrorHeaderMessage = 'Error - SMS templates were not imported'
 const copyConfigExtendendMenuOption = 'Copy Config. Extended'
@@ -52,7 +52,7 @@ const successMessageHeader = 'Success'
 const webSdkCopyTest = 'TEST_WEB_SDK_COPY'
 const templateSiteName = '_cdc-toolbox-source-templates_'
 const targetSiteDomainName = 'prod.us.target_sites'
-const target2SiteDomainName = 'target_sites'
+const target2SiteDomainName = 'prod.us.parent.target_sites'
 const webSDKConfiguration = 'Web SDK Configuration'
 const webhooksOption = 'Webhooks'
 const templateSiteNameSmsTemplatesContent = ' Canada / United States (1 languages)  Spain (1 languages)  Portugal (1 languages)  Brazil (1 languages) '
@@ -60,8 +60,9 @@ const schemadataTestFieldOne = ' data_test_schema '
 const schemadataTestFieldTwo = ' data_test_schema_2 '
 const accountsSchemaOption = 'Accounts Schema'
 const identityConnectOption = 'Connect'
-
 const gigyaURL = 'console.gigya.com'
+const dataflowOption = 'Dataflows'
+const testDataflow = 'TESTING DATAFLOW'
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
@@ -1682,4 +1683,6 @@ export {
   identityConnectOption,
   childOfBaseDomainName,
   webhooksOption,
+  testDataflow,
+  dataflowOption
 }

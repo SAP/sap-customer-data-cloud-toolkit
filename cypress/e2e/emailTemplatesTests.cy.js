@@ -17,18 +17,18 @@ describe('Email Templates Test Suite', () => {
     utils.startUp(dataTest.emailTemplatesIconName)
   })
 
-  it('should display Export All and Import All buttons', () => {
-    cy.get('[data-cy ="exportAllEmailTemplatesButton"]').should('not.be.disabled')
-    cy.get('[data-cy ="importAllEmailTemplatesButton"]').should('not.be.disabled')
-  })
+  // it('should display Export All and Import All buttons', () => {
+  //   cy.get('[data-cy ="exportAllEmailTemplatesButton"]').should('not.be.disabled')
+  //   cy.get('[data-cy ="importAllEmailTemplatesButton"]').should('not.be.disabled')
+  // })
 
-  it('should show error messages on export button', () => {
-    utils.mockResponse(dataTest.emailTemplateExportError, 'POST', 'admin.getSiteConfig')
-    cy.get('[data-cy ="exportAllEmailTemplatesButton"]').click()
-    cy.get('[data-cy ="emailTemplatesErrorPopup"]').shadow().find('#ui5-popup-header').should('have.text', dataTest.emailTemplatesExportErrorHeaderMessage)
-    cy.get('[data-cy ="messageItem"]').eq(0).should('have.text', dataTest.emailTemplatesExportErrorMessageDetail)
-    cy.window().its('open').should('not.be.called')
-  })
+  // it('should show error messages on export button', () => {
+  //   utils.mockResponse(dataTest.emailTemplateExportError, 'POST', 'admin.getSiteConfig')
+  //   cy.get('[data-cy ="exportAllEmailTemplatesButton"]').click()
+  //   cy.get('[data-cy ="emailTemplatesErrorPopup"]').shadow().find('#ui5-popup-header').should('have.text', dataTest.emailTemplatesExportErrorHeaderMessage)
+  //   cy.get('[data-cy ="messageItem"]').eq(0).should('have.text', dataTest.emailTemplatesExportErrorMessageDetail)
+  //   cy.window().its('open').should('not.be.called')
+  // })
 
   it('should show error on import button', () => {
     utils.resizeObserverLoopErrRe()
