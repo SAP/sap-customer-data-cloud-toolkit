@@ -18,6 +18,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
+  chromeWebSecurity:false,
   defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',

@@ -37,7 +37,7 @@ describe('All features full Test Suite', () => {
     testImportExportSmsSecondUseCaseTemplates()
 
     // Copy configurations to test site
-    // navigateToChosenSite(dataTest.templateSiteName)
+    navigateToChosenSite(dataTest.templateSiteName)
     const targetSites = [dataTest.targetSiteDomainName, dataTest.target2SiteDomainName]
     copyConfigTesting(targetSites)
 
@@ -65,25 +65,20 @@ describe('All features full Test Suite', () => {
     cy.get('#descriptionInput').shadow().find('[class = "ui5-input-inner"]').type(pareSiteDomain).should('have.value', pareSiteDomain)
     cy.get('#dataCenterSelect').click()
     cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(2).click()
-
     // add copy config to parent
     addCopyConfigFrom(dataTest.templateSiteName)
-
     // add child
     cy.get('[data-cy="parentRowActionSheetOpener"]').click()
     cy.get('[data-cy="createChildSiteAction"]').click()
     cy.get('#childBaseDomainInput').shadow().find('[class = "ui5-input-inner"]').type(childSiteDomain).should('have.value', childSiteDomain)
     cy.get('#childDescriptionInput').shadow().find('[class = "ui5-input-inner"]').type(childSiteDomain).should('have.value', childSiteDomain)
-
     // add copy config to child
     addCopyConfigFrom(dataTest.templateSiteName)
-
     utils.getSaveButton().click()
     cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
-
     cy.get('#successPopup').find('ui5-bar').find('[id="closeButton"]').click()
-    //utils.clickPopUpOkButton('#successPopup')
+ 
   }
 
   function addCopyConfigFrom(templateSiteName) {
@@ -107,11 +102,8 @@ describe('All features full Test Suite', () => {
     cy.get('ui5-table-row').should('have.length', '6')
     utils.deleteChildSite(0)
     utils.deleteChildSite(0)
-
     utils.getSaveButton().click()
-
     cy.waitUntil(() => cy.get('[data-cy ="siteDeployersuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
-
     cy.get('[data-cy ="siteDeployersuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
   }
@@ -122,28 +114,12 @@ describe('All features full Test Suite', () => {
     targetSites.forEach(addSiteToTargetList)
     cy.get('ui5-list').find('ui5-li-custom').should('have.length', targetSites.length)
     cy.get('[data-cy ="selectAllCheckbox"]').click()
-    writeDatasetVariable('test1','test2','test3')
     cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
     cy.waitUntil(() => cy.get('[data-cy ="copyConfigSuccessPopup"]').then((win) => cy.get(win).should('be.visible')))
-
     cy.get('[data-cy ="copyConfigSuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
-
     cy.get('[data-cy ="copyConfigSuccessPopup"]').find('ui5-bar').find('[id="closeButton"]').click()
   }
-  function writeDatasetVariable(variable1,variable2,variable3){
-    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('li').eq(0).find('ui5-icon').click()
-    //write dataflow1
-    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(1).find('ui5-button').click()
-    cy.get('[data-cy ="dataflowVariableInput"]').eq(0).shadow().find('[class="ui5-input-inner"]').type(variable1)
-    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(1).click()
-    //write dataflow2
-    cy.get('[data-cy ="siteConfigurationsCard"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-button').click()
-    cy.get('[data-cy ="dataflowVariableInput"]').eq(1).shadow().find('[class="ui5-input-inner"]').type(variable2)
   
-     //write dataflow3
-    cy.get('[data-cy ="dataflowVariableInput"]').eq(2).shadow().find('[class="ui5-input-inner"]').type(variable3)
-    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(2).click()
-  }
   function addSiteToTargetList(target) {
     cy.get('[data-cy ="currentSiteName"]').click()
     cy.waitUntil(() =>
@@ -154,7 +130,6 @@ describe('All features full Test Suite', () => {
         .find('[class="ui5-input-inner"]')
         .then((win) => cy.get(win).should('not.have.attr', 'disabled').get(win).type(target))
     )
-
     cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('[id="apiKeyInput"]').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
@@ -168,7 +143,6 @@ describe('All features full Test Suite', () => {
     cy.get('[data-cy ="exportAllEmailTemplatesButton"]').realClick()
     cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
     cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
-
     cy.get('[data-cy ="zipFileInput"]').selectFile(`${dataTest.cypressDownloadsPath}${dataTest.emailExampleFile}`, { force: true })
     cy.get('[data-cy ="importPopup"]').find('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').realClick()
@@ -211,7 +185,6 @@ describe('All features full Test Suite', () => {
 
     cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
     cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
-
     cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
     cy.get('[data-cy ="importPopup"]').find('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').realClick()
@@ -222,7 +195,6 @@ describe('All features full Test Suite', () => {
 
         .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
     )
-
     cy.waitUntil(() =>
       cy
         .get('main-app')
@@ -337,7 +309,9 @@ describe('All features full Test Suite', () => {
         .find('[class ="fd-section app__header"]')
         .find('[class ="fd-input-group"]')
         .find('[placeholder="Search"]')
-        .then((input) => cy.get(input).should('not.be.disabled').clear().focus().type(siteName))
+        .then(
+           (input) => cy.get(input).should('be.visible').should('not.be.disabled').clear().focus().type(siteName)
+          )
     )
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(index).click()
     cy.wait(5000)
@@ -405,6 +379,8 @@ describe('All features full Test Suite', () => {
     checkSocial()
     // Check if webhooks where copied successfully
     checkWebhooks()
+    // Check if the dataflows where copied successfully
+    checkDataflows()
   }
 
   function checkWebhooks() {
@@ -460,5 +436,12 @@ describe('All features full Test Suite', () => {
     getSelectedOption(dataTest.identityConnectOption)
     cy.get('main-app').shadow().find('connect-app').shadow().find('nav').find('[class="fd-tabs__item identity-providers-tab"]').click()
     cy.get('main-app').shadow().find('connect-app').shadow().find('[class="fd-row"]').should('have.length', 3)
+  }
+  function checkDataflows(){
+    getSelectedOption(dataTest.dataflowOption)
+    cy.get('main-app').shadow().find('iframe').then((frame)=>{
+      const doc = frame.contents().find('body')
+      cy.wrap(doc).find('etl-app').find('etl-dataflowtable').find('table').contains(dataTest.testDataflow)
+    })
   }
 })

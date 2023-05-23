@@ -60,8 +60,9 @@ const schemadataTestFieldOne = ' data_test_schema '
 const schemadataTestFieldTwo = ' data_test_schema_2 '
 const accountsSchemaOption = 'Accounts Schema'
 const identityConnectOption = 'Connect'
-
 const gigyaURL = 'console.gigya.com'
+const dataflowOption = 'Dataflows'
+const testDataflow = 'TESTING DATAFLOW'
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
@@ -1682,4 +1683,6 @@ export {
   identityConnectOption,
   childOfBaseDomainName,
   webhooksOption,
+  testDataflow,
+  dataflowOption
 }
