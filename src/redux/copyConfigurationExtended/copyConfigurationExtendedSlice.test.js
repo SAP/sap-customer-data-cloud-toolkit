@@ -152,7 +152,6 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newState = copyConfigurationExtendedReducer(initialState, action)
     expect(newState.isLoading).toEqual(false)
     expect(newState.showSuccessMessage).toEqual(true)
-    expect(tracker).toHaveBeenCalled()
   })
 
   test('should update state when setConfigurations is fulfilled with errors', () => {

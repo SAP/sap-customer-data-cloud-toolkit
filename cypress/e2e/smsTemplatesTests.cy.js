@@ -11,7 +11,6 @@
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
-
 describe('SMS Templates Test Suite', () => {
   beforeEach(() => {
     utils.startUp(dataTest.smsTemplatesIconName)
@@ -59,8 +58,9 @@ describe('SMS Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="smsSuccessPopup"]').shadow().find('#ui5-popup-header').should('have.text', 'Success')
-    cy.get('@windowOpenStub').should('be.called')
     utils.clickPopUpOkButton('smsSuccessPopup')
+   cy.get('@windowOpenStub').should('be.called')
+    
   })
 
   it('should show credentials error dialog on export', () => {

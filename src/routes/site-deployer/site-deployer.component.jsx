@@ -66,7 +66,7 @@ import ManualRemovalPopup from '../../components/manual-removal-popup/manual-rem
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import styles from './site-deployer.styles.js'
-
+import { Tracker } from '../../tracker/tracker'
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
 const getSelectedDataCenters = () => {
@@ -182,6 +182,7 @@ const SiteDeployer = ({ t }) => {
     const SITE_DEPLOYER_URL_PATH = 'cdc-toolbox/site-deployer'
     const SITE_SELECTOR_URL_PATH = 'sites/site-selector'
     window.location.href = document.location.href.replace(SITE_DEPLOYER_URL_PATH, SITE_SELECTOR_URL_PATH)
+    Tracker.reportUsage()
     document.location.reload()
   }
 
@@ -263,12 +264,12 @@ const SiteDeployer = ({ t }) => {
       open={showSuccessDialog && !isLoading}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      closeButtonContent={t('GLOBAL.OK')}
+      closeButtonContent={t("GLOBAL.BUTTON_REPORT_USAGE")}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="successPopup"
       data-cy="siteDeployersuccessPopup"
     >
-      <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
+      <Text>{t("GLOBAL.REPORT_USAGE")}</Text>
     </DialogMessageInform>
   )
 

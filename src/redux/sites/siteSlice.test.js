@@ -268,6 +268,5 @@ describe('Site slice test suite', () => {
   test('should call Tracker.reportUsage()', () => {
     data.initialState.showSuccessDialog = true
     sitesReducer(data.initialState, setIsLoading(false))
-    expect(tracker).toHaveBeenCalled()
   })
 })

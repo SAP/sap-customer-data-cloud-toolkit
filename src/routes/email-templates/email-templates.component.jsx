@@ -38,9 +38,8 @@ import {
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './email-templates.styles.js'
-
 import { errorConditions } from '../../redux/errorConditions'
-
+import { Tracker } from '../../tracker/tracker'
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
 const EmailTemplates = ({ t }) => {
@@ -84,6 +83,7 @@ const EmailTemplates = ({ t }) => {
   }
 
   const onAfterCloseSuccessDialogHandler = () => {
+    Tracker.reportUsage()
     document.location.reload()
   }
 
@@ -136,11 +136,11 @@ const EmailTemplates = ({ t }) => {
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
       onAfterClose={onAfterCloseSuccessDialogHandler}
-      closeButtonContent={t('GLOBAL.OK')}
+      closeButtonContent={t('GLOBAL.BUTTON_REPORT_USAGE')}
       id="successPopup"
       data-cy="emailSuccessPopup"
     >
-      <Text>{t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}</Text>
+      <Text>{t('GLOBAL.REPORT_USAGE', { importedEmailTemplatesCount })}</Text>
     </DialogMessageInform>
   )
 

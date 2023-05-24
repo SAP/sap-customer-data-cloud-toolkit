@@ -66,7 +66,7 @@ import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
 import styles from './copy-configuration-extended.styles'
-
+import { Tracker } from '../../tracker/tracker'
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
 const PAGE_TITLE = 'Copy Configuration Extended'
@@ -151,6 +151,7 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
     setSelectAllCheckboxState(false)
+    Tracker.reportUsage()
   }
 
   const onTarketApiKeyDeleteHandler = (event) => {
@@ -171,12 +172,12 @@ const CopyConfigurationExtended = ({ t }) => {
       open={showSuccessDialog}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      closeButtonContent={t('GLOBAL.OK')}
+      closeButtonContent={t('GLOBAL.BUTTON_REPORT_USAGE')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="copyConfigSuccessPopup"
       data-cy="copyConfigSuccessPopup"
     >
-      <Text>{t('COPY_CONFIGURATION_EXTENDED.COPY_SUCCESS_MESSAGE')}</Text>
+      <Text>{t('GLOBAL.REPORT_USAGE')}</Text>
     </DialogMessageInform>
   )
 
