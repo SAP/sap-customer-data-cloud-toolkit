@@ -59,7 +59,7 @@ describe('SMS Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="smsSuccessPopup"]').shadow().find('#ui5-popup-header').should('have.text', 'Success')
     utils.clickPopUpOkButton('smsSuccessPopup')
-   cy.get('@windowOpenStub').should('be.called')
+    cy.get('@windowOpenStub').should('be.called')
     
   })
 

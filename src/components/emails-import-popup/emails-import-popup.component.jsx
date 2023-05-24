@@ -85,7 +85,6 @@ const EmailsImportPopup = ({ t }) => {
 
   const onCloseEmailImportPopup = () => {
     dispatch(setIsImportPopupOpen(false))
-
   }
 
   const onAfterCloseCredentialsErrorDialogHandle = () => {

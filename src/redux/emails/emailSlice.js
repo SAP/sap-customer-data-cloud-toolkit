@@ -9,14 +9,11 @@
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-
 import EmailManager from '../../services/emails/emailManager'
-
 import { getApiKey, getErrorAsArray } from '../utils'
 import { ZIP_FILE_MIME_TYPE } from '../constants'
 import { errorConditions } from '../errorConditions'
 import { ERROR_SEVERITY_WARNING } from '../../services/errors/generateErrorResponse'
-import { Tracker } from '../../tracker/tracker'
 
 const EMAILS_SLICE_STATE_NAME = 'emails'
 const EXPORT_EMAIL_TEMPLATES_FILE_NAME = 'email-templates'
