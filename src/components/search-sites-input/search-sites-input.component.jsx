@@ -44,7 +44,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
   }, 500)
 
   const onTargetApiKeysInputKeyPressHandler = (event) => {
-    const inputValue = event.target.value
+    const inputValue = event.target.value.trim()
     if (event.key === 'Enter' && !findStringInAvailableTargetSites(inputValue, filteredAvailableTargetSites)) {
       setTargetApiKeyInputValue(inputValue)
       processInput(inputValue)
