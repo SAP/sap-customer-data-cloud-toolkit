@@ -13,8 +13,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as utils from './utils'
 import SiteManager from '../../services/site/siteManager'
 import { getErrorAsArray } from '../utils'
-import { Tracker } from '../../tracker/tracker'
-
 const SITES_SLICE_STATE_NAME = 'sites'
 const CREATE_SITES_ACTION = 'service/createSites'
 
@@ -106,9 +104,6 @@ export const siteSlice = createSlice({
     },
     setIsLoading: (state, action) => {
       state.isLoading = action.payload
-      if (!state.isLoading && state.showSuccessDialog) {
-        Tracker.reportUsage()
-      }
     },
   },
   extraReducers: (builder) => {

@@ -18,7 +18,7 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import MessageList from '../../components/message-list/message-list.component'
 import SmsImportPopup from '../../components/sms-import-popup/sms-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
-
+import { Tracker } from '../../tracker/tracker'
 import {
   getSmsTemplatesArrayBuffer,
   selectExportFile,
@@ -100,6 +100,10 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearErrors())
     dispatch(clearErrorCondition())
   }
+  const onSuccessDialogAfterCloseHandler = () => {
+    Tracker.reportUsage()
+    document.location.reload()
+  }
 
   const onAfterCloseCredentialsErrorDialogHandler = () => {
     setShowCredentialsErrorDialog(false)
@@ -125,12 +129,12 @@ const SmsTemplates = ({ t }) => {
       open={showSuccessDialog}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      onAfterClose={() => document.location.reload()}
-      closeButtonContent="Ok"
+      onAfterClose={onSuccessDialogAfterCloseHandler}
+      closeButtonContent={t("GLOBAL.BUTTON_REPORT_USAGE")}
       id="successPopup"
       data-cy="smsSuccessPopup"
     >
-      <Text>{t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
+      <Text>{t("GLOBAL.REPORT_USAGE")}</Text>
     </DialogMessageInform>
   )
 

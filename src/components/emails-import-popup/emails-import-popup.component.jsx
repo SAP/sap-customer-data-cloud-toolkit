@@ -18,7 +18,6 @@ import CredentialsErrorDialog from '../../components/credentials-error-dialog/cr
 import DialogMessageConfirm from '../../components/dialog-message-confirm/dialog-message-confirm.component'
 import MessageList from '../../components/message-list/message-list.component'
 import ImportPopup from '../import-popup/import-popup.component'
-
 import {
   selectIsImportPopupOpen,
   sendEmailTemplatesArrayBuffer,

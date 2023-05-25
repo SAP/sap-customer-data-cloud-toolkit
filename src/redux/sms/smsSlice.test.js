@@ -105,6 +105,5 @@ describe('Site slice test suite', () => {
     expect(newState.errors).toEqual([])
     expect(newState.isImportPopupOpen).toEqual(false)
     expect(newState.showSuccessDialog).toEqual(true)
-    expect(tracker).toHaveBeenCalled()
   })
 })

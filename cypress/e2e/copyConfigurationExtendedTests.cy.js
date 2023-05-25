@@ -8,7 +8,6 @@
  * license agreement you entered into with SAP.
  */
 
-/* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
 
@@ -37,7 +36,7 @@ describe('Copy Configuration extended test suite', () => {
     utils.setConfigurationCheckBox()
     cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.enabled')
     cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
-    cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.copyConfigSuccessPopupMessage)
+    cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedSuccessMessage)
     cy.get('[data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
     utils.checkElementsInitialState()
     cy.wait(1500)
