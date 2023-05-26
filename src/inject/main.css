@@ -16,6 +16,21 @@
   width: calc(100% - 241px);
 }
 
+.cdc-tools-app-loading {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  height: 100%;
+  width: calc(100% - 241px);
+  background-color: #fff;
+  z-index: 9;
+  display: none;
+}
+
+.cdc-tools-app-loading-show {
+  display: block;
+}
+
 .cdc-tools-app-container {
   position: absolute;
   top: 0px;
