@@ -9,11 +9,18 @@
  */
 
 import { onElementExists } from '../../inject/utils'
+import { MAIN_LOADING_CLASS, MAIN_LOADING_SHOW_CLASS } from '../../inject/constants'
+
+export const showCredentialsLoading = () => document.querySelector(`.${MAIN_LOADING_CLASS}`).classList.add(MAIN_LOADING_SHOW_CLASS)
+export const hideCredentialsLoading = () => document.querySelector(`.${MAIN_LOADING_CLASS}`).classList.remove(MAIN_LOADING_SHOW_CLASS)
 
 export const getCredentials = () => {
+  showCredentialsLoading()
+
   return new Promise((resolve) => {
     onElementExists('.fd-tabs__item', () => {
       resolve(readCredentialsFromAccountSettings())
+      setTimeout(hideCredentialsLoading, 200)
     })
   })
 }

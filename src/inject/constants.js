@@ -18,6 +18,8 @@ export const TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS = 'cdc-tools--topbar-menu-c
 export const TOPBAR_MENU_CONTAINER_CLASS = 'cdc-toolbox--topbar-menu-container'
 export const TOPBAR_MENU_ITEM_PLACEHOLDER_CLASS = 'cdc-tools--topbar-menu-item-placeholder'
 
+export const MAIN_LOADING_CLASS = 'cdc-tools-app-loading'
+export const MAIN_LOADING_SHOW_CLASS = 'cdc-tools-app-loading-show'
 export const MAIN_CONTAINER_CLASS = 'cdc-tools-app'
 export const MAIN_CONTAINER_SHOW_CLASS = 'show-cdc-tools'
 export const ROUTE_CONTAINER_CLASS = 'cdc-tools-app-container'
