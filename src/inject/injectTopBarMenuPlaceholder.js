@@ -42,8 +42,6 @@ export const initTopBarMenuPlaceholder = (onCreated) => {
   if (typeof onCreated == 'function') {
     onCreated()
   }
-  const shellBarActions = querySelectorAllShadows('fd-shellbar-actions')[0]
-  shellBarActions.style.cssText += 'width: 620px;min-width: 620px;';
 
   // If the injected element is removed, inject it again
   watchElement({
