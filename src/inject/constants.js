@@ -17,6 +17,7 @@ export const MOCK_ELEMENT_CLASS = 'cdc-tools--mock'
 export const TOPBAR_MENU_CONTAINER_PLACEHOLDER_CLASS = 'cdc-tools--topbar-menu-container-placeholder'
 export const TOPBAR_MENU_CONTAINER_CLASS = 'cdc-toolbox--topbar-menu-container'
 export const TOPBAR_MENU_ITEM_PLACEHOLDER_CLASS = 'cdc-tools--topbar-menu-item-placeholder'
+export const TOPBAR_ACTIONS_SELECTOR = '.fd-shellbar__group.fd-shellbar__group--actions'
 
 export const MAIN_LOADING_CLASS = 'cdc-tools-app-loading'
 export const MAIN_LOADING_SHOW_CLASS = 'cdc-tools-app-loading-show'
