@@ -101,9 +101,10 @@ describe('Copy Configuration extended test suite', () => {
   })
 
   it('should add the apiKey after the user insert it with spaces ', () => {
-    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(`${dataTest.dummyApiKey}  ` )
+    const dummyApiKeyWithSpaces = ` ${dataTest.dummyApiKey}  `
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKeyWithSpaces)
     cy.waitUntil(() =>
-    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').then((win) => cy.get(win).should('have.value', `${dataTest.dummyApiKey}  `))
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').then((win) => cy.get(win).should('have.value', dummyApiKeyWithSpaces))
     )
     cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').focus().type('{enter}')
     cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').find('div > table').should('have.text',dataTest.dummyTargetApiKeyText)
