@@ -48,6 +48,8 @@ const copyConfigCurrentSiteApiKeyLabel = 'API Key:'
 const copyConfigTargetSitesApisLabel = 'Target Sites API Keys:'
 const copyConfigSuccessPopupMessage = 'OkAll selected configurations were copied successfully.'
 const dummyApiKey = '4DiwrECcjcMVrRyIX8aukA'
+const dummyApiKeyWithSpaces = '4DiwrECcjcMVrRyIX8aukA    '
+const dummyTargetApiKeyText = 'Site Domain:dev.cdc-toolsAPI Key:4DiwrECcjcMVrRyIX8aukA    '
 const successMessageHeader = 'Success'
 const webSdkCopyTest = 'TEST_WEB_SDK_COPY'
 const templateSiteName = '_cdc-toolbox-source-templates_'
@@ -1684,5 +1686,7 @@ export {
   childOfBaseDomainName,
   webhooksOption,
   testDataflow,
-  dataflowOption
+  dataflowOption,
+  dummyApiKeyWithSpaces,
+  dummyTargetApiKeyText
 }

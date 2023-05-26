@@ -99,4 +99,14 @@ describe('Copy Configuration extended test suite', () => {
     cy.get('[data-cy ="selectAllCheckbox"]').should('not.be.checked')
     cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
   })
+
+  it('should add the apiKey after the user insert it with spaces ', () => {
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dataTest.dummyApiKeyWithSpaces)
+    cy.waitUntil(() =>
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').then((win) => cy.get(win).should('have.value', dataTest.dummyApiKeyWithSpaces))
+    )
+    cy.wait(1000)
+    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').find('[data-cy="addTargetSiteButton"]').shadow().find('button').click()
+    cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').find('div > table').should('have.text',dataTest.dummyTargetApiKeyText)
+  })	
 })
