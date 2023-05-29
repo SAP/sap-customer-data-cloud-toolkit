@@ -59,7 +59,7 @@ class Dataflows {
     let getDataflow = await this.get(response)
 
     if (getDataflow.errorCode === 0) {
-      getDataflow = await this.set(destinationAPI, getDataflow)
+      await this.set(destinationAPI, getDataflow)
     }
 
     return response
