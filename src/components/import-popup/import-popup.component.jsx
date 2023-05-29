@@ -40,7 +40,7 @@ const ImportPopup = ({
         <div id="header" className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>{popupHeader}</div>
           <div>
-            <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseImportPopup} design="Transparent" className="ui-dialog-titlebar-close"></Button>
+            <Button id="closeEmailImportPopup" icon="decline" onClick={onCloseImportPopup} design="Transparent" className="ui-dialog-titlebar-close"/>
           </div>
         </div>
       }
@@ -50,7 +50,7 @@ const ImportPopup = ({
             <Label id="specifyFileLabel">{specifyFileLabel}</Label>
           </div>
           <div>
-            <input data-cy="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}></input>
+            <input data-cy="zipFileInput" type="file" accept="application/zip" onChange={onFileUploadButtonClickHandler}/>
           </div>
         </div>
       }
@@ -65,7 +65,7 @@ const ImportPopup = ({
           </Button>
         </div>
       }
-    ></Dialog>
+    />
   )
 }
 
