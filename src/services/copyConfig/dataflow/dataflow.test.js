@@ -8,7 +8,7 @@
  * license agreement you entered into with SAP.
  */
 
-import { credentials, expectedGigyaResponseInvalidAPI, verifyAllResponsesAreOk, verifyResponseIsOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, verifyAllResponsesAreOk } from '../../servicesDataTest'
 import axios from 'axios'
 import { getResponseWithContext } from '../dataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
