@@ -32,7 +32,7 @@ class DataflowOptions extends Options {
   add(response) {
     const dataflows = response.result
     this.options.branches = []
-    if (dataflows.length === 0) {
+    if (!dataflows || dataflows.length === 0) {
       return
     }
     for (const dataflow of dataflows) {
