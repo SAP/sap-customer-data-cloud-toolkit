@@ -154,7 +154,7 @@ const getSearchDataflowsExpectedResponse = {
           id: 'record.evaluate',
           type: 'record.evaluate',
           params: {
-            script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgY29uc29sZS5sb2coJ3t7aG9zdG5hbWV9fScpDQogICAgcmV0dXJuIHJlY29yZDsNCn0=',
+            script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7CiAgICAvLyBsb2cgIiN0ZXN0IgogICAgY29uc29sZS5sb2coInt7aG9zdG5hbWV9fSIpCiAgICByZXR1cm4gcmVjb3JkOwp9',
             ECMAScriptVersion: '12',
             notifyLastRecord: false,
           },

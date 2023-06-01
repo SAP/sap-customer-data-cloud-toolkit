@@ -20,6 +20,8 @@ class Dataflow {
   static #NAMESPACE = 'idx'
   static #CONTEXT_ID = 'dataflows'
   static #encodedFields = ['script']
+  static #ENCODED_FIELD_END_MARK = '"'
+  static #DECODED_FIELD_END_MARK = '#-#"'
   #credentials
   #site
   #dataCenter
@@ -144,10 +146,10 @@ class Dataflow {
 
   async #copyDataflow(destinationSite, dataCenter, name, sourceSiteDataflows, destinationSiteDataflows, dataflowVariables) {
     let sourceSiteDataflow = Dataflow.#findDataflow(sourceSiteDataflows, name)
-    const destinationSiteDataflow = Dataflow.#findDataflow(destinationSiteDataflows, name)
     if (dataflowVariables) {
       sourceSiteDataflow = Dataflow.#replaceVariables(sourceSiteDataflow, dataflowVariables)
     }
+    const destinationSiteDataflow = Dataflow.#findDataflow(destinationSiteDataflows, sourceSiteDataflow.name)
     if (destinationSiteDataflow) {
       // we are doing a modify the id must be the one from the destination extension
       sourceSiteDataflow.id = destinationSiteDataflow.id
@@ -189,7 +191,7 @@ class Dataflow {
   }
 
   static #decodeField(field, dataflowStr) {
-    return Dataflow.#processField(field, dataflowStr, atob)
+    return Dataflow.#processField(field, dataflowStr, atob, Dataflow.#ENCODED_FIELD_END_MARK)
   }
 
   static encodeDataflow(dataflowStr) {
@@ -200,10 +202,10 @@ class Dataflow {
   }
 
   static #encodeField(field, dataflowStr) {
-    return Dataflow.#processField(field, dataflowStr, btoa)
+    return Dataflow.#processField(field, dataflowStr, btoa, Dataflow.#DECODED_FIELD_END_MARK)
   }
 
-  static #processField(field, dataflowStr, codecFunction) {
+  static #processField(field, dataflowStr, codecFunction, fieldEndMark) {
     let idx = 0
     while (idx < dataflowStr.length) {
       idx = dataflowStr.indexOf(field, idx)
@@ -211,8 +213,13 @@ class Dataflow {
         break
       }
       const valueStart = idx + field.length + 2
-      const valueEnd = dataflowStr.indexOf('"', valueStart)
-      const value = codecFunction(dataflowStr.substring(valueStart, valueEnd))
+      let valueEnd = dataflowStr.indexOf(fieldEndMark, valueStart)
+      let value = codecFunction(dataflowStr.substring(valueStart, valueEnd))
+      if (fieldEndMark === Dataflow.#DECODED_FIELD_END_MARK) {
+        valueEnd += Dataflow.#DECODED_FIELD_END_MARK.length - 1
+      } else {
+        value += Dataflow.#DECODED_FIELD_END_MARK.substring(0, Dataflow.#DECODED_FIELD_END_MARK.length - 1)
+      }
       dataflowStr = dataflowStr.substring(0, valueStart) + value + dataflowStr.substring(valueEnd)
       idx = valueEnd
     }
