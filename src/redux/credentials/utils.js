@@ -20,7 +20,7 @@ export const getCredentials = () => {
   return new Promise((resolve) => {
     onElementExists('.fd-tabs__item', () => {
       resolve(readCredentialsFromAccountSettings())
-      setTimeout(hideCredentialsLoading, 200)
+      setTimeout(hideCredentialsLoading, 500)
     })
   })
 }
