@@ -221,7 +221,7 @@ class Dataflow {
         value += Dataflow.#DECODED_FIELD_END_MARK.substring(0, Dataflow.#DECODED_FIELD_END_MARK.length - 1)
       }
       dataflowStr = dataflowStr.substring(0, valueStart) + value + dataflowStr.substring(valueEnd)
-      idx = valueEnd
+      idx = valueStart + value.length
     }
     return dataflowStr
   }
