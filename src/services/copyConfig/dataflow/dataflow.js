@@ -22,6 +22,7 @@ class Dataflow {
   static #encodedFields = ['script']
   static #ENCODED_FIELD_END_MARK = '"'
   static #DECODED_FIELD_END_MARK = '#-#"'
+  static #DATAFLOW_STATUS_PUBLISHED = 'published'
   #credentials
   #site
   #dataCenter
@@ -33,7 +34,8 @@ class Dataflow {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, Dataflow.#getSetDataflowEndpoint())
+    const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getSetDataflowEndpoint() : Dataflow.#getSetDataflowDraftEndpoint()
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint)
     const res = await client.post(url, this.#setDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
     })
@@ -41,7 +43,8 @@ class Dataflow {
   }
 
   async create(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, Dataflow.#getCreateDataflowEndpoint())
+    const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getCreateDataflowEndpoint() : Dataflow.#getCreateDataflowDraftEndpoint()
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint)
     const res = await client.post(url, this.#setDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_CREATE_CONFIG)
     })
@@ -118,8 +121,16 @@ class Dataflow {
     return `${Dataflow.#NAMESPACE}.setDataflow`
   }
 
+  static #getSetDataflowDraftEndpoint() {
+    return Dataflow.#getSetDataflowEndpoint() + 'Draft'
+  }
+
   static #getCreateDataflowEndpoint() {
     return `${Dataflow.#NAMESPACE}.createDataflow`
+  }
+
+  static #getCreateDataflowDraftEndpoint() {
+    return Dataflow.#getCreateDataflowEndpoint() + 'Draft'
   }
 
   static #getSearchDataflowEndpoint() {
@@ -137,7 +148,7 @@ class Dataflow {
         promises.push(this.#copyDataflow(destinationSite, destinationSiteConfiguration.dataCenter, dataflow.name, response, destinationSiteDataflows, dataflow.variables))
       }
     }
-    return Promise.all(promises)
+    return (await Promise.all(promises)).flat()
   }
 
   async #getSiteDataflows(destinationSite, dataCenter) {
@@ -145,13 +156,25 @@ class Dataflow {
   }
 
   async #copyDataflow(destinationSite, dataCenter, name, sourceSiteDataflows, destinationSiteDataflows, dataflowVariables) {
-    let sourceSiteDataflow = Dataflow.#findDataflow(sourceSiteDataflows, name)
+    const promises = []
+    const dataflowVersions = sourceSiteDataflows.result.filter((df) => df.name === name)
+    for (const version of dataflowVersions) {
+      promises.push(this.#copyDataflowByStatus(destinationSite, dataCenter, name, version.status, sourceSiteDataflows, destinationSiteDataflows, dataflowVariables))
+    }
+    return Promise.all(promises)
+  }
+
+  async #copyDataflowByStatus(destinationSite, dataCenter, name, status, sourceSiteDataflows, destinationSiteDataflows, dataflowVariables) {
+    let sourceSiteDataflow = Dataflow.#findDataflow(sourceSiteDataflows, name, status)
+    if (!sourceSiteDataflow) {
+      return undefined
+    }
     if (dataflowVariables) {
       sourceSiteDataflow = Dataflow.#replaceVariables(sourceSiteDataflow, dataflowVariables)
     }
-    const destinationSiteDataflow = Dataflow.#findDataflow(destinationSiteDataflows, sourceSiteDataflow.name)
+    const destinationSiteDataflow = Dataflow.#findDataflow(destinationSiteDataflows, sourceSiteDataflow.name, status)
     if (destinationSiteDataflow) {
-      // we are doing a modify the id must be the one from the destination extension
+      // we are doing an update, the id must be the one from the destination extension
       sourceSiteDataflow.id = destinationSiteDataflow.id
       return this.set(destinationSite, dataCenter, sourceSiteDataflow)
     } else {
@@ -159,11 +182,11 @@ class Dataflow {
     }
   }
 
-  static #findDataflow(dataflows, name) {
+  static #findDataflow(dataflows, name, status) {
     return dataflows.result === undefined
       ? undefined
       : dataflows.result.find((df) => {
-          return df.name === name
+          return df.name === name && df.status === status
         })
   }
 

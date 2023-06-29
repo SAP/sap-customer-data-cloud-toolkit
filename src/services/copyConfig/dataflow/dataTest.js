@@ -47,7 +47,7 @@ const getSearchDataflowsExpectedResponse = {
       siteId: 12345,
       id: 'df2',
       name: 'dataflow2',
-      status: 'published',
+      status: 'draft',
       description: 'sftp > parse > injectJobId > importLiteAccount > format > sftp',
       steps: [
         {
