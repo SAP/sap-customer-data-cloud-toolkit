@@ -36,19 +36,21 @@ class DataflowOptions extends Options {
       return
     }
     for (const dataflow of dataflows) {
-      const decodedDataflow = Dataflow.decodeDataflow(dataflow)
-      const variables = Dataflow.getVariables(decodedDataflow)
-      const variablesObj = this.#buildVariablesObject(variables)
-      const opt = {
-        id: dataflow.name,
-        name: dataflow.name,
-        value: true,
-        formatName: false,
+      if (!this.#dataflowExists(dataflow.name)) {
+        const decodedDataflow = Dataflow.decodeDataflow(dataflow)
+        const variables = Dataflow.getVariables(decodedDataflow)
+        const variablesObj = this.#buildVariablesObject(variables)
+        const opt = {
+          id: dataflow.name,
+          name: dataflow.name,
+          value: true,
+          formatName: false,
+        }
+        if (variablesObj) {
+          opt.variables = variablesObj.variables
+        }
+        this.options.branches.push(opt)
       }
-      if (variablesObj) {
-        opt.variables = variablesObj.variables
-      }
-      this.options.branches.push(opt)
     }
   }
 
@@ -61,6 +63,12 @@ class DataflowOptions extends Options {
       obj.variables.push({ variable: `${variable}`, value: '' })
     }
     return obj.variables.length > 0 ? obj : undefined
+  }
+
+  #dataflowExists(name) {
+    return this.options.branches.find((dataflow) => {
+      return dataflow.name === name
+    })
   }
 }
 

@@ -73,7 +73,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.getEditSiteConfigButton().click()
     cy.get('#selectAllCheckbox').realClick()
     cy.get('#selectAllCheckbox').should('have.prop', 'checked')
-    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').click()
+    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(0).realClick()
     utils.getEditSiteConfigButton().click()
     cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('have.prop', 'checked'))
   })
