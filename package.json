@@ -99,7 +99,7 @@
     "cypress-file-upload": "^5.0.8",
     "cypress-jest-coverage-merge": "^1.0.2",
     "cypress-real-events": "^1.7.6",
-    "cypress-wait-until": "^1.7.2",
+    "cypress-wait-until": "^2.0.0",
     "identity-obj-proxy": "^3.0.0",
     "istanbul": "^0.4.5",
     "istanbul-merge": "^2.0.0",
