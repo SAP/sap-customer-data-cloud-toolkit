@@ -107,6 +107,6 @@
     "prettier": "3.0.0",
     "react-scripts": "5.0.1",
     "release-it": "^16.0.0",
-    "start-server-and-test": "^1.14.0"
+    "start-server-and-test": "^2.0.0"
   }
 }
