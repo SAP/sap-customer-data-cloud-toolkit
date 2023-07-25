@@ -1,0 +1,293 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
+
+.fd-action-bar {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-shadow: 0 0 0.25rem #00000026, inset 0 -0.0625rem #d9d9d9;
+  box-shadow: var(--sapContent_HeaderShadow, 0 0 0.25rem 0 rgba(0, 0, 0, 0.15), inset 0 -0.0625rem 0 0 #d9d9d9);
+  background-color: #fff;
+  background-color: var(--sapPageHeader_Background, #fff);
+  min-height: 3rem;
+  max-height: 4.25rem;
+  word-wrap: break-word;
+  justify-content: space-between;
+  padding: 0.5rem 2rem;
+}
+.fd-action-bar:after,
+.fd-action-bar:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+.fd-action-bar__header {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  height: 2rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.fd-action-bar__header:after,
+.fd-action-bar__header:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+.fd-action-bar__back {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: block;
+  position: relative;
+  margin-right: 0.5rem;
+}
+.fd-action-bar__back:after,
+.fd-action-bar__back:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+@media (min-width: 320px) {
+  .fd-action-bar__back {
+    display: none !important;
+  }
+}
+@media (min-width: 600px) {
+  .fd-action-bar__back {
+    display: inline-block !important;
+  }
+}
+.fd-action-bar__back[dir='rtl'],
+[dir='rtl'] .fd-action-bar__back {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+.fd-action-bar__title {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: var(--sapTextColor, #32363a);
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-rendering: optimizeLegibility;
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontHeaderFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  color: #32363a;
+  color: var(--sapGroup_TitleTextColor, #32363a);
+  flex-grow: 1;
+  flex-basis: 0;
+  line-height: 1.375rem;
+  padding-right: 0.5rem;
+  vertical-align: middle;
+  margin: 0;
+}
+.fd-action-bar__title:after,
+.fd-action-bar__title:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+.fd-action-bar__title[dir='rtl'],
+[dir='rtl'] .fd-action-bar__title {
+  padding-right: 0;
+  padding-left: 0.5rem;
+}
+.fd-action-bar__description {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  color: #6a6d70;
+  color: var(--sapContent_LabelColor, #6a6d70);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  height: 1.25rem;
+  vertical-align: middle;
+}
+.fd-action-bar__description:after,
+.fd-action-bar__description:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+@media (min-width: 320px) {
+  .fd-action-bar__description {
+    display: none !important;
+  }
+}
+@media (min-width: 600px) {
+  .fd-action-bar__description {
+    display: inline-block !important;
+  }
+}
+.fd-action-bar__description--back {
+  padding-left: 2.5rem;
+}
+.fd-action-bar__description--back[dir='rtl'],
+[dir='rtl'] .fd-action-bar__description--back {
+  padding-left: 0;
+  padding-right: 2.5rem;
+}
+.fd-action-bar__actions {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.25s ease-in;
+  visibility: visible;
+  height: 2rem;
+}
+.fd-action-bar__actions:after,
+.fd-action-bar__actions:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+.fd-action-bar__actions.is-disabled,
+.fd-action-bar__actions[aria-hidden='true'] {
+  opacity: 0;
+  visibility: hidden;
+}
+.fd-action-bar__actions > :nth-child(n + 1) {
+  margin-left: 0.5rem;
+}
+.fd-action-bar__actions > :first-child {
+  margin-left: 0;
+}
+.fd-action-bar__actions > [dir='rtl']:nth-child(n + 1),
+[dir='rtl'] .fd-action-bar__actions > :nth-child(n + 1) {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+.fd-action-bar__actions > [dir='rtl']:first-child,
+[dir='rtl'] .fd-action-bar__actions > :first-child {
+  margin-right: 0;
+}
+.fd-action-bar--s {
+  padding: 0.5rem 1rem;
+}
+.fd-action-bar--m_l {
+  padding: 0.5rem 2rem;
+}
+.fd-action-bar--xl {
+  padding: 0.5rem 3rem;
+} /*!
+ * Fundamental Library Styles v0.21.0-rc.92
+ * Copyright (c) 2022 SAP SE or an SAP affiliate company.
+ * Licensed under Apache License 2.0 (https://github.com/SAP/fundamental-styles/blob/main/LICENSE)
+ */
+.fd-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+.fd-title {
+  font-size: 0.875rem;
+  font-size: var(--sapFontSize, 0.875rem);
+  line-height: 1.4;
+  line-height: var(--sapContent_LineHeight, 1.4);
+  font-family: '72', '72full', Arial, Helvetica, sans-serif;
+  font-family: var(--sapFontFamily, '72', '72full', Arial, Helvetica, sans-serif);
+  font-weight: 400;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  color: #32363a;
+  color: var(--sapTextColor, #32363a);
+}
+.fd-title:after,
+.fd-title:before {
+  box-sizing: inherit;
+  font-size: inherit;
+}
+.fd-title--h1 {
+  font-size: 2.25rem;
+  font-size: var(--sapFontHeader1Size, 2.25rem);
+}
+.fd-title--h2 {
+  font-size: 1.5rem;
+  font-size: var(--sapFontHeader2Size, 1.5rem);
+}
+.fd-title--h3 {
+  font-size: 1.25rem;
+  font-size: var(--sapFontHeader3Size, 1.25rem);
+}
+.fd-title--h4 {
+  font-size: 1.125rem;
+  font-size: var(--sapFontHeader4Size, 1.125rem);
+}
+.fd-title--h5 {
+  font-size: 1rem;
+  font-size: var(--sapFontHeader5Size, 1rem);
+}
+.fd-title--h6 {
+  font-size: 0.875rem;
+  font-size: var(--sapFontHeader6Size, 0.875rem);
+}
+.fd-title--wrap {
+  overflow: auto;
+  white-space: normal;
+  text-overflow: initial;
+}

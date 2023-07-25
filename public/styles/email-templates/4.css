@@ -1,0 +1,45 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
+
+[_nghost-yea-c102] .title-emails[_ngcontent-yea-c102] {
+  font-size: 14px;
+  color: var(--sapNeutralElementColor, #6a6d70);
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+[_nghost-yea-c102] .email-card-content[_ngcontent-yea-c102] {
+  padding: 1.8rem 1rem;
+}
+[_nghost-yea-c102] .email-card-content[_ngcontent-yea-c102] .select-template[_ngcontent-yea-c102] {
+  margin-bottom: 8px;
+}
+[_nghost-yea-c102] .email-card-content[_ngcontent-yea-c102] .model-url[_ngcontent-yea-c102] {
+  margin-top: 23px;
+}
+[_nghost-yea-c102] .locales-content[_ngcontent-yea-c102] {
+  margin-top: 15px;
+}
+[_nghost-yea-c102] .template-content[_ngcontent-yea-c102] {
+  margin-top: 34px;
+  position: sticky;
+  top: 5px;
+}
+.full-width[_ngcontent-yea-c102] .fd-select fd-popover {
+  width: 100%;
+}
+.no-click[_ngcontent-yea-c102] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+[_nghost-yea-c102] .override[_ngcontent-yea-c102] {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.5rem 0 0;
+}
+.email-type-subtitle[_ngcontent-yea-c102],
+.email-template-content-wrapper[_ngcontent-yea-c102] {
+  margin-top: 1rem;
+}

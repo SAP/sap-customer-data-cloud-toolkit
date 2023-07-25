@@ -1,0 +1,54 @@
+[
+  {
+    "console": "localhost",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US"
+      }
+    ]
+  },
+  {
+    "console": "console.gigya.com",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US"
+      }
+    ]
+  },
+  {
+    "console": "console.eu2.gigya.com",
+    "datacenters": [
+      {
+        "value": "eu2",
+        "label": "EU"
+      }
+    ]
+  },
+  {
+    "console": "console.cn1.gigya.com",
+    "datacenters": [
+      {
+        "value": "cn1",
+        "label": "CN"
+      }
+    ]
+  }
+]
