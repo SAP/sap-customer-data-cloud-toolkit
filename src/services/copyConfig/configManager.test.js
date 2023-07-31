@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import * as CommonTestData from '../servicesDataTest'
 import ConfigManager from './configManager'
 import axios from 'axios'
@@ -169,10 +168,11 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
 
@@ -278,6 +278,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, policyId, apiKey) })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, socialIdentitiesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, channelId, apiKey) })
@@ -330,23 +331,25 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
-      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
+
+      .mockResolvedValueOnce({ data: topicsExpectedResponse })
+
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
 
@@ -354,11 +357,15 @@ describe('Config Manager test suite', () => {
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(30)
-    CommonTestData.verifyResponseIsNotOk(response[0], mockedResponse)
-    expect(response[0].context.id).toEqual(schemaId)
-    expect(response[0].context.targetApiKey).toEqual(apiKey)
+    const errorResponseIndex = 1
+    CommonTestData.verifyResponseIsNotOk(response[errorResponseIndex], mockedResponse)
+    expect(response[errorResponseIndex].context.id).toEqual(schemaId)
+    expect(response[errorResponseIndex].context.targetApiKey).toEqual(apiKey)
 
-    verifyAllResponsesAreOk(response.slice(1))
+    CommonTestData.verifyResponseIsOk(response[0], mockedResponse)
+    expect(response[0].context.id).toEqual(profileId)
+    expect(response[0].context.targetApiKey).toEqual(apiKey)
+    verifyAllResponsesAreOk(response.slice(2))
     verifyAllContext(response)
   })
 
@@ -451,9 +458,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: mockedDataCenterResponse })
       .mockResolvedValueOnce({ data: mockedDataCenterResponse }) // due to ParentChildSorter()
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
-    if (option === schemaId) {
-      axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
-    }
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
     axios.mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, option, apiKey) })
     if (numberOfChildren === 0) {
       axios.mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, option, apiKey) })

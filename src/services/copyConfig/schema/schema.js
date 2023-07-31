@@ -3,10 +3,9 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
-import generateErrorResponse, { ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+import generateErrorResponse, { ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
 
 class Schema {
@@ -63,16 +62,69 @@ class Schema {
     const responses = []
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     removePropertyFromObjectCascading(payload, 'preferencesSchema') // to be processed later
-    if (options.getOptionValue(Schema.DATA_SCHEMA)) {
-      responses.push(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    const destinationSiteSchema = await this.#getSchemaOfSite(destinationSite, destinationSiteConfiguration.dataCenter)
+    if (destinationSiteSchema.errorCode === 0) {
+      if (options.getOptionValue(Schema.DATA_SCHEMA)) {
+        responses.push(
+          ...this.#removeFromThePayloadDifferentTypes(destinationSite, payload.dataSchema, destinationSiteSchema.dataSchema, this.#createWarningCannotChangeDataSchemaFieldType)
+        )
+        responses.unshift(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+      }
+      if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
+        responses.push(
+          ...this.#removeFromThePayloadDifferentTypes(
+            destinationSite,
+            payload.profileSchema,
+            destinationSiteSchema.profileSchema,
+            this.#createWarningCannotChangeProfileSchemaFieldType
+          )
+        )
+        responses.unshift(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+      }
+      if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
+        responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+      }
+      return Promise.all(responses)
+    } else {
+      return [destinationSiteSchema]
     }
-    if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
-      responses.push(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+  }
+
+  #removeFromThePayloadDifferentTypes(destinationSite, schemaPayload, destinationSiteSchema, errorFunction) {
+    const responses = []
+    for (const schemaObjKey of Object.keys(destinationSiteSchema.fields)) {
+      if (this.#typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey)) {
+        delete schemaPayload.fields[schemaObjKey].type
+        responses.push(errorFunction(destinationSite, schemaObjKey))
+      }
     }
-    if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
-      responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+    return responses
+  }
+
+  #createWarningCannotChangeDataSchemaFieldType(destinationSite, field) {
+    return {
+      errorCode: ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
+      errorDetails: 'Data schema field already exists on the destination site with a different type.',
+      errorMessage: `Partially copied data schema field "${field}"`,
+      statusCode: 412,
+      statusReason: 'Precondition Failed',
+      time: Date.now(),
+      severity: ERROR_SEVERITY_WARNING,
+      context: { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA },
     }
-    return Promise.all(responses)
+  }
+
+  #createWarningCannotChangeProfileSchemaFieldType(destinationSite, field) {
+    return {
+      errorCode: ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
+      errorDetails: 'Profile schema field already exists on the destination site with a different type.',
+      errorMessage: `Partially copied profile schema field "${field}"`,
+      statusCode: 412,
+      statusReason: 'Precondition Failed',
+      time: Date.now(),
+      severity: ERROR_SEVERITY_WARNING,
+      context: { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA },
+    }
   }
 
   async #copyDataSchema(destinationSite, dataCenter, payload, isParentSite) {
@@ -81,48 +133,19 @@ class Schema {
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
-    const responses = await this.#removeFromThePayloadObjectsWithDifferentTypes(destinationSite, dataCenter, dataSchemaPayload)
-    if (responses.length === 0 || responses[0].errorCode === ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE) {
-      removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
-      if (isParentSite) {
-        response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
-      } else {
-        response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
-      }
-      responses.unshift(response)
-    }
-    return responses
-  }
-
-  async #removeFromThePayloadObjectsWithDifferentTypes(destinationSite, dataCenter, dataSchemaPayload) {
-    const responses = []
-    const destinationSiteSchema = await this.#getSchemaOfSite(destinationSite, dataCenter)
-    if (destinationSiteSchema.errorCode === 0) {
-      for (const schemaObjKey of Object.keys(destinationSiteSchema.dataSchema.fields)) {
-        if (this.#typeIsDifferent(dataSchemaPayload, destinationSiteSchema, schemaObjKey)) {
-          delete dataSchemaPayload.dataSchema.fields[schemaObjKey].type
-          responses.push({
-            errorCode: ERROR_CODE_CANNOT_CHANGE_DATA_SCHEMA_FIELD_TYPE,
-            errorDetails: "Data schema field already exists on the destination site with a different type.",
-            errorMessage: `Partially copied data schema field "${schemaObjKey}"`,
-            statusCode: 412,
-            statusReason: 'Precondition Failed',
-            time: Date.now(),
-            severity: ERROR_SEVERITY_WARNING,
-            context: { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA },
-          })
-        }
-      }
+    removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
+    if (isParentSite) {
+      response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
     } else {
-      responses.push(destinationSiteSchema)
+      response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
     }
-    return responses
+    return response
   }
 
-  #typeIsDifferent(dataSchemaPayload, destinationSiteSchema, schemaObjKey) {
-    const schemaObj = dataSchemaPayload.dataSchema.fields[schemaObjKey]
+  #typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey) {
+    const schemaObj = schemaPayload.fields[schemaObjKey]
     if (schemaObj) {
-      return schemaObj.type !== destinationSiteSchema.dataSchema.fields[schemaObjKey].type
+      return schemaObj.type !== destinationSiteSchema.fields[schemaObjKey].type
     }
     return false
   }
@@ -171,17 +194,17 @@ class Schema {
 
   #createDataPayloadWithRequiredOnly(payload, schemaName) {
     const clonePayload = JSON.parse(JSON.stringify(payload))
-    for(const field of Object.keys(clonePayload[schemaName].fields)) {
-      clonePayload[schemaName].fields[field] = { 'required' : clonePayload[schemaName].fields[field].required }
+    for (const field of Object.keys(clonePayload[schemaName].fields)) {
+      clonePayload[schemaName].fields[field] = { required: clonePayload[schemaName].fields[field].required }
     }
     return clonePayload
   }
 
   #createSubscriptionsPayloadWithRequiredOnly(payload, schemaName) {
     const clonePayload = JSON.parse(JSON.stringify(payload))
-    for(const subscription of Object.keys(clonePayload[schemaName].fields)) {
-      for(const field of Object.keys(clonePayload[schemaName].fields[subscription])) {
-        clonePayload[schemaName].fields[subscription][field] = {'required': clonePayload[schemaName].fields[subscription][field].required}
+    for (const subscription of Object.keys(clonePayload[schemaName].fields)) {
+      for (const field of Object.keys(clonePayload[schemaName].fields[subscription])) {
+        clonePayload[schemaName].fields[subscription][field] = { required: clonePayload[schemaName].fields[subscription][field].required }
       }
     }
     return clonePayload
