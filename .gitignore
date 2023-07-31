@@ -44,7 +44,8 @@ yarn-error.log*
 
 .vscode
 .idea
-client.test.js
+.iml
+gigya/client.test.js
 
 /cypress/videos
 /cypress/screenshots
