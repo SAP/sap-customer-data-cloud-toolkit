@@ -15,13 +15,15 @@ import {
   getSubscriptionsSchemaExpectedBodyForParentSite,
   getSubscriptionsSchemaExpectedBodyForChildSiteStep1,
   getSubscriptionsSchemaExpectedBodyForChildSiteStep2,
+  expectedSourceChildCopyIssueSchemaResponse,
+  expectedDestinationChildCopyIssueSchemaResponse,
 } from './dataTest'
 import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest'
 import Options from '../options'
-import { ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE } from '../../errors/generateErrorResponse'
+import { ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE, ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION } from '../../errors/generateErrorResponse'
 
 jest.mock('axios')
 
@@ -131,6 +133,39 @@ describe('Schema test suite', () => {
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithDifferentType)
+  })
+
+  test('copy successfully child fields to a site with parent object created', async () => {
+    const _schemaOptions = new Options({
+      branches: [
+        { id: schemaId, name: schemaId, value: true },
+        { id: profileId, name: profileId, value: false },
+        { id: subscriptionsId, name: subscriptionsId, value: false },
+      ],
+    })
+    let spy = jest.spyOn(schema, 'set')
+    axios
+      .mockResolvedValueOnce({ data: expectedSourceChildCopyIssueSchemaResponse })
+      .mockResolvedValueOnce({ data: expectedDestinationChildCopyIssueSchemaResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, _schemaOptions)
+    expect(responses.length).toBe(3)
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[1].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION)
+    expect(responses[2].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION)
+    expect(responses[0].context.id).toEqual(schemaId)
+    expect(responses[1].context.id).toEqual(schemaId)
+    expect(responses[2].context.id).toEqual(schemaId)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
+    expect(responses[1].context.targetApiKey).toEqual(apiKey)
+    expect(responses[2].context.targetApiKey).toEqual(apiKey)
+
+    expect(spy.mock.calls.length).toBe(1)
+    const expectedSchemaBodyWithOutChildren = JSON.parse(JSON.stringify(expectedSourceChildCopyIssueSchemaResponse))
+    expectedSchemaBodyWithOutChildren.context = { targetApiKey: apiKey, id: schemaId }
+    delete expectedSchemaBodyWithOutChildren.dataSchema.fields['nutritionCookingDislikes.item']
+    delete expectedSchemaBodyWithOutChildren.dataSchema.fields['nutritionCookingDislikes.flag']
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithOutChildren)
   })
 
   test('copy unsuccessfully - error on get', async () => {

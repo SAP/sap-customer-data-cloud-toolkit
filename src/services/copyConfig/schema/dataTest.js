@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { profileId, schemaId, subscriptionsId } from '../dataTest'
 import { removePropertyFromObjectCascading } from '../objectHelper'
 
@@ -223,3 +222,68 @@ export function getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey) {
   expectedBody.scope = 'site'
   return expectedBody
 }
+
+export const expectedSourceChildCopyIssueSchemaResponse = JSON.parse(
+  JSON.stringify({
+    callId: '617d9ce97ce44902afac6083e843d795',
+    errorCode: 0,
+    apiVersion: 2,
+    statusCode: 200,
+    statusReason: 'OK',
+    time: '2023-01-17T10:10:22.541Z',
+    dataSchema: {
+      fields: {
+        'nutritionCookingDislikes.item': {
+          required: false,
+          type: 'boolean',
+          allowNull: true,
+          writeAccess: 'clientModify',
+        },
+        'nutritionCookingDislikes.flag': {
+          required: false,
+          type: 'boolean',
+          allowNull: true,
+          writeAccess: 'clientModify',
+        },
+        'elster.unternehmensanschrift.ortsteil': {
+          required: true,
+          type: 'string',
+          allowNull: false,
+          writeAccess: 'serverOnly',
+          encrypt: 'AES',
+        },
+      },
+      dynamicSchema: true,
+    },
+  }),
+)
+
+export const expectedDestinationChildCopyIssueSchemaResponse = JSON.parse(
+  JSON.stringify({
+    callId: '617d9ce97ce44902afac6083e843d795',
+    errorCode: 0,
+    apiVersion: 2,
+    statusCode: 200,
+    statusReason: 'OK',
+    time: '2023-01-17T10:10:22.541Z',
+    dataSchema: {
+      fields: {
+        nutritionCookingDislikes: {
+          required: false,
+          type: 'boolean',
+          allowNull: true,
+          writeAccess: 'clientModify',
+        },
+        'elster.unternehmensanschrift.ort': {
+          required: true,
+          type: 'string',
+          allowNull: false,
+          writeAccess: 'serverOnly',
+          encrypt: 'AES',
+          subType: 'none',
+        },
+      },
+      dynamicSchema: true,
+    },
+  }),
+)

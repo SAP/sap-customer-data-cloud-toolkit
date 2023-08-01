@@ -5,7 +5,11 @@
 
 import UrlBuilder from '../../gigya/urlBuilder'
 import client from '../../gigya/client'
-import generateErrorResponse, { ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+import generateErrorResponse, {
+  ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
+  ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
+  ERROR_SEVERITY_WARNING,
+} from '../../errors/generateErrorResponse'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
 
 class Schema {
@@ -66,7 +70,7 @@ class Schema {
     if (destinationSiteSchema.errorCode === 0) {
       if (options.getOptionValue(Schema.DATA_SCHEMA)) {
         responses.push(
-          ...this.#removeFromThePayloadDifferentTypes(destinationSite, payload.dataSchema, destinationSiteSchema.dataSchema, this.#createWarningCannotChangeDataSchemaFieldType)
+          ...this.#removeFromThePayloadDifferentTypes(destinationSite, payload.dataSchema, destinationSiteSchema.dataSchema, this.#createWarningCannotChangeDataSchemaFieldType),
         )
         responses.unshift(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
       }
@@ -76,8 +80,8 @@ class Schema {
             destinationSite,
             payload.profileSchema,
             destinationSiteSchema.profileSchema,
-            this.#createWarningCannotChangeProfileSchemaFieldType
-          )
+            this.#createWarningCannotChangeProfileSchemaFieldType,
+          ),
         )
         responses.unshift(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
       }
@@ -96,6 +100,18 @@ class Schema {
       if (this.#typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey)) {
         delete schemaPayload.fields[schemaObjKey].type
         responses.push(errorFunction(destinationSite, schemaObjKey))
+      }
+      responses.push(...this.#handleSourceChildsThatHaveParentOnDestination(destinationSite, schemaObjKey, schemaPayload))
+    }
+    return responses
+  }
+
+  #handleSourceChildsThatHaveParentOnDestination(destinationSite, destinationField, sourceSchema) {
+    const responses = []
+    for (const schemaObjKey of Object.keys(sourceSchema.fields)) {
+      if (schemaObjKey.includes(destinationField + '.')) {
+        delete sourceSchema.fields[schemaObjKey]
+        responses.push(this.#createWarningCannotCopyChildThatHaveParentOnDestination(destinationSite, schemaObjKey))
       }
     }
     return responses
@@ -124,6 +140,19 @@ class Schema {
       time: Date.now(),
       severity: ERROR_SEVERITY_WARNING,
       context: { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA },
+    }
+  }
+
+  #createWarningCannotCopyChildThatHaveParentOnDestination(destinationSite, field) {
+    return {
+      errorCode: ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
+      errorDetails: "Schema field's parent already exists on the destination site. Gigya do not supports creating childs.",
+      errorMessage: `Ignored schema field "${field}"`,
+      statusCode: 412,
+      statusReason: 'Precondition Failed',
+      time: Date.now(),
+      severity: ERROR_SEVERITY_WARNING,
+      context: { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA },
     }
   }
 
