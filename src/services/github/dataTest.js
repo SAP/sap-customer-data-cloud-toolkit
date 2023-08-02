@@ -11,9 +11,9 @@ const gitHubExpectedErrorResponse = {
 }
 
 const gitHubExpectedResponse = {
-  url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320',
-  assets_url: 'github/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/100320/assets',
-  html_url: 'github/cx-servicesautomation/cdc-tools-chrome-extension/releases/tag/0.2.0',
+  url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/releases/100320',
+  assets_url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/releases/100320/assets',
+  html_url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/releases/tag/0.2.0',
   id: 100320,
   author: {
     login: 'Iuser',
@@ -28,10 +28,10 @@ const gitHubExpectedResponse = {
   published_at: '2022-12-13T13:38:36Z',
   assets: [
     {
-      url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/assets/35336',
+      url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/releases/assets/35336',
       id: 35336,
       node_id: 'MDEyOlJlbGVhc2VBc3NldDM1MzM2',
-      name: 'cdc-tools-chrome-extension-0.2.0.zip',
+      name: 'sap-customer-data-cloud-toolkit-0.2.0.zip',
       label: null,
       uploader: {},
       content_type: 'application/zip',
@@ -40,11 +40,11 @@ const gitHubExpectedResponse = {
       download_count: 1,
       created_at: '2022-12-13T13:38:38Z',
       updated_at: '2022-12-13T13:38:38Z',
-      browser_download_url: 'github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension/releases/download/0.2.0/cdc-tools-chrome-extension-0.2.0.zip',
+      browser_download_url: 'github.com/repos/SAP/sap-customer-data-cloud-toolkit/releases/download/0.2.0/sap-customer-data-cloud-toolkit-0.2.0.zip',
     },
   ],
-  tarball_url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/tarball/0.2.0',
-  zipball_url: 'github.tools.sap/api/v3/repos/cx-servicesautomation/cdc-tools-chrome-extension/zipball/0.2.0',
+  tarball_url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/tarball/0.2.0',
+  zipball_url: 'api.github.com/repos/SAP/sap-customer-data-cloud-toolkit/zipball/0.2.0',
   body: '*',
 }
 

@@ -17,7 +17,7 @@ class GitHubClient {
   }
 
   async getLatestReleaseInformation() {
-    return this.axiosInstance.get('/repos/cx-servicesautomation/cdc-tools-chrome-extension/releases/latest')
+    return this.axiosInstance.get('/repos/SAP/sap-customer-data-cloud-toolkit/releases/latest')
   }
 }
 
