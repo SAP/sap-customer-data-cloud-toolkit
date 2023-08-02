@@ -8,6 +8,7 @@ import client from '../../gigya/client'
 import generateErrorResponse, {
   ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
   ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
+  ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
   ERROR_SEVERITY_WARNING,
 } from '../../errors/generateErrorResponse'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
@@ -64,29 +65,37 @@ class Schema {
 
   async #copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
     const responses = []
+    const sourceSiteSchema = JSON.parse(JSON.stringify(payload))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
-    removePropertyFromObjectCascading(payload, 'preferencesSchema') // to be processed later
+    removePropertyFromObjectCascading(sourceSiteSchema, 'preferencesSchema') // to be processed later
     const destinationSiteSchema = await this.#getSchemaOfSite(destinationSite, destinationSiteConfiguration.dataCenter)
     if (destinationSiteSchema.errorCode === 0) {
       if (options.getOptionValue(Schema.DATA_SCHEMA)) {
         responses.push(
-          ...this.#removeFromThePayloadDifferentTypes(destinationSite, payload.dataSchema, destinationSiteSchema.dataSchema, this.#createWarningCannotChangeDataSchemaFieldType),
+          ...this.#removeFromThePayloadDifferentTypes(
+            destinationSite,
+            sourceSiteSchema.dataSchema,
+            destinationSiteSchema.dataSchema,
+            this.#createWarningCannotChangeDataSchemaFieldType,
+          ),
         )
-        responses.unshift(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+        responses.push(...this.#removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSiteSchema.dataSchema, destinationSiteSchema.dataSchema))
+        responses.unshift(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
         responses.push(
           ...this.#removeFromThePayloadDifferentTypes(
             destinationSite,
-            payload.profileSchema,
+            sourceSiteSchema.profileSchema,
             destinationSiteSchema.profileSchema,
             this.#createWarningCannotChangeProfileSchemaFieldType,
           ),
         )
-        responses.unshift(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+        responses.push(...this.#removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSiteSchema.profileSchema, destinationSiteSchema.profileSchema))
+        responses.unshift(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
-        responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, payload, isParentSite))
+        responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       return Promise.all(responses)
     } else {
@@ -101,17 +110,29 @@ class Schema {
         delete schemaPayload.fields[schemaObjKey].type
         responses.push(errorFunction(destinationSite, schemaObjKey))
       }
-      responses.push(...this.#handleSourceChildsThatHaveParentOnDestination(destinationSite, schemaObjKey, schemaPayload))
     }
     return responses
   }
 
-  #handleSourceChildsThatHaveParentOnDestination(destinationSite, destinationField, sourceSchema) {
+  #removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSchema, destinationSiteSchema) {
+    const responses = []
+    for (const dstSchemaObjKey of Object.keys(destinationSiteSchema.fields)) {
+      for (const schemaObjKey of Object.keys(sourceSchema.fields)) {
+        if (schemaObjKey.includes(dstSchemaObjKey + '.')) {
+          delete sourceSchema.fields[schemaObjKey]
+          responses.push(this.#createWarningCannotCopyChildThatHaveParentOnDestination(destinationSite, schemaObjKey))
+        }
+      }
+    }
+    return responses
+  }
+
+  #removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSchema, destinationSiteSchema) {
     const responses = []
     for (const schemaObjKey of Object.keys(sourceSchema.fields)) {
-      if (schemaObjKey.includes(destinationField + '.')) {
+      if (destinationSiteSchema.fields[schemaObjKey] === undefined) {
         delete sourceSchema.fields[schemaObjKey]
-        responses.push(this.#createWarningCannotCopyChildThatHaveParentOnDestination(destinationSite, schemaObjKey))
+        responses.push(this.#createWarningCannotCopyNewFieldsOfProfileSchema(destinationSite, schemaObjKey))
       }
     }
     return responses
@@ -146,13 +167,26 @@ class Schema {
   #createWarningCannotCopyChildThatHaveParentOnDestination(destinationSite, field) {
     return {
       errorCode: ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
-      errorDetails: "Schema field's parent already exists on the destination site. Gigya do not supports creating childs.",
-      errorMessage: `Ignored schema field "${field}"`,
+      errorDetails: "Data schema field's parent already exists on the destination site. Gigya do not supports creating childs.",
+      errorMessage: `Ignored data schema field "${field}"`,
       statusCode: 412,
       statusReason: 'Precondition Failed',
       time: Date.now(),
       severity: ERROR_SEVERITY_WARNING,
       context: { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA },
+    }
+  }
+
+  #createWarningCannotCopyNewFieldsOfProfileSchema(destinationSite, field) {
+    return {
+      errorCode: ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
+      errorDetails: "Cannot create new fields on profile schema of the destination site. It's a Gigya limitation.",
+      errorMessage: `Ignored profile schema field "${field}"`,
+      statusCode: 412,
+      statusReason: 'Precondition Failed',
+      time: Date.now(),
+      severity: ERROR_SEVERITY_WARNING,
+      context: { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA },
     }
   }
 

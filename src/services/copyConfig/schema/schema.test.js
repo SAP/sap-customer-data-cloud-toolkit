@@ -23,7 +23,11 @@ import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
 import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest'
 import Options from '../options'
-import { ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE, ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION } from '../../errors/generateErrorResponse'
+import {
+  ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
+  ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
+  ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
+} from '../../errors/generateErrorResponse'
 
 jest.mock('axios')
 
@@ -166,6 +170,41 @@ describe('Schema test suite', () => {
     delete expectedSchemaBodyWithOutChildren.dataSchema.fields['nutritionCookingDislikes.item']
     delete expectedSchemaBodyWithOutChildren.dataSchema.fields['nutritionCookingDislikes.flag']
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithOutChildren)
+  })
+
+  test('copy successfully profile schema with extra fields on source site', async () => {
+    const _schemaOptions = new Options({
+      branches: [
+        { id: schemaId, name: schemaId, value: false },
+        { id: profileId, name: profileId, value: true },
+        { id: subscriptionsId, name: subscriptionsId, value: false },
+      ],
+    })
+    let spy = jest.spyOn(schema, 'set')
+    const expectedDestinationSiteSchemaResponse = JSON.parse(JSON.stringify(expectedSchemaResponse))
+    delete expectedDestinationSiteSchemaResponse.profileSchema.fields.email
+    delete expectedDestinationSiteSchemaResponse.profileSchema.fields.birthYear
+    axios
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: expectedDestinationSiteSchemaResponse })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+    const responses = await schema.copy(apiKey, dataCenterConfiguration, _schemaOptions)
+    expect(responses.length).toBe(3)
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[1].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA)
+    expect(responses[2].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA)
+    expect(responses[0].context.id).toEqual(profileId)
+    expect(responses[1].context.id).toEqual(profileId)
+    expect(responses[2].context.id).toEqual(profileId)
+    expect(responses[0].context.targetApiKey).toEqual(apiKey)
+    expect(responses[1].context.targetApiKey).toEqual(apiKey)
+    expect(responses[2].context.targetApiKey).toEqual(apiKey)
+
+    expect(spy.mock.calls.length).toBe(1)
+    const expectedSchemaBodyWithOutExtraFields = getProfileSchemaExpectedBodyForParentSite(apiKey)
+    delete expectedSchemaBodyWithOutExtraFields.profileSchema.fields.email
+    delete expectedSchemaBodyWithOutExtraFields.profileSchema.fields.birthYear
+    expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithOutExtraFields)
   })
 
   test('copy unsuccessfully - error on get', async () => {
