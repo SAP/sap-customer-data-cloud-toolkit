@@ -28,6 +28,7 @@ import {
   ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
   ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
 } from '../../errors/generateErrorResponse'
+import { removePropertyFromObjectCascading } from '../objectHelper'
 
 jest.mock('axios')
 
@@ -80,10 +81,10 @@ describe('Schema test suite', () => {
     axios
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedSchemaResponse)) })
       .mockResolvedValueOnce({ data: JSON.parse(JSON.stringify(expectedSchemaResponse)) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
 
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
@@ -100,9 +101,9 @@ describe('Schema test suite', () => {
 
     expect(spy.mock.calls.length).toBe(5)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep1(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
   })
 
@@ -270,5 +271,26 @@ describe('Schema test suite', () => {
     expect(spy.mock.calls.length).toBe(2)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
+  })
+
+  test('break schema payload into several smaller if needed', async () => {
+    const dataSchemaPayload = JSON.parse(JSON.stringify(expectedSchemaResponse))
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, 'preferencesSchema')
+    dataSchemaPayload.dataSchema.fields['email'] = {
+      required: false,
+      type: 'boolean',
+      allowNull: true,
+      writeAccess: 'clientModify',
+    }
+    const payloads = schema.breakSchemaPayloadIntoSeveralSmallerIfNeeded(dataSchemaPayload, 'dataSchema', 300)
+    expect(payloads.length).toBe(3)
+    expect(Object.keys(payloads[0].dataSchema.fields).length).toEqual(1)
+    expect(payloads[0].dataSchema.fields.email).toBeDefined()
+    expect(Object.keys(payloads[1].dataSchema.fields).length).toEqual(1)
+    expect(payloads[1].dataSchema.fields.subscribe).toBeDefined()
+    expect(Object.keys(payloads[2].dataSchema.fields).length).toEqual(1)
+    expect(payloads[2].dataSchema.fields.terms).toBeDefined()
   })
 })
