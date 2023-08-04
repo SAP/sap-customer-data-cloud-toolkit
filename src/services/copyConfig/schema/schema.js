@@ -107,8 +107,8 @@ class Schema {
   #removeFromThePayloadDifferentTypes(destinationSite, schemaPayload, destinationSiteSchema, errorFunction) {
     const responses = []
     for (const schemaObjKey of Object.keys(destinationSiteSchema.fields)) {
-      if (this.#typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey)) {
-        delete schemaPayload.fields[schemaObjKey].type
+      if (this.#typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey) && destinationSiteSchema.fields[schemaObjKey].type !== undefined) {
+        schemaPayload.fields[schemaObjKey].type = destinationSiteSchema.fields[schemaObjKey].type
         responses.push(errorFunction(destinationSite, schemaObjKey))
       }
     }

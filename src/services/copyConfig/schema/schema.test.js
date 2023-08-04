@@ -111,6 +111,7 @@ describe('Schema test suite', () => {
     let spy = jest.spyOn(schema, 'set')
     const schemaResponseWithDifferentType = JSON.parse(JSON.stringify(expectedSchemaResponse))
     schemaResponseWithDifferentType.dataSchema.fields.terms.type = 'long'
+    schemaResponseWithDifferentType.dataSchema.fields.subscribe.type = undefined
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: schemaResponseWithDifferentType })
@@ -134,7 +135,7 @@ describe('Schema test suite', () => {
 
     expect(spy.mock.calls.length).toBe(3)
     const expectedSchemaBodyWithDifferentType = getDataSchemaExpectedBodyForParentSite(apiKey)
-    delete expectedSchemaBodyWithDifferentType.dataSchema.fields.terms.type
+    expectedSchemaBodyWithDifferentType.dataSchema.fields.terms.type = schemaResponseWithDifferentType.dataSchema.fields.terms.type
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithDifferentType)
