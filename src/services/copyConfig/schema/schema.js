@@ -20,6 +20,7 @@ class Schema {
   static DATA_SCHEMA = 'dataSchema'
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
+  static GIGYA_MAXIMUM_PAYLOAD_SIZE = 8192
   #credentials
   #site
   #dataCenter
@@ -80,7 +81,7 @@ class Schema {
           ),
         )
         responses.push(...this.#removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSiteSchema.dataSchema, destinationSiteSchema.dataSchema))
-        responses.unshift(this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.unshift(...await this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
         responses.push(
@@ -92,7 +93,7 @@ class Schema {
           ),
         )
         responses.push(...this.#removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSiteSchema.profileSchema, destinationSiteSchema.profileSchema))
-        responses.unshift(this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.unshift(...await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
         responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
@@ -191,18 +192,26 @@ class Schema {
   }
 
   async #copyDataSchema(destinationSite, dataCenter, payload, isParentSite) {
+    const responses = []
     let response
     const dataSchemaPayload = JSON.parse(JSON.stringify(payload))
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
     removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
-    if (isParentSite) {
-      response = await this.set(destinationSite, dataCenter, dataSchemaPayload)
-    } else {
-      response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, dataSchemaPayload)
+    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(dataSchemaPayload, 'dataSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
+    for(const schemaPayload of schemaPayloads) {
+      if (isParentSite) {
+        response = await this.set(destinationSite, dataCenter, schemaPayload)
+      } else {
+        response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, schemaPayload)
+      }
+      responses.push(response)
+      if(response.errorCode !== 0){
+        break
+      }
     }
-    return response
+    return responses
   }
 
   #typeIsDifferent(schemaPayload, destinationSiteSchema, schemaObjKey) {
@@ -214,19 +223,27 @@ class Schema {
   }
 
   async #copyProfileSchema(destinationSite, dataCenter, payload, isParentSite) {
+    const responses = []
     let response
     const clonePayload = JSON.parse(JSON.stringify(payload))
     removePropertyFromObjectCascading(clonePayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.SUBSCRIPTIONS_SCHEMA)
     clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
     Schema.#removeUnsuportedProfileSchemaFields(clonePayload)
-    if (isParentSite) {
-      response = await this.set(destinationSite, dataCenter, clonePayload)
-    } else {
-      removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
-      response = await this.set(destinationSite, dataCenter, clonePayload)
+    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(clonePayload, 'profileSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
+    for(const schemaPayload of schemaPayloads) {
+      if (isParentSite) {
+        response = await this.set(destinationSite, dataCenter, schemaPayload)
+      } else {
+        removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
+        response = await this.set(destinationSite, dataCenter, schemaPayload)
+      }
+      responses.push(response)
+      if(response.errorCode !== 0){
+        break
+      }
     }
-    return response
+    return responses
   }
 
   static #removeUnsuportedProfileSchemaFields(clonePayload) {
@@ -359,6 +376,40 @@ class Schema {
 
   static #has(property) {
     return property !== undefined && Object.keys(property).length > 0
+  }
+
+  breakSchemaPayloadIntoSeveralSmallerIfNeeded(schemaPayload, schemaType, payloadMaximumSize) {
+    const payloads = []
+    this.#breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(schemaPayload, schemaType, payloadMaximumSize, payloads)
+    return payloads;
+  }
+
+  #breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(schemaPayload, schemaType, payloadMaximumSize, payloads) {
+    const payloadStr = JSON.stringify(schemaPayload)
+    if(payloadStr.length <= payloadMaximumSize) {
+      payloads.push(schemaPayload)
+      return
+    }
+    const fieldsToSend = []
+    let payloadSize = payloadStr.length
+    let payloadClone = JSON.parse(payloadStr)
+
+    const fields = Object.keys(payloadClone[schemaType].fields)
+    const numberOfFields = fields.length
+    for(let i = 0 ; i < numberOfFields && payloadSize > payloadMaximumSize ; ++i) {
+      delete payloadClone[schemaType].fields[fields[i]]
+      fieldsToSend.push(fields[i])
+      payloadSize = JSON.stringify(payloadClone).length
+    }
+    payloads.push(payloadClone)
+
+    payloadClone = JSON.parse(payloadStr)
+    payloadClone[schemaType].fields = {}
+    for(const field of fieldsToSend) {
+      payloadClone[schemaType].fields[field] = schemaPayload[schemaType].fields[field]
+    }
+
+    return this.#breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(payloadClone, schemaType, payloadMaximumSize, payloads);
   }
 }
 
