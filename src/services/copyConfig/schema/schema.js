@@ -20,7 +20,7 @@ class Schema {
   static DATA_SCHEMA = 'dataSchema'
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
-  static GIGYA_MAXIMUM_PAYLOAD_SIZE = 20928
+  static GIGYA_MAXIMUM_PAYLOAD_SIZE = 8192
   #credentials
   #site
   #dataCenter
