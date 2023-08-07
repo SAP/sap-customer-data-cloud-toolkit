@@ -35,7 +35,7 @@ export const areConfigurationsFilled = (configurations) => {
 }
 
 export const errorsAreWarnings = (errors) => {
-  return !errors.some((error) => error.severity === ERROR_SEVERITY_ERROR)
+  return !errors.some((error) => !error.hasOwnProperty('severity') || error.severity === ERROR_SEVERITY_ERROR)
 }
 
 export const sendReportOnWarnings = (errors) => {

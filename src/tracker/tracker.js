@@ -3,10 +3,9 @@
  * License: Apache-2.0
  */
 
-
 export const Tracker = {
-  applicationName: 'Customer Data Cloud Toolkit',
-  distributionList: 'DL CX Automation Tracker - Customer Data Cloud Toolbox <DL_64219B11753A88028E183E70@global.corp.sap>',
+  applicationName: 'SAP Customer Data Cloud Toolkit',
+  distributionList: 'DL CX Automation Tracker - SAP Customer Data Cloud Toolkit <DL_64219B11753A88028E183E70@global.corp.sap>',
 }
 
 Tracker.subject = `[CX Automation Tracker] ${Tracker.applicationName}`
@@ -18,5 +17,5 @@ Just fill the project name and click "send" to report 1 usage of ${Tracker.appli
 Project name: `
 
 Tracker.reportUsage = function () {
-    window.open(`mailto:${Tracker.distributionList}?subject=${Tracker.subject}&body=${Tracker.body}`, '_blank', 'noopener')
+  window.open(`mailto:${Tracker.distributionList}?subject=${Tracker.subject}&body=${Tracker.body}`, '_blank', 'noopener')
 }
