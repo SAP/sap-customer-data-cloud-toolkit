@@ -4,8 +4,8 @@
  */
 
 export const Tracker = {
-  applicationName: 'SAP Customer Data Cloud Toolkit',
-  distributionList: 'DL CX Automation Tracker - SAP Customer Data Cloud Toolkit <DL_64219B11753A88028E183E70@global.corp.sap>',
+  applicationName: 'SAP Customer Data Cloud toolkit',
+  distributionList: 'DL CX Automation Tracker - SAP Customer Data Cloud toolkit <DL_64219B11753A88028E183E70@global.corp.sap>',
 }
 
 Tracker.subject = `[CX Automation Tracker] ${Tracker.applicationName}`
