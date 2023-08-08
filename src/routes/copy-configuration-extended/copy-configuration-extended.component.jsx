@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
@@ -51,7 +50,7 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
-import { cleanTreeVerticalScrolls, areConfigurationsFilled } from './utils'
+import { cleanTreeVerticalScrolls, areConfigurationsFilled, sendReportOnWarnings } from './utils'
 import { getApiKey } from '../../redux/utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
@@ -62,7 +61,9 @@ import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
 import styles from './copy-configuration-extended.styles'
+
 import { Tracker } from '../../tracker/tracker'
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
 const PAGE_TITLE = 'Copy Configuration Extended'
@@ -195,6 +196,8 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showErrorList = () => {
+    sendReportOnWarnings(errors)
+
     return errors.length ? (
       <div className={classes.errorListOuterDivStyle}>
         <div className={classes.errorListInnerDivStyle}>
