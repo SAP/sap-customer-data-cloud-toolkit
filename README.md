@@ -1,4 +1,4 @@
-# SAP Customer Data Cloud Toolkit - Chrome Extension
+# SAP Customer Data Cloud Toolkit
 
 ## About this project
 App created to extend the existing functionality of the SAP Customer Data Cloud Console.
@@ -14,7 +14,7 @@ App created to extend the existing functionality of the SAP Customer Data Cloud 
 ## Requirements and Setup
 ### Run in SAP Customer Data Cloud Console
 
-1. `git clone https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension.git`
+1. `git clone https://github.com/SAP/sap-customer-data-cloud-toolkit.git`
 2. `npm install`
 3. `npm run build`
 4. Navigate to [chrome://extensions/](chrome://extensions/)
@@ -25,7 +25,7 @@ App created to extend the existing functionality of the SAP Customer Data Cloud 
 
 ### Run in Development Environment
 
-1. `git clone https://github.tools.sap/cx-servicesautomation/cdc-tools-chrome-extension.git`
+1. `git clone https://github.com/SAP/sap-customer-data-cloud-toolkit.git`
 2. `npm install`
 3. `Create the environment variables REACT_APP_USERKEY and REACT_APP_SECRET with your user key and secret values, 
    to avoid to set them multiple times during the application execution`
