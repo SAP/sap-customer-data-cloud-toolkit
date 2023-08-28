@@ -16,8 +16,6 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 ### Supported browsers
 
 1. Google Chrome
-2. Internet Explorer
-3. Mozilla Firefox
 
 ### Run in SAP Customer Data Cloud Console
 
