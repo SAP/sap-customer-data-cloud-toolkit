@@ -12,6 +12,13 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 - Site Deployer with Copy Configuration Extended
 
 ## Requirements and Setup
+
+### Supported browsers
+
+1. Google Chrome
+2. Internet Explorer
+3. Mozilla Firefox
+
 ### Run in SAP Customer Data Cloud Console
 
 1. `git clone https://github.com/SAP/sap-customer-data-cloud-toolkit.git`
