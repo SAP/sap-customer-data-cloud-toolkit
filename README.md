@@ -1,7 +1,7 @@
 # SAP Customer Data Cloud Toolkit
 
 ## About this project
-App created to extend the existing functionality of the SAP Customer Data Cloud Console.
+The Browser Extension created to extend the existing functionality of the SAP Customer Data Cloud Console.
 
 #### Features:
 
