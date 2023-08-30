@@ -41,7 +41,7 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 1. Run `npm run cypress:ci`
 
 ### Cypress End to End tests
-1. Check the project's documentation on https://wiki.one.int.sap/wiki/display/CDCTOOLBOX/Documentation+Guide
+1. Check the project's documentation on https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki
 
 ## Support, Feedback, Contributing
 
