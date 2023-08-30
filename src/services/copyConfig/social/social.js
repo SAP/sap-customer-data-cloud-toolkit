@@ -31,7 +31,7 @@ class Social {
     return response.data
   }
 
-  async #set(apiKey, config, targetDataCenter) {
+  async set(apiKey, config, targetDataCenter) {
     const url = UrlBuilder.buildUrl(Social.#NAMESPACE, targetDataCenter, Social.#SET_ENDPOINT)
     const response = await client.post(url, this.#setSocialConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, Social.#ERROR_SET_SOCIAL_CONFIG)
@@ -43,7 +43,7 @@ class Social {
     let response = await this.get(this.originApiKey)
 
     if (response.errorCode === 0) {
-      response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
+      response = await this.set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
 
     if (response.context) {

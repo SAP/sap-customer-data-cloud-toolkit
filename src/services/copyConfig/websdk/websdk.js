@@ -29,7 +29,7 @@ class WebSdk {
     return response
   }
 
-  async #set(apiKey, config, targetDataCenter) {
+  async set(apiKey, config, targetDataCenter) {
     const url = UrlBuilder.buildUrl(WebSdk.#NAMESPACE, targetDataCenter, WebSdk.#SET_ENDPOINT)
     const response = await client.post(url, this.#setWebSdkConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, WebSdk.#ERROR_SET_WEB_SDK_CONFIG)
@@ -40,7 +40,7 @@ class WebSdk {
   async copy(targetApi, targetSiteConfiguration) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#set(targetApi, response, targetSiteConfiguration.dataCenter)
+      response = await this.set(targetApi, response, targetSiteConfiguration.dataCenter)
     }
 
     if (response.context) {
