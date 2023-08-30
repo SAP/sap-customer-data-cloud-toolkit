@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "SAP Customer Data Cloud Toolkit",
+  "name": "SAP Customer Data Cloud toolkit",
   "version": "1.6.1",
-  "description": "Add extra functionality to SAP Customer Data Cloud Toolkit console",
+  "description": "Add extra functionality to SAP Customer Data Cloud toolkit console",
   "permissions": ["storage"],
   "icons": {
     "16": "images/icon-16.png",
