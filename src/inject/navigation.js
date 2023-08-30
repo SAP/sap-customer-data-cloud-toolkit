@@ -60,7 +60,7 @@ export const processHashChange = (locationHash) => {
     isAppInitialized = true
   }
 
-  // Check if this route is from CDC Console or CDC Toolkit extension
+  // Check if this route is from CDC Console or CDC toolkit extension
   if (!getFilterRouteFromExtension(route)) {
     // Show CDC Console route
     hideContainer()
@@ -71,7 +71,7 @@ export const processHashChange = (locationHash) => {
       isAppInitialized = false
     }
   } else {
-    // Show CDC Toolkit extension route
+    // Show CDC toolkit extension route
     if (incompatibleRouteLoaded) {
       return window.location.reload(true)
     }
