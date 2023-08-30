@@ -47,7 +47,7 @@ const CredentialsPopover = ({ t }) => {
 
       <Form className={classes.documentationLinkStyle} columnsS="2">
         <FormItem>
-          <Link href="https://wiki.one.int.sap/wiki/display/CDCTOOLBOX/End+User+Documentation" target="_blank">
+          <Link href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/End-User-Documentation" target="_blank">
             {t('GLOBAL.DOCUMENTATION')}
           </Link>
         </FormItem>
