@@ -14,7 +14,7 @@ class GitHubManager {
   #github = 'api.github.com'
 
   constructor() {
-    this.gitHubClient = new GitHubClient(`${this.#protocol}://${this.#github}`, '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') // repo_deployment permission only
+    this.gitHubClient = new GitHubClient(`${this.#protocol}://${this.#github}`)
   }
 
   async getNewReleaseAvailable() {

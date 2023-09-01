@@ -19,7 +19,7 @@ let client
 
 beforeAll(() => {
   axios.create.mockReturnThis()
-  client = new GitHubClient('localhost', 'token')
+  client = new GitHubClient('localhost')
 })
 
 describe('GitHub test suite', () => {
