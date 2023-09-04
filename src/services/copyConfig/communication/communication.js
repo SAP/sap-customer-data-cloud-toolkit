@@ -32,8 +32,8 @@ class Communication {
     if (options && options.value === false) {
       return responses
     }
-    responses.push(...(await this.#copyChannels(destinationSite, destinationSiteConfiguration)))
-    responses.push(...(await this.#copyTopics(destinationSite, destinationSiteConfiguration)))
+    responses.push(...(await this.copyChannels(destinationSite, destinationSiteConfiguration)))
+    responses.push(...(await this.copyTopics(destinationSite, destinationSiteConfiguration)))
 
     responses = responses.flat()
     stringToJson(responses, 'context')
@@ -44,7 +44,7 @@ class Communication {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
-  async #copyChannels(destinationSite, destinationSiteConfiguration) {
+  async copyChannels(destinationSite, destinationSiteConfiguration) {
     let responses = []
     if (!this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
       let response = await this.#channel.get()
@@ -60,7 +60,7 @@ class Communication {
     return await Promise.all(responses)
   }
 
-  async #copyTopics(destinationSite, destinationSiteConfiguration) {
+  async copyTopics(destinationSite, destinationSiteConfiguration) {
     let responses = []
 
     let response = await this.#topic.get()

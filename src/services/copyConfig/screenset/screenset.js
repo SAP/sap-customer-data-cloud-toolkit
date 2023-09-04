@@ -45,7 +45,7 @@ class ScreenSet {
     let response = await this.get()
 
     if (response.errorCode === 0) {
-      response = await this.#copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
+      response = await this.copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
     }
     stringToJson(response, 'context')
 
@@ -95,7 +95,7 @@ class ScreenSet {
     return `${ScreenSet.#NAMESPACE}.setScreenSet`
   }
 
-  async #copyScreenSets(destinationSite, dataCenter, response, options) {
+  async copyScreenSets(destinationSite, dataCenter, response, options) {
     const promises = []
     for (const screenSetCollectionInfo of options.getOptions().branches) {
       for (const screenSetInfo of screenSetCollectionInfo.branches) {

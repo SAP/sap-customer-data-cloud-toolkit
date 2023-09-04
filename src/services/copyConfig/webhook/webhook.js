@@ -43,7 +43,7 @@ class Webhook {
     let response = await this.get()
 
     if (response.errorCode === 0) {
-      response = await this.#copyWebhooks(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
+      response = await this.copyWebhooks(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
     }
     stringToJson(response, 'context')
 
@@ -84,7 +84,7 @@ class Webhook {
     return `${Webhook.#NAMESPACE}.webhooks.set`
   }
 
-  async #copyWebhooks(destinationSite, dataCenter, response, options) {
+  async copyWebhooks(destinationSite, dataCenter, response, options) {
     const promises = []
     for (const webhook of options.getOptions().branches) {
       if (webhook.value) {

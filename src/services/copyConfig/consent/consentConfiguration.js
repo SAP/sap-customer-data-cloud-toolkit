@@ -39,7 +39,7 @@ class ConsentConfiguration {
     let response = await this.#consentStatement.get()
     if (response.errorCode === 0) {
       const consentsPayload = ConsentConfiguration.#splitConsents(response.preferences)
-      responses.push(...(await this.#copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
+      responses.push(...(await this.copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
     } else {
       responses.push(response)
     }
@@ -74,7 +74,7 @@ class ConsentConfiguration {
     })
   }
 
-  async #copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload) {
+  async copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload) {
     const promises = []
     for (const consentPayload of consentsPayload) {
       promises.push(this.#copyConsentStatement(destinationSite, destinationSiteConfiguration, consentPayload))

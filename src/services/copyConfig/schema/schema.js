@@ -58,13 +58,13 @@ class Schema {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = (await this.#copySchema(destinationSite, destinationSiteConfiguration, response, options)).flat()
+      response = (await this.copySchema(destinationSite, destinationSiteConfiguration, response, options)).flat()
     }
     stringToJson(response, 'context')
     return response
   }
 
-  async #copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
+  async copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
     const responses = []
     const sourceSiteSchema = JSON.parse(JSON.stringify(payload))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
