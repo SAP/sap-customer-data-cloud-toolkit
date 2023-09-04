@@ -7,12 +7,9 @@
 import axios from 'axios'
 
 class GitHubClient {
-  constructor(baseUrl, token) {
+  constructor(baseUrl) {
     this.axiosInstance = axios.create({
-      baseURL: baseUrl,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      baseURL: baseUrl
     })
   }
 
