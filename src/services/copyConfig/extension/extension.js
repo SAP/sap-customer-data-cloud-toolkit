@@ -51,7 +51,7 @@ class Extension {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#copyExtensions(destinationSite, destinationSiteConfiguration, response, options)
+      response = await this.copyExtensions(destinationSite, destinationSiteConfiguration, response, options)
     }
     stringToJson(response, 'context')
     return response
@@ -121,7 +121,7 @@ class Extension {
     return `${Extension.#NAMESPACE}.extensions.create`
   }
 
-  async #copyExtensions(destinationSite, destinationSiteConfiguration, response, options) {
+  async copyExtensions(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
     const destinationSiteExtensions = await this.#getSiteExtensions(destinationSite, destinationSiteConfiguration.dataCenter)
     if (destinationSiteExtensions.errorCode !== 0) {

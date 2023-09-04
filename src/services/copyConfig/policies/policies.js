@@ -43,9 +43,8 @@ class Policy {
   async copy(targetApi, targetDataCenter, options) {
     let response = await this.get()
 
-    this.#cleanResponse(response)
     if (response.errorCode === 0) {
-      response = await this.#copyPolicies(targetApi, targetDataCenter, response, options)
+      response = await this.copyPolicies(targetApi, targetDataCenter, response, options)
     }
     if (response.context) {
       response['context'] = response.context.replace(/&quot;/g, '"')
@@ -55,7 +54,8 @@ class Policy {
     return response
   }
 
-  async #copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
+  async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
+    this.#cleanResponse(response)
     const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {

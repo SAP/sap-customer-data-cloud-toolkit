@@ -71,7 +71,7 @@ class Dataflow {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.search()
     if (response.errorCode === 0) {
-      response = await this.#copyDataflows(destinationSite, destinationSiteConfiguration, response, options)
+      response = await this.copyDataflows(destinationSite, destinationSiteConfiguration, response, options)
       Dataflow.#ignoreRedundantOperationError(response)
     }
     stringToJson(response, 'context')
@@ -133,7 +133,7 @@ class Dataflow {
     return `${Dataflow.#NAMESPACE}.search`
   }
 
-  async #copyDataflows(destinationSite, destinationSiteConfiguration, response, options) {
+  async copyDataflows(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
     const destinationSiteDataflows = await this.#getSiteDataflows(destinationSite, destinationSiteConfiguration.dataCenter)
     if (destinationSiteDataflows.errorCode !== 0) {

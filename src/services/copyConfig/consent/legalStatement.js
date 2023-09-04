@@ -52,13 +52,13 @@ class LegalStatement {
   async #copyLegalStatement(destinationSite, dataCenter, consentId, language) {
     let response = await this.get(consentId, language)
     if (response.errorCode === 0) {
-      this.#removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
+      this.removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
       response = await this.set(destinationSite, dataCenter, consentId, language, response.legalStatements)
     }
     return response
   }
 
-  #removeLegalStatementsWithStatus(legalStatements, status) {
+  removeLegalStatementsWithStatus(legalStatements, status) {
     const type = LegalStatement.#getLegalStatementType(legalStatements)
     if (!type) {
       return

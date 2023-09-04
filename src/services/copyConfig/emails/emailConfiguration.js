@@ -43,7 +43,7 @@ class EmailConfiguration {
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let response = await this.get()
     if (response.errorCode === 0) {
-      response = await this.#copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options)
+      response = await this.copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options)
     }
     stringToJson(response, 'context')
     return Array.isArray(response) ? response : [response]
@@ -53,7 +53,7 @@ class EmailConfiguration {
     return this.#email
   }
 
-  async #copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {
+  async copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
     for (const templateInfo of options.getOptions().branches) {
       if (templateInfo.value) {
