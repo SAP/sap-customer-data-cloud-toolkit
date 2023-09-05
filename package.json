@@ -94,7 +94,7 @@
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "concurrently": "^8.0.0",
-    "cypress": "^12.5.0",
+    "cypress": "^13.1.0",
     "cypress-browser-extension-plugin": "^0.1.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-jest-coverage-merge": "^1.0.2",
