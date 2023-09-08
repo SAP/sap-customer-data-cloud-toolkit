@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP/sap-customer-data-cloud-toolkit)](https://api.reuse.software/info/github.com/SAP/sap-customer-data-cloud-toolkit)
+
 # SAP Customer Data Cloud toolkit
 
 ## About this project
