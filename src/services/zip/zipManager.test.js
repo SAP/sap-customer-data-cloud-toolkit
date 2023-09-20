@@ -4,7 +4,7 @@
  */
 
 
-import ZipManager from './zipManager'
+import ZipManager from './zipManager.js'
 
 describe('files test suite', () => {
   test('create', async () => {

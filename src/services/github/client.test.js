@@ -8,9 +8,9 @@
  * license agreement you entered into with SAP.
  */
 
-import GitHubClient from './client'
+import GitHubClient from './client.js'
 import axios from 'axios'
-import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './dataTest'
+import { gitHubExpectedErrorResponse, gitHubExpectedResponse } from './dataTest.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

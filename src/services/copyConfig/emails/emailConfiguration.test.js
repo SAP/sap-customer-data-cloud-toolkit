@@ -5,12 +5,12 @@
 
 
 import axios from 'axios'
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
-import EmailConfiguration from './emailConfiguration'
-import { getEmailsExpectedResponse, getEmailsExpectedResponseWithNoTemplates } from '../../emails/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, emailTemplatesId } from '../dataTest'
-import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
-import Options from "../options";
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
+import EmailConfiguration from './emailConfiguration.js'
+import { getEmailsExpectedResponse, getEmailsExpectedResponseWithNoTemplates } from '../../emails/dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, emailTemplatesId } from '../dataTest.js'
+import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
+import Options from '../options.js'
 
 jest.mock('axios')
 

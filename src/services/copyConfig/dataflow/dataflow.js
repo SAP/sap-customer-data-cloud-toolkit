@@ -4,10 +4,10 @@
  */
 
 
-import UrlBuilder from '../../gigya/urlBuilder'
-import client from '../../gigya/client'
-import generateErrorResponse from '../../errors/generateErrorResponse'
-import { stringToJson } from '../objectHelper'
+import UrlBuilder from '../../gigya/urlBuilder.js'
+import client from '../../gigya/client.js'
+import generateErrorResponse from '../../errors/generateErrorResponse.js'
+import { stringToJson } from '../objectHelper.js'
 
 class Dataflow {
   static #ERROR_MSG_SET_CONFIG = 'Error setting dataflows'

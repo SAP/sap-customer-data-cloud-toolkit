@@ -4,10 +4,10 @@
  */
 
 
-import client from '../gigya/client'
-import UrlBuilder from '../gigya/urlBuilder'
-import generateErrorResponse from '../errors/generateErrorResponse'
-import GigyaManager from '../gigya/gigyaManager'
+import client from '../gigya/client.js'
+import UrlBuilder from '../gigya/urlBuilder.js'
+import generateErrorResponse from '../errors/generateErrorResponse.js'
+import GigyaManager from '../gigya/gigyaManager.js'
 
 class Email {
   static #ERROR_MSG_GET_CONFIG = 'Error getting email templates'

@@ -4,11 +4,11 @@
  */
 
 
-import * as CommonTestData from '../servicesDataTest'
-import * as TestData from '../configurator/dataTest'
-import GigyaManager from './gigyaManager'
+import * as CommonTestData from '../servicesDataTest.js'
+import * as TestData from '../configurator/dataTest.js'
+import GigyaManager from './gigyaManager.js'
 import axios from 'axios'
-import SiteConfigurator from '../configurator/siteConfigurator'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 jest.mock('axios')
 

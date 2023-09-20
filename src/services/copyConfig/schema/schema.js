@@ -3,15 +3,15 @@
  * License: Apache-2.0
  */
 
-import UrlBuilder from '../../gigya/urlBuilder'
-import client from '../../gigya/client'
+import UrlBuilder from '../../gigya/urlBuilder.js'
+import client from '../../gigya/client.js'
 import generateErrorResponse, {
   ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
   ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
   ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
   ERROR_SEVERITY_WARNING,
-} from '../../errors/generateErrorResponse'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
+} from '../../errors/generateErrorResponse.js'
+import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
 
 class Schema {
   static #ERROR_MSG_GET_CONFIG = 'Error getting schema'

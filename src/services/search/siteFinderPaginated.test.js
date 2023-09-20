@@ -4,11 +4,11 @@
  */
 
 
-import * as CommonTestData from '../servicesDataTest'
+import * as CommonTestData from '../servicesDataTest.js'
 import axios from 'axios'
-import { expectedGetPartnersResponseOk, getExpectedGetPartnerSitesResponseOk } from './dataTest'
-import SiteFinderPaginated from './siteFinderPaginated'
-import { expectedGigyaInvalidUserKey } from '../servicesDataTest'
+import { expectedGetPartnersResponseOk, getExpectedGetPartnerSitesResponseOk } from './dataTest.js'
+import SiteFinderPaginated from './siteFinderPaginated.js'
+import { expectedGigyaInvalidUserKey } from '../servicesDataTest.js'
 
 jest.mock('axios')
 

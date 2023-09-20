@@ -4,8 +4,8 @@
  */
 
 
-import Sms from '../../sms/sms'
-import { stringToJson } from '../objectHelper'
+import Sms from '../../sms/sms.js'
+import { stringToJson } from '../objectHelper.js'
 
 class SmsConfiguration {
   #credentials

@@ -4,11 +4,11 @@
  */
 
 
-import { credentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey } from '../../servicesDataTest'
-import Policy from './policies'
+import { credentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey } from '../../servicesDataTest.js'
+import Policy from './policies.js'
 import axios from 'axios'
-import * as PolicyTestData from './dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, policyId } from '../dataTest'
+import * as PolicyTestData from './dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, policyId } from '../dataTest.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

@@ -3,19 +3,19 @@
  * License: Apache-2.0
  */
 
-import * as CommonTestData from '../servicesDataTest'
-import ConfigManager from './configManager'
+import * as CommonTestData from '../servicesDataTest.js'
+import ConfigManager from './configManager.js'
 import axios from 'axios'
-import * as ConfiguratorTestData from '../configurator/dataTest'
-import { getInfoExpectedResponse } from './info/dataTest'
-import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI } from '../servicesDataTest'
-import { expectedSchemaResponse } from './schema/dataTest'
-import { getSocialsProviders } from './social/dataTest'
-import { getSiteConfig } from './websdk/dataTest'
-import { getSmsExpectedResponse } from '../sms/dataTest'
-import { getEmailsExpectedResponse } from '../emails/dataTest'
-import { getExpectedScreenSetResponse } from './screenset/dataTest'
-import { getPolicyConfig } from './policies/dataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
+import { getInfoExpectedResponse } from './info/dataTest.js'
+import { errorCallback, verifyAllResponsesAreOk, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI } from '../servicesDataTest.js'
+import { expectedSchemaResponse } from './schema/dataTest.js'
+import { getSocialsProviders } from './social/dataTest.js'
+import { getSiteConfig } from './websdk/dataTest.js'
+import { getSmsExpectedResponse } from '../sms/dataTest.js'
+import { getEmailsExpectedResponse } from '../emails/dataTest.js'
+import { getExpectedScreenSetResponse } from './screenset/dataTest.js'
+import { getPolicyConfig } from './policies/dataTest.js'
 import {
   getResponseWithContext,
   profileId,
@@ -29,13 +29,13 @@ import {
   consentId,
   channelId,
   topicId,
-} from './dataTest'
-import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest'
-import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest'
-import Sorter from './sorter'
-import { getExpectedWebhookResponse } from './webhook/dataTest'
-import { getExpectedListExtensionResponse } from './extension/dataTest'
-import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from './dataflow/dataTest'
+} from './dataTest.js'
+import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest.js'
+import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest.js'
+import Sorter from './sorter.js'
+import { getExpectedWebhookResponse } from './webhook/dataTest.js'
+import { getExpectedListExtensionResponse } from './extension/dataTest.js'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from './dataflow/dataTest.js'
 
 jest.mock('axios')
 

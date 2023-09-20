@@ -4,9 +4,9 @@
  */
 
 
-import Site from './site'
-import SiteConfigurator from '../configurator/siteConfigurator'
-import SiteMigrator from './siteMigrator'
+import Site from './site.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
+import SiteMigrator from './siteMigrator.js'
 
 class SiteManager {
   constructor(credentials) {

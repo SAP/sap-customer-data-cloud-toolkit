@@ -3,8 +3,8 @@
  * License: Apache-2.0
  */
 
-import Schema from './schema'
-import * as CommonTestData from '../../servicesDataTest'
+import Schema from './schema.js'
+import * as CommonTestData from '../../servicesDataTest.js'
 import {
   expectedSchemaResponse,
   getDataSchemaExpectedBodyForParentSite,
@@ -17,18 +17,18 @@ import {
   getSubscriptionsSchemaExpectedBodyForChildSiteStep2,
   expectedSourceChildCopyIssueSchemaResponse,
   expectedDestinationChildCopyIssueSchemaResponse,
-} from './dataTest'
+} from './dataTest.js'
 import axios from 'axios'
-import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
-import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest'
-import Options from '../options'
+import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, profileId, schemaId, subscriptionsId } from '../dataTest.js'
+import Options from '../options.js'
 import {
   ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
   ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION,
   ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA,
-} from '../../errors/generateErrorResponse'
-import { removePropertyFromObjectCascading } from '../objectHelper'
+} from '../../errors/generateErrorResponse.js'
+import { removePropertyFromObjectCascading } from '../objectHelper.js'
 
 jest.mock('axios')
 

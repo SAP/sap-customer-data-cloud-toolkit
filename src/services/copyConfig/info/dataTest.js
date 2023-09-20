@@ -4,10 +4,10 @@
  */
 
 
-import { expectedSchemaResponse } from '../schema/dataTest'
-import SchemaOptions from '../schema/schemaOptions'
-import PolicyOptions from '../policies/policyOptions'
-import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
+import { expectedSchemaResponse } from '../schema/dataTest.js'
+import SchemaOptions from '../schema/schemaOptions.js'
+import PolicyOptions from '../policies/policyOptions.js'
+import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)

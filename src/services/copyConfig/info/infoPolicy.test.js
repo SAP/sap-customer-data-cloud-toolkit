@@ -4,22 +4,22 @@
  */
 
 
-import Info from './info'
-import * as CommonTestData from '../../servicesDataTest'
-import { getInfoExpectedResponse } from './dataTest'
+import Info from './info.js'
+import * as CommonTestData from '../../servicesDataTest.js'
+import { getInfoExpectedResponse } from './dataTest.js'
 import axios from 'axios'
-import { expectedSchemaResponse } from '../schema/dataTest'
-import { getSocialsProviders } from '../social/dataTest'
-import { getSmsExpectedResponse } from '../../sms/dataTest'
-import { getSiteConfig } from '../websdk/dataTest'
-import { getPolicyConfig } from '../policies/dataTest'
-import { getEmailsExpectedResponse } from '../../emails/dataTest'
-import { getExpectedScreenSetResponse } from '../screenset/dataTest'
-import { getConsentStatementExpectedResponse } from '../consent/dataTest'
-import { channelsExpectedResponse } from '../communication/dataTest'
-import { getExpectedWebhookResponse } from '../webhook/dataTest'
-import { getExpectedListExtensionResponse } from '../extension/dataTest'
-import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest'
+import { expectedSchemaResponse } from '../schema/dataTest.js'
+import { getSocialsProviders } from '../social/dataTest.js'
+import { getSmsExpectedResponse } from '../../sms/dataTest.js'
+import { getSiteConfig } from '../websdk/dataTest.js'
+import { getPolicyConfig } from '../policies/dataTest.js'
+import { getEmailsExpectedResponse } from '../../emails/dataTest.js'
+import { getExpectedScreenSetResponse } from '../screenset/dataTest.js'
+import { getConsentStatementExpectedResponse } from '../consent/dataTest.js'
+import { channelsExpectedResponse } from '../communication/dataTest.js'
+import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
+import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {

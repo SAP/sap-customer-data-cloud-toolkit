@@ -4,9 +4,9 @@
  */
 
 
-import UrlBuilder from '../../gigya/urlBuilder'
-import client from '../../gigya/client'
-import generateErrorResponse from '../../errors/generateErrorResponse'
+import UrlBuilder from '../../gigya/urlBuilder.js'
+import client from '../../gigya/client.js'
+import generateErrorResponse from '../../errors/generateErrorResponse.js'
 
 class Topic {
   static #ERROR_MSG_GET_CONFIG = 'Error getting topics'

@@ -4,9 +4,9 @@
  */
 
 
-import GitHubClient from './client'
-import generateErrorResponse from '../errors/generateErrorResponse'
-import { VERSION } from '../../constants'
+import GitHubClient from './client.js'
+import generateErrorResponse from '../errors/generateErrorResponse.js'
+import { VERSION } from '../../constants.js'
 
 class GitHubManager {
   static ERROR_MSG_RELEASE = 'Error accessing release information on git hub'

@@ -5,11 +5,11 @@
 
 
 import axios from 'axios'
-import * as SocialsTestData from './dataTest'
-import Social from './social'
-import { expectedSetSocialsProvidersResponse } from './dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, socialIdentitiesId } from '../dataTest'
-import { expectedGigyaInvalidUserKey, expectedGigyaResponseInvalidAPI, credentials } from '../../servicesDataTest'
+import * as SocialsTestData from './dataTest.js'
+import Social from './social.js'
+import { expectedSetSocialsProvidersResponse } from './dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, socialIdentitiesId } from '../dataTest.js'
+import { expectedGigyaInvalidUserKey, expectedGigyaResponseInvalidAPI, credentials } from '../../servicesDataTest.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

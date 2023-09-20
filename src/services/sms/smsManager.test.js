@@ -5,14 +5,14 @@
 
 
 import axios from 'axios'
-import * as ConfiguratorTestData from '../configurator/dataTest'
-import ZipManager from '../zip/zipManager'
-import SmsManager from './smsManager'
-import { credentials } from '../servicesDataTest'
-import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './dataTest'
-import * as CommonTestData from '../servicesDataTest'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
+import ZipManager from '../zip/zipManager.js'
+import SmsManager from './smsManager.js'
+import { credentials } from '../servicesDataTest.js'
+import { getSmsExpectedResponse, getSmsExpectedResponseWithNoTemplates, setSmsExpectedTemplateArgument } from './dataTest.js'
+import * as CommonTestData from '../servicesDataTest.js'
 import JSZip from 'jszip'
-import { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse'
+import { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse.js'
 
 jest.mock('axios')
 jest.setTimeout(30000)

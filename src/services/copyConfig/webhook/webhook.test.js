@@ -4,13 +4,13 @@
  */
 
 
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyAllResponsesAreOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyAllResponsesAreOk } from '../../servicesDataTest.js'
 import axios from 'axios'
-import { getResponseWithContext } from '../dataTest'
-import { getExpectedWebhookResponse, getWebhookExpectedBody } from './dataTest'
-import Webhook from './webhook'
-import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import Options from '../options'
+import { getResponseWithContext } from '../dataTest.js'
+import { getExpectedWebhookResponse, getWebhookExpectedBody } from './dataTest.js'
+import Webhook from './webhook.js'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
+import Options from '../options.js'
 
 jest.mock('axios')
 

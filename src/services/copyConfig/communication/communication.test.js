@@ -5,11 +5,11 @@
 
 
 import axios from 'axios'
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest'
-import { getResponseWithContext } from '../dataTest'
-import { channelsExpectedResponse, topicsExpectedResponse } from './dataTest'
-import Communication from './communication'
-import CommunicationOptions from './communicationOptions'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
+import { getResponseWithContext } from '../dataTest.js'
+import { channelsExpectedResponse, topicsExpectedResponse } from './dataTest.js'
+import Communication from './communication.js'
+import CommunicationOptions from './communicationOptions.js'
 
 jest.mock('axios')
 

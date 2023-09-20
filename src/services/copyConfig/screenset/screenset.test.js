@@ -4,15 +4,15 @@
  */
 
 
-import { credentials } from '../../servicesDataTest'
-import { getExpectedScreenSetResponse, getScreenSetExpectedBody } from './dataTest'
+import { credentials } from '../../servicesDataTest.js'
+import { getExpectedScreenSetResponse, getScreenSetExpectedBody } from './dataTest.js'
 import axios from 'axios'
-import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
-import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext } from '../dataTest'
-import ScreenSet from './screenset'
-import { getInfoExpectedResponse } from '../info/dataTest'
-import Options from '../options'
+import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext } from '../dataTest.js'
+import ScreenSet from './screenset.js'
+import { getInfoExpectedResponse } from '../info/dataTest.js'
+import Options from '../options.js'
 
 jest.mock('axios')
 

@@ -5,11 +5,11 @@
 
 
 import axios from 'axios'
-import * as EmailsTestData from './dataTest'
-import Email from './email'
-import * as CommonTestData from '../servicesDataTest'
-import * as ConfiguratorTestData from '../configurator/dataTest'
-import * as ServiceDataTest from '../servicesDataTest'
+import * as EmailsTestData from './dataTest.js'
+import Email from './email.js'
+import * as CommonTestData from '../servicesDataTest.js'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
+import * as ServiceDataTest from '../servicesDataTest.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

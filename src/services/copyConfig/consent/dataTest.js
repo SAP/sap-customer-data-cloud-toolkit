@@ -4,7 +4,7 @@
  */
 
 
-import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
 
 export const getConsentStatementExpectedResponse = {
   callId: '5fa3a71a78f44d289bc12d545d18b102',

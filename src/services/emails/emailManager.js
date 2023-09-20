@@ -4,17 +4,17 @@
  */
 
 
-import EmailTemplateNameTranslator from './emailTemplateNameTranslator'
-import Email from './email'
-import ZipManager from '../zip/zipManager'
-import XmlValidator from '../validator/xmlValidator'
+import EmailTemplateNameTranslator from './emailTemplateNameTranslator.js'
+import Email from './email.js'
+import ZipManager from '../zip/zipManager.js'
+import XmlValidator from '../validator/xmlValidator.js'
 import generateErrorResponse, {
   ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_METADATA_FILE,
   ERROR_SEVERITY_ERROR,
   ERROR_SEVERITY_INFO,
   ERROR_SEVERITY_WARNING,
-} from '../errors/generateErrorResponse'
-import GigyaManager from '../gigya/gigyaManager'
+} from '../errors/generateErrorResponse.js'
+import GigyaManager from '../gigya/gigyaManager.js'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'

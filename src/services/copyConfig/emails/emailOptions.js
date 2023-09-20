@@ -4,8 +4,8 @@
  */
 
 
-import Options from '../options'
-import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
+import Options from '../options.js'
+import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
 class EmailOptions extends Options {
   #emailConfiguration

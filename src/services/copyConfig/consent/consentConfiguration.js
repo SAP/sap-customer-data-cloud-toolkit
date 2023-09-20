@@ -4,11 +4,11 @@
  */
 
 
-import ConsentStatement from './consentStatement'
-import LegalStatement from './legalStatement'
-import { stringToJson } from '../objectHelper'
-import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
-import ConsentDefaultLanguage from './consentDefaultLanguage'
+import ConsentStatement from './consentStatement.js'
+import LegalStatement from './legalStatement.js'
+import { stringToJson } from '../objectHelper.js'
+import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
+import ConsentDefaultLanguage from './consentDefaultLanguage.js'
 
 class ConsentConfiguration {
   #credentials
