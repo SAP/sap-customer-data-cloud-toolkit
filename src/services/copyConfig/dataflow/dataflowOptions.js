@@ -4,8 +4,8 @@
  */
 
 
-import Options from '../options'
-import Dataflow from './dataflow'
+import Options from '../options.js'
+import Dataflow from './dataflow.js'
 
 class DataflowOptions extends Options {
   #dataflow

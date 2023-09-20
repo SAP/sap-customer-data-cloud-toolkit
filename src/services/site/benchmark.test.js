@@ -4,15 +4,15 @@
  */
 
 
-import SiteManager from './siteManager'
-import * as TestData from './dataTest'
-import * as CommonTestData from '../servicesDataTest'
-import * as ConfiguratorTestData from '../configurator/dataTest'
+import SiteManager from './siteManager.js'
+import * as TestData from './dataTest.js'
+import * as CommonTestData from '../servicesDataTest.js'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
 import axios from 'axios'
 import { performance } from 'perf_hooks'
 
 jest.mock('axios')
-jest.mock('../gigya/client')
+jest.mock('../gigya/client.js')
 jest.setTimeout(60000)
 
 describe.skip('Benchmark test suite', () => {

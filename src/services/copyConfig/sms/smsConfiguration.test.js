@@ -5,10 +5,10 @@
 
 
 import axios from 'axios'
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest'
-import SmsConfiguration from './smsConfiguration'
-import { getSmsExpectedResponse } from '../../sms/dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, smsTemplatesId } from '../dataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
+import SmsConfiguration from './smsConfiguration.js'
+import { getSmsExpectedResponse } from '../../sms/dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, smsTemplatesId } from '../dataTest.js'
 
 jest.mock('axios')
 

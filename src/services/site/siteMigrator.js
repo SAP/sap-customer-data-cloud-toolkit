@@ -4,9 +4,9 @@
  */
 
 
-import client from '../gigya/client'
-import UrlBuilder from '../gigya/urlBuilder'
-import generateErrorResponse from '../errors/generateErrorResponse'
+import client from '../gigya/client.js'
+import UrlBuilder from '../gigya/urlBuilder.js'
+import generateErrorResponse from '../errors/generateErrorResponse.js'
 
 class SiteMigrator {
   static #ERROR_MSG_MIGRATE = 'Error migrating site consents'

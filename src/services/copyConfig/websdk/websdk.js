@@ -4,11 +4,11 @@
  */
 
 
-import client from '../../gigya/client'
-import generateErrorResponse from '../../errors/generateErrorResponse'
-import UrlBuilder from '../../gigya/urlBuilder'
-import { stringToJson } from '../objectHelper'
-import SiteConfigurator from '../../configurator/siteConfigurator'
+import client from '../../gigya/client.js'
+import generateErrorResponse from '../../errors/generateErrorResponse.js'
+import UrlBuilder from '../../gigya/urlBuilder.js'
+import { stringToJson } from '../objectHelper.js'
+import SiteConfigurator from '../../configurator/siteConfigurator.js'
 
 class WebSdk {
   static #NAMESPACE = 'admin'

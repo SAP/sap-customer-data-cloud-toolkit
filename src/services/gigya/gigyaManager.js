@@ -4,7 +4,7 @@
  */
 
 
-import SiteConfigurator from '../configurator/siteConfigurator'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 class GigyaManager {
   constructor(userKey, secret) {

@@ -4,7 +4,7 @@
  */
 
 
-import Options from '../options'
+import Options from '../options.js'
 
 class ExtensionOptions extends Options {
   #extension

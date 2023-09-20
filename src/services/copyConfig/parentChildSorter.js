@@ -4,8 +4,8 @@
  */
 
 
-import SiteConfigurator from '../configurator/siteConfigurator'
-import Sorter from './sorter'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
+import Sorter from './sorter.js'
 
 class ParentChildSorter extends Sorter {
   #siteConfigurator

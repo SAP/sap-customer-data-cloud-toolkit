@@ -4,13 +4,13 @@
  */
 
 
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyAllResponsesAreOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyAllResponsesAreOk } from '../../servicesDataTest.js'
 import axios from 'axios'
-import { getResponseWithContext } from '../dataTest'
-import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import Options from '../options'
-import Extension from './extension'
-import { getChildExtensionExpectedBody, getEmptyExtensionResponse, getExpectedCreateExtensionResponse, getExpectedListExtensionResponse } from './dataTest'
+import { getResponseWithContext } from '../dataTest.js'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
+import Options from '../options.js'
+import Extension from './extension.js'
+import { getChildExtensionExpectedBody, getEmptyExtensionResponse, getExpectedCreateExtensionResponse, getExpectedListExtensionResponse } from './dataTest.js'
 
 jest.mock('axios')
 

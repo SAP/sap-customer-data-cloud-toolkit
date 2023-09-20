@@ -4,10 +4,10 @@
  */
 
 
-import generateErrorResponse from '../../errors/generateErrorResponse'
-import UrlBuilder from '../../gigya/urlBuilder'
-import client from '../../gigya/client'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
+import generateErrorResponse from '../../errors/generateErrorResponse.js'
+import UrlBuilder from '../../gigya/urlBuilder.js'
+import client from '../../gigya/client.js'
+import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
 
 class Policy {
   static #NAMESPACE = 'accounts'

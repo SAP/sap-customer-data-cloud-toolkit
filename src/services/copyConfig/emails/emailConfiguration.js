@@ -4,9 +4,9 @@
  */
 
 
-import Email from '../../emails/email'
-import { stringToJson } from '../objectHelper'
-import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator'
+import Email from '../../emails/email.js'
+import { stringToJson } from '../objectHelper.js'
+import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
 class EmailConfiguration {
   #credentials

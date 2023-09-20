@@ -5,10 +5,10 @@
 
 
 import axios from 'axios'
-import * as WebSDKTestData from './dataTest'
-import { getExpectedResponseWithContext, getResponseWithContext, webSdkId } from '../dataTest'
-import { expectedGigyaInvalidUserKey, expectedGigyaResponseInvalidAPI, credentials, expectedGigyaResponseOk } from '../../servicesDataTest'
-import WebSdk from './websdk'
+import * as WebSDKTestData from './dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, webSdkId } from '../dataTest.js'
+import { expectedGigyaInvalidUserKey, expectedGigyaResponseInvalidAPI, credentials, expectedGigyaResponseOk } from '../../servicesDataTest.js'
+import WebSdk from './websdk.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

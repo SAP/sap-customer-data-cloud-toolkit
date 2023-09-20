@@ -3,8 +3,8 @@
  * License: Apache-2.0
  */
 
-import { profileId, schemaId, subscriptionsId } from '../dataTest'
-import { removePropertyFromObjectCascading } from '../objectHelper'
+import { profileId, schemaId, subscriptionsId } from '../dataTest.js'
+import { removePropertyFromObjectCascading } from '../objectHelper.js'
 
 export const expectedSchemaResponse = {
   callId: '617d9ce97ce44902afac6083e843d795',

@@ -4,10 +4,10 @@
  */
 
 
-import SiteMigrator from './siteMigrator'
-import * as TestData from './dataTest'
+import SiteMigrator from './siteMigrator.js'
+import * as TestData from './dataTest.js'
 import axios from 'axios'
-import * as CommonTestData from '../servicesDataTest'
+import * as CommonTestData from '../servicesDataTest.js'
 
 jest.mock('axios')
 

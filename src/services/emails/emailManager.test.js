@@ -5,15 +5,15 @@
 
 
 import axios from 'axios'
-import * as EmailsTestData from './dataTest'
-import EmailManager from './emailManager'
-import ZipManager from '../zip/zipManager'
-import * as CommonTestData from '../servicesDataTest'
-import * as ConfiguratorTestData from '../configurator/dataTest'
+import * as EmailsTestData from './dataTest.js'
+import EmailManager from './emailManager.js'
+import ZipManager from '../zip/zipManager.js'
+import * as CommonTestData from '../servicesDataTest.js'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
 import JSZip from 'jszip'
-import { errorCallback } from '../servicesDataTest'
-import SiteConfigurator from '../configurator/siteConfigurator'
-import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../errors/generateErrorResponse'
+import { errorCallback } from '../servicesDataTest.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
+import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../errors/generateErrorResponse.js'
 
 jest.mock('axios')
 jest.setTimeout(30000)

@@ -4,11 +4,11 @@
  */
 
 
-import { credentials, expectedGigyaResponseInvalidAPI, verifyAllResponsesAreOk } from '../../servicesDataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, verifyAllResponsesAreOk } from '../../servicesDataTest.js'
 import axios from 'axios'
-import { getResponseWithContext } from '../dataTest'
-import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest'
-import Options from '../options'
+import { getResponseWithContext } from '../dataTest.js'
+import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
+import Options from '../options.js'
 import {
   getEmptyDataflowResponse,
   getExpectedArgument,
@@ -16,8 +16,8 @@ import {
   getExpectedSetDataflowResponse,
   getResponseDataflowHasNotChanged,
   getSearchDataflowsExpectedResponse,
-} from './dataTest'
-import Dataflow from './dataflow'
+} from './dataTest.js'
+import Dataflow from './dataflow.js'
 
 jest.mock('axios')
 

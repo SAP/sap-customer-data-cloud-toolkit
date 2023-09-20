@@ -4,9 +4,9 @@
  */
 
 
-import Channel from './channel'
-import Topic from './topic'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper'
+import Channel from './channel.js'
+import Topic from './topic.js'
+import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
 
 class Communication {
   #credentials

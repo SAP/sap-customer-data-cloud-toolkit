@@ -4,7 +4,7 @@
  */
 
 
-import Options from '../options'
+import Options from '../options.js'
 
 class WebSdkOptions extends Options {
   #webSdk

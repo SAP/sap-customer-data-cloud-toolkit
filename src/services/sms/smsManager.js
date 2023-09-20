@@ -4,10 +4,10 @@
  */
 
 
-import Sms from './sms'
-import ZipManager from '../zip/zipManager'
+import Sms from './sms.js'
+import ZipManager from '../zip/zipManager.js'
 import _ from 'lodash'
-import generateErrorResponse, { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse'
+import generateErrorResponse, { ERROR_CODE_ZIP_FILE_DOES_NOT_CONTAINS_TEMPLATE_FILES } from '../errors/generateErrorResponse.js'
 
 class SmsManager {
   static TEMPLATE_FILE_EXTENSION = '.txt'

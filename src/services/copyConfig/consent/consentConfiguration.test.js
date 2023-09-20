@@ -5,18 +5,18 @@
 
 
 import axios from 'axios'
-import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest'
-import { getResponseWithContext } from '../dataTest'
+import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
+import { getResponseWithContext } from '../dataTest.js'
 import {
   cannotChangeConsentsOnChildSite,
   getConsentStatementExpectedResponse,
   getLegalStatementExpectedResponse,
   getNoConsentStatementExpectedResponse,
   legalConsentAlreadyExists,
-} from './dataTest'
-import ConsentConfiguration from './consentConfiguration'
-import ConsentOptions from './consentOptions'
-import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
+} from './dataTest.js'
+import ConsentConfiguration from './consentConfiguration.js'
+import ConsentOptions from './consentOptions.js'
+import { ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
 
 jest.mock('axios')
 

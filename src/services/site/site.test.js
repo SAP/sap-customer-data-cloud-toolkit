@@ -4,11 +4,11 @@
  */
 
 
-import Site from './site'
-import * as TestData from './dataTest'
+import Site from './site.js'
+import * as TestData from './dataTest.js'
 import axios from 'axios'
-import * as CommonTestData from '../servicesDataTest'
-import * as ConfiguratorTestData from '../configurator/dataTest'
+import * as CommonTestData from '../servicesDataTest.js'
+import * as ConfiguratorTestData from '../configurator/dataTest.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)

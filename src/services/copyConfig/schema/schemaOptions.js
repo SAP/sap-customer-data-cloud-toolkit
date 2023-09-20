@@ -4,7 +4,7 @@
  */
 
 
-import Options from '../options'
+import Options from '../options.js'
 
 class SchemaOptions extends Options {
   static DATA_SCHEMA = 'dataSchema'

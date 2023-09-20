@@ -4,7 +4,7 @@
  */
 
 
-import { expectedGigyaResponseOk } from '../../servicesDataTest'
+import { expectedGigyaResponseOk } from '../../servicesDataTest.js'
 
 const getSearchDataflowsExpectedResponse = {
   callId: '5e9c715e909a48c883aef5cf00000000',
