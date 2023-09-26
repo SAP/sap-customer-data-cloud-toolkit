@@ -3,13 +3,24 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 
 const MAX_RETRY_ATTEMPTS = 20
 const isError = (response) => {
   return (
-    response.data.errorCode === 403048 || (response.code !== undefined && (response.code === 'ETIMEDOUT' || response.code === 'ERR_BAD_RESPONSE' || response.code === 'ENOTFOUND'))
+    !response ||
+    (response.code !== undefined &&
+      (response.code === 'ETIMEDOUT' ||
+        response.code === 'ERR_BAD_RESPONSE' ||
+        response.code === 'ENOTFOUND' ||
+        response.code === 'EPIPE' ||
+        response.code === 'ECONNRESET' ||
+        response.code === 'ERR_SOCKET_CONNECTION_TIMEOUT')) ||
+    !response.data ||
+    // Api Rate limit exceeded
+    response.data.errorCode === 403048 ||
+    // General Server Error
+    response.data.errorCode === 500001
   )
 }
 
@@ -26,11 +37,20 @@ const client = {
     let response
     let retryCounter = 0
     do {
-      response = await axios(requestOptions)
-      //console.log(`${JSON.stringify(response)}`)
-      if (isError(response)) {
+      try {
+        response = await axios(requestOptions)
+        // console.log(`${JSON.stringify(response)}`)
+        if (isError(response)) {
+          retryCounter++
+          client.wait(1000)
+        }
+      } catch (error) {
         retryCounter++
         client.wait(1000)
+
+        if (retryCounter >= MAX_RETRY_ATTEMPTS) {
+          throw error
+        }
       }
     } while (isError(response) && retryCounter < MAX_RETRY_ATTEMPTS)
 
