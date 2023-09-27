@@ -5,7 +5,7 @@
 
 import axios from 'axios'
 
-const MAX_RETRY_ATTEMPTS = 20
+export const MAX_RETRY_ATTEMPTS = 20
 const isError = (response) => {
   return (
     !response ||
