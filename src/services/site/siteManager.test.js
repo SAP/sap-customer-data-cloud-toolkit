@@ -6,7 +6,7 @@
 
 import SiteManager from './siteManager.js'
 import * as TestData from './dataTest.js'
-import client from '../gigya/client.js'
+import client, {MAX_RETRY_ATTEMPTS} from '../gigya/client.js'
 import axios from 'axios'
 import * as CommonTestData from '../servicesDataTest.js'
 import * as ConfiguratorTestData from '../configurator/dataTest.js'
@@ -99,27 +99,9 @@ describe('Site manager async test suite', () => {
     axios
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseOk })
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce(mockedResponse)
-      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
+    mockResolvedValueTimes(mockedResponse, MAX_RETRY_ATTEMPTS)
+    axios
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
 
@@ -128,7 +110,7 @@ describe('Site manager async test suite', () => {
     //console.log(`test.response=${JSON.stringify(response)}`)
 
     expect(spy).toHaveBeenCalled()
-    expect(spy.mock.calls.length).toBe(20)
+    expect(spy.mock.calls.length).toBe(MAX_RETRY_ATTEMPTS)
     expect(response.length).toEqual(2)
     expectResponseIsOk(response[0], true)
     verifyResponseIsNotOk(response[1], TestData.expectedGigyaErrorApiRateLimit)
@@ -324,7 +306,8 @@ describe('Site manager async test suite', () => {
       .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce(mockedResponse)
       .mockResolvedValueOnce({ data: ConfiguratorTestData.scExpectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: TestData.expectedGigyaResponseInvalidDataCenter })
+    mockResolvedValueTimes({ data: TestData.expectedGigyaResponseInvalidDataCenter }, MAX_RETRY_ATTEMPTS)
+    axios
       .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(1) })
       .mockResolvedValueOnce({ data: TestData.sdExpectedDeleteTokenSuccessfully })
       .mockResolvedValueOnce({ data: TestData.sdExpectedGigyaResponseDeletedSite })
@@ -566,6 +549,12 @@ function expectResponseIsNotOk(response, expectedResponse, deleted, endpoint) {
   verifyResponseIsNotOk(response, expectedResponse)
   expect(response.deleted).toEqual(deleted)
   expect(response.endpoint).toEqual(endpoint)
+}
+
+function mockResolvedValueTimes(value, times) {
+  for(let i = 0 ; i < times ; ++i) {
+    axios.mockResolvedValueOnce(value)
+  }
 }
 
 export { verifyAllResponsesAreOk }

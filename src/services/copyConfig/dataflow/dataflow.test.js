@@ -187,7 +187,7 @@ describe('Dataflows test suite', () => {
     if (testDestinationSite) {
       axios.mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
     }
-    axios.mockResolvedValueOnce({ data: mockedResponse })
+    axios.mockResolvedValue({ data: mockedResponse })
 
     const responses = await dataflow.copy(apiKey, dataCenterConfiguration, dataflowOptions)
     expect(responses.length).toBe(1)
