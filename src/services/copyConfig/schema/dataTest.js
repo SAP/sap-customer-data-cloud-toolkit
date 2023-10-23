@@ -181,7 +181,7 @@ export function getDataSchemaExpectedBodyForChildSiteStep2(apiKey) {
   return expectedBody
 }
 
-export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
+export function getProfileSchemaExpectedBodyForChildSiteStep1(apiKey) {
   const expectedBody = getProfileSchemaExpectedBodyForParentSite(apiKey)
   const fields = expectedBody.profileSchema.fields
   delete fields.email.required
@@ -191,6 +191,39 @@ export function getProfileSchemaExpectedBodyForChildSite(apiKey) {
   delete fields.zip.required
   delete fields.country.required
   delete fields.gender.required
+
+  delete expectedBody.dataSchema
+  delete expectedBody.subscriptionsSchema
+  delete expectedBody.preferencesSchema
+  return expectedBody
+}
+
+export function getProfileSchemaExpectedBodyForChildSiteStep2(apiKey) {
+  const expectedBody = getProfileSchemaExpectedBodyForParentSite(apiKey)
+  const fields = expectedBody.profileSchema.fields
+  delete fields.email.format
+  delete fields.email.type
+  delete fields.email.writeAccess
+  delete fields.email.encrypt
+  delete fields.birthYear.type
+  delete fields.birthYear.writeAccess
+  delete fields.firstName.type
+  delete fields.firstName.writeAccess
+  delete fields.firstName.encrypt
+  delete fields.lastName.type
+  delete fields.lastName.writeAccess
+  delete fields.lastName.encrypt
+  delete fields.zip.type
+  delete fields.zip.writeAccess
+  delete fields.zip.encrypt
+  delete fields.country.type
+  delete fields.country.writeAccess
+  delete fields.country.encrypt
+  delete fields.gender.format
+  delete fields.gender.type
+  delete fields.gender.writeAccess
+  delete fields.gender.encrypt
+  expectedBody.scope = 'site'
 
   delete expectedBody.dataSchema
   delete expectedBody.subscriptionsSchema

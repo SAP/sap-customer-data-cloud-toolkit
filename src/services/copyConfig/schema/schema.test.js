@@ -10,7 +10,8 @@ import {
   getDataSchemaExpectedBodyForParentSite,
   getDataSchemaExpectedBodyForChildSiteStep1,
   getDataSchemaExpectedBodyForChildSiteStep2,
-  getProfileSchemaExpectedBodyForChildSite,
+  getProfileSchemaExpectedBodyForChildSiteStep1,
+  getProfileSchemaExpectedBodyForChildSiteStep2,
   getProfileSchemaExpectedBodyForParentSite,
   getSubscriptionsSchemaExpectedBodyForParentSite,
   getSubscriptionsSchemaExpectedBodyForChildSiteStep1,
@@ -84,6 +85,7 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
 
@@ -99,12 +101,13 @@ describe('Schema test suite', () => {
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
     expect(responses[2].context.targetApiKey).toEqual(apiKey)
 
-    expect(spy.mock.calls.length).toBe(5)
+    expect(spy.mock.calls.length).toBe(6)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep1(apiKey))
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSite(apiKey))
-    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getProfileSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(6, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
   })
 
   test('copy successfully to a site with the same field with different type', async () => {
