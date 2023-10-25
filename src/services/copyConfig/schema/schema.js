@@ -204,7 +204,7 @@ class Schema {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
-        response = await this.#copyDataSchemaToChildSite(destinationSite, dataCenter, schemaPayload)
+        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'dataSchema')
       }
       responses.push(response)
       if(response.errorCode !== 0){
@@ -235,8 +235,7 @@ class Schema {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
-        removePropertyFromObjectCascading(clonePayload.profileSchema, 'required')
-        response = await this.set(destinationSite, dataCenter, schemaPayload)
+        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'profileSchema')
       }
       responses.push(response)
       if(response.errorCode !== 0){
@@ -257,22 +256,22 @@ class Schema {
     }
   }
 
-  async #copyDataSchemaToChildSite(destinationSite, dataCenter, payload) {
+  async #copySchemaToChildSite(destinationSite, dataCenter, payload, schemaName) {
     let response
     let clonePayload = JSON.parse(JSON.stringify(payload))
     // the field 'required' cannot be copied to a child site together with other fields
-    removePropertyFromObjectCascading(clonePayload.dataSchema.fields, 'required')
+    removePropertyFromObjectCascading(clonePayload[schemaName].fields, 'required')
     response = await this.set(destinationSite, dataCenter, clonePayload)
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
-      clonePayload = this.#createDataPayloadWithRequiredOnly(payload, 'dataSchema')
+      clonePayload = this.#createPayloadWithRequiredOnly(payload, schemaName)
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
     return response
   }
 
-  #createDataPayloadWithRequiredOnly(payload, schemaName) {
+  #createPayloadWithRequiredOnly(payload, schemaName) {
     const clonePayload = JSON.parse(JSON.stringify(payload))
     for (const field of Object.keys(clonePayload[schemaName].fields)) {
       clonePayload[schemaName].fields[field] = { required: clonePayload[schemaName].fields[field].required }
