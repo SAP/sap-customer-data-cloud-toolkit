@@ -6,7 +6,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { Form, FormItem, Input, InputType, Link, Label, MessageStrip, MessageStripDesign } from '@ui5/webcomponents-react'
+import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
 
 import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
 

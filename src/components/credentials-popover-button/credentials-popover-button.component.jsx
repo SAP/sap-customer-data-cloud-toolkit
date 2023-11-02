@@ -3,9 +3,9 @@
  * License: Apache-2.0
  */
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType } from '@ui5/webcomponents-react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
