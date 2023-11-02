@@ -3,15 +3,13 @@
  * License: Apache-2.0
  */
 
-
 import { useRef, useEffect } from 'react'
-import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType, Badge } from '@ui5/webcomponents-react'
+import { Button, ResponsivePopover, ButtonDesign, PopoverPlacementType } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
 import { setIsPopUpOpen } from '../../redux/credentials/credentialsSlice'
-import { selectIsNewReleaseAvailable, checkNewVersion } from '../../redux/version/versionSlice'
 
 import CredentialsPopover from '../credentials-popover/credentials-popover.component'
 import './credentials-popover-button.component.css'
@@ -24,12 +22,6 @@ const CredentialsPopoverButton = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const ref = useRef()
-
-  const isNewReleaseAvailable = useSelector(selectIsNewReleaseAvailable)
-
-  useEffect(() => {
-    dispatch(checkNewVersion())
-  }, [dispatch])
 
   const openPopoverButtonClickHandler = (event) => {
     const responsivePopover = ref.current
@@ -53,14 +45,6 @@ const CredentialsPopoverButton = ({ t }) => {
         tooltip={t('CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX')}
         design={ButtonDesign.Transparent}
       ></Button>
-
-      {isNewReleaseAvailable ? (
-        <Badge colorScheme="3" className={classes.badgeStyle}>
-          !
-        </Badge>
-      ) : (
-        ''
-      )}
 
       <ResponsivePopover
         id="credentialsResponsivePopover"
