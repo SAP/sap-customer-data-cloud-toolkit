@@ -36,8 +36,6 @@
   "CONFIGURATION_TREE.TOOLTIP_POLICIES_SECURITY": "Password history restrictions and change interval.",
   "CONFIGURATION_TREE.TOOLTIP_POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS": "Two factor authentication providers.",
   "CONFIGURATION_TREE.TOOLTIP_POLICIES_WEBSDK": "Default screensets and session expiration configuration.",
-  "CREDENTIALS_POPOVER.DOWNLOAD_VERSION": "Download SAP Customer Data Cloud toolkit v{{version}}",
-  "CREDENTIALS_POPOVER.NEW_VERSION": "A new version is available!",
   "CREDENTIALS_POPOVER_BUTTON.CDCTOOLBOX": "SAP Customer Data Cloud toolkit",
   "EMAILS_IMPORT_POPUP.POPUP_HEADER": "Import email templates",
   "EMAILS_IMPORT_POPUP.SPECIFY_FILE": "Please specify a zip file that contains the email templates to import:",
