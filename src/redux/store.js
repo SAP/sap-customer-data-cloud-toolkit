@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { configureStore } from '@reduxjs/toolkit'
 
 import sitesReducer from './sites/siteSlice'
@@ -12,7 +11,6 @@ import siteStructuresReducer from './siteStructures/siteStructuresSlice'
 import emailReducer from './emails/emailSlice'
 import smsReducer from './sms/smsSlice'
 import credentialsReducer from './credentials/credentialsSlice'
-import versionReducer from './version/versionSlice'
 import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
 import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 import targetSitesTooltipIconReducer from './targetSitesTooltipIcon/targetSitesTooltipIconSlice'
@@ -25,7 +23,6 @@ export default configureStore({
     emails: emailReducer,
     sms: smsReducer,
     credentials: credentialsReducer,
-    version: versionReducer,
     copyConfigurationExtended: copyConfigurationExtendedReducer,
     siteDeployerCopyConfiguration: siteDeployerCopyConfigurationReducer,
     targetSitesTooltipIcon: targetSitesTooltipIconReducer,
