@@ -15,6 +15,7 @@ import generateErrorResponse, {
   ERROR_SEVERITY_WARNING,
 } from '../errors/generateErrorResponse.js'
 import GigyaManager from '../gigya/gigyaManager.js'
+import ConfigManager from '../copyConfig/configManager.js'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
@@ -24,8 +25,10 @@ class EmailManager {
   #zipManager
   #emailTemplateNameTranslator
   #gigyaManager
+  #credentials
 
   constructor(credentials) {
+    this.#credentials = credentials
     this.emailService = new Email(credentials.userKey, credentials.secret)
     this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
@@ -135,7 +138,18 @@ class EmailManager {
     const metadataObj = JSON.parse(zipContentMap.get(`${this.zipBaseFolderInfo.zipBaseFolder}${EmailManager.#IMPORT_EXPORT_METADATA_FILE_NAME}`))
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
     this.#removeOldContentFromMetadataMap(metadataMap)
+
+    const siteInformation = await new ConfigManager(this.#credentials, site).getSiteInformation(site)
+    if (metadataObj['twoFactorAuth'] && metadataObj['twoFactorAuth'].providers && this.#isChildSite(siteInformation, site)) {
+      // cannot override providers on child site
+      delete metadataObj['twoFactorAuth'].providers
+    }
+
     return await this.#importTemplates(site, metadataObj)
+  }
+
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
   async validateEmailTemplates(zipContent) {
