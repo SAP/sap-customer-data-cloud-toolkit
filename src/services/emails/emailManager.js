@@ -139,17 +139,7 @@ class EmailManager {
     const metadataMap = this.#mergeMetadataMapWithZipContent(zipContentMap, metadataObj)
     this.#removeOldContentFromMetadataMap(metadataMap)
 
-    const siteInformation = await new ConfigManager(this.#credentials, site).getSiteInformation(site)
-    if (metadataObj['twoFactorAuth'] && metadataObj['twoFactorAuth'].providers && this.#isChildSite(siteInformation, site)) {
-      // cannot override providers on child site
-      delete metadataObj['twoFactorAuth'].providers
-    }
-
     return await this.#importTemplates(site, metadataObj)
-  }
-
-  #isChildSite(siteInfo, siteApiKey) {
-    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
 
   async validateEmailTemplates(zipContent) {
@@ -267,6 +257,12 @@ class EmailManager {
     if (dataCenterResponse.errorCode !== 0) {
       return Promise.reject([dataCenterResponse])
     }
+
+    if (metadataObj['twoFactorAuth'] && metadataObj['twoFactorAuth'].providers) {
+      // cannot override providers on child site
+      delete metadataObj['twoFactorAuth'].providers
+    }
+
     for (const property in metadataObj) {
       if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {
         promises.push(this.emailService.setSiteEmailsWithDataCenter(site, property, metadataObj[property], dataCenterResponse.dataCenter))
