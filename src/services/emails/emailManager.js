@@ -253,6 +253,12 @@ class EmailManager {
     if (dataCenterResponse.errorCode !== 0) {
       return Promise.reject([dataCenterResponse])
     }
+
+    if (metadataObj['twoFactorAuth'] && metadataObj['twoFactorAuth'].providers) {
+      // cannot override providers on child site
+      delete metadataObj['twoFactorAuth'].providers
+    }
+
     for (const property in metadataObj) {
       if (this.#emailTemplateNameTranslator.exists(property) || EMAIL_TEMPLATE_PARENTS.includes(property)) {
         promises.push(this.emailService.setSiteEmailsWithDataCenter(site, property, metadataObj[property], dataCenterResponse.dataCenter))
