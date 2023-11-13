@@ -115,6 +115,22 @@ class EmailOptions extends Options {
         value: true,
       })
     }
+    if (response.unknownLocationNotification) {
+      const id = 'unknownLocationNotification'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
+    if (response.passwordResetNotification) {
+      const id = 'passwordResetNotification'
+      this.options.branches.push({
+        id: id,
+        name: emailTemplateNameTranslator.translateInternalName(id),
+        value: true,
+      })
+    }
   }
 }
 

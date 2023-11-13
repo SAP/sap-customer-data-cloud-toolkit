@@ -33,6 +33,8 @@ class EmailConfiguration {
       ['twoFactorAuth', 'twoFactorAuth'],
       ['impossibleTraveler', 'impossibleTraveler'],
       ['confirmationEmailTemplates', 'emailNotifications.confirmationEmailTemplates'],
+      ['unknownLocationNotification', 'unknownLocationNotification'],
+      ['passwordResetNotification', 'passwordResetNotification'],
     ])
   }
 
