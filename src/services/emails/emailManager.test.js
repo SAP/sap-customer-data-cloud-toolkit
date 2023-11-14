@@ -143,7 +143,7 @@ describe('Emails Manager test suite', () => {
     const response = await emailManager.import(apiKey, zipContent)
     //console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
-    expect(spy.mock.calls.length).toBe(9)
+    expect(spy.mock.calls.length).toBe(11)
   })
 
   test.each(directoriesTable)('8 - import new template', async (zipRootFolder) => {
@@ -245,7 +245,7 @@ describe('Emails Manager test suite', () => {
     const response = await emailManager.import(apiKey, zipContent)
     //console.log('response=' + JSON.stringify(response))
     response.map((resp) => CommonTestData.verifyResponseIsOk(resp))
-    expect(spy.mock.calls.length).toBe(9)
+    expect(spy.mock.calls.length).toBe(11)
   })
 
   test('20 - error validating html template', async () => {
@@ -321,6 +321,8 @@ function createExpectedZipEntries() {
   expectedZipEntries.set('DoubleOptInConfirmation/ar.html', EmailsTestData.emailTemplate)
   expectedZipEntries.set('PasswordReset/en.html', EmailsTestData.emailTemplate)
   expectedZipEntries.set('TFAEmailVerification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('UnknownLocationNotification/en.html', EmailsTestData.emailTemplate)
+  expectedZipEntries.set('PasswordResetNotification/en.html', EmailsTestData.emailTemplate)
   return expectedZipEntries
 }
 

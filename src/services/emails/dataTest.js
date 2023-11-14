@@ -177,6 +177,8 @@ function deleteContent(clone) {
   delete clone.emailNotifications.welcomeEmailTemplates
   delete clone.emailVerification
   delete clone.impossibleTraveler
+  // delete clone.unknownLocationNotification
+  // delete clone.passwordResetNotification
 }
 
 const expectedExportConfigurationFileContent = {
@@ -288,13 +290,13 @@ const expectedExportConfigurationFileContent = {
   unknownLocationNotification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: emailTemplate,
+      en: 'UnknownLocationNotification/en.html',
     },
   },
   passwordResetNotification: {
     defaultLanguage: 'en',
     emailTemplates: {
-      en: emailTemplate,
+      en: 'PasswordResetNotification/en.html',
     },
   },
 }

@@ -22,6 +22,8 @@ class EmailTemplateNameTranslator {
       ['twoFactorAuth', 'TFAEmailVerification'],
       ['impossibleTraveler', 'ImpossibleTraveler'],
       ['confirmationEmailTemplates', 'PasswordResetConfirmation'],
+      ['unknownLocationNotification', 'UnknownLocationNotification'],
+      ['passwordResetNotification', 'PasswordResetNotification'],
     ])
 
     // create emailTemplatesExternalName map with reversed values and keys

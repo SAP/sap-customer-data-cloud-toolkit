@@ -89,6 +89,8 @@ describe('Info Email Templates test suite', () => {
       'twoFactorAuth',
       'impossibleTraveler',
       'emailNotifications.confirmationEmailTemplates',
+      'unknownLocationNotification',
+      'passwordResetNotification',
     ])
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
