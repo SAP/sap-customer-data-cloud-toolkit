@@ -100,7 +100,7 @@ class Schema {
         responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.INTERNAL_SCHEMA)) {
-        responses.push(this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema))
+        responses.push(this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       return Promise.all(responses)
     } else {
@@ -335,13 +335,9 @@ class Schema {
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, internalSchemaPayload)
     } else {
-      response = await this.#copyInternalSchemaToChildSite(destinationSite, dataCenter, internalSchemaPayload)
+      response = await this.#copySchemaToChildSite(destinationSite, dataCenter, internalSchemaPayload, 'internalSchema')
     }
     return response
-  }
-
-  async #copyInternalSchemaToChildSite(destinationSite, dataCenter, payload) {
-    // TODO
   }
 
   #isChildSite(siteInfo, siteApiKey) {
