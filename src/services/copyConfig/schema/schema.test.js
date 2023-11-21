@@ -281,6 +281,7 @@ describe('Schema test suite', () => {
     const dataSchemaPayload = JSON.parse(JSON.stringify(expectedSchemaResponse))
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.INTERNAL_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, 'preferencesSchema')
     dataSchemaPayload.dataSchema.fields['email'] = {
       required: false,

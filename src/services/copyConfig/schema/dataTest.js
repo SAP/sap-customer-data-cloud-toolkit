@@ -121,6 +121,18 @@ export const expectedSchemaResponse = {
       },
     },
   },
+  internalSchema: {
+    fields: {
+      fieldEcryptedRegex: {
+        required: false,
+        type: 'string',
+        allowNull: true,
+        writeAccess: 'serverOnly',
+        encrypt: 'AES',
+      },
+    },
+    dynamicSchema: false,
+  },
 }
 
 export function getDataSchemaExpectedBodyForParentSite(apiKey) {
@@ -129,6 +141,7 @@ export function getDataSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.profileSchema
   delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
+  delete expectedBody.internalSchema
   return expectedBody
 }
 
@@ -149,6 +162,7 @@ export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.dataSchema
   delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
+  delete expectedBody.internalSchema
   return expectedBody
 }
 
@@ -237,6 +251,7 @@ export function getSubscriptionsSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.dataSchema
   delete expectedBody.profileSchema
   delete expectedBody.preferencesSchema
+  delete expectedBody.internalSchema
   return expectedBody
 }
 
