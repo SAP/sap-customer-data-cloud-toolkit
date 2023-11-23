@@ -20,6 +20,7 @@ class Schema {
   static DATA_SCHEMA = 'dataSchema'
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
+  static INTERNAL_SCHEMA = 'internalSchema'
   static GIGYA_MAXIMUM_PAYLOAD_SIZE = 8192
   #credentials
   #site
@@ -81,7 +82,7 @@ class Schema {
           ),
         )
         responses.push(...this.#removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSiteSchema.dataSchema, destinationSiteSchema.dataSchema))
-        responses.unshift(...await this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.unshift(...(await this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
       }
       if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
         responses.push(
@@ -93,10 +94,13 @@ class Schema {
           ),
         )
         responses.push(...this.#removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSiteSchema.profileSchema, destinationSiteSchema.profileSchema))
-        responses.unshift(...await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.unshift(...(await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
       }
       if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
-        responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.push(await this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+      }
+      if (options.getOptionValue(Schema.INTERNAL_SCHEMA)) {
+        responses.push(await this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       return Promise.all(responses)
     } else {
@@ -197,17 +201,18 @@ class Schema {
     const dataSchemaPayload = JSON.parse(JSON.stringify(payload))
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.INTERNAL_SCHEMA)
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
     removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
     const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(dataSchemaPayload, 'dataSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
-    for(const schemaPayload of schemaPayloads) {
+    for (const schemaPayload of schemaPayloads) {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
         response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'dataSchema')
       }
       responses.push(response)
-      if(response.errorCode !== 0){
+      if (response.errorCode !== 0) {
         break
       }
     }
@@ -228,17 +233,18 @@ class Schema {
     const clonePayload = JSON.parse(JSON.stringify(payload))
     removePropertyFromObjectCascading(clonePayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(clonePayload, Schema.INTERNAL_SCHEMA)
     clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
     Schema.#removeUnsuportedProfileSchemaFields(clonePayload)
     const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(clonePayload, 'profileSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
-    for(const schemaPayload of schemaPayloads) {
+    for (const schemaPayload of schemaPayloads) {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
         response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'profileSchema')
       }
       responses.push(response)
-      if(response.errorCode !== 0){
+      if (response.errorCode !== 0) {
         break
       }
     }
@@ -294,6 +300,7 @@ class Schema {
     const subscriptionsSchemaPayload = JSON.parse(JSON.stringify(payload))
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.PROFILE_SCHEMA)
+    removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.INTERNAL_SCHEMA)
     subscriptionsSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.SUBSCRIPTIONS_SCHEMA }
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, subscriptionsSchemaPayload)
@@ -318,6 +325,21 @@ class Schema {
     return response
   }
 
+  async #copyInternalSchema(destinationSite, dataCenter, payload, isParentSite) {
+    let response
+    const internalSchemaPayload = JSON.parse(JSON.stringify(payload))
+    removePropertyFromObjectCascading(internalSchemaPayload, Schema.DATA_SCHEMA)
+    removePropertyFromObjectCascading(internalSchemaPayload, Schema.PROFILE_SCHEMA)
+    removePropertyFromObjectCascading(internalSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    internalSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.INTERNAL_SCHEMA }
+    if (isParentSite) {
+      response = await this.set(destinationSite, dataCenter, internalSchemaPayload)
+    } else {
+      response = await this.#copySchemaToChildSite(destinationSite, dataCenter, internalSchemaPayload, 'internalSchema')
+    }
+    return response
+  }
+
   #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
@@ -328,8 +350,13 @@ class Schema {
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
     parameters.context = JSON.stringify({ id: 'schema', targetApiKey: apiKey })
+    parameters.include = this.#getIncludedSchemas()
 
     return parameters
+  }
+
+  #getIncludedSchemas() {
+    return `${Schema.PROFILE_SCHEMA},${Schema.DATA_SCHEMA},${Schema.SUBSCRIPTIONS_SCHEMA},${Schema.INTERNAL_SCHEMA}`
   }
 
   #setSchemaParameters(apiKey, body) {
@@ -343,6 +370,9 @@ class Schema {
     }
     if (body.subscriptionsSchema) {
       parameters[Schema.SUBSCRIPTIONS_SCHEMA] = JSON.stringify(body.subscriptionsSchema)
+    }
+    if (body.internalSchema) {
+      parameters[Schema.INTERNAL_SCHEMA] = JSON.stringify(body.internalSchema)
     }
     if (body.scope) {
       parameters['scope'] = body.scope
@@ -373,6 +403,10 @@ class Schema {
     return Schema.#has(response.subscriptionsSchema)
   }
 
+  static hasInternalSchema(response) {
+    return Schema.#has(response.internalSchema)
+  }
+
   static #has(property) {
     return property !== undefined && Object.keys(property).length > 0
   }
@@ -380,12 +414,12 @@ class Schema {
   breakSchemaPayloadIntoSeveralSmallerIfNeeded(schemaPayload, schemaType, payloadMaximumSize) {
     const payloads = []
     this.#breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(schemaPayload, schemaType, payloadMaximumSize, payloads)
-    return payloads;
+    return payloads
   }
 
   #breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(schemaPayload, schemaType, payloadMaximumSize, payloads) {
     const payloadStr = JSON.stringify(schemaPayload)
-    if(payloadStr.length <= payloadMaximumSize) {
+    if (payloadStr.length <= payloadMaximumSize) {
       payloads.push(schemaPayload)
       return
     }
@@ -395,7 +429,7 @@ class Schema {
 
     const fields = Object.keys(payloadClone[schemaType].fields)
     const numberOfFields = fields.length
-    for(let i = 0 ; i < numberOfFields && payloadSize > payloadMaximumSize ; ++i) {
+    for (let i = 0; i < numberOfFields && payloadSize > payloadMaximumSize; ++i) {
       delete payloadClone[schemaType].fields[fields[i]]
       fieldsToSend.push(fields[i])
       payloadSize = JSON.stringify(payloadClone).length
@@ -404,11 +438,11 @@ class Schema {
 
     payloadClone = JSON.parse(payloadStr)
     payloadClone[schemaType].fields = {}
-    for(const field of fieldsToSend) {
+    for (const field of fieldsToSend) {
       payloadClone[schemaType].fields[field] = schemaPayload[schemaType].fields[field]
     }
 
-    return this.#breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(payloadClone, schemaType, payloadMaximumSize, payloads);
+    return this.#breakSchemaPayloadIntoSeveralSmallerIfNeededRecursive(payloadClone, schemaType, payloadMaximumSize, payloads)
   }
 }
 

@@ -3,13 +3,13 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class SchemaOptions extends Options {
   static DATA_SCHEMA = 'dataSchema'
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
+  static INTERNAL_SCHEMA = 'internalSchema'
   #schema
 
   constructor(schema) {
@@ -32,7 +32,12 @@ class SchemaOptions extends Options {
           id: SchemaOptions.SUBSCRIPTIONS_SCHEMA,
           name: SchemaOptions.SUBSCRIPTIONS_SCHEMA,
           value: true,
-        }
+        },
+        {
+          id: SchemaOptions.INTERNAL_SCHEMA,
+          name: SchemaOptions.INTERNAL_SCHEMA,
+          value: true,
+        },
       ],
     })
     this.#schema = schema
@@ -52,6 +57,9 @@ class SchemaOptions extends Options {
 
   removeSubscriptionsSchema(info) {
     return this.removeInfo(SchemaOptions.SUBSCRIPTIONS_SCHEMA, info)
+  }
+  removeInternalSchema(info) {
+    return this.removeInfo(SchemaOptions.INTERNAL_SCHEMA, info)
   }
 }
 

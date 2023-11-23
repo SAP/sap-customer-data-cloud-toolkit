@@ -135,6 +135,9 @@ class Info {
       if (!Schema.hasSubscriptionsSchema(response)) {
         schemaOptions.removeSubscriptionsSchema(info)
       }
+      if (!Schema.hasInternalSchema(response)) {
+        schemaOptions.removeInternalSchema(info)
+      }
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
