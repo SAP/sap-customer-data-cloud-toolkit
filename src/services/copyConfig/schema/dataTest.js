@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-import { profileId, schemaId, subscriptionsId } from '../dataTest.js'
+import { internalSchemaId, profileId, schemaId, subscriptionsId } from '../dataTest.js'
 import { removePropertyFromObjectCascading } from '../objectHelper.js'
 
 export const expectedSchemaResponse = {
@@ -335,3 +335,29 @@ export const expectedDestinationChildCopyIssueSchemaResponse = JSON.parse(
     },
   }),
 )
+
+export function getInternalSchemaExpectedBodyForParentSite(apiKey) {
+  const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  expectedBody.context = { targetApiKey: apiKey, id: internalSchemaId }
+  delete expectedBody.dataSchema
+  delete expectedBody.profileSchema
+  delete expectedBody.preferencesSchema
+  delete expectedBody.subscriptionsSchema
+  return expectedBody
+}
+
+export function getInternalSchemaExpectedBodyForChildSiteStep1(apiKey) {
+  const expectedBody = getInternalSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'required')
+  return expectedBody
+}
+
+export function getInternalSchemaExpectedBodyForChildSiteStep2(apiKey) {
+  const expectedBody = getInternalSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'type')
+  removePropertyFromObjectCascading(expectedBody, 'allowNull')
+  removePropertyFromObjectCascading(expectedBody, 'writeAccess')
+  removePropertyFromObjectCascading(expectedBody, 'encrypt')
+  expectedBody.scope = 'site'
+  return expectedBody
+}

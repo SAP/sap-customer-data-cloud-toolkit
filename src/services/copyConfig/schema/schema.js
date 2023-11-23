@@ -97,10 +97,10 @@ class Schema {
         responses.unshift(...(await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
       }
       if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
-        responses.push(this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.push(await this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       if (options.getOptionValue(Schema.INTERNAL_SCHEMA)) {
-        responses.push(this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+        responses.push(await this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
       }
       return Promise.all(responses)
     } else {
