@@ -2,6 +2,16 @@ general:
   buildTool: 'npm'
   productiveBranch: 'main'
   pipelineOptimization: false
+  gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
+  vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-26250'
+  vaultAppRoleSecretTokenCredentialsId: 'vault-approle-secret-id-accessor-3103-26250'
+  vaultPath: 'piper/PIPELINE-GROUP-3103'
+  vaultBasePath: 'piper/PIPELINE-GROUP-3103'
+  vaultPipelineName: 'PIPELINE-26250'
+  vaultServerUrl: 'https://vault.tools.sap'
+  vaultNamespace: 'ies/hyperspace/pipelines'
+  nativeBuild: true
+  nativeVoting: true
   verbose: true
 steps:
   checkmarxExecuteScan:
@@ -25,10 +35,9 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
-    whitesourceProductName: 'cdc-tools-chrome-extension'
-    whitesourceProductToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
-    whitesourceUserTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
-    whitesourceProjectName: 'sap-customer-data-cloud-toolkit'
+    whitesourceProductName: 'SHC - CXA CDC TOOLKIT 1.0'
+    whitesourceProductToken: '611e7a74814a450b8bf1d2e34e680afc130fb28774a3464f81aea4f115450126'
+    whitesourceUserTokenCredentialsId: 'hyperspace-whitesource-cxa-cdc-toolkit-1-0'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
