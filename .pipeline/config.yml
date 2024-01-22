@@ -25,16 +25,10 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
-    userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
-    productName: cdc-tools-chrome-extension
-    projectName: sap-customer-data-cloud-toolkit
-    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.4'
-    agentUrl: 'https://sap.whitesourcesoftware.com/agent'
-    agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
-    #includes:['*/src/*,**/*.html,**/*.xml,**/*.js,**/*.jsx,**/*.json']
-    #excludes:['**/node_modules/**','**/coverage/**','**/build/**']
-    productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
-    projectToken: '903dc851f55b43778b3180f0a484800a5a57e7245e9b44bb9096338692519b2d'
+    whitesourceProductName: 'cdc-tools-chrome-extension'
+    whitesourceProductToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
+    whitesourceUserTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
+    whitesourceProjectName: 'sap-customer-data-cloud-toolkit'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
