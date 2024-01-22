@@ -1,5 +1,18 @@
 general:
   buildTool: 'npm'
+  productiveBranch: 'main'
+  pipelineOptimization: false
+  gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
+  vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-26250'
+  vaultAppRoleSecretTokenCredentialsId: 'vault-approle-secret-id-accessor-3103-26250'
+  vaultPath: 'piper/PIPELINE-GROUP-3103'
+  vaultBasePath: 'piper/PIPELINE-GROUP-3103'
+  vaultPipelineName: 'PIPELINE-26250'
+  vaultServerUrl: 'https://vault.tools.sap'
+  vaultNamespace: 'ies/hyperspace/pipelines'
+  nativeBuild: true
+  nativeVoting: true
+  verbose: true
 steps:
   checkmarxExecuteScan:
     avoidDuplicateProjectScans: false
@@ -22,19 +35,9 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
-    buildTool: 'npm'
-    userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
-    productName: cdc-tools-chrome-extension
-    projectName: sap-customer-data-cloud-toolkit
-    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.4'
-    agentUrl: 'https://sap.whitesourcesoftware.com/agent'
-    verbose: true
-    agentDownloadUrl: 'https://github.com/whitesource/unified-agent-distribution/releases/latest/download/wss-unified-agent.jar'
-    #includes: ['*/src/*, **/*.html, **/*.xml, **/*.js, **/*.jsx, **/*.json']
-    #excludes: ['**/node_modules/**', '**/coverage/**', '**/build/**']
-    productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
-    orgToken: '6971b2eec2d3420bad0caf173ec629f6a3c7d3ba63f3445ab99ffdbf1acfb1d0'
-    projectToken: '903dc851f55b43778b3180f0a484800a5a57e7245e9b44bb9096338692519b2d'
+    whitesourceProductName: 'SHC - CXA CDC TOOLKIT 1.0'
+    whitesourceProductToken: '611e7a74814a450b8bf1d2e34e680afc130fb28774a3464f81aea4f115450126'
+    whitesourceUserTokenCredentialsId: 'whitesource'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
