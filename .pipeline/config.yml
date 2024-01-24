@@ -24,10 +24,10 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
-    whitesourceProductName: 'cdc-tools-chrome-extension'
-    whitesourceProductToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
-    whitesourceUserTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
-    whitesourceProjectName: 'sap-customer-data-cloud-toolkit'
+    productName: 'cdc-tools-chrome-extension'
+    productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
+    userTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
+    projectName: 'sap-customer-data-cloud-toolkit'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
