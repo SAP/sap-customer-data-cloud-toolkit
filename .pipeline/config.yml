@@ -28,6 +28,7 @@ steps:
     productToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
     userTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
     projectName: 'sap-customer-data-cloud-toolkit'
+    serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.4'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
