@@ -23,9 +23,9 @@ steps:
     vulnerabilityThresholdResult: 'FAILURE'
     waitForResultsEnabled: true
   whitesourceExecuteScan:
-    userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
-    productName: cdc-tools-chrome-extension
-    projectName: sap-customer-data-cloud-toolkit
+    userTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
+    productName: 'cdc-tools-chrome-extension'
+    projectName: 'sap-customer-data-cloud-toolkit'
     serviceUrl: 'https://sap.whitesourcesoftware.com/api/v1.4'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
