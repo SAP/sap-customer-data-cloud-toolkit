@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info.js'
 import * as CommonTestData from '../../servicesDataTest.js'
 import { getExpectedSchemaResponseExcept, getInfoExpectedResponse } from './dataTest.js'
@@ -29,6 +28,7 @@ import {
   consentId,
   channelId,
   internalSchemaId,
+  addressesSchemaId,
 } from '../dataTest.js'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest.js'
 import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest.js'
@@ -109,7 +109,7 @@ describe('Info test suite', () => {
   })
 
   test('get info except schema successfully', async () => {
-    const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId, internalSchemaId])
+    const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId, internalSchemaId, addressesSchemaId])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })

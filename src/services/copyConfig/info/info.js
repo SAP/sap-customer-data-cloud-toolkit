@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Schema from '../schema/schema.js'
 import Social from '../social/social.js'
 import SmsConfiguration from '../sms/smsConfiguration.js'
@@ -137,6 +136,9 @@ class Info {
       }
       if (!Schema.hasInternalSchema(response)) {
         schemaOptions.removeInternalSchema(info)
+      }
+      if (!Schema.hasAddressesSchema(response)) {
+        schemaOptions.removeAddressesSchema(info)
       }
       return Promise.resolve(info)
     } else {

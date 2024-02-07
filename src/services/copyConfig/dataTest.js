@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export function getResponseWithContext(response, id, apiKey) {
   const resp = JSON.parse(JSON.stringify(response))
   resp.context = JSON.stringify({ targetApiKey: apiKey, id: id })
@@ -20,6 +19,7 @@ export const schemaId = 'dataSchema'
 export const profileId = 'profileSchema'
 export const subscriptionsId = 'subscriptionsSchema'
 export const internalSchemaId = 'internalSchema'
+export const addressesSchemaId = 'addressesSchema'
 export const socialIdentitiesId = 'socialIdentities'
 export const smsTemplatesId = 'smsTemplates'
 export const emailTemplatesId = 'emailTemplates'

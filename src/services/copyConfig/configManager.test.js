@@ -30,6 +30,7 @@ import {
   channelId,
   topicId,
   internalSchemaId,
+  addressesSchemaId,
 } from './dataTest.js'
 import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest.js'
 import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest.js'
@@ -178,12 +179,13 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
 
-    expect(response.length).toEqual(33)
+    expect(response.length).toEqual(34)
     verifyAllResponsesAreOk(response)
     verifyAllContext(response)
   })
@@ -304,8 +306,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, addressesSchemaId, apiKey) })
 
-    await executeCopyAllUnsuccessfully(mockedResponse, 33)
+    await executeCopyAllUnsuccessfully(mockedResponse, 34)
   })
 
   test('copy all unsuccessfully - error on single copy', async () => {
@@ -359,20 +362,17 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
-    expect(response.length).toEqual(33)
-    const errorResponseIndex = 1
+    expect(response.length).toEqual(34)
+    const errorResponseIndex = 0
     CommonTestData.verifyResponseIsNotOk(response[errorResponseIndex], mockedResponse)
     expect(response[errorResponseIndex].context.id).toEqual(schemaId)
     expect(response[errorResponseIndex].context.targetApiKey).toEqual(apiKey)
-
-    CommonTestData.verifyResponseIsOk(response[0], mockedResponse)
-    expect(response[0].context.id).toEqual(profileId)
-    expect(response[0].context.targetApiKey).toEqual(apiKey)
-    verifyAllResponsesAreOk(response.slice(2))
+    verifyAllResponsesAreOk(response.slice(1))
     verifyAllContext(response)
   })
 
