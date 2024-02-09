@@ -86,7 +86,7 @@ class SiteFinderPaginated {
       userKey: this.#credentials.userKey,
       secret: this.#credentials.secret,
       targetPartnerID: partnerInfo.PartnerID,
-      pageSize: 1000,
+      pageSize: 9999999,
       context: JSON.stringify({ partnerId: partnerInfo.PartnerID, partnerName: partnerInfo.Name }),
     }
     const response = await client.post(url, bodyWithCredentials).catch(function (error) {
