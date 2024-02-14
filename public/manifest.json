@@ -13,15 +13,7 @@
   "action": {},
   "content_scripts": [
     {
-      "matches": ["https://console.gigya.com/*"],
-      "all_frames": true,
-      "run_at": "document_end",
-      "js": [],
-      "css": [],
-      "media": []
-    },
-    {
-      "matches": ["https://console.cdc.cloud.sap/*"],
+      "matches": ["https://console.gigya.com/*", "https://console.cdc.cloud.sap/*"],
       "all_frames": true,
       "run_at": "document_end",
       "js": [],
