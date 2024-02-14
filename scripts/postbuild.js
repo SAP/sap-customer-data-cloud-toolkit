@@ -23,13 +23,14 @@ function readFile(path, prefix, extension) {
     .map((filename) => `${path}/${filename}`)[0]
 }
 
-function addContentScripts(buildManifest, publicManifest) {
-  publicManifest.content_scripts.forEach((script) => {
-    buildManifest.content_scripts.push({
-      ...script,
-      js: [js],
-      css: [css],
-    })
+function updateManifestFiles(manifest, jsFile, cssFile) {
+  manifest.content_scripts.forEach((script) => {
+    script.js.push(jsFile)
+    script.css.push(cssFile)
+  })
+
+  manifest['web_accessible_resources'].forEach((resource) => {
+    resource.resources.push(cssFile)
   })
 }
 
@@ -38,14 +39,7 @@ const css = readFile('static/css', 'main', 'css')
 
 const newManifest = {
   ...manifest,
-  content_scripts: [],
-  web_accessible_resources: [
-    {
-      ...manifest.web_accessible_resources[0],
-      resources: [css],
-    },
-  ],
 }
 
-addContentScripts(newManifest, manifest)
+updateManifestFiles(newManifest, js, css)
 fs.writeFileSync('./build/manifest.json', JSON.stringify(newManifest, null, 2))
