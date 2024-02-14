@@ -19,6 +19,14 @@
       "js": [],
       "css": [],
       "media": []
+    },
+    {
+      "matches": ["https://console.cdc.cloud.sap/*"],
+      "all_frames": true,
+      "run_at": "document_end",
+      "js": [],
+      "css": [],
+      "media": []
     }
   ],
   "web_accessible_resources": [

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const fs = require('fs')
 const manifest = require('../public/manifest.json')
 
@@ -24,18 +23,22 @@ function readFile(path, prefix, extension) {
     .map((filename) => `${path}/${filename}`)[0]
 }
 
+function addContentScripts(buildManifest, publicManifest) {
+  publicManifest.content_scripts.forEach((script) => {
+    buildManifest.content_scripts.push({
+      ...script,
+      js: [js],
+      css: [css],
+    })
+  })
+}
+
 const js = readFile('static/js', 'main', 'js')
 const css = readFile('static/css', 'main', 'css')
 
 const newManifest = {
   ...manifest,
-  content_scripts: [
-    {
-      ...manifest.content_scripts[0],
-      js: [js],
-      css: [css],
-    },
-  ],
+  content_scripts: [],
   web_accessible_resources: [
     {
       ...manifest.web_accessible_resources[0],
@@ -44,4 +47,5 @@ const newManifest = {
   ],
 }
 
+addContentScripts(newManifest, manifest)
 fs.writeFileSync('./build/manifest.json', JSON.stringify(newManifest, null, 2))

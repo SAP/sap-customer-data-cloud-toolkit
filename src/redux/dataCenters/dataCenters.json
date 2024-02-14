@@ -50,5 +50,22 @@
         "label": "CN"
       }
     ]
+  },
+  {
+    "console": "console.cdc.cloud.sap",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US"
+      }
+    ]
   }
 ]
