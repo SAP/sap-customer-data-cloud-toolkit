@@ -3,11 +3,10 @@
  * License: Apache-2.0
  */
 
-
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
-import GigyaManager from '../gigya/gigyaManager.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 class Sms {
   static #ERROR_MSG_GET_CONFIG = 'Error getting sms templates'
@@ -17,7 +16,7 @@ class Sms {
   constructor(userKey, secret) {
     this.userKey = userKey
     this.secret = secret
-    this.gigyaManager = new GigyaManager(this.userKey, this.secret)
+    this.siteConfigurator = new SiteConfigurator(this.userKey, this.secret)
   }
 
   async get(site, dataCenter) {
@@ -31,7 +30,7 @@ class Sms {
   }
 
   async getSiteSms(site) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site, 'us1')
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }
@@ -48,7 +47,7 @@ class Sms {
   }
 
   async setSiteSms(site, templates) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site, 'us1')
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }

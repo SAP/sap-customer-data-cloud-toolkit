@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /**
  * @jest-environment jsdom
  */
@@ -23,6 +22,7 @@ const initialState = {
     {
       label: 'US',
       value: 'us1',
+      isPrimary: true,
     },
   ],
 }

@@ -3,11 +3,10 @@
  * License: Apache-2.0
  */
 
-
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
-import GigyaManager from '../gigya/gigyaManager.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 class Email {
   static #ERROR_MSG_GET_CONFIG = 'Error getting email templates'
@@ -17,11 +16,11 @@ class Email {
   constructor(userKey, secret) {
     this.userKey = userKey
     this.secret = secret
-    this.gigyaManager = new GigyaManager(this.userKey, this.secret)
+    this.siteConfigurator = new SiteConfigurator(this.userKey, this.secret)
   }
 
   async getSiteEmails(site) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site, 'us1')
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }
@@ -39,7 +38,7 @@ class Email {
   }
 
   async setSiteEmails(site, templateName, template) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site, 'us1')
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }

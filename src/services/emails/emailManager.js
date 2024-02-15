@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import EmailTemplateNameTranslator from './emailTemplateNameTranslator.js'
 import Email from './email.js'
 import ZipManager from '../zip/zipManager.js'
@@ -14,7 +13,7 @@ import generateErrorResponse, {
   ERROR_SEVERITY_INFO,
   ERROR_SEVERITY_WARNING,
 } from '../errors/generateErrorResponse.js'
-import GigyaManager from '../gigya/gigyaManager.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 class EmailManager {
   static #EMAIL_TEMPLATE_IDENTIFIER = 'mailTemplates'
@@ -23,13 +22,13 @@ class EmailManager {
   static #zipIgnoreBaseFolders = ['__MACOSX']
   #zipManager
   #emailTemplateNameTranslator
-  #gigyaManager
+  #siteConfigurator
 
   constructor(credentials) {
     this.emailService = new Email(credentials.userKey, credentials.secret)
     this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
-    this.#gigyaManager = new GigyaManager(credentials.userKey, credentials.secret)
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
   }
 
   async export(site) {
@@ -249,7 +248,8 @@ class EmailManager {
   async #importTemplates(site, metadataObj) {
     const EMAIL_TEMPLATE_PARENTS = ['emailNotifications']
     const promises = []
-    const dataCenterResponse = await this.#gigyaManager.getDataCenterFromSite(site)
+
+    const dataCenterResponse = await this.#siteConfigurator.getSiteConfig(site, 'us1')
     if (dataCenterResponse.errorCode !== 0) {
       return Promise.reject([dataCenterResponse])
     }
