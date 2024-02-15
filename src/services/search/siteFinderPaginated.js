@@ -10,7 +10,6 @@ import generateErrorResponse from '../errors/generateErrorResponse.js'
 
 class SiteFinderPaginated {
   static #NAMESPACE = 'admin'
-  static #DATA_CENTER_DEFAULT = 'us1'
   #credentials
   #requestsPerPage
   #pageInfo
@@ -72,7 +71,7 @@ class SiteFinderPaginated {
   }
 
   async #getPartners() {
-    const url = UrlBuilder.buildUrl(SiteFinderPaginated.#NAMESPACE, SiteFinderPaginated.#DATA_CENTER_DEFAULT, 'admin.console.getPartners')
+    const url = UrlBuilder.buildUrl(SiteFinderPaginated.#NAMESPACE, undefined, 'admin.console.getPartners', this.#credentials.gigyaConsole)
     const bodyWithCredentials = { userKey: this.#credentials.userKey, secret: this.#credentials.secret }
     const response = await client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, 'Error getting partners')
@@ -81,7 +80,7 @@ class SiteFinderPaginated {
   }
 
   async #getPagedUserEffectiveSites(partnerInfo) {
-    const url = UrlBuilder.buildUrl(SiteFinderPaginated.#NAMESPACE, SiteFinderPaginated.#DATA_CENTER_DEFAULT, 'admin.console.getPagedUserEffectiveSites')
+    const url = UrlBuilder.buildUrl(SiteFinderPaginated.#NAMESPACE, undefined, 'admin.console.getPagedUserEffectiveSites', this.#credentials.gigyaConsole)
     const bodyWithCredentials = {
       userKey: this.#credentials.userKey,
       secret: this.#credentials.secret,

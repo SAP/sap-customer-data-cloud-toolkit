@@ -25,10 +25,10 @@ class EmailManager {
   #siteConfigurator
 
   constructor(credentials) {
-    this.emailService = new Email(credentials.userKey, credentials.secret)
+    this.emailService = new Email(credentials.userKey, credentials.secret, credentials.gigyaConsole)
     this.#zipManager = new ZipManager()
     this.#emailTemplateNameTranslator = new EmailTemplateNameTranslator()
-    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
   }
 
   async export(site) {
@@ -249,7 +249,7 @@ class EmailManager {
     const EMAIL_TEMPLATE_PARENTS = ['emailNotifications']
     const promises = []
 
-    const dataCenterResponse = await this.#siteConfigurator.getSiteConfig(site, 'us1')
+    const dataCenterResponse = await this.#siteConfigurator.getSiteConfig(site)
     if (dataCenterResponse.errorCode !== 0) {
       return Promise.reject([dataCenterResponse])
     }

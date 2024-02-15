@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info/info.js'
 import Schema from './schema/schema.js'
 import Social from './social/social.js'
@@ -42,7 +41,7 @@ class ConfigManager {
   constructor(credentials, originApiKey) {
     this.#credentials = credentials
     this.#originApiKey = originApiKey
-    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
     this.#originSiteConfiguration = undefined
   }
 
@@ -106,7 +105,7 @@ class ConfigManager {
   }
 
   async getSiteInformation(apiKey) {
-    const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
+    const response = await this.#siteConfigurator.getSiteConfig(apiKey)
     response.context = { id: 'admin.getSiteConfig', targetApiKey: apiKey }
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }

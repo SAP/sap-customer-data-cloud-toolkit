@@ -23,7 +23,7 @@ class ConsentStatement {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(ConsentStatement.#NAMESPACE, this.#dataCenter, ConsentStatement.getGetConsentStatementEndpoint())
+    const url = UrlBuilder.buildUrl(ConsentStatement.#NAMESPACE, this.#dataCenter, ConsentStatement.getGetConsentStatementEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getConsentStatementParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, ConsentStatement.#ERROR_MSG_GET_CONFIG)
     })
@@ -31,7 +31,7 @@ class ConsentStatement {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(ConsentStatement.#NAMESPACE, dataCenter, ConsentStatement.getSetConsentStatementEndpoint())
+    const url = UrlBuilder.buildUrl(ConsentStatement.#NAMESPACE, dataCenter, ConsentStatement.getSetConsentStatementEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setConsentStatementParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, ConsentStatement.#ERROR_MSG_SET_CONFIG)
     })

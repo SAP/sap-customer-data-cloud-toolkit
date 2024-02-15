@@ -17,7 +17,7 @@ class SmsConfiguration {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
-    this.#sms = new Sms(credentials.userKey, credentials.secret)
+    this.#sms = new Sms(credentials.userKey, credentials.secret, credentials.gigyaConsole)
   }
 
   async get() {

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import ConfigManager from '../../services/copyConfig/configManager'
@@ -206,7 +205,7 @@ export const copyConfigurationExtendedSlice = createSlice({
 
 export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
 
   try {
@@ -218,7 +217,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
 
 export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
 
   const responses = checkDataflowVariables(state.copyConfigurationExtended.configurations)
@@ -230,7 +229,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   try {
     return await new ConfigManager(credentials, currentSiteApiKey).copy(
       state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
-      state.copyConfigurationExtended.configurations
+      state.copyConfigurationExtended.configurations,
     )
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -242,7 +241,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
     if (!areAvailableTargetSitesLoading) {
       const parallelRequestsAllowed = 5
       const state = getState()
-      const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+      const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
       const siteFinderPaginated = new SiteFinderPaginated(credentials, parallelRequestsAllowed)
       let response = await siteFinderPaginated.getFirstPage()
       const availableTargetSites = []
@@ -261,7 +260,7 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
 
 export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFORMATION_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
 
   try {
@@ -273,7 +272,7 @@ export const getCurrentSiteInformation = createAsyncThunk(GET_CURRENT_SITE_INFOR
 
 export const getTargetSiteInformation = createAsyncThunk(GET_TARGET_SITE_INFORMATION_ACTION, async (targetApiKey, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
 
   try {
     return await new ConfigManager(credentials, targetApiKey).getSiteInformation(targetApiKey)

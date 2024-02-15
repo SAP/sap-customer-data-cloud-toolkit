@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import * as utils from './utils'
@@ -157,6 +156,7 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
       partnerID: utils.getPartnerId(window.location.hash),
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname,
     }).create({
       sites,
     })

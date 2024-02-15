@@ -37,7 +37,7 @@ class Schema {
   }
 
   async #_get(site, dataCenter) {
-    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getGetSchemaEndpoint())
+    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getGetSchemaEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getSchemaParameters(site)).catch(function (error) {
       return generateErrorResponse(error, Schema.#ERROR_MSG_GET_CONFIG)
     })
@@ -49,7 +49,7 @@ class Schema {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getSetSchemaEndpoint())
+    const url = UrlBuilder.buildUrl(Schema.#NAMESPACE, dataCenter, Schema.#getSetSchemaEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setSchemaParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Schema.#ERROR_MSG_SET_CONFIG)
     })

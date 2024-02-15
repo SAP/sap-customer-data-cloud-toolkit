@@ -84,6 +84,7 @@ export const getSmsTemplatesArrayBuffer = createAsyncThunk(EXPORT_SMS_TEMPLATES_
     return await new SmsManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname
     }).export(getApiKey(window.location.hash))
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -96,6 +97,7 @@ export const sendSmsTemplatesArrayBuffer = createAsyncThunk(IMPORT_SMS_TEMPLATES
     return await new SmsManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))

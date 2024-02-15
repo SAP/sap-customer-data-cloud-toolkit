@@ -22,7 +22,7 @@ class ConsentDefaultLanguage {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(ConsentDefaultLanguage.#NAMESPACE, dataCenter, ConsentDefaultLanguage.getSetConsentDefaultLanguageEndpoint())
+    const url = UrlBuilder.buildUrl(ConsentDefaultLanguage.#NAMESPACE, dataCenter, ConsentDefaultLanguage.getSetConsentDefaultLanguageEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setConsentDefaultLanguageParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, ConsentDefaultLanguage.#ERROR_MSG_SET_CONFIG)
     })

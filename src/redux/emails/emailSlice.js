@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import EmailManager from '../../services/emails/emailManager'
 import { getApiKey, getErrorAsArray } from '../utils'
@@ -115,6 +114,7 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk(EXPORT_EMAIL_TEMPLA
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -127,6 +127,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk(IMPORT_EMAIL_TEMPL
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -139,6 +140,7 @@ export const validateEmailTemplates = createAsyncThunk(VALIDATE_EMAIL_TEMPLATES_
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
+      gigyaConsole: window.location.hostname,
     }).validateEmailTemplates(zipContent)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
