@@ -156,7 +156,7 @@ export const createSites = createAsyncThunk(CREATE_SITES_ACTION, async (sites, {
       partnerID: utils.getPartnerId(window.location.hash),
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
-      gigyaConsole: window.location.hostname,
+      gigyaConsole: state.credentials.credentials.gigyaConsole,
     }).create({
       sites,
     })

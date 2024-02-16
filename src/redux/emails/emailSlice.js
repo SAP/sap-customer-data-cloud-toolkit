@@ -114,7 +114,7 @@ export const getEmailTemplatesArrayBuffer = createAsyncThunk(EXPORT_EMAIL_TEMPLA
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
-      gigyaConsole: window.location.hostname,
+      gigyaConsole: state.credentials.credentials.gigyaConsole,
     }).export(getApiKey(window.location.hash))
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -127,7 +127,7 @@ export const sendEmailTemplatesArrayBuffer = createAsyncThunk(IMPORT_EMAIL_TEMPL
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
-      gigyaConsole: window.location.hostname,
+      gigyaConsole: state.credentials.credentials.gigyaConsole,
     }).import(getApiKey(window.location.hash), zipContent)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
@@ -140,7 +140,7 @@ export const validateEmailTemplates = createAsyncThunk(VALIDATE_EMAIL_TEMPLATES_
     return await new EmailManager({
       userKey: state.credentials.credentials.userKey,
       secret: state.credentials.credentials.secretKey,
-      gigyaConsole: window.location.hostname,
+      gigyaConsole: state.credentials.credentials.gigyaConsole,
     }).validateEmailTemplates(zipContent)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))

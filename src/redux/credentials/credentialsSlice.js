@@ -16,6 +16,7 @@ export const credentialsSlice = createSlice({
     credentials: {
       userKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_USERKEY}` : '',
       secretKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_SECRET}` : '',
+      gigyaConsole: ''
     },
     isPopUpOpen: false,
   },
@@ -25,6 +26,9 @@ export const credentialsSlice = createSlice({
     },
     setSecretKey: (state, action) => {
       state.credentials.secretKey = action.payload
+    },
+    setGigyaConsole: (state, action) => {
+      state.credentials.gigyaConsole = action.payload
     },
     setIsPopUpOpen: (state, action) => {
       state.isPopUpOpen = action.payload
@@ -51,7 +55,7 @@ export const updateCredentialsAsync = createAsyncThunk(UPDATE_CREDENTIALS_ACTION
   }
 })
 
-export const { setUserKey, setSecretKey, setIsPopUpOpen, updateCredentials } = credentialsSlice.actions
+export const { setUserKey, setSecretKey, setGigyaConsole, setIsPopUpOpen, updateCredentials } = credentialsSlice.actions
 
 export const selectCredentials = (state) => state.credentials.credentials
 

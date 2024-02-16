@@ -131,7 +131,7 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
 
 export const getSourceSiteInformation = createAsyncThunk(GET_SOURCE_SITE_INFORMATION_ACTION, async (props, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const apiKey = props.apiKey
   const siteId = props.siteId
   try {
@@ -144,7 +144,7 @@ export const getSourceSiteInformation = createAsyncThunk(GET_SOURCE_SITE_INFORMA
 
 export const getSourceSiteConfigurations = createAsyncThunk(GET_SOURCE_SITE_INFORMATION_CONFIGURATIONS, async (siteId, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const sourceSiteApiKey = getConfiguration(state.siteDeployerCopyConfiguration.sitesConfigurations, siteId).sourceSites[0].apiKey
   try {
     const configurations = await new ConfigManager(credentials, sourceSiteApiKey).getConfiguration()

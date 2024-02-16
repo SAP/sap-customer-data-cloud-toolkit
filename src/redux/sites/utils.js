@@ -154,7 +154,7 @@ const processSitesCreationErrors = (state, errors, responses) => {
 }
 
 const generateCredentialsObject = (state) => {
-  return { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: window.location.hostname }
+  return { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
 }
 
 const calculateProgressIncrement = (okResponses) => {
