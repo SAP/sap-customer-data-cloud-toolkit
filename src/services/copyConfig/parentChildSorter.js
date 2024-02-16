@@ -12,7 +12,7 @@ class ParentChildSorter extends Sorter {
 
   constructor(credentials) {
     super()
-    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
   }
 
   async sort(arrayOfValues) {
@@ -27,7 +27,7 @@ class ParentChildSorter extends Sorter {
   }
 
   async #getSiteInformation(apiKey) {
-    const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
+    const response = await this.#siteConfigurator.getSiteConfig(apiKey)
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }
 

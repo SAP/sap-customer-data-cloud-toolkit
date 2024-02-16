@@ -24,7 +24,7 @@ class LegalStatement {
   }
 
   async get(consentId, language) {
-    const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, this.#dataCenter, LegalStatement.getGetLegalStatementEndpoint())
+    const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, this.#dataCenter, LegalStatement.getGetLegalStatementEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getLegalStatementParameters(this.#site, consentId, language)).catch(function (error) {
       return generateErrorResponse(error, LegalStatement.#ERROR_MSG_GET_CONFIG)
     })
@@ -32,7 +32,7 @@ class LegalStatement {
   }
 
   async set(site, dataCenter, consentId, language, legalStatements) {
-    const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, dataCenter, LegalStatement.getSetLegalStatementEndpoint())
+    const url = UrlBuilder.buildUrl(LegalStatement.#NAMESPACE, dataCenter, LegalStatement.getSetLegalStatementEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setLegalStatementParameters(site, consentId, language, legalStatements)).catch(function (error) {
       return generateErrorResponse(error, LegalStatement.#ERROR_MSG_SET_CONFIG)
     })

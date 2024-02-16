@@ -3,25 +3,25 @@
  * License: Apache-2.0
  */
 
-
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
-import GigyaManager from '../gigya/gigyaManager.js'
+import SiteConfigurator from '../configurator/siteConfigurator.js'
 
 class Sms {
   static #ERROR_MSG_GET_CONFIG = 'Error getting sms templates'
   static #ERROR_MSG_SET_CONFIG = 'Error setting sms templates'
   static #NAMESPACE = 'accounts'
 
-  constructor(userKey, secret) {
+  constructor(userKey, secret, gigyaConsole) {
     this.userKey = userKey
     this.secret = secret
-    this.gigyaManager = new GigyaManager(this.userKey, this.secret)
+    this.gigyaConsole = gigyaConsole
+    this.siteConfigurator = new SiteConfigurator(userKey, secret, gigyaConsole)
   }
 
   async get(site, dataCenter) {
-    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getGetSmsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getGetSmsTemplatesEndpoint(), this.gigyaConsole)
     const res = await client.post(url, this.#getSmsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Sms.#ERROR_MSG_GET_CONFIG)
@@ -31,7 +31,7 @@ class Sms {
   }
 
   async getSiteSms(site) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site)
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }
@@ -39,7 +39,7 @@ class Sms {
   }
 
   async set(site, dataCenter, templates) {
-    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getSetSmsTemplatesEndpoint())
+    const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getSetSmsTemplatesEndpoint(), this.gigyaConsole)
     const res = await client.post(url, this.#setSmsTemplatesParameters(site, templates)).catch(function (error) {
       //console.log(`error=${error}`)
       return generateErrorResponse(error, Sms.#ERROR_MSG_SET_CONFIG)
@@ -48,7 +48,7 @@ class Sms {
   }
 
   async setSiteSms(site, templates) {
-    const dataCenterResponse = await this.gigyaManager.getDataCenterFromSite(site)
+    const dataCenterResponse = await this.siteConfigurator.getSiteConfig(site)
     if (dataCenterResponse.errorCode !== 0) {
       return dataCenterResponse
     }

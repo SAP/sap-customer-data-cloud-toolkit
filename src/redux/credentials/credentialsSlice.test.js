@@ -3,33 +3,36 @@
  * License: Apache-2.0
  */
 
-
 /**
  * @jest-environment jsdom
  */
 
-import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, updateCredentialsAsync } from './credentialsSlice'
+import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, updateCredentialsAsync, setGigyaConsole } from './credentialsSlice'
 import { getAccountURL, readCredentialsFromAccountSettings, areCredentialsFilled, shouldUpdateCredentials } from './utils'
 
 const initialState = {
   credentials: {
     secretKey: '',
     userKey: '',
+    gigyaConsole: '',
   },
   isPopUpOpen: false,
 }
 
 const testUserKey = 'dummyUserKey'
 const testSecretKey = 'dummySecretKey'
+const testGigyaConsole = 'dummygigyaconsole'
 
 const expectedCredentials = {
   secretKey: testSecretKey,
   userKey: testUserKey,
+  gigyaConsole: testGigyaConsole,
 }
 
 const emptyCredentials = {
   secretKey: '',
   userKey: '',
+  gigyaConsole: '',
 }
 
 describe('Credentials Slice test suite', () => {
@@ -51,6 +54,11 @@ describe('Credentials Slice test suite', () => {
     expect(newState.credentials.secretKey).toEqual(testSecretKey)
   })
 
+  test('should update credentials gigyaConsole', () => {
+    const newState = credentialsReducer(initialState, setGigyaConsole(testGigyaConsole))
+    expect(newState.credentials.gigyaConsole).toEqual(testGigyaConsole)
+  })
+
   test('should update isPopUpOpen', () => {
     const newState = credentialsReducer(initialState, setIsPopUpOpen(true))
     expect(newState.isPopUpOpen).toEqual(true)
@@ -61,6 +69,8 @@ describe('Credentials Slice test suite', () => {
   })
 
   test('should get credentials', () => {
+    delete window.location
+    window.location = new URL(`https://${testGigyaConsole}`)
     expect(readCredentialsFromAccountSettings()).toEqual(expectedCredentials)
   })
 

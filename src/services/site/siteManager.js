@@ -11,8 +11,8 @@ import SiteMigrator from './siteMigrator.js'
 class SiteManager {
   constructor(credentials) {
     this.credentials = credentials
-    this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret)
-    this.siteMigrator = new SiteMigrator(credentials.userKey, credentials.secret)
+    this.siteService = new Site(credentials.partnerID, credentials.userKey, credentials.secret, credentials.gigyaConsole)
+    this.siteMigrator = new SiteMigrator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
   }
 
   async create(siteHierarchy) {
@@ -70,7 +70,7 @@ class SiteManager {
   }
 
   async #createSiteAndConnect(site, parentApiKey) {
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, this.credentials.gigyaConsole)
     let childResponse = (await this.#createSite(site)).data
     childResponse = this.#enrichResponse(childResponse, site.tempId, true)
     if (this.#isSuccessful(childResponse)) {
@@ -144,9 +144,9 @@ class SiteManager {
   async #deleteSite(targetApiKey) {
     //console.log(`Deleting site ${targetApiKey}`)
     const responses = []
-    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret)
+    const siteConfigurator = new SiteConfigurator(this.credentials.userKey, this.credentials.secret, this.credentials.gigyaConsole)
 
-    const siteConfig = await siteConfigurator.getSiteConfig(targetApiKey, 'us1')
+    const siteConfig = await siteConfigurator.getSiteConfig(targetApiKey)
     if (this.#isSiteAlreadyDeleted(siteConfig) || !this.#isSuccessful(siteConfig)) {
       this.#addApiKeyToResponse(siteConfig, targetApiKey)
       responses.push(siteConfig)

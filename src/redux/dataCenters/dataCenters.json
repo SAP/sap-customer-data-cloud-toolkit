@@ -12,12 +12,14 @@
       },
       {
         "value": "us1",
-        "label": "US"
+        "label": "US",
+        "isPrimary": true
       }
     ]
   },
   {
     "console": "console.gigya.com",
+    "isDefault": true,
     "datacenters": [
       {
         "value": "au1",
@@ -29,7 +31,8 @@
       },
       {
         "value": "us1",
-        "label": "US"
+        "label": "US",
+        "isPrimary": true
       }
     ]
   },
@@ -38,16 +41,18 @@
     "datacenters": [
       {
         "value": "eu2",
-        "label": "EU"
+        "label": "EU2",
+        "isPrimary": true
       }
     ]
   },
   {
-    "console": "console.cn1.gigya.com",
+    "console": "console.cn1.sapcdm.cn",
     "datacenters": [
       {
         "value": "cn1",
-        "label": "CN"
+        "label": "CN",
+        "isPrimary": true
       }
     ]
   },
@@ -64,7 +69,8 @@
       },
       {
         "value": "us1",
-        "label": "US"
+        "label": "US",
+        "isPrimary": true
       }
     ]
   }

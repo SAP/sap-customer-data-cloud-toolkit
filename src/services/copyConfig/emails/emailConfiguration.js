@@ -19,7 +19,7 @@ class EmailConfiguration {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
-    this.#email = new Email(credentials.userKey, credentials.secret)
+    this.#email = new Email(credentials.userKey, credentials.secret, credentials.gigyaConsole)
 
     this.#emailTemplatesInternalPath = new Map([
       ['magicLink', 'magicLink'],

@@ -14,13 +14,13 @@ class WebSdk {
   static #NAMESPACE = 'admin'
   static #SET_ENDPOINT = 'admin.setSiteConfig'
   static #ERROR_SET_WEB_SDK_CONFIG = 'Error setting web sdk configuration'
+  #credentials
 
   constructor(credentials, apiKey, dataCenter) {
-    this.userKey = credentials.userKey
-    this.secret = credentials.secret
+    this.#credentials = credentials
     this.originApiKey = apiKey
     this.originDataCenter = dataCenter
-    this.siteConfigurator = new SiteConfigurator(this.userKey, this.secret)
+    this.siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
   }
 
   async get() {
@@ -30,7 +30,7 @@ class WebSdk {
   }
 
   async set(apiKey, config, targetDataCenter) {
-    const url = UrlBuilder.buildUrl(WebSdk.#NAMESPACE, targetDataCenter, WebSdk.#SET_ENDPOINT)
+    const url = UrlBuilder.buildUrl(WebSdk.#NAMESPACE, targetDataCenter, WebSdk.#SET_ENDPOINT, this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#setWebSdkConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, WebSdk.#ERROR_SET_WEB_SDK_CONFIG)
     })
@@ -53,8 +53,8 @@ class WebSdk {
   #setWebSdkConfigParameters(apiKey, config) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
-    parameters.userKey = this.userKey
-    parameters.secret = this.secret
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.globalConf = config.globalConf
     parameters.context = JSON.stringify({ id: 'webSdk', targetApiKey: apiKey })
     return parameters

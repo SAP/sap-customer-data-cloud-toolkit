@@ -3,22 +3,22 @@
  * License: Apache-2.0
  */
 
-
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
 
 class SiteConfigurator {
-  static ERROR_MSG_CONFIG = 'Invalid ApiKey parameter'
+  static ERROR_MSG_CONFIG = 'Invalid ApiKey or data center parameter'
   static #NAMESPACE = 'admin'
 
-  constructor(userKey, secret) {
+  constructor(userKey, secret, gigyaConsole) {
     this.userKey = userKey
     this.secret = secret
+    this.gigyaConsole = gigyaConsole
   }
 
   async connect(parentApiKey, childApiKey, dataCenter) {
-    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getSetEndpoint())
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getSetEndpoint(), this.gigyaConsole)
     const body = this.#createRequestBody(parentApiKey, childApiKey)
     return client.post(url, body).catch(function (error) {
       return generateErrorResponse(error, SiteConfigurator.ERROR_MSG_CONFIG)
@@ -43,7 +43,7 @@ class SiteConfigurator {
   }
 
   async getSiteConfig(apiKey, dataCenter) {
-    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getGetEndpoint())
+    const url = UrlBuilder.buildUrl(SiteConfigurator.#NAMESPACE, dataCenter, SiteConfigurator.getGetEndpoint(), this.gigyaConsole)
 
     const response = await client.post(url, this.#siteConfigParameters(apiKey, this.userKey, this.secret)).catch(function (error) {
       //console.log(`error=${JSON.stringify(error)}`)

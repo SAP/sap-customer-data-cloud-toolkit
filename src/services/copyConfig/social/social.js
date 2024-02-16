@@ -15,16 +15,16 @@ class Social {
   static #SET_ENDPOINT = 'socialize.setProvidersConfig'
   static #ERROR_GET_SOCIAL_CONFIG = 'Error retrieving social configuration'
   static #ERROR_SET_SOCIAL_CONFIG = 'Error setting social configuration'
+  #credentials
 
   constructor(credentials, apiKey, dataCenter) {
-    this.userKey = credentials.userKey
-    this.secret = credentials.secret
+    this.#credentials = credentials
     this.originApiKey = apiKey
     this.originDataCenter = dataCenter
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Social.#NAMESPACE, this.originDataCenter, Social.#GET_ENDPOINT)
+    const url = UrlBuilder.buildUrl(Social.#NAMESPACE, this.originDataCenter, Social.#GET_ENDPOINT, this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#getSocialConfigParameters(this.originApiKey)).catch(function (error) {
       return generateErrorResponse(error, Social.#ERROR_GET_SOCIAL_CONFIG)
     })
@@ -32,7 +32,7 @@ class Social {
   }
 
   async set(apiKey, config, targetDataCenter) {
-    const url = UrlBuilder.buildUrl(Social.#NAMESPACE, targetDataCenter, Social.#SET_ENDPOINT)
+    const url = UrlBuilder.buildUrl(Social.#NAMESPACE, targetDataCenter, Social.#SET_ENDPOINT, this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#setSocialConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, Social.#ERROR_SET_SOCIAL_CONFIG)
     })
@@ -56,8 +56,8 @@ class Social {
   #getSocialConfigParameters(apiKey) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
-    parameters.userKey = this.userKey
-    parameters.secret = this.secret
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.includeSettings = true
     parameters.includeCapabilities = true
     parameters.includeSecretKeys = true
@@ -69,8 +69,8 @@ class Social {
   #setSocialConfigParameters(apiKey, config) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
-    parameters.userKey = this.userKey
-    parameters.secret = this.secret
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.settings = config.settings
     parameters.capabilities = config.capabilities
     parameters.providers = JSON.stringify(config.providers)

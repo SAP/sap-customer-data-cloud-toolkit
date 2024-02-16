@@ -41,7 +41,7 @@ export const readCredentialsFromAccountSettings = () => {
   try {
     navigateToAPICredentialsTab()
     const credetialsInputs = getCredentialsInputs()
-    return { userKey: getUserKeyInput(credetialsInputs), secretKey: getSecretKeyInput(credetialsInputs) }
+    return { userKey: getUserKeyInput(credetialsInputs), secretKey: getSecretKeyInput(credetialsInputs), gigyaConsole: window.location.hostname }
   } catch (error) {
     return error
   } finally {
