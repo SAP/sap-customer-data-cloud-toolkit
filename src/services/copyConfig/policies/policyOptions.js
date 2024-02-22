@@ -144,22 +144,32 @@ class PolicyOptions extends Options {
       return response
     }
     if (preferencesCenter || passwordReset) {
-      this.updateBranches('preferencesCenter', redirectURL)
-      this.updateBranches('passwordReset', resetUrl)
+      this.updateBranches('preferencesCenter', redirectURL, response, 'redirectURL')
+      this.updateBranches('passwordReset', resetUrl, response, 'resetURL')
     }
-    const preferencesCenterObject = this.options.branches.find((obj) => obj.id === 'ppreferencesCenter')
-    const requiredUrl = preferencesCenterObject.branches.filter((obj) => obj.name === 'Include Links')
-    this.removeLink('Include Links', requiredUrl.name)
-    // this.removeLink('Include Links', requiredUrl.name)
+    // const preferencesCenterObject = this.options.branches.find((obj) => obj.id === 'ppreferencesCenter')
+    // const passWordResetObject = this.options.branches.find((obj) => obj.id === 'ppasswordReset')
 
+    // const requiredUrl = passWordResetObject.branches.filter((obj) => obj.name === 'Include Links')
+    // this.removeInfo('Include Links', passWordResetObject)
+    // this.removeInfo('Include Links', preferencesCenterObject)
+    // this.removeInfo(PolicyOptions.#security, this.options)
     return response
   }
-  updateBranches(name, url) {
+  deleteLinkFromResponse(response, featureName, urlName) {
+    console.log('asdasdasd', response[featureName].urlName)
+    delete response[featureName][urlName]
+  }
+  updateBranches(name, url, response, urlName) {
     const collection = this.options.branches.find((collection) => collection.name === name)
     const optionName = 'Include Links'
     if (collection) {
+      console.log('collection', collection.name)
       collection.branches = []
       this.#addLink(url, optionName, collection.branches)
+      if (collection.branches.length > 0) {
+        this.deleteLinkFromResponse(response, name, urlName)
+      }
     }
   }
   #addLink(url, name, branches) {
@@ -172,15 +182,6 @@ class PolicyOptions extends Options {
       })
     }
   }
-  // #createRedirectInfo(set, collectionInfo) {
-  //   this.options.branches.push({
-  //     id: collectionName,
-  //     name: collectionName,
-  //     formatName: false,
-  //     value: true,
-  //     branches: [],
-  //   })
-  // }
   removeAccountOptions(info) {
     return this.removeInfo(PolicyOptions.#accountOptions, info)
   }
@@ -230,8 +231,12 @@ class PolicyOptions extends Options {
     return this.removeInfo(PolicyOptions.#webSdk, info)
   }
   removePreferencesCenterLink(info) {
-    console.log('preferences Center', PolicyOptions.#preferencesCenter)
-    return this.removeInfo('Include Links', info)
+    const preferencesCenterObject = info.branches.find((obj) => obj.id === 'ppreferencesCenter')
+    return this.removeInfo('Include Links', preferencesCenterObject)
+  }
+  removePasswordResetLink(info) {
+    const passWordResetObject = info.branches.find((obj) => obj.id === 'ppasswordReset')
+    return this.removeInfo('Include Links', passWordResetObject)
   }
 }
 

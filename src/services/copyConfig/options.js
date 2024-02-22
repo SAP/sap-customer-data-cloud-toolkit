@@ -55,10 +55,11 @@ class Options {
   }
 
   removeInfo(name, info) {
-    console.log('info branches', info.branches.filter(name))
     return info.branches.filter(this.#remove(name))
   }
-
+  removeLink(name, info) {
+    info.branches.filter((obj) => obj.name === 'Include Links')
+  }
   #remove(name) {
     return function (value, index, array) {
       if (value.name === name) {

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
@@ -124,6 +123,7 @@ class Policy {
   #removeUnecessaryFields(response, options) {
     if (options.branches === undefined) {
       this.#deleteOptions(response, options.options)
+      this.#removeFieldIfBranchExists(options.options)
       return response
     } else {
       this.#deleteOptions(response, options)
@@ -131,6 +131,17 @@ class Policy {
     }
   }
 
+  #removeFieldIfBranchExists(options, response) {
+    for (let key in options.branches) {
+      console.log('keyasdas', key)
+      console.log('keyasdas', options.branches[key])
+      if (options.branches[key].branches) {
+        console.log('inside', response[options.branches[key].name])
+      }
+      // if (Array.isArray(options.branches[key])) {
+      // }
+    }
+  }
   #cleanResponse(response) {
     delete response['rba']
     if (response['security']) {
