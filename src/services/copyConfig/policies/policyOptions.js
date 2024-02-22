@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class PolicyOptions extends Options {
@@ -136,6 +135,52 @@ class PolicyOptions extends Options {
   getConfiguration() {
     return this.#policy
   }
+  addUrl(response) {
+    const { preferencesCenter, passwordReset } = response
+    const redirectURL = preferencesCenter.redirectURL
+    const resetUrl = passwordReset.resetURL
+
+    if (!redirectURL || !resetUrl) {
+      return response
+    }
+    if (preferencesCenter || passwordReset) {
+      this.updateBranches('preferencesCenter', redirectURL)
+      this.updateBranches('passwordReset', resetUrl)
+    }
+    const preferencesCenterObject = this.options.branches.find((obj) => obj.id === 'ppreferencesCenter')
+    const requiredUrl = preferencesCenterObject.branches.filter((obj) => obj.name === 'Include Links')
+    this.removeLink('Include Links', requiredUrl.name)
+    // this.removeLink('Include Links', requiredUrl.name)
+
+    return response
+  }
+  updateBranches(name, url) {
+    const collection = this.options.branches.find((collection) => collection.name === name)
+    const optionName = 'Include Links'
+    if (collection) {
+      collection.branches = []
+      this.#addLink(url, optionName, collection.branches)
+    }
+  }
+  #addLink(url, name, branches) {
+    if (url) {
+      branches.push({
+        id: url,
+        name: name,
+        formatName: false,
+        value: true,
+      })
+    }
+  }
+  // #createRedirectInfo(set, collectionInfo) {
+  //   this.options.branches.push({
+  //     id: collectionName,
+  //     name: collectionName,
+  //     formatName: false,
+  //     value: true,
+  //     branches: [],
+  //   })
+  // }
   removeAccountOptions(info) {
     return this.removeInfo(PolicyOptions.#accountOptions, info)
   }
@@ -183,6 +228,10 @@ class PolicyOptions extends Options {
   }
   removeWebSdk(info) {
     return this.removeInfo(PolicyOptions.#webSdk, info)
+  }
+  removePreferencesCenterLink(info) {
+    console.log('preferences Center', PolicyOptions.#preferencesCenter)
+    return this.removeInfo('Include Links', info)
   }
 }
 

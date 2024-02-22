@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class WebhookOptions extends Options {
@@ -36,6 +35,20 @@ class WebhookOptions extends Options {
         name: webhook.name,
         value: true,
         formatName: false,
+      })
+      this.#addLink(webhook.url, webhook.name)
+    }
+  }
+  #addLink(url, name) {
+    const collection = this.options.branches.find((collection) => collection.name === name)
+    const optionName = 'Include Links'
+    if (collection) {
+      collection.branches = []
+      collection.branches.push({
+        id: url,
+        name: optionName,
+        formatName: false,
+        value: true,
       })
     }
   }

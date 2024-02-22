@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
@@ -25,6 +24,31 @@ class EmailOptions extends Options {
     return this.#emailConfiguration
   }
 
+  addUrl(response) {
+    const passwordUrl = response.passwordReset.resetURL
+    const preferences = response.preferencesCenter.redirectURL
+    this.updateBranches('PasswordReset', passwordUrl)
+    this.updateBranches('LitePreferencesCenter', preferences)
+  }
+
+  updateBranches(name, url) {
+    const collection = this.options.branches.find((collection) => collection.name === name)
+    const optionName = 'Include Links'
+    if (collection) {
+      collection.branches = []
+      this.#addLink(url, optionName, collection.branches)
+    }
+  }
+  #addLink(url, linkName, branches) {
+    if (url) {
+      branches.push({
+        id: url,
+        name: linkName,
+        formatName: false,
+        value: true,
+      })
+    }
+  }
   addEmails(response) {
     const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
     if (response.magicLink) {

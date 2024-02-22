@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Schema from '../schema/schema.js'
 import Social from '../social/social.js'
 import SmsConfiguration from '../sms/smsConfiguration.js'
@@ -150,6 +149,7 @@ class Info {
     const response = await screenSetOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       screenSetOptions.addCollection(response)
+      console.log('screenSetOptions', screenSetOptions)
       const info = JSON.parse(JSON.stringify(screenSetOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
@@ -179,6 +179,7 @@ class Info {
 
     if (response.errorCode === 0) {
       emailOptions.addEmails(response)
+      emailOptions.addUrl(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
@@ -205,8 +206,9 @@ class Info {
   async #getPolicies() {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
-
     if (response.errorCode === 0) {
+      policyOptions.addUrl(response)
+      console.log('policyOptions', policyOptions)
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
       Info.#removeUnsupportedPolicies(response, info, policyOptions)
       return Promise.resolve(info)
@@ -215,7 +217,7 @@ class Info {
       return Promise.reject([response])
     }
   }
-
+  //remover o link para nao aparecer
   static #removeUnsupportedPolicies(response, info, policyOptions) {
     if (!response.accountOptions) {
       policyOptions.removeAccountOptions(info)

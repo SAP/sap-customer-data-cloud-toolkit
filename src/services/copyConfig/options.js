@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 class Options {
   constructor(options) {
     this.options = options
@@ -56,6 +55,7 @@ class Options {
   }
 
   removeInfo(name, info) {
+    console.log('info branches', info.branches.filter(name))
     return info.branches.filter(this.#remove(name))
   }
 

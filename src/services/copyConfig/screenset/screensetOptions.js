@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class ScreenSetOptions extends Options {
@@ -27,6 +26,8 @@ class ScreenSetOptions extends Options {
   addCollection(response) {
     const screenSets = response.screenSets
     this.options.branches = []
+    console.log('screenSets', screenSets)
+
     if (screenSets.length === 0) {
       return
     }
@@ -34,6 +35,7 @@ class ScreenSetOptions extends Options {
       const collectionName = this.#getCollectionName(set)
       this.#addScreenSetInfo(set, collectionName)
     }
+    console.log('response', response)
   }
 
   #getCollectionName(set) {
@@ -42,8 +44,10 @@ class ScreenSetOptions extends Options {
   }
 
   #addScreenSetInfo(set, collectionName) {
+    console.log('options.branches', this.options.branches)
     const collectionInfo = this.options.branches.find((collection) => collection.id === collectionName)
     if (collectionInfo) {
+      console.log('collectionInfo', collectionInfo.branches)
       this.#createScreenSetInfo(set, collectionInfo)
     } else {
       this.#createScreenSetCollectionInfo(set, collectionName)
