@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export function removePropertyFromObjectCascading(object, property) {
   const deletedProperties = []
   const propertiesPath = buildPropertiesPath(object)
@@ -87,4 +86,13 @@ export function stringToJson(obj, property) {
       obj[property] = JSON.parse(obj[property])
     }
   }
+}
+
+export function removeAllPropertiesFromObjectExceptSome(object, propertiesToKeep) {
+  Object.keys(object).forEach((key) => {
+    if (!propertiesToKeep.includes(key)) {
+      delete object[key]
+    }
+  })
+  return object
 }

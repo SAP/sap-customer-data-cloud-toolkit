@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info.js'
 import * as CommonTestData from '../../servicesDataTest.js'
 import { getInfoExpectedResponse } from './dataTest.js'
@@ -20,6 +19,7 @@ import { channelsExpectedResponse, topicsExpectedResponse } from '../communicati
 import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
 
 jest.mock('axios')
 
@@ -106,6 +106,9 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const emailsIndex = 6
@@ -129,6 +132,9 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     expectedResponse[6].branches.splice(templateIndex, 1)

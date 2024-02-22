@@ -67,6 +67,8 @@ const mapSpecialCheckboxId = (checkBoxId) => {
   const COMMUNICATION_CHECKBOX_ID = 'communicationTopics'
   const CONSENT_PREFIX = 'consent'
   const CONSENT_CHECKBOX_ID = 'consent'
+  const RBA_PREFIX = 'rba.'
+  const RBA_CHECKBOX_ID = 'rba'
   let mappedCheckboxId = checkBoxId
 
   if (checkBoxId.startsWith(COMMUNICATION_PREFIX)) {
@@ -75,6 +77,10 @@ const mapSpecialCheckboxId = (checkBoxId) => {
 
   if (checkBoxId.startsWith(CONSENT_PREFIX)) {
     mappedCheckboxId = CONSENT_CHECKBOX_ID
+  }
+
+  if (checkBoxId.startsWith(RBA_PREFIX)) {
+    mappedCheckboxId = RBA_CHECKBOX_ID
   }
   return mappedCheckboxId
 }
