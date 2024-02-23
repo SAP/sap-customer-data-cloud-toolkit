@@ -144,8 +144,8 @@ class PolicyOptions extends Options {
       return response
     }
     if (preferencesCenter || passwordReset) {
-      this.updateBranches('preferencesCenter', redirectURL, response, 'redirectURL')
-      this.updateBranches('passwordReset', resetUrl, response, 'resetURL')
+      this.updateBranches('preferencesCenter', redirectURL, 'Lite Preferences Center', 'redirectURL')
+      this.updateBranches('passwordReset', resetUrl, 'Reset Page', 'resetURL')
     }
     // const preferencesCenterObject = this.options.branches.find((obj) => obj.id === 'ppreferencesCenter')
     // const passWordResetObject = this.options.branches.find((obj) => obj.id === 'ppasswordReset')
@@ -156,20 +156,14 @@ class PolicyOptions extends Options {
     // this.removeInfo(PolicyOptions.#security, this.options)
     return response
   }
-  deleteLinkFromResponse(response, featureName, urlName) {
-    console.log('asdasdasd', response[featureName].urlName)
-    delete response[featureName][urlName]
-  }
-  updateBranches(name, url, response, urlName) {
+
+  updateBranches(name, url, checkBoxName) {
     const collection = this.options.branches.find((collection) => collection.name === name)
-    const optionName = 'Include Links'
+    const optionName = `Include ${checkBoxName} URL`
     if (collection) {
       console.log('collection', collection.name)
       collection.branches = []
       this.#addLink(url, optionName, collection.branches)
-      if (collection.branches.length > 0) {
-        this.deleteLinkFromResponse(response, name, urlName)
-      }
     }
   }
   #addLink(url, name, branches) {

@@ -55,6 +55,17 @@ class Policy {
 
   async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
     this.#cleanResponse(response)
+    console.log(
+      'asiodjasod',
+      options.options.branches.filter((obj) => Array.isArray(obj.branches)),
+    )
+    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))
+    this.#cleanUrl(collection, response)
+    console.log('asiodjasod', collection.value)
+
+    if (!options.options.branches[7].branches[0].value) {
+      removePropertyFromObjectCascading(response.data.passwordReset, 'resetURL')
+    }
     const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {
@@ -63,7 +74,25 @@ class Policy {
       return this.#copyPoliciesToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, filteredResponse)
     }
   }
-
+  #cleanUrl(options, response) {
+    for (let branch of options) {
+      let filter = branch.branches.map((obj) => obj.value)
+      if (filter[0] === true) {
+        //  delete response[]
+        this.cleanLink(response, branch)
+        console.log('in', filter)
+      }
+    }
+  }
+  deleteLink(response, property, branch) {
+    console.log('respoajsda')
+    delete response[branch][property]
+  }
+  cleanLink(response, branch) {
+    if (branch.name === 'passwordReset') {
+      this.deleteLink(response, 'resetURL', branch.name)
+    }
+  }
   async #copyPoliciesToChildSite(destinationSite, dataCenter, response) {
     this.#prepareAccountOptionsToChildSite(response)
     this.#prepareRegistrationToChildSite(response)
