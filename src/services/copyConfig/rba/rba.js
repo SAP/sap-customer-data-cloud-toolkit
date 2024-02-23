@@ -7,8 +7,7 @@ export default class Rba {
   static ACCOUNT_TAKEOVER_PROTECTION = 'accountTakeoverProtection'
   static UNKNOWN_LOCATION_NOTIFICATION = 'unknownLocationNotification'
   static UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID = 'rba.unknownLocationNotification'
-  static RBA_RULES = 'rbaRules'
-  static SETTINGS = 'settings'
+  static RULES = 'rules'
   #credentials
   #site
   #dataCenter
@@ -35,6 +34,10 @@ export default class Rba {
     return responses
   }
 
+  #isChildSite(siteInfo, siteApiKey) {
+    return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
+  }
+
   async #copyRba(destinationSite, destinationSiteConfiguration, payloads, options) {
     const promises = []
     if (options.getOptionValue(Rba.ACCOUNT_TAKEOVER_PROTECTION)) {
@@ -43,7 +46,7 @@ export default class Rba {
     if (options.getOptionValue(Rba.UNKNOWN_LOCATION_NOTIFICATION)) {
       promises.push(this.setUnknownLocationNotification(destinationSite, destinationSiteConfiguration, payloads[1]))
     }
-    if (options.getOptionValue(Rba.RBA_RULES)) {
+    if (options.getOptionValue(Rba.RULES)) {
       promises.push(this.setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payloads[2]))
     }
     return await Promise.all(promises)
