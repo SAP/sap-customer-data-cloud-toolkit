@@ -2,6 +2,10 @@ import RbaPolicy from './policy.js'
 import Policies from '../policies/policies.js'
 import { removeAllPropertiesFromObjectExceptSome, stringToJson } from '../objectHelper.js'
 import RiskAssessment from './riskAssessment.js'
+import {
+  ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
+  ERROR_SEVERITY_WARNING
+} from "../../errors/generateErrorResponse";
 
 export default class Rba {
   static ACCOUNT_TAKEOVER_PROTECTION = 'accountTakeoverProtection'
@@ -26,6 +30,18 @@ export default class Rba {
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
+    if(this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
+      return [{
+        errorCode: ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
+        errorDetails: 'Cannot change RBA data on child site.',
+        errorMessage: 'Cannot copy RBA data to the destination site',
+        statusCode: 412,
+        statusReason: 'Precondition Failed',
+        time: Date.now(),
+        severity: ERROR_SEVERITY_WARNING,
+        context: { targetApiKey: destinationSite, id: 'rba.' },
+      }]
+    }
     responses = await this.get()
     if (responses.every((r) => r.errorCode === 0)) {
       responses = (await this.#copyRba(destinationSite, destinationSiteConfiguration, responses, options)).flat()

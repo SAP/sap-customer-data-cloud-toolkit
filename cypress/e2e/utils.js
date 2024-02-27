@@ -38,7 +38,15 @@ import {
   mockedSetDataflowResponse,
   mockedCreateDataflowResponse,
   mockedSearchDataflowsEmptyResponse,
+  mockedSetRiskAssessmentResponse,
+  mockedSetUnknownLocationNotificationResponse,
+  mockedSetRbaPolicyResponse,
 } from './dataTest'
+import {
+  expectedGetRbaPolicyResponseOk,
+  expectedGetRiskAssessmentResponseOk,
+  expectedGetUnknownLocationNotificationResponseOk
+} from "../../src/services/copyConfig/rba/dataTest";
 
 export function startUp(pageName) {
   cy.visit('', {
@@ -162,6 +170,9 @@ export function mockGetConfigurationRequests() {
   mockResponse(mockedGetExtensionExpectedResponse, 'POST', 'accounts.extensions.list')
   mockResponse(mockedCreateExtensionExpectedResponse, 'POST', 'accounts.extensions.create')
   mockSearchResponse(mockedSearchDataflowsResponse, 'POST', 'idx.search')
+  mockResponse(expectedGetRiskAssessmentResponseOk, 'POST', 'accounts.rba.riskAssessment.getConfig')
+  mockResponse(expectedGetUnknownLocationNotificationResponseOk, 'POST', 'accounts.getPolicies')
+  mockResponse(expectedGetRbaPolicyResponseOk, 'POST', 'accounts.rba.getPolicy')
 }
 
 export function mockSetConfigurationRequests() {
@@ -176,6 +187,9 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetExtensionResponse, 'POST', 'accounts.extensions.modify')
   mockResponse(mockedSetDataflowResponse, 'POST', 'idx.setDataflow')
   mockSearchResponse(mockedCreateDataflowResponse, 'POST', 'idx.createDataflow')
+  mockResponse(mockedSetRiskAssessmentResponse, 'POST', 'accounts.rba.riskAssessment.setConfig')
+  mockResponse(mockedSetUnknownLocationNotificationResponse, 'POST', 'accounts.setPolicies')
+  mockResponse(mockedSetRbaPolicyResponse, 'POST', 'accounts.rba.setPolicy')
 }
 
 export function mockGetUserSitesRequest() {

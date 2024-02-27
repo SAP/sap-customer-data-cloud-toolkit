@@ -31,7 +31,7 @@ export default class RbaOptions extends Options {
           id: RbaOptions.RULES,
           name: RbaOptions.RULES,
           value: true,
-        }
+        },
       ],
     })
     this.#rba = rba
@@ -41,7 +41,7 @@ export default class RbaOptions extends Options {
     return this.#rba
   }
 
-  removeRbaRules(info) {
+  removeRules(info) {
     return this.removeInfo(RbaOptions.RULES, info)
   }
 }

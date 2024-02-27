@@ -313,7 +313,7 @@ class Info {
     if (responses.every((r) => r.errorCode === 0)) {
       const info = JSON.parse(JSON.stringify(rbaOptions.getOptionsDisabled()))
       if (!Rba.hasRules(responses[2])) {
-        rbaOptions.removeRbaRules(info)
+        rbaOptions.removeRules(info)
       }
       return Promise.resolve(info)
     } else {
