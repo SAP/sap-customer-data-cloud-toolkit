@@ -55,17 +55,9 @@ class Policy {
 
   async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
     this.#cleanResponse(response)
-    console.log(
-      'asiodjasod',
-      options.options.branches.filter((obj) => Array.isArray(obj.branches)),
-    )
+
     const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))
     this.#cleanUrl(collection, response)
-    console.log('asiodjasod', collection.value)
-
-    if (!options.options.branches[7].branches[0].value) {
-      removePropertyFromObjectCascading(response.data.passwordReset, 'resetURL')
-    }
     const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {
@@ -77,20 +69,21 @@ class Policy {
   #cleanUrl(options, response) {
     for (let branch of options) {
       let filter = branch.branches.map((obj) => obj.value)
-      if (filter[0] === true) {
-        //  delete response[]
+      if (!filter[0]) {
         this.cleanLink(response, branch)
         console.log('in', filter)
       }
     }
   }
   deleteLink(response, property, branch) {
-    console.log('respoajsda')
     delete response[branch][property]
   }
   cleanLink(response, branch) {
     if (branch.name === 'passwordReset') {
       this.deleteLink(response, 'resetURL', branch.name)
+    }
+    if (branch.name === 'preferenceCenter') {
+      this.deleteLink(response, 'redirectURL', branch.name)
     }
   }
   async #copyPoliciesToChildSite(destinationSite, dataCenter, response) {
@@ -152,7 +145,6 @@ class Policy {
   #removeUnecessaryFields(response, options) {
     if (options.branches === undefined) {
       this.#deleteOptions(response, options.options)
-      this.#removeFieldIfBranchExists(options.options)
       return response
     } else {
       this.#deleteOptions(response, options)
@@ -160,17 +152,6 @@ class Policy {
     }
   }
 
-  #removeFieldIfBranchExists(options, response) {
-    for (let key in options.branches) {
-      console.log('keyasdas', key)
-      console.log('keyasdas', options.branches[key])
-      if (options.branches[key].branches) {
-        console.log('inside', response[options.branches[key].name])
-      }
-      // if (Array.isArray(options.branches[key])) {
-      // }
-    }
-  }
   #cleanResponse(response) {
     delete response['rba']
     if (response['security']) {

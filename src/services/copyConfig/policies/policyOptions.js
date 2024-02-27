@@ -147,13 +147,7 @@ class PolicyOptions extends Options {
       this.updateBranches('preferencesCenter', redirectURL, 'Lite Preferences Center', 'redirectURL')
       this.updateBranches('passwordReset', resetUrl, 'Reset Page', 'resetURL')
     }
-    // const preferencesCenterObject = this.options.branches.find((obj) => obj.id === 'ppreferencesCenter')
-    // const passWordResetObject = this.options.branches.find((obj) => obj.id === 'ppasswordReset')
 
-    // const requiredUrl = passWordResetObject.branches.filter((obj) => obj.name === 'Include Links')
-    // this.removeInfo('Include Links', passWordResetObject)
-    // this.removeInfo('Include Links', preferencesCenterObject)
-    // this.removeInfo(PolicyOptions.#security, this.options)
     return response
   }
 
@@ -169,10 +163,10 @@ class PolicyOptions extends Options {
   #addLink(url, name, branches) {
     if (url) {
       branches.push({
-        id: url,
+        id: `${name}-Link`,
         name: name,
         formatName: false,
-        value: true,
+        value: false,
       })
     }
   }

@@ -36,19 +36,19 @@ class WebhookOptions extends Options {
         value: true,
         formatName: false,
       })
-      this.#addLink(webhook.url, webhook.name)
+      this.#addLink(webhook.name)
     }
   }
-  #addLink(url, name) {
+  #addLink(name) {
     const collection = this.options.branches.find((collection) => collection.name === name)
-    const optionName = 'Include Links'
+    const optionName = 'Include Notification URL'
     if (collection) {
       collection.branches = []
       collection.branches.push({
-        id: url,
+        id: `${name}-Email-Link`,
         name: optionName,
         formatName: false,
-        value: true,
+        value: false,
       })
     }
   }

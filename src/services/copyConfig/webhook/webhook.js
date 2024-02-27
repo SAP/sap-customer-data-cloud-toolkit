@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -87,11 +86,30 @@ class Webhook {
   async copyWebhooks(destinationSite, dataCenter, response, options) {
     const promises = []
     for (const webhook of options.getOptions().branches) {
+      this.#cleanUrl(webhook, response.webhooks)
       if (webhook.value) {
         promises.push(this.#copyWebhook(destinationSite, dataCenter, webhook.name, response))
       }
     }
     return Promise.all(promises)
+  }
+  #cleanUrl(options, response) {
+    let filter = options.branches.find((obj) => obj)
+    if (!filter.value) {
+      this.cleanLink(response, filter)
+      console.log('in', filter)
+    }
+  }
+  deleteLink(response, property, branch) {
+    delete response[branch][property]
+  }
+  cleanLink(response, branch) {
+    if (branch.id === '_cdc-toolbox-source-templates_') {
+      this.deleteLink(response, 'resetURL', branch.name)
+    }
+    if (branch.id === 'preferenceCenter') {
+      this.deleteLink(response, 'redirectURL', branch.name)
+    }
   }
 
   async #copyWebhook(destinationSite, dataCenter, name, response) {

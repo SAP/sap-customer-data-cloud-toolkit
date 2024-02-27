@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class ExtensionOptions extends Options {
@@ -36,6 +35,22 @@ class ExtensionOptions extends Options {
         name: extension.extensionPoint,
         value: true,
         formatName: false,
+      })
+      if (extension.extensionFuncUrl) {
+        this.#addLink(extension.extensionFuncUrl, extension.extensionPoint)
+      }
+    }
+  }
+  #addLink(url, name) {
+    const collection = this.options.branches.find((collection) => collection.name === name)
+    const optionName = 'Include Extension URL'
+    if (collection) {
+      collection.branches = []
+      collection.branches.push({
+        id: url,
+        name: optionName,
+        formatName: false,
+        value: false,
       })
     }
   }

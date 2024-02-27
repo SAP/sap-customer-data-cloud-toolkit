@@ -27,14 +27,15 @@ class EmailOptions extends Options {
   addUrl(response) {
     const passwordUrl = response.passwordReset.resetURL
     const preferences = response.preferencesCenter.redirectURL
-    this.updateBranches('PasswordReset', passwordUrl)
-    this.updateBranches('LitePreferencesCenter', preferences)
+    this.updateBranches('preferencesCenter', preferences, 'Lite Preferences Center')
+    this.updateBranches('passwordReset', passwordUrl, 'Reset Page')
   }
 
-  updateBranches(name, url) {
-    const collection = this.options.branches.find((collection) => collection.name === name)
-    const optionName = 'Include Links'
+  updateBranches(name, url, checkBoxName) {
+    const collection = this.options.branches.find((collection) => collection.id === name)
+    const optionName = `Include ${checkBoxName} URL`
     if (collection) {
+      console.log('collection', collection.name)
       collection.branches = []
       this.#addLink(url, optionName, collection.branches)
     }
@@ -42,10 +43,10 @@ class EmailOptions extends Options {
   #addLink(url, linkName, branches) {
     if (url) {
       branches.push({
-        id: url,
+        id: `${linkName}-Email-Link`,
         name: linkName,
         formatName: false,
-        value: true,
+        value: false,
       })
     }
   }

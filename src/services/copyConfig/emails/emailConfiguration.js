@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Email from '../../emails/email.js'
 import { stringToJson } from '../objectHelper.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
@@ -47,21 +46,44 @@ class EmailConfiguration {
     if (response.errorCode === 0) {
       response = await this.copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options)
     }
+
     stringToJson(response, 'context')
     return Array.isArray(response) ? response : [response]
   }
-
+  #cleanUrl(options, response) {
+    for (let branch of options) {
+      let filter = branch.branches.map((obj) => obj.value)
+      if (!filter[0]) {
+        this.cleanLink(response, branch)
+        console.log('in', filter)
+      }
+    }
+  }
+  deleteLink(response, property, branch) {
+    delete response[branch][property]
+  }
+  cleanLink(response, branch) {
+    if (branch.id === 'passwordReset') {
+      this.deleteLink(response, 'resetURL', branch.id)
+    }
+    if (branch.id === 'preferencesCenter') {
+      this.deleteLink(response, 'redirectURL', branch.id)
+    }
+  }
   getEmail() {
     return this.#email
   }
 
   async copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
+    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))
+    this.#cleanUrl(collection, response)
     for (const templateInfo of options.getOptions().branches) {
       if (templateInfo.value) {
         promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, destinationSiteConfiguration, response))
       }
     }
+
     return Promise.all(promises)
   }
 
