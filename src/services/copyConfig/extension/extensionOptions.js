@@ -37,17 +37,17 @@ class ExtensionOptions extends Options {
         formatName: false,
       })
       if (extension.extensionFuncUrl) {
-        this.#addLink(extension.extensionFuncUrl, extension.extensionPoint)
+        this.#addLink(extension.extensionPoint)
       }
     }
   }
-  #addLink(url, name) {
+  #addLink(name) {
     const collection = this.options.branches.find((collection) => collection.name === name)
     const optionName = 'Include Extension URL'
     if (collection) {
       collection.branches = []
       collection.branches.push({
-        id: url,
+        id: `${name}-Extension-Link`,
         name: optionName,
         formatName: false,
         value: false,

@@ -63,7 +63,9 @@ class Webhook {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters.url = body.url
+    if (body.url) {
+      parameters.url = body.url
+    }
     parameters.events = JSON.stringify(body.events)
     parameters.name = body.name
     parameters.active = body.active
@@ -96,19 +98,18 @@ class Webhook {
   #cleanUrl(options, response) {
     let filter = options.branches.find((obj) => obj)
     if (!filter.value) {
-      this.cleanLink(response, filter)
+      this.cleanLink(response, options)
       console.log('in', filter)
     }
   }
-  deleteLink(response, property, branch) {
-    delete response[branch][property]
+  deleteLink(response) {
+    delete response.url
   }
   cleanLink(response, branch) {
-    if (branch.id === '_cdc-toolbox-source-templates_') {
-      this.deleteLink(response, 'resetURL', branch.name)
-    }
-    if (branch.id === 'preferenceCenter') {
-      this.deleteLink(response, 'redirectURL', branch.name)
+    for (const res of response) {
+      if (res.name === branch.id) {
+        this.deleteLink(res)
+      }
     }
   }
 
