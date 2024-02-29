@@ -13,14 +13,15 @@ class Site {
   static #ERROR_MSG_DELETE = 'Error deleting site'
   static #NAMESPACE = 'admin'
 
-  constructor(partnerId, userKey, secret) {
+  constructor(partnerId, userKey, secret, gigyaConsole) {
     this.partnerId = partnerId
     this.userKey = userKey
     this.secret = secret
+    this.gigyaConsole = gigyaConsole
   }
 
   async create(body) {
-    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, body.dataCenter, Site.getCreateEndpoint())
+    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, body.dataCenter, Site.getCreateEndpoint(), this.gigyaConsole)
     const bodyWithCredentials = this.#addCredentials(body)
     return client.post(url, bodyWithCredentials).catch(function (error) {
       return generateErrorResponse(error, Site.#ERROR_MSG_CREATE)
@@ -44,7 +45,7 @@ class Site {
   }
 
   async delete(site, dataCenter) {
-    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, dataCenter, Site.getDeleteEndpoint())
+    const url = UrlBuilder.buildUrl(Site.#NAMESPACE, dataCenter, Site.getDeleteEndpoint(), this.gigyaConsole)
 
     // GET TOKEN
     const getDeleteTokenRes = await client.post(url, this.#deleteSiteParameters(site)).catch(function (error) {

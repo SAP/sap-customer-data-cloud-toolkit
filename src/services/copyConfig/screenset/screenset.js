@@ -24,7 +24,7 @@ class ScreenSet {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, this.#dataCenter, ScreenSet.getGetScreenSetEndpoint())
+    const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, this.#dataCenter, ScreenSet.getGetScreenSetEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getScreenSetParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_GET_CONFIG)
     })
@@ -33,7 +33,7 @@ class ScreenSet {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, dataCenter, ScreenSet.getSetScreenSetEndpoint())
+    const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, dataCenter, ScreenSet.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_SET_CONFIG)
     })

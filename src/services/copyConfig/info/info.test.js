@@ -36,6 +36,7 @@ import { channelsExpectedResponse, topicsExpectedResponse } from '../communicati
 import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
 
 jest.mock('axios')
 
@@ -58,8 +59,10 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
-
     const response = await info.get()
     const expectedResponse = getInfoExpectedResponse(false)
 
@@ -101,6 +104,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -124,6 +130,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
 
     const response = await info.get()
@@ -149,6 +158,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -171,6 +183,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -195,6 +210,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -219,6 +237,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -251,6 +272,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
 
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -275,6 +299,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))

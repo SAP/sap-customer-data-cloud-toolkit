@@ -15,16 +15,16 @@ class Policy {
   static #SET_ENDPOINT = 'accounts.setPolicies'
   static #ERROR_GET_POLICY_CONFIG = 'Error retrieving policy configuration'
   static #ERROR_SET_POLICY_CONFIG = 'Error setting policy configuration'
+  #credentials
 
   constructor(credentials, apiKey, dataCenter) {
-    this.userKey = credentials.userKey
-    this.secret = credentials.secret
+    this.#credentials = credentials
     this.originApiKey = apiKey
     this.originDataCenter = dataCenter
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, this.originDataCenter, Policy.#GET_ENDPOINT)
+    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, this.originDataCenter, Policy.#GET_ENDPOINT, this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#getPolicyConfigParameters(this.originApiKey)).catch(function (error) {
       return generateErrorResponse(error, Policy.#ERROR_GET_POLICY_CONFIG)
     })
@@ -33,7 +33,7 @@ class Policy {
   }
 
   async set(apiKey, config, targetDataCenter) {
-    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, targetDataCenter, Policy.#SET_ENDPOINT)
+    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, targetDataCenter, Policy.#SET_ENDPOINT, this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#setPolicyConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, Policy.#ERROR_SET_POLICY_CONFIG)
     })
@@ -143,8 +143,8 @@ class Policy {
   #getPolicyConfigParameters(apiKey) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
-    parameters.userKey = this.userKey
-    parameters.secret = this.secret
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     parameters.format = 'json'
     return parameters
   }
@@ -152,8 +152,8 @@ class Policy {
   #setPolicyConfigParameters(apiKey, config) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
-    parameters.userKey = this.userKey
-    parameters.secret = this.secret
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
     if (config.accountOptions) {
       parameters.accountOptions = JSON.stringify(config.accountOptions)
       parameters.context = JSON.stringify({ id: 'accountOptions', targetApiKey: apiKey })

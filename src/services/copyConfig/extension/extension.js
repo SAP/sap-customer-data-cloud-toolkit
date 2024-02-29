@@ -25,7 +25,7 @@ class Extension {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, this.#dataCenter, Extension.#getGetExtensionEndpoint())
+    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, this.#dataCenter, Extension.#getGetExtensionEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getExtensionParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, Extension.#ERROR_MSG_GET_CONFIG)
     })
@@ -33,7 +33,7 @@ class Extension {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getSetExtensionEndpoint())
+    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getSetExtensionEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setExtensionParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Extension.#ERROR_MSG_SET_CONFIG)
     })
@@ -41,7 +41,7 @@ class Extension {
   }
 
   async create(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getCreateExtensionEndpoint())
+    const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getCreateExtensionEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#createExtensionParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Extension.#ERROR_MSG_CREATE_CONFIG)
     })

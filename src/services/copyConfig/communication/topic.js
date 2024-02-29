@@ -23,7 +23,7 @@ class Topic {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Topic.#NAMESPACE, this.#dataCenter, Topic.getGetTopicEndpoint())
+    const url = UrlBuilder.buildUrl(Topic.#NAMESPACE, this.#dataCenter, Topic.getGetTopicEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getTopicParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, Topic.#ERROR_MSG_GET_CONFIG)
     })
@@ -31,7 +31,7 @@ class Topic {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Topic.#NAMESPACE, dataCenter, Topic.getSetTopicEndpoint())
+    const url = UrlBuilder.buildUrl(Topic.#NAMESPACE, dataCenter, Topic.getSetTopicEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setTopicParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Topic.#ERROR_MSG_SET_CONFIG)
     })

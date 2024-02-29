@@ -31,7 +31,7 @@ class Dataflow {
 
   async set(site, dataCenter, body) {
     const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getSetDataflowEndpoint() : Dataflow.#getSetDataflowDraftEndpoint()
-    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint)
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
     })
@@ -40,7 +40,7 @@ class Dataflow {
 
   async create(site, dataCenter, body) {
     const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getCreateDataflowEndpoint() : Dataflow.#getCreateDataflowDraftEndpoint()
-    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint)
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_CREATE_CONFIG)
     })
@@ -61,7 +61,7 @@ class Dataflow {
   }
 
   async #searchDataflows(query) {
-    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, this.#dataCenter, Dataflow.#getSearchDataflowEndpoint())
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, this.#dataCenter, Dataflow.#getSearchDataflowEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#searchDataflowParameters(this.#site, query)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SEARCH_CONFIG)
     })

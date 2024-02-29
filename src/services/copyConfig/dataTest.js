@@ -15,6 +15,12 @@ export function getExpectedResponseWithContext(response, id, apiKey) {
   return resp
 }
 
+export function getExpectedResponseWithContextAsString(response, id, apiKey) {
+  const resp = getExpectedResponseWithContext(response, id, apiKey)
+  resp.context = JSON.stringify(resp.context)
+  return resp
+}
+
 export const schemaId = 'dataSchema'
 export const profileId = 'profileSchema'
 export const subscriptionsId = 'subscriptionsSchema'
@@ -28,3 +34,6 @@ export const policyId = 'policy'
 export const consentId = 'consent'
 export const channelId = 'communication_channel'
 export const topicId = 'communication_topic'
+export const rbaRiskAssessmentId = 'rba.riskAssessment'
+export const rbaUnknownLocationNotificationId = 'rba.unknownLocationNotification'
+export const rbaPolicyId = 'rba.policy'

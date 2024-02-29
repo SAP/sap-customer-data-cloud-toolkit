@@ -23,7 +23,7 @@ class Channel {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Channel.#NAMESPACE, this.#dataCenter, Channel.getGetChannelEndpoint())
+    const url = UrlBuilder.buildUrl(Channel.#NAMESPACE, this.#dataCenter, Channel.getGetChannelEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getChannelParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, Channel.#ERROR_MSG_GET_CONFIG)
     })
@@ -31,7 +31,7 @@ class Channel {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Channel.#NAMESPACE, dataCenter, Channel.getSetChannelEndpoint())
+    const url = UrlBuilder.buildUrl(Channel.#NAMESPACE, dataCenter, Channel.getSetChannelEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setChannelParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Channel.#ERROR_MSG_SET_CONFIG)
     })

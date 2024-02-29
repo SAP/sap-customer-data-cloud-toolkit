@@ -24,7 +24,7 @@ class Webhook {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Webhook.#NAMESPACE, this.#dataCenter, Webhook.getGetWebhookEndpoint())
+    const url = UrlBuilder.buildUrl(Webhook.#NAMESPACE, this.#dataCenter, Webhook.getGetWebhookEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#getWebhookParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, Webhook.#ERROR_MSG_GET_CONFIG)
     })
@@ -32,7 +32,7 @@ class Webhook {
   }
 
   async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(Webhook.#NAMESPACE, dataCenter, Webhook.getSetWebhookEndpoint())
+    const url = UrlBuilder.buildUrl(Webhook.#NAMESPACE, dataCenter, Webhook.getSetWebhookEndpoint(), this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setWebhookParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Webhook.#ERROR_MSG_SET_CONFIG)
     })

@@ -28,6 +28,8 @@ import ExtensionOptions from '../extension/extensionOptions.js'
 import Extension from '../extension/extension.js'
 import DataflowOptions from '../dataflow/dataflowOptions.js'
 import Dataflow from '../dataflow/dataflow.js'
+import Rba from '../rba/rba.js'
+import RbaOptions from '../rba/rbaOptions.js'
 
 class Info {
   #credentials
@@ -55,6 +57,7 @@ class Info {
       this.#getDataflows(),
       this.#getWebhooks(),
       this.#getExtensions(),
+      this.#getRba(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (Info.#hasConfiguration(info)) {
@@ -304,6 +307,20 @@ class Info {
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
+    }
+  }
+
+  async #getRba() {
+    const rbaOptions = new RbaOptions(new Rba(this.#credentials, this.#site, this.#dataCenter))
+    const responses = await rbaOptions.getConfiguration().get()
+    if (responses.every((r) => r.errorCode === 0)) {
+      const info = JSON.parse(JSON.stringify(rbaOptions.getOptionsDisabled()))
+      if (!Rba.hasRules(responses[2])) {
+        rbaOptions.removeRules(info)
+      }
+      return Promise.resolve(info)
+    } else {
+      return Promise.reject(responses)
     }
   }
 }

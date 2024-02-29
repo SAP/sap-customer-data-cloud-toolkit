@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info.js'
 import * as CommonTestData from '../../servicesDataTest.js'
 import { getInfoExpectedResponse } from './dataTest.js'
@@ -20,6 +19,8 @@ import { channelsExpectedResponse } from '../communication/dataTest.js'
 import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
+
 jest.mock('axios')
 
 describe('Info Policy test suite', () => {
@@ -97,6 +98,9 @@ describe('Info Policy test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
 
     const response = await info.get()
 

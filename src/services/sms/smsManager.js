@@ -20,7 +20,7 @@ class SmsManager {
   #zipManager
 
   constructor(credentials) {
-    this.smsService = new Sms(credentials.userKey, credentials.secret)
+    this.smsService = new Sms(credentials.userKey, credentials.secret, credentials.gigyaConsole)
     this.#zipManager = new ZipManager()
   }
 

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info/info.js'
 import Schema from './schema/schema.js'
 import Social from './social/social.js'
@@ -31,6 +30,8 @@ import ExtensionOptions from './extension/extensionOptions.js'
 import Extension from './extension/extension.js'
 import Dataflow from './dataflow/dataflow.js'
 import DataflowOptions from './dataflow/dataflowOptions.js'
+import RbaOptions from './rba/rbaOptions.js'
+import Rba from './rba/rba.js'
 
 class ConfigManager {
   #configurations = []
@@ -42,7 +43,7 @@ class ConfigManager {
   constructor(credentials, originApiKey) {
     this.#credentials = credentials
     this.#originApiKey = originApiKey
-    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret)
+    this.#siteConfigurator = new SiteConfigurator(credentials.userKey, credentials.secret, credentials.gigyaConsole)
     this.#originSiteConfiguration = undefined
   }
 
@@ -106,7 +107,7 @@ class ConfigManager {
   }
 
   async getSiteInformation(apiKey) {
-    const response = await this.#siteConfigurator.getSiteConfig(apiKey, 'us1')
+    const response = await this.#siteConfigurator.getSiteConfig(apiKey)
     response.context = { id: 'admin.getSiteConfig', targetApiKey: apiKey }
     return response.errorCode === 0 ? Promise.resolve(response) : Promise.reject(response)
   }
@@ -125,6 +126,7 @@ class ConfigManager {
     this.#configurations.push(new WebhookOptions(new Webhook(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new ExtensionOptions(new Extension(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new DataflowOptions(new Dataflow(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new RbaOptions(new Rba(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {

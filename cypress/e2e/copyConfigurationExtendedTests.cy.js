@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import * as utils from './utils'
 import * as dataTest from './dataTest'
 
@@ -50,14 +49,13 @@ describe('Copy Configuration extended test suite', () => {
   it('should display errors on unsuccessfull set configurations and clear them on cancel', () => {
     utils.mockSetConfigurationRequests()
     utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.setSchema')
-    utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.getPolicies')
     utils.fillTargetApiKeyInput()
     utils.setConfigurationCheckBox()
-    utils.checkErrors('not.exist')
+    cy.get('[icon = error]').should('not.exist')
     cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
-    utils.checkErrors('be.visible')
+    cy.get('#errorListContainer').find('[id ="messageList"]').find('ui5-li-custom').should('have.length', 3)
     cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').click()
-    utils.checkErrors('not.exist')
+    cy.get('[icon = error]').should('not.exist')
     cy.get('@windowOpenStub').should('not.be.called')
   })
 
@@ -100,9 +98,14 @@ describe('Copy Configuration extended test suite', () => {
     const dummyApiKeyWithSpaces = ` ${dataTest.dummyApiKey}  `
     cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKeyWithSpaces)
     cy.waitUntil(() =>
-    cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').then((win) => cy.get(win).should('have.value', dummyApiKeyWithSpaces))
+      cy
+        .get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]')
+        .find('#apiKeyInput')
+        .shadow()
+        .find('[class = "ui5-input-inner"]')
+        .then((win) => cy.get(win).should('have.value', dummyApiKeyWithSpaces)),
     )
     cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').focus().type('{enter}')
-    cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').find('div > table').should('have.text',dataTest.dummyTargetApiKeyText)
-  })	
+    cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').find('div > table').should('have.text', dataTest.dummyTargetApiKeyText)
+  })
 })
