@@ -11,7 +11,7 @@ export default class Rba {
   static ACCOUNT_TAKEOVER_PROTECTION = 'accountTakeoverProtection'
   static UNKNOWN_LOCATION_NOTIFICATION = 'unknownLocationNotification'
   static UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID = 'rba.unknownLocationNotification'
-  static RULES = 'rules'
+  static RULES = 'RBA Rules'
   #credentials
   #site
   #dataCenter

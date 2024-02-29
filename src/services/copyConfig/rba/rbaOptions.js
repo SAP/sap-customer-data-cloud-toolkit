@@ -8,13 +8,13 @@ import Options from '../options.js'
 export default class RbaOptions extends Options {
   static ACCOUNT_TAKEOVER_PROTECTION = 'accountTakeoverProtection'
   static UNKNOWN_LOCATION_NOTIFICATION = 'unknownLocationNotification'
-  static RULES = 'rules'
+  static RULES = 'RBA Rules'
   #rba
 
   constructor(rba) {
     super({
       id: 'rba',
-      name: 'rba',
+      name: 'riskBasedAuthentication',
       value: true,
       branches: [
         {
@@ -30,6 +30,7 @@ export default class RbaOptions extends Options {
         {
           id: RbaOptions.RULES,
           name: RbaOptions.RULES,
+          formatName: false,
           value: true,
         },
       ],
