@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 
 import {
@@ -42,11 +41,7 @@ import {
   mockedSetUnknownLocationNotificationResponse,
   mockedSetRbaPolicyResponse,
 } from './dataTest'
-import {
-  expectedGetRbaPolicyResponseOk,
-  expectedGetRiskAssessmentResponseOk,
-  expectedGetUnknownLocationNotificationResponseOk
-} from "../../src/services/copyConfig/rba/dataTest";
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
 
 export function startUp(pageName) {
   cy.visit('', {
@@ -89,14 +84,14 @@ export function mockResponse(response, method, url) {
 let interceptCount = true
 export function mockSearchResponse(response, method, url) {
   cy.intercept(method, url, (req) => {
-      if (interceptCount) {
-        interceptCount = false       
-        req.reply({ body: mockedSearchDataflowsResponse })
-      } else {
-        interceptCount = true;
-        req.reply({body: mockedSearchDataflowsEmptyResponse})
-      }
-  })  
+    if (interceptCount) {
+      interceptCount = false
+      req.reply({ body: mockedSearchDataflowsResponse })
+    } else {
+      interceptCount = true
+      req.reply({ body: mockedSearchDataflowsEmptyResponse })
+    }
+  })
 }
 
 export function resizeObserverLoopErrRe() {
@@ -230,7 +225,6 @@ export function setConfigurationCheckBox(parent) {
 export function fillTargetApiKeyInput() {
   cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
   cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
-
 }
 
 export function fillSourceApiKeyInput() {
@@ -263,8 +257,7 @@ export function getIcon(iconNumber) {
 }
 
 function getSiteConfigButton(buttonId) {
-  return  cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
-
+  return cy.get('ui5-table-row').eq(0).find('[data-cy ="sitesCopyConfigurationButtonPannelGrid"]').find(`[data-cy =${buttonId}]`)
 }
 
 export function getAddSiteConfigButton() {
@@ -282,4 +275,3 @@ export function getDeclineSiteConfigButton() {
 export function getSiteCopyConfigurationDialog() {
   return cy.get('[data-cy ="siteCopyConfigurationDialog"]')
 }
-
