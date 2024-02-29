@@ -3,11 +3,11 @@
  * License: Apache-2.0
  */
 
-
 import { expectedSchemaResponse } from '../schema/dataTest.js'
 import SchemaOptions from '../schema/schemaOptions.js'
 import PolicyOptions from '../policies/policyOptions.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
+import RbaOptions from '../rba/rbaOptions.js'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
@@ -125,7 +125,10 @@ export function getInfoExpectedResponse(supports) {
     ],
   }
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions]
+  const rbaOptions = new RbaOptions(undefined)
+  const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()
+
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

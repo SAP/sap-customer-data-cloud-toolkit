@@ -30,6 +30,9 @@ import {
   channelId,
   topicId,
   internalSchemaId,
+  rbaRiskAssessmentId,
+  rbaUnknownLocationNotificationId,
+  rbaPolicyId,
 } from './dataTest.js'
 import { getConsentStatementExpectedResponse, getNoConsentStatementExpectedResponse } from './consent/dataTest.js'
 import { channelsExpectedResponse, topicsExpectedResponse } from './communication/dataTest.js'
@@ -37,6 +40,7 @@ import Sorter from './sorter.js'
 import { getExpectedWebhookResponse } from './webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from './extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from './dataflow/dataTest.js'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from './rba/dataTest.js'
 
 jest.mock('axios')
 
@@ -67,6 +71,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
     const response = await configManager.getConfiguration()
     //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -143,6 +150,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
       .mockResolvedValueOnce({ data: channelsExpectedResponse })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
@@ -171,6 +181,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaRiskAssessmentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaUnknownLocationNotificationId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaPolicyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
@@ -183,7 +196,7 @@ describe('Config Manager test suite', () => {
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
 
-    expect(response.length).toEqual(33)
+    expect(response.length).toEqual(36)
     verifyAllResponsesAreOk(response)
     verifyAllContext(response)
   })
@@ -248,9 +261,12 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, webSdkId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, consentId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, channelId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, rbaRiskAssessmentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, rbaUnknownLocationNotificationId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, rbaPolicyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(ConfiguratorTestData.scExpectedGigyaResponseNotOk, topicId, apiKey) })
 
-    await executeCopyAllUnsuccessfully(ConfiguratorTestData.scExpectedGigyaResponseNotOk, 10)
+    await executeCopyAllUnsuccessfully(ConfiguratorTestData.scExpectedGigyaResponseNotOk, 13)
   })
 
   test('copy all unsuccessfully - error setting info', async () => {
@@ -269,6 +285,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
       .mockResolvedValueOnce({ data: channelsExpectedResponse })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
@@ -297,6 +316,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, webSdkId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, rbaRiskAssessmentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, rbaUnknownLocationNotificationId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, rbaPolicyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, topicId, apiKey) })
@@ -305,7 +327,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, internalSchemaId, apiKey) })
 
-    await executeCopyAllUnsuccessfully(mockedResponse, 33)
+    await executeCopyAllUnsuccessfully(mockedResponse, 36)
   })
 
   test('copy all unsuccessfully - error on single copy', async () => {
@@ -324,6 +346,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getSiteConfig })
       .mockResolvedValueOnce({ data: getNoConsentStatementExpectedResponse() })
       .mockResolvedValueOnce({ data: channelsExpectedResponse })
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
@@ -352,6 +377,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, smsTemplatesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, webSdkId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaRiskAssessmentId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaUnknownLocationNotificationId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, rbaPolicyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, topicId, apiKey) })
@@ -363,7 +391,7 @@ describe('Config Manager test suite', () => {
     const infoExpectedResponse = getInfoExpectedResponse(true)
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
-    expect(response.length).toEqual(33)
+    expect(response.length).toEqual(36)
     const errorResponseIndex = 1
     CommonTestData.verifyResponseIsNotOk(response[errorResponseIndex], mockedResponse)
     expect(response[errorResponseIndex].context.id).toEqual(schemaId)

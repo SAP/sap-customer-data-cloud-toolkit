@@ -30,6 +30,8 @@ import ExtensionOptions from './extension/extensionOptions.js'
 import Extension from './extension/extension.js'
 import Dataflow from './dataflow/dataflow.js'
 import DataflowOptions from './dataflow/dataflowOptions.js'
+import RbaOptions from './rba/rbaOptions.js'
+import Rba from './rba/rba.js'
 
 class ConfigManager {
   #configurations = []
@@ -124,6 +126,7 @@ class ConfigManager {
     this.#configurations.push(new WebhookOptions(new Webhook(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new ExtensionOptions(new Extension(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new DataflowOptions(new Dataflow(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new RbaOptions(new Rba(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {
