@@ -73,6 +73,19 @@ class Options {
   getId() {
     return this.options.id
   }
+  addBranch(name) {
+    const collection = this.options.branches.find((collection) => collection.name === name)
+    const optionName = `Include ${name} URL`
+    if (collection) {
+      collection.branches = []
+      collection.branches.push({
+        id: `${name}-Link`,
+        name: optionName,
+        formatName: false,
+        value: false,
+      })
+    }
+  }
 
   getOptionValue(optionName) {
     if (this.getOptions().name === optionName) {

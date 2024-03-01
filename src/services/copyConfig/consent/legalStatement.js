@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -39,23 +38,40 @@ class LegalStatement {
     return res.data
   }
 
-  async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages) {
+  async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages, options) {
     const promises = []
     for (const language of consentLanguages) {
-      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language))
+      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language, options.options))
     }
     const responses = await Promise.all(promises)
     stringToJson(responses, 'context')
     return responses
   }
 
-  async #copyLegalStatement(destinationSite, dataCenter, consentId, language) {
+  async #copyLegalStatement(destinationSite, dataCenter, consentId, language, options) {
     let response = await this.get(consentId, language)
+    this.#cleanUrl(response, options)
     if (response.errorCode === 0) {
       this.removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
       response = await this.set(destinationSite, dataCenter, consentId, language, response.legalStatements)
     }
     return response
+  }
+  #cleanUrl(response, options) {
+    let filter = options.branches.find((obj) => obj)
+    if (!filter.value) {
+      this.cleanLink(response)
+      console.log('in', filter)
+    }
+  }
+  deleteLink(response) {
+    delete response.documentUrl
+  }
+  cleanLink(response) {
+    for (const key in response.legalStatements.versions) {
+      const res = response.legalStatements.versions[key]
+      this.deleteLink(res)
+    }
   }
 
   removeLegalStatementsWithStatus(legalStatements, status) {

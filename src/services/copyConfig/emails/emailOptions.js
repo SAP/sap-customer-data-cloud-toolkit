@@ -25,10 +25,12 @@ class EmailOptions extends Options {
   }
 
   addUrl(response) {
-    const passwordUrl = response.passwordReset.resetURL
-    const preferences = response.preferencesCenter.redirectURL
-    this.updateBranches('preferencesCenter', preferences, 'Lite Preferences Center')
-    this.updateBranches('passwordReset', passwordUrl, 'Reset Page')
+    this.addBranch('LitePreferencesCenter')
+    this.addBranch('PasswordReset')
+    // const passwordUrl = response.passwordReset.resetURL
+    // const preferences = response.preferencesCenter.redirectURL
+    // this.updateBranches('preferencesCenter', preferences, 'Lite Preferences Center')
+    // this.updateBranches('passwordReset', passwordUrl, 'Reset Page')
   }
 
   updateBranches(name, url, checkBoxName) {

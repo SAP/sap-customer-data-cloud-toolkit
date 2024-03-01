@@ -135,20 +135,22 @@ class PolicyOptions extends Options {
   getConfiguration() {
     return this.#policy
   }
-  addUrl(response) {
-    const { preferencesCenter, passwordReset } = response
-    const redirectURL = preferencesCenter.redirectURL
-    const resetUrl = passwordReset.resetURL
+  addUrl() {
+    this.addBranch('preferencesCenter')
+    this.addBranch('passwordReset')
+    // const { preferencesCenter, passwordReset } = response
+    // const redirectURL = preferencesCenter.redirectURL
+    // const resetUrl = passwordReset.resetURL
 
-    if (!redirectURL || !resetUrl) {
-      return response
-    }
-    if (preferencesCenter || passwordReset) {
-      this.updateBranches('preferencesCenter', redirectURL, 'Lite Preferences Center', 'redirectURL')
-      this.updateBranches('passwordReset', resetUrl, 'Reset Page', 'resetURL')
-    }
+    // if (!redirectURL || !resetUrl) {
+    //   return response
+    // }
+    // if (preferencesCenter || passwordReset) {
+    //   this.updateBranches('preferencesCenter', redirectURL, 'Lite Preferences Center')
+    //   this.updateBranches('passwordReset', resetUrl, 'Reset Page')
+    // }
 
-    return response
+    // return response
   }
 
   updateBranches(name, url, checkBoxName) {

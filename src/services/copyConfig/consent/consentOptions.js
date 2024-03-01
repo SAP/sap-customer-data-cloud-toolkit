@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class ConsentOptions extends Options {
@@ -20,6 +19,16 @@ class ConsentOptions extends Options {
 
   getConfiguration() {
     return this.#consentConfiguration
+  }
+  addUrl() {
+    const collection = this.options
+    collection.branches = []
+    collection.branches.push({
+      id: 'legalStatements-URL',
+      name: 'Include Documentation URL',
+      value: false,
+      formatName: false,
+    })
   }
 
   removeConsent(info) {

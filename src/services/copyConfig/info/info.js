@@ -101,10 +101,12 @@ class Info {
     const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await consentOptions.getConfiguration().get()
     if (response.errorCode === 0) {
+      consentOptions.addUrl(response)
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
       if (!ConsentConfiguration.hasConsents(response)) {
         consentOptions.removeConsent(info)
       }
+
       return Promise.resolve(info)
     } else if (Info.#consentsNotMigrated(response)) {
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
@@ -207,8 +209,7 @@ class Info {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      policyOptions.addUrl(response)
-      console.log('policyOptions', policyOptions)
+      policyOptions.addUrl()
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
       Info.#removeUnsupportedPolicies(response, info, policyOptions)
       return Promise.resolve(info)
