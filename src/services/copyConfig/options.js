@@ -73,10 +73,10 @@ class Options {
   getId() {
     return this.options.id
   }
-  addBranch(id, optName) {
+  addBranch(optId, optName) {
     let option
-    if (id !== 'consentStatements'){
-      option = this.options.branches.find((collection) => collection.name === id)
+    if (optId !== 'consentStatements'){
+      option = this.options.branches.find((collection) => collection.name === optId)
     }else {
       option =  this.options
     }
@@ -85,7 +85,7 @@ class Options {
     if (option) {
       option.branches = []
       option.branches.push({
-        id: `${id}-Link`,
+        id: `${optId}-Link`,
         name: optionName,
         formatName: false,
         value: false,
