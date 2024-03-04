@@ -396,7 +396,7 @@ describe('Config Manager test suite', () => {
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(37)
-    const errorResponseIndex = 1
+    const errorResponseIndex = 0
     CommonTestData.verifyResponseIsNotOk(response[errorResponseIndex], mockedResponse)
     expect(response[errorResponseIndex].context.id).toEqual(schemaId)
     expect(response[errorResponseIndex].context.targetApiKey).toEqual(apiKey)
