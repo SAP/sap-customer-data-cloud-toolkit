@@ -101,7 +101,7 @@ class Info {
     const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await consentOptions.getConfiguration().get()
     if (response.errorCode === 0) {
-      consentOptions.addUrl(response)
+      consentOptions.addBranch('consentStatements','Document')
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
       if (!ConsentConfiguration.hasConsents(response)) {
         consentOptions.removeConsent(info)

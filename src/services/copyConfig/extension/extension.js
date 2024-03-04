@@ -122,8 +122,6 @@ class Extension {
 
   async copyExtensions(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
-    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))
-    this.#cleanUrl(collection, response)
     const destinationSiteExtensions = await this.#getSiteExtensions(destinationSite, destinationSiteConfiguration.dataCenter)
     if (destinationSiteExtensions.errorCode !== 0) {
       return [destinationSiteExtensions]
@@ -140,25 +138,6 @@ class Extension {
       }
     }
     return Promise.all(promises)
-  }
-  #cleanUrl(options, response) {
-    for (let branch of options) {
-      let filter = branch.branches.map((obj) => obj.value)
-      if (!filter[0]) {
-        this.cleanLink(response.result, branch)
-        console.log('in', filter)
-      }
-    }
-  }
-  deleteLink(response) {
-    delete response.extensionFuncUrl
-  }
-  cleanLink(response, branch) {
-    for (const res of response) {
-      if (res.extensionPoint === branch.id) {
-        this.deleteLink(res)
-      }
-    }
   }
 
   async #getSiteExtensions(destinationSite, dataCenter) {

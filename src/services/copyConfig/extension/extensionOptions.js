@@ -36,22 +36,6 @@ class ExtensionOptions extends Options {
         value: true,
         formatName: false,
       })
-      if (extension.extensionFuncUrl) {
-        this.#addLink(extension.extensionPoint)
-      }
-    }
-  }
-  #addLink(name) {
-    const collection = this.options.branches.find((collection) => collection.name === name)
-    const optionName = 'Include Extension URL'
-    if (collection) {
-      collection.branches = []
-      collection.branches.push({
-        id: `${name}-Extension-Link`,
-        name: optionName,
-        formatName: false,
-        value: false,
-      })
     }
   }
 }

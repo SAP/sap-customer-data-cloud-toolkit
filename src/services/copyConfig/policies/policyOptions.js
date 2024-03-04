@@ -136,42 +136,11 @@ class PolicyOptions extends Options {
     return this.#policy
   }
   addUrl() {
-    this.addBranch('preferencesCenter')
-    this.addBranch('passwordReset')
-    // const { preferencesCenter, passwordReset } = response
-    // const redirectURL = preferencesCenter.redirectURL
-    // const resetUrl = passwordReset.resetURL
-
-    // if (!redirectURL || !resetUrl) {
-    //   return response
-    // }
-    // if (preferencesCenter || passwordReset) {
-    //   this.updateBranches('preferencesCenter', redirectURL, 'Lite Preferences Center')
-    //   this.updateBranches('passwordReset', resetUrl, 'Reset Page')
-    // }
-
-    // return response
+    this.addBranch('preferencesCenter','Lite Preferences Center')
+    this.addBranch('passwordReset','Reset Page')
   }
 
-  updateBranches(name, url, checkBoxName) {
-    const collection = this.options.branches.find((collection) => collection.name === name)
-    const optionName = `Include ${checkBoxName} URL`
-    if (collection) {
-      console.log('collection', collection.name)
-      collection.branches = []
-      this.#addLink(url, optionName, collection.branches)
-    }
-  }
-  #addLink(url, name, branches) {
-    if (url) {
-      branches.push({
-        id: `${name}-Link`,
-        name: name,
-        formatName: false,
-        value: false,
-      })
-    }
-  }
+
   removeAccountOptions(info) {
     return this.removeInfo(PolicyOptions.#accountOptions, info)
   }

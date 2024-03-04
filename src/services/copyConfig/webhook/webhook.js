@@ -63,9 +63,7 @@ class Webhook {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    if (body.url) {
-      parameters.url = body.url
-    }
+    parameters.url = body.url
     parameters.events = JSON.stringify(body.events)
     parameters.name = body.name
     parameters.active = body.active
@@ -88,29 +86,11 @@ class Webhook {
   async copyWebhooks(destinationSite, dataCenter, response, options) {
     const promises = []
     for (const webhook of options.getOptions().branches) {
-      this.#cleanUrl(webhook, response.webhooks)
       if (webhook.value) {
         promises.push(this.#copyWebhook(destinationSite, dataCenter, webhook.name, response))
       }
     }
     return Promise.all(promises)
-  }
-  #cleanUrl(options, response) {
-    let filter = options.branches.find((obj) => obj)
-    if (!filter.value) {
-      this.cleanLink(response, options)
-      console.log('in', filter)
-    }
-  }
-  deleteLink(response) {
-    delete response.url
-  }
-  cleanLink(response, branch) {
-    for (const res of response) {
-      if (res.name === branch.id) {
-        this.deleteLink(res)
-      }
-    }
   }
 
   async #copyWebhook(destinationSite, dataCenter, name, response) {

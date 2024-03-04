@@ -25,33 +25,10 @@ class EmailOptions extends Options {
   }
 
   addUrl(response) {
-    this.addBranch('LitePreferencesCenter')
-    this.addBranch('PasswordReset')
-    // const passwordUrl = response.passwordReset.resetURL
-    // const preferences = response.preferencesCenter.redirectURL
-    // this.updateBranches('preferencesCenter', preferences, 'Lite Preferences Center')
-    // this.updateBranches('passwordReset', passwordUrl, 'Reset Page')
+    this.addBranch('LitePreferencesCenter','Lite Preferences Center')
+    this.addBranch('PasswordReset','Reset Page')
   }
 
-  updateBranches(name, url, checkBoxName) {
-    const collection = this.options.branches.find((collection) => collection.id === name)
-    const optionName = `Include ${checkBoxName} URL`
-    if (collection) {
-      console.log('collection', collection.name)
-      collection.branches = []
-      this.#addLink(url, optionName, collection.branches)
-    }
-  }
-  #addLink(url, linkName, branches) {
-    if (url) {
-      branches.push({
-        id: `${linkName}-Email-Link`,
-        name: linkName,
-        formatName: false,
-        value: false,
-      })
-    }
-  }
   addEmails(response) {
     const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
     if (response.magicLink) {
