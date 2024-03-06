@@ -33,12 +33,14 @@ const CredentialsPopover = ({ t }) => {
 
   return (
     <>
+      <Form className={classes.documentationLinkStyle} columnsS="1">
       <FormItem label={t('GLOBAL.USER_KEY')}>
         <Input type={InputType.Text} id="userKey" value={userKey} onInput={(event) => onUserKeyValueChange(event)} />
       </FormItem>
       <FormItem label={t('GLOBAL.SECRET_KEY')}>
         <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
       </FormItem>
+      </Form>
 
       <Form className={classes.documentationLinkStyle} columnsS="2">
         <FormItem>
