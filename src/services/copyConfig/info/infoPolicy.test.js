@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Info from './info.js'
 import * as CommonTestData from '../../servicesDataTest.js'
 import { getInfoExpectedResponse } from './dataTest.js'

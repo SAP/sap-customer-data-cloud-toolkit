@@ -50,8 +50,8 @@ class LegalStatement {
 
   async #copyLegalStatement(destinationSite, dataCenter, consentId, language, options) {
     let response = await this.get(consentId, language)
-    this.#cleanUrl(response, options)
     if (response.errorCode === 0) {
+      this.#cleanUrl(response, options)
       this.removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
       response = await this.set(destinationSite, dataCenter, consentId, language, response.legalStatements)
     }

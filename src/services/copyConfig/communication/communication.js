@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Channel from './channel.js'
 import Topic from './topic.js'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
@@ -32,8 +31,8 @@ class Communication {
     if (options && options.value === false) {
       return responses
     }
-    responses.push(...(await this.copyChannels(destinationSite, destinationSiteConfiguration)))
-    responses.push(...(await this.copyTopics(destinationSite, destinationSiteConfiguration)))
+    // responses.push(...(await this.copyChannels(destinationSite, destinationSiteConfiguration)))
+    // responses.push(...(await this.copyTopics(destinationSite, destinationSiteConfiguration)))
 
     responses = responses.flat()
     stringToJson(responses, 'context')
