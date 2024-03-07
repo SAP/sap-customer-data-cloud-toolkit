@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
 import { getResponseWithContext } from '../dataTest.js'
@@ -25,6 +24,14 @@ describe('ConsentConfiguration test suite', () => {
   const dataCenter = 'eu1'
   const consentConfiguration = new ConsentConfiguration(credentials, apiKey, dataCenter)
   const consentOptions = new ConsentOptions()
+  let optionsConsent = {
+    options: {
+      id: 'consent',
+      name: 'consentStatements',
+      value: false,
+      branches: [{}],
+    },
+  }
 
   test('nothing to copy', async () => {
     const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptionsDisabled())
@@ -44,7 +51,7 @@ describe('ConsentConfiguration test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.termsConsentId1_en', apiKey) })
 
-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())
+    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)
     expect(responses.length).toEqual(5)
     responses.forEach((response) => {
       verifyResponseIsOk(response)
@@ -77,7 +84,7 @@ describe('ConsentConfiguration test suite', () => {
     const mockedResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, 'consent_consentStatement_get', apiKey)
     axios.mockResolvedValueOnce({ data: mockedResponse })
 
-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())
+    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)
     expect(responses.length).toEqual(1)
     verifyResponseIsNotOk(responses[0], expectedGigyaResponseInvalidAPI)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
@@ -96,7 +103,7 @@ describe('ConsentConfiguration test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.consentId2_en', apiKey) })
 
-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())
+    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)
     expect(responses.length).toEqual(4)
     verifyResponseIsNotOk(responses[0], legalConsentAlreadyExists)
     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)
@@ -123,7 +130,7 @@ describe('ConsentConfiguration test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.consentId2_en', apiKey) })
 
-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())
+    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)
     expect(responses.length).toEqual(5)
     responses.slice(0, 3).forEach((response) => {
       verifyResponseIsOk(response)

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 class Options {
   constructor(options) {
     this.options = options
@@ -12,7 +11,28 @@ class Options {
   getOptions() {
     return this.options
   }
+  removeLink(name, info) {
+    info.branches.filter((obj) => obj.name === 'Include Links')
+  }
+  addBranch(optId, optName) {
+    let option
+    if (optId !== 'consentStatements') {
+      option = this.options.branches.find((collection) => collection.name === optId)
+    } else {
+      option = this.options
+    }
 
+    const optionName = `Include ${optName} URL`
+    if (option) {
+      option.branches = []
+      option.branches.push({
+        id: `${optId}-Link`,
+        name: optionName,
+        formatName: false,
+        value: false,
+      })
+    }
+  }
   getOptionsDisabled() {
     const opt = JSON.parse(JSON.stringify(this.options))
     opt.value = false

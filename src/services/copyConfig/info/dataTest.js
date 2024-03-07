@@ -17,6 +17,7 @@ export function getInfoExpectedResponse(supports) {
   const screenSets = createScreenSetCollection(SCREEN_SET_COLLECTION_DEFAULT, supports)
 
   const policiesOptions = new PolicyOptions(undefined)
+  policiesOptions.addUrl()
   const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()
 
   const socialIdentities = {
@@ -44,6 +45,14 @@ export function getInfoExpectedResponse(supports) {
     id: 'consent',
     name: 'consentStatements',
     value: supports,
+    branches: [
+      {
+        formatName: false,
+        id: 'consentStatements-Link',
+        name: 'Include Document URL',
+        value: false,
+      },
+    ],
   }
 
   const communicationTopics = {

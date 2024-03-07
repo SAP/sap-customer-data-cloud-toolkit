@@ -1,0 +1,827 @@
+[1mdiff --git a/src/services/copyConfig/consent/consentConfiguration.js b/src/services/copyConfig/consent/consentConfiguration.js[m
+[1mindex 0441737..5000584 100644[m
+[1m--- a/src/services/copyConfig/consent/consentConfiguration.js[m
+[1m+++ b/src/services/copyConfig/consent/consentConfiguration.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import ConsentStatement from './consentStatement.js'[m
+ import LegalStatement from './legalStatement.js'[m
+ import { stringToJson } from '../objectHelper.js'[m
+[36m@@ -17,6 +16,7 @@[m [mclass ConsentConfiguration {[m
+   #consentStatement[m
+   #legalStatement[m
+   #consentDefaultLanguage[m
+[32m+[m[32m  #options[m
+ [m
+   constructor(credentials, site, dataCenter) {[m
+     this.#credentials = credentials[m
+[36m@@ -33,6 +33,9 @@[m [mclass ConsentConfiguration {[m
+ [m
+   async copy(destinationSite, destinationSiteConfiguration, options) {[m
+     let responses = [][m
+[32m+[m[32m    if (options) {[m
+[32m+[m[32m      this.#options = options[m
+[32m+[m[32m    }[m
+     if (options && options.value === false) {[m
+       return responses[m
+     }[m
+[36m@@ -117,7 +120,7 @@[m [mclass ConsentConfiguration {[m
+   async #copyLegalStatements(destinationSite, destinationSiteConfiguration, consent) {[m
+     const consentId = ConsentConfiguration.#getConsentId(consent.preferences)[m
+     const consentLanguages = consent.preferences[consentId].langs[m
+[31m-    return this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages)[m
+[32m+[m[32m    return this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages, this.#options)[m
+   }[m
+ [m
+   static #getConsentId(consent) {[m
+[36m@@ -167,4 +170,4 @@[m [mclass ConsentConfiguration {[m
+   }[m
+ }[m
+ [m
+[31m-export default ConsentConfiguration[m
+[32m+[m[32mexport default ConsentConfiguration[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/consentConfiguration.test.js b/src/services/copyConfig/consent/consentConfiguration.test.js[m
+[1mindex c092687..38ce59b 100644[m
+[1m--- a/src/services/copyConfig/consent/consentConfiguration.test.js[m
+[1m+++ b/src/services/copyConfig/consent/consentConfiguration.test.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import axios from 'axios'[m
+ import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'[m
+ import { getResponseWithContext } from '../dataTest.js'[m
+[36m@@ -25,6 +24,14 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+   const dataCenter = 'eu1'[m
+   const consentConfiguration = new ConsentConfiguration(credentials, apiKey, dataCenter)[m
+   const consentOptions = new ConsentOptions()[m
+[32m+[m[32m  let optionsConsent = {[m
+[32m+[m[32m    options: {[m
+[32m+[m[32m      id: 'consent',[m
+[32m+[m[32m      name: 'consentStatements',[m
+[32m+[m[32m      value: false,[m
+[32m+[m[32m      branches: [{}],[m
+[32m+[m[32m    },[m
+[32m+[m[32m  }[m
+ [m
+   test('nothing to copy', async () => {[m
+     const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptionsDisabled())[m
+[36m@@ -44,7 +51,7 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.termsConsentId1_en', apiKey) })[m
+ [m
+[31m-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())[m
+[32m+[m[32m    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)[m
+     expect(responses.length).toEqual(5)[m
+     responses.forEach((response) => {[m
+       verifyResponseIsOk(response)[m
+[36m@@ -77,7 +84,7 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+     const mockedResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, 'consent_consentStatement_get', apiKey)[m
+     axios.mockResolvedValueOnce({ data: mockedResponse })[m
+ [m
+[31m-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())[m
+[32m+[m[32m    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)[m
+     expect(responses.length).toEqual(1)[m
+     verifyResponseIsNotOk(responses[0], expectedGigyaResponseInvalidAPI)[m
+     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)[m
+[36m@@ -96,7 +103,7 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.consentId2_en', apiKey) })[m
+ [m
+[31m-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())[m
+[32m+[m[32m    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)[m
+     expect(responses.length).toEqual(4)[m
+     verifyResponseIsNotOk(responses[0], legalConsentAlreadyExists)[m
+     expect(responses[0].context.targetApiKey).toEqual(`${apiKey}`)[m
+[36m@@ -123,7 +130,7 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_legalStatement_terms.consentId2_pt', apiKey) })[m
+       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'consent_consentStatement_terms.consentId2_en', apiKey) })[m
+ [m
+[31m-    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptions())[m
+[32m+[m[32m    const responses = await consentConfiguration.copy(apiKey, { dataCenter }, optionsConsent)[m
+     expect(responses.length).toEqual(5)[m
+     responses.slice(0, 3).forEach((response) => {[m
+       verifyResponseIsOk(response)[m
+[36m@@ -141,4 +148,4 @@[m [mdescribe('ConsentConfiguration test suite', () => {[m
+     expect(responses[errorIdx + 1].context.id.startsWith('consent_')).toBeTruthy()[m
+     expect(responses[errorIdx + 1].severity).toEqual(ERROR_SEVERITY_INFO)[m
+   })[m
+[31m-})[m
+[32m+[m[32m})[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/consentDefaultLanguage.js b/src/services/copyConfig/consent/consentDefaultLanguage.js[m
+[1mindex c492d7a..b2e6b8a 100644[m
+[1m--- a/src/services/copyConfig/consent/consentDefaultLanguage.js[m
+[1m+++ b/src/services/copyConfig/consent/consentDefaultLanguage.js[m
+[36m@@ -49,4 +49,4 @@[m [mclass ConsentDefaultLanguage {[m
+   }[m
+ }[m
+ [m
+[31m-export default ConsentDefaultLanguage[m
+[32m+[m[32mexport default ConsentDefaultLanguage[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/consentOptions.js b/src/services/copyConfig/consent/consentOptions.js[m
+[1mindex b6c38f3..bed6da5 100644[m
+[1m--- a/src/services/copyConfig/consent/consentOptions.js[m
+[1m+++ b/src/services/copyConfig/consent/consentOptions.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import Options from '../options.js'[m
+ [m
+ class ConsentOptions extends Options {[m
+[36m@@ -27,4 +26,4 @@[m [mclass ConsentOptions extends Options {[m
+   }[m
+ }[m
+ [m
+[31m-export default ConsentOptions[m
+[32m+[m[32mexport default ConsentOptions[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/consentStatement.js b/src/services/copyConfig/consent/consentStatement.js[m
+[1mindex b9b9123..960ca25 100644[m
+[1m--- a/src/services/copyConfig/consent/consentStatement.js[m
+[1m+++ b/src/services/copyConfig/consent/consentStatement.js[m
+[36m@@ -64,4 +64,4 @@[m [mclass ConsentStatement {[m
+   }[m
+ }[m
+ [m
+[31m-export default ConsentStatement[m
+[32m+[m[32mexport default ConsentStatement[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/dataTest.js b/src/services/copyConfig/consent/dataTest.js[m
+[1mindex 78ed350..f873fc6 100644[m
+[1m--- a/src/services/copyConfig/consent/dataTest.js[m
+[1m+++ b/src/services/copyConfig/consent/dataTest.js[m
+[36m@@ -93,4 +93,4 @@[m [mexport const cannotChangeConsentsOnChildSite = {[m
+   statusReason: 'Precondition Failed',[m
+   time: Date.now(),[m
+   severity: ERROR_SEVERITY_WARNING,[m
+[31m-}[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/consent/legalStatement.js b/src/services/copyConfig/consent/legalStatement.js[m
+[1mindex b872fc6..f10aae5 100644[m
+[1m--- a/src/services/copyConfig/consent/legalStatement.js[m
+[1m+++ b/src/services/copyConfig/consent/legalStatement.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import UrlBuilder from '../../gigya/urlBuilder.js'[m
+ import client from '../../gigya/client.js'[m
+ import generateErrorResponse from '../../errors/generateErrorResponse.js'[m
+[36m@@ -39,24 +38,41 @@[m [mclass LegalStatement {[m
+     return res.data[m
+   }[m
+ [m
+[31m-  async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages) {[m
+[32m+[m[32m  async copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages, options) {[m
+     const promises = [][m
+     for (const language of consentLanguages) {[m
+[31m-      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language))[m
+[32m+[m[32m      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, consentId, language, options.options))[m
+     }[m
+     const responses = await Promise.all(promises)[m
+     stringToJson(responses, 'context')[m
+     return responses[m
+   }[m
+ [m
+[31m-  async #copyLegalStatement(destinationSite, dataCenter, consentId, language) {[m
+[32m+[m[32m  async #copyLegalStatement(destinationSite, dataCenter, consentId, language, options) {[m
+     let response = await this.get(consentId, language)[m
+     if (response.errorCode === 0) {[m
+[32m+[m[32m      this.#cleanUrl(response, options)[m
+       this.removeLegalStatementsWithStatus(response.legalStatements, 'Historic')[m
+       response = await this.set(destinationSite, dataCenter, consentId, language, response.legalStatements)[m
+     }[m
+     return response[m
+   }[m
+[32m+[m[32m  #cleanUrl(response, options) {[m
+[32m+[m[32m    let filter = options.branches.find((obj) => obj)[m
+[32m+[m[32m    if (!filter.value) {[m
+[32m+[m[32m      this.cleanLink(response)[m
+[32m+[m[32m      console.log('in', filter)[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m  deleteLink(response) {[m
+[32m+[m[32m    delete response.documentUrl[m
+[32m+[m[32m  }[m
+[32m+[m[32m  cleanLink(response) {[m
+[32m+[m[32m    for (const key in response.legalStatements.versions) {[m
+[32m+[m[32m      const res = response.legalStatements.versions[key][m
+[32m+[m[32m      this.deleteLink(res)[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+ [m
+   removeLegalStatementsWithStatus(legalStatements, status) {[m
+     const type = LegalStatement.#getLegalStatementType(legalStatements)[m
+[36m@@ -115,4 +131,4 @@[m [mclass LegalStatement {[m
+   }[m
+ }[m
+ [m
+[31m-export default LegalStatement[m
+[32m+[m[32mexport default LegalStatement[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/emails/emailConfiguration.js b/src/services/copyConfig/emails/emailConfiguration.js[m
+[1mindex 80a587d..b600f2b 100644[m
+[1m--- a/src/services/copyConfig/emails/emailConfiguration.js[m
+[1m+++ b/src/services/copyConfig/emails/emailConfiguration.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import Email from '../../emails/email.js'[m
+ import { stringToJson } from '../objectHelper.js'[m
+ import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'[m
+[36m@@ -47,21 +46,44 @@[m [mclass EmailConfiguration {[m
+     if (response.errorCode === 0) {[m
+       response = await this.copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options)[m
+     }[m
+[32m+[m
+     stringToJson(response, 'context')[m
+     return Array.isArray(response) ? response : [response][m
+   }[m
+[31m-[m
+[32m+[m[32m  #cleanUrl(options, response) {[m
+[32m+[m[32m    for (let branch of options) {[m
+[32m+[m[32m      let filter = branch.branches.map((obj) => obj.value)[m
+[32m+[m[32m      if (!filter[0]) {[m
+[32m+[m[32m        this.cleanLink(response, branch)[m
+[32m+[m[32m        console.log('in', filter)[m
+[32m+[m[32m      }[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m  deleteLink(response, property, branch) {[m
+[32m+[m[32m    delete response[branch][property][m
+[32m+[m[32m  }[m
+[32m+[m[32m  cleanLink(response, branch) {[m
+[32m+[m[32m    if (branch.id === 'passwordReset') {[m
+[32m+[m[32m      this.deleteLink(response, 'resetURL', branch.id)[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (branch.id === 'preferencesCenter') {[m
+[32m+[m[32m      this.deleteLink(response, 'redirectURL', branch.id)[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+   getEmail() {[m
+     return this.#email[m
+   }[m
+ [m
+   async copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {[m
+     const promises = [][m
+[32m+[m[32m    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))[m
+[32m+[m[32m    this.#cleanUrl(collection, response)[m
+     for (const templateInfo of options.getOptions().branches) {[m
+       if (templateInfo.value) {[m
+         promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, destinationSiteConfiguration, response))[m
+       }[m
+     }[m
+[32m+[m
+     return Promise.all(promises)[m
+   }[m
+ [m
+[36m@@ -107,4 +129,4 @@[m [mclass EmailConfiguration {[m
+   }[m
+ }[m
+ [m
+[31m-export default EmailConfiguration[m
+[32m+[m[32mexport default EmailConfiguration[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/emails/emailConfiguration.test.js b/src/services/copyConfig/emails/emailConfiguration.test.js[m
+[1mindex b74b88c..4032eb1 100644[m
+[1m--- a/src/services/copyConfig/emails/emailConfiguration.test.js[m
+[1m+++ b/src/services/copyConfig/emails/emailConfiguration.test.js[m
+[36m@@ -148,4 +148,4 @@[m [mdescribe('Email Configuration test suite', () => {[m
+       ],[m
+     }[m
+   }[m
+[31m-})[m
+[32m+[m[32m})[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/emails/emailOptions.js b/src/services/copyConfig/emails/emailOptions.js[m
+[1mindex 85a4f6a..5b1be18 100644[m
+[1m--- a/src/services/copyConfig/emails/emailOptions.js[m
+[1m+++ b/src/services/copyConfig/emails/emailOptions.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import Options from '../options.js'[m
+ import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'[m
+ [m
+[36m@@ -25,6 +24,11 @@[m [mclass EmailOptions extends Options {[m
+     return this.#emailConfiguration[m
+   }[m
+ [m
+[32m+[m[32m  addUrl(response) {[m
+[32m+[m[32m    this.addBranch('LitePreferencesCenter','Lite Preferences Center')[m
+[32m+[m[32m    this.addBranch('PasswordReset','Reset Page')[m
+[32m+[m[32m  }[m
+[32m+[m
+   addEmails(response) {[m
+     const emailTemplateNameTranslator = new EmailTemplateNameTranslator()[m
+     if (response.magicLink) {[m
+[36m@@ -134,4 +138,4 @@[m [mclass EmailOptions extends Options {[m
+   }[m
+ }[m
+ [m
+[31m-export default EmailOptions[m
+[32m+[m[32mexport default EmailOptions[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/extension/dataTest.js b/src/services/copyConfig/extension/dataTest.js[m
+[1mindex d80d2c2..0d4005e 100644[m
+[1m--- a/src/services/copyConfig/extension/dataTest.js[m
+[1m+++ b/src/services/copyConfig/extension/dataTest.js[m
+[36m@@ -103,4 +103,4 @@[m [mexport function getEmptyExtensionResponse() {[m
+     time: '2023-01-01T12:00:00.757Z',[m
+     result: [],[m
+   }[m
+[31m-}[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/extension/extension.js b/src/services/copyConfig/extension/extension.js[m
+[1mindex 09b9320..85635ba 100644[m
+[1m--- a/src/services/copyConfig/extension/extension.js[m
+[1m+++ b/src/services/copyConfig/extension/extension.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import UrlBuilder from '../../gigya/urlBuilder.js'[m
+ import client from '../../gigya/client.js'[m
+ import generateErrorResponse from '../../errors/generateErrorResponse.js'[m
+[36m@@ -127,6 +126,7 @@[m [mclass Extension {[m
+     if (destinationSiteExtensions.errorCode !== 0) {[m
+       return [destinationSiteExtensions][m
+     }[m
+[32m+[m
+     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)[m
+     for (const extension of options.getOptions().branches) {[m
+       if (extension.value) {[m
+[36m@@ -187,7 +187,7 @@[m [mclass Extension {[m
+         destinationSite,[m
+         destinationSiteConfiguration.dataCenter,[m
+         sourceSiteExtension,[m
+[31m-        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite)[m
+[32m+[m[32m        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite),[m
+       )[m
+     }[m
+   }[m
+[36m@@ -213,4 +213,4 @@[m [mclass Extension {[m
+   }[m
+ }[m
+ [m
+[31m-export default Extension[m
+[32m+[m[32mexport default Extension[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/extension/extension.test.js b/src/services/copyConfig/extension/extension.test.js[m
+[1mindex 7e004ab..062f055 100644[m
+[1m--- a/src/services/copyConfig/extension/extension.test.js[m
+[1m+++ b/src/services/copyConfig/extension/extension.test.js[m
+[36m@@ -196,4 +196,4 @@[m [mdescribe('Extensions test suite', () => {[m
+     expect(spy.mock.calls.length).toBe(expectedExtensionResponse.result.length - 1)[m
+     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenterConfiguration.dataCenter, getExpectedListExtensionResponse().result[0])[m
+   }[m
+[31m-})[m
+[32m+[m[32m})[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/extension/extensionOptions.js b/src/services/copyConfig/extension/extensionOptions.js[m
+[1mindex f2d0495..8214153 100644[m
+[1m--- a/src/services/copyConfig/extension/extensionOptions.js[m
+[1m+++ b/src/services/copyConfig/extension/extensionOptions.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import Options from '../options.js'[m
+ [m
+ class ExtensionOptions extends Options {[m
+[36m@@ -41,4 +40,4 @@[m [mclass ExtensionOptions extends Options {[m
+   }[m
+ }[m
+ [m
+[31m-export default ExtensionOptions[m
+[32m+[m[32mexport default ExtensionOptions[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/info/dataTest.js b/src/services/copyConfig/info/dataTest.js[m
+[1mindex 4e0ea91..3740236 100644[m
+[1m--- a/src/services/copyConfig/info/dataTest.js[m
+[1m+++ b/src/services/copyConfig/info/dataTest.js[m
+[36m@@ -7,7 +7,6 @@[m [mimport { expectedSchemaResponse } from '../schema/dataTest.js'[m
+ import SchemaOptions from '../schema/schemaOptions.js'[m
+ import PolicyOptions from '../policies/policyOptions.js'[m
+ import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'[m
+[31m-import RbaOptions from '../rba/rbaOptions.js'[m
+ [m
+ export function getInfoExpectedResponse(supports) {[m
+   const schemaOptions = new SchemaOptions(undefined)[m
+[36m@@ -17,6 +16,7 @@[m [mexport function getInfoExpectedResponse(supports) {[m
+   const screenSets = createScreenSetCollection(SCREEN_SET_COLLECTION_DEFAULT, supports)[m
+ [m
+   const policiesOptions = new PolicyOptions(undefined)[m
+[32m+[m[32m  policiesOptions.addUrl()[m
+   const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()[m
+ [m
+   const socialIdentities = {[m
+[36m@@ -44,8 +44,15 @@[m [mexport function getInfoExpectedResponse(supports) {[m
+     id: 'consent',[m
+     name: 'consentStatements',[m
+     value: supports,[m
+[32m+[m[32m    branches: [[m
+[32m+[m[32m      {[m
+[32m+[m[32m        formatName: false,[m
+[32m+[m[32m        id: 'consentStatements-Link',[m
+[32m+[m[32m        name: 'Include Document URL',[m
+[32m+[m[32m        value: false,[m
+[32m+[m[32m      },[m
+[32m+[m[32m    ],[m
+   }[m
+[31m-[m
+   const communicationTopics = {[m
+     id: 'communicationTopics',[m
+     name: 'communicationTopics',[m
+[36m@@ -125,10 +132,7 @@[m [mexport function getInfoExpectedResponse(supports) {[m
+     ],[m
+   }[m
+ [m
+[31m-  const rbaOptions = new RbaOptions(undefined)[m
+[31m-  const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()[m
+[31m-[m
+[31m-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba][m
+[32m+[m[32m  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions][m
+ }[m
+ [m
+ export function getExpectedSchemaResponseExcept(exceptions) {[m
+[36m@@ -181,6 +185,41 @@[m [mfunction createScreenSetCollection(collection, value) {[m
+   return screenSets[m
+ }[m
+ [m
+[32m+[m[32mfunction addExtraBranch(emailInternalName, emailTemplates, emailTemplateNameTranslator) {[m
+[32m+[m[32m  const branchesMap = {[m
+[32m+[m[32m    passwordReset: {[m
+[32m+[m[32m      id: emailInternalName,[m
+[32m+[m[32m      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),[m
+[32m+[m[32m      value: false,[m
+[32m+[m[32m      branches: [[m
+[32m+[m[32m        {[m
+[32m+[m[32m          formatName: false,[m
+[32m+[m[32m          id: `PasswordReset-Link`,[m
+[32m+[m[32m          name: 'Include Reset Page URL',[m
+[32m+[m[32m          value: false,[m
+[32m+[m[32m        },[m
+[32m+[m[32m      ],[m
+[32m+[m[32m    },[m
+[32m+[m[32m    preferencesCenter: {[m
+[32m+[m[32m      id: emailInternalName,[m
+[32m+[m[32m      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),[m
+[32m+[m[32m      value: false,[m
+[32m+[m[32m      branches: [[m
+[32m+[m[32m        {[m
+[32m+[m[32m          formatName: false,[m
+[32m+[m[32m          id: `LitePreferencesCenter-Link`,[m
+[32m+[m[32m          name: 'Include Lite Preferences Center URL',[m
+[32m+[m[32m          value: false,[m
+[32m+[m[32m        },[m
+[32m+[m[32m      ],[m
+[32m+[m[32m    },[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  if (branchesMap.hasOwnProperty(emailInternalName)) {[m
+[32m+[m[32m    emailTemplates.branches.push(branchesMap[emailInternalName])[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[32m+[m
+ function createEmailTemplates(value) {[m
+   const emailTemplates = {[m
+     id: 'emailTemplates',[m
+[36m@@ -190,11 +229,15 @@[m [mfunction createEmailTemplates(value) {[m
+   }[m
+   const emailTemplateNameTranslator = new EmailTemplateNameTranslator()[m
+   for (const emailInternalName of emailTemplateNameTranslator.getInternalNames()) {[m
+[31m-    emailTemplates.branches.push({[m
+[31m-      id: emailInternalName,[m
+[31m-      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),[m
+[31m-      value: value,[m
+[31m-    })[m
+[32m+[m[32m    if (emailInternalName == 'passwordReset' || emailInternalName == 'preferencesCenter') {[m
+[32m+[m[32m      addExtraBranch(emailInternalName, emailTemplates, emailTemplateNameTranslator)[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m      emailTemplates.branches.push({[m
+[32m+[m[32m        id: emailInternalName,[m
+[32m+[m[32m        name: emailTemplateNameTranslator.translateInternalName(emailInternalName),[m
+[32m+[m[32m        value: value,[m
+[32m+[m[32m      })[m
+[32m+[m[32m    }[m
+   }[m
+   return emailTemplates[m
+[31m-}[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/info/info.js b/src/services/copyConfig/info/info.js[m
+[1mindex 7a0b091..6a98c69 100644[m
+[1m--- a/src/services/copyConfig/info/info.js[m
+[1m+++ b/src/services/copyConfig/info/info.js[m
+[36m@@ -28,8 +28,6 @@[m [mimport ExtensionOptions from '../extension/extensionOptions.js'[m
+ import Extension from '../extension/extension.js'[m
+ import DataflowOptions from '../dataflow/dataflowOptions.js'[m
+ import Dataflow from '../dataflow/dataflow.js'[m
+[31m-import Rba from '../rba/rba.js'[m
+[31m-import RbaOptions from '../rba/rbaOptions.js'[m
+ [m
+ class Info {[m
+   #credentials[m
+[36m@@ -57,7 +55,6 @@[m [mclass Info {[m
+       this.#getDataflows(),[m
+       this.#getWebhooks(),[m
+       this.#getExtensions(),[m
+[31m-      this.#getRba(),[m
+     ]).then((infos) => {[m
+       infos.forEach((info) => {[m
+         if (Info.#hasConfiguration(info)) {[m
+[36m@@ -104,10 +101,12 @@[m [mclass Info {[m
+     const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))[m
+     const response = await consentOptions.getConfiguration().get()[m
+     if (response.errorCode === 0) {[m
+[32m+[m[32m      consentOptions.addBranch('consentStatements', 'Document')[m
+       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))[m
+       if (!ConsentConfiguration.hasConsents(response)) {[m
+         consentOptions.removeConsent(info)[m
+       }[m
+[32m+[m
+       return Promise.resolve(info)[m
+     } else if (Info.#consentsNotMigrated(response)) {[m
+       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))[m
+[36m@@ -152,6 +151,7 @@[m [mclass Info {[m
+     const response = await screenSetOptions.getConfiguration().get()[m
+     if (response.errorCode === 0) {[m
+       screenSetOptions.addCollection(response)[m
+[32m+[m[32m      console.log('screenSetOptions', screenSetOptions)[m
+       const info = JSON.parse(JSON.stringify(screenSetOptions.getOptionsDisabled()))[m
+       return Promise.resolve(info)[m
+     } else {[m
+[36m@@ -181,6 +181,7 @@[m [mclass Info {[m
+ [m
+     if (response.errorCode === 0) {[m
+       emailOptions.addEmails(response)[m
+[32m+[m[32m      emailOptions.addUrl(response)[m
+       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))[m
+       return Promise.resolve(info)[m
+     } else {[m
+[36m@@ -207,8 +208,8 @@[m [mclass Info {[m
+   async #getPolicies() {[m
+     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))[m
+     const response = await policyOptions.getConfiguration().get()[m
+[31m-[m
+     if (response.errorCode === 0) {[m
+[32m+[m[32m      policyOptions.addUrl()[m
+       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))[m
+       Info.#removeUnsupportedPolicies(response, info, policyOptions)[m
+       return Promise.resolve(info)[m
+[36m@@ -217,7 +218,7 @@[m [mclass Info {[m
+       return Promise.reject([response])[m
+     }[m
+   }[m
+[31m-[m
+[32m+[m[32m  //remover o link para nao aparecer[m
+   static #removeUnsupportedPolicies(response, info, policyOptions) {[m
+     if (!response.accountOptions) {[m
+       policyOptions.removeAccountOptions(info)[m
+[36m@@ -306,20 +307,6 @@[m [mclass Info {[m
+       return Promise.reject([response])[m
+     }[m
+   }[m
+[31m-[m
+[31m-  async #getRba() {[m
+[31m-    const rbaOptions = new RbaOptions(new Rba(this.#credentials, this.#site, this.#dataCenter))[m
+[31m-    const responses = await rbaOptions.getConfiguration().get()[m
+[31m-    if (responses.every((r) => r.errorCode === 0)) {[m
+[31m-      const info = JSON.parse(JSON.stringify(rbaOptions.getOptionsDisabled()))[m
+[31m-      if (!Rba.hasRules(responses[2])) {[m
+[31m-        rbaOptions.removeRules(info)[m
+[31m-      }[m
+[31m-      return Promise.resolve(info)[m
+[31m-    } else {[m
+[31m-      return Promise.reject(responses)[m
+[31m-    }[m
+[31m-  }[m
+ }[m
+ [m
+ export default Info[m
+[1mdiff --git a/src/services/copyConfig/info/infoPolicy.test.js b/src/services/copyConfig/info/infoPolicy.test.js[m
+[1mindex 8f13d9e..46a4a44 100644[m
+[1m--- a/src/services/copyConfig/info/infoPolicy.test.js[m
+[1m+++ b/src/services/copyConfig/info/infoPolicy.test.js[m
+[36m@@ -19,8 +19,6 @@[m [mimport { channelsExpectedResponse } from '../communication/dataTest.js'[m
+ import { getExpectedWebhookResponse } from '../webhook/dataTest.js'[m
+ import { getExpectedListExtensionResponse } from '../extension/dataTest.js'[m
+ import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'[m
+[31m-import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'[m
+[31m-[m
+ jest.mock('axios')[m
+ [m
+ describe('Info Policy test suite', () => {[m
+[36m@@ -98,9 +96,6 @@[m [mdescribe('Info Policy test suite', () => {[m
+       .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })[m
+       .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })[m
+       .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })[m
+[31m-      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })[m
+[31m-      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })[m
+[31m-      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })[m
+ [m
+     const response = await info.get()[m
+ [m
+[36m@@ -115,4 +110,4 @@[m [mdescribe('Info Policy test suite', () => {[m
+ [m
+     return response[m
+   }[m
+[31m-})[m
+[32m+[m[32m})[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/options.js b/src/services/copyConfig/options.js[m
+[1mindex 022c9b5..6013c67 100644[m
+[1m--- a/src/services/copyConfig/options.js[m
+[1m+++ b/src/services/copyConfig/options.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ class Options {[m
+   constructor(options) {[m
+     this.options = options[m
+[36m@@ -58,7 +57,9 @@[m [mclass Options {[m
+   removeInfo(name, info) {[m
+     return info.branches.filter(this.#remove(name))[m
+   }[m
+[31m-[m
+[32m+[m[32m  removeLink(name, info) {[m
+[32m+[m[32m    info.branches.filter((obj) => obj.name === 'Include Links')[m
+[32m+[m[32m  }[m
+   #remove(name) {[m
+     return function (value, index, array) {[m
+       if (value.name === name) {[m
+[36m@@ -72,6 +73,25 @@[m [mclass Options {[m
+   getId() {[m
+     return this.options.id[m
+   }[m
+[32m+[m[32m  addBranch(optId, optName) {[m
+[32m+[m[32m    let option[m
+[32m+[m[32m    if (optId !== 'consentStatements'){[m
+[32m+[m[32m      option = this.options.branches.find((collection) => collection.name === optId)[m
+[32m+[m[32m    }else {[m
+[32m+[m[32m      option =  this.options[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    const optionName = `Include ${optName} URL`[m
+[32m+[m[32m    if (option) {[m
+[32m+[m[32m      option.branches = [][m
+[32m+[m[32m      option.branches.push({[m
+[32m+[m[32m        id: `${optId}-Link`,[m
+[32m+[m[32m        name: optionName,[m
+[32m+[m[32m        formatName: false,[m
+[32m+[m[32m        value: false,[m
+[32m+[m[32m      })[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+ [m
+   getOptionValue(optionName) {[m
+     if (this.getOptions().name === optionName) {[m
+[36m@@ -88,4 +108,4 @@[m [mclass Options {[m
+   }[m
+ }[m
+ [m
+[31m-export default Options[m
+[32m+[m[32mexport default Options[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/policies/dataTest.js b/src/services/copyConfig/policies/dataTest.js[m
+[1mindex 536eb7c..114e49c 100644[m
+[1m--- a/src/services/copyConfig/policies/dataTest.js[m
+[1m+++ b/src/services/copyConfig/policies/dataTest.js[m
+[36m@@ -211,4 +211,4 @@[m [mfunction getPoliciesExpectedResponseWithNoObjects() {[m
+ }[m
+ [m
+ const accountOptions = 'accountOptions'[m
+[31m-export { getPolicyConfig, accountOptions, getPoliciesExpectedResponseWithNoObjects }[m
+[32m+[m[32mexport { getPolicyConfig, accountOptions, getPoliciesExpectedResponseWithNoObjects }[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/policies/policies.js b/src/services/copyConfig/policies/policies.js[m
+[1mindex 95fff13..2e2455a 100644[m
+[1m--- a/src/services/copyConfig/policies/policies.js[m
+[1m+++ b/src/services/copyConfig/policies/policies.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import generateErrorResponse from '../../errors/generateErrorResponse.js'[m
+ import UrlBuilder from '../../gigya/urlBuilder.js'[m
+ import client from '../../gigya/client.js'[m
+[36m@@ -56,6 +55,9 @@[m [mclass Policy {[m
+ [m
+   async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {[m
+     this.#cleanResponse(response)[m
+[32m+[m
+[32m+[m[32m    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))[m
+[32m+[m[32m    this.#cleanUrl(collection, response)[m
+     const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))[m
+     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)[m
+     if (isParentSite) {[m
+[36m@@ -64,7 +66,26 @@[m [mclass Policy {[m
+       return this.#copyPoliciesToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, filteredResponse)[m
+     }[m
+   }[m
+[31m-[m
+[32m+[m[32m  #cleanUrl(options, response) {[m
+[32m+[m[32m    for (let branch of options) {[m
+[32m+[m[32m      let filter = branch.branches.map((obj) => obj.value)[m
+[32m+[m[32m      if (!filter[0]) {[m
+[32m+[m[32m        this.cleanLink(response, branch)[m
+[32m+[m[32m        console.log('in', filter)[m
+[32m+[m[32m      }[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+[32m+[m[32m  deleteLink(response, property, branch) {[m
+[32m+[m[32m    delete response[branch][property][m
+[32m+[m[32m  }[m
+[32m+[m[32m  cleanLink(response, branch) {[m
+[32m+[m[32m    if (branch.name === 'passwordReset') {[m
+[32m+[m[32m      this.deleteLink(response, 'resetURL', branch.name)[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (branch.name === 'preferenceCenter') {[m
+[32m+[m[32m      this.deleteLink(response, 'redirectURL', branch.name)[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }[m
+   async #copyPoliciesToChildSite(destinationSite, dataCenter, response) {[m
+     this.#prepareAccountOptionsToChildSite(response)[m
+     this.#prepareRegistrationToChildSite(response)[m
+[36m@@ -216,4 +237,4 @@[m [mclass Policy {[m
+   }[m
+ }[m
+ [m
+[31m-export default Policy[m
+[32m+[m[32mexport default Policy[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/policies/policies.test.js b/src/services/copyConfig/policies/policies.test.js[m
+[1mindex 28ce325..d99f4eb 100644[m
+[1m--- a/src/services/copyConfig/policies/policies.test.js[m
+[1m+++ b/src/services/copyConfig/policies/policies.test.js[m
+[36m@@ -149,4 +149,4 @@[m [mdescribe('Policies test suite', () => {[m
+       ],[m
+     }[m
+   }[m
+[31m-})[m
+[32m+[m[32m})[m
+\ No newline at end of file[m
+[1mdiff --git a/src/services/copyConfig/policies/policyOptions.js b/src/services/copyConfig/policies/policyOptions.js[m
+[1mindex bc584b8..b2aed70 100644[m
+[1m--- a/src/services/copyConfig/policies/policyOptions.js[m
+[1m+++ b/src/services/copyConfig/policies/policyOptions.js[m
+[36m@@ -3,7 +3,6 @@[m
+  * License: Apache-2.0[m
+  */[m
+ [m
+[31m-[m
+ import Options from '../options.js'[m
+ [m
+ class PolicyOptions extends Options {[m
+[36m@@ -136,6 +135,12 @@[m [mclass PolicyOptions extends Options {[m
+   getConfiguration() {[m
+     return this.#policy[m
+   }[m
+[32m+[m[32m  addUrl() {[m
+[32m+[m[32m    this.addBranch('preferencesCenter','Lite Preferences Center')[m
+[32m+[m[32m    this.addBranch('passwordReset','Reset Page')[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m
+   removeAccountOptions(info) {[m
+     return this.removeInfo(PolicyOptions.#accountOptions, info)[m
+   }[m
+[36m@@ -184,6 +189,14 @@[m [mclass PolicyOptions extends Options {[m
+   removeWebSdk(info) {[m
+     return this.removeInfo(PolicyOptions.#webSdk, info)[m
+   }[m
+[32m+[m[32m  removePreferencesCenterLink(info) {[m
+[32m+[m[32m    const preferencesCenterObject = info.branches.find((obj) => obj.id === 'ppreferencesCenter')[m
+[32m+[m[32m    return this.removeInfo('Include Links', preferencesCenterObject)[m
+[32m+[m[32m  }[m
+[32m+[m[32m  removePasswordResetLink(info) {[m
+[32m+[m[32m    const passWordResetObject = info.branches.find((obj) => obj.id === 'ppasswordReset')[m
+[32m+[m[32m    return this.removeInfo('Include Links', passWordResetObject)[m
+[32m+[m[32m  }[m
+ }[m
+ [m
+[31m-export default PolicyOptions[m
+[32m+[m[32mexport default PolicyOptions[m
+\ No newline at end of file[m

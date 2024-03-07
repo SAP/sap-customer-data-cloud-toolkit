@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { credentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey } from '../../servicesDataTest.js'
 import Policy from './policies.js'
 import axios from 'axios'
@@ -22,24 +21,48 @@ describe('Policies test suite', () => {
   })
 
   const allOptions = {
-    branches: [
-      { id: 'registration', value: true },
-      { id: 'Web Sdk', value: false },
-      { id: 'accountOptions', value: true },
-      { id: 'passwordComplexity', value: false },
-      { id: 'security', value: false },
-      { id: 'emailVerification', value: false },
-      { id: 'emailNotifications', value: false },
-      { id: 'passwordReset', value: false },
-      { id: 'codeVerification', value: false },
-      { id: 'profilePhoto', value: false },
-      { id: 'federation', value: false },
-      { id: 'twoFactorAuth', value: false },
-      { id: 'doubleOptIn', value: false },
-      { id: 'gigyaPlugins', value: false },
-      { id: 'rba', value: false },
-      { id: 'preferencesCenter', value: false },
-    ],
+    options: {
+      branches: [
+        { id: 'registration', value: true },
+        { id: 'Web Sdk', value: false },
+        { id: 'accountOptions', value: true },
+        { id: 'passwordComplexity', value: false },
+        { id: 'security', value: false },
+        { id: 'emailVerification', value: false },
+        { id: 'emailNotifications', value: false },
+        {
+          id: 'passwordReset',
+          value: false,
+          branches: [
+            {
+              formatName: false,
+              id: 'passwordReset-Link',
+              name: 'Include Reset Page URL',
+              value: false,
+            },
+          ],
+        },
+        { id: 'codeVerification', value: false },
+        { id: 'profilePhoto', value: false },
+        { id: 'federation', value: false },
+        { id: 'twoFactorAuth', value: false },
+        { id: 'doubleOptIn', value: false },
+        { id: 'gigyaPlugins', value: false },
+        { id: 'rba', value: false },
+        {
+          id: 'preferencesCenter',
+          value: false,
+          branches: [
+            {
+              formatName: false,
+              id: 'preferencesCenter-Link',
+              name: 'Include Lite Preferences Center URL',
+              value: false,
+            },
+          ],
+        },
+      ],
+    },
   }
 
   test('copy policies successfully', async () => {
