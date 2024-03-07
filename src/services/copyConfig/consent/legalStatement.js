@@ -61,7 +61,6 @@ class LegalStatement {
     let filter = options.branches.find((obj) => obj)
     if (!filter.value) {
       this.cleanLink(response)
-      console.log('in', filter)
     }
   }
   deleteLink(response) {

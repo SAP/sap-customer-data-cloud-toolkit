@@ -160,16 +160,18 @@ describe('Policies test suite', () => {
 
   function getPolicyInfo(optionName) {
     return {
-      id: 'policy',
-      name: 'policy',
-      value: false,
-      branches: [
-        {
-          id: optionName,
-          name: optionName,
-          value: true,
-        },
-      ],
+      options: {
+        id: 'policy',
+        name: 'policy',
+        value: false,
+        branches: [
+          {
+            id: optionName,
+            name: optionName,
+            value: true,
+          },
+        ],
+      },
     }
   }
 })
