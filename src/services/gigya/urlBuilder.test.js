@@ -1,4 +1,4 @@
-import UrlBuilder from './urlBuilder'
+import UrlBuilder from './urlBuilder.js'
 
 describe('URL Builder test suite', () => {
   const namespace = 'namespace'
@@ -79,13 +79,13 @@ describe('URL Builder test suite', () => {
     expect(url).toBe(`https://${namespace}.eu2.${getDomain(console)}/${endpoint}`)
   })
 
-  test('buildUrl with undefined data center and console console.cn1.sapcdm.cn', async () => {
+  test('buildUrl with undefined data center and console console.cn1.sapcdm.cn', () => {
     const console = 'console.cn1.sapcdm.cn'
     const url = UrlBuilder.buildUrl(namespace, undefined, endpoint, console)
     expect(url).toBe(`https://${namespace}.cn1.${getDomain(console)}/${endpoint}`)
   })
 
-  test('buildUrl with undefined data center and console au.my.console.eu2.cdc.cloud.sap', async () => {
+  test('buildUrl with undefined data center and console au.my.console.eu2.cdc.cloud.sap', () => {
     const console = 'console.eu2.cdc.cloud.sap'
     const url = UrlBuilder.buildUrl(namespace, undefined, endpoint, console)
     expect(url).toBe(`https://${namespace}.eu2.${getDomain(console)}/${endpoint}`)
