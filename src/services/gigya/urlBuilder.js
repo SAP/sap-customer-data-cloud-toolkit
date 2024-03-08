@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import dataCenters from '../../redux/dataCenters/dataCenters.json'
 
 class UrlBuilder {
@@ -20,12 +19,20 @@ class UrlBuilder {
   }
 
   static #getPrimaryDataCenter(console) {
-    const hostDataCenters = dataCenters.filter((dataCenter) => dataCenter.console === console)[0].datacenters
+    const hostDataCenters = dataCenters.filter((dataCenter) => {
+      return new RegExp(dataCenter.console).test(console)
+    })[0].datacenters
+
+    //const hostDataCenters = dataCenters.filter((dataCenter) => dataCenter.console === console)[0].datacenters
     return hostDataCenters.filter((dataCenter) => dataCenter.isPrimary === true)[0].value
   }
 
   static #getDomain(host) {
-    return host.includes('cn1') ? 'sapcdm.cn' : 'gigya.com'
+    const supportedDomains = ['gigya.com', 'cdc.cloud.sap', 'sapcdm.cn']
+    //return host.includes('cn1') ? 'sapcdm.cn' : 'gigya.com'
+    return supportedDomains.filter((domain) => {
+      return host.endsWith(domain)
+    })
   }
 }
 
