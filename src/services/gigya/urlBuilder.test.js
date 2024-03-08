@@ -103,9 +103,9 @@ describe('URL Builder test suite', () => {
     } else if (gigyaConsole.endsWith('sapcdm.cn')) {
       return 'sapcdm.cn'
     } else if (gigyaConsole.endsWith(defaultDomain)) {
-      return 'gigya.com'
+      return defaultDomain
     } else if (gigyaConsole.endsWith('cdc.cloud.sap')) {
-      return 'cdc.cloud.sap'
+      return defaultDomain
     }
     return ''
   }

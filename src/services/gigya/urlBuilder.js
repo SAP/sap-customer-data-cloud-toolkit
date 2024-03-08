@@ -23,16 +23,11 @@ class UrlBuilder {
       return new RegExp(dataCenter.console).test(console)
     })[0].datacenters
 
-    //const hostDataCenters = dataCenters.filter((dataCenter) => dataCenter.console === console)[0].datacenters
     return hostDataCenters.filter((dataCenter) => dataCenter.isPrimary === true)[0].value
   }
 
   static #getDomain(host) {
-    const supportedDomains = ['gigya.com', 'cdc.cloud.sap', 'sapcdm.cn']
-    //return host.includes('cn1') ? 'sapcdm.cn' : 'gigya.com'
-    return supportedDomains.filter((domain) => {
-      return host.endsWith(domain)
-    })
+    return host.includes('cn1') ? 'sapcdm.cn' : 'gigya.com'
   }
 }
 
