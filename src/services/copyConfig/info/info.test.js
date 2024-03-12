@@ -28,6 +28,7 @@ import {
   consentId,
   channelId,
   internalSchemaId,
+  addressesSchemaId,
 } from '../dataTest.js'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest.js'
 import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest.js'
@@ -114,7 +115,7 @@ describe('Info test suite', () => {
   })
 
   test('get info except schema successfully', async () => {
-    const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId, internalSchemaId])
+    const mockedResponse = getExpectedSchemaResponseExcept([schemaId, profileId, subscriptionsId, internalSchemaId, addressesSchemaId])
     axios
       .mockResolvedValueOnce({ data: mockedResponse })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })

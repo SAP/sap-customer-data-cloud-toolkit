@@ -12,6 +12,7 @@ import generateErrorResponse, {
   ERROR_SEVERITY_WARNING,
 } from '../../errors/generateErrorResponse.js'
 import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
+import PayloadCreator from './payloadCreator.js'
 
 class Schema {
   static #ERROR_MSG_GET_CONFIG = 'Error getting schema'
@@ -21,6 +22,7 @@ class Schema {
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
   static INTERNAL_SCHEMA = 'internalSchema'
+  static ADDRESSES_SCHEMA = 'addressesSchema'
   static GIGYA_MAXIMUM_PAYLOAD_SIZE = 8192
   #credentials
   #site
@@ -66,46 +68,53 @@ class Schema {
   }
 
   async copySchema(destinationSite, destinationSiteConfiguration, payload, options) {
-    const responses = []
     const sourceSiteSchema = JSON.parse(JSON.stringify(payload))
-    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     removePropertyFromObjectCascading(sourceSiteSchema, 'preferencesSchema') // to be processed later
     const destinationSiteSchema = await this.#getSchemaOfSite(destinationSite, destinationSiteConfiguration.dataCenter)
     if (destinationSiteSchema.errorCode === 0) {
-      if (options.getOptionValue(Schema.DATA_SCHEMA)) {
-        responses.push(
-          ...this.#removeFromThePayloadDifferentTypes(
-            destinationSite,
-            sourceSiteSchema.dataSchema,
-            destinationSiteSchema.dataSchema,
-            this.#createWarningCannotChangeDataSchemaFieldType,
-          ),
-        )
-        responses.push(...this.#removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSiteSchema.dataSchema, destinationSiteSchema.dataSchema))
-        responses.unshift(...(await this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
-      }
-      if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
-        responses.push(
-          ...this.#removeFromThePayloadDifferentTypes(
-            destinationSite,
-            sourceSiteSchema.profileSchema,
-            destinationSiteSchema.profileSchema,
-            this.#createWarningCannotChangeProfileSchemaFieldType,
-          ),
-        )
-        responses.push(...this.#removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSiteSchema.profileSchema, destinationSiteSchema.profileSchema))
-        responses.unshift(...(await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
-      }
-      if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
-        responses.push(await this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
-      }
-      if (options.getOptionValue(Schema.INTERNAL_SCHEMA)) {
-        responses.push(await this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
-      }
-      return Promise.all(responses)
+      return this.#copyAllSchemas(destinationSiteConfiguration, destinationSite, sourceSiteSchema, destinationSiteSchema, options)
     } else {
       return [destinationSiteSchema]
     }
+  }
+
+  async #copyAllSchemas(destinationSiteConfiguration, destinationSite, sourceSiteSchema, destinationSiteSchema, options) {
+    const responses = []
+    const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
+    if (options.getOptionValue(Schema.DATA_SCHEMA)) {
+      responses.push(
+        ...this.#removeFromThePayloadDifferentTypes(
+          destinationSite,
+          sourceSiteSchema.dataSchema,
+          destinationSiteSchema.dataSchema,
+          this.#createWarningCannotChangeDataSchemaFieldType,
+        ),
+      )
+      responses.push(...this.#removeSourceChildsThatHaveParentOnDestination(destinationSite, sourceSiteSchema.dataSchema, destinationSiteSchema.dataSchema))
+      responses.push(...(await this.#copyDataSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
+    }
+    if (options.getOptionValue(Schema.PROFILE_SCHEMA)) {
+      responses.push(
+        ...this.#removeFromThePayloadDifferentTypes(
+          destinationSite,
+          sourceSiteSchema.profileSchema,
+          destinationSiteSchema.profileSchema,
+          this.#createWarningCannotChangeProfileSchemaFieldType,
+        ),
+      )
+      responses.push(...this.#removeProfileFieldsThatDoNotExistsOnDestination(destinationSite, sourceSiteSchema.profileSchema, destinationSiteSchema.profileSchema))
+      responses.push(...(await this.#copyProfileSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
+    }
+    if (options.getOptionValue(Schema.SUBSCRIPTIONS_SCHEMA)) {
+      responses.push(await this.#copySubscriptionsSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+    }
+    if (options.getOptionValue(Schema.INTERNAL_SCHEMA)) {
+      responses.push(await this.#copyInternalSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite))
+    }
+    if (options.getOptionValue(Schema.ADDRESSES_SCHEMA)) {
+      responses.push(...(await this.#copyAddressesSchema(destinationSite, destinationSiteConfiguration.dataCenter, sourceSiteSchema, isParentSite)))
+    }
+    return Promise.all(responses)
   }
 
   #removeFromThePayloadDifferentTypes(destinationSite, schemaPayload, destinationSiteSchema, errorFunction) {
@@ -202,14 +211,15 @@ class Schema {
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.INTERNAL_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.ADDRESSES_SCHEMA)
     dataSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.DATA_SCHEMA }
     removePropertyFromObjectCascading(dataSchemaPayload.dataSchema.fields, 'subType')
-    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(dataSchemaPayload, 'dataSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
+    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(dataSchemaPayload, Schema.DATA_SCHEMA, Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
     for (const schemaPayload of schemaPayloads) {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
-        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'dataSchema')
+        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, Schema.DATA_SCHEMA)
       }
       responses.push(response)
       if (response.errorCode !== 0) {
@@ -234,14 +244,15 @@ class Schema {
     removePropertyFromObjectCascading(clonePayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.SUBSCRIPTIONS_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.INTERNAL_SCHEMA)
+    removePropertyFromObjectCascading(clonePayload, Schema.ADDRESSES_SCHEMA)
     clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
     Schema.#removeUnsuportedProfileSchemaFields(clonePayload)
-    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(clonePayload, 'profileSchema', Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
+    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(clonePayload, Schema.PROFILE_SCHEMA, Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
     for (const schemaPayload of schemaPayloads) {
       if (isParentSite) {
         response = await this.set(destinationSite, dataCenter, schemaPayload)
       } else {
-        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, 'profileSchema')
+        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, Schema.PROFILE_SCHEMA)
       }
       responses.push(response)
       if (response.errorCode !== 0) {
@@ -270,29 +281,11 @@ class Schema {
     response = await this.set(destinationSite, dataCenter, clonePayload)
     if (response.errorCode === 0) {
       // the field 'required' can only be copied alone to a child site together with scope=site
-      clonePayload = this.#createPayloadWithRequiredOnly(payload, schemaName)
+      clonePayload = PayloadCreator.createPayloadWithRequiredOnly(payload, schemaName)
       clonePayload['scope'] = 'site'
       response = await this.set(destinationSite, dataCenter, clonePayload)
     }
     return response
-  }
-
-  #createPayloadWithRequiredOnly(payload, schemaName) {
-    const clonePayload = JSON.parse(JSON.stringify(payload))
-    for (const field of Object.keys(clonePayload[schemaName].fields)) {
-      clonePayload[schemaName].fields[field] = { required: clonePayload[schemaName].fields[field].required }
-    }
-    return clonePayload
-  }
-
-  #createSubscriptionsPayloadWithRequiredOnly(payload, schemaName) {
-    const clonePayload = JSON.parse(JSON.stringify(payload))
-    for (const subscription of Object.keys(clonePayload[schemaName].fields)) {
-      for (const field of Object.keys(clonePayload[schemaName].fields[subscription])) {
-        clonePayload[schemaName].fields[subscription][field] = { required: clonePayload[schemaName].fields[subscription][field].required }
-      }
-    }
-    return clonePayload
   }
 
   async #copySubscriptionsSchema(destinationSite, dataCenter, payload, isParentSite) {
@@ -301,26 +294,12 @@ class Schema {
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.INTERNAL_SCHEMA)
+    removePropertyFromObjectCascading(subscriptionsSchemaPayload, Schema.ADDRESSES_SCHEMA)
     subscriptionsSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.SUBSCRIPTIONS_SCHEMA }
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, subscriptionsSchemaPayload)
     } else {
-      response = await this.#copySubscriptionsSchemaToChildSite(destinationSite, dataCenter, subscriptionsSchemaPayload)
-    }
-    return response
-  }
-
-  async #copySubscriptionsSchemaToChildSite(destinationSite, dataCenter, payload) {
-    let response
-    let clonePayload = JSON.parse(JSON.stringify(payload))
-    // the field 'required' cannot be copied to a child site together with other fields
-    removePropertyFromObjectCascading(clonePayload.subscriptionsSchema, 'required')
-    response = await this.set(destinationSite, dataCenter, clonePayload)
-    if (response.errorCode === 0) {
-      // the field 'required' can only be copied alone to a child site together with scope=site
-      clonePayload = this.#createSubscriptionsPayloadWithRequiredOnly(payload, 'subscriptionsSchema')
-      clonePayload['scope'] = 'site'
-      response = await this.set(destinationSite, dataCenter, clonePayload)
+      response = await this.#copySchemaToChildSite(destinationSite, dataCenter, subscriptionsSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     }
     return response
   }
@@ -331,13 +310,38 @@ class Schema {
     removePropertyFromObjectCascading(internalSchemaPayload, Schema.DATA_SCHEMA)
     removePropertyFromObjectCascading(internalSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(internalSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(internalSchemaPayload, Schema.ADDRESSES_SCHEMA)
     internalSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.INTERNAL_SCHEMA }
     if (isParentSite) {
       response = await this.set(destinationSite, dataCenter, internalSchemaPayload)
     } else {
-      response = await this.#copySchemaToChildSite(destinationSite, dataCenter, internalSchemaPayload, 'internalSchema')
+      response = await this.#copySchemaToChildSite(destinationSite, dataCenter, internalSchemaPayload, Schema.INTERNAL_SCHEMA)
     }
     return response
+  }
+
+  async #copyAddressesSchema(destinationSite, dataCenter, payload, isParentSite) {
+    const responses = []
+    let response
+    const addressesSchemaPayload = JSON.parse(JSON.stringify(payload))
+    removePropertyFromObjectCascading(addressesSchemaPayload, Schema.DATA_SCHEMA)
+    removePropertyFromObjectCascading(addressesSchemaPayload, Schema.PROFILE_SCHEMA)
+    removePropertyFromObjectCascading(addressesSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
+    removePropertyFromObjectCascading(addressesSchemaPayload, Schema.INTERNAL_SCHEMA)
+    addressesSchemaPayload.context = { targetApiKey: destinationSite, id: Schema.ADDRESSES_SCHEMA }
+    const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(addressesSchemaPayload, Schema.ADDRESSES_SCHEMA, Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
+    for (const schemaPayload of schemaPayloads) {
+      if (isParentSite) {
+        response = await this.set(destinationSite, dataCenter, schemaPayload)
+      } else {
+        response = await this.#copySchemaToChildSite(destinationSite, dataCenter, schemaPayload, Schema.ADDRESSES_SCHEMA)
+      }
+      responses.push(response)
+      if (response.errorCode !== 0) {
+        break
+      }
+    }
+    return responses
   }
 
   #isChildSite(siteInfo, siteApiKey) {
@@ -356,11 +360,12 @@ class Schema {
   }
 
   #getIncludedSchemas() {
-    return `${Schema.PROFILE_SCHEMA},${Schema.DATA_SCHEMA},${Schema.SUBSCRIPTIONS_SCHEMA},${Schema.INTERNAL_SCHEMA}`
+    return `${Schema.PROFILE_SCHEMA},${Schema.DATA_SCHEMA},${Schema.SUBSCRIPTIONS_SCHEMA},${Schema.INTERNAL_SCHEMA},${Schema.ADDRESSES_SCHEMA}`
   }
 
   #setSchemaParameters(apiKey, body) {
     const parameters = Object.assign({}, this.#getSchemaParameters(apiKey))
+    delete parameters.include
 
     if (body.dataSchema) {
       parameters[Schema.DATA_SCHEMA] = JSON.stringify(body.dataSchema)
@@ -373,6 +378,9 @@ class Schema {
     }
     if (body.internalSchema) {
       parameters[Schema.INTERNAL_SCHEMA] = JSON.stringify(body.internalSchema)
+    }
+    if (body.addressesSchema) {
+      parameters[Schema.ADDRESSES_SCHEMA] = JSON.stringify(body.addressesSchema)
     }
     if (body.scope) {
       parameters['scope'] = body.scope
@@ -405,6 +413,10 @@ class Schema {
 
   static hasInternalSchema(response) {
     return Schema.#has(response.internalSchema)
+  }
+
+  static hasAddressesSchema(response) {
+    return Schema.#has(response.addressesSchema)
   }
 
   static #has(property) {
