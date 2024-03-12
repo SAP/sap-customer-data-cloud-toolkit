@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 import * as servicesDataTest from '../../src/services/site/dataTest'
 import * as utils from './utils'
@@ -13,7 +12,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
   beforeEach(() => {
     utils.resizeObserverLoopErrRe()
     utils.mockGetConfigurationRequests()
-   utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
+    utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     utils.startUp(dataTest.siteDeployerIconName)
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
@@ -120,17 +119,9 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.fillSourceApiKeyInput()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-checkbox').eq(0).realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('.ui5-li-tree-toggle-box').realClick()
-    cy.get('[data-cy="siteCopyConfigurationDialog"]')
-      .find('ui5-tree')
-      .eq(8)
-      .find('ui5-tree-item-custom')
-      .find('ui5-tree-item-custom')
-      .eq(1)
-      .find('div')
-      .eq(0)
-      .find('ui5-button')
-      .eq(0)
-      .click()
+    // cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(1).realClick()
+    cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-checkbox').realClick()
+    cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-button').realClick()
     cy.get('[data-cy="dataflowVariableInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
     cy.get('[data-cy="dataflowVariableInput"]').eq(1).shadow().find('[class = "ui5-input-inner"]').type('user')
     cy.get('[data-cy="dataflowVariableInput"]').eq(2).shadow().find('[class = "ui5-input-inner"]').type('mobile')

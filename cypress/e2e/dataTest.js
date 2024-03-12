@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const currentSiteName = 'dev.cdc-tools'
@@ -11,9 +10,9 @@ const baseDomainName = 'target_sites'
 const childOfBaseDomainName = 'target_sites.child'
 const siteSelectorOption = 'Site Selector'
 const smsTemplatesOption = 'SMS Templates'
-const parentBaseDomain = 'Manually add parent site'
+const parentBaseDomain = 'testing_site'
 const parentSiteDescription = 'Manually added description'
-const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
+const expectedErrorMessage = 'Missing required parameter (testing_site - eu1)Missing required parameter : partnerID'
 const expectedSuccessMessage = 'Report Usage Via E-mailPlease report the successful usage to help us track usages and being able to continue improving this tool.'
 const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
