@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import * as CommonTestData from '../servicesDataTest.js'
 
 const Endpoints = {
@@ -34,14 +33,18 @@ const expectedGigyaResponseNoSecret = {
 const expectedGigyaResponseNoUserKey = expectedGigyaResponseNoSecret
 
 const expectedGigyaResponseNoPartnerId = {
-  callId: '719a94d3fecc4159a748345c757a49a3',
-  errorCode: 400002,
-  errorDetails: 'Missing required parameter : partnerID',
-  errorMessage: 'Missing required parameter',
-  statusCode: 400,
-  statusReason: CommonTestData.badRequest,
+  callId: 'ed0ae89d172f4705a26f513ca469e6a8',
+  errorCode: 500001,
+  errorDetails: 'baseDomain',
+  errorMessage: 'General Server Error',
   apiVersion: 2,
-  time: Date.now(),
+  statusCode: 500,
+  statusReason: 'Internal Server Error',
+  time: '2024-03-12T16:21:28.815Z',
+  deleted: false,
+  endpoint: 'admin.createSite',
+  isChildSite: false,
+  site: {},
 }
 
 const expectedGigyaResponseNoBaseDomain = {
