@@ -87,10 +87,14 @@ const styles = {
     margin: 0,
   },
   progressIndicatorStyle: {
-    width: '98%',
+    width: '93%',
     position: 'relative',
     margin: 'var(--_ui5_card_header_padding)',
+    display: 'table',
+    // eslint-disable-next-line no-dupe-keys
+    margin:'auto',
   },
+  
   errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,
   },
