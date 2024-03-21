@@ -3,8 +3,9 @@
  * License: Apache-2.0
  */
 
-
+/* Hide fridge with credentials */
 .cdc-toolbox--topbar-menu-container {
+  display: none;
   position: absolute;
   right: 377px;
   top: -64px;
