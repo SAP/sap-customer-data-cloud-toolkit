@@ -73,6 +73,7 @@ const CopyConfigurationDialog = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [unselectAllIncludeCheckboxState, setUnSelectAllIncludeCheckboxState] = useState(false)
 
   useEffect(() => {
     if (open && edit) {
@@ -108,10 +109,33 @@ const CopyConfigurationDialog = ({ t }) => {
     })
   }
 
+  const onSelectAllIncludeUrlChangeHandler = (event) => {
+    let checkBoxId
+    configurations.forEach((configuration) => {
+      if (configuration.branches && configuration.branches.length > 0) {
+        configuration.branches.forEach((branch) => {
+          if (branch.name && branch.name.includes("Include")) {
+            checkBoxId = branch.id
+            dispatch(setConfigurationStatus({ checkBoxId, value:false }))
+          }
+          if (branch.branches && branch.branches.length > 0) {
+            branch.branches.forEach((nestedBranch) => {
+              if (nestedBranch.name && nestedBranch.name.includes("Include")) {
+                checkBoxId = nestedBranch.id
+                dispatch(setConfigurationStatus({ checkBoxId, value:false }))
+              }
+            });
+          }
+        });
+      }
+    });
+  };
+
   const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))
     dispatch(clearSourceConfigurations(siteId))
     setSelectAllCheckboxState(false)
+    setUnSelectAllIncludeCheckboxState(false)
   }
 
   const onDialogMessageConfirmAfterCloseHandle = () => {
@@ -130,6 +154,7 @@ const CopyConfigurationDialog = ({ t }) => {
     dispatch(clearApiCardError())
     dispatch(clearErrors())
     setSelectAllCheckboxState(false)
+    setUnSelectAllIncludeCheckboxState(false)
   }
 
   const showConfigurations = () => {
@@ -138,7 +163,9 @@ const CopyConfigurationDialog = ({ t }) => {
         siteId={siteId}
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
+        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}

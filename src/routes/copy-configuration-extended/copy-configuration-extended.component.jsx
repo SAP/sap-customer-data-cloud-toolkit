@@ -86,6 +86,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
+  const [unselectAllIncludeCheckboxState, setUnSelectAllIncludeCheckboxState] = useState(false)
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
@@ -107,6 +108,7 @@ const CopyConfigurationExtended = ({ t }) => {
       }
 
       setSelectAllCheckboxState(false)
+      setUnSelectAllIncludeCheckboxState(false)
     }
   }
 
@@ -140,6 +142,7 @@ const CopyConfigurationExtended = ({ t }) => {
       dispatch(clearTargetApiKeys())
       dispatch(clearErrors())
       setSelectAllCheckboxState(false)
+      setUnSelectAllIncludeCheckboxState(false)
     }
   }
 
@@ -148,6 +151,7 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
     setSelectAllCheckboxState(false)
+    setUnSelectAllIncludeCheckboxState(false)
     Tracker.reportUsage()
   }
 
@@ -163,6 +167,28 @@ const CopyConfigurationExtended = ({ t }) => {
       dispatch(setConfigurationStatus({ checkBoxId, value }))
     })
   }
+
+  const onSelectAllIncludeUrlChangeHandler = (event) => {
+    let checkBoxId
+    configurations.forEach((configuration) => {
+      if (configuration.branches && configuration.branches.length > 0) {
+        configuration.branches.forEach((branch) => {
+          if (branch.name && branch.name.includes("Include")) {
+            checkBoxId = branch.id
+            dispatch(setConfigurationStatus({ checkBoxId, value:false }))
+          }
+          if (branch.branches && branch.branches.length > 0) {
+            branch.branches.forEach((nestedBranch) => {
+              if (nestedBranch.name && nestedBranch.name.includes("Include")) {
+                 checkBoxId = nestedBranch.id
+                dispatch(setConfigurationStatus({ checkBoxId, value:false }))
+              }
+            });
+          }
+        });
+      }
+    });
+  };
 
   const showSuccessMessage = () => (
     <DialogMessageInform
@@ -187,7 +213,9 @@ const CopyConfigurationExtended = ({ t }) => {
       <SiteConfigurations
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
+        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
