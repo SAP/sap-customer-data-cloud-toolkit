@@ -270,7 +270,7 @@ const SiteDeployer = ({ t }) => {
   )
 
   const showProgressBar = () => {
-    return <div>{<ProgressIndicator value={progressIndicatorValue} className={classes.progressIndicatorStyle} />}</div>
+    return <div>{<ProgressIndicator value={progressIndicatorValue} valueState={ValueState.None} className={classes.progressIndicatorStyle} />}</div>
   }
 
   return (
