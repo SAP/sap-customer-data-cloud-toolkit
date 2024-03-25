@@ -70,7 +70,7 @@ export function clearCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
   openPopoverButton.realClick()
-  cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear()
+  cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().clear({ force: true })
   cy.get('#secretKey').shadow().find('[class = "ui5-input-inner"]').clear({ force: true })
   openPopoverButton.realClick()
 }

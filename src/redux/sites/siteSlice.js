@@ -110,6 +110,7 @@ export const siteSlice = createSlice({
     })
     builder.addCase(createSites.fulfilled, (state, action) => {
       state.progressIndicatorValue = 100
+      state.isLoading = false;
       const errors = utils.getResponseErrors(action.payload.responses)
       if (!utils.isArrayEmpty(errors)) {
         utils.processSitesCreationErrors(state, errors, action.payload.responses)
