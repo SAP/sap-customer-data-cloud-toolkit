@@ -17,6 +17,7 @@ export function getInfoExpectedResponse(supports) {
   const screenSets = createScreenSetCollection(SCREEN_SET_COLLECTION_DEFAULT, supports)
 
   const policiesOptions = new PolicyOptions(undefined)
+  policiesOptions.addUrl()
   const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()
 
   const socialIdentities = {
@@ -44,6 +45,14 @@ export function getInfoExpectedResponse(supports) {
     id: 'consent',
     name: 'consentStatements',
     value: supports,
+    branches: [
+      {
+        formatName: false,
+        id: 'consentStatements-Link',
+        name: 'Include Document URL',
+        value: false,
+      },
+    ],
   }
 
   const communicationTopics = {
@@ -180,6 +189,40 @@ function createScreenSetCollection(collection, value) {
   }
   return screenSets
 }
+function addExtraBranch(emailInternalName, emailTemplates, emailTemplateNameTranslator, value) {
+  const branchesMap = {
+    passwordReset: {
+      id: emailInternalName,
+      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
+      value: value,
+      branches: [
+        {
+          formatName: false,
+          id: `PasswordReset-Link`,
+          name: 'Include Reset Page URL',
+          value: false,
+        },
+      ],
+    },
+    preferencesCenter: {
+      id: emailInternalName,
+      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
+      value: value,
+      branches: [
+        {
+          formatName: false,
+          id: `LitePreferencesCenter-Link`,
+          name: 'Include Lite Preferences Center URL',
+          value: false,
+        },
+      ],
+    },
+  }
+
+  if (branchesMap.hasOwnProperty(emailInternalName)) {
+    emailTemplates.branches.push(branchesMap[emailInternalName])
+  }
+}
 
 function createEmailTemplates(value) {
   const emailTemplates = {
@@ -190,11 +233,15 @@ function createEmailTemplates(value) {
   }
   const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
   for (const emailInternalName of emailTemplateNameTranslator.getInternalNames()) {
-    emailTemplates.branches.push({
-      id: emailInternalName,
-      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
-      value: value,
-    })
+    if (emailInternalName === 'passwordReset' || emailInternalName === 'preferencesCenter') {
+      addExtraBranch(emailInternalName, emailTemplates, emailTemplateNameTranslator, value)
+    } else {
+      emailTemplates.branches.push({
+        id: emailInternalName,
+        name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
+        value: value,
+      })
+    }
   }
   return emailTemplates
 }

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import ConsentStatement from './consentStatement.js'
 import LegalStatement from './legalStatement.js'
 import { stringToJson } from '../objectHelper.js'
@@ -17,6 +16,7 @@ class ConsentConfiguration {
   #consentStatement
   #legalStatement
   #consentDefaultLanguage
+  #options
 
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
@@ -33,6 +33,9 @@ class ConsentConfiguration {
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
+    if (options) {
+      this.#options = options
+    }
     if (options && options.value === false) {
       return responses
     }
@@ -117,7 +120,7 @@ class ConsentConfiguration {
   async #copyLegalStatements(destinationSite, destinationSiteConfiguration, consent) {
     const consentId = ConsentConfiguration.#getConsentId(consent.preferences)
     const consentLanguages = consent.preferences[consentId].langs
-    return this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages)
+    return this.#legalStatement.copy(destinationSite, destinationSiteConfiguration, consentId, consentLanguages, this.#options)
   }
 
   static #getConsentId(consent) {

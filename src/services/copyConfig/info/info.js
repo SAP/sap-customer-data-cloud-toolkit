@@ -104,6 +104,7 @@ class Info {
     const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await consentOptions.getConfiguration().get()
     if (response.errorCode === 0) {
+      consentOptions.addBranch('consentStatements', 'Document')
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
       if (!ConsentConfiguration.hasConsents(response)) {
         consentOptions.removeConsent(info)
@@ -181,6 +182,7 @@ class Info {
 
     if (response.errorCode === 0) {
       emailOptions.addEmails(response)
+      emailOptions.addUrl(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
       return Promise.resolve(info)
     } else {
@@ -209,6 +211,7 @@ class Info {
     const response = await policyOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
+      policyOptions.addUrl()
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
       Info.#removeUnsupportedPolicies(response, info, policyOptions)
       return Promise.resolve(info)

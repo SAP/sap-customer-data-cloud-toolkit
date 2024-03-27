@@ -1,6 +1,7 @@
 {
   "COPY_CONFIGURATION_DIALOG.HEADER_TEXT": "Copy configuration and settings from the source site to the new site.",
   "COPY_CONFIGURATION_DIALOG.SELECT_SOURCE_SITE": "Select Source Site",
+  "COPY_CONFIGURATION_EXTENDED.REMOVE_INCLUDED_URL_BUTTON": "Uncheck all links and credentials",
   "COPY_CONFIGURATION_DIALOG.SOURCE_SITE": "Source Site:",
   "COPY_CONFIGURATION_EXTENDED.API_KEY": "API Key:",
   "COPY_CONFIGURATION_EXTENDED.COPY_SUCCESS_MESSAGE": "All selected configurations were copied successfully.",

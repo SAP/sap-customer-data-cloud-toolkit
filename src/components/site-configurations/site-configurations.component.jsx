@@ -1,31 +1,25 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
+import React from 'react';
+import { withTranslation } from 'react-i18next';
+import { createUseStyles } from 'react-jss';
+import { Card, CardHeader, FlexBox, CheckBox, Button } from '@ui5/webcomponents-react'
+import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component';
+import styles from './site-configurations.styles';
 
-
-import { withTranslation } from 'react-i18next'
-import { createUseStyles } from 'react-jss'
-
-import { Card, CardHeader, FlexBox, CheckBox } from '@ui5/webcomponents-react'
-
-import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
-
-import styles from './site-configurations.styles'
-
-const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
+const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' });
 
 const SiteConfigurations = ({
-  siteId,
-  configurations,
-  selectAllCheckboxState,
-  onSelectAllCheckboxChangeHandler,
-  setConfigurationStatus,
-  setDataflowVariableValue,
-  setDataflowVariableValues,
-  t,
-}) => {
-  const classes = useStyles()
+                              siteId,
+                              configurations,
+                              selectAllCheckboxState,
+                              unselectAllIncludeCheckboxState,
+                              onSelectAllCheckboxChangeHandler,
+                              onSelectAllIncludeUrlChangeHandler,
+                              setConfigurationStatus,
+                              setDataflowVariableValue,
+                              setDataflowVariableValues,
+                              t,
+                            }) => {
+  const classes = useStyles();
 
   return configurations && configurations.length ? (
     <div className={classes.selectConfigurationOuterDivStyle}>
@@ -37,13 +31,31 @@ const SiteConfigurations = ({
             <CardHeader
               titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')}
               action={
-                <CheckBox
-                  id="selectAllCheckbox"
-                  data-cy="selectAllCheckbox"
-                  checked={selectAllCheckboxState}
-                  text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')}
-                  onChange={onSelectAllCheckboxChangeHandler}
-                />
+                <>
+                  {/*<CheckBox*/}
+                  {/*  id="removeIncludedUrlCheckbox"*/}
+                  {/*  data-cy="removeIncludedUrlCheckbox"*/}
+                  {/*  checked={unselectAllIncludeCheckboxState}*/}
+                  {/*  text={t('COPY_CONFIGURATION_EXTENDED.REMOVE_INCLUDED_URL')}*/}
+                  {/*  onChange={onSelectAllIncludeUrlChangeHandler}*/}
+                  {/*/>*/}
+
+                  <Button
+                    id="removeIncludedUrlButton"
+                    data-cy="removeIncludedUrlButton"
+                    onClick={() => onSelectAllIncludeUrlChangeHandler({ srcElement: { checked: false } })}
+                  >
+                    {t('COPY_CONFIGURATION_EXTENDED.REMOVE_INCLUDED_URL_BUTTON')}
+                  </Button>
+
+                  <CheckBox
+                    id="selectAllCheckbox"
+                    data-cy="selectAllCheckbox"
+                    checked={selectAllCheckboxState}
+                    text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')}
+                    onChange={onSelectAllCheckboxChangeHandler}
+                  />
+                </>
               }
             />
           }
@@ -65,7 +77,7 @@ const SiteConfigurations = ({
     </div>
   ) : (
     ''
-  )
-}
+  );
+};
 
-export default withTranslation()(SiteConfigurations)
+export default withTranslation()(SiteConfigurations);

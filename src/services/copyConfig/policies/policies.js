@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
@@ -56,6 +55,8 @@ class Policy {
 
   async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
     this.#cleanResponse(response)
+    const collection = options.options.branches.filter((obj) => Array.isArray(obj.branches))
+    this.#cleanUrl(collection, response)
     const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {
@@ -64,7 +65,26 @@ class Policy {
       return this.#copyPoliciesToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, filteredResponse)
     }
   }
-
+  #cleanUrl(options, response) {
+    for (let branch of options) {
+      let filter = branch.branches.map((obj) => obj.value)
+      if (!filter[0]) {
+        this.cleanLink(response, branch)
+        console.log('in', filter)
+      }
+    }
+  }
+  deleteLink(response, property, branch) {
+    delete response[branch][property]
+  }
+  cleanLink(response, branch) {
+    if (branch.name === 'passwordReset') {
+      this.deleteLink(response, 'resetURL', branch.name)
+    }
+    if (branch.name === 'preferenceCenter') {
+      this.deleteLink(response, 'redirectURL', branch.name)
+    }
+  }
   async #copyPoliciesToChildSite(destinationSite, dataCenter, response) {
     this.#prepareAccountOptionsToChildSite(response)
     this.#prepareRegistrationToChildSite(response)

@@ -73,6 +73,7 @@ const CopyConfigurationDialog = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [unselectAllIncludeCheckboxState, setUnSelectAllIncludeCheckboxState] = useState(false)
 
   useEffect(() => {
     if (open && edit) {
@@ -108,10 +109,36 @@ const CopyConfigurationDialog = ({ t }) => {
     })
   }
 
+const handleCheckboxChange = (checkbox, value) => {
+  if (checkbox.name && checkbox.name.includes("Include")) {
+    const checkBoxId = checkbox.id;
+    dispatch(setConfigurationStatus({ checkBoxId, value: value }));
+  }
+};
+
+const processNestedBranches = (branches, value) => {
+  branches.forEach(branch => {
+    handleCheckboxChange(branch, value);
+
+    if (branch.branches && branch.branches.length > 0) {
+      branch.branches.forEach(nestedBranch => handleCheckboxChange(nestedBranch, value));
+    }
+  });
+};
+
+const onSelectAllIncludeUrlChangeHandler = (event) => {
+  configurations.forEach((configuration) => {
+    if (configuration.branches && configuration.branches.length > 0) {
+      processNestedBranches(configuration.branches, false);
+    }
+  });
+};
+
   const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))
     dispatch(clearSourceConfigurations(siteId))
     setSelectAllCheckboxState(false)
+    setUnSelectAllIncludeCheckboxState(false)
   }
 
   const onDialogMessageConfirmAfterCloseHandle = () => {
@@ -130,6 +157,7 @@ const CopyConfigurationDialog = ({ t }) => {
     dispatch(clearApiCardError())
     dispatch(clearErrors())
     setSelectAllCheckboxState(false)
+    setUnSelectAllIncludeCheckboxState(false)
   }
 
   const showConfigurations = () => {
@@ -138,7 +166,9 @@ const CopyConfigurationDialog = ({ t }) => {
         siteId={siteId}
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
+        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}

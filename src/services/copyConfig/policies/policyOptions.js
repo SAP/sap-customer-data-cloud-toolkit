@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class PolicyOptions extends Options {
@@ -132,7 +131,10 @@ class PolicyOptions extends Options {
     })
     this.#policy = policy
   }
-
+  addUrl() {
+    this.addBranch('preferencesCenter', 'Lite Preferences Center')
+    this.addBranch('passwordReset', 'Reset Page')
+  }
   getConfiguration() {
     return this.#policy
   }
