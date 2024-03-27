@@ -5,6 +5,7 @@
 
 
 .cdc-tools-app {
+  display: none;
   position: absolute;
   top: 72px;
   right: 0px;
@@ -28,6 +29,7 @@
 }
 
 .cdc-tools-app-container {
+  display: none;
   position: absolute;
   top: 0px;
   right: 0px;
@@ -35,15 +37,10 @@
   width: 100%;
 }
 
-.cdc-tools-app {
-  display: none;
-}
 .cdc-tools-app.show-cdc-tools {
   display: block;
 }
-.cdc-tools-app-container {
-  display: none;
-}
+
 .cdc-tools-app-container.show-cdc-tools-app-container {
   display: block;
 }
