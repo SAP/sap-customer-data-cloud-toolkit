@@ -18,6 +18,8 @@ import TargetSitesTooltipIcon from '../../components/target-sites-tooltip-icon/t
 import TargetApiKeysList from '../../components/target-api-keys-list/target-api-keys-list.component'
 import MessageList from '../../components/message-list/message-list.component'
 
+import { onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
+
 import {
   clearSourceConfigurations,
   addSourceSite,
@@ -108,31 +110,41 @@ const CopyConfigurationDialog = ({ t }) => {
       dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value }))
     })
   }
-
-const handleCheckboxChange = (checkbox, value) => {
-  if (checkbox.name && checkbox.name.includes("Include")) {
-    const checkBoxId = checkbox.id;
-    dispatch(setConfigurationStatus({ checkBoxId, value: value }));
-  }
+ // ***************** Modified Simplified *****************
+ const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+  onSelectAllIncludeUrlChangeHandler(dispatch, configurations);
 };
 
-const processNestedBranches = (branches, value) => {
-  branches.forEach(branch => {
-    handleCheckboxChange(branch, value);
+ // ***************** Modified Simplified *****************
 
-    if (branch.branches && branch.branches.length > 0) {
-      branch.branches.forEach(nestedBranch => handleCheckboxChange(nestedBranch, value));
-    }
-  });
-};
 
-const onSelectAllIncludeUrlChangeHandler = (event) => {
-  configurations.forEach((configuration) => {
-    if (configuration.branches && configuration.branches.length > 0) {
-      processNestedBranches(configuration.branches, false);
-    }
-  });
-};
+  // ***************** Simplified *****************
+// const handleCheckboxChange = (checkbox, value) => {
+//   if (checkbox.name && checkbox.name.includes("Include")) {
+//     const checkBoxId = checkbox.id;
+//     dispatch(setConfigurationStatus({ checkBoxId, value: value }));
+//   }
+// };
+
+// const processNestedBranches = (branches, value) => {
+//   branches.forEach(branch => {
+//     handleCheckboxChange(branch, value);
+
+//     if (branch.branches && branch.branches.length > 0) {
+//       branch.branches.forEach(nestedBranch => handleCheckboxChange(nestedBranch, value));
+//     }
+//   });
+// };
+
+// const onSelectAllIncludeUrlChangeHandler = (event) => {
+//   configurations.forEach((configuration) => {
+//     if (configuration.branches && configuration.branches.length > 0) {
+//       processNestedBranches(configuration.branches, false);
+//     }
+//   });
+// };
+ // ***************** Simplified *****************
+
 
   const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))
@@ -168,10 +180,10 @@ const onSelectAllIncludeUrlChangeHandler = (event) => {
         selectAllCheckboxState={selectAllCheckboxState}
         unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
-        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
   }

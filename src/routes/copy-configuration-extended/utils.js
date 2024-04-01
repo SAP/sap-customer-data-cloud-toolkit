@@ -6,6 +6,7 @@
 import { onElementExists } from '../../inject/utils'
 import { ERROR_SEVERITY_ERROR } from '../../services/errors/generateErrorResponse'
 import { Tracker } from '../../tracker/tracker'
+import { setConfigurationStatus } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 export const cleanTreeVerticalScrolls = () => {
   onElementExists('ui5-tree', () => {
@@ -46,3 +47,28 @@ export const sendReportOnWarnings = (errors) => {
     }, SEND_REPORT_DELAY_IN_MILLIS)
   }
 }
+
+export const handleCheckboxChange = (dispatch, checkbox, value) => {
+  if (checkbox.name && checkbox.name.includes("Include")) {
+    const checkBoxId = checkbox.id;
+    dispatch(setConfigurationStatus({ checkBoxId, value: value }));
+  }
+};
+
+export const processNestedBranches = (dispatch, branches, value) => {
+  branches.forEach(branch => {
+    handleCheckboxChange(dispatch, branch, value);
+
+    if (branch.branches && branch.branches.length > 0) {
+      branch.branches.forEach(nestedBranch => handleCheckboxChange(dispatch, nestedBranch, value));
+    }
+  });
+};
+
+export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations) => {
+  configurations.forEach((configuration) => {
+    if (configuration.branches && configuration.branches.length > 0) {
+      processNestedBranches(dispatch, configuration.branches, false);
+    }
+  });
+};
