@@ -66,6 +66,9 @@ import { Tracker } from '../../tracker/tracker'
 
 import { onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils';
 
+import { onSelectAllCheckboxChange } from '../../routes/copy-configuration-extended/utils';
+
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
 const PAGE_TITLE = 'Copy Configuration Extended'
@@ -161,78 +164,11 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ checkBoxId, value }))
-    })
-  }
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch);
 
- //******************** Modified  Simplified ********************
- 
  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
   onSelectAllIncludeUrlChangeHandler(dispatch, configurations);
 };
-
-
- //******************** Modified  Simplified ********************
-
-
-  //******************** Simplified ********************
-  // const handleCheckboxChange = (checkbox, value) => {
-  //   if (checkbox.name && checkbox.name.includes("Include")) {
-  //     const checkBoxId = checkbox.id;
-  //     dispatch(setConfigurationStatus({ checkBoxId, value: value }));
-  //   }
-  // };
-
-  // const processNestedBranches = (branches, value) => {
-  //   branches.forEach(branch => {
-  //     handleCheckboxChange(branch, value);
-
-  //     if (branch.branches && branch.branches.length > 0) {
-  //       branch.branches.forEach(nestedBranch => handleCheckboxChange(nestedBranch, value));
-  //     }
-  //   });
-  // };
-
-  // const onSelectAllIncludeUrlChangeHandler = (event) => {
-  //   configurations.forEach((configuration) => {
-  //     if (configuration.branches && configuration.branches.length > 0) {
-  //       processNestedBranches(configuration.branches, false);
-  //     }
-  //   });
-  // };
-//******************** Simplified ********************
-
-  //****************** Alternative ******************
-//   const checkNestedItems = (branch) => {
-//     if (branch.branches && branch.branches.length > 0) {
-//         branch.branches.forEach((nestedBranch) => {
-//             if (nestedBranch.name && nestedBranch.name.includes("Include")) {
-//                 let checkBoxId = nestedBranch.id
-//                 dispatch(setConfigurationStatus({ checkBoxId, value:false }))
-//             }
-//         });
-//     }
-// }
-
-// const onSelectAllIncludeUrlChangeHandler = (event) => {
-//     configurations.forEach((configuration) => {
-//         if (configuration.branches && configuration.branches.length > 0) {
-//             configuration.branches.forEach((branch) => {
-//                 if (branch.name && branch.name.includes("Include")) {
-//                     let checkBoxId = branch.id
-//                     dispatch(setConfigurationStatus({ checkBoxId, value:false }))
-//                 }
-//                 checkNestedItems(branch); // Call checkNestedItems() function in here
-//             });
-//         }
-//     });
-// };
- //****************** Alternative ******************
 
   const showSuccessMessage = () => (
     <DialogMessageInform

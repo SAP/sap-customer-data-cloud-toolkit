@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -53,6 +52,10 @@ import { areConfigurationsFilled } from '../../routes/copy-configuration-extende
 import { checkDataflowVariables } from '../../redux/copyConfigurationExtended/utils'
 
 import styles from '../../routes/copy-configuration-extended/copy-configuration-extended.styles'
+
+import { onSelectAllCheckboxChange } from '../../routes/copy-configuration-extended/utils';
+
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationDialog' })
 
 const CopyConfigurationDialog = ({ t }) => {
@@ -102,49 +105,11 @@ const CopyConfigurationDialog = ({ t }) => {
     }
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value }))
-    })
-  }
- // ***************** Modified Simplified *****************
- const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch);
+
+  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
   onSelectAllIncludeUrlChangeHandler(dispatch, configurations);
 };
-
- // ***************** Modified Simplified *****************
-
-
-  // ***************** Simplified *****************
-// const handleCheckboxChange = (checkbox, value) => {
-//   if (checkbox.name && checkbox.name.includes("Include")) {
-//     const checkBoxId = checkbox.id;
-//     dispatch(setConfigurationStatus({ checkBoxId, value: value }));
-//   }
-// };
-
-// const processNestedBranches = (branches, value) => {
-//   branches.forEach(branch => {
-//     handleCheckboxChange(branch, value);
-
-//     if (branch.branches && branch.branches.length > 0) {
-//       branch.branches.forEach(nestedBranch => handleCheckboxChange(nestedBranch, value));
-//     }
-//   });
-// };
-
-// const onSelectAllIncludeUrlChangeHandler = (event) => {
-//   configurations.forEach((configuration) => {
-//     if (configuration.branches && configuration.branches.length > 0) {
-//       processNestedBranches(configuration.branches, false);
-//     }
-//   });
-// };
- // ***************** Simplified *****************
-
 
   const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))

@@ -72,3 +72,15 @@ export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations) => 
     }
   });
 };
+
+export const onSelectAllCheckboxChange = (siteId = null, setSelectAllCheckboxState, configurations, dispatch) => (event) => {
+  const value = event.srcElement.checked;
+  setSelectAllCheckboxState(value);
+  configurations.forEach((configuration) => {
+      const checkBoxId = configuration.id;
+      const details = siteId
+          ? { siteId: siteId, checkBoxId, value }
+          : { checkBoxId, value };
+      dispatch(setConfigurationStatus(details));
+  });
+};
