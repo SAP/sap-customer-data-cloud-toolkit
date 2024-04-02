@@ -43,6 +43,8 @@ const SiteConfigurations = ({
                   <Button
                     id="removeIncludedUrlButton"
                     data-cy="removeIncludedUrlButton"
+                    design="Transparent"
+                    className={classes.removeIncludedUrlButton}
                     onClick={() => onSelectAllIncludeUrlChangeHandler({ srcElement: { checked: false } })}
                   >
                     {t('COPY_CONFIGURATION_EXTENDED.REMOVE_INCLUDED_URL_BUTTON')}
