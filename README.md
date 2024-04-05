@@ -14,9 +14,9 @@ This Browser Extension was created to extend the existing functionality of the [
 - Copy Configuration extended
 - Site Deployer with Copy Configuration Extended
 
-<a href="docs/wiki/assets/screenshots/Site-Deployer.png"><img src="docs/wiki/assets/screenshots/Site-Deployer.png" alt="Site Deployer" style="height: 220px;"></a>
-<a href="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png"><img src="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png" alt="Import/Export SMS and E-mail templates" style="height: 220px;"></a>
-<a href="docs/wiki/assets/screenshots/Copy-Config-Extended.png"><img src="docs/wiki/assets/screenshots/Copy-Config-Extended.png" alt="Copy Configuration extended" style="height: 220px;"></a>
+<a href="docs/wiki/assets/screenshots/Site-Deployer.png"><img src="docs/wiki/assets/screenshots/Site-Deployer.png" alt="Site Deployer" style="height: 240px;"></a>
+<a href="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png"><img src="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png" alt="Import/Export SMS and E-mail templates" style="height: 240px;"></a>
+<a href="docs/wiki/assets/screenshots/Copy-Config-Extended.png"><img src="docs/wiki/assets/screenshots/Copy-Config-Extended.png" alt="Copy Configuration extended" style="height: 240px;"></a>
 
 ## Requirements and Setup
 
