@@ -3,7 +3,8 @@
 # SAP Customer Data Cloud toolkit
 
 ## About this project
-The Browser Extension created to extend the existing functionality of the SAP Customer Data Cloud Console(https://console.gigya.com).
+
+This Browser Extension was created to extend the existing functionality of the [SAP Customer Data Cloud Console](https://console.gigya.com).
 
 #### Features:
 
@@ -12,6 +13,10 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 - Import/Export SMS templates
 - Copy Configuration extended
 - Site Deployer with Copy Configuration Extended
+
+<a href="docs/wiki/assets/screenshots/Site-Deployer.png"><img src="docs/wiki/assets/screenshots/Site-Deployer.png" alt="Site Deployer" style="height: 200px;"></a>
+<a href="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png"><img src="docs/wiki/assets/screenshots/Export-Import-SMS-E-mail-Templates.png" alt="Import/Export SMS and E-mail templates" style="height: 200px;"></a>
+<a href="docs/wiki/assets/screenshots/Copy-Config-Extended.png"><img src="docs/wiki/assets/screenshots/Copy-Config-Extended.png" alt="Copy Configuration extended" style="height: 200px;"></a>
 
 ## Requirements and Setup
 
@@ -35,7 +40,7 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 1. `git clone https://github.com/SAP/sap-customer-data-cloud-toolkit.git`
 2. `npm install`
 3. `Create the environment variables REACT_APP_USERKEY and REACT_APP_SECRET with your user key and secret values, 
-   to avoid to set them multiple times during the application execution`
+to avoid to set them multiple times during the application execution`
 4. `npm run start`
 
 ### Cypress UI tests
@@ -43,6 +48,7 @@ The Browser Extension created to extend the existing functionality of the SAP Cu
 1. Run `npm run cypress:ci`
 
 ### Cypress End to End tests
+
 1. Check the project's documentation on https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki
 
 ## Support, Feedback, Contributing
