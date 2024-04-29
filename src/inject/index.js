@@ -9,8 +9,6 @@ import { initNavigation } from './navigation'
 
 import { MENU_ELEMENTS } from './constants'
 
-import './main.css'
-
 export const initInject = () => {
   initChromeStorage()
   injectMenu(MENU_ELEMENTS)

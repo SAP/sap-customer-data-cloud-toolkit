@@ -93,8 +93,6 @@ const styles = {
     paddingLeft: '2%',
     paddingRight: '2%',
     boxSizing: 'border-box',
-    // eslint-disable-next-line no-dupe-keys
-    margin:'auto',
 },
     errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,
