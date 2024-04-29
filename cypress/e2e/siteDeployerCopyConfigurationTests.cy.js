@@ -119,7 +119,6 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.fillSourceApiKeyInput()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-checkbox').eq(0).realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('.ui5-li-tree-toggle-box').realClick()
-    // cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(1).realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-checkbox').realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').eq(2).find('ui5-button').realClick()
     cy.get('[data-cy="dataflowVariableInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
