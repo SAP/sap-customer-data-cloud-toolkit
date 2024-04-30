@@ -3,9 +3,8 @@
  * License: Apache-2.0
  */
 
-
 import Email from '../../emails/email.js'
-import { stringToJson } from '../objectHelper.js'
+import { removePropertyPathFromObject, stringToJson } from '../objectHelper.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
 class EmailConfiguration {
@@ -59,10 +58,24 @@ class EmailConfiguration {
     const promises = []
     for (const templateInfo of options.getOptions().branches) {
       if (templateInfo.value) {
-        promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, destinationSiteConfiguration, response))
+        const filteredResponse = JSON.parse(JSON.stringify(response))
+        this.#cleanResponse(filteredResponse)
+        const responseProcessed = this.#processLinksOptions(filteredResponse, templateInfo)
+        promises.push(this.#copyEmailTemplate(destinationSite, templateInfo.name, destinationSiteConfiguration, responseProcessed))
       }
     }
     return Promise.all(promises)
+  }
+
+  #cleanResponse(response) {
+    // the following fields should only be copied when processing policies
+    if (response.doubleOptIn) {
+      delete response.doubleOptIn.nextURL
+      delete response.doubleOptIn.nextExpiredURL
+    }
+    if (response.emailVerification) {
+      delete response.emailVerification.nextURL
+    }
   }
 
   #copyEmailTemplate(destinationSite, templateName, destinationSiteConfiguration, response) {
@@ -75,6 +88,19 @@ class EmailConfiguration {
       delete template.providers
     }
     return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, templatePath, template, destinationSiteConfiguration.dataCenter)
+  }
+
+  #processLinksOptions(response, options) {
+    const templateHaveLinks = options.branches?.length > 0
+    if (templateHaveLinks) {
+      const responseClone = JSON.parse(JSON.stringify(response))
+      for (const linkOption of options.branches) {
+        if (!linkOption.value && linkOption.link) {
+          return removePropertyPathFromObject(responseClone, linkOption.link)
+        }
+      }
+    }
+    return response
   }
 
   #isChildSite(siteInfo, siteApiKey) {

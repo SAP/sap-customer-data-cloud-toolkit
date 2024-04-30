@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -46,11 +45,12 @@ import {
   setErrors,
 } from '../../redux/siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
-import { areConfigurationsFilled } from '../../routes/copy-configuration-extended/utils'
+import { areConfigurationsFilled, onSelectAllIncludeUrlChangeHandler, onSelectAllCheckboxChange } from '../../routes/copy-configuration-extended/utils'
 
 import { checkDataflowVariables } from '../../redux/copyConfigurationExtended/utils'
 
 import styles from '../../routes/copy-configuration-extended/copy-configuration-extended.styles'
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationDialog' })
 
 const CopyConfigurationDialog = ({ t }) => {
@@ -73,6 +73,7 @@ const CopyConfigurationDialog = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [unselectAllIncludeCheckboxState] = useState(false)
 
   useEffect(() => {
     if (open && edit) {
@@ -108,6 +109,12 @@ const CopyConfigurationDialog = ({ t }) => {
     })
   }
 
+  //const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch)
+
+  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, siteId)
+  }
+
   const onSourceApiKeyDeleteHandler = () => {
     dispatch(removeSourceSite(siteId))
     dispatch(clearSourceConfigurations(siteId))
@@ -138,10 +145,12 @@ const CopyConfigurationDialog = ({ t }) => {
         siteId={siteId}
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
+        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState} // TODO check if needed
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper} // TODO check if needed
       />
     )
   }

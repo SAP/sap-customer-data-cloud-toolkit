@@ -64,6 +64,8 @@ import styles from './copy-configuration-extended.styles'
 
 import { Tracker } from '../../tracker/tracker'
 
+import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
 const PAGE_TITLE = 'Copy Configuration Extended'
@@ -86,6 +88,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
+  const [unselectAllIncludeCheckboxState] = useState(false)
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
@@ -164,6 +167,12 @@ const CopyConfigurationExtended = ({ t }) => {
     })
   }
 
+  //const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch)
+
+  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations)
+  }
+
   const showSuccessMessage = () => (
     <DialogMessageInform
       open={showSuccessDialog}
@@ -187,10 +196,12 @@ const CopyConfigurationExtended = ({ t }) => {
       <SiteConfigurations
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
+        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
   }

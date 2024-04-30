@@ -3,12 +3,12 @@
  * License: Apache-2.0
  */
 
-
 import { credentials, expectedGigyaResponseOk, expectedGigyaResponseInvalidAPI, expectedGigyaInvalidUserKey } from '../../servicesDataTest.js'
 import Policy from './policies.js'
 import axios from 'axios'
 import * as PolicyTestData from './dataTest.js'
 import { getExpectedResponseWithContext, getResponseWithContext, policyId } from '../dataTest.js'
+import PolicyOptions from './policyOptions.js'
 
 jest.mock('axios')
 jest.setTimeout(10000)
@@ -21,26 +21,7 @@ describe('Policies test suite', () => {
     jest.restoreAllMocks()
   })
 
-  const allOptions = {
-    branches: [
-      { id: 'registration', value: true },
-      { id: 'Web Sdk', value: false },
-      { id: 'accountOptions', value: true },
-      { id: 'passwordComplexity', value: false },
-      { id: 'security', value: false },
-      { id: 'emailVerification', value: false },
-      { id: 'emailNotifications', value: false },
-      { id: 'passwordReset', value: false },
-      { id: 'codeVerification', value: false },
-      { id: 'profilePhoto', value: false },
-      { id: 'federation', value: false },
-      { id: 'twoFactorAuth', value: false },
-      { id: 'doubleOptIn', value: false },
-      { id: 'gigyaPlugins', value: false },
-      { id: 'rba', value: false },
-      { id: 'preferencesCenter', value: false },
-    ],
-  }
+  const allOptions = new PolicyOptions(policy).addSupportedPolicies(PolicyTestData.getPolicyConfig).getOptions()
 
   test('copy policies successfully', async () => {
     axios.mockResolvedValueOnce({ data: PolicyTestData.getPolicyConfig }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey) })
@@ -49,6 +30,35 @@ describe('Policies test suite', () => {
     expect(response).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey))
     expect(response.context.id).toEqual(policyId)
     expect(response.context.targetApiKey).toEqual(`${targetApiKey}`)
+  })
+
+  test.each([
+    ['emailVerification', true],
+    ['emailVerification', false],
+    ['doubleOptIn', true],
+    ['doubleOptIn', false],
+  ])('copy successfully links url', async (policyName, linkValue) => {
+    const options = new PolicyOptions(policy).addSupportedPolicies(PolicyTestData.getPolicyConfig).getOptionsDisabled()
+    const policyOption = options.branches.find((opt) => opt.propertyName === policyName)
+    policyOption.value = true
+    policyOption.branches.map((opt) => (opt.value = linkValue))
+
+    axios.mockResolvedValueOnce({ data: PolicyTestData.getPolicyConfig }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey) })
+    let spy = jest.spyOn(policy, 'set')
+    const response = await policy.copy(targetApiKey, { dataCenter: targetDataCenter }, options)
+
+    expect(response).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey))
+    expect(response.context.id).toEqual(policyId)
+    expect(response.context.targetApiKey).toEqual(`${targetApiKey}`)
+
+    expect(spy.mock.calls.length).toBe(1)
+    let expectedTemplate = PolicyTestData.getPoliciesExpectedResponseWithNoObjects()
+    expectedTemplate = Object.assign(expectedTemplate, { [policyName]: PolicyTestData.getPolicyConfig[policyName] })
+    if (!linkValue) {
+      delete expectedTemplate[policyName]['nextURL']
+      delete expectedTemplate[policyName]['nextExpiredURL']
+    }
+    expect(spy).toHaveBeenCalledWith(targetApiKey, expectedTemplate, targetDataCenter)
   })
 
   test('copy policies - invalid target api', async () => {
@@ -79,42 +89,24 @@ describe('Policies test suite', () => {
     expect(response.context.targetApiKey).toEqual(`${targetApiKey}`)
   })
 
-  test('copy successfully account options', async () => {
-    executeTest('accountOptions')
-  })
-  test('copy successfully code verification', async () => {
-    executeTest('codeVerification')
-  })
-  test('copy successfully emailNotifications', async () => {
-    executeTest('emailNotifications')
-  })
-  test('copy successfully emailVerification', async () => {
-    executeTest('emailVerification')
-  })
-  test('copy successfully federation', async () => {
-    executeTest('federation')
-  })
-  test('copy successfully passwordComplexity', async () => {
-    executeTest('passwordComplexity')
-  })
-
-  test('copy successfully passwordReset', async () => {
-    executeTest('passwordReset')
-  })
-  test('copy successfully profilePhoto', async () => {
-    executeTest('profilePhoto')
-  })
-  test('copy successfully registration', async () => {
-    executeTest('registration')
-  })
-  test('copy successfully security', async () => {
-    executeTest('security')
-  })
-  test('copy successfully webSdk', async () => {
-    executeTest('gigyaPlugins')
-  })
-  test('copy successfully twoFactorAuth', async () => {
-    executeTest('twoFactorAuth')
+  test.each([
+    'accountOptions',
+    'codeVerification',
+    'emailNotifications',
+    'emailVerification',
+    'federation',
+    'passwordComplexity',
+    'passwordReset',
+    'profilePhoto',
+    'registration',
+    'security',
+    'gigyaPlugins',
+    'twoFactorAuth',
+    'preferencesCenter',
+    'authentication',
+    'doubleOptIn',
+  ])('copy successfully profile %s', async (property) => {
+    executeTest(property)
   })
 
   async function executeCopy(expectedResponse, optionName) {
@@ -131,8 +123,23 @@ describe('Policies test suite', () => {
     axios.mockResolvedValueOnce({ data: mockedResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey) })
     await executeCopy(getResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey), getPolicyInfo(optionName))
     expect(spy.mock.calls.length).toBe(1)
-
+    deleteResponseFields(mockedResponse, optionName)
     expect(spy).toHaveBeenCalledWith(targetApiKey, mockedResponse, undefined)
+  }
+
+  function deleteResponseFields(response, field) {
+    if (field === 'security') {
+      delete response.security.accountLockout
+      delete response.security.captcha
+      delete response.security.ipLockout
+    }
+    // the following fields should only be copied when processing emails
+    if (field === 'passwordReset') {
+      delete response.passwordReset.resetURL
+    }
+    if (field === 'preferencesCenter') {
+      delete response.preferencesCenter.redirectURL
+    }
   }
 
   function getPolicyInfo(optionName) {

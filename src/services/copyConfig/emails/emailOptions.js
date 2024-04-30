@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 
@@ -51,7 +50,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications.welcomeEmailTemplates) {
+    if (response.emailNotifications && response.emailNotifications.welcomeEmailTemplates) {
       const id = 'welcomeEmailTemplates'
       this.options.branches.push({
         id: id,
@@ -59,7 +58,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications.accountDeletedEmailTemplates) {
+    if (response.emailNotifications && response.emailNotifications.accountDeletedEmailTemplates) {
       const id = 'accountDeletedEmailTemplates'
       this.options.branches.push({
         id: id,
@@ -69,11 +68,22 @@ class EmailOptions extends Options {
     }
     if (response.preferencesCenter) {
       const id = 'preferencesCenter'
-      this.options.branches.push({
+      const pcOptions = {
         id: id,
         name: emailTemplateNameTranslator.translateInternalName(id),
         value: true,
-      })
+      }
+      if (response.preferencesCenter.redirectURL) {
+        pcOptions['branches'] = [
+          {
+            id: `Lite${id}-Link`,
+            name: 'Include Lite Preferences Center URL',
+            link: 'preferencesCenter.redirectURL',
+            value: true,
+          },
+        ]
+      }
+      this.options.branches.push(pcOptions)
     }
     if (response.doubleOptIn) {
       const id = 'doubleOptIn'
@@ -85,11 +95,22 @@ class EmailOptions extends Options {
     }
     if (response.passwordReset) {
       const id = 'passwordReset'
-      this.options.branches.push({
+      const prOption = {
         id: id,
         name: emailTemplateNameTranslator.translateInternalName(id),
         value: true,
-      })
+      }
+      if (response.passwordReset.resetURL) {
+        prOption['branches'] = [
+          {
+            id: `${id}-Link`,
+            name: 'Include Reset Page URL',
+            link: 'passwordReset.resetURL',
+            value: true,
+          },
+        ]
+      }
+      this.options.branches.push(prOption)
     }
     if (response.twoFactorAuth) {
       const id = 'twoFactorAuth'
@@ -107,7 +128,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications.confirmationEmailTemplates) {
+    if (response.emailNotifications && response.emailNotifications.confirmationEmailTemplates) {
       const id = 'confirmationEmailTemplates'
       this.options.branches.push({
         id: id,

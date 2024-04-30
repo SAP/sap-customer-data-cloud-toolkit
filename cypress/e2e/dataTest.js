@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const currentSiteName = 'dev.cdc-tools'
@@ -153,6 +152,15 @@ const mockPolicyResponse = {
     requireLoginID: false,
     enforceCoppa: false,
   },
+  doubleOptIn: {
+    nextURL: 'url/gs/Link.aspx',
+    nextExpiredURL: 'url/gs/LinkExpired.aspx',
+    defaultLanguage: 'en',
+    confirmationLinkExpiration: 1209600,
+    confirmationEmailTemplates: {
+      en: '<html xmlns=>\r\n<head>\r\n<META name="from" content="Name <noreply@YOUR-SITE.com>" />\r\n<META name="subject" content="Confirm your subscription" />\r\n<style>a.button{display:inline-block;background-color:#1371b9;border:none;border-radius:8px;color:#FFF;text-align:center;text-decoration:none;padding:8px 10px;width:200px;transition:all 0.5s;cursor:pointer;margin:5px}a.button span{cursor:pointer;display:inline-block;position:relative;transition:0.5s}body{font-family:Arial;font-size:13px;line-height:16px}div.background{background:url() repeat-x;width:720px;padding:13px 0;margin:0 auto}div.inner-background{background:#fff;border-radius:3px;margin:0 auto;width:693px}div.inner-pane{padding:30px 30px 29px;margin:0px auto}</style>\r\n</head>\r\n<body>\r\n<div class="background"><div class="inner-background">\r\n<div class="inner-pane">\r\n<p>Hello <b>$firstName</b> <b>$lastName</b>,</p>\r\n<p>We have received your request to subscribe to our newsletter:</p>\r\n<p>$subscriptionList</p><p>Please confirm the subscription.</p> \r\n<a href="$confirmationURL" class="button"><span>Yes, Subscribe Me</span></a>\r\n<p>If you received this email by mistake, simply delete it. You won\'t be subscribed if you don\'t click the confirmation button above.</p>\r\n<p>If you have any inquiries or suggestions, please contact us by sending an email to: &lt;emailAddress&gt;.</p>\r\n</div>\r\n</div>\r\n</body>\r\n</html>',
+    },
+  },
   accountOptions: {
     verifyEmail: false,
     verifyProviderEmail: false,
@@ -184,6 +192,7 @@ const mockPolicyResponse = {
     emailTemplates: {
       en: '<html xmlns=>\r\n<head>\r\n\t\t<META name="from"content="Name <noreply@YOUR-SITE.com>" />\r\n\t\t<META name="subject" content="Account Activation" />\r\n    </head>\r\n    <body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n<div style="background: url() repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n            <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n<div style="padding:30px 30px 29px;margin: 0px auto;">\r\n\t\t<p>Hello <b>$firstName $lastName</b>,</p>\r\n\t\t<p>Please click this link to activate your account:</p>\r\n<p><a href="$emailVerificationLink">Activate link</a></p>\r\n</div>\r\n</div>\r\n</div>\r\n</body>\r\n</html>\r\n\r\n\r\n',
     },
+    nextURL: 'sfsd.com',
   },
 
   passwordReset: {
@@ -282,6 +291,15 @@ const mockedGetPolicyResponse = {
     requireLoginID: true,
     enforceCoppa: true,
   },
+  doubleOptIn: {
+    nextURL: 'url/gs/Link.aspx',
+    nextExpiredURL: 'url/gs/LinkExpired.aspx',
+    defaultLanguage: 'en',
+    confirmationLinkExpiration: 1209600,
+    confirmationEmailTemplates: {
+      en: '<html xmlns=>\r\n<head>\r\n<META name="from" content="Name <noreply@YOUR-SITE.com>" />\r\n<META name="subject" content="Confirm your subscription" />\r\n<style>a.button{display:inline-block;background-color:#1371b9;border:none;border-radius:8px;color:#FFF;text-align:center;text-decoration:none;padding:8px 10px;width:200px;transition:all 0.5s;cursor:pointer;margin:5px}a.button span{cursor:pointer;display:inline-block;position:relative;transition:0.5s}body{font-family:Arial;font-size:13px;line-height:16px}div.background{background:url() repeat-x;width:720px;padding:13px 0;margin:0 auto}div.inner-background{background:#fff;border-radius:3px;margin:0 auto;width:693px}div.inner-pane{padding:30px 30px 29px;margin:0px auto}</style>\r\n</head>\r\n<body>\r\n<div class="background"><div class="inner-background">\r\n<div class="inner-pane">\r\n<p>Hello <b>$firstName</b> <b>$lastName</b>,</p>\r\n<p>We have received your request to subscribe to our newsletter:</p>\r\n<p>$subscriptionList</p><p>Please confirm the subscription.</p> \r\n<a href="$confirmationURL" class="button"><span>Yes, Subscribe Me</span></a>\r\n<p>If you received this email by mistake, simply delete it. You won\'t be subscribed if you don\'t click the confirmation button above.</p>\r\n<p>If you have any inquiries or suggestions, please contact us by sending an email to: &lt;emailAddress&gt;.</p>\r\n</div>\r\n</div>\r\n</body>\r\n</html>',
+    },
+  },
   gigyaPlugins: {
     connectWithoutLoginBehavior: 'alwaysLogin',
     defaultRegScreenSet: 'Default-RegistrationLogin',
@@ -323,6 +341,7 @@ const mockedGetPolicyResponse = {
       ca: '\n  <html xmlns=>\n    <head>\n      <META name="from"    content="Name <noreply@diogo.com>" />\n      <META name="subject" content="Email policies test" />\n    </head>\n    <body style="font-family: Arial; font-size: 13px; line-height: 16px;">\n        <div style="background: url(\'\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\n            <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\n                <div style="padding:30px 30px 29px;margin: 0px auto;">\n                  <p>Hello <b>$firstName $lastName</b>,</p>\n                  <p>Please click this link to activate your account:</p>\n                    <p><a href="$emailVerificationLink">Activate link</a></p>\n                </div>\n            </div>\n        </div>\n    </body>\n</html>\n  ',
       es: '<html xmlns=>\r\n    <head>\r\n\t\t<META name="from"    content="Name <noreply@diogo.com>" />\r\n\t\t<META name="subject" content="Email policies test - 245" />\r\n    </head>\r\n    <body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n        <div style="background: url(\'\') repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n            <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n                <div style="padding:30px 30px 29px;margin: 0px auto;">\r\n\t\t            <p>This is a test for the branch 245<b>$firstName $lastName</b>,</p>\r\n\t\t            <p>Please click this link to activate your account:</p>\r\n                    <p><a href="$emailVerificationLink">Activate link</a></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n\r\n\r\n',
     },
+    nextURL: 'sfsd.com',
   },
   emailNotifications: {
     welcomeEmailDefaultLanguage: 'en',
@@ -1031,6 +1050,7 @@ const mockedGetEmailTemplatesConfigsResponse = {
     emailTemplates: {
       en: '<html xmlns="">\r\n    <head>\r\n\t\t<META name="from"    content="Name <noreply@YOUR-SITE.com>" />\r\n\t\t<META name="subject" content="Preferences center invitation" />\r\n    </head>\r\n    <body style="font-family: Arial; font-size: 13px; line-height: 16px;">\r\n        <div style="background: url() repeat-x; width: 720px; padding:13px 0; margin:0 auto;">\r\n            <div style="background: #fff; border-radius: 3px; margin: 0 auto; width: 693px; ">\r\n                <div style="padding:30px 30px 29px;margin: 0px auto;">\r\n\t\t            <p>Hello <b>$firstName $lastName</b>,</p>\r\n\t\t            <p>Please click this link to enter your Preference Center:</p>\r\n                    <p><a href="$link">Edit my preferences</a></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n\r\n\r\n',
     },
+    redirectURL: 'litePrefCenter.com',
     linkPlaceHolder: '$link',
   },
   doubleOptIn: {
@@ -1090,7 +1110,8 @@ const mockedGetEmailTemplatesConfigsResponse = {
       'zh-tw':
         '<html xmlns="">\r\n<head>\r\n<META name="from" content="Name <noreply@YOUR-SITE.com>" />\r\n<META name="subject" content="確認您的訂閱" />\r\n<style>a.button{display:inline-block;background-color:#1371b9;border:none;border-radius:8px;color:#FFF;text-align:center;text-decoration:none;padding:8px 10px;width:200px;transition:all 0.5s;cursor:pointer;margin:5px}a.button span{cursor:pointer;display:inline-block;position:relative;transition:0.5s}body{font-family:Arial;font-size:13px;line-height:16px}div.background{background:url() repeat-x;width:720px;padding:13px 0;margin:0 auto}div.inner-background{background:#fff;border-radius:3px;margin:0 auto;width:693px}div.inner-pane{padding:30px 30px 29px;margin:0px auto}</style>\r\n</head>\r\n<body>\r\n<div class="background"><div class="inner-background">\r\n<div class="inner-pane">\r\n<p>您好 <b>$firstName</b> <b>$lastName</b>,</p>\r\n<p>我們已收到您訂閱我們新聞通訊的請求：</p>\r\n<p>$subscriptionList</p><p>請確認訂閱。</p> \r\n<a href="$confirmationURL" class="button"><span>是的，為我訂閱</span></a>\r\n<p>如果您是誤收這封郵件，將其刪除即可。如您不點擊上面的確認按鈕，則不會為您訂閱。</p>\r\n<p>如果您有任何疑問或建議，請發送電子郵件聯繫我們：&lt;emailAddress&gt;。</p>\r\n</div>\r\n</div>\r\n</body>\r\n</html>',
     },
-    nextURL: '',
+    nextURL: 'url/gs/confirmSubscriptions.aspx',
+    nextExpiredURL: 'url/gs/LinkExpired.aspx',
     confirmationLinkExpiration: 1209600,
   },
   passwordReset: {
@@ -1101,6 +1122,7 @@ const mockedGetEmailTemplatesConfigsResponse = {
     requireSecurityCheck: false,
     tokenExpiration: 3600,
     sendConfirmationEmail: false,
+    resetURL: 'reset.com',
   },
   twoFactorAuth: {
     providers: [

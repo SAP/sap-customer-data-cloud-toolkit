@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
 import EmailConfiguration from './emailConfiguration.js'
@@ -67,6 +66,45 @@ describe('Email Configuration test suite', () => {
     await executeTest('confirmationEmailTemplates', 'emailNotifications')
   })
 
+  test.each([true, false])('copy successfully links url', async (linkValue) => {
+    const templateName = 'preferencesCenter'
+    const options = {
+      id: 'emailTemplates',
+      name: 'emailTemplates',
+      value: true,
+      branches: [
+        {
+          id: templateName,
+          name: 'LitePreferencesCenter',
+          value: true,
+          branches: [
+            {
+              id: `Lite${templateName}-Link`,
+              name: 'Include Lite Preferences Center URL',
+              link: `${templateName}.redirectURL`,
+              value: linkValue,
+            },
+          ],
+        },
+      ],
+    }
+
+    const mockedResponse = getEmailsExpectedResponseWithNoTemplates()
+    mockedResponse[templateName] = getEmailsExpectedResponse[templateName]
+    axios.mockResolvedValueOnce({ data: mockedResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+
+    let spy = jest.spyOn(emailConfiguration.getEmail(), 'setSiteEmailsWithDataCenter')
+    await executeCopy(getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey), options)
+
+    expect(spy.mock.calls.length).toBe(1)
+    const expectedTemplate = JSON.parse(JSON.stringify(getEmailsExpectedResponse[templateName]))
+    if (!linkValue) {
+      delete expectedTemplate['redirectURL']
+    }
+    const expectedTemplateName = templateName
+    expect(spy).toHaveBeenCalledWith(apiKey, expectedTemplateName, expectedTemplate, dataCenter)
+  })
+
   test('copy unsuccessfully - error on get', async () => {
     const mockedResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, emailTemplatesId, apiKey)
     axios.mockResolvedValueOnce({ data: mockedResponse })
@@ -116,6 +154,13 @@ describe('Email Configuration test suite', () => {
       expectedTemplate = expectedTemplate[parentName]
     } else {
       expectedTemplate = getEmailsExpectedResponse[templateName]
+      if (templateName === 'doubleOptIn') {
+        delete expectedTemplate.nextURL
+        delete expectedTemplate.nextExpiredURL
+      }
+      if (templateName === 'emailVerification') {
+        delete expectedTemplate.nextURL
+      }
     }
     const expectedTemplateName = parentName ? `${parentName}.${templateName}` : templateName
     expect(spy).toHaveBeenCalledWith(apiKey, expectedTemplateName, expectedTemplate, dataCenter)

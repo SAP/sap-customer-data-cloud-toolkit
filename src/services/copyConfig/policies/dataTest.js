@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const getPolicyConfig = {
   registration: {
     requireCaptcha: false,
@@ -53,6 +52,7 @@ const getPolicyConfig = {
     signDeviceId: 'js_latest',
   },
   emailVerification: {
+    nextURL: 'sfsd.com',
     verificationEmailExpiration: 86400,
     autoLogin: false,
     defaultLanguage: 'en',
@@ -71,7 +71,8 @@ const getPolicyConfig = {
     },
   },
   doubleOptIn: {
-    nextURL: '',
+    nextURL: 'url/gs/Link.aspx',
+    nextExpiredURL: 'url/gs/LinkExpired.aspx',
     defaultLanguage: 'en',
     confirmationLinkExpiration: 1209600,
     confirmationEmailTemplates: {
@@ -129,6 +130,7 @@ const getPolicyConfig = {
     confirmationEmailDefaultLanguage: 'en',
   },
   passwordReset: {
+    resetURL: 'reset.com',
     requireSecurityCheck: false,
     tokenExpiration: 3600,
     sendConfirmationEmail: false,

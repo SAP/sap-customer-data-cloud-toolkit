@@ -32,54 +32,25 @@ describe('Info Policy test suite', () => {
   beforeEach(() => {
     expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
   })
-  test('get policy info successfully except Account Options', async () => {
-    await executeInfoPolicyTest('accountOptions', 0)
-  })
-  test('get policy info successfully except code Verification', async () => {
-    await executeInfoPolicyTest('codeVerification', 1)
-  })
-  test('get policy info successfully except email notification', async () => {
-    await executeInfoPolicyTest('emailNotifications', 2)
-  })
-  test('get policy info successfully except email Verification', async () => {
-    await executeInfoPolicyTest('emailVerification', 3)
-  })
-  test('get policy info successfully except federation', async () => {
-    await executeInfoPolicyTest('federation', 4)
-  })
 
-  test('get policy info successfully except password Complexity', async () => {
-    await executeInfoPolicyTest('passwordComplexity', 5)
-  })
-  test('get policy info successfully except webSdk', async () => {
-    await executeInfoPolicyTest('gigyaPlugins', 6)
-  })
-  test('get policy info successfully except password Reset', async () => {
-    await executeInfoPolicyTest('passwordReset', 7)
-  })
-  test('get policy info successfully except profile Photo', async () => {
-    await executeInfoPolicyTest('profilePhoto', 8)
-  })
-  test('get policy info successfully except Registration', async () => {
-    await executeInfoPolicyTest('registration', 9)
-  })
-  test('get policy info successfully except security', async () => {
-    await executeInfoPolicyTest('security', 10)
-  })
-  test('get policy info successfully except two Factor Authentication', async () => {
-    await executeInfoPolicyTest('twoFactorAuth', 11)
-  })
-
-  test('get policy info successfully except authentication', async () => {
-    await executeInfoPolicyTest('authentication', 12)
-  })
-
-  test('get policy info successfully except doubleOptIn', async () => {
-    await executeInfoPolicyTest('doubleOptIn', 13)
-  })
-
-  test('get policy info successfully except preferencesCenter', async () => {
-    await executeInfoPolicyTest('preferencesCenter', 14)
+  test.each([
+      ['accountOptions', 0],
+      ['authentication', 1],
+      ['codeVerification', 2],
+      ['emailNotifications', 3],
+      ['emailVerification', 4],
+      ['federation', 5],
+      ['passwordComplexity', 6],
+      ['gigyaPlugins', 7],
+      ['passwordReset', 8],
+      ['profilePhoto', 9],
+      ['registration', 10],
+      ['security', 11],
+      ['twoFactorAuth', 12],
+      ['doubleOptIn', 13],
+      ['preferencesCenter', 14]
+  ])('get policy info successfully except %s', async (property, index) => {
+    await executeInfoPolicyTest(property, index)
   })
 
   async function executeInfoPolicyTest(templateNames, templateIndex) {

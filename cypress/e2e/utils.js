@@ -241,6 +241,7 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.get('[data-cy ="dataCenterSelect"]').click()
   cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
+  cy.wait(500)
 }
 
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {

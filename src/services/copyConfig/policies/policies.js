@@ -3,11 +3,10 @@
  * License: Apache-2.0
  */
 
-
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
+import { removePropertyFromObjectCascading, removePropertyPathFromObject, stringToJson } from '../objectHelper.js'
 
 class Policy {
   static #NAMESPACE = 'accounts'
@@ -55,13 +54,30 @@ class Policy {
   }
 
   async copyPolicies(destinationSite, destinationSiteConfiguration, response, options) {
-    this.#cleanResponse(response)
-    const filteredResponse = JSON.parse(JSON.stringify(this.#removeUnecessaryFields(response, options)))
+    if (options.branches === undefined) {
+      options = options.options
+    }
+    const filteredResponse = JSON.parse(JSON.stringify(response))
+    this.#cleanResponse(filteredResponse)
+    this.#removeUnnecessaryFields(filteredResponse, options)
     const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
     if (isParentSite) {
       return this.set(destinationSite, filteredResponse, destinationSiteConfiguration.dataCenter)
     } else {
       return this.#copyPoliciesToChildSite(destinationSite, destinationSiteConfiguration.dataCenter, filteredResponse)
+    }
+  }
+
+  #deleteLinksOptions(response, options) {
+    for (const policyOption of options.branches) {
+      const policyHaveLinks = policyOption.branches?.length > 0
+      if (policyOption.value && policyHaveLinks) {
+        for (const linkOption of policyOption.branches) {
+          if (!linkOption.value && linkOption.link) {
+            removePropertyPathFromObject(response, linkOption.link)
+          }
+        }
+      }
     }
   }
 
@@ -115,28 +131,31 @@ class Policy {
   #deleteOptions(response, options) {
     for (const templateInfo of options.branches) {
       if (!templateInfo.value) {
-        delete response[templateInfo.id]
+        delete response[templateInfo.propertyName]
       }
     }
     return response
   }
 
-  #removeUnecessaryFields(response, options) {
-    if (options.branches === undefined) {
-      this.#deleteOptions(response, options.options)
-      return response
-    } else {
-      this.#deleteOptions(response, options)
-      return response
-    }
+  #removeUnnecessaryFields(response, options) {
+    this.#deleteOptions(response, options)
+    this.#deleteLinksOptions(response, options)
+    return response
   }
 
   #cleanResponse(response) {
     delete response['rba']
-    if (response['security']) {
-      delete response['security'].accountLockout
-      delete response['security'].captcha
-      delete response['security'].ipLockout
+    if (response.security) {
+      delete response.security.accountLockout
+      delete response.security.captcha
+      delete response.security.ipLockout
+    }
+    // the following fields should only be copied when processing emails
+    if (response.passwordReset) {
+      delete response.passwordReset.resetURL
+    }
+    if (response.preferencesCenter) {
+      delete response.preferencesCenter.redirectURL
     }
   }
 
