@@ -88,7 +88,6 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
-  const [unselectAllIncludeCheckboxState] = useState(false)
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
@@ -187,7 +186,6 @@ const CopyConfigurationExtended = ({ t }) => {
       <SiteConfigurations
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
-        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState}
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}

@@ -73,7 +73,6 @@ const CopyConfigurationDialog = ({ t }) => {
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [unselectAllIncludeCheckboxState] = useState(false)
 
   useEffect(() => {
     if (open && edit) {
@@ -136,12 +135,11 @@ const CopyConfigurationDialog = ({ t }) => {
         siteId={siteId}
         configurations={configurations}
         selectAllCheckboxState={selectAllCheckboxState}
-        unselectAllIncludeCheckboxState={unselectAllIncludeCheckboxState} // TODO check if needed
         onSelectAllCheckboxChangeHandler={onSelectAllCheckboxChangeHandler}
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
-        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper} // TODO check if needed
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
   }
