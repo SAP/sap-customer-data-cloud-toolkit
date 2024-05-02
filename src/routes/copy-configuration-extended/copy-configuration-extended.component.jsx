@@ -158,19 +158,10 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ checkBoxId, value }))
-    })
-  }
-
-  //const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch)
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
 
   const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
-    onSelectAllIncludeUrlChangeHandler(dispatch, configurations)
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, null, setConfigurationStatus)
   }
 
   const showSuccessMessage = () => (

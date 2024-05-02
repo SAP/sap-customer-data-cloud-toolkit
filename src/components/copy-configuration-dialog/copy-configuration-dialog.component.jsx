@@ -100,19 +100,10 @@ const CopyConfigurationDialog = ({ t }) => {
     }
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value }))
-    })
-  }
-
-  //const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch)
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
 
   const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
-    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, siteId)
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, siteId, setConfigurationStatus)
   }
 
   const onSourceApiKeyDeleteHandler = () => {

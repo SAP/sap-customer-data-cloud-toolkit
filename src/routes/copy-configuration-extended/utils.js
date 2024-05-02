@@ -6,7 +6,6 @@
 import { onElementExists } from '../../inject/utils'
 import { ERROR_SEVERITY_ERROR } from '../../services/errors/generateErrorResponse'
 import { Tracker } from '../../tracker/tracker'
-import { setConfigurationStatus } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 export const cleanTreeVerticalScrolls = () => {
   onElementExists('ui5-tree', () => {
@@ -48,38 +47,36 @@ export const sendReportOnWarnings = (errors) => {
   }
 }
 
-export const handleCheckboxChange = (dispatch, checkbox, value, siteId) => {
+export const handleCheckboxChange = (dispatch, checkbox, value, siteId, setConfigurationStatus) => {
   if (checkbox.link) {
     const checkBoxId = checkbox.id
     dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value: value }))
   }
 }
 
-export const processNestedBranches = (dispatch, branches, value, siteId) => {
+export const processNestedBranches = (dispatch, branches, value, siteId, setConfigurationStatus) => {
   branches.forEach((branch) => {
-    handleCheckboxChange(dispatch, branch, value, siteId)
+    handleCheckboxChange(dispatch, branch, value, siteId, setConfigurationStatus)
 
     if (branch.branches && branch.branches.length > 0) {
-      branch.branches.forEach((nestedBranch) => handleCheckboxChange(dispatch, nestedBranch, value, siteId))
+      branch.branches.forEach((nestedBranch) => handleCheckboxChange(dispatch, nestedBranch, value, siteId, setConfigurationStatus))
     }
   })
 }
 
-export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, siteId) => {
-  // BMS
+export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, siteId, setConfigurationStatus) => {
   configurations.forEach((configuration) => {
     if (configuration.branches && configuration.branches.length > 0) {
-      processNestedBranches(dispatch, configuration.branches, false, siteId)
+      processNestedBranches(dispatch, configuration.branches, false, siteId, setConfigurationStatus)
     }
     if (configuration.link) {
-      handleCheckboxChange(dispatch, configuration, false, siteId)
+      handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
     }
   })
 }
 
-/*
 export const onSelectAllCheckboxChange =
-  (siteId = null, setSelectAllCheckboxState, configurations, dispatch) =>
+  (siteId = null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus) =>
   (event) => {
     const value = event.srcElement.checked
     setSelectAllCheckboxState(value)
@@ -89,4 +86,3 @@ export const onSelectAllCheckboxChange =
       dispatch(setConfigurationStatus(details))
     })
   }
-*/
