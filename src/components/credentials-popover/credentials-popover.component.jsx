@@ -3,12 +3,12 @@
  * License: Apache-2.0
  */
 
-import { useSelector, useDispatch } from 'react-redux'
+import { Form, FormItem, Input, InputType, Label, Link } from '@ui5/webcomponents-react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { Form, FormItem, Input, InputType, Link, Label } from '@ui5/webcomponents-react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { setUserKey, setSecretKey, selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { selectCredentials, setSecretKey, setUserKey } from '../../redux/credentials/credentialsSlice'
 
 import { VERSION } from '../../constants'
 import styles from './credentials-popover.styles.js'
@@ -26,37 +26,33 @@ const CredentialsPopover = ({ t }) => {
     dispatch(setUserKey(newUserKey))
   }
 
-  const onsecretKeyValueChange = (event) => {
+  const onSecretKeyValueChange = (event) => {
     const newSecretKey = event.target.value
     dispatch(setSecretKey(newSecretKey))
   }
 
   return (
-    <>
+    <Form className={classes.documentationLinkStyle} columnsS="1">
       <FormItem label={t('GLOBAL.USER_KEY')}>
         <Input type={InputType.Text} id="userKey" value={userKey} onInput={(event) => onUserKeyValueChange(event)} />
       </FormItem>
       <FormItem label={t('GLOBAL.SECRET_KEY')}>
-        <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onsecretKeyValueChange(event)} />
+        <Input type={InputType.Password} id="secretKey" value={secretKey} onInput={(event) => onSecretKeyValueChange(event)} />
       </FormItem>
 
-      <Form className={classes.documentationLinkStyle} columnsS="2">
-        <FormItem>
-          <Link href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/End-User-Documentation" target="_blank">
+      <FormItem>
+        <div className={classes.formItemDocumentationLinkStyle}>
+          <Link href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/Documentation" target="_blank">
             {t('GLOBAL.DOCUMENTATION')}
           </Link>
-        </FormItem>
-
-        <FormItem>
           <Label className={classes.versionLabelStyle}>
             <small>
               {t('GLOBAL.VERSION')} {VERSION}
             </small>
           </Label>
-        </FormItem>
-      </Form>
-    </>
+        </div>
+      </FormItem>
+    </Form>
   )
 }
-
 export default withTranslation()(CredentialsPopover)

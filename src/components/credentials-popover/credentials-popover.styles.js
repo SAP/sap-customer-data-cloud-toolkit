@@ -3,13 +3,16 @@
  * License: Apache-2.0
  */
 
-
 import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {
   versionLabelStyle: {
-    width: '100%',
     textAlign: 'right',
+  },
+  formItemDocumentationLinkStyle: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   documentationLinkStyle: { ...spacing.sapUiSmallMarginTop },
 }
