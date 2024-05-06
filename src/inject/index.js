@@ -6,10 +6,7 @@
 import { initChromeStorage } from './chromeStorage'
 import { injectMenu } from './injectMenu'
 import { initNavigation } from './navigation'
-
 import { MENU_ELEMENTS } from './constants'
-
-import './main.css'
 
 export const initInject = () => {
   initChromeStorage()
