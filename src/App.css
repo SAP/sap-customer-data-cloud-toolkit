@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
- .cdc-tools-app {
+.cdc-tools-app {
   position: absolute;
   top: 72px;
   right: 0px;
@@ -51,6 +51,8 @@
   position: absolute;
   right: 377px;
   top: -64px;
+
+  /* Hide topbar menu button */
   display: none;
 }
 @media (max-width: 1200px) {
@@ -75,6 +77,11 @@
 }
 
 /* Datacenter flag icons */
+/*
+  <span class="data-center-list__item ng-star-inserted" title={item.value}>
+    <i class={`a-icon data-center-list__icon a-icon--flag-${item.value.toLocaleLowerCase()}`}></i>
+  </span>
+*/
 .a-icon {
   display: block;
   background-position: 50% 50%;
@@ -107,6 +114,8 @@
 .a-icon--flag-us {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAChklEQVQ4jZ2UTWgVVxTHf3fmzp336szkKeU1TUS6ED9AV4l20a5S14W4V2mLi0qlgojWbOKiUBVRSNBFSvwouou0hiwCUnBVUhoq2CKKitC8PL9IY2bkvZm5946LJETNB+qBuznnnt/533PvPYIV7MS5Yfk8brgtYVl0FFP6i3179HJ7xRLJ1Qf/PTt/5359R/3Jc5XlGuVJ+isP6TBPM7F56+9iw6Y9Ld98+2RZUO/poV2jN/4ZnEma0hiLNhZPOqSZ5ueebjrXV2eTVgU1wmhnGAZ/LgL92Pfrriu/jV3MtRFaG3zlAZBmOVK6nN3m05m/IsJaQ1v715UjvZcAHID+C6PVa9dvnrfWCq0NypMYa5k/ltYG/BIEwcKKIhfl98VxEgBIgNv36heTF6mbZhpfeaRZTrmk8KRLo5lR8j2cjk9xPln9Zkuj4tbfPwA9EuDfu7WufE5JmuX4SjLfI195NNMce2kAPXFz8W193H4I6JEnzg3LX67+oXwlSTNNuaRoNDPKJYXrOguKdu9FLlYE4MWXNzoSkNpYxFzbc22Q0sURAmMtnnTRxmLHx7DjU0uBoLVNSsB+1rkegKIoFiTPked9lWICXiRLckTUIkQcJ07xaNIsXertTLS2uQLg/y+7sqJe894LUm3NV4/cUBLAPXLsJOUPjr6XnEbjNCOfz77sOE4CM9BXY+pZ9E6QNR/OuHv3t4dhkEiAMAyS6Z969xeTtUEcx30riLVGRJXvwzBI4I1PG8fJdrJsiCxduyJE+RMo1R2GwV/zrkVjZPrM8Y+oT14obt/qKuo19WpMVFtzsXnLddau+6py4PDj12IrFZ7uPyUBycxMQRSZyncHlx1sLwFl1QcOu9Av5gAAAABJRU5ErkJggg==);
 }
+
+/* UI5 React Style Fixes - https://sap.github.io/ui5-webcomponents-react/ */
 
 /* Theme specific fixes: sap_fiori_3 */
 [data-sap-theme='sap_fiori_3'] {
