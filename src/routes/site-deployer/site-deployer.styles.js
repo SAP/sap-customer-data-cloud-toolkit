@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {
@@ -90,6 +89,9 @@ const styles = {
     width: '98%',
     position: 'relative',
     margin: 'var(--_ui5_card_header_padding)',
+    paddingLeft: '2%',
+    paddingRight: '0%',
+    boxSizing: 'border-box',
   },
   errorListOuterDivStyle: {
     ...spacing.sapUiSmallMargin,
