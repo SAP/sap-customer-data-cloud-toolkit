@@ -52,7 +52,7 @@
   right: 377px;
   top: -64px;
 
-  /* Hide tobbar menu button */
+  /* Hide topbar menu button */
   /* display: none; */
 }
 @media (max-width: 1200px) {
@@ -152,6 +152,9 @@
 
   .cdc-tools-app-container {
     top: 0;
+  }
+  .cdc-toolbox--topbar-menu-container {
+    top: -68px;
   }
 }
 
