@@ -9,9 +9,8 @@ import React from 'react'
 import { getCurrentConsoleTheme } from './utils/theme'
 
 import './App.css'
-import CredentialsPopoverButton from './components/credentials-popover-button/credentials-popover-button.component'
 import { useThemeChange } from './hooks/useThemeChange'
-import { ROUTE_CONTAINER_CLASS, ROUTE_COPY_CONFIG_EXTENDED, ROUTE_EMAIL_TEMPLATES, ROUTE_SITE_DEPLOYER, ROUTE_SMS_TEMPLATES, TOPBAR_MENU_CONTAINER_CLASS } from './inject/constants'
+import { ROUTE_CONTAINER_CLASS, ROUTE_COPY_CONFIG_EXTENDED, ROUTE_EMAIL_TEMPLATES, ROUTE_SITE_DEPLOYER, ROUTE_SMS_TEMPLATES } from './inject/constants'
 import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
@@ -35,9 +34,6 @@ function App() {
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_COPY_CONFIG_EXTENDED}>
           <CopyConfigurationExtended />
         </div>
-      </div>
-      <div className={TOPBAR_MENU_CONTAINER_CLASS}>
-        <CredentialsPopoverButton />
       </div>
     </ThemeProvider>
   )
