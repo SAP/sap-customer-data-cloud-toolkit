@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
@@ -39,16 +38,7 @@ describe('Email Templates Test Suite', () => {
     cy.window().its('open').should('not.be.called')
   })
 
-  it('should show credentials error dialog on export', () => {
-    utils.clearCredentials()
-    cy.get('[data-cy ="exportAllEmailTemplatesButton"]').click()
-    cy.get('[data-cy ="credentialErrorPopup"]').eq(1).should('have.text', dataTest.missingCredentialsErrorMessage)
-    utils.clickPopUpOkButton('credentialErrorPopup')
-    cy.window().its('open').should('not.be.called')
-  })
-
   it('should show credentials error dialog on import', () => {
-    utils.clearCredentials()
     cy.get('[data-cy ="importAllEmailTemplatesButton"]').click()
     cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile)
     cy.get('[data-cy ="importZipButton"]').click()

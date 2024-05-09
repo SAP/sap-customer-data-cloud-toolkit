@@ -49,21 +49,14 @@ export function startUp(pageName) {
       cy.stub(window, 'open').as('windowOpenStub')
     },
   })
+  cy.clearAllCookies()
+  cy.clearAllLocalStorage()
+  cy.clearAllSessionStorage()
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
   mockGetUserSitesRequest()
   mockGetPartnersRequest()
   cy.contains(pageName).realClick()
-  writeCredentials()
-}
-
-export function writeCredentials() {
-  resizeObserverLoopErrRe()
-  const openPopoverButton = cy.get('body').find('#openPopoverButton')
-  openPopoverButton.realClick()
-  cy.get('#userKey').shadow().find('[class = "ui5-input-inner"]').focus().type('A', { force: true })
-  cy.get('#secretKey').shadow().find('[class = "ui5-input-content"]').find('[class = "ui5-input-inner"]').type('d', { force: true })
-  openPopoverButton.realClick()
 }
 
 export function clearCredentials() {
@@ -104,11 +97,13 @@ export function resizeObserverLoopErrRe() {
 }
 
 export function getBaseDomain(baseDomain, timeout) {
+  cy.wait(1000)
   cy.get('[data-cy ="cdctools-baseDomain"]').should('be.visible')
   return cy.get('[data-cy ="cdctools-baseDomain"]', { timeout: timeout }).shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
 }
 
 export function getDataCenters(chosenDataCenter) {
+  cy.wait(1000)
   cy.get('[data-cy ="cdctools-dataCenter"]').shadow().find('ui5-icon').realClick()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
@@ -125,6 +120,7 @@ export function getDataCenters(chosenDataCenter) {
 export function getSiteStructure(optionNumber, timeout) {
   cy.get('[data-cy ="cdctools-siteStructure"]').should('be.visible')
   cy.get('[data-cy ="cdctools-siteStructure"]', { timeout: timeout }).click()
+  cy.wait(1000)
   return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
 
@@ -147,7 +143,7 @@ export function getCancelButton() {
 
 export function clickPopUpOkButton(popUpId) {
   cy.get(`[data-cy =${popUpId}]`).should('be.visible')
-  return cy.get(`[data-cy =${popUpId}]`).find('ui5-bar').find('ui5-button').realClick()
+  return cy.get(`[data-cy =${popUpId}]`).find('ui5-bar').find('ui5-button').click()
 }
 
 export function mockGetConfigurationRequests() {
@@ -214,12 +210,8 @@ export function checkElementsInitialState() {
   cy.get('[data-cy ="targetSitePopover"]').eq(1).should('have.text', targetSitePopoverText)
 }
 
-export function setConfigurationCheckBox(parent) {
-  if (parent) {
-    cy.get(`[data-cy =${parent}]`).find('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
-  } else {
-    cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
-  }
+export function setConfigurationCheckBox() {
+  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
 }
 
 export function fillTargetApiKeyInput() {
@@ -229,7 +221,8 @@ export function fillTargetApiKeyInput() {
 
 export function fillSourceApiKeyInput() {
   cy.get('[data-cy ="siteCopyConfigurationDialog"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().focus().type(dummyApiKey)
-  cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
+  cy.wait(1000)
+  cy.get(':nth-child(2) > [data-cy="apiKeyInput"] > [data-cy="addTargetSiteButton"]').should('not.be.disabled').realClick()
 }
 
 export function checkTargetSitesList() {
@@ -239,6 +232,7 @@ export function checkTargetSitesList() {
 export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOption) {
   cy.get('[data-cy ="baseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(baseDomain).should('have.value', baseDomain)
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
+  cy.wait(1000)
   cy.get('[data-cy ="dataCenterSelect"]').click()
   cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
 }

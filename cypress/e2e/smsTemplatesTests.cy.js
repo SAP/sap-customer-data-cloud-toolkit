@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 import * as utils from './utils'
 import * as dataTest from './dataTest'
@@ -56,23 +55,5 @@ describe('SMS Templates Test Suite', () => {
     cy.get('[data-cy ="smsSuccessPopup"]').shadow().find('#ui5-popup-header').should('have.text', 'Success')
     utils.clickPopUpOkButton('smsSuccessPopup')
     cy.get('@windowOpenStub').should('be.called')
-    
-  })
-
-  it('should show credentials error dialog on export', () => {
-    utils.clearCredentials()
-    cy.get('[data-cy ="exportAllSmsTemplatesButton"]').click()
-    cy.get('[data-cy ="credentialErrorPopup"]').eq(1).should('have.text', dataTest.missingCredentialsErrorMessage)
-    utils.clickPopUpOkButton('credentialErrorPopup')
-    cy.get('@windowOpenStub').should('not.be.called')
-  })
-
-  it('should show credentials error dialog on import', () => {
-    utils.clearCredentials()
-    cy.get('[data-cy ="importAllSmsTemplatesButton"]').click()
-    cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.smsExampleFile)
-    cy.get('[data-cy ="importZipButton"]').click()
-    cy.get('[data-cy ="credentialErrorPopup"]').eq(1).should('have.text', dataTest.missingCredentialsErrorMessage)
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 })

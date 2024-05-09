@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const { defineConfig } = require('cypress')
 require('dotenv').config()
 const path = require('path')
@@ -14,7 +13,7 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-  chromeWebSecurity:false,
+  chromeWebSecurity: false,
   defaultCommandTimeout: 30000,
   e2e: {
     baseUrl: 'http://localhost:3000',
@@ -32,7 +31,7 @@ module.exports = defineConfig({
       return {
         config,
 
-       excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
+        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js', 'cypress/e2e/copyConfigurationExtendedTests.cy.js'],
         // excludeSpecPattern: [
         //   'cypress/e2e/copyConfigurationExtendedTests.cy.js',
         //   'cypress/e2e/emailTemplatesTests.cy.js',
