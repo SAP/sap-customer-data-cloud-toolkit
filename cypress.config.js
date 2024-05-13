@@ -31,13 +31,14 @@ module.exports = defineConfig({
       return {
         config,
 
-        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js', 'cypress/e2e/copyConfigurationExtendedTests.cy.js'],
+        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
         // excludeSpecPattern: [
         //   'cypress/e2e/copyConfigurationExtendedTests.cy.js',
         //   'cypress/e2e/emailTemplatesTests.cy.js',
         //   'cypress/e2e/smsTemplatesTests.cy.js',
         //   'cypress/e2e/siteDeployerTests.cy.js',
         //   'cypress/e2e/siteDeployerCopyConfigurationTests.cy.js',
+        //   'cypress/e2e/e2eFullTesting.cy.js'
         // ],
       }
     },

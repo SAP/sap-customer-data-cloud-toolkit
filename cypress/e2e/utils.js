@@ -44,7 +44,7 @@ import {
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
 
 export function startUp(pageName) {
-  cy.visit('', {
+  cy.visit('/#/4_6Tv6z8O6NmUO_BZoHcXIRw/4_6Tv6z8O6NmUO_BZoHcXIRw/', {
     onBeforeLoad(window) {
       cy.stub(window, 'open').as('windowOpenStub')
     },
