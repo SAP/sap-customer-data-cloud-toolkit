@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const baseDomain = 'a_b_c_site_deployer'
 const dropdownOption = 'Dev, Stag, Prod with Parent and Child (ex: dev.eu.parent.siteDomain, dev.eu.siteDomain)'
 const currentSiteName = 'dev.cdc-tools'

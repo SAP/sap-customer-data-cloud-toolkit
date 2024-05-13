@@ -11,9 +11,9 @@ import * as dataTest from './dataTest'
 describe('siteDeployerCopyConfiguration test suite', () => {
   beforeEach(() => {
     utils.resizeObserverLoopErrRe()
-    utils.mockGetConfigurationRequests()
-    utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     utils.startUp(dataTest.siteDeployerIconName)
+    utils.mockGetConfigurationRequests()
+    cy.intercept('POST', 'admin.createSite', { body: servicesDataTest.expectedGigyaResponseNoPartnerId }).as('admin.createSite')
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
   })
@@ -23,7 +23,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.getEditSiteConfigButton().should('not.exist')
     utils.getDeclineSiteConfigButton().should('not.exist')
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
@@ -35,10 +35,10 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should not set a site configuration on cancel', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
-    utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
+    utils.setConfigurationCheckBox()
     cy.get('[data-cy ="dialogMessageConfirmCancelButton"]').click()
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
     utils.getEditSiteConfigButton().should('not.exist')
@@ -47,7 +47,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should remove a site configuration', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
@@ -60,7 +60,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should update a site configuration on edit save', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')

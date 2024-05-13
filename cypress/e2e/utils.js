@@ -54,8 +54,6 @@ export function startUp(pageName) {
   cy.clearAllSessionStorage()
   mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
-  mockGetUserSitesRequest()
-  mockGetPartnersRequest()
   cy.contains(pageName).realClick()
 }
 
@@ -72,6 +70,10 @@ export function mockResponse(response, method, url) {
   cy.intercept(method, url, {
     body: response,
   })
+}
+export function mockCopyConfigRequests(response, method, url) {
+  cy.intercept(method, url, { body: response }).as('schema')
+  cy.wait('@schema')
 }
 
 let interceptCount = true
@@ -147,25 +149,42 @@ export function clickPopUpOkButton(popUpId) {
 }
 
 export function mockGetConfigurationRequests() {
-  mockResponse(mockedGetSchemaResponse, 'POST', 'accounts.getSchema')
-  mockResponse(mockedGetScreenSetResponse, 'POST', 'accounts.getScreenSets')
-  mockResponse(mockedGetPolicyResponse, 'POST', 'accounts.getPolicies')
-  mockResponse(mockedGetSmsConfigsResponse, 'POST', 'accounts.sms.templates.get')
-  mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
-  mockResponse(mockedGetSocialsConfigsResponse, 'POST', 'socialize.getProvidersConfig')
-  mockResponse(mockedGetEmailTemplatesConfigsResponse, 'POST', 'accounts.policies.emailTemplates.getConfig')
-  mockResponse(mockedGetConsentStatementExpectedResponse, 'POST', 'accounts.getConsentsStatements')
-  mockResponse(mockedGetCommunicationChannelsExpectedResponse, 'POST', 'accounts.communication.getChannels')
-  mockResponse(mockedGetCommunicationTopicsExpectedResponse, 'POST', 'accounts.communication.getTopicSettings')
-  mockResponse(mockedGetWebhookExpectedResponse, 'POST', 'accounts.webhooks.getAll')
-  mockResponse(mockedGetExtensionExpectedResponse, 'POST', 'accounts.extensions.list')
-  mockResponse(mockedCreateExtensionExpectedResponse, 'POST', 'accounts.extensions.create')
-  mockSearchResponse(mockedSearchDataflowsResponse, 'POST', 'idx.search')
-  mockResponse(expectedGetRiskAssessmentResponseOk, 'POST', 'accounts.rba.riskAssessment.getConfig')
-  mockResponse(expectedGetUnknownLocationNotificationResponseOk, 'POST', 'accounts.getPolicies')
-  mockResponse(expectedGetRbaPolicyResponseOk, 'POST', 'accounts.rba.getPolicy')
+  cy.intercept('POST', 'admin.console.getPagedUserEffectiveSites', { body: mockedUserSitesResponse }).as('getPagedUserEffectiveSites')
+  cy.intercept('POST', 'admin.console.getPartners', { body: mockedGetPartnersResponse }).as('getPartners')
+  cy.intercept('POST', 'accounts.getSchema', { body: mockedGetSchemaResponse }).as('getSchema')
+  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedGetScreenSetResponse }).as('getScreenSets')
+  cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('getPolicies')
+  cy.intercept('POST', 'accounts.sms.templates.get', { body: mockedGetSmsConfigsResponse }).as('sms.templates.get')
+  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
+  cy.intercept('POST', 'socialize.getProvidersConfig', { body: mockedGetSocialsConfigsResponse }).as('getProvidersConfig')
+  cy.intercept('POST', 'accounts.policies.emailTemplates.getConfig', { body: mockedGetEmailTemplatesConfigsResponse }).as('policies.emailTemplates.getConfig')
+  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockedGetConsentStatementExpectedResponse }).as('getConsentsStatements')
+  cy.intercept('POST', 'accounts.communication.getChannels', { body: mockedGetCommunicationChannelsExpectedResponse }).as('communication.getChannels')
+  cy.intercept('POST', 'accounts.communication.getTopicSettings', { body: mockedGetCommunicationTopicsExpectedResponse }).as('communication.getTopicSettings')
+  cy.intercept('POST', 'accounts.webhooks.getAll', { body: mockedGetWebhookExpectedResponse }).as('webhooks.getAll')
+  cy.intercept('POST', 'accounts.extensions.list', { body: mockedGetExtensionExpectedResponse }).as('extensions.list')
+  cy.intercept('POST', 'accounts.extensions.create', { body: mockedCreateExtensionExpectedResponse }).as('extensions.create')
+  cy.intercept('POST', 'idx.search', { body: mockedSearchDataflowsResponse }).as('idx.search')
+  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('rba.riskAssessment.getConfig')
+  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('accounts.getPolicies')
+  cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('rba.getPolicy')
+  cy.wait([
+    '@getPagedUserEffectiveSites',
+    '@getSchema',
+    '@getScreenSets',
+    '@getPolicies',
+    '@sms.templates.get',
+    '@getSiteConfig',
+    '@getProvidersConfig',
+    '@policies.emailTemplates.getConfig',
+    '@getConsentsStatements',
+    '@communication.getChannels',
+    '@webhooks.getAll',
+    '@extensions.list',
+    '@idx.search',
+    '@rba.getPolicy',
+  ])
 }
-
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
   mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
@@ -205,24 +224,43 @@ export function checkElementsInitialState() {
   cy.get('#policiesPopover').should('have.text', policiesPopoverText)
   cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.disabled')
   cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').should('be.enabled')
-  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).should('exist')
-  cy.get('[data-cy ="targetSiteTooltipIcon"]').eq(1).realHover()
-  cy.get('[data-cy ="targetSitePopover"]').eq(1).should('have.text', targetSitePopoverText)
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').should('exist')
+  cy.get('[data-cy ="targetSiteTooltipIcon"]').realHover()
+  cy.get('[data-cy ="targetSitePopover"]').should('have.text', targetSitePopoverText)
 }
 
 export function setConfigurationCheckBox() {
-  cy.get('ui5-tree').eq(0).find('ui5-checkbox').eq(0).realClick()
+  cy.get('#siteCopyConfigurationDialog')
+    .find('#siteConfigurationsCard')
+    .find('ui5-tree')
+    .then((tree) => {
+      cy.wrap(tree).should('be.visible')
+      cy.wrap(tree).find('#schema').click()
+    })
+}
+
+export function setConfigurationCopyConfig() {
+  cy.get('#siteConfigurationsCard')
+    .find('ui5-tree')
+    .then((tree) => {
+      cy.wrap(tree).should('be.visible')
+      cy.wrap(tree).find('#schema').click()
+    })
 }
 
 export function fillTargetApiKeyInput() {
   cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').type(dummyApiKey)
-  cy.get('ui5-static-area-item').shadow().find('ui5-li-suggestion-item').click()
+  cy.wait(1000)
+  cy.get('#apiKeyInput').find('[id="addTargetSiteButton"]').click()
 }
 
 export function fillSourceApiKeyInput() {
-  cy.get('[data-cy ="siteCopyConfigurationDialog"]').find('#apiKeyInput').shadow().find('[class = "ui5-input-inner"]').click().focus().type(dummyApiKey)
-  cy.wait(1000)
-  cy.get(':nth-child(2) > [data-cy="apiKeyInput"] > [data-cy="addTargetSiteButton"]').should('not.be.disabled').realClick()
+  cy.get('[data-cy ="siteCopyConfigurationDialog"]')
+    .find('#apiKeyInput')
+    .then((input) => {
+      cy.wrap(input).shadow().find('input').click().focus().type(dummyApiKey)
+      cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
+    })
 }
 
 export function checkTargetSitesList() {
