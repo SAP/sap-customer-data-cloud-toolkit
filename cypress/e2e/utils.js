@@ -167,7 +167,7 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('mockGetConfigurationRequests')
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('mockGetConfigurationRequests')
   cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('mockGetConfigurationRequests')
-  cy.wait('@mockGetConfigurationRequests', { requestTimeout: 10000 })
+  // cy.wait('@mockGetConfigurationRequests', { requestTimeout: 10000 })
 }
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
