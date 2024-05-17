@@ -14,7 +14,6 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.startUp(dataTest.siteDeployerIconName)
     utils.mockGetConfigurationRequests()
     cy.intercept('POST', 'admin.createSite', { body: servicesDataTest.expectedGigyaResponseNoPartnerId }).as('admin.createSite')
-    cy.wait('@admin.createSite')
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
   })

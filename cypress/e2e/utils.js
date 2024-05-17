@@ -5,43 +5,43 @@
 
 /* eslint-disable no-undef */
 
-import {
-  siteConfigResponse,
-  mockedGetSchemaResponse,
-  mockedSetSchemaResponse,
-  mockedGetSmsConfigsResponse,
-  mockedSetSmsTemplatesResponse,
-  mockedGetSocialsConfigsResponse,
-  mockedSetSocialsConfigsResponse,
-  mockedUserSitesResponse,
-  mockedGetPartnersResponse,
-  dummyApiKey,
-  mockedGetEmailTemplatesConfigsResponse,
-  mockPolicyResponse,
-  policiesPopoverText,
-  mockedGetScreenSetResponse,
-  targetSitePopoverText,
-  mockedSetPolicyResponse,
-  mockedGetConsentStatementExpectedResponse,
-  mockedSetConsentResponse,
-  mockedGetPolicyResponse,
-  mockedGetCommunicationTopicsExpectedResponse,
-  mockedSetCommunicationResponse,
-  mockedGetCommunicationChannelsExpectedResponse,
-  mockedGetWebhookExpectedResponse,
-  mockedSetWebhookResponse,
-  mockedGetExtensionExpectedResponse,
-  mockedCreateExtensionExpectedResponse,
-  mockedSetExtensionResponse,
-  mockedSearchDataflowsResponse,
-  mockedSetDataflowResponse,
-  mockedCreateDataflowResponse,
-  mockedSearchDataflowsEmptyResponse,
-  mockedSetRiskAssessmentResponse,
-  mockedSetUnknownLocationNotificationResponse,
-  mockedSetRbaPolicyResponse,
-} from './dataTest'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
+import {
+  dummyApiKey,
+  mockPolicyResponse,
+  mockedCreateDataflowResponse,
+  mockedCreateExtensionExpectedResponse,
+  mockedGetCommunicationChannelsExpectedResponse,
+  mockedGetCommunicationTopicsExpectedResponse,
+  mockedGetConsentStatementExpectedResponse,
+  mockedGetEmailTemplatesConfigsResponse,
+  mockedGetExtensionExpectedResponse,
+  mockedGetPartnersResponse,
+  mockedGetPolicyResponse,
+  mockedGetSchemaResponse,
+  mockedGetScreenSetResponse,
+  mockedGetSmsConfigsResponse,
+  mockedGetSocialsConfigsResponse,
+  mockedGetWebhookExpectedResponse,
+  mockedSearchDataflowsEmptyResponse,
+  mockedSearchDataflowsResponse,
+  mockedSetCommunicationResponse,
+  mockedSetConsentResponse,
+  mockedSetDataflowResponse,
+  mockedSetExtensionResponse,
+  mockedSetPolicyResponse,
+  mockedSetRbaPolicyResponse,
+  mockedSetRiskAssessmentResponse,
+  mockedSetSchemaResponse,
+  mockedSetSmsTemplatesResponse,
+  mockedSetSocialsConfigsResponse,
+  mockedSetUnknownLocationNotificationResponse,
+  mockedSetWebhookResponse,
+  mockedUserSitesResponse,
+  policiesPopoverText,
+  siteConfigResponse,
+  targetSitePopoverText,
+} from './dataTest'
 
 export function startUp(pageName) {
   cy.visit('/#/4_6Tv6z8O6NmUO_BZoHcXIRw/4_6Tv6z8O6NmUO_BZoHcXIRw/', {
@@ -67,13 +67,12 @@ export function clearCredentials() {
 }
 
 export function mockResponse(response, method, url) {
-  cy.intercept(method, url, {
-    body: response,
-  })
+  cy.intercept(method, url, { body: response })
 }
+
 export function mockCopyConfigRequests(response, method, url) {
   cy.intercept(method, url, { body: response }).as('schema')
-  cy.wait('@schema')
+  cy.wait('@schema', { requestTimeout: 10000 })
 }
 
 let interceptCount = true
@@ -149,41 +148,26 @@ export function clickPopUpOkButton(popUpId) {
 }
 
 export function mockGetConfigurationRequests() {
-  cy.intercept('POST', 'admin.console.getPagedUserEffectiveSites', { body: mockedUserSitesResponse }).as('getPagedUserEffectiveSites')
-  cy.intercept('POST', 'admin.console.getPartners', { body: mockedGetPartnersResponse }).as('getPartners')
-  cy.intercept('POST', 'accounts.getSchema', { body: mockedGetSchemaResponse }).as('getSchema')
-  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedGetScreenSetResponse }).as('getScreenSets')
-  cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('getPolicies')
-  cy.intercept('POST', 'accounts.sms.templates.get', { body: mockedGetSmsConfigsResponse }).as('sms.templates.get')
-  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
-  cy.intercept('POST', 'socialize.getProvidersConfig', { body: mockedGetSocialsConfigsResponse }).as('getProvidersConfig')
-  cy.intercept('POST', 'accounts.policies.emailTemplates.getConfig', { body: mockedGetEmailTemplatesConfigsResponse }).as('policies.emailTemplates.getConfig')
-  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockedGetConsentStatementExpectedResponse }).as('getConsentsStatements')
-  cy.intercept('POST', 'accounts.communication.getChannels', { body: mockedGetCommunicationChannelsExpectedResponse }).as('communication.getChannels')
-  cy.intercept('POST', 'accounts.communication.getTopicSettings', { body: mockedGetCommunicationTopicsExpectedResponse }).as('communication.getTopicSettings')
-  cy.intercept('POST', 'accounts.webhooks.getAll', { body: mockedGetWebhookExpectedResponse }).as('webhooks.getAll')
-  cy.intercept('POST', 'accounts.extensions.list', { body: mockedGetExtensionExpectedResponse }).as('extensions.list')
-  cy.intercept('POST', 'accounts.extensions.create', { body: mockedCreateExtensionExpectedResponse }).as('extensions.create')
-  cy.intercept('POST', 'idx.search', { body: mockedSearchDataflowsResponse }).as('idx.search')
-  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('rba.riskAssessment.getConfig')
-  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('accounts.getPolicies')
-  cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('rba.getPolicy')
-  cy.wait([
-    '@getPagedUserEffectiveSites',
-    '@getSchema',
-    '@getScreenSets',
-    '@getPolicies',
-    '@sms.templates.get',
-    '@getSiteConfig',
-    '@getProvidersConfig',
-    '@policies.emailTemplates.getConfig',
-    '@getConsentsStatements',
-    '@communication.getChannels',
-    '@webhooks.getAll',
-    '@extensions.list',
-    '@idx.search',
-    '@rba.getPolicy',
-  ])
+  cy.intercept('POST', 'admin.console.getPagedUserEffectiveSites', { body: mockedUserSitesResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'admin.console.getPartners', { body: mockedGetPartnersResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.getSchema', { body: mockedGetSchemaResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedGetScreenSetResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.sms.templates.get', { body: mockedGetSmsConfigsResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'socialize.getProvidersConfig', { body: mockedGetSocialsConfigsResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.policies.emailTemplates.getConfig', { body: mockedGetEmailTemplatesConfigsResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockedGetConsentStatementExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.communication.getChannels', { body: mockedGetCommunicationChannelsExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.communication.getTopicSettings', { body: mockedGetCommunicationTopicsExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.webhooks.getAll', { body: mockedGetWebhookExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.extensions.list', { body: mockedGetExtensionExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.extensions.create', { body: mockedCreateExtensionExpectedResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'idx.search', { body: mockedSearchDataflowsResponse }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('mockGetConfigurationRequests')
+  cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('mockGetConfigurationRequests')
+  cy.wait('@mockGetConfigurationRequests', { requestTimeout: 10000 })
 }
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
