@@ -30,8 +30,7 @@ module.exports = defineConfig({
       on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
       return {
         config,
-
-        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js', 'cypress/e2e/copyConfigurationExtendedTests.cy.js', 'cypress/e2e/siteDeployerCopyConfigurationTests.cy.js'],
+        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
         // excludeSpecPattern: [
         //   'cypress/e2e/copyConfigurationExtendedTests.cy.js',
         //   'cypress/e2e/emailTemplatesTests.cy.js',

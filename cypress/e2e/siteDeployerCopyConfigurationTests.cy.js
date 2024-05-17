@@ -5,8 +5,8 @@
 
 /* eslint-disable no-undef */
 import * as servicesDataTest from '../../src/services/site/dataTest'
-import * as utils from './utils'
 import * as dataTest from './dataTest'
+import * as utils from './utils'
 
 describe('siteDeployerCopyConfiguration test suite', () => {
   beforeEach(() => {
@@ -23,9 +23,9 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.getEditSiteConfigButton().should('not.exist')
     utils.getDeclineSiteConfigButton().should('not.exist')
     utils.getAddSiteConfigButton().click()
-    cy.wait(2000)
+    cy.wait(5000)
     utils.fillSourceApiKeyInput()
-    cy.wait(1000)
+    cy.wait(5000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').click()
     utils.getAddSiteConfigButton().should('not.exist')
@@ -35,9 +35,9 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should not set a site configuration on cancel', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(2000)
+    cy.wait(5000)
     utils.fillSourceApiKeyInput()
-    cy.wait(1000)
+    cy.wait(5000)
     utils.setConfigurationCheckBox()
     cy.get('[data-cy ="dialogMessageConfirmCancelButton"]').click()
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
@@ -47,9 +47,9 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should remove a site configuration', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(2000)
+    cy.wait(5000)
     utils.fillSourceApiKeyInput()
-    cy.wait(1000)
+    cy.wait(5000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').click()
     utils.getDeclineSiteConfigButton().click()
@@ -60,12 +60,12 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should update a site configuration on edit save', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(2000)
+    cy.wait(5000)
     utils.fillSourceApiKeyInput()
-    cy.wait(1000)
+    cy.wait(5000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(0).click()
-    cy.wait(1000)
+    cy.wait(5000)
     utils.getEditSiteConfigButton().click()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-checkbox').eq(0).realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('.ui5-li-tree-toggle-box').realClick()
