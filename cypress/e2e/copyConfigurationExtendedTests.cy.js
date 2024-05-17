@@ -64,7 +64,7 @@ describe('Copy Configuration extended test suite', () => {
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
       cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedSuccessMessage)
       cy.get('[data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
-      cy.wait(15500)
+      cy.wait(1500)
       cy.get('@windowOpenStub').should('be.called')
     })
 
@@ -83,10 +83,10 @@ describe('Copy Configuration extended test suite', () => {
     //......... make another context
     it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {
       cy.get('[data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
-      cy.wait(15000)
+      cy.wait(1000)
       cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#addTargetSiteButton').click()
       cy.get('[data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
-      cy.wait(15000)
+      cy.wait(1000)
       cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#addTargetSiteButton').click()
       cy.get('[data-cy ="messageStripError"]').should('have.text', dataTest.expectedDuplicatedMessage)
       cy.get('[data-cy ="messageStripError"]').shadow().find('ui5-button').click()
