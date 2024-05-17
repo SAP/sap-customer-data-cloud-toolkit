@@ -15,7 +15,7 @@ node() {
     stage ('tests') {
         dockerExecute(
             script: this,
-            dockerImage: 'cypress/browsers:node18.12.0-chrome107',
+            dockerImage: 'cypress/browsers:node-20.13.0-chrome-124.0.6367.155-1-ff-125.0.3-edge-124.0.2478.80-1',
         ) {
             sh '''chown -R root .
             npm install
