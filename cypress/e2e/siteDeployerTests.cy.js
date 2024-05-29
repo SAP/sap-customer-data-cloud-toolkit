@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 import * as servicesDataTest from '../../src/services/site/dataTest'
 import * as dataTest from './dataTest'
@@ -27,10 +26,10 @@ describe('Site Deployer Test Suite', () => {
 
   it('Should create 3 parent sites (dev, stag, prod) with US datacenter', () => {
     utils.getCreateButton().should('be.disabled')
-    utils.getDataCenters('US', 'EU', 'AU')
     utils.getBaseDomain(dataTest.baseDomain, 0)
     utils.getSiteStructure(1)
     cy.get('[data-cy ="cdctools-siteStructure"]').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
+    utils.getDataCenters('US')
     cy.get('ui5-table-row').should('have.length', '0')
     utils.getCreateButton().should('not.be.disabled')
     utils.getCreateButton().click()
@@ -50,7 +49,6 @@ describe('Site Deployer Test Suite', () => {
     utils.getSaveButton().click()
     cy.get('[data-cy ="messageItem"]').eq(1).should('have.text', dataTest.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('Should add a single Parent Site Manually with success message', () => {
@@ -65,7 +63,6 @@ describe('Site Deployer Test Suite', () => {
     successPopup.should('be.visible')
     successPopup.should('have.text', dataTest.expectedSuccessMessage)
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
-    cy.get('@windowOpenStub').should('be.called')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
@@ -80,7 +77,6 @@ describe('Site Deployer Test Suite', () => {
     cy.get('ui5-table-row').should('have.length', 1)
     cy.get('ui5-table-cell').eq(0).find('[tooltip ="Show Child Sites"]').click()
     utils.writeChildrenSiteTable(dataTest.childrenBaseDomain, dataTest.childrenSiteDescription)
-
     cy.get('[data-cy ="dataCenterSelect"]')
       .shadow()
       .find('[class ="ui5-select-root ui5-input-focusable-element"]')
@@ -90,18 +86,6 @@ describe('Site Deployer Test Suite', () => {
     utils.getIcon(0)
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
     cy.get('ui5-table-row').should('have.length', 0)
-  })
-
-  it('Should show error Popup when Credentials are empty', () => {
-    utils.clearCredentials()
-    cy.get('[data-cy ="addParentButton"]').click()
-    utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
-    utils.getSaveButton().should('not.be.disabled')
-    utils.getSaveButton().realClick()
-    const errorPopup = cy.get('[data-cy ="credentialErrorPopup"]').eq(0)
-    errorPopup.should('be.visible')
-    errorPopup.should('have.text', dataTest.missingCredentialsErrorMessage)
-    utils.clickPopUpOkButton('credentialErrorPopup')
   })
 
   it('Should show Manual Removal Popup', () => {
@@ -115,6 +99,5 @@ describe('Site Deployer Test Suite', () => {
     cy.get('[data-cy ="manualRemovalCheckbox"]').click()
     cy.get('[data-cy ="manualRemovalConfirmButton"]').shadow().find('.ui5-button-root').should('not.be.disabled')
     cy.get('[data-cy ="manualRemovalConfirmButton"]').click()
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 })

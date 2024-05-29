@@ -3,9 +3,8 @@
  * License: Apache-2.0
  */
 
-
-import { onElementExists } from '../../inject/utils'
 import { MAIN_LOADING_CLASS, MAIN_LOADING_SHOW_CLASS } from '../../inject/constants'
+import { onElementExists } from '../../inject/utils'
 
 export const showCredentialsLoading = () => document.querySelector(`.${MAIN_LOADING_CLASS}`).classList.add(MAIN_LOADING_SHOW_CLASS)
 export const hideCredentialsLoading = () => document.querySelector(`.${MAIN_LOADING_CLASS}`).classList.remove(MAIN_LOADING_SHOW_CLASS)
@@ -29,8 +28,8 @@ export const getAccountURL = () => {
   return tempURL
 }
 
-export const shouldUpdateCredentials = (credentials, isPopUpOpen) => {
-  return !areCredentialsFilled(credentials) && !isPopUpOpen && isHTTPSProtocol()
+export const shouldUpdateCredentials = (credentials) => {
+  return !areCredentialsFilled(credentials) && isHTTPSProtocol()
 }
 
 export const areCredentialsFilled = (credentials) => {
@@ -40,8 +39,8 @@ export const areCredentialsFilled = (credentials) => {
 export const readCredentialsFromAccountSettings = () => {
   try {
     navigateToAPICredentialsTab()
-    const credetialsInputs = getCredentialsInputs()
-    return { userKey: getUserKeyInput(credetialsInputs), secretKey: getSecretKeyInput(credetialsInputs), gigyaConsole: window.location.hostname }
+    const credentialsInputs = getCredentialsInputs()
+    return { userKey: getUserKeyInput(credentialsInputs), secretKey: getSecretKeyInput(credentialsInputs), gigyaConsole: window.location.hostname }
   } catch (error) {
     return error
   } finally {

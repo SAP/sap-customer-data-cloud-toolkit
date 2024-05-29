@@ -3,8 +3,6 @@
  * License: Apache-2.0
  */
 
-
-import { Fragment } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
@@ -39,53 +37,47 @@ export const SitesTable = ({ t }) => {
 
   const showErrorTableColumn = (list) => (list.length ? <TableColumn className={classes.errorTableColumnStyle}></TableColumn> : '')
 
-  const showCopyConfigDialog = () => {
-    return <CopyConfigurationDialog />
-  }
-
   return (
     <>
-      <Fragment>
-        {sitesStructure.length ? (
-          <Table
-            columns={
-              <>
-                {showErrorTableColumn(errorList)}
-                <TableColumn className={classes.siteDomainColumnStyle}>
-                  <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
-                </TableColumn>
-                <TableColumn className={classes.descriptionColumnStyle}>
-                  <Label>{t('GLOBAL.DESCRIPTION')}</Label>
-                </TableColumn>
-                <TableColumn className={classes.dataCenterColumnStyle}>
-                  <Label>{t('GLOBAL.DATA_CENTER')}</Label>
-                </TableColumn>
-                <TableColumn className={classes.copyConfigurationColumnStyle}>
-                  <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
-                </TableColumn>
-                <TableColumn className={classes.addParentSiteColumnStyle}>
-                  <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
-                </TableColumn>
-              </>
-            }
-          >
-            {sitesStructure.map((site) => (
-              <ParentSiteTableRow key={site.tempId} {...site} />
-            ))}
-          </Table>
-        ) : (
-          <Bar className={classes.illustratedMessageBarStyle}>
-            <IllustratedMessage size="Dialog" name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
-          </Bar>
-        )}
+      {sitesStructure.length ? (
+        <Table
+          columns={
+            <>
+              {showErrorTableColumn(errorList)}
+              <TableColumn className={classes.siteDomainColumnStyle}>
+                <Label>{t('GLOBAL.SITE_DOMAIN')}</Label>
+              </TableColumn>
+              <TableColumn className={classes.descriptionColumnStyle}>
+                <Label>{t('GLOBAL.DESCRIPTION')}</Label>
+              </TableColumn>
+              <TableColumn className={classes.dataCenterColumnStyle}>
+                <Label>{t('GLOBAL.DATA_CENTER')}</Label>
+              </TableColumn>
+              <TableColumn className={classes.copyConfigurationColumnStyle}>
+                <Label>{t('GLOBAL.COPY_CONFIGURATION')}</Label>
+              </TableColumn>
+              <TableColumn className={classes.addParentSiteColumnStyle}>
+                <Label> {t('SITE_TABLE_COMPONENT.ACTIONS')}</Label>
+              </TableColumn>
+            </>
+          }
+        >
+          {sitesStructure.map((site) => (
+            <ParentSiteTableRow key={site.tempId} {...site} />
+          ))}
+        </Table>
+      ) : (
+        <Bar className={classes.illustratedMessageBarStyle}>
+          <IllustratedMessage size="Dialog" name="EmptyList" titleText={t('SITE_TABLE_COMPONENT.NO_SITES_TO_CREATE')} subtitleText={t('SITE_TABLE_COMPONENT.SUBTITLE_TEXT')} />
+        </Bar>
+      )}
 
-        <div className={classes.addParentButtonOuterDivStyle}>
-          <Button id="addParentButton" data-cy="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
-            {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
-          </Button>
-        </div>
-        {showCopyConfigDialog()}
-      </Fragment>
+      <div className={classes.addParentButtonOuterDivStyle}>
+        <Button id="addParentButton" data-cy="addParentButton" onClick={onAddParentSiteHandler} icon="add" design="Transparent" className={classes.addParentButtonStyle}>
+          {t('SITE_TABLE_COMPONENT.ADD_PARENT_SITE')}
+        </Button>
+      </div>
+      {sitesStructure.length ? <CopyConfigurationDialog /> : ''}
     </>
   )
 }

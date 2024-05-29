@@ -7,8 +7,8 @@
  * @jest-environment jsdom
  */
 
-import credentialsReducer, { setUserKey, setSecretKey, setIsPopUpOpen, updateCredentialsAsync, setGigyaConsole } from './credentialsSlice'
-import { getAccountURL, readCredentialsFromAccountSettings, areCredentialsFilled, shouldUpdateCredentials } from './utils'
+import credentialsReducer, { setGigyaConsole, setSecretKey, setUserKey, updateCredentialsAsync } from './credentialsSlice'
+import { areCredentialsFilled, getAccountURL, readCredentialsFromAccountSettings, shouldUpdateCredentials } from './utils'
 
 const initialState = {
   credentials: {
@@ -16,7 +16,6 @@ const initialState = {
     userKey: '',
     gigyaConsole: '',
   },
-  isPopUpOpen: false,
 }
 
 const testUserKey = 'dummyUserKey'
@@ -57,11 +56,6 @@ describe('Credentials Slice test suite', () => {
   test('should update credentials gigyaConsole', () => {
     const newState = credentialsReducer(initialState, setGigyaConsole(testGigyaConsole))
     expect(newState.credentials.gigyaConsole).toEqual(testGigyaConsole)
-  })
-
-  test('should update isPopUpOpen', () => {
-    const newState = credentialsReducer(initialState, setIsPopUpOpen(true))
-    expect(newState.isPopUpOpen).toEqual(true)
   })
 
   test('should get account URL', () => {

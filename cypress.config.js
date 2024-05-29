@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const { defineConfig } = require('cypress')
 require('dotenv').config()
 const path = require('path')
@@ -14,8 +13,11 @@ module.exports = defineConfig({
     passWord: `${process.env.passWord}`,
     codeCoverageTasksRegistered: true,
   },
-  chromeWebSecurity:false,
+  chromeWebSecurity: false,
   defaultCommandTimeout: 30000,
+  requestTimeout: 30000,
+  responseTimeout: 30000,
+  watchForFileChanges: false,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
@@ -31,14 +33,14 @@ module.exports = defineConfig({
       on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
       return {
         config,
-
-       excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
+        excludeSpecPattern: ['cypress/e2e/e2eFullTesting.cy.js'],
         // excludeSpecPattern: [
         //   'cypress/e2e/copyConfigurationExtendedTests.cy.js',
         //   'cypress/e2e/emailTemplatesTests.cy.js',
         //   'cypress/e2e/smsTemplatesTests.cy.js',
         //   'cypress/e2e/siteDeployerTests.cy.js',
         //   'cypress/e2e/siteDeployerCopyConfigurationTests.cy.js',
+        //   'cypress/e2e/e2eFullTesting.cy.js'
         // ],
       }
     },

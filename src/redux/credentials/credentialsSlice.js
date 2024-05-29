@@ -3,9 +3,8 @@
  * License: Apache-2.0
  */
 
-
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getCredentials, shouldUpdateCredentials, getAccountURL } from './utils'
+import { getAccountURL, getCredentials, shouldUpdateCredentials } from './utils'
 
 const CREDENTIALS_SLICE_STATE_NAME = 'credentials'
 const UPDATE_CREDENTIALS_ACTION = 'updateCredentials'
@@ -16,9 +15,8 @@ export const credentialsSlice = createSlice({
     credentials: {
       userKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_USERKEY}` : '',
       secretKey: process.env.NODE_ENV === 'development' ? `${process.env.REACT_APP_SECRET}` : '',
-      gigyaConsole: ''
+      gigyaConsole: '',
     },
-    isPopUpOpen: false,
   },
   reducers: {
     setUserKey: (state, action) => {
@@ -30,9 +28,6 @@ export const credentialsSlice = createSlice({
     setGigyaConsole: (state, action) => {
       state.credentials.gigyaConsole = action.payload
     },
-    setIsPopUpOpen: (state, action) => {
-      state.isPopUpOpen = action.payload
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(updateCredentialsAsync.fulfilled, (state, action) => {
@@ -43,9 +38,9 @@ export const credentialsSlice = createSlice({
   },
 })
 
-export const updateCredentialsAsync = createAsyncThunk(UPDATE_CREDENTIALS_ACTION, async (dummy, { getState }) => {
+export const updateCredentialsAsync = createAsyncThunk(UPDATE_CREDENTIALS_ACTION, async (_, { getState }) => {
   const credentialsState = getState().credentials
-  if (shouldUpdateCredentials(credentialsState.credentials, credentialsState.isPopUpOpen)) {
+  if (shouldUpdateCredentials(credentialsState.credentials)) {
     window.location.href = getAccountURL()
     try {
       return await getCredentials()
@@ -55,7 +50,7 @@ export const updateCredentialsAsync = createAsyncThunk(UPDATE_CREDENTIALS_ACTION
   }
 })
 
-export const { setUserKey, setSecretKey, setGigyaConsole, setIsPopUpOpen, updateCredentials } = credentialsSlice.actions
+export const { setUserKey, setSecretKey, setGigyaConsole, updateCredentials } = credentialsSlice.actions
 
 export const selectCredentials = (state) => state.credentials.credentials
 
