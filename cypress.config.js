@@ -15,6 +15,9 @@ module.exports = defineConfig({
   },
   chromeWebSecurity: false,
   defaultCommandTimeout: 30000,
+  requestTimeout: 30000,
+  responseTimeout: 30000,
+  watchForFileChanges: false,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {

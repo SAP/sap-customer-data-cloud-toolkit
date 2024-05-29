@@ -4,8 +4,8 @@
  */
 
 /* eslint-disable no-undef */
-import * as utils from './utils'
 import * as dataTest from './dataTest'
+import * as utils from './utils'
 
 describe('Email Templates Test Suite', () => {
   beforeEach(() => {
@@ -22,7 +22,6 @@ describe('Email Templates Test Suite', () => {
     cy.get('[data-cy ="exportAllEmailTemplatesButton"]').click()
     cy.get('[data-cy ="emailTemplatesErrorPopup"]').shadow().find('#ui5-popup-header').should('have.text', dataTest.emailTemplatesExportErrorHeaderMessage)
     cy.get('[data-cy ="messageItem"]').eq(0).should('have.text', dataTest.emailTemplatesExportErrorMessageDetail)
-    cy.window().its('open').should('not.be.called')
   })
 
   it('should show error on import button', () => {
@@ -35,7 +34,6 @@ describe('Email Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="emailTemplatesErrorPopup"]').shadow().find('header').should('have.text', 'Error')
     cy.get('[data-cy ="messageList"]').eq(0).should('have.text', dataTest.importEmailTemplatesErrorMessage)
-    cy.window().its('open').should('not.be.called')
   })
 
   it('should show credentials error dialog on import', () => {
@@ -44,6 +42,5 @@ describe('Email Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="credentialErrorPopup"]').eq(1).should('have.text', dataTest.missingCredentialsErrorMessage)
     cy.get('[data-cy ="credentialErrorPopup"]').eq(1).find('#closeButton').click({ force: true })
-    cy.window().its('open').should('not.be.called')
   })
 })

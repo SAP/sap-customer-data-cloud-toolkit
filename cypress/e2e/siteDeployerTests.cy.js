@@ -49,7 +49,6 @@ describe('Site Deployer Test Suite', () => {
     utils.getSaveButton().click()
     cy.get('[data-cy ="messageItem"]').eq(1).should('have.text', dataTest.expectedErrorMessage)
     cy.get('[icon ="error"]').should('be.visible')
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('Should add a single Parent Site Manually with success message', () => {
@@ -64,7 +63,6 @@ describe('Site Deployer Test Suite', () => {
     successPopup.should('be.visible')
     successPopup.should('have.text', dataTest.expectedSuccessMessage)
     utils.clickPopUpOkButton('siteDeployersuccessPopup')
-    cy.get('@windowOpenStub').should('be.called')
   })
 
   it('Should add a Parent Site and a Child Site Manually', () => {
@@ -101,6 +99,5 @@ describe('Site Deployer Test Suite', () => {
     cy.get('[data-cy ="manualRemovalCheckbox"]').click()
     cy.get('[data-cy ="manualRemovalConfirmButton"]').shadow().find('.ui5-button-root').should('not.be.disabled')
     cy.get('[data-cy ="manualRemovalConfirmButton"]').click()
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 })

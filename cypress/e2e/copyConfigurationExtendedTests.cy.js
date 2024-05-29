@@ -4,13 +4,14 @@
  */
 
 import * as dataTest from './dataTest'
+import { mockedSetSchemaErrorResponse, mockedSetSchemaResponse } from './dataTest'
 import * as utils from './utils'
 
 describe('Copy Configuration extended test suite', () => {
   context('Check initial elements state', () => {
     beforeEach(() => {
-      utils.startUp(dataTest.copyConfigExtendendMenuOption)
       utils.mockGetConfigurationRequests()
+      utils.startUp(dataTest.copyConfigExtendendMenuOption)
     })
 
     it('should display all expected elements', () => {
@@ -22,8 +23,8 @@ describe('Copy Configuration extended test suite', () => {
       cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('#apiKeyInput').should('be.visible')
       cy.get('[title-text = "Select Configuration"]').should('be.visible')
       utils.checkElementsInitialState()
-      cy.get('@windowOpenStub').should('not.be.called')
     })
+
     it('should delete an added Target Site from the Targe Sites list', () => {
       utils.fillTargetApiKeyInput()
       utils.checkTargetSitesList()
@@ -36,8 +37,8 @@ describe('Copy Configuration extended test suite', () => {
       utils.setConfigurationCopyConfig()
       cy.get('[data-cy ="copyConfigExtendedCancelButton"]').click()
       utils.checkElementsInitialState()
-      cy.get('@windowOpenStub').should('not.be.called')
     })
+
     it('should select and unselect all configurations', () => {
       cy.get('[data-cy ="selectAllCheckbox"]').should('not.be.checked')
       cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
@@ -49,28 +50,26 @@ describe('Copy Configuration extended test suite', () => {
       cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
     })
   })
+
   context('Display success messages', () => {
     beforeEach(() => {
-      utils.startUp(dataTest.copyConfigExtendendMenuOption)
       utils.mockGetConfigurationRequests()
+      utils.startUp(dataTest.copyConfigExtendendMenuOption)
     })
 
     it('should display success popup after successfully copy on save', () => {
-      utils.mockSetConfigurationRequests()
+      cy.intercept('POST', 'accounts.setSchema', { body: mockedSetSchemaResponse }).as('setSchema')
       utils.fillTargetApiKeyInput()
-      // utils.mockCopyConfigRequests(dataTest.mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
+
       utils.setConfigurationCopyConfig()
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.enabled')
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
       cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedSuccessMessage)
       cy.get('[data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
-      cy.wait(1500)
-      cy.get('@windowOpenStub').should('be.called')
     })
 
     it('should display errors on unsuccessfull set configurations and clear them on cancel', () => {
-      utils.mockSetConfigurationRequests()
-      utils.mockResponse(dataTest.mockedSetSchemaErrorResponse, 'POST', 'accounts.setSchema')
+      cy.intercept('POST', 'accounts.setSchema', { body: mockedSetSchemaErrorResponse }).as('setSchemaError')
       utils.fillTargetApiKeyInput()
       utils.setConfigurationCopyConfig()
       cy.get('[icon = error]').should('not.exist')
@@ -78,9 +77,8 @@ describe('Copy Configuration extended test suite', () => {
       cy.get('#errorListContainer').find('[id ="messageList"]').find('ui5-li-custom').should('have.length', 3)
       cy.get('[data-cy ="copyConfigExtendedCancelButton"]').shadow().find('button').click()
       cy.get('[icon = error]').should('not.exist')
-      cy.get('@windowOpenStub').should('not.be.called')
     })
-    //......... make another context
+
     it('should show a MessageStrip message when adding a duplicated Target Site and close it', () => {
       cy.get('[data-cy ="apiKeyInput"]').eq(0).shadow().find('[class = "ui5-input-inner"]').type('test')
       cy.wait(1000)

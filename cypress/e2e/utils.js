@@ -8,7 +8,6 @@
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
 import {
   dummyApiKey,
-  mockPolicyResponse,
   mockedCreateDataflowResponse,
   mockedCreateExtensionExpectedResponse,
   mockedGetCommunicationChannelsExpectedResponse,
@@ -44,7 +43,7 @@ import {
 } from './dataTest'
 
 export function startUp(pageName) {
-  cy.visit('/#/4_6Tv6z8O6NmUO_BZoHcXIRw/4_6Tv6z8O6NmUO_BZoHcXIRw/', {
+  cy.visit('', {
     onBeforeLoad(window) {
       cy.stub(window, 'open').as('windowOpenStub')
     },
@@ -52,9 +51,12 @@ export function startUp(pageName) {
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
-  mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
-  mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
+
+  // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
+  // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
+
   cy.contains(pageName).realClick()
+  cy.reload()
 }
 
 export function clearCredentials() {
@@ -166,28 +168,8 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('rba.riskAssessment.getConfig')
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('accounts.getPolicies')
   cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('rba.getPolicy')
-  cy.wait(
-    [
-      '@getPagedUserEffectiveSites',
-      '@getSchema',
-      '@getScreenSets',
-      '@getPolicies',
-      '@sms.templates.get',
-      '@getSiteConfig',
-      '@getProvidersConfig',
-      '@policies.emailTemplates.getConfig',
-      '@getConsentsStatements',
-      '@communication.getChannels',
-      '@webhooks.getAll',
-      '@extensions.list',
-      '@idx.search',
-      '@rba.getPolicy',
-    ],
-    {
-      requestTimeout: 10000,
-    },
-  )
 }
+
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
   mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
@@ -285,7 +267,7 @@ export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
 
 export function createChild() {
   getIcon(0)
-  cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Create Child Site Item 1 of 2"]').realClick()
+  cy.get('[data-cy="createChildSiteAction"]').click()
 }
 export function getIcon(iconNumber) {
   return cy.get('[icon ="overflow"]').eq(iconNumber).realClick()

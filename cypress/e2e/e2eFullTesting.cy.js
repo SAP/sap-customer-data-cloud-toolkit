@@ -3,10 +3,9 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
-import * as utils from './utils'
 import * as dataTest from './dataTest'
+import * as utils from './utils'
 
 describe('All features full Test Suite', () => {
   it('All features tests', () => {
@@ -74,7 +73,6 @@ describe('All features full Test Suite', () => {
     cy.waitUntil(() => cy.get('#successPopup').then((win) => cy.get(win).should('be.visible')))
     cy.get('#successPopup').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     cy.get('#successPopup').find('ui5-bar').find('[id="closeButton"]').click()
- 
   }
 
   function addCopyConfigFrom(templateSiteName) {
@@ -115,7 +113,7 @@ describe('All features full Test Suite', () => {
     cy.get('[data-cy ="copyConfigSuccessPopup"]').shadow().find('[id="ui5-popup-header"]').should('have.text', dataTest.successMessageHeader)
     cy.get('[data-cy ="copyConfigSuccessPopup"]').find('ui5-bar').find('[id="closeButton"]').click()
   }
-  
+
   function addSiteToTargetList(target) {
     cy.get('[data-cy ="currentSiteName"]').click()
     cy.waitUntil(() =>
@@ -124,7 +122,7 @@ describe('All features full Test Suite', () => {
         .find('[id="apiKeyInput"]')
         .shadow()
         .find('[class="ui5-input-inner"]')
-        .then((win) => cy.get(win).should('not.have.attr', 'disabled').get(win).type(target))
+        .then((win) => cy.get(win).should('not.have.attr', 'disabled').get(win).type(target)),
     )
     cy.get('[data-cy ="copyConfigurationExtendedSearchSitesInputCard"]').find('[id="apiKeyInput"]').shadow().find('[class="ui5-input-inner"]').should('have.value', target)
     cy.get('ui5-static-area-item').shadow().find('ui5-list').find('ui5-li-suggestion-item').eq(0).should('contain.text', target)
@@ -147,7 +145,7 @@ describe('All features full Test Suite', () => {
       cy
         .get('[data-cy ="emailSuccessPopup"]')
 
-        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
+        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click()),
     )
     cy.waitUntil(() =>
       cy
@@ -158,7 +156,7 @@ describe('All features full Test Suite', () => {
         .find('fd-card-header')
         .find('[class="fd-card__title-area"]')
         .find('h2')
-        .then((win) => cy.get(win).should('have.text', 'Templates'))
+        .then((win) => cy.get(win).should('have.text', 'Templates')),
     )
     cy.waitUntil(() =>
       cy
@@ -169,7 +167,7 @@ describe('All features full Test Suite', () => {
         .find('fd-card-content')
         .find('fd-select')
 
-        .then((win) => cy.get(win).should('be.visible').get(win).click())
+        .then((win) => cy.get(win).should('be.visible').get(win).click()),
     )
     cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').find('[class="locales-item__name"]').should('have.length', '44')
@@ -178,7 +176,6 @@ describe('All features full Test Suite', () => {
   function testImportExportEmailTemplatesSecondCase() {
     //Email Templates - Second Use Case
     //Importing the test template with added languages
-
     cy.get('[data-cy ="importAllEmailTemplatesButton"]').realClick()
     cy.waitUntil(() => cy.get('[data-cy ="importPopup"]').then((win) => cy.get(win).should('be.visible')))
     cy.get('[data-cy ="zipFileInput"]').attachFile(dataTest.emailExampleFile, { force: true })
@@ -189,7 +186,7 @@ describe('All features full Test Suite', () => {
       cy
         .get('[data-cy ="emailSuccessPopup"]')
 
-        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click())
+        .then((win) => cy.get(win).should('be.visible').find('ui5-bar > ui5-button').click()),
     )
     cy.waitUntil(() =>
       cy
@@ -200,7 +197,7 @@ describe('All features full Test Suite', () => {
         .find('fd-card-header')
         .find('[class="fd-card__title-area"]')
         .find('h2')
-        .then((win) => cy.get(win).should('have.text', 'Templates'))
+        .then((win) => cy.get(win).should('have.text', 'Templates')),
     )
     cy.waitUntil(() =>
       cy
@@ -211,7 +208,7 @@ describe('All features full Test Suite', () => {
         .find('fd-card-content')
         .find('fd-select')
 
-        .then((win) => cy.get(win).should('be.visible').get(win).click())
+        .then((win) => cy.get(win).should('be.visible').get(win).click()),
     )
     cy.get('.cdk-overlay-container').find('fd-option').eq(4).click()
     cy.get('main-app').shadow().find('email-templates-web-app').shadow().find('languages-list').should('be.visible')
@@ -295,7 +292,7 @@ describe('All features full Test Suite', () => {
   function navigateToChosenSite(siteName, childSite) {
     let index = childSite === true ? 1 : 0
     getSelectedOption(dataTest.siteSelectorOption)
-    
+
     cy.waitUntil(() =>
       cy
         .get('main-app')
@@ -305,9 +302,7 @@ describe('All features full Test Suite', () => {
         .find('[class ="fd-section app__header"]')
         .find('[class ="fd-input-group"]')
         .find('[placeholder="Search"]')
-        .then(
-           (input) => cy.get(input).should('be.visible').should('not.be.disabled').clear().focus().type(siteName)
-          )
+        .then((input) => cy.get(input).should('be.visible').should('not.be.disabled').clear().focus().type(siteName)),
     )
     cy.get('main-app').shadow().find('[class ="app-area"]').find('site-selector-web-app').shadow().find('[class ="fd-table__body"]').find('td').find('a').eq(index).click()
     cy.wait(5000)
@@ -331,7 +326,7 @@ describe('All features full Test Suite', () => {
       cy
         .get(' .cdk-overlay-pane')
         .find('[class = "fd-popover__popper"]')
-        .then((input) => cy.get(input).find('ul > li').get('.delete_menu_item').click({ force: true }))
+        .then((input) => cy.get(input).find('ul > li').get('.delete_menu_item').click({ force: true })),
     )
 
     cy.get('.fd-bar__right').find('fd-dialog-footer-button').eq(1).find('button').click()
@@ -433,11 +428,14 @@ describe('All features full Test Suite', () => {
     cy.get('main-app').shadow().find('connect-app').shadow().find('nav').find('[class="fd-tabs__item identity-providers-tab"]').click()
     cy.get('main-app').shadow().find('connect-app').shadow().find('[class="fd-row"]').should('have.length', 3)
   }
-  function checkDataflows(){
+  function checkDataflows() {
     getSelectedOption(dataTest.dataflowOption)
-    cy.get('main-app').shadow().find('iframe').then((frame)=>{
-      const doc = frame.contents().find('body')
-      cy.wrap(doc).find('etl-app').find('etl-dataflowtable').find('table').contains(dataTest.testDataflow)
-    })
+    cy.get('main-app')
+      .shadow()
+      .find('iframe')
+      .then((frame) => {
+        const doc = frame.contents().find('body')
+        cy.wrap(doc).find('etl-app').find('etl-dataflowtable').find('table').contains(dataTest.testDataflow)
+      })
   }
 })

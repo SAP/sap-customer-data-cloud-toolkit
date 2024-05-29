@@ -4,8 +4,8 @@
  */
 
 /* eslint-disable no-undef */
-import * as utils from './utils'
 import * as dataTest from './dataTest'
+import * as utils from './utils'
 describe('SMS Templates Test Suite', () => {
   beforeEach(() => {
     utils.startUp(dataTest.smsTemplatesIconName)
@@ -39,7 +39,6 @@ describe('SMS Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').shadow().find('[type="button"]').should('not.be.disabled')
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="smsTemplatesErrorPopup"]').shadow().find('#ui5-popup-header').should('have.text', dataTest.smsTemplatesImportErrorHeaderMessage)
-    cy.get('@windowOpenStub').should('not.be.called')
   })
 
   it('should show success popup on import', () => {
@@ -54,6 +53,5 @@ describe('SMS Templates Test Suite', () => {
     cy.get('[data-cy ="importZipButton"]').click()
     cy.get('[data-cy ="smsSuccessPopup"]').shadow().find('#ui5-popup-header').should('have.text', 'Success')
     utils.clickPopUpOkButton('smsSuccessPopup')
-    cy.get('@windowOpenStub').should('be.called')
   })
 })

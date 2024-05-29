@@ -11,8 +11,8 @@ import * as utils from './utils'
 describe('siteDeployerCopyConfiguration test suite', () => {
   beforeEach(() => {
     utils.resizeObserverLoopErrRe()
-    utils.startUp(dataTest.siteDeployerIconName)
     utils.mockGetConfigurationRequests()
+    utils.startUp(dataTest.siteDeployerIconName)
     cy.intercept('POST', 'admin.createSite', { body: servicesDataTest.expectedGigyaResponseNoPartnerId }).as('admin.createSite')
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
