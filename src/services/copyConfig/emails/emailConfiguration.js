@@ -6,6 +6,7 @@
 import Email from '../../emails/email.js'
 import { removePropertyPathFromObject, stringToJson } from '../objectHelper.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
+import Options from '../options.js'
 
 class EmailConfiguration {
   #credentials
@@ -57,7 +58,7 @@ class EmailConfiguration {
   async copyEmailTemplates(destinationSite, destinationSiteConfiguration, response, options) {
     const promises = []
     for (const templateInfo of options.getOptions().branches) {
-      if (templateInfo.value) {
+      if (Options.isOptionSelected(templateInfo)) {
         const filteredResponse = JSON.parse(JSON.stringify(response))
         this.#cleanResponse(filteredResponse)
         const responseProcessed = this.#processLinksOptions(filteredResponse, templateInfo)
@@ -90,17 +91,42 @@ class EmailConfiguration {
     return this.getEmail().setSiteEmailsWithDataCenter(destinationSite, templatePath, template, destinationSiteConfiguration.dataCenter)
   }
 
-  #processLinksOptions(response, options) {
-    const templateHaveLinks = options.branches?.length > 0
+  #processLinksOptions(response, option) {
+    const responseClone = JSON.parse(JSON.stringify(response))
+    const templateHaveLinks = option.branches?.length > 0
     if (templateHaveLinks) {
-      const responseClone = JSON.parse(JSON.stringify(response))
-      for (const linkOption of options.branches) {
-        if (!linkOption.value && linkOption.link) {
-          return removePropertyPathFromObject(responseClone, linkOption.link)
-        }
+      if (option.value) {
+        this.#removeLinks(responseClone, option)
+      } else {
+        this.#replaceTemplateWithLinksOnly(responseClone, option)
       }
     }
-    return response
+    return responseClone
+  }
+
+  #replaceTemplateWithLinksOnly(response, templateOption) {
+    const template = {}
+    let templateName
+    for (const linkOption of templateOption.branches) {
+      if (linkOption.value && linkOption.link) {
+        const tokens = linkOption.link.split('.')
+        console.assert(tokens.length === 2, 'Template link path does not contain the expected 2 tokens')
+        templateName = tokens[0]
+        const linkName = tokens[1]
+        template[linkName] = response[templateName][linkName]
+      }
+    }
+    if (Object.keys(template).length > 0) {
+      response[templateName] = template
+    }
+  }
+
+  #removeLinks(response, templateOption) {
+    for (const linkOption of templateOption.branches) {
+      if (!linkOption.value && linkOption.link) {
+        removePropertyPathFromObject(response, linkOption.link)
+      }
+    }
   }
 
   #isChildSite(siteInfo, siteApiKey) {

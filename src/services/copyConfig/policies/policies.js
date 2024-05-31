@@ -7,6 +7,7 @@ import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import { removePropertyFromObjectCascading, removePropertyPathFromObject, stringToJson } from '../objectHelper.js'
+import Options from '../options.js'
 
 class Policy {
   static #NAMESPACE = 'accounts'
@@ -68,16 +69,42 @@ class Policy {
     }
   }
 
-  #deleteLinksOptions(response, options) {
+  #processLinksOptions(response, options) {
     for (const policyOption of options.branches) {
       const policyHaveLinks = policyOption.branches?.length > 0
-      if (policyOption.value && policyHaveLinks) {
-        for (const linkOption of policyOption.branches) {
-          if (!linkOption.value && linkOption.link) {
-            removePropertyPathFromObject(response, linkOption.link)
-          }
-        }
+      if (!policyHaveLinks) {
+        continue
       }
+      if (policyOption.value) {
+        this.#removeLinks(response, policyOption)
+      } else {
+        this.#replacePolicyWithLinksOnly(response, policyOption)
+      }
+    }
+  }
+
+  #removeLinks(response, policyOption) {
+    for (const linkOption of policyOption.branches) {
+      if (!linkOption.value && linkOption.link) {
+        removePropertyPathFromObject(response, linkOption.link)
+      }
+    }
+  }
+
+  #replacePolicyWithLinksOnly(response, policyOption) {
+    const policy = {}
+    let policyName
+    for (const linkOption of policyOption.branches) {
+      if (linkOption.value && linkOption.link) {
+        const tokens = linkOption.link.split('.')
+        console.assert(tokens.length === 2, 'Policy link path does not contain the expected 2 tokens')
+        policyName = tokens[0]
+        const linkName = tokens[1]
+        policy[linkName] = response[policyName][linkName]
+      }
+    }
+    if (Object.keys(policy).length > 0) {
+      response[policyName] = policy
     }
   }
 
@@ -130,7 +157,7 @@ class Policy {
 
   #deleteOptions(response, options) {
     for (const templateInfo of options.branches) {
-      if (!templateInfo.value) {
+      if (!Options.isOptionSelected(templateInfo)) {
         delete response[templateInfo.propertyName]
       }
     }
@@ -139,7 +166,7 @@ class Policy {
 
   #removeUnnecessaryFields(response, options) {
     this.#deleteOptions(response, options)
-    this.#deleteLinksOptions(response, options)
+    this.#processLinksOptions(response, options)
     return response
   }
 

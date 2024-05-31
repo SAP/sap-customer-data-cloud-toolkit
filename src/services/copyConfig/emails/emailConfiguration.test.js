@@ -105,6 +105,43 @@ describe('Email Configuration test suite', () => {
     expect(spy).toHaveBeenCalledWith(apiKey, expectedTemplateName, expectedTemplate, dataCenter)
   })
 
+  test('copy preferencesCenter links url only', async () => {
+    const templateName = 'preferencesCenter'
+    const options = {
+      id: 'emailTemplates',
+      name: 'emailTemplates',
+      value: false,
+      branches: [
+        {
+          id: templateName,
+          name: 'LitePreferencesCenter',
+          value: false,
+          branches: [
+            {
+              id: `Lite${templateName}-Link`,
+              name: 'Include Lite Preferences Center URL',
+              link: `${templateName}.redirectURL`,
+              value: true,
+            },
+          ],
+        },
+      ],
+    }
+
+    const mockedResponse = getEmailsExpectedResponseWithNoTemplates()
+    mockedResponse[templateName] = getEmailsExpectedResponse[templateName]
+    axios.mockResolvedValueOnce({ data: mockedResponse }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey) })
+
+    let spy = jest.spyOn(emailConfiguration.getEmail(), 'setSiteEmailsWithDataCenter')
+    await executeCopy(getResponseWithContext(expectedGigyaResponseOk, emailTemplatesId, apiKey), options)
+
+    expect(spy.mock.calls.length).toBe(1)
+    const expectedTemplate = {}
+    expectedTemplate['redirectURL'] = getEmailsExpectedResponse[templateName].redirectURL
+    const expectedTemplateName = templateName
+    expect(spy).toHaveBeenCalledWith(apiKey, expectedTemplateName, expectedTemplate, dataCenter)
+  })
+
   test('copy unsuccessfully - error on get', async () => {
     const mockedResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, emailTemplatesId, apiKey)
     axios.mockResolvedValueOnce({ data: mockedResponse })

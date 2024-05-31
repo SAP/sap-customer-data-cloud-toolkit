@@ -37,7 +37,7 @@ describe('Policies test suite', () => {
     ['emailVerification', false],
     ['doubleOptIn', true],
     ['doubleOptIn', false],
-  ])('copy successfully links url', async (policyName, linkValue) => {
+  ])('copy successfully links url %s', async (policyName, linkValue) => {
     const options = new PolicyOptions(policy).addSupportedPolicies(PolicyTestData.getPolicyConfig).getOptionsDisabled()
     const policyOption = options.branches.find((opt) => opt.propertyName === policyName)
     policyOption.value = true
@@ -53,10 +53,36 @@ describe('Policies test suite', () => {
 
     expect(spy.mock.calls.length).toBe(1)
     let expectedTemplate = PolicyTestData.getPoliciesExpectedResponseWithNoObjects()
-    expectedTemplate = Object.assign(expectedTemplate, { [policyName]: PolicyTestData.getPolicyConfig[policyName] })
+    expectedTemplate = Object.assign(expectedTemplate, { [policyName]: JSON.parse(JSON.stringify(PolicyTestData.getPolicyConfig[policyName])) })
     if (!linkValue) {
       delete expectedTemplate[policyName]['nextURL']
       delete expectedTemplate[policyName]['nextExpiredURL']
+    }
+    expect(spy).toHaveBeenCalledWith(targetApiKey, expectedTemplate, targetDataCenter)
+  })
+
+  test.each([
+    ['emailVerification', true],
+    ['doubleOptIn', true],
+  ])('copy successfully only links url %s', async (policyName, linkValue) => {
+    const options = new PolicyOptions(policy).addSupportedPolicies(PolicyTestData.getPolicyConfig).getOptionsDisabled()
+    const policyOption = options.branches.find((opt) => opt.propertyName === policyName)
+    policyOption.branches.map((opt) => (opt.value = linkValue))
+
+    axios.mockResolvedValueOnce({ data: PolicyTestData.getPolicyConfig }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey) })
+    let spy = jest.spyOn(policy, 'set')
+    const response = await policy.copy(targetApiKey, { dataCenter: targetDataCenter }, options)
+
+    expect(response).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, policyId, targetApiKey))
+    expect(response.context.id).toEqual(policyId)
+    expect(response.context.targetApiKey).toEqual(`${targetApiKey}`)
+
+    expect(spy.mock.calls.length).toBe(1)
+    let expectedTemplate = PolicyTestData.getPoliciesExpectedResponseWithNoObjects()
+    expectedTemplate = Object.assign(expectedTemplate, { [policyName]: {} })
+    Object.assign(expectedTemplate[policyName], { ['nextURL']: PolicyTestData.getPolicyConfig[policyName]['nextURL'] })
+    if (PolicyTestData.getPolicyConfig[policyName]['nextExpiredURL']) {
+      Object.assign(expectedTemplate[policyName], { ['nextExpiredURL']: PolicyTestData.getPolicyConfig[policyName]['nextExpiredURL'] })
     }
     expect(spy).toHaveBeenCalledWith(targetApiKey, expectedTemplate, targetDataCenter)
   })

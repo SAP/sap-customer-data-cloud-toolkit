@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 class Options {
   constructor(options) {
     this.options = options
@@ -83,6 +82,23 @@ class Options {
           return option.value
         }
       }
+    }
+    return false
+  }
+
+  static isOptionSelected(option) {
+    if (!option) {
+      return false
+    }
+    if (option.value) {
+      return true
+    }
+    if (option.branches) {
+      let optionSelected = false
+      for (const subOption of option.branches) {
+        optionSelected |= this.isOptionSelected(subOption)
+      }
+      return optionSelected
     }
     return false
   }
