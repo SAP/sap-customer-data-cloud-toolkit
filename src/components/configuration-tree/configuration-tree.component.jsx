@@ -71,7 +71,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
       <TreeItemCustom
         key={treeNode.id}
         content={
-          <FlexBox direction="Row" justifyContent="Center">
+          <FlexBox direction="Row" justifyContent="Start">
             <CheckBox
               id={`${treeNode.id}`}
               text={treeNode.formatName === false ? treeNode.name : `${lodash.startCase(treeNode.name)}`}

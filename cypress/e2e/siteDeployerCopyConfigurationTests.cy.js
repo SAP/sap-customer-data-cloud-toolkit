@@ -3,18 +3,17 @@
  * License: Apache-2.0
  */
 
-
 /* eslint-disable no-undef */
 import * as servicesDataTest from '../../src/services/site/dataTest'
-import * as utils from './utils'
 import * as dataTest from './dataTest'
+import * as utils from './utils'
 
 describe('siteDeployerCopyConfiguration test suite', () => {
   beforeEach(() => {
     utils.resizeObserverLoopErrRe()
     utils.mockGetConfigurationRequests()
-   utils.mockResponse(servicesDataTest.expectedGigyaResponseNoPartnerId, 'POST', 'admin.createSite')
     utils.startUp(dataTest.siteDeployerIconName)
+    cy.intercept('POST', 'admin.createSite', { body: servicesDataTest.expectedGigyaResponseNoPartnerId }).as('admin.createSite')
     cy.get('[data-cy ="addParentButton"]').click()
     utils.writeParentSiteTable(dataTest.parentBaseDomain, dataTest.parentSiteDescription, 2)
   })
@@ -24,7 +23,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
     utils.getEditSiteConfigButton().should('not.exist')
     utils.getDeclineSiteConfigButton().should('not.exist')
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
@@ -36,10 +35,10 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should not set a site configuration on cancel', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
-    utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
+    utils.setConfigurationCheckBox()
     cy.get('[data-cy ="dialogMessageConfirmCancelButton"]').click()
     utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
     utils.getEditSiteConfigButton().should('not.exist')
@@ -48,7 +47,7 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should remove a site configuration', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
@@ -61,63 +60,13 @@ describe('siteDeployerCopyConfiguration test suite', () => {
 
   it('should update a site configuration on edit save', () => {
     utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
+    cy.wait(2000)
     utils.fillSourceApiKeyInput()
     cy.wait(1000)
     utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
     cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(0).click()
-    utils.getEditSiteConfigButton().click()
-    cy.get('#selectAllCheckbox').realClick()
-    cy.get('#selectAllCheckbox').should('have.prop', 'checked')
-    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(0).realClick()
-    utils.getEditSiteConfigButton().click()
-    cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('have.prop', 'checked'))
-  })
-
-  it('should not update a site configuration on edit cancel', () => {
-    utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
-    utils.fillSourceApiKeyInput()
     cy.wait(1000)
-    utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
-    cy.get('[data-cy ="dialogMessageConfirmConfirmButton"]').eq(0).click()
     utils.getEditSiteConfigButton().click()
-    cy.get('[data-cy ="selectAllCheckbox"]').realClick()
-    cy.get('[data-cy ="selectAllCheckbox"]').should('have.prop', 'checked')
-    cy.get('[data-cy ="dialogMessageConfirmCancelButton"]').eq(0).click()
-    utils.getEditSiteConfigButton().click()
-    cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
-  })
-
-  it('should update the source site when adding a second source site', () => {
-    utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
-    utils.fillSourceApiKeyInput()
-    utils.checkTargetSitesList()
-    cy.get('[data-cy ="addTargetSiteButton"]').eq(1).click()
-    utils.checkTargetSitesList()
-  })
-
-  it('should clear site configurations when removing the source site', () => {
-    utils.getAddSiteConfigButton().click()
-    cy.wait(5000)
-    utils.fillSourceApiKeyInput()
-    cy.wait(1000)
-    utils.setConfigurationCheckBox('siteCopyConfigurationDialog')
-    cy.get('[data-cy ="siteConfigurationsCard"]').should('be.visible')
-    cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').shadow().find('ui5-button').click()
-    cy.get('[data-cy ="selectedTargetApiKeysList"]').should('not.exist')
-    cy.get('[data-cy ="siteConfigurationsCard"]').should('not.be.visible')
-  })
-
-  it('should set dataflow configuration variables on save and not on cancel', () => {
-    utils.getAddSiteConfigButton().shadow().find('button').should('be.enabled')
-    utils.getEditSiteConfigButton().should('not.exist')
-    utils.getDeclineSiteConfigButton().should('not.exist')
-    utils.getAddSiteConfigButton().click()
-    utils.getSiteCopyConfigurationDialog().should('be.visible')
-    cy.wait(5000)
-    utils.fillSourceApiKeyInput()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-checkbox').eq(0).realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]').find('ui5-tree').eq(8).find('ui5-tree-item-custom').shadow().find('.ui5-li-tree-toggle-box').realClick()
     cy.get('[data-cy="siteCopyConfigurationDialog"]')

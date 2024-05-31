@@ -3,14 +3,13 @@
  * License: Apache-2.0
  */
 
-
+import lodash from 'lodash'
 import { useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
-import lodash from 'lodash'
 
-import { Input, SuggestionItem, Button, InputType } from '@ui5/webcomponents-react'
+import { Button, Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
 
 import { selectAvailableTargetSites, selectUnfilteredAvailableTargetSites } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
@@ -27,15 +26,15 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
   const availableTargetSites = useSelector(selectAvailableTargetSites)
   const unfilteredAvailableTargetSites = useSelector(selectUnfilteredAvailableTargetSites)
 
-  const [filteredAvailableTargetSites, setFilteredAvailableTargetApiKeys] = useState(unfilteredAvailableTargetSites)
+  const [filteredAvailableTargetSites, setFilteredAvailableTargetSites] = useState([])
 
   const onTargetApiKeysInputHandler = lodash.debounce((event) => {
     const inputValue = event.target.value
     setTargetApiKeyInputValue(inputValue)
     if (siteId) {
-      setFilteredAvailableTargetApiKeys(filterTargetSites(inputValue, unfilteredAvailableTargetSites))
+      setFilteredAvailableTargetSites(filterTargetSites(inputValue, unfilteredAvailableTargetSites))
     } else {
-      setFilteredAvailableTargetApiKeys(filterTargetSites(inputValue, availableTargetSites))
+      setFilteredAvailableTargetSites(filterTargetSites(inputValue, availableTargetSites))
     }
   }, 500)
 
@@ -82,7 +81,7 @@ const SearchSitesInput = ({ siteId, tarketApiKeyInputValue, setTarketApiKeyInput
       id="apiKeyInput"
       data-cy="apiKeyInput"
       onInput={onTargetApiKeysInputHandler}
-      onKeyPress={onTargetApiKeysInputKeyPressHandler}
+      onChange={onTargetApiKeysInputKeyPressHandler}
       type={InputType.Text}
       value={tarketApiKeyInputValue}
       className={classes.targetInfoContainerInput}
