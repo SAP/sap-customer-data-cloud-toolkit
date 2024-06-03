@@ -7,7 +7,7 @@ import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import { Card, CardHeader, FlexBox, CheckBox, Button } from '@ui5/webcomponents-react'
+import { Button, Card, CardHeader, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
 
@@ -42,7 +42,7 @@ const SiteConfigurations = ({
                   <Button
                     id="removeIncludedUrlButton"
                     data-cy="removeIncludedUrlButton"
-                    design="Transparent"
+                    design="Default"
                     className={classes.removeIncludedUrlButton}
                     onClick={() => onSelectAllIncludeUrlChangeHandler({ srcElement: { checked: false } })}
                   >

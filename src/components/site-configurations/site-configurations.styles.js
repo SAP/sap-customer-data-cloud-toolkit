@@ -17,7 +17,7 @@ const styles = {
     '--ui5-listitem-border-bottom': '0',
   },
   removeIncludedUrlButton: {
-    transform: 'translate(4px, 4px)',
+    margin: '3px 12px 0 0',
   },
 }
 
