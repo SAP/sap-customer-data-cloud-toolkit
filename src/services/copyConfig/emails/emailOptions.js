@@ -5,6 +5,7 @@
 
 import Options from '../options.js'
 import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
+import { t } from '../../i18n.js'
 
 class EmailOptions extends Options {
   #emailConfiguration
@@ -50,7 +51,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications && response.emailNotifications.welcomeEmailTemplates) {
+    if (response.emailNotifications?.welcomeEmailTemplates) {
       const id = 'welcomeEmailTemplates'
       this.options.branches.push({
         id: id,
@@ -58,7 +59,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications && response.emailNotifications.accountDeletedEmailTemplates) {
+    if (response.emailNotifications?.accountDeletedEmailTemplates) {
       const id = 'accountDeletedEmailTemplates'
       this.options.branches.push({
         id: id,
@@ -77,7 +78,7 @@ class EmailOptions extends Options {
         pcOptions['branches'] = [
           {
             id: `Lite${id}-Link`,
-            name: 'Include Lite Preferences Center URL',
+            name: t('CONFIGURATION_TREE.EMAIL_LINK_PREFERENCES_CENTER_URL'),
             link: 'preferencesCenter.redirectURL',
             value: true,
           },
@@ -104,7 +105,7 @@ class EmailOptions extends Options {
         prOption['branches'] = [
           {
             id: `${id}-Link`,
-            name: 'Include Reset Page URL',
+            name: t('CONFIGURATION_TREE.EMAIL_LINK_PASSWORD_RESET_PAGE_URL'),
             link: 'passwordReset.resetURL',
             value: true,
           },
@@ -128,7 +129,7 @@ class EmailOptions extends Options {
         value: true,
       })
     }
-    if (response.emailNotifications && response.emailNotifications.confirmationEmailTemplates) {
+    if (response.emailNotifications?.confirmationEmailTemplates) {
       const id = 'confirmationEmailTemplates'
       this.options.branches.push({
         id: id,

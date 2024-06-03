@@ -80,9 +80,9 @@ describe('Policies test suite', () => {
     expect(spy.mock.calls.length).toBe(1)
     let expectedTemplate = PolicyTestData.getPoliciesExpectedResponseWithNoObjects()
     expectedTemplate = Object.assign(expectedTemplate, { [policyName]: {} })
-    Object.assign(expectedTemplate[policyName], { ['nextURL']: PolicyTestData.getPolicyConfig[policyName]['nextURL'] })
+    Object.assign(expectedTemplate[policyName], { 'nextURL': PolicyTestData.getPolicyConfig[policyName]['nextURL'] })
     if (PolicyTestData.getPolicyConfig[policyName]['nextExpiredURL']) {
-      Object.assign(expectedTemplate[policyName], { ['nextExpiredURL']: PolicyTestData.getPolicyConfig[policyName]['nextExpiredURL'] })
+      Object.assign(expectedTemplate[policyName], { 'nextExpiredURL': PolicyTestData.getPolicyConfig[policyName]['nextExpiredURL'] })
     }
     expect(spy).toHaveBeenCalledWith(targetApiKey, expectedTemplate, targetDataCenter)
   })

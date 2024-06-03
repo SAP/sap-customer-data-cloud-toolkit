@@ -4,6 +4,7 @@
  */
 
 import Options from '../options.js'
+import { t } from '../../i18n.js'
 
 class PolicyOptions extends Options {
   #policy
@@ -90,7 +91,7 @@ class PolicyOptions extends Options {
         evOption['branches'] = [
           {
             id: `${evOption.id}-Link`,
-            name: 'Include Customize Redirection URL',
+            name: t('CONFIGURATION_TREE.POLICIES_LINK_EMAIL_VERIFICATION_CUSTOM_REDIRECTION_URL'),
             link: `${PolicyOptions.#emailVerification}.nextURL`,
             value: true,
           },
@@ -185,7 +186,7 @@ class PolicyOptions extends Options {
       if (response.doubleOptIn.nextURL) {
         doiOption.branches.push({
           id: `${id}-nextUrl-Link`,
-          name: 'Include Customize Redirection URL',
+          name: t('CONFIGURATION_TREE.POLICIES_LINK_DOUBLE_OPT_IN_CUSTOM_REDIRECTION_URL'),
           link: `${PolicyOptions.#doubleOptIn}.nextURL`,
           value: true,
         })
@@ -193,7 +194,7 @@ class PolicyOptions extends Options {
       if (response.doubleOptIn.nextExpiredURL) {
         doiOption.branches.push({
           id: `${id}-nextExpiredUrl-Link`,
-          name: 'Include Customize Expired Redirection URL',
+          name: t('CONFIGURATION_TREE.POLICIES_LINK_DOUBLE_OPT_IN_CUSTOM_EXPIRED_REDIRECTION_URL'),
           link: `${PolicyOptions.#doubleOptIn}.nextExpiredURL`,
           value: true,
         })
