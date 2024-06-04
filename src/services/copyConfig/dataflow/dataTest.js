@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { expectedGigyaResponseOk } from '../../servicesDataTest.js'
 
 const getSearchDataflowsExpectedResponse = {
@@ -109,7 +108,7 @@ const getSearchDataflowsExpectedResponse = {
           id: 'Format Error File',
           type: 'file.format.json',
           params: {
-            fileName: 'import_lite_{{accounts}}_errors_${now}.json',
+            fileName: 'import_lite_{{accounts}}_errors.json',
             maxFileSize: 5000,
             createEmptyFile: false,
             wrapField: '{{wrapField}}',
@@ -136,7 +135,7 @@ const getSearchDataflowsExpectedResponse = {
             fields: [
               {
                 field: 'data.idxImportId',
-                value: '${jobId}',
+                value: 'jobId',
               },
               {
                 field: 'data.injectValue',

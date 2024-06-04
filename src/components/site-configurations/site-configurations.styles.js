@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {
@@ -16,6 +15,9 @@ const styles = {
     '--sapList_SelectionBackgroundColor': 'white',
     '--ui5-listitem-selected-border-bottom': '0',
     '--ui5-listitem-border-bottom': '0',
+  },
+  removeIncludedUrlButton: {
+    margin: '3px 12px 0 0',
   },
 }
 

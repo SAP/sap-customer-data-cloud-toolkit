@@ -64,6 +64,8 @@ import styles from './copy-configuration-extended.styles'
 
 import { Tracker } from '../../tracker/tracker'
 
+import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
 const PAGE_TITLE = 'Copy Configuration Extended'
@@ -155,13 +157,10 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ checkBoxId, value }))
-    })
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
+
+  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, null, setConfigurationStatus)
   }
 
   const showSuccessMessage = () => (
@@ -191,6 +190,7 @@ const CopyConfigurationExtended = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
   }

@@ -3,11 +3,11 @@
  * License: Apache-2.0
  */
 
-
+import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 
-import { Card, CardHeader, FlexBox, CheckBox } from '@ui5/webcomponents-react'
+import { Button, Card, CardHeader, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 
 import ConfigurationTree from '../../components/configuration-tree/configuration-tree.component'
 
@@ -20,6 +20,7 @@ const SiteConfigurations = ({
   configurations,
   selectAllCheckboxState,
   onSelectAllCheckboxChangeHandler,
+  onSelectAllIncludeUrlChangeHandler,
   setConfigurationStatus,
   setDataflowVariableValue,
   setDataflowVariableValues,
@@ -37,13 +38,25 @@ const SiteConfigurations = ({
             <CardHeader
               titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_CONFIGURATION')}
               action={
-                <CheckBox
-                  id="selectAllCheckbox"
-                  data-cy="selectAllCheckbox"
-                  checked={selectAllCheckboxState}
-                  text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')}
-                  onChange={onSelectAllCheckboxChangeHandler}
-                />
+                <>
+                  <Button
+                    id="removeIncludedUrlButton"
+                    data-cy="removeIncludedUrlButton"
+                    design="Default"
+                    className={classes.removeIncludedUrlButton}
+                    onClick={() => onSelectAllIncludeUrlChangeHandler({ srcElement: { checked: false } })}
+                  >
+                    {t('COPY_CONFIGURATION_EXTENDED.REMOVE_INCLUDED_URL_BUTTON')}
+                  </Button>
+
+                  <CheckBox
+                    id="selectAllCheckbox"
+                    data-cy="selectAllCheckbox"
+                    checked={selectAllCheckboxState}
+                    text={t('COPY_CONFIGURATION_EXTENDED.SELECT_ALL')}
+                    onChange={onSelectAllCheckboxChangeHandler}
+                  />
+                </>
               }
             />
           }

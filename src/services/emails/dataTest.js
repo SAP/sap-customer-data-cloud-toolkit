@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const emailTemplate =
   '<html xmlns="http://www.w3.org/1999/xhtml">\r\n' +
   '<head>\r\n' +
@@ -73,6 +72,7 @@ const getEmailsExpectedResponse = {
     emailTemplates: {
       en: emailTemplate,
     },
+    redirectURL: 'litePrefCenter.com',
     linkPlaceHolder: '$link',
   },
   doubleOptIn: {
@@ -90,7 +90,7 @@ const getEmailsExpectedResponse = {
       en: emailTemplate,
     },
     requireSecurityCheck: false,
-    resetURL: '',
+    resetURL: 'reset.com',
     tokenExpiration: 3600,
     sendConfirmationEmail: false,
   },
@@ -230,6 +230,7 @@ const expectedExportConfigurationFileContent = {
     emailTemplates: {
       en: 'LitePreferencesCenter/en.html',
     },
+    redirectURL: 'litePrefCenter.com',
     linkPlaceHolder: '$link',
   },
   doubleOptIn: {
@@ -247,7 +248,7 @@ const expectedExportConfigurationFileContent = {
       en: 'PasswordReset/en.html',
     },
     requireSecurityCheck: false,
-    resetURL: '',
+    resetURL: 'reset.com',
     tokenExpiration: 3600,
     sendConfirmationEmail: false,
   },

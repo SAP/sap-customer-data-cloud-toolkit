@@ -25,6 +25,26 @@ describe('Copy Configuration extended test suite', () => {
       utils.checkElementsInitialState()
     })
 
+    it('should uncheck links and credentials', () => {
+      //In the beginning all the checkBoxes are not checked
+      cy.get('[data-cy ="selectAllCheckbox"]').should('not.be.checked')
+      cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('not.be.checked'))
+      //When select all checkbox is clicked all the other checkboxes from the ui5-tree are checked
+      cy.get('[data-cy ="selectAllCheckbox"]').realClick()
+      cy.get('[data-cy ="selectAllCheckbox"]').should('have.prop', 'checked')
+      cy.get('ui5-tree').each(($el) => cy.wrap($el).find('ui5-checkbox').should('have.prop', 'checked'))
+      //When clicking on the removeIncludedUrlButton the "Include URL" checkbox are not checked
+      cy.get('[data-cy ="removeIncludedUrlButton"]').click()
+      cy.get('ui5-tree').find('[id="socialIdentities"]').should('not.be.checked')
+      // email templates checkboxes
+      cy.get('ui5-tree').find('[id="passwordReset-Link"]').should('not.be.checked')
+      cy.get('ui5-tree').find('[id="LitepreferencesCenter-Link"]').should('not.be.checked')
+      // policies checkboxes
+      cy.get('ui5-tree').find('[id="pdoubleOptIn-nextUrl-Link"]').should('not.be.checked')
+      cy.get('ui5-tree').find('[id="pdoubleOptIn-nextExpiredUrl-Link"]').should('not.be.checked')
+      cy.get('ui5-tree').find('[id="pemailVerification-Link"]').should('not.be.checked')
+    })
+
     it('should delete an added Target Site from the Targe Sites list', () => {
       utils.fillTargetApiKeyInput()
       utils.checkTargetSitesList()

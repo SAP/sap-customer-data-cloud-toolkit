@@ -46,3 +46,43 @@ export const sendReportOnWarnings = (errors) => {
     }, SEND_REPORT_DELAY_IN_MILLIS)
   }
 }
+
+export const handleCheckboxChange = (dispatch, checkbox, value, siteId, setConfigurationStatus) => {
+  if (checkbox.link) {
+    const checkBoxId = checkbox.id
+    dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value: value }))
+  }
+}
+
+export const processNestedBranches = (dispatch, branches, value, siteId, setConfigurationStatus) => {
+  branches.forEach((branch) => {
+    handleCheckboxChange(dispatch, branch, value, siteId, setConfigurationStatus)
+
+    if (branch.branches && branch.branches.length > 0) {
+      branch.branches.forEach((nestedBranch) => handleCheckboxChange(dispatch, nestedBranch, value, siteId, setConfigurationStatus))
+    }
+  })
+}
+
+export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, siteId, setConfigurationStatus) => {
+  configurations.forEach((configuration) => {
+    if (configuration.branches && configuration.branches.length > 0) {
+      processNestedBranches(dispatch, configuration.branches, false, siteId, setConfigurationStatus)
+    }
+    if (configuration.link) {
+      handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
+    }
+  })
+}
+
+export const onSelectAllCheckboxChange =
+  (siteId = null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus) =>
+  (event) => {
+    const value = event.srcElement.checked
+    setSelectAllCheckboxState(value)
+    configurations.forEach((configuration) => {
+      const checkBoxId = configuration.id
+      const details = siteId ? { siteId: siteId, checkBoxId, value } : { checkBoxId, value }
+      dispatch(setConfigurationStatus(details))
+    })
+  }
