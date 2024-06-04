@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-import { internalSchemaId, profileId, schemaId, subscriptionsId } from '../dataTest.js'
+import { internalSchemaId, profileId, schemaId, subscriptionsId, addressesSchemaId } from '../dataTest.js'
 import { removePropertyFromObjectCascading } from '../objectHelper.js'
 
 export const expectedSchemaResponse = {
@@ -133,6 +133,120 @@ export const expectedSchemaResponse = {
     },
     dynamicSchema: false,
   },
+  addressesSchema: {
+    fields: {
+      work: {
+        street: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        countryISOCode3: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        entrance: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        houseNumber: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        apartment: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        floor: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        city: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        building: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        neighborhood: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        zipCode: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: null,
+          encrypt: 'AES',
+        },
+        postOfficeBox: {
+          type: 'string',
+          required: false,
+          writeAccess: 'clientModify',
+          allowNull: true,
+          format: "regex('^(a-z)*?')",
+          encrypt: 'AES',
+        },
+        metadata: {
+          selectedSuggestion: {
+            type: 'string',
+            required: false,
+            writeAccess: 'serverOnly',
+            allowNull: true,
+            format: null,
+            encrypt: 'AES',
+          },
+          verifiedAddress: {
+            floor: {
+              type: 'string',
+              required: false,
+              writeAccess: 'serverOnly',
+              allowNull: true,
+              format: null,
+              encrypt: 'AES',
+            },
+          },
+        },
+      },
+    },
+  },
 }
 
 export function getDataSchemaExpectedBodyForParentSite(apiKey) {
@@ -142,6 +256,7 @@ export function getDataSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   delete expectedBody.internalSchema
+  delete expectedBody.addressesSchema
   return expectedBody
 }
 
@@ -163,6 +278,7 @@ export function getProfileSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.subscriptionsSchema
   delete expectedBody.preferencesSchema
   delete expectedBody.internalSchema
+  delete expectedBody.addressesSchema
   return expectedBody
 }
 
@@ -252,6 +368,7 @@ export function getSubscriptionsSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.profileSchema
   delete expectedBody.preferencesSchema
   delete expectedBody.internalSchema
+  delete expectedBody.addressesSchema
   return expectedBody
 }
 
@@ -343,6 +460,7 @@ export function getInternalSchemaExpectedBodyForParentSite(apiKey) {
   delete expectedBody.profileSchema
   delete expectedBody.preferencesSchema
   delete expectedBody.subscriptionsSchema
+  delete expectedBody.addressesSchema
   return expectedBody
 }
 
@@ -358,6 +476,34 @@ export function getInternalSchemaExpectedBodyForChildSiteStep2(apiKey) {
   removePropertyFromObjectCascading(expectedBody, 'allowNull')
   removePropertyFromObjectCascading(expectedBody, 'writeAccess')
   removePropertyFromObjectCascading(expectedBody, 'encrypt')
+  expectedBody.scope = 'site'
+  return expectedBody
+}
+
+export function getAddressesSchemaExpectedBodyForParentSite(apiKey) {
+  const expectedBody = JSON.parse(JSON.stringify(expectedSchemaResponse))
+  expectedBody.context = { targetApiKey: apiKey, id: addressesSchemaId }
+  delete expectedBody.dataSchema
+  delete expectedBody.profileSchema
+  delete expectedBody.preferencesSchema
+  delete expectedBody.subscriptionsSchema
+  delete expectedBody.internalSchema
+  return expectedBody
+}
+
+export function getAddressesSchemaExpectedBodyForChildSiteStep1(apiKey) {
+  const expectedBody = getAddressesSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'required')
+  return expectedBody
+}
+
+export function getAddressesSchemaExpectedBodyForChildSiteStep2(apiKey) {
+  const expectedBody = getAddressesSchemaExpectedBodyForParentSite(apiKey)
+  removePropertyFromObjectCascading(expectedBody, 'type')
+  removePropertyFromObjectCascading(expectedBody, 'allowNull')
+  removePropertyFromObjectCascading(expectedBody, 'writeAccess')
+  removePropertyFromObjectCascading(expectedBody, 'encrypt')
+  removePropertyFromObjectCascading(expectedBody, 'format')
   expectedBody.scope = 'site'
   return expectedBody
 }

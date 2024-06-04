@@ -21,11 +21,14 @@ import {
   getInternalSchemaExpectedBodyForParentSite,
   getInternalSchemaExpectedBodyForChildSiteStep1,
   getInternalSchemaExpectedBodyForChildSiteStep2,
+  getAddressesSchemaExpectedBodyForParentSite,
+  getAddressesSchemaExpectedBodyForChildSiteStep1,
+  getAddressesSchemaExpectedBodyForChildSiteStep2,
 } from './dataTest.js'
 import axios from 'axios'
 import { expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk } from '../../servicesDataTest.js'
 import { getSiteConfigSuccessfullyMultipleMember } from '../../configurator/dataTest.js'
-import { getExpectedResponseWithContext, getResponseWithContext, internalSchemaId, profileId, schemaId, subscriptionsId } from '../dataTest.js'
+import { getExpectedResponseWithContext, getResponseWithContext, internalSchemaId, profileId, schemaId, subscriptionsId, addressesSchemaId } from '../dataTest.js'
 import Options from '../options.js'
 import {
   ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE,
@@ -47,8 +50,14 @@ describe('Schema test suite', () => {
       { id: profileId, name: profileId, value: true },
       { id: subscriptionsId, name: subscriptionsId, value: true },
       { id: internalSchemaId, name: internalSchemaId, value: true },
+      { id: addressesSchemaId, name: addressesSchemaId, value: true },
     ],
   })
+  const dataIdIdx = 0
+  const profileIdIdx = 1
+  const subscriptionsIdIdx = 2
+  const internalIdIdx = 3
+  const addressesIdIdx = 4
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -63,26 +72,31 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
-    expect(responses.length).toBe(4)
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
-    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
-    expect(responses[3]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
-    expect(responses[1].context.id).toEqual(schemaId)
-    expect(responses[0].context.id).toEqual(profileId)
-    expect(responses[2].context.id).toEqual(subscriptionsId)
-    expect(responses[3].context.id).toEqual(internalSchemaId)
-    expect(responses[0].context.targetApiKey).toEqual(apiKey)
-    expect(responses[1].context.targetApiKey).toEqual(apiKey)
-    expect(responses[2].context.targetApiKey).toEqual(apiKey)
-    expect(responses[3].context.targetApiKey).toEqual(apiKey)
+    expect(responses.length).toBe(5)
+    expect(responses[dataIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[profileIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[subscriptionsIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
+    expect(responses[internalIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
+    expect(responses[addressesIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey))
+    expect(responses[dataIdIdx].context.id).toEqual(schemaId)
+    expect(responses[profileIdIdx].context.id).toEqual(profileId)
+    expect(responses[subscriptionsIdIdx].context.id).toEqual(subscriptionsId)
+    expect(responses[internalIdIdx].context.id).toEqual(internalSchemaId)
+    expect(responses[addressesIdIdx].context.id).toEqual(addressesSchemaId)
+    expect(responses[profileIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[dataIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[subscriptionsIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[internalIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[addressesIdIdx].context.targetApiKey).toEqual(apiKey)
 
-    expect(spy.mock.calls.length).toBe(4)
+    expect(spy.mock.calls.length).toBe(5)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getInternalSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getAddressesSchemaExpectedBodyForParentSite(apiKey))
   })
 
   test('copy successfully to child site', async () => {
@@ -99,23 +113,28 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
 
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
-    expect(responses.length).toBe(4)
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
-    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
-    expect(responses[3]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
-    expect(responses[1].context.id).toEqual(schemaId)
-    expect(responses[0].context.id).toEqual(profileId)
-    expect(responses[2].context.id).toEqual(subscriptionsId)
-    expect(responses[3].context.id).toEqual(internalSchemaId)
-    expect(responses[0].context.targetApiKey).toEqual(apiKey)
-    expect(responses[1].context.targetApiKey).toEqual(apiKey)
-    expect(responses[2].context.targetApiKey).toEqual(apiKey)
-    expect(responses[3].context.targetApiKey).toEqual(apiKey)
+    expect(responses.length).toBe(5)
+    expect(responses[dataIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[profileIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[subscriptionsIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
+    expect(responses[internalIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
+    expect(responses[addressesIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey))
+    expect(responses[dataIdIdx].context.id).toEqual(schemaId)
+    expect(responses[profileIdIdx].context.id).toEqual(profileId)
+    expect(responses[subscriptionsIdIdx].context.id).toEqual(subscriptionsId)
+    expect(responses[internalIdIdx].context.id).toEqual(internalSchemaId)
+    expect(responses[addressesIdIdx].context.id).toEqual(addressesSchemaId)
+    expect(responses[profileIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[dataIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[subscriptionsIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[internalIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[addressesIdIdx].context.targetApiKey).toEqual(apiKey)
 
-    expect(spy.mock.calls.length).toBe(8)
+    expect(spy.mock.calls.length).toBe(10)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep1(apiKey))
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getDataSchemaExpectedBodyForChildSiteStep2(apiKey))
     expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep1(apiKey))
@@ -124,6 +143,8 @@ describe('Schema test suite', () => {
     expect(spy).toHaveBeenNthCalledWith(6, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForChildSiteStep2(apiKey))
     expect(spy).toHaveBeenNthCalledWith(7, apiKey, dataCenter, getInternalSchemaExpectedBodyForChildSiteStep1(apiKey))
     expect(spy).toHaveBeenNthCalledWith(8, apiKey, dataCenter, getInternalSchemaExpectedBodyForChildSiteStep2(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(9, apiKey, dataCenter, getAddressesSchemaExpectedBodyForChildSiteStep1(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(10, apiKey, dataCenter, getAddressesSchemaExpectedBodyForChildSiteStep2(apiKey))
   })
 
   test('copy successfully to a site with the same field with different type', async () => {
@@ -138,31 +159,36 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
-    expect(responses.length).toBe(5)
+    expect(responses.length).toBe(6)
     expect(responses[3]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[2].errorCode).toEqual(ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE)
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
-    expect(responses[4]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
+    expect(responses[dataIdIdx].errorCode).toEqual(ERROR_CODE_CANNOT_CHANGE_SCHEMA_FIELD_TYPE)
+    expect(responses[profileIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[subscriptionsIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, subscriptionsId, apiKey))
+    expect(responses[internalIdIdx + 1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, internalSchemaId, apiKey))
+    expect(responses[addressesIdIdx + 1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey))
     expect(responses[3].context.id).toEqual(schemaId)
-    expect(responses[2].context.id).toEqual(schemaId)
-    expect(responses[1].context.id).toEqual(profileId)
-    expect(responses[0].context.id).toEqual(subscriptionsId)
-    expect(responses[4].context.id).toEqual(internalSchemaId)
-    expect(responses[0].context.targetApiKey).toEqual(apiKey)
-    expect(responses[1].context.targetApiKey).toEqual(apiKey)
-    expect(responses[2].context.targetApiKey).toEqual(apiKey)
+    expect(responses[dataIdIdx].context.id).toEqual(schemaId)
+    expect(responses[profileIdIdx].context.id).toEqual(profileId)
+    expect(responses[subscriptionsIdIdx].context.id).toEqual(subscriptionsId)
+    expect(responses[internalIdIdx + 1].context.id).toEqual(internalSchemaId)
+    expect(responses[addressesIdIdx + 1].context.id).toEqual(addressesSchemaId)
+    expect(responses[dataIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[profileIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[subscriptionsIdIdx].context.targetApiKey).toEqual(apiKey)
     expect(responses[3].context.targetApiKey).toEqual(apiKey)
-    expect(responses[4].context.targetApiKey).toEqual(apiKey)
+    expect(responses[internalIdIdx + 1].context.targetApiKey).toEqual(apiKey)
+    expect(responses[addressesIdIdx + 1].context.targetApiKey).toEqual(apiKey)
 
-    expect(spy.mock.calls.length).toBe(4)
+    expect(spy.mock.calls.length).toBe(5)
     const expectedSchemaBodyWithDifferentType = getDataSchemaExpectedBodyForParentSite(apiKey)
     expectedSchemaBodyWithDifferentType.dataSchema.fields.terms.type = schemaResponseWithDifferentType.dataSchema.fields.terms.type
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getProfileSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getSubscriptionsSchemaExpectedBodyForParentSite(apiKey))
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, expectedSchemaBodyWithDifferentType)
     expect(spy).toHaveBeenNthCalledWith(4, apiKey, dataCenter, getInternalSchemaExpectedBodyForParentSite(apiKey))
+    expect(spy).toHaveBeenNthCalledWith(5, apiKey, dataCenter, getAddressesSchemaExpectedBodyForParentSite(apiKey))
   })
 
   test('copy successfully child fields to a site with parent object created', async () => {
@@ -180,9 +206,9 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, _schemaOptions)
     expect(responses.length).toBe(3)
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
     expect(responses[1].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION)
-    expect(responses[2].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION)
+    expect(responses[0].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_CHILD_THAT_HAVE_PARENT_ON_DESTINATION)
     expect(responses[0].context.id).toEqual(schemaId)
     expect(responses[1].context.id).toEqual(schemaId)
     expect(responses[2].context.id).toEqual(schemaId)
@@ -216,9 +242,9 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, _schemaOptions)
     expect(responses.length).toBe(3)
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
     expect(responses[1].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA)
-    expect(responses[2].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA)
+    expect(responses[0].errorCode).toEqual(ERROR_CODE_CANNOT_COPY_NEW_FIELD_OF_PROFILE_SCHEMA)
     expect(responses[0].context.id).toEqual(profileId)
     expect(responses[1].context.id).toEqual(profileId)
     expect(responses[2].context.id).toEqual(profileId)
@@ -249,6 +275,7 @@ describe('Schema test suite', () => {
     const mockedProfileResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, profileId, apiKey)
     const mockedSubscriptionsResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, subscriptionsId, apiKey)
     const mockedInternalSchemaResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, internalSchemaId, apiKey)
+    const mockedAddressesSchemaResponse = getResponseWithContext(expectedGigyaResponseInvalidAPI, addressesSchemaId, apiKey)
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
@@ -256,27 +283,28 @@ describe('Schema test suite', () => {
       .mockResolvedValueOnce({ data: mockedProfileResponse })
       .mockResolvedValueOnce({ data: mockedSubscriptionsResponse })
       .mockResolvedValueOnce({ data: mockedInternalSchemaResponse })
+      .mockResolvedValueOnce({ data: mockedAddressesSchemaResponse })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
-    expect(responses.length).toBe(4)
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey))
-    expect(responses[1].context.id).toEqual(schemaId)
-    expect(responses[1].context.targetApiKey).toEqual(apiKey)
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, profileId, apiKey))
-    expect(responses[0].context.id).toEqual(profileId)
-    expect(responses[0].context.targetApiKey).toEqual(apiKey)
-    expect(responses[2]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, subscriptionsId, apiKey))
-    expect(responses[2].context.id).toEqual(subscriptionsId)
-    expect(responses[2].context.targetApiKey).toEqual(apiKey)
-    expect(responses[3]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, internalSchemaId, apiKey))
-    expect(responses[3].context.id).toEqual(internalSchemaId)
-    expect(responses[3].context.targetApiKey).toEqual(apiKey)
+    expect(responses.length).toBe(5)
+    expect(responses[dataIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey))
+    expect(responses[dataIdIdx].context.id).toEqual(schemaId)
+    expect(responses[dataIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[profileIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, profileId, apiKey))
+    expect(responses[profileIdIdx].context.id).toEqual(profileId)
+    expect(responses[profileIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[subscriptionsIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, subscriptionsId, apiKey))
+    expect(responses[subscriptionsIdIdx].context.id).toEqual(subscriptionsId)
+    expect(responses[subscriptionsIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[internalIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, internalSchemaId, apiKey))
+    expect(responses[internalIdIdx].context.id).toEqual(internalSchemaId)
+    expect(responses[internalIdIdx].context.targetApiKey).toEqual(apiKey)
+    expect(responses[addressesIdIdx]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, addressesSchemaId, apiKey))
+    expect(responses[addressesIdIdx].context.id).toEqual(addressesSchemaId)
+    expect(responses[addressesIdIdx].context.targetApiKey).toEqual(apiKey)
   })
 
   test('copy all schema except subscriptions to parent site', async () => {
     let spy = jest.spyOn(schema, 'set')
-    const schemaResponse = expectedSchemaResponse
-    delete schemaResponse.subscriptionsSchema.fields.subscription1
-    delete schemaResponse.subscriptionsSchema.fields.subscription2
 
     const schemaOptions = new Options({
       branches: [
@@ -285,16 +313,16 @@ describe('Schema test suite', () => {
       ],
     })
     axios
-      .mockResolvedValueOnce({ data: schemaResponse })
-      .mockResolvedValueOnce({ data: schemaResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
+      .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, profileId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey) })
     const responses = await schema.copy(apiKey, dataCenterConfiguration, schemaOptions)
     expect(responses.length).toBe(2)
-    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
-    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
-    expect(responses[0].context.id).toEqual(schemaId)
-    expect(responses[1].context.id).toEqual(profileId)
+    expect(responses[1]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, schemaId, apiKey))
+    expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, profileId, apiKey))
+    expect(responses[1].context.id).toEqual(schemaId)
+    expect(responses[0].context.id).toEqual(profileId)
     expect(responses[0].context.targetApiKey).toEqual(apiKey)
     expect(responses[1].context.targetApiKey).toEqual(apiKey)
 
@@ -308,6 +336,7 @@ describe('Schema test suite', () => {
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.PROFILE_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.SUBSCRIPTIONS_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, Schema.INTERNAL_SCHEMA)
+    removePropertyFromObjectCascading(dataSchemaPayload, Schema.ADDRESSES_SCHEMA)
     removePropertyFromObjectCascading(dataSchemaPayload, 'preferencesSchema')
     dataSchemaPayload.dataSchema.fields['email'] = {
       required: false,

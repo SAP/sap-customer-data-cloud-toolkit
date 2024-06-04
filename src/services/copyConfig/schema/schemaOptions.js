@@ -10,6 +10,7 @@ class SchemaOptions extends Options {
   static PROFILE_SCHEMA = 'profileSchema'
   static SUBSCRIPTIONS_SCHEMA = 'subscriptionsSchema'
   static INTERNAL_SCHEMA = 'internalSchema'
+  static ADDRESSES_SCHEMA = 'addressesSchema'
   #schema
 
   constructor(schema) {
@@ -38,6 +39,11 @@ class SchemaOptions extends Options {
           name: SchemaOptions.INTERNAL_SCHEMA,
           value: true,
         },
+        {
+          id: SchemaOptions.ADDRESSES_SCHEMA,
+          name: SchemaOptions.ADDRESSES_SCHEMA,
+          value: true,
+        },
       ],
     })
     this.#schema = schema
@@ -58,8 +64,13 @@ class SchemaOptions extends Options {
   removeSubscriptionsSchema(info) {
     return this.removeInfo(SchemaOptions.SUBSCRIPTIONS_SCHEMA, info)
   }
+
   removeInternalSchema(info) {
     return this.removeInfo(SchemaOptions.INTERNAL_SCHEMA, info)
+  }
+
+  removeAddressesSchema(info) {
+    return this.removeInfo(SchemaOptions.ADDRESSES_SCHEMA, info)
   }
 }
 
