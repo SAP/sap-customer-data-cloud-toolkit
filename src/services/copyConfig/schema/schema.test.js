@@ -152,7 +152,6 @@ describe('Schema test suite', () => {
     const schemaResponseWithDifferentType = JSON.parse(JSON.stringify(expectedSchemaResponse))
     schemaResponseWithDifferentType.dataSchema.fields.terms.type = 'long'
     schemaResponseWithDifferentType.dataSchema.fields.subscribe.type = undefined
-    //delete schemaResponseWithDifferentType['dataSchema']['fields']['subscribe']['type']
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: schemaResponseWithDifferentType })
