@@ -37,7 +37,43 @@
     ]
   },
   {
-    "console": "console.eu2.gigya.com",
+    "console": "[a-z0-9]*.my.console.gigya.com",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US",
+        "isPrimary": true
+      }
+    ]
+  },
+  {
+    "console": "[a-z0-9]*console.us1.gigya.com",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US",
+        "isPrimary": true
+      }
+    ]
+  },
+  {
+    "console": "[a-z0-9]*console.eu2.gigya.com",
     "datacenters": [
       {
         "value": "eu2",
@@ -47,7 +83,7 @@
     ]
   },
   {
-    "console": "console.cn1.sapcdm.cn",
+    "console": "[a-z0-9]*console.cn1.sapcdm.cn",
     "datacenters": [
       {
         "value": "cn1",
@@ -57,7 +93,35 @@
     ]
   },
   {
-    "console": "console.cdc.cloud.sap",
+    "console": "[a-z0-9]*console.cdc.cloud.sap",
+    "datacenters": [
+      {
+        "value": "au1",
+        "label": "AU"
+      },
+      {
+        "value": "eu1",
+        "label": "EU"
+      },
+      {
+        "value": "us1",
+        "label": "US",
+        "isPrimary": true
+      }
+    ]
+  },
+  {
+    "console": "[a-z0-9]*console.eu2.cdc.cloud.sap",
+    "datacenters": [
+      {
+        "value": "eu2",
+        "label": "EU2",
+        "isPrimary": true
+      }
+    ]
+  },
+  {
+    "console": "[a-z0-9]*console.us1.cdc.cloud.sap",
     "datacenters": [
       {
         "value": "au1",

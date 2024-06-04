@@ -3,10 +3,57 @@
  * License: Apache-2.0
  */
 
+.cdc-tools-app {
+  position: absolute;
+  top: 72px;
+  right: 0px;
+  height: 0;
+  width: calc(100% - 241px);
+}
+.cdc-tools-app-loading {
+  position: absolute;
+  top: 50px;
+  right: 0px;
+  height: 100%;
+  width: calc(100% - 241px);
+  background-color: #fff;
+  z-index: 9;
+  display: none;
+}
+.cdc-tools-app-loading-show {
+  display: block;
+}
+.cdc-tools-app-container {
+  position: absolute;
+  top: 6px;
+  right: 0px;
+  height: auto;
+  width: 100%;
+}
+.cdc-tools-app {
+  display: none;
+}
+.cdc-tools-app.show-cdc-tools {
+  display: block;
+}
+.cdc-tools-app-container {
+  display: none;
+}
+.cdc-tools-app-container.show-cdc-tools-app-container {
+  display: block;
+}
+
+.cdc-tools-background {
+  background-color: var(--sapBackgroundColor, #f7f7f7);
+}
+
 .cdc-toolbox--topbar-menu-container {
   position: absolute;
   right: 377px;
-  top: -68px;
+  top: -64px;
+
+  /* Hide topbar menu button */
+  display: none;
 }
 @media (max-width: 1200px) {
   .cdc-toolbox--topbar-menu-container {
@@ -29,15 +76,6 @@
   }
 }
 
-/* UI5 React Style Fixes - https://sap.github.io/ui5-webcomponents-react/ */
-ui5-select,
-ui5-textarea,
-ui5-multi-combobox,
-ui5-input {
-  border-style: solid;
-  border-width: 1px;
-}
-
 /* Datacenter flag icons */
 /*
   <span class="data-center-list__item ng-star-inserted" title={item.value}>
@@ -52,7 +90,6 @@ ui5-input {
 
 .data-center-list__icon {
   --icon-size: 8px;
-
   background-size: calc(2.25 * var(--icon-size));
   position: absolute;
   left: 50%;
@@ -76,4 +113,36 @@ ui5-input {
 
 .a-icon--flag-us {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAChklEQVQ4jZ2UTWgVVxTHf3fmzp336szkKeU1TUS6ED9AV4l20a5S14W4V2mLi0qlgojWbOKiUBVRSNBFSvwouou0hiwCUnBVUhoq2CKKitC8PL9IY2bkvZm5946LJETNB+qBuznnnt/533PvPYIV7MS5Yfk8brgtYVl0FFP6i3179HJ7xRLJ1Qf/PTt/5359R/3Jc5XlGuVJ+isP6TBPM7F56+9iw6Y9Ld98+2RZUO/poV2jN/4ZnEma0hiLNhZPOqSZ5ueebjrXV2eTVgU1wmhnGAZ/LgL92Pfrriu/jV3MtRFaG3zlAZBmOVK6nN3m05m/IsJaQ1v715UjvZcAHID+C6PVa9dvnrfWCq0NypMYa5k/ltYG/BIEwcKKIhfl98VxEgBIgNv36heTF6mbZhpfeaRZTrmk8KRLo5lR8j2cjk9xPln9Zkuj4tbfPwA9EuDfu7WufE5JmuX4SjLfI195NNMce2kAPXFz8W193H4I6JEnzg3LX67+oXwlSTNNuaRoNDPKJYXrOguKdu9FLlYE4MWXNzoSkNpYxFzbc22Q0sURAmMtnnTRxmLHx7DjU0uBoLVNSsB+1rkegKIoFiTPked9lWICXiRLckTUIkQcJ07xaNIsXertTLS2uQLg/y+7sqJe894LUm3NV4/cUBLAPXLsJOUPjr6XnEbjNCOfz77sOE4CM9BXY+pZ9E6QNR/OuHv3t4dhkEiAMAyS6Z969xeTtUEcx30riLVGRJXvwzBI4I1PG8fJdrJsiCxduyJE+RMo1R2GwV/zrkVjZPrM8Y+oT14obt/qKuo19WpMVFtzsXnLddau+6py4PDj12IrFZ7uPyUBycxMQRSZyncHlx1sLwFl1QcOu9Av5gAAAABJRU5ErkJggg==);
+}
+
+/* UI5 React Style Fixes - https://sap.github.io/ui5-webcomponents-react/ */
+
+/* Theme specific fixes: sap_fiori_3 */
+[data-sap-theme='sap_fiori_3'] {
+  ui5-select,
+  ui5-textarea,
+  ui5-multi-combobox,
+  ui5-input {
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--sapField_BorderColor);
+  }
+
+  ui5-select:hover,
+  ui5-textarea:hover,
+  ui5-multi-combobox:hover,
+  ui5-input:hover {
+    border-color: var(--sapField_Hover_BorderColor);
+  }
+
+  .cdc-tools-app-container {
+    top: 0;
+  }
+  .cdc-toolbox--topbar-menu-container {
+    top: -68px;
+  }
+}
+
+/* Theme specific fixes: new_horizon */
+[data-sap-theme='new_horizon'] {
 }

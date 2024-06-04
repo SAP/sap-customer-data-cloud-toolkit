@@ -96,3 +96,15 @@ export function removeAllPropertiesFromObjectExceptSome(object, propertiesToKeep
   })
   return object
 }
+
+export function removePropertyPathFromObject(object, path) {
+  let tokens = path.split('.')
+  let toDelete = tokens.reduce((acc, key, idx, arr) => {
+    if (idx < arr.length - 1) {
+      acc = acc[key]
+    }
+    return acc
+  }, object)
+  delete toDelete[tokens[tokens.length - 1]]
+  return object
+}

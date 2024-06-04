@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -46,11 +45,12 @@ import {
   setErrors,
 } from '../../redux/siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
-import { areConfigurationsFilled } from '../../routes/copy-configuration-extended/utils'
+import { areConfigurationsFilled, onSelectAllIncludeUrlChangeHandler, onSelectAllCheckboxChange } from '../../routes/copy-configuration-extended/utils'
 
 import { checkDataflowVariables } from '../../redux/copyConfigurationExtended/utils'
 
 import styles from '../../routes/copy-configuration-extended/copy-configuration-extended.styles'
+
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationDialog' })
 
 const CopyConfigurationDialog = ({ t }) => {
@@ -99,13 +99,10 @@ const CopyConfigurationDialog = ({ t }) => {
     }
   }
 
-  const onSelectAllCheckboxChangeHandler = (event) => {
-    const value = event.srcElement.checked
-    setSelectAllCheckboxState(value)
-    configurations.forEach((configuration) => {
-      const checkBoxId = configuration.id
-      dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value }))
-    })
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
+
+  const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
+    onSelectAllIncludeUrlChangeHandler(dispatch, configurations, siteId, setConfigurationStatus)
   }
 
   const onSourceApiKeyDeleteHandler = () => {
@@ -142,6 +139,7 @@ const CopyConfigurationDialog = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
   }

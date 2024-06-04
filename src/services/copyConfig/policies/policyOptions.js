@@ -3,8 +3,8 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
+import { t } from '../../i18n.js'
 
 class PolicyOptions extends Options {
   #policy
@@ -23,6 +23,7 @@ class PolicyOptions extends Options {
   static #webSdk = 'Web Sdk'
   static #doubleOptIn = 'doubleOptIn'
   static #preferencesCenter = 'preferencesCenter'
+  static #idPrefix = 'p'
 
   constructor(policy) {
     const policies = 'policies'
@@ -31,104 +32,7 @@ class PolicyOptions extends Options {
       name: policies,
       value: true,
       tooltip: policies.toUpperCase(),
-      branches: [
-        {
-          id: PolicyOptions.#accountOptions,
-          name: PolicyOptions.#accountOptions,
-          value: true,
-          tooltip: 'POLICIES_ACCOUNT_OPTIONS',
-        },
-        {
-          id: `p${PolicyOptions.#codeVerification}`,
-          name: PolicyOptions.#codeVerification,
-          value: true,
-          tooltip: 'CODE_VERIFICATION',
-        },
-        {
-          id: PolicyOptions.#emailNotifications,
-          name: PolicyOptions.#emailNotifications,
-          value: true,
-
-          tooltip: 'POLICIES_EMAIL_NOTIFICATIONS',
-        },
-        {
-          id: `p${PolicyOptions.#emailVerification}`,
-          name: PolicyOptions.#emailVerification,
-          value: true,
-
-          tooltip: 'POLICIES_EMAIL_VERIFICATION',
-        },
-        {
-          id: PolicyOptions.#federation,
-          name: PolicyOptions.#federation,
-          value: true,
-
-          tooltip: 'POLICIES_FEDERATION',
-        },
-
-        {
-          id: PolicyOptions.#passwordComplexity,
-          name: PolicyOptions.#passwordComplexity,
-          value: true,
-
-          tooltip: 'POLICIES_PASSWORD_COMPLEXITY',
-        },
-        {
-          id: 'gigyaPlugins',
-          name: PolicyOptions.#webSdk,
-          value: true,
-
-          tooltip: 'POLICIES_WEBSDK',
-        },
-        {
-          id: `p${PolicyOptions.#passwordReset}`,
-          name: PolicyOptions.#passwordReset,
-          value: true,
-          tooltip: 'POLICIES_PASSWORD_RESET',
-        },
-        {
-          id: 'profilePhoto',
-          name: PolicyOptions.#profilePhoto,
-          value: true,
-          tooltip: 'POLICIES_DEFAULT_PROFILE_PHOTO_DIMENSIONS',
-        },
-        {
-          id: PolicyOptions.#registration,
-          name: PolicyOptions.#registration,
-          value: true,
-          tooltip: 'POLICIES_REGISTRATION',
-        },
-        {
-          id: PolicyOptions.#security,
-          name: PolicyOptions.#security,
-          value: true,
-          tooltip: 'POLICIES_SECURITY',
-        },
-        {
-          id: 'pTwoFactorAuth',
-          name: PolicyOptions.#twoFactorAuth,
-          value: true,
-          tooltip: 'POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS',
-        },
-        {
-          id: PolicyOptions.#authentication,
-          name: PolicyOptions.#authentication,
-          value: true,
-          tooltip: 'POLICIES_AUTHENTICATION',
-        },
-        {
-          id: `p${PolicyOptions.#doubleOptIn}`,
-          name: PolicyOptions.#doubleOptIn,
-          value: true,
-          tooltip: 'POLICIES_DOUBLE_OPT_IN',
-        },
-        {
-          id: `p${PolicyOptions.#preferencesCenter}`,
-          name: PolicyOptions.#preferencesCenter,
-          value: true,
-          tooltip: 'POLICIES_PREFERENCES_CENTER',
-        },
-      ],
+      branches: [],
     })
     this.#policy = policy
   }
@@ -136,53 +40,180 @@ class PolicyOptions extends Options {
   getConfiguration() {
     return this.#policy
   }
-  removeAccountOptions(info) {
-    return this.removeInfo(PolicyOptions.#accountOptions, info)
-  }
-  removeAuthentication(info) {
-    return this.removeInfo(PolicyOptions.#authentication, info)
-  }
-  removeDoubleOptIn(info) {
-    return this.removeInfo(PolicyOptions.#doubleOptIn, info)
-  }
-  removePreferencesCenter(info) {
-    return this.removeInfo(PolicyOptions.#preferencesCenter, info)
-  }
-  removeCodeVerification(info) {
-    return this.removeInfo(PolicyOptions.#codeVerification, info)
-  }
 
-  removeEmailNotification(info) {
-    return this.removeInfo(PolicyOptions.#emailNotifications, info)
-  }
+  addSupportedPolicies(response) {
+    if (response.accountOptions) {
+      this.options.branches.push({
+        id: PolicyOptions.#accountOptions,
+        name: PolicyOptions.#accountOptions,
+        propertyName: PolicyOptions.#accountOptions,
+        value: true,
+        tooltip: 'POLICIES_ACCOUNT_OPTIONS',
+      })
+    }
+    if (response.authentication) {
+      this.options.branches.push({
+        id: PolicyOptions.#authentication,
+        name: PolicyOptions.#authentication,
+        propertyName: PolicyOptions.#authentication,
+        value: true,
+        tooltip: 'POLICIES_AUTHENTICATION',
+      })
+    }
+    if (response.codeVerification) {
+      this.options.branches.push({
+        id: `${PolicyOptions.#idPrefix}${PolicyOptions.#codeVerification}`,
+        name: PolicyOptions.#codeVerification,
+        propertyName: PolicyOptions.#codeVerification,
+        value: true,
+        tooltip: 'CODE_VERIFICATION',
+      })
+    }
+    if (response.emailNotifications) {
+      this.options.branches.push({
+        id: PolicyOptions.#emailNotifications,
+        name: PolicyOptions.#emailNotifications,
+        propertyName: PolicyOptions.#emailNotifications,
+        value: true,
 
-  removeEmailVerification(info) {
-    return this.removeInfo(PolicyOptions.#emailVerification, info)
-  }
+        tooltip: 'POLICIES_EMAIL_NOTIFICATIONS',
+      })
+    }
+    if (response.emailVerification) {
+      const evOption = {
+        id: `${PolicyOptions.#idPrefix}${PolicyOptions.#emailVerification}`,
+        name: PolicyOptions.#emailVerification,
+        propertyName: PolicyOptions.#emailVerification,
+        value: true,
+        tooltip: 'POLICIES_EMAIL_VERIFICATION',
+      }
+      if (response.emailVerification.nextURL) {
+        evOption['branches'] = [
+          {
+            id: `${evOption.id}-Link`,
+            name: t('CONFIGURATION_TREE.POLICIES_LINK_EMAIL_VERIFICATION_CUSTOM_REDIRECTION_URL'),
+            link: `${PolicyOptions.#emailVerification}.nextURL`,
+            value: true,
+          },
+        ]
+      }
+      this.options.branches.push(evOption)
+    }
+    if (response.federation) {
+      this.options.branches.push({
+        id: PolicyOptions.#federation,
+        name: PolicyOptions.#federation,
+        propertyName: PolicyOptions.#federation,
+        value: true,
 
-  removeFederation(info) {
-    return this.removeInfo(PolicyOptions.#federation, info)
-  }
-  removePasswordComplexity(info) {
-    return this.removeInfo(PolicyOptions.#passwordComplexity, info)
-  }
-  removePasswordReset(info) {
-    return this.removeInfo(PolicyOptions.#passwordReset, info)
-  }
-  removeProfilePhoto(info) {
-    return this.removeInfo(PolicyOptions.#profilePhoto, info)
-  }
-  removeRegistration(info) {
-    return this.removeInfo(PolicyOptions.#registration, info)
-  }
-  removeSecurity(info) {
-    return this.removeInfo(PolicyOptions.#security, info)
-  }
-  removeTwoFactorAuth(info) {
-    return this.removeInfo(PolicyOptions.#twoFactorAuth, info)
-  }
-  removeWebSdk(info) {
-    return this.removeInfo(PolicyOptions.#webSdk, info)
+        tooltip: 'POLICIES_FEDERATION',
+      })
+    }
+    if (response.passwordComplexity) {
+      this.options.branches.push({
+        id: PolicyOptions.#passwordComplexity,
+        name: PolicyOptions.#passwordComplexity,
+        propertyName: PolicyOptions.#passwordComplexity,
+        value: true,
+
+        tooltip: 'POLICIES_PASSWORD_COMPLEXITY',
+      })
+    }
+    if (response.gigyaPlugins) {
+      this.options.branches.push({
+        id: 'gigyaPlugins',
+        name: PolicyOptions.#webSdk,
+        propertyName: 'gigyaPlugins',
+        value: true,
+        tooltip: 'POLICIES_WEBSDK',
+      })
+    }
+    if (response.passwordReset) {
+      this.options.branches.push({
+        id: `${PolicyOptions.#idPrefix}${PolicyOptions.#passwordReset}`,
+        name: PolicyOptions.#passwordReset,
+        propertyName: PolicyOptions.#passwordReset,
+        value: true,
+        tooltip: 'POLICIES_PASSWORD_RESET',
+      })
+    }
+    if (response.profilePhoto) {
+      this.options.branches.push({
+        id: 'profilePhoto',
+        name: PolicyOptions.#profilePhoto,
+        propertyName: 'profilePhoto',
+        value: true,
+        tooltip: 'POLICIES_DEFAULT_PROFILE_PHOTO_DIMENSIONS',
+      })
+    }
+    if (response.registration) {
+      this.options.branches.push({
+        id: PolicyOptions.#registration,
+        name: PolicyOptions.#registration,
+        propertyName: PolicyOptions.#registration,
+        value: true,
+        tooltip: 'POLICIES_REGISTRATION',
+      })
+    }
+    if (response.security) {
+      this.options.branches.push({
+        id: PolicyOptions.#security,
+        name: PolicyOptions.#security,
+        propertyName: PolicyOptions.#security,
+        value: true,
+        tooltip: 'POLICIES_SECURITY',
+      })
+    }
+    if (response.twoFactorAuth) {
+      this.options.branches.push({
+        id: `${PolicyOptions.#idPrefix}TwoFactorAuth`,
+        name: PolicyOptions.#twoFactorAuth,
+        propertyName: `twoFactorAuth`,
+        value: true,
+        tooltip: 'POLICIES_TWO_FACTOR_AUTHENTICATION_PROVIDERS',
+      })
+    }
+    if (response.doubleOptIn) {
+      const id = `${PolicyOptions.#idPrefix}${PolicyOptions.#doubleOptIn}`
+      const doiOption = {
+        id: `${id}`,
+        name: PolicyOptions.#doubleOptIn,
+        propertyName: PolicyOptions.#doubleOptIn,
+        value: true,
+        tooltip: 'POLICIES_DOUBLE_OPT_IN',
+      }
+      doiOption.branches = []
+      if (response.doubleOptIn.nextURL) {
+        doiOption.branches.push({
+          id: `${id}-nextUrl-Link`,
+          name: t('CONFIGURATION_TREE.POLICIES_LINK_DOUBLE_OPT_IN_CUSTOM_REDIRECTION_URL'),
+          link: `${PolicyOptions.#doubleOptIn}.nextURL`,
+          value: true,
+        })
+      }
+      if (response.doubleOptIn.nextExpiredURL) {
+        doiOption.branches.push({
+          id: `${id}-nextExpiredUrl-Link`,
+          name: t('CONFIGURATION_TREE.POLICIES_LINK_DOUBLE_OPT_IN_CUSTOM_EXPIRED_REDIRECTION_URL'),
+          link: `${PolicyOptions.#doubleOptIn}.nextExpiredURL`,
+          value: true,
+        })
+      }
+      if (doiOption.branches.length === 0) {
+        delete doiOption.branches
+      }
+      this.options.branches.push(doiOption)
+    }
+    if (response.preferencesCenter) {
+      this.options.branches.push({
+        id: `${PolicyOptions.#idPrefix}${PolicyOptions.#preferencesCenter}`,
+        name: PolicyOptions.#preferencesCenter,
+        propertyName: PolicyOptions.#preferencesCenter,
+        value: true,
+        tooltip: 'POLICIES_PREFERENCES_CENTER',
+      })
+    }
+    return this
   }
 }
 

@@ -221,60 +221,12 @@ class Info {
     const response = await policyOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
+      policyOptions.addSupportedPolicies(response)
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
-      Info.#removeUnsupportedPolicies(response, info, policyOptions)
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
       return Promise.reject([response])
-    }
-  }
-
-  static #removeUnsupportedPolicies(response, info, policyOptions) {
-    if (!response.accountOptions) {
-      policyOptions.removeAccountOptions(info)
-    }
-    if (!response.authentication) {
-      policyOptions.removeAuthentication(info)
-    }
-    if (!response.codeVerification) {
-      policyOptions.removeCodeVerification(info)
-    }
-    if (!response.emailNotifications) {
-      policyOptions.removeEmailNotification(info)
-    }
-    if (!response.emailVerification) {
-      policyOptions.removeEmailVerification(info)
-    }
-    if (!response.federation) {
-      policyOptions.removeFederation(info)
-    }
-    if (!response.passwordComplexity) {
-      policyOptions.removePasswordComplexity(info)
-    }
-    if (!response.gigyaPlugins) {
-      policyOptions.removeWebSdk(info)
-    }
-    if (!response.passwordReset) {
-      policyOptions.removePasswordReset(info)
-    }
-    if (!response.profilePhoto) {
-      policyOptions.removeProfilePhoto(info)
-    }
-    if (!response.registration) {
-      policyOptions.removeRegistration(info)
-    }
-    if (!response.security) {
-      policyOptions.removeSecurity(info)
-    }
-    if (!response.twoFactorAuth) {
-      policyOptions.removeTwoFactorAuth(info)
-    }
-    if (!response.doubleOptIn) {
-      policyOptions.removeDoubleOptIn(info)
-    }
-    if (!response.preferencesCenter) {
-      policyOptions.removePreferencesCenter(info)
     }
   }
 

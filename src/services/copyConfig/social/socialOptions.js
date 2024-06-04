@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Options from '../options.js'
 
 class SocialOptions extends Options {
@@ -14,6 +13,7 @@ class SocialOptions extends Options {
       id: 'socialIdentities',
       name: 'socialIdentities',
       value: true,
+      link: '-',
     })
     this.#social = social
   }

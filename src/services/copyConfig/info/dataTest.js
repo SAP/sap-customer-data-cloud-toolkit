@@ -6,8 +6,10 @@
 import { expectedSchemaResponse } from '../schema/dataTest.js'
 import SchemaOptions from '../schema/schemaOptions.js'
 import PolicyOptions from '../policies/policyOptions.js'
-import EmailTemplateNameTranslator from '../../emails/emailTemplateNameTranslator.js'
 import RbaOptions from '../rba/rbaOptions.js'
+import EmailOptions from '../emails/emailOptions.js'
+import { getPolicyConfig } from '../policies/dataTest.js'
+import { getEmailsExpectedResponse } from '../../emails/dataTest.js'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
@@ -17,15 +19,19 @@ export function getInfoExpectedResponse(supports) {
   const screenSets = createScreenSetCollection(SCREEN_SET_COLLECTION_DEFAULT, supports)
 
   const policiesOptions = new PolicyOptions(undefined)
+  policiesOptions.addSupportedPolicies(getPolicyConfig)
   const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()
 
   const socialIdentities = {
     id: 'socialIdentities',
     name: 'socialIdentities',
     value: supports,
+    link: '-',
   }
 
-  const emailTemplates = createEmailTemplates(supports)
+  const emailOptions = new EmailOptions(undefined)
+  emailOptions.addEmails(getEmailsExpectedResponse)
+  const emailTemplates = supports ? emailOptions.getOptions() : emailOptions.getOptionsDisabled()
 
   const smsTemplates = {
     id: 'smsTemplates',
@@ -179,22 +185,4 @@ function createScreenSetCollection(collection, value) {
     screenSets.branches[0].branches.push(createScreenSet(collection, name, value))
   }
   return screenSets
-}
-
-function createEmailTemplates(value) {
-  const emailTemplates = {
-    id: 'emailTemplates',
-    name: 'emailTemplates',
-    value: value,
-    branches: [],
-  }
-  const emailTemplateNameTranslator = new EmailTemplateNameTranslator()
-  for (const emailInternalName of emailTemplateNameTranslator.getInternalNames()) {
-    emailTemplates.branches.push({
-      id: emailInternalName,
-      name: emailTemplateNameTranslator.translateInternalName(emailInternalName),
-      value: value,
-    })
-  }
-  return emailTemplates
 }
