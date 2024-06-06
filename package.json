@@ -1,6 +1,6 @@
 {
   "name": "sap-customer-data-cloud-toolkit",
-  "version": "1.6.7",
+  "version": "1.7.0",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.6",
