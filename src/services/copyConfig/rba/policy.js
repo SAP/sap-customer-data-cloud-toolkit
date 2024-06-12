@@ -1,6 +1,6 @@
-import UrlBuilder from '../../gigya/urlBuilder.js'
-import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
+import client from '../../gigya/client.js'
+import UrlBuilder from '../../gigya/urlBuilder.js'
 
 export default class Policy {
   static #NAMESPACE = 'accounts'
