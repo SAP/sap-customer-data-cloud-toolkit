@@ -3,11 +3,14 @@
  * License: Apache-2.0
  */
 
-
 const styles = {
   tooltipIconStyle: {
     alignSelf: 'center',
     marginLeft: '6px',
+  },
+
+  addMergeRba: {
+    marginTop: '0.25vh',
   },
 }
 
