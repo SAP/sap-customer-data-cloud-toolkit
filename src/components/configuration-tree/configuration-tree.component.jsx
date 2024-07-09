@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import lodash from 'lodash'
 
-import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover, SegmentedButton, SegmentedButtonItem } from '@ui5/webcomponents-react'
+import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover, SegmentedButton, SegmentedButtonItem, FlexBoxAlignItems, RadioButton } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
@@ -23,10 +23,16 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
   const [selectedSegment, setSelectedSegment] = useState('copy') // State to keep track of selected segment
+  const [isRBAChecked, setIsRBAChecked] = useState(false) // State to keep track of RBA checkbox
 
   const onCheckBoxStateChangeHandler = (event) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
+
+    if (checkBoxId === 'rba') {
+      setIsRBAChecked(value)
+    }
+
     if (siteId) {
       dispatch(setConfigurationStatus({ siteId, checkBoxId, value }))
     } else {
@@ -60,18 +66,18 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
       ''
     )
   }
-  // Tree.node name
+
   const RBA = 'riskBasedAuthentication'
 
-  const handleSegmentedButtonChange = (event) => {
-    const selectedItem = event.detail.selectedItem
+  const handleRadioButtonChange = (event) => {
+    const selectedItem = event.target
     if (selectedItem) {
-      const selectedButton = selectedItem.textContent.trim()
-      if (selectedButton === 'Merge RBA') {
-        console.log('merge pressed')
+      const selectedButton = selectedItem.text.trim()
+      if (selectedButton === 'Replace') {
+        console.log('replace pressed')
         setSelectedSegment('merge')
-      } else if (selectedButton === 'Copy RBA') {
-        console.log('copy pressed')
+      } else {
+        console.log('merge pressed')
         setSelectedSegment('copy')
       }
     }
@@ -111,12 +117,14 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             {showError(treeNode)}
 
             {/* Add Risk Based Segmented Button */}
-            {isRiskBasedAuth && (
+            {isRiskBasedAuth && isRBAChecked && (
               <span>
-                <SegmentedButton id="addMergeRba" data-cy="addMergeRba" className={classes.addMergeRba} onSelectionChange={handleSegmentedButtonChange}>
-                  <SegmentedButtonItem>Merge RBA</SegmentedButtonItem>
-                  <SegmentedButtonItem>Copy RBA</SegmentedButtonItem>
-                </SegmentedButton>
+               
+                <FlexBox alignItems={FlexBoxAlignItems.Center} role="radiogroup" onChange={handleRadioButtonChange}>
+                  <RadioButton name="MergeReplaceButton" text="Merge" onChange={handleRadioButtonChange} />
+                  <RadioButton name="MergeReplaceButton" text="Replace" checked onChange={handleRadioButtonChange} />
+                </FlexBox>
+                {''}
               </span>
             )}
           </FlexBox>
