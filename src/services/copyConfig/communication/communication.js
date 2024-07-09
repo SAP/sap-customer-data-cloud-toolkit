@@ -5,7 +5,7 @@
 
 import Channel from './channel.js'
 import Topic from './topic.js'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
+import { stringToJson } from '../objectHelper.js'
 
 class Communication {
   #credentials
@@ -63,6 +63,7 @@ class Communication {
     let responses = []
 
     let response = await this.#topic.searchTopics()
+
     if (response.errorCode === 0) {
       for (const topic of response.results) {
         responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration.dataCenter, topic))
@@ -81,26 +82,6 @@ class Communication {
       channelsList.push(payload)
     }
     return channelsList
-  }
-
-  static #splitTopics(topics) {
-    const topicsList = []
-    for (const topic of Object.keys(topics)) {
-      const payload = { CommunicationSettings: {} }
-      payload.CommunicationSettings[topic] = topics[topic]
-      topicsList.push(payload)
-    }
-    return topicsList
-  }
-
-  static #createTopicsPayloadForChildSite(topics) {
-    const topicsList = []
-    for (const topic of Object.keys(topics)) {
-      const payload = { CommunicationSettings: {} }
-      payload.CommunicationSettings[topic] = { isActive: topics[topic].isActive }
-      topicsList.push(payload)
-    }
-    return topicsList
   }
 
   static hasCommunicationTopics(response) {
