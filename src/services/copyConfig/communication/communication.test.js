@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
 import { getResponseWithContext } from '../dataTest.js'
@@ -30,8 +29,8 @@ describe('Communication test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_channel_SMS', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_channel_WiFi', apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_NoTax_SMS', apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_NoTax_WiFi', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_SMS', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_EMAIL', apiKey) })
 
     const responses = await communication.copy(apiKey, { dataCenter }, communicationOptions.getOptions())
     expect(responses.length).toEqual(4)
@@ -45,8 +44,8 @@ describe('Communication test suite', () => {
   test('copy successfully to child site', async () => {
     axios
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_NoTax_SMS', apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_NoTax_WiFi', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_SMS', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_EMAIL', apiKey) })
 
     const responses = await communication.copy(apiKey, { dataCenter, siteGroupOwner: apiKey + 'x' }, communicationOptions.getOptions())
     expect(responses.length).toEqual(2)
@@ -78,8 +77,8 @@ describe('Communication test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_channel_SMS', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_channel_WiFi', apiKey) })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_topic_NoTax_SMS', apiKey) })
-      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_NoTax_WiFi', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'communication_topic_SMS', apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, 'communication_topic_EMAIL', apiKey) })
 
     const responses = await communication.copy(apiKey, { dataCenter }, communicationOptions.getOptions())
     expect(responses.length).toEqual(4)
@@ -92,9 +91,9 @@ describe('Communication test suite', () => {
     expect(responses[1].context.id).toEqual('communication_channel_WiFi')
     verifyResponseIsNotOk(responses[2], expectedGigyaResponseInvalidAPI)
     expect(responses[2].context.targetApiKey).toEqual(`${apiKey}`)
-    expect(responses[2].context.id).toEqual('communication_topic_NoTax_SMS')
+    expect(responses[2].context.id).toEqual('communication_topic_SMS')
     verifyResponseIsOk(responses[3])
     expect(responses[3].context.targetApiKey).toEqual(`${apiKey}`)
-    expect(responses[3].context.id).toEqual('communication_topic_NoTax_WiFi')
+    expect(responses[3].context.id).toEqual('communication_topic_EMAIL')
   })
 })

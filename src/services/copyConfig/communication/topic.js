@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -12,6 +11,7 @@ class Topic {
   static #ERROR_MSG_GET_CONFIG = 'Error getting topics'
   static #ERROR_MSG_SET_CONFIG = 'Error setting topics'
   static #NAMESPACE = 'accounts'
+  static #QUERY = 'select topicChannelId, topic, channel, lastModified, description,schema from topicChannels limit 2000'
   #credentials
   #site
   #dataCenter
@@ -22,9 +22,9 @@ class Topic {
     this.#dataCenter = dataCenter
   }
 
-  async get() {
+  async searchTopics() {
     const url = UrlBuilder.buildUrl(Topic.#NAMESPACE, this.#dataCenter, Topic.getGetTopicEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, this.#getTopicParameters(this.#site)).catch(function (error) {
+    const res = await client.post(url, this.#searchTopicParameters(this.#site, Topic.#QUERY)).catch(function (error) {
       return generateErrorResponse(error, Topic.#ERROR_MSG_GET_CONFIG)
     })
     return res.data
@@ -48,19 +48,33 @@ class Topic {
     return parameters
   }
 
+  #searchTopicParameters(apiKey, query) {
+    const parameters = Object.assign({}, this.#authenticationTopicParameters(apiKey))
+    parameters.query = query
+    parameters.context = JSON.stringify({})
+    return parameters
+  }
+
+  #authenticationTopicParameters(apiKey) {
+    const parameters = Object.assign({})
+    parameters.apiKey = apiKey
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
+    return parameters
+  }
   #setTopicParameters(apiKey, body) {
     const parameters = Object.assign({}, this.#getTopicParameters(apiKey))
-    parameters.CommunicationSettings = JSON.stringify(body.CommunicationSettings)
-    parameters.context = JSON.stringify({ id: `communication_topic_${Object.keys(body.CommunicationSettings)[0]}`, targetApiKey: apiKey })
+    parameters.topicChannel = JSON.stringify(body)
+    parameters.context = JSON.stringify({ id: `topic_${Object.keys(body)[0]}`, targetApiKey: apiKey })
     return parameters
   }
 
   static getGetTopicEndpoint() {
-    return `${Topic.#NAMESPACE}.communication.getTopicSettings`
+    return `${Topic.#NAMESPACE}.communications.settings.search`
   }
 
   static getSetTopicEndpoint() {
-    return `${Topic.#NAMESPACE}.communication.setTopicSettings`
+    return `${Topic.#NAMESPACE}.communications.settings.set`
   }
 }
 
