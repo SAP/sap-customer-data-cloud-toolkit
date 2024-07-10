@@ -14,6 +14,8 @@ import '@ui5/webcomponents-icons/dist/message-information.js'
 import './configuration-tree.component.css'
 import styles from './configuration-tree.styles.js'
 
+import { t } from '../../i18n.js'
+
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
 const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setDataflowVariableValue, setDataflowVariableValues, t }) => {
@@ -22,7 +24,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
-  const [selectedSegment, setSelectedSegment] = useState('copy') // State to keep track of selected segment
+  const [selectedSegment, setSelectedSegment] = useState('replaceAction') // State to keep track of selected segment
   const [isRBAChecked, setIsRBAChecked] = useState(false) // State to keep track of RBA checkbox
 
   const onCheckBoxStateChangeHandler = (event) => {
@@ -75,10 +77,10 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
       const selectedButton = selectedItem.text.trim()
       if (selectedButton === 'Replace') {
         console.log('replace pressed')
-        setSelectedSegment('merge')
+        setSelectedSegment('replaceAction')
       } else {
         console.log('merge pressed')
-        setSelectedSegment('copy')
+        setSelectedSegment('mergeAction')
       }
     }
   }
@@ -119,12 +121,10 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             {/* Add Risk Based Segmented Button */}
             {isRiskBasedAuth && isRBAChecked && (
               <span>
-               
                 <FlexBox alignItems={FlexBoxAlignItems.Center} role="radiogroup" onChange={handleRadioButtonChange}>
-                  <RadioButton name="MergeReplaceButton" text="Merge" onChange={handleRadioButtonChange} />
-                  <RadioButton name="MergeReplaceButton" text="Replace" checked onChange={handleRadioButtonChange} />
+                  <RadioButton className="customRadioButton" name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_MERGE')} onChange={handleRadioButtonChange} />
+                  <RadioButton className="customRadioButton" name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_REPLACE')} onChange={handleRadioButtonChange} checked />
                 </FlexBox>
-                {''}
               </span>
             )}
           </FlexBox>
