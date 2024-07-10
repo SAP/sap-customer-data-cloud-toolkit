@@ -4,7 +4,7 @@
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import trackingTool from 'automated-usage-tracking-tool' // TODO: update this import after automated-usage-tracking-tool' is published
+import trackingTool from '@sap_oss/automated-usage-tracking-tool'
 import { initTracker, setTrackUsageDialogStyles } from './utils'
 
 const USAGE_TRACKER_STATE_NAME = 'usageTracker'
@@ -34,7 +34,6 @@ export const requestConsentConfirmation = createAsyncThunk(REQUEST_CONSENT_CONFI
 })
 
 export const trackUsage = createAsyncThunk(TRACK_USAGE_ACTION, async (feature) => {
-  debugger
   try {
     initTracker(trackingTool)
     trackingTool.trackUsage({

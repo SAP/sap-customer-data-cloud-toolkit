@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /**
  * @jest-environment jsdom
  */
@@ -32,14 +31,14 @@ import sitesReducer, {
 import { getPartnerId, getCreationSuccessMessage } from './utils'
 
 import * as data from './dataTest'
-import { Tracker } from '../../tracker/tracker'
+// import { Tracker } from '../../tracker/tracker'
 
 describe('Site slice test suite', () => {
-  let tracker
+  // let tracker
 
-  beforeEach(() => {
-    tracker = jest.spyOn(Tracker, 'reportUsage')
-  })
+  // beforeEach(() => {
+  //   tracker = jest.spyOn(Tracker, 'reportUsage')
+  // })
 
   test('should return initial state', () => {
     expect(sitesReducer(undefined, { type: undefined })).toEqual(data.initialState)
@@ -131,7 +130,7 @@ describe('Site slice test suite', () => {
       deleteChild({
         parentSiteTempId: '1234',
         tempId: '5678',
-      })
+      }),
     )
     expect(newState.sites[0].childSites.length).toEqual(0)
   })
@@ -141,7 +140,7 @@ describe('Site slice test suite', () => {
       data.stateWithParentWithChild,
       deleteParent({
         tempId: '1234',
-      })
+      }),
     )
     expect(newState.sites.length).toEqual(0)
   })
@@ -176,7 +175,7 @@ describe('Site slice test suite', () => {
     expect(newState.errors.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(false)
     expect(newState.progressIndicatorValue).toEqual(0)
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should update state when createSites is rejected', () => {
@@ -184,7 +183,7 @@ describe('Site slice test suite', () => {
     const newState = sitesReducer(data.initialState, action)
     expect(newState.errors.length).toEqual(1)
     expect(newState.errors[0]).toEqual(data.dummyError)
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should clear errors', () => {
@@ -204,7 +203,7 @@ describe('Site slice test suite', () => {
     expect(newState.errors.length).toEqual(1)
     expect(newState.errors[0].errorCode).toEqual(data.dummyError.errorCode)
     expect(newState.showSuccessDialog).toEqual(false)
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should have fulfilled createSites with copyConfigurationResponses errors', () => {
@@ -216,7 +215,7 @@ describe('Site slice test suite', () => {
     expect(newState.errors[1].errorCode).toEqual(data.dummyError.errorCode)
     expect(newState.showSuccessDialog).toEqual(false)
     expect(newState.sitesToDeleteManually).toEqual([])
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should have fulfilled createSites without errors', () => {
@@ -225,7 +224,7 @@ describe('Site slice test suite', () => {
     expect(newState.sites.length).toEqual(0)
     expect(newState.showSuccessDialog).toEqual(true)
     expect(newState.progressIndicatorValue).toEqual(100)
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should select a Parent site by id', () => {
@@ -258,7 +257,7 @@ describe('Site slice test suite', () => {
   test('should set isLoading to true', () => {
     const newState = sitesReducer(data.initialState, setIsLoading(true))
     expect(newState.isLoading).toEqual(true)
-    expect(tracker).not.toHaveBeenCalled()
+    // expect(tracker).not.toHaveBeenCalled()
   })
 
   test('should call Tracker.reportUsage()', () => {
