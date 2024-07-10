@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -52,6 +51,7 @@ import {
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
 import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
+import { requestConsentConfirmation, trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
@@ -62,7 +62,7 @@ import ManualRemovalPopup from '../../components/manual-removal-popup/manual-rem
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
 
 import styles from './site-deployer.styles.js'
-import { Tracker } from '../../tracker/tracker'
+
 const useStyles = createUseStyles(styles, { name: 'SiteDeployer' })
 
 const getSelectedDataCenters = () => {
@@ -118,6 +118,7 @@ const SiteDeployer = ({ t }) => {
   const classes = useStyles()
 
   useEffect(() => {
+    dispatch(requestConsentConfirmation())
     dispatch(updateCredentialsAsync())
   })
 
@@ -168,7 +169,7 @@ const SiteDeployer = ({ t }) => {
               childSites: structure.childSites,
             },
             dataCenters: dataCenters,
-          })
+          }),
         )
       })
     })
@@ -178,7 +179,7 @@ const SiteDeployer = ({ t }) => {
     const SITE_DEPLOYER_URL_PATH = 'cdc-toolbox/site-deployer'
     const SITE_SELECTOR_URL_PATH = 'sites/site-selector'
     window.location.href = document.location.href.replace(SITE_DEPLOYER_URL_PATH, SITE_SELECTOR_URL_PATH)
-    Tracker.reportUsage()
+    dispatch(trackUsage({ featureName: PAGE_TITLE }))
     document.location.reload()
   }
 
@@ -260,12 +261,12 @@ const SiteDeployer = ({ t }) => {
       open={showSuccessDialog && !isLoading}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      closeButtonContent={t("GLOBAL.BUTTON_REPORT_USAGE")}
+      closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="successPopup"
       data-cy="siteDeployersuccessPopup"
     >
-      <Text>{t("GLOBAL.REPORT_USAGE")}</Text>
+      <Text>{t('SITE_DEPLOYER_COMPONENT.SITES_CREATED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
   )
 

@@ -5,7 +5,6 @@
 
 import { onElementExists } from '../../inject/utils'
 import { ERROR_SEVERITY_ERROR } from '../../services/errors/generateErrorResponse'
-import { Tracker } from '../../tracker/tracker'
 
 export const cleanTreeVerticalScrolls = () => {
   onElementExists('ui5-tree', () => {
@@ -39,12 +38,10 @@ export const errorsAreWarnings = (errors) => {
 }
 
 export const sendReportOnWarnings = (errors) => {
-  const SEND_REPORT_DELAY_IN_MILLIS = 2000
   if (errors.length && errorsAreWarnings(errors)) {
-    setTimeout(() => {
-      Tracker.reportUsage()
-    }, SEND_REPORT_DELAY_IN_MILLIS)
+    return true
   }
+  return false
 }
 
 export const handleCheckboxChange = (dispatch, checkbox, value, siteId, setConfigurationStatus) => {
