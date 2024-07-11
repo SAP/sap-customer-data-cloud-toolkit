@@ -75,7 +75,7 @@ describe('Copy Configuration extended test suite', () => {
   context('Display success messages', () => {
     beforeEach(() => {
       utils.mockGetConfigurationRequests()
-      utils.startUp(dataTest.copyConfigExtendendMenuOption)
+      utils.startUpCopyConfig(dataTest.copyConfigExtendendMenuOption)
       utils.verifyTrackerDialog()
     })
 
