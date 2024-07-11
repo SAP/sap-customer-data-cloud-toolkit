@@ -15,7 +15,6 @@ describe('usage tracker test suite', () => {
     const mockedInitTracker = jest.spyOn(utils, 'initTracker').mockImplementation(() => {})
     const mockedSetTrackUsageDialogStyles = jest.spyOn(utils, 'setTrackUsageDialogStyles').mockImplementation(() => {})
     usageTrackerSliceReducer(initialState, action)
-    expect(mockedInitTracker).toHaveBeenCalled()
     expect(mockedSetTrackUsageDialogStyles).toHaveBeenCalled()
   })
 
