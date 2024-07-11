@@ -4,10 +4,11 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import lodash from 'lodash'
 
-import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover, SegmentedButton, SegmentedButtonItem, FlexBoxAlignItems, RadioButton } from '@ui5/webcomponents-react'
+import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
+import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.jsx'
 import { getHighestSeverity } from './utils'
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
@@ -22,8 +23,8 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
-  const [selectedSegment, setSelectedSegment] = useState('replaceAction') // State to keep track of selected segment
-  const [isRBAChecked, setIsRBAChecked] = useState(false) // State to keep track of RBA checkbox
+  const [selectedSegment, setSelectedSegment] = useState('replaceAction')
+  const [isRBAChecked, setIsRBAChecked] = useState(false)
 
   const onCheckBoxStateChangeHandler = (event) => {
     const checkBoxId = event.srcElement.id
@@ -66,34 +67,10 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
       ''
     )
   }
-  // Add Risk Based Authorization Rules RadioButtons
-  const rbaMergeOrReplaceRules = (treeNode) => {
-    const isRiskBasedAuth = treeNode.name === RBA
-    return isRiskBasedAuth && isRBAChecked ? (
-      <span>
-        <FlexBox alignItems={FlexBoxAlignItems.Center} role="radiogroup" onChange={handleRadioButtonChange}>
-          <RadioButton name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_MERGE')} onChange={handleRadioButtonChange} />
-          <RadioButton name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_REPLACE')} onChange={handleRadioButtonChange} checked />
-        </FlexBox>
-      </span>
-    ) : (
-      ''
-    )
-  }
 
-  const RBA = 'RBA Rules'
-  const handleRadioButtonChange = (event) => {
-    const selectedItem = event.target
-    if (selectedItem) {
-      const selectedButton = selectedItem.text.trim()
-      if (selectedButton === 'Replace') {
-        console.log('replace pressed')
-        setSelectedSegment('replaceAction')
-      } else {
-        console.log('merge pressed')
-        setSelectedSegment('mergeAction')
-      }
-    }
+  const showRBARulesButtons = (treeNode) => {
+    const isRiskBasedAuth = treeNode.name === 'RBA Rules'
+    return isRiskBasedAuth && isRBAChecked ? <RiskBasedAuthenticationRulesButtons t={t} setSelectedSegment={setSelectedSegment} /> : ''
   }
 
   const expandTree = (treeNode) => {
@@ -127,7 +104,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             )}
             {showDataflowSettings(treeNode)}
             {showError(treeNode)}
-            {rbaMergeOrReplaceRules(treeNode)}
+            {showRBARulesButtons(treeNode)}
           </FlexBox>
         }
       >
