@@ -1,26 +1,20 @@
-/**
- * @jest-environment jsdom
- */
-import usageTrackerSliceReducer, { requestConsentConfirmation, trackUsage } from './usageTrackerSlice'
-import * as utils from './utils'
+import usageTrackerSliceReducer, { initializeTracker } from './usageTrackerSlice'
+import trackingTool from '@sap_oss/automated-usage-tracking-tool'
 
 describe('usage tracker test suite', () => {
   const initialState = {
-    consentGranted: false,
+    isTrackerInitialized: false,
+    isConsentGranted: false,
   }
 
-  test('should call setTrackUsageDialogStyles when requestConsentConfirmation is pending', () => {
-    const action = requestConsentConfirmation.pending
-    jest.spyOn(document, 'getElementById').mockReturnValue({})
-    const mockedInitTracker = jest.spyOn(utils, 'initTracker').mockImplementation(() => {})
-    const mockedSetTrackUsageDialogStyles = jest.spyOn(utils, 'setTrackUsageDialogStyles').mockImplementation(() => {})
-    usageTrackerSliceReducer(initialState, action)
-    expect(mockedSetTrackUsageDialogStyles).toHaveBeenCalled()
-  })
+  test('should update state when initializeTracker is called', () => {
+    const mockedTrackingToolInit = jest.spyOn(trackingTool, 'init').mockImplementation(() => {})
+    const mockedTrackingToolIsConsentGranted = jest.spyOn(trackingTool, 'isConsentGranted').mockImplementation(() => true)
 
-  test('should call setTrackUsageDialogStyles when requestConsentConfirmation is fulfilled', () => {
-    const action = requestConsentConfirmation.fulfilled
-    const newState = usageTrackerSliceReducer(initialState, action)
-    expect(newState.consentGranted).toEqual(true)
+    const newState = usageTrackerSliceReducer(initialState, initializeTracker)
+    expect(mockedTrackingToolInit).toHaveBeenCalled()
+    expect(mockedTrackingToolIsConsentGranted).toHaveBeenCalled()
+    expect(newState.isTrackerInitialized).toEqual(true)
+    expect(newState.isConsentGranted).toEqual(true)
   })
 })

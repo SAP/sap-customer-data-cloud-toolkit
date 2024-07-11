@@ -15,9 +15,13 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
 import SmsTemplates from './routes/sms-templates/sms-templates.component'
+import store from './redux/store'
+import { initializeTracker, requestConsentConfirmation } from './redux/usageTracker/usageTrackerSlice'
+import '@sap_oss/automated-usage-tracking-tool/styles/sap_horizon.css'
 
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
+  setUpUsageTracker()
 
   return (
     <ThemeProvider>
@@ -38,4 +42,14 @@ function App() {
     </ThemeProvider>
   )
 }
+
+function setUpUsageTracker() {
+  if (!store.getState().usageTracker.isTrackerInitialized) {
+    store.dispatch(initializeTracker())
+  }
+  if (!store.getState().usageTracker.isConsentGranted) {
+    store.dispatch(requestConsentConfirmation())
+  }
+}
+
 export default App
