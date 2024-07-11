@@ -14,8 +14,6 @@ import '@ui5/webcomponents-icons/dist/message-information.js'
 import './configuration-tree.component.css'
 import styles from './configuration-tree.styles.js'
 
-import { t } from '../../i18n.js'
-
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
 const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setDataflowVariableValue, setDataflowVariableValues, t }) => {
@@ -31,7 +29,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
 
-    if (checkBoxId === 'rba') {
+    if (checkBoxId === 'rba' || checkBoxId === 'RBA Rules') {
       setIsRBAChecked(value)
     }
 
@@ -68,9 +66,22 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
       ''
     )
   }
+  // Add Risk Based Authorization Rules RadioButtons
+  const rbaMergeOrReplaceRules = (treeNode) => {
+    const isRiskBasedAuth = treeNode.name === RBA
+    return isRiskBasedAuth && isRBAChecked ? (
+      <span>
+        <FlexBox alignItems={FlexBoxAlignItems.Center} role="radiogroup" onChange={handleRadioButtonChange}>
+          <RadioButton name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_MERGE')} onChange={handleRadioButtonChange} />
+          <RadioButton name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_REPLACE')} onChange={handleRadioButtonChange} checked />
+        </FlexBox>
+      </span>
+    ) : (
+      ''
+    )
+  }
 
-  const RBA = 'riskBasedAuthentication'
-
+  const RBA = 'RBA Rules'
   const handleRadioButtonChange = (event) => {
     const selectedItem = event.target
     if (selectedItem) {
@@ -86,7 +97,6 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
   }
 
   const expandTree = (treeNode) => {
-    const isRiskBasedAuth = treeNode.name === RBA
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -117,16 +127,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             )}
             {showDataflowSettings(treeNode)}
             {showError(treeNode)}
-
-            {/* Add Risk Based Segmented Button */}
-            {isRiskBasedAuth && isRBAChecked && (
-              <span>
-                <FlexBox alignItems={FlexBoxAlignItems.Center} role="radiogroup" onChange={handleRadioButtonChange}>
-                  <RadioButton className="customRadioButton" name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_MERGE')} onChange={handleRadioButtonChange} />
-                  <RadioButton className="customRadioButton" name="MergeReplaceButton" text={t('CONFIGURATINON_TREE.BUTTON_REPLACE')} onChange={handleRadioButtonChange} checked />
-                </FlexBox>
-              </span>
-            )}
+            {rbaMergeOrReplaceRules(treeNode)}
           </FlexBox>
         }
       >
