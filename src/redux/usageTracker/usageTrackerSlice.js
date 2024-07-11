@@ -31,7 +31,7 @@ export const usageTrackerSlice = createSlice({
 
 export const requestConsentConfirmation = createAsyncThunk(REQUEST_CONSENT_CONFIRMATION_ACTION, async (_, { rejectWithValue }) => {
   try {
-    return await trackingTool.requestConsentConfirmation({})
+    return await trackingTool.requestConsentConfirmation()
   } catch (error) {
     return rejectWithValue(error)
   }
