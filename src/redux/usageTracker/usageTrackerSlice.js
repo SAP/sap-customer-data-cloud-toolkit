@@ -13,7 +13,16 @@ const TRACK_USAGE_ACTION = 'trackUsage'
 
 export const usageTrackerSlice = createSlice({
   name: USAGE_TRACKER_STATE_NAME,
-  initialState: {},
+  initialState: {
+    trackerInitialized: false,
+    consentGranted: localStorage.getItem('usageTracking') !== null,
+  },
+  reducers: {
+    initializeTracker(state) {
+      initTracker(trackingTool)
+      state.trackerInitialized = true
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(requestConsentConfirmation.pending, () => {
       const dialog = document.getElementById('automated-usage-tracking-tool-dialog')
@@ -21,28 +30,35 @@ export const usageTrackerSlice = createSlice({
         setTrackUsageDialogStyles(dialog)
       }
     })
+    builder.addCase(requestConsentConfirmation.fulfilled, (state) => {
+      state.consentGranted = true
+    })
   },
 })
 
-export const requestConsentConfirmation = createAsyncThunk(REQUEST_CONSENT_CONFIRMATION_ACTION, async () => {
+export const requestConsentConfirmation = createAsyncThunk(REQUEST_CONSENT_CONFIRMATION_ACTION, async (_, { rejectWithValue }) => {
   try {
-    initTracker(trackingTool)
     return await trackingTool.requestConsentConfirmation({})
   } catch (error) {
-    console.log(error)
+    return rejectWithValue(error)
   }
 })
 
-export const trackUsage = createAsyncThunk(TRACK_USAGE_ACTION, async (feature) => {
+export const trackUsage = createAsyncThunk(TRACK_USAGE_ACTION, async (feature, { rejectWithValue }) => {
   try {
-    initTracker(trackingTool)
     trackingTool.trackUsage({
       toolName: 'cdc-toolkit',
       featureName: feature.featureName,
     })
   } catch (error) {
-    console.log(error)
+    return rejectWithValue(error)
   }
 })
 
+export const { initializeTracker } = usageTrackerSlice.actions
+
 export default usageTrackerSlice.reducer
+
+export const selectTrackerInitialized = (state) => state.usageTracker.trackerInitialized
+
+export const selectConsentGranted = (state) => state.usageTracker.consentGranted

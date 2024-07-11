@@ -10,27 +10,30 @@ export const setTrackUsageDialogStyles = (dialog) => {
   dialog.style.width = '500px'
   dialog.style.borderRadius = '5px'
   dialog.style.borderColor = '#fff'
-  setTrackUsageDialogContentStyle()
-  setTrackUsageDialogFooterStyle()
-  setTrackUsageDialogConfirmButtonStyle()
+  setTrackUsageDialogContentStyle(dialog)
+  setTrackUsageDialogFooterStyle(dialog)
+  setTrackUsageDialogConfirmButtonStyle(dialog)
 }
 
-function setTrackUsageDialogContentStyle() {
-  const dialogContent = document.getElementById('automated-usage-tracking-tool-dialog-content')
+function setTrackUsageDialogContentStyle(dialog) {
+  // const dialogContent = document.getElementById('automated-usage-tracking-tool-dialog-content')
+  const dialogContent = dialog.querySelector('#automated-usage-tracking-tool-dialog-content')
   dialogContent.style.padding = '8px'
   dialogContent.style.fontFamily = `"72override", "72", "72full", Arial, Helvetica, sans-serif`
   dialogContent.style.fontSize = '.875rem;'
 }
 
-function setTrackUsageDialogFooterStyle() {
-  const dialogFooter = document.getElementById('automated-usage-tracking-tool-dialog-footer')
+function setTrackUsageDialogFooterStyle(dialog) {
+  // const dialogFooter = document.getElementById('automated-usage-tracking-tool-dialog-footer')
+  const dialogFooter = dialog.querySelector('#automated-usage-tracking-tool-dialog-footer')
   dialogFooter.style.display = 'inline-flex'
   dialogFooter.style.flexDirection = 'column'
   dialogFooter.style.width = '100%'
 }
 
-function setTrackUsageDialogConfirmButtonStyle() {
-  const confirmButton = document.getElementById('automated-usage-tracking-tool-dialog-confirm-button')
+function setTrackUsageDialogConfirmButtonStyle(dialog) {
+  // const confirmButton = document.getElementById('automated-usage-tracking-tool-dialog-confirm-button')
+  const confirmButton = dialog.querySelector('#automated-usage-tracking-tool-dialog-confirm-button')
   confirmButton.style.color = '#fff'
   confirmButton.style.borderColor = '#0a6ed1'
   confirmButton.style.backgroundColor = '#0a6ed1'

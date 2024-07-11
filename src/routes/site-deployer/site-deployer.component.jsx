@@ -51,7 +51,7 @@ import {
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
 import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
-import { requestConsentConfirmation, trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
+import { initializeTracker, requestConsentConfirmation, trackUsage, selectTrackerInitialized, selectConsentGranted } from '../../redux/usageTracker/usageTrackerSlice'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
@@ -109,6 +109,8 @@ const SiteDeployer = ({ t }) => {
   const sitesToDeleteManually = useSelector(selectSitesToDeleteManually)
   const structures = useSelector(selectSiteStructures)
   const progressIndicatorValue = useSelector(selectProgressIndicatorValue)
+  const trackerInitialized = useSelector(selectTrackerInitialized)
+  const consentGranted = useSelector(selectConsentGranted)
 
   const [selectedStructureId, setSelectedStructureId] = useState()
   const [baseDomain, setBaseDomain] = useState('')
@@ -118,7 +120,12 @@ const SiteDeployer = ({ t }) => {
   const classes = useStyles()
 
   useEffect(() => {
-    dispatch(requestConsentConfirmation())
+    if (!trackerInitialized) {
+      dispatch(initializeTracker())
+    }
+    if (!consentGranted) {
+      dispatch(requestConsentConfirmation())
+    }
     dispatch(updateCredentialsAsync())
   })
 
