@@ -40,14 +40,24 @@ import {
   policiesPopoverText,
   siteConfigResponse,
   targetSitePopoverText,
+  trackingToolText,
 } from './dataTest'
 
 export function startUp(pageName) {
-  cy.visit('', {
-    onBeforeLoad(window) {
-      cy.stub(window, 'open').as('windowOpenStub')
-    },
-  })
+  cy.visit('')
+  this.verifyTrackerDialog()
+  cy.clearAllCookies()
+  cy.clearAllLocalStorage()
+  cy.clearAllSessionStorage()
+
+  // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
+  // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
+
+  cy.contains(pageName).realClick()
+}
+export function startUpCopyConfig(pageName) {
+  cy.visit('')
+  this.verifyTrackerDialog()
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
@@ -57,6 +67,12 @@ export function startUp(pageName) {
 
   cy.contains(pageName).realClick()
   cy.reload()
+}
+
+export function verifyTrackerDialog() {
+  cy.get('#automated-usage-tracking-tool-dialog').should('be.visible')
+  cy.get('#automated-usage-tracking-tool-dialog-content').should('contain.text', trackingToolText)
+  cy.get('#automated-usage-tracking-tool-dialog-confirm-button').click()
 }
 
 export function clearCredentials() {
@@ -243,8 +259,9 @@ export function fillSourceApiKeyInput() {
   cy.get('[data-cy ="siteCopyConfigurationDialog"]')
     .find('#apiKeyInput')
     .then((input) => {
-      cy.wrap(input).shadow().find('input').click().focus().type(dummyApiKey)
-      cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
+      cy.wrap(input).shadow().find('input').click().focus().type(`${dummyApiKey}`).should('have.value', dummyApiKey)
+      cy.wait(1000)
+      cy.get(':nth-child(2) > [data-cy="apiKeyInput"] > [data-cy="addTargetSiteButton"]').click()
     })
 }
 

@@ -13,7 +13,8 @@ const smsTemplatesOption = 'SMS Templates'
 const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
-const expectedSuccessMessage = 'Report Usage Via E-mailPlease report the successful usage to help us track usages and being able to continue improving this tool.'
+const expectedSuccessMessage = 'OkAll sites have been created successfully.'
+const expectedCopyConfigSuccessMessage = 'OkAll selected configurations were copied successfully.'
 const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
@@ -59,6 +60,8 @@ const identityConnectOption = 'Connect'
 const gigyaURL = 'console.gigya.com'
 const dataflowOption = 'Dataflows'
 const testDataflow = 'TESTING DATAFLOW'
+const trackingToolText =
+  'This app collects anonymous usage data to help deliver and improve this product. By installing this app, you agree to share this information with SAP. If you wish to revoke your consent, please uninstall the app. Do you want to continue? (Y/n)'
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
@@ -1646,6 +1649,7 @@ export {
   expectedDuplicatedMessage,
   expectedErrorMessage,
   expectedSuccessMessage,
+  expectedCopyConfigSuccessMessage,
   gigyaURL,
   identityConnectOption,
   importEmailTemplatesErrorMessage,
@@ -1705,6 +1709,7 @@ export {
   templateSiteName,
   templateSiteNameSmsTemplatesContent,
   testDataflow,
+  trackingToolText,
   unauthorizedUser,
   webSDKConfiguration,
   webSdkCopyTest,

@@ -11,7 +11,8 @@ describe('Copy Configuration extended test suite', () => {
   context('Check initial elements state', () => {
     beforeEach(() => {
       utils.mockGetConfigurationRequests()
-      utils.startUp(dataTest.copyConfigExtendendMenuOption)
+      utils.startUpCopyConfig(dataTest.copyConfigExtendendMenuOption)
+      utils.verifyTrackerDialog()
     })
 
     it('should display all expected elements', () => {
@@ -75,6 +76,7 @@ describe('Copy Configuration extended test suite', () => {
     beforeEach(() => {
       utils.mockGetConfigurationRequests()
       utils.startUp(dataTest.copyConfigExtendendMenuOption)
+      utils.verifyTrackerDialog()
     })
 
     it('should display success popup after successfully copy on save', () => {
@@ -84,7 +86,7 @@ describe('Copy Configuration extended test suite', () => {
       utils.setConfigurationCopyConfig()
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.enabled')
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
-      cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedSuccessMessage)
+      cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedCopyConfigSuccessMessage)
       cy.get('[data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
     })
 
