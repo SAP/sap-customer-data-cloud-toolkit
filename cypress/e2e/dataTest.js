@@ -61,7 +61,7 @@ const gigyaURL = 'console.gigya.com'
 const dataflowOption = 'Dataflows'
 const testDataflow = 'TESTING DATAFLOW'
 const trackingToolText =
-  'This app collects anonymous usage data to help deliver and improve this product. By installing this app, you agree to share this information with SAP. If you wish to revoke your consent, please uninstall the app. Do you want to continue? (Y/n)'
+  'This app collects anonymous usage data to help deliver and improve this product. By installing this app, you agree to share this information with SAP. If you wish to revoke your consent, please uninstall the app. Do you want to continue?'
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
