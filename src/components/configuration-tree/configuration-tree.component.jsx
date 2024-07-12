@@ -8,7 +8,7 @@ import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/web
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
-import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.jsx'
+import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.component'
 import { getHighestSeverity } from './utils'
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
@@ -23,7 +23,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
-  const [selectedSegment, setSelectedSegment] = useState('replaceAction')
+  const [selectedSegment, setSelectedSegment] = useState('merge')
   const [isRBAChecked, setIsRBAChecked] = useState(false)
 
   const onCheckBoxStateChangeHandler = (event) => {
