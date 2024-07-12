@@ -51,7 +51,7 @@ import {
 import { selectDataCenters } from '../../redux/dataCenters/dataCentersSlice'
 import { selectSiteStructures } from '../../redux/siteStructures/siteStructuresSlice'
 import { selectCredentials, updateCredentialsAsync } from '../../redux/credentials/credentialsSlice'
-import { trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
+import { trackUsage } from '../../lib/tracker.js'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
@@ -174,11 +174,11 @@ const SiteDeployer = ({ t }) => {
     })
   }
 
-  const onSuccessDialogAfterCloseHandler = () => {
+  const onSuccessDialogAfterCloseHandler = async () => {
     const SITE_DEPLOYER_URL_PATH = 'cdc-toolbox/site-deployer'
     const SITE_SELECTOR_URL_PATH = 'sites/site-selector'
     window.location.href = document.location.href.replace(SITE_DEPLOYER_URL_PATH, SITE_SELECTOR_URL_PATH)
-    dispatch(trackUsage({ featureName: PAGE_TITLE }))
+    await trackUsage({ featureName: PAGE_TITLE })
     document.location.reload()
   }
 

@@ -30,7 +30,7 @@ import {
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
-import { trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
+import { trackUsage } from '../../lib/tracker.js'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './sms-templates.styles.js'
@@ -100,8 +100,8 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearErrors())
     dispatch(clearErrorCondition())
   }
-  const onSuccessDialogAfterCloseHandler = () => {
-    dispatch(trackUsage({ featureName: PAGE_TITLE }))
+  const onSuccessDialogAfterCloseHandler = async () => {
+    await trackUsage({ featureName: PAGE_TITLE })
     document.location.reload()
   }
 

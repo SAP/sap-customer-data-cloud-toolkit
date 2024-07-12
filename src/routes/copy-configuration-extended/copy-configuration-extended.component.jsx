@@ -48,7 +48,7 @@ import {
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
-import { trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
+import { trackUsage } from '../../lib/tracker.js'
 
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
@@ -145,12 +145,12 @@ const CopyConfigurationExtended = ({ t }) => {
     }
   }
 
-  const onSuccessDialogAfterCloseHandler = () => {
+  const onSuccessDialogAfterCloseHandler = async () => {
     setTarketApiKeyInputValue('')
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
     setSelectAllCheckboxState(false)
-    dispatch(trackUsage({ featureName: PAGE_TITLE }))
+    await trackUsage({ featureName: PAGE_TITLE })
   }
 
   const onTarketApiKeyDeleteHandler = (event) => {
@@ -196,9 +196,7 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showErrorList = () => {
-    if (sendReportOnWarnings(errors)) {
-      dispatch(trackUsage({ featureName: PAGE_TITLE }))
-    }
+    sendReportOnWarnings(errors, PAGE_TITLE)
 
     return errors.length ? (
       <div className={classes.errorListOuterDivStyle}>

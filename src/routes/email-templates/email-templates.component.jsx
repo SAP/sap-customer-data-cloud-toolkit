@@ -32,11 +32,11 @@ import {
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
-import { trackUsage } from '../../redux/usageTracker/usageTrackerSlice'
-
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './email-templates.styles.js'
 import { errorConditions } from '../../redux/errorConditions'
+
+import { trackUsage } from '../../lib/tracker.js'
 
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
 
@@ -82,8 +82,8 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearErrorCondition())
   }
 
-  const onAfterCloseSuccessDialogHandler = () => {
-    dispatch(trackUsage({ featureName: PAGE_TITLE }))
+  const onAfterCloseSuccessDialogHandler = async () => {
+    await trackUsage({ featureName: PAGE_TITLE })
     document.location.reload()
   }
 
