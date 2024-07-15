@@ -84,6 +84,9 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
       const configuration = findConfiguration(siteConfiguration.configurations, action.payload.checkBoxId)
       configuration.variables = action.payload.variables
     },
+    setRbaRulesMergeOrReplace(state, action) {
+      state.mergeOrReplace = action.payload
+    },
     setErrors(state, action) {
       state.errors = action.payload
     },
@@ -169,6 +172,7 @@ export const {
   clearErrors,
   setDataflowVariableValue,
   setDataflowVariableValues,
+  setRbaRulesMergeOrReplace,
   setErrors,
 } = siteDeployerCopyConfigurationSlice.actions
 

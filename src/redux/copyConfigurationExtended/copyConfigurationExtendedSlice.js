@@ -115,6 +115,11 @@ export const copyConfigurationExtendedSlice = createSlice({
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       configuration.variables = action.payload.variables
     },
+    setRbaRulesMergeOrReplace(state, action) {
+      // Change value from Merge to Replace use something similar to the setDataflowVariableValues
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.mergeOrReplace = action.payload.mergeOrReplace
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getConfigurations.pending, (state) => {
@@ -227,6 +232,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   }
 
   try {
+    debugger
     return await new ConfigManager(credentials, currentSiteApiKey).copy(
       state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
       state.copyConfigurationExtended.configurations,
@@ -241,7 +247,11 @@ export const getAvailableTargetSites = createAsyncThunk(GET_AVAILABLE_TARGET_API
     if (!areAvailableTargetSitesLoading) {
       const parallelRequestsAllowed = 5
       const state = getState()
-      const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
+      const credentials = {
+        userKey: state.credentials.credentials.userKey,
+        secret: state.credentials.credentials.secretKey,
+        gigyaConsole: state.credentials.credentials.gigyaConsole,
+      }
       const siteFinderPaginated = new SiteFinderPaginated(credentials, parallelRequestsAllowed)
       let response = await siteFinderPaginated.getFirstPage()
       const availableTargetSites = []
@@ -294,6 +304,7 @@ export const {
   setAvailableTargetSites,
   setDataflowVariableValue,
   setDataflowVariableValues,
+  setRbaRulesMergeOrReplace,
 } = copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations

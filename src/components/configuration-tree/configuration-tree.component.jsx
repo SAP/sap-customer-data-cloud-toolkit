@@ -17,13 +17,25 @@ import styles from './configuration-tree.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
-const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setDataflowVariableValue, setDataflowVariableValues, t }) => {
+const ConfigurationTree = ({
+  siteId,
+  id,
+  name,
+  value,
+  error,
+  branches,
+  tooltip,
+  setConfigurationStatus,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  setRbaRulesMergeOrReplace,
+  t,
+}) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
-  const [selectedSegment, setSelectedSegment] = useState('merge')
   const [isRBAChecked, setIsRBAChecked] = useState(false)
 
   const onCheckBoxStateChangeHandler = (event) => {
@@ -70,7 +82,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
 
   const showRBARulesButtons = (treeNode) => {
     const isRiskBasedAuth = treeNode.name === 'RBA Rules'
-    return isRiskBasedAuth && isRBAChecked ? <RiskBasedAuthenticationRulesButtons t={t} setSelectedSegment={setSelectedSegment} /> : ''
+    return isRiskBasedAuth && isRBAChecked ? <RiskBasedAuthenticationRulesButtons treeNode={treeNode} setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace} t={t} /> : ''
   }
 
   const expandTree = (treeNode) => {
