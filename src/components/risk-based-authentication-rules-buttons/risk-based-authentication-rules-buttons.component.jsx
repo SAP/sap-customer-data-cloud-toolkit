@@ -1,30 +1,32 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
+
 import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { FlexBox, RadioButton } from '@ui5/webcomponents-react'
 import { useDispatch } from 'react-redux'
+import { handleRadioButtonChange } from './utils'
 
 const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesMergeOrReplace, t }) => {
   const dispatch = useDispatch()
-  const handleRadioButtonChange = (event) => {
-    const selectedItem = event.target
-    if (selectedItem) {
-      const selectedButton = selectedItem.text.trim()
-      if (selectedButton === t('CONFIGURATION_TREE.BUTTON_MERGE')) {
-        console.log('replace pressed')
-        debugger
-        dispatch(setRbaRulesMergeOrReplace({ checkBoxId: treeNode.id, mergeOrReplace: 'merge' }))
-      } else {
-        console.log('replace pressed')
-        dispatch(setRbaRulesMergeOrReplace({ checkBoxId: treeNode.id, mergeOrReplace: 'replace' }))
-      }
-    }
-  }
 
   return (
     <span>
       <FlexBox role="radiogroup">
-        <RadioButton name="MergeReplaceButton" text={t('CONFIGURATION_TREE.BUTTON_REPLACE')} onClick={handleRadioButtonChange} />
-        <RadioButton name="MergeReplaceButton" text={t('CONFIGURATION_TREE.BUTTON_MERGE')} onClick={handleRadioButtonChange} checked />
+        <RadioButton
+          name="MergeReplaceButton"
+          text={t('CONFIGURATION_TREE.BUTTON_REPLACE')}
+          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesMergeOrReplace, t, dispatch)}
+        />
+        <RadioButton
+          name="MergeReplaceButton"
+          text={t('CONFIGURATION_TREE.BUTTON_MERGE')}
+          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesMergeOrReplace, t, dispatch)}
+          checked
+        />
       </FlexBox>
     </span>
   )
