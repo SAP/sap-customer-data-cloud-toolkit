@@ -116,7 +116,6 @@ export const copyConfigurationExtendedSlice = createSlice({
       configuration.variables = action.payload.variables
     },
     setRbaRulesMergeOrReplace(state, action) {
-      // Change value from Merge to Replace use something similar to the setDataflowVariableValues
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       configuration.mergeOrReplace = action.payload.mergeOrReplace
     },

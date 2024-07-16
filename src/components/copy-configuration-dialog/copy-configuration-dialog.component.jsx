@@ -42,6 +42,7 @@ import {
   clearErrors,
   setDataflowVariableValue,
   setDataflowVariableValues,
+  setRbaRulesMergeOrReplace,
   setErrors,
 } from '../../redux/siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 
@@ -139,6 +140,7 @@ const CopyConfigurationDialog = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
+        setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace}
         onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
       />
     )
