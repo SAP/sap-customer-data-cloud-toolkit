@@ -1,17 +1,18 @@
-import RbaPolicy from './policy.js'
-import Policies from '../policies/policies.js'
+import { ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse'
 import { removeAllPropertiesFromObjectExceptSome, stringToJson } from '../objectHelper.js'
+import Policies from '../policies/policies.js'
+import RbaPolicy from './policy.js'
 import RiskAssessment from './riskAssessment.js'
-import {
-  ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
-  ERROR_SEVERITY_WARNING
-} from "../../errors/generateErrorResponse";
 
 export default class Rba {
   static ACCOUNT_TAKEOVER_PROTECTION = 'accountTakeoverProtection'
   static UNKNOWN_LOCATION_NOTIFICATION = 'unknownLocationNotification'
   static UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID = 'rba.unknownLocationNotification'
   static RULES = 'RBA Rules'
+  static OPERATION = {
+    MERGE: 'merge',
+    REPLACE: 'replace',
+  }
   #credentials
   #site
   #dataCenter
@@ -23,6 +24,8 @@ export default class Rba {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
+    console.log({ site, dataCenter })
+
     this.#rbaPolicy = new RbaPolicy(credentials, site, dataCenter)
     this.#policies = new Policies(credentials, site, dataCenter)
     this.#riskAssessment = new RiskAssessment(credentials, site)
@@ -30,17 +33,19 @@ export default class Rba {
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
-    if(this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
-      return [{
-        errorCode: ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
-        errorDetails: 'Cannot change RBA data on child site.',
-        errorMessage: 'Cannot copy RBA data to the destination site',
-        statusCode: 412,
-        statusReason: 'Precondition Failed',
-        time: Date.now(),
-        severity: ERROR_SEVERITY_WARNING,
-        context: { targetApiKey: destinationSite, id: 'rba.' },
-      }]
+    if (this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
+      return [
+        {
+          errorCode: ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
+          errorDetails: 'Cannot change RBA data on child site.',
+          errorMessage: 'Cannot copy RBA data to the destination site',
+          statusCode: 412,
+          statusReason: 'Precondition Failed',
+          time: Date.now(),
+          severity: ERROR_SEVERITY_WARNING,
+          context: { targetApiKey: destinationSite, id: 'rba.' },
+        },
+      ]
     }
     responses = await this.get()
     if (responses.every((r) => r.errorCode === 0)) {
@@ -63,7 +68,9 @@ export default class Rba {
       promises.push(this.setUnknownLocationNotification(destinationSite, destinationSiteConfiguration, payloads[1]))
     }
     if (options.getOptionValue(Rba.RULES)) {
-      promises.push(this.setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payloads[2]))
+      debugger
+      const mergeOrReplace = options.getOptionMergeOrRequest(Rba.RULES)
+      promises.push(this.setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payloads[2], mergeOrReplace))
     }
     return await Promise.all(promises)
   }
@@ -84,14 +91,39 @@ export default class Rba {
     return response
   }
 
-  async setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payload) {
-    const response = await this.#rbaPolicy.set(destinationSite, payload, destinationSiteConfiguration.dataCenter)
+  // Merge originCommonRules into destinationCommonRules by id
+  mergeCommonRules(originCommonRules, destinationCommonRules) {
+    const destinationCommonRulesMap = new Map(destinationCommonRules.map((rule) => [rule.id, rule]))
+
+    originCommonRules.forEach((originRule) => {
+      if (destinationCommonRulesMap.has(originRule.id)) {
+        const destinationRuleIndex = destinationCommonRules.findIndex((r) => r.id === originRule.id)
+        destinationCommonRules[destinationRuleIndex] = { ...destinationCommonRulesMap.get(originRule.id), ...originRule }
+      } else {
+        destinationCommonRules.push(originRule)
+      }
+    })
+
+    return destinationCommonRules
+  }
+
+  async setRbaRulesAndSettings(destinationApiKey, destinationSiteConfiguration, payload, mergeOrReplace = Rba.OPERATION.MERGE) {
+    debugger
+    if (mergeOrReplace === Rba.OPERATION.MERGE) {
+      const destinationSiteRbaPolicy = new RbaPolicy(this.#credentials, destinationApiKey, destinationSiteConfiguration.dataCenter)
+      const destinationSitePolicies = await destinationSiteRbaPolicy.get()
+
+      const originCommonRules = payload.policy.commonRules
+      const destinationCommonRules = destinationSitePolicies.policy.commonRules
+      payload.policy.commonRules = this.mergeCommonRules(originCommonRules, destinationCommonRules)
+    }
+    const response = await this.#rbaPolicy.set(destinationApiKey, payload, destinationSiteConfiguration.dataCenter)
     response['context'] = response.context.replace(/&quot;/g, '"')
     return response
   }
 
-  async get() {
-    return await Promise.all([this.#riskAssessment.get(), this.#policies.get(), this.#rbaPolicy.get()])
+  get() {
+    return Promise.all([this.#riskAssessment.get(), this.#policies.get(), this.#rbaPolicy.get()])
   }
 
   static hasRules(response) {

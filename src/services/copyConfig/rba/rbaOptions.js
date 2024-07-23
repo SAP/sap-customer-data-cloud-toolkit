@@ -32,6 +32,7 @@ export default class RbaOptions extends Options {
           name: RbaOptions.RULES,
           formatName: false,
           value: true,
+          mergeOrReplace: RbaOptions.mergeOrReplace,
         },
       ],
     })
@@ -44,5 +45,11 @@ export default class RbaOptions extends Options {
 
   removeRules(info) {
     return this.removeInfo(RbaOptions.RULES, info)
+  }
+
+  getOptionMergeOrRequest(id) {
+    debugger
+    const option = this.options.branches.find((branch) => branch.id === id)
+    return option ? option.mergeOrReplace : 'merge'
   }
 }

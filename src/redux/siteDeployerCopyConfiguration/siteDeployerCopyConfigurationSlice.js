@@ -27,6 +27,7 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
     edit: false,
     isCopyConfigurationDialogOpen: false,
     sourceSiteAdded: false,
+    mergeOrReplace: 'merge',
   },
   reducers: {
     removeSiteConfigurations(state, action) {
@@ -199,3 +200,5 @@ export const selectEdit = (state) => state.siteDeployerCopyConfiguration.edit
 export const selectIsCopyConfigurationDialogOpen = (state) => state.siteDeployerCopyConfiguration.isCopyConfigurationDialogOpen
 
 export const selectSourceSiteAdded = (state) => state.siteDeployerCopyConfiguration.sourceSiteAdded
+
+export const selectMergeOrReplace = (state) => state.siteDeployerCopyConfiguration.mergeOrReplace
