@@ -231,7 +231,6 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   }
 
   try {
-    debugger
     return await new ConfigManager(credentials, currentSiteApiKey).copy(
       state.copyConfigurationExtended.targetSites.map((targetSite) => targetSite.apiKey),
       state.copyConfigurationExtended.configurations,

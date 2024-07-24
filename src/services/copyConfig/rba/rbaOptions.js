@@ -48,7 +48,6 @@ export default class RbaOptions extends Options {
   }
 
   getOptionMergeOrRequest(id) {
-    debugger
     const option = this.options.branches.find((branch) => branch.id === id)
     return option ? option.mergeOrReplace : 'merge'
   }

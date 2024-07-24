@@ -24,7 +24,6 @@ export default class Rba {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
-    console.log({ site, dataCenter })
 
     this.#rbaPolicy = new RbaPolicy(credentials, site, dataCenter)
     this.#policies = new Policies(credentials, site, dataCenter)
