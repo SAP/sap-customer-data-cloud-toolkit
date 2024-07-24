@@ -1,8 +1,9 @@
+// risk-based-authentication-rules-buttons.component.jsx
+
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-
 
 import React from 'react'
 import { withTranslation } from 'react-i18next'
@@ -12,7 +13,6 @@ import { handleRadioButtonChange } from './utils'
 
 const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesMergeOrReplace, t }) => {
   const dispatch = useDispatch()
-
   return (
     <span>
       <FlexBox role="radiogroup">

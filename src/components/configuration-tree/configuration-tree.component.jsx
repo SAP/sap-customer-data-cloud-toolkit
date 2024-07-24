@@ -10,6 +10,7 @@ import MessagePopoverButton from '../message-popover-button/message-popover-butt
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
 import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.component'
 import { getHighestSeverity } from './utils'
+import { handleRBACheckboxChange } from '../risk-based-authentication-rules-buttons/utils' // Import the new utility function
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
 import './configuration-tree.component.css'
@@ -42,9 +43,8 @@ const ConfigurationTree = ({
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
 
-    if (checkBoxId === 'rba' || checkBoxId === 'RBA Rules') {
-      setIsRBAChecked(value)
-    }
+    // Call the utility function to handle RBA checkbox state
+    handleRBACheckboxChange(checkBoxId, value, setIsRBAChecked)
 
     if (siteId) {
       dispatch(setConfigurationStatus({ siteId, checkBoxId, value }))
@@ -82,7 +82,11 @@ const ConfigurationTree = ({
 
   const showRBARulesButtons = (treeNode) => {
     const isRiskBasedAuth = treeNode.name === 'RBA Rules'
-    return isRiskBasedAuth && isRBAChecked ? <RiskBasedAuthenticationRulesButtons treeNode={treeNode} setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace} t={t} /> : ''
+    return isRiskBasedAuth && isRBAChecked ? (
+      <RiskBasedAuthenticationRulesButtons dataFlowTreeNode={treeNode} treeNode={treeNode} setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace} t={t} />
+    ) : (
+      ''
+    )
   }
 
   const expandTree = (treeNode) => {
