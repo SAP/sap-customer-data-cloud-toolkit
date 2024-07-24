@@ -15,9 +15,13 @@ export const handleRadioButtonChange = (event, treeNode, setRbaRulesMergeOrRepla
   }
 }
 
-// Handles RBA checkbox state
 export const handleRBACheckboxChange = (checkBoxId, value, setIsRBAChecked) => {
   if (checkBoxId === 'rba' || checkBoxId === 'RBA Rules') {
     setIsRBAChecked(value)
   }
+}
+
+export const shouldShowRBARulesButtons = (treeNode, isRBAChecked) => {
+  const isRiskBasedAuth = treeNode.name === 'RBA Rules'
+  return isRiskBasedAuth && isRBAChecked
 }

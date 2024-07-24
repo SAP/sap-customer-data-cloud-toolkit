@@ -9,10 +9,8 @@ import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/web
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
 import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.component'
-import { getHighestSeverity } from './utils'
-import { handleRBACheckboxChange } from '../risk-based-authentication-rules-buttons/utils' // Import the new utility function
-
-import '@ui5/webcomponents-icons/dist/message-information.js'
+import { getHighestSeverity } from './utils.js'
+import { handleRBACheckboxChange, shouldShowRBARulesButtons } from '../../components/risk-based-authentication-rules-buttons/utils' // Import the new utility function
 import './configuration-tree.component.css'
 import styles from './configuration-tree.styles.js'
 
@@ -81,8 +79,7 @@ const ConfigurationTree = ({
   }
 
   const showRBARulesButtons = (treeNode) => {
-    const isRiskBasedAuth = treeNode.name === 'RBA Rules'
-    return isRiskBasedAuth && isRBAChecked ? (
+    return shouldShowRBARulesButtons(treeNode, isRBAChecked) ? (
       <RiskBasedAuthenticationRulesButtons dataFlowTreeNode={treeNode} treeNode={treeNode} setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace} t={t} />
     ) : (
       ''
