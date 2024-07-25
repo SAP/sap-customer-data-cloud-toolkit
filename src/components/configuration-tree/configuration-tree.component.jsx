@@ -27,7 +27,7 @@ const ConfigurationTree = ({
   setConfigurationStatus,
   setDataflowVariableValue,
   setDataflowVariableValues,
-  setRbaRulesMergeOrReplace,
+  setRbaRulesOperation,
   t,
 }) => {
   const dispatch = useDispatch()
@@ -80,7 +80,7 @@ const ConfigurationTree = ({
 
   const showRBARulesButtons = (treeNode) => {
     return shouldShowRBARulesButtons(treeNode, isRBAChecked) ? (
-      <RiskBasedAuthenticationRulesButtons dataFlowTreeNode={treeNode} treeNode={treeNode} setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace} t={t} />
+      <RiskBasedAuthenticationRulesButtons dataFlowTreeNode={treeNode} treeNode={treeNode} setRbaRulesOperation={setRbaRulesOperation} t={t} />
     ) : (
       ''
     )

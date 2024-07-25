@@ -44,7 +44,7 @@ import {
   setConfigurationStatus,
   setDataflowVariableValue,
   setDataflowVariableValues,
-  setRbaRulesMergeOrReplace,
+  setRbaRulesOperation,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -192,7 +192,7 @@ const CopyConfigurationExtended = ({ t }) => {
         setDataflowVariableValue={setDataflowVariableValue}
         setDataflowVariableValues={setDataflowVariableValues}
         onSelectAllIncludeUrlChangeHandler={onSelectAllIncludeUrlChangeHandlerWrapper}
-        setRbaRulesMergeOrReplace={setRbaRulesMergeOrReplace}
+        setRbaRulesOperation={setRbaRulesOperation}
       />
     )
   }

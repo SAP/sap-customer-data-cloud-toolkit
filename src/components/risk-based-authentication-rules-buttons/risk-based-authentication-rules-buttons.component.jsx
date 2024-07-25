@@ -11,7 +11,7 @@ import { FlexBox, RadioButton } from '@ui5/webcomponents-react'
 import { useDispatch } from 'react-redux'
 import { handleRadioButtonChange } from './utils'
 
-const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesMergeOrReplace, t }) => {
+const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesOperation, t }) => {
   const dispatch = useDispatch()
   return (
     <span>
@@ -19,12 +19,12 @@ const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesMergeOrRepla
         <RadioButton
           name="MergeReplaceButton"
           text={t('CONFIGURATION_TREE.BUTTON_REPLACE')}
-          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesMergeOrReplace, t, dispatch)}
+          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, t, dispatch)}
         />
         <RadioButton
           name="MergeReplaceButton"
           text={t('CONFIGURATION_TREE.BUTTON_MERGE')}
-          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesMergeOrReplace, t, dispatch)}
+          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, t, dispatch)}
           checked
         />
       </FlexBox>

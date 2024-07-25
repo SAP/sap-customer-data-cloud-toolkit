@@ -4,7 +4,7 @@
  */
 
 import { handleRadioButtonChange } from './utils'
-import { treeNodeExample, setRbaRulesMergeOrReplace, dispatch, t, eventMerge, eventReplace, replaceValue, mergeValue } from './dataTest'
+import { treeNodeExample, setRbaRulesOperation, dispatch, t, eventMerge, eventReplace, replaceValue, mergeValue } from './dataTest'
 
 describe('handleRadioButtonChange function tests', () => {
   beforeEach(() => {
@@ -12,12 +12,12 @@ describe('handleRadioButtonChange function tests', () => {
   })
 
   test('should dispatch merge action when merge button is clicked', () => {
-    handleRadioButtonChange(eventMerge, treeNodeExample, setRbaRulesMergeOrReplace, t, dispatch)
-    expect(dispatch).toHaveBeenCalledWith(setRbaRulesMergeOrReplace({ checkBoxId: treeNodeExample.id, mergeValue }))
+    handleRadioButtonChange(eventMerge, treeNodeExample, setRbaRulesOperation, t, dispatch)
+    expect(dispatch).toHaveBeenCalledWith(setRbaRulesOperation({ checkBoxId: treeNodeExample.id, mergeValue }))
   })
 
   test('should dispatch replace action when replace button is clicked', () => {
-    handleRadioButtonChange(eventReplace, treeNodeExample, setRbaRulesMergeOrReplace, t, dispatch)
-    expect(dispatch).toHaveBeenCalledWith(setRbaRulesMergeOrReplace({ checkBoxId: treeNodeExample.id, replaceValue }))
+    handleRadioButtonChange(eventReplace, treeNodeExample, setRbaRulesOperation, t, dispatch)
+    expect(dispatch).toHaveBeenCalledWith(setRbaRulesOperation({ checkBoxId: treeNodeExample.id, replaceValue }))
   })
 })

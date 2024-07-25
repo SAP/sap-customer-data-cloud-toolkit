@@ -115,9 +115,9 @@ export const copyConfigurationExtendedSlice = createSlice({
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       configuration.variables = action.payload.variables
     },
-    setRbaRulesMergeOrReplace(state, action) {
+    setRbaRulesOperation(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      configuration.mergeOrReplace = action.payload.mergeOrReplace
+      configuration.operation = action.payload.operation
     },
   },
   extraReducers: (builder) => {
@@ -302,7 +302,7 @@ export const {
   setAvailableTargetSites,
   setDataflowVariableValue,
   setDataflowVariableValues,
-  setRbaRulesMergeOrReplace,
+  setRbaRulesOperation,
 } = copyConfigurationExtendedSlice.actions
 
 export const selectConfigurations = (state) => state.copyConfigurationExtended.configurations

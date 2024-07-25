@@ -9,7 +9,7 @@ export const treeNodeExample = {
   value: false,
 }
 
-export const setRbaRulesMergeOrReplace = jest.fn()
+export const setRbaRulesOperation = jest.fn()
 
 export const dispatch = jest.fn()
 
@@ -23,6 +23,6 @@ export const eventReplace = {
   target: { text: 'CONFIGURATION_TREE.BUTTON_REPLACE' },
 }
 
-export const replaceValue = { mergeOrReplace: 'replace' }
+export const replaceValue = { operation: 'replace' }
 
-export const mergeValue = { mergeOrReplace: 'merge' }
+export const mergeValue = { operation: 'merge' }

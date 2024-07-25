@@ -67,8 +67,8 @@ export default class Rba {
       promises.push(this.setUnknownLocationNotification(destinationSite, destinationSiteConfiguration, payloads[1]))
     }
     if (options.getOptionValue(Rba.RULES)) {
-      const mergeOrReplace = options.getOptionMergeOrRequest(Rba.RULES)
-      promises.push(this.setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payloads[2], mergeOrReplace))
+      const operation = options.getOptionOperation(Rba.RULES)
+      promises.push(this.setRbaRulesAndSettings(destinationSite, destinationSiteConfiguration, payloads[2], operation))
     }
     return await Promise.all(promises)
   }
@@ -105,8 +105,8 @@ export default class Rba {
     return destinationCommonRules
   }
 
-  async setRbaRulesAndSettings(destinationApiKey, destinationSiteConfiguration, payload, mergeOrReplace = Rba.OPERATION.MERGE) {
-    if (mergeOrReplace === Rba.OPERATION.MERGE) {
+  async setRbaRulesAndSettings(destinationApiKey, destinationSiteConfiguration, payload, operation = Rba.OPERATION.MERGE) {
+    if (operation === Rba.OPERATION.MERGE) {
       const destinationSiteRbaPolicy = new RbaPolicy(this.#credentials, destinationApiKey, destinationSiteConfiguration.dataCenter)
       const destinationSitePolicies = await destinationSiteRbaPolicy.get()
 

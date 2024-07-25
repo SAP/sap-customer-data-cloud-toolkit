@@ -27,7 +27,7 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
     edit: false,
     isCopyConfigurationDialogOpen: false,
     sourceSiteAdded: false,
-    mergeOrReplace: 'merge',
+    operation: 'merge',
   },
   reducers: {
     removeSiteConfigurations(state, action) {
@@ -85,8 +85,8 @@ export const siteDeployerCopyConfigurationSlice = createSlice({
       const configuration = findConfiguration(siteConfiguration.configurations, action.payload.checkBoxId)
       configuration.variables = action.payload.variables
     },
-    setRbaRulesMergeOrReplace(state, action) {
-      state.mergeOrReplace = action.payload
+    setRbaRulesOperation(state, action) {
+      state.operation = action.payload
     },
     setErrors(state, action) {
       state.errors = action.payload
@@ -173,7 +173,7 @@ export const {
   clearErrors,
   setDataflowVariableValue,
   setDataflowVariableValues,
-  setRbaRulesMergeOrReplace,
+  setRbaRulesOperation,
   setErrors,
 } = siteDeployerCopyConfigurationSlice.actions
 
@@ -201,4 +201,4 @@ export const selectIsCopyConfigurationDialogOpen = (state) => state.siteDeployer
 
 export const selectSourceSiteAdded = (state) => state.siteDeployerCopyConfiguration.sourceSiteAdded
 
-export const selectMergeOrReplace = (state) => state.siteDeployerCopyConfiguration.mergeOrReplace
+export const selectOperation = (state) => state.siteDeployerCopyConfiguration.operation
