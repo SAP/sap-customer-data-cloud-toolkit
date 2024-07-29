@@ -8,7 +8,7 @@ import SmsManager from '../../services/sms/smsManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
-import * as Tracker from '../../redux/usageTracker/usageTrackerSlice'
+import * as Tracker from '../../lib/tracker'
 
 jest.mock('../../services/sms/smsManager')
 

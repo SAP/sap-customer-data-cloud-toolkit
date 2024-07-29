@@ -39,7 +39,7 @@ import {
   initialStateWithApiCardError,
   initialStateWithDataflows,
 } from './dataTest'
-import * as Tracker from '../../redux/usageTracker/usageTrackerSlice'
+import * as Tracker from '../../lib/tracker'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
   let tracker

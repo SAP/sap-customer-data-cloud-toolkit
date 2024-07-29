@@ -31,7 +31,7 @@ import sitesReducer, {
 import { getPartnerId, getCreationSuccessMessage } from './utils'
 
 import * as data from './dataTest'
-import * as Tracker from '../../redux/usageTracker/usageTrackerSlice'
+import * as Tracker from '../../lib/tracker'
 
 describe('Site slice test suite', () => {
   let tracker
