@@ -110,8 +110,9 @@ export default class Rba {
       const destinationSiteRbaPolicy = new RbaPolicy(this.#credentials, destinationApiKey, destinationSiteConfiguration.dataCenter)
       const destinationSitePolicies = await destinationSiteRbaPolicy.get()
 
-      const originCommonRules = payload.policy.commonRules
-      const destinationCommonRules = destinationSitePolicies.policy.commonRules
+      const originCommonRules = payload.policy.commonRules || []
+      const destinationCommonRules = destinationSitePolicies.policy && destinationSitePolicies.policy.commonRules ? destinationSitePolicies.policy.commonRules : []
+
       payload.policy.commonRules = this.mergeCommonRules(originCommonRules, destinationCommonRules)
     }
     const response = await this.#rbaPolicy.set(destinationApiKey, payload, destinationSiteConfiguration.dataCenter)
