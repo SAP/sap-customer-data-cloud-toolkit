@@ -84,8 +84,12 @@ export default class Rba {
     let securityPayload = removeAllPropertiesFromObjectExceptSome(clonePayload, [propertyName])
     removeAllPropertiesFromObjectExceptSome(securityPayload.security, ['sendUnknownLocationNotification'])
     const response = await this.#policies.set(destinationSite, securityPayload, destinationSiteConfiguration.dataCenter)
-    response['context'] = response.context.replace(/&quot;/g, '"')
-    response['context'] = response.context.replace(propertyName, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID)
+
+    if (response.context) {
+      response.context = response.context.replace(/&quot;/g, '"')
+      response.context = response.context.replace(propertyName, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID)
+    }
+
     return response
   }
 
@@ -116,7 +120,11 @@ export default class Rba {
       payload.policy.commonRules = this.mergeCommonRules(originCommonRules, destinationCommonRules)
     }
     const response = await this.#rbaPolicy.set(destinationApiKey, payload, destinationSiteConfiguration.dataCenter)
-    response['context'] = response.context.replace(/&quot;/g, '"')
+
+    if (response.context) {
+      response.context = response.context.replace(/&quot;/g, '"')
+    }
+
     return response
   }
 
