@@ -17,18 +17,22 @@ export default class Policy {
 
   async get() {
     const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, this.originDataCenter, 'accounts.rba.getPolicy', this.#credentials.gigyaConsole)
-    const response = await client.post(url, this.#getPolicyParameters(this.originApiKey)).catch(function (error) {
+    try {
+      const response = await client.post(url, this.#getPolicyParameters(this.originApiKey))
+      return response.data
+    } catch (error) {
       return generateErrorResponse(error, Policy.#ERROR_GET_POLICY_CONFIG)
-    })
-    return response.data
+    }
   }
 
   async set(apiKey, policy, targetDataCenter) {
     const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, targetDataCenter, 'accounts.rba.setPolicy', this.#credentials.gigyaConsole)
-    const response = await client.post(url, this.#setPolicyParameters(apiKey, policy)).catch(function (error) {
+    try {
+      const response = await client.post(url, this.#setPolicyParameters(apiKey, policy))
+      return response.data
+    } catch (error) {
       return generateErrorResponse(error, Policy.#ERROR_SET_POLICY_CONFIG)
-    })
-    return response.data
+    }
   }
 
   #getPolicyParameters(apiKey) {
