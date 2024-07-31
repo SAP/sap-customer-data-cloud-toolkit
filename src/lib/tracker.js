@@ -1,14 +1,11 @@
-import trackingTool from '@sap_oss/automated-usage-tracking-tool'
+import Web from '@sap_oss/automated-usage-tracking-tool'
 
-export function initTracker() {
-  trackingTool.init({
-    apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ',
-    dataCenter: 'eu1',
-  })
-}
+const trackingTool = new Web({
+  apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ',
+  dataCenter: 'eu1',
+})
 
 export async function requestConsentConfirmation() {
-  initTracker()
   return await trackingTool.requestConsentConfirmation({
     message: `
       <h2>SAP Customer Data Cloud toolkit</h2>
@@ -18,7 +15,6 @@ export async function requestConsentConfirmation() {
 }
 
 export async function requestConsentQuestion() {
-  initTracker()
   return await trackingTool.requestConsentQuestion({
     message: `
       <h2>SAP Customer Data Cloud toolkit</h2>
@@ -28,7 +24,6 @@ export async function requestConsentQuestion() {
 }
 
 export async function trackUsage({ featureName }) {
-  initTracker()
   return await trackingTool.trackUsage({
     toolName: 'sap-customer-data-cloud-toolkit',
     featureName,
