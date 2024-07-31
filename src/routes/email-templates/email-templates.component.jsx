@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useState, useEffect } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -32,11 +31,16 @@ import {
 } from '../../redux/emails/emailSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './email-templates.styles.js'
 import { errorConditions } from '../../redux/errorConditions'
-import { Tracker } from '../../tracker/tracker'
+
+import { trackUsage } from '../../lib/tracker.js'
+
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
+
+const PAGE_TITLE = 'Email Templates'
 
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
@@ -78,8 +82,8 @@ const EmailTemplates = ({ t }) => {
     dispatch(clearErrorCondition())
   }
 
-  const onAfterCloseSuccessDialogHandler = () => {
-    Tracker.reportUsage()
+  const onAfterCloseSuccessDialogHandler = async () => {
+    await trackUsage({ featureName: PAGE_TITLE })
     document.location.reload()
   }
 
@@ -132,11 +136,11 @@ const EmailTemplates = ({ t }) => {
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
       onAfterClose={onAfterCloseSuccessDialogHandler}
-      closeButtonContent={t('GLOBAL.BUTTON_REPORT_USAGE')}
+      closeButtonContent={t('GLOBAL.OK')}
       id="successPopup"
       data-cy="emailSuccessPopup"
     >
-      <Text>{t('GLOBAL.REPORT_USAGE', { importedEmailTemplatesCount })}</Text>
+      <Text>{t('EMAIL_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { importedEmailTemplatesCount })}</Text>
     </DialogMessageInform>
   )
 

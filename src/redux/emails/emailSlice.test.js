@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import emailReducer, {
   setIsImportPopupOpen,
   clearExportFile,
@@ -20,7 +19,7 @@ import EmailManager from '../../services/emails/emailManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
-import { Tracker } from '../../tracker/tracker'
+import * as Tracker from '../../lib/tracker'
 
 jest.mock('../../services/emails/emailManager')
 
@@ -28,7 +27,7 @@ describe('Email slice test suite', () => {
   let tracker
 
   beforeEach(() => {
-    tracker = jest.spyOn(Tracker, 'reportUsage')
+    tracker = jest.spyOn(Tracker, 'trackUsage').mockImplementation(() => {})
   })
 
   test('should return initial state', () => {

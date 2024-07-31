@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useState, useEffect } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,7 +13,7 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import MessageList from '../../components/message-list/message-list.component'
 import SmsImportPopup from '../../components/sms-import-popup/sms-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
-import { Tracker } from '../../tracker/tracker'
+
 import {
   getSmsTemplatesArrayBuffer,
   selectExportFile,
@@ -30,12 +29,17 @@ import {
 } from '../../redux/sms/smsSlice'
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+
+import { trackUsage } from '../../lib/tracker.js'
+
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 import styles from './sms-templates.styles.js'
 
 import { errorConditions } from '../../redux/errorConditions'
 
 const useStyles = createUseStyles(styles, { name: 'SmsTemplates' })
+
+const PAGE_TITLE = 'SMS Templates'
 
 const SmsTemplates = ({ t }) => {
   const dispatch = useDispatch()
@@ -96,8 +100,8 @@ const SmsTemplates = ({ t }) => {
     dispatch(clearErrors())
     dispatch(clearErrorCondition())
   }
-  const onSuccessDialogAfterCloseHandler = () => {
-    Tracker.reportUsage()
+  const onSuccessDialogAfterCloseHandler = async () => {
+    await trackUsage({ featureName: PAGE_TITLE })
     document.location.reload()
   }
 
@@ -126,11 +130,11 @@ const SmsTemplates = ({ t }) => {
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
       onAfterClose={onSuccessDialogAfterCloseHandler}
-      closeButtonContent={t("GLOBAL.BUTTON_REPORT_USAGE")}
+      closeButtonContent={t('GLOBAL.OK')}
       id="successPopup"
       data-cy="smsSuccessPopup"
     >
-      <Text>{t("GLOBAL.REPORT_USAGE")}</Text>
+      <Text>{t('SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
   )
 

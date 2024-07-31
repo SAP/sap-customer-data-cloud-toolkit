@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /**
  * @jest-environment jsdom
  */
@@ -40,13 +39,13 @@ import {
   initialStateWithApiCardError,
   initialStateWithDataflows,
 } from './dataTest'
-import { Tracker } from '../../tracker/tracker'
+import * as Tracker from '../../lib/tracker'
 
 describe('copyConfigurationExtendedSlice test suite', () => {
   let tracker
 
   beforeEach(() => {
-    tracker = jest.spyOn(Tracker, 'reportUsage')
+    tracker = jest.spyOn(Tracker, 'trackUsage').mockImplementation(() => {})
   })
 
   test('should return initial state', () => {
@@ -208,7 +207,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
     const newDataflowVariableValue = 'newDataflowVariableValue'
     const newState = copyConfigurationExtendedReducer(
       initialStateWithDataflows,
-      setDataflowVariableValue({ checkBoxId: 'dataflow1', variable: 'var1', value: newDataflowVariableValue })
+      setDataflowVariableValue({ checkBoxId: 'dataflow1', variable: 'var1', value: newDataflowVariableValue }),
     )
     expect(newState.configurations[0].branches[0].variables[0].value).toEqual(newDataflowVariableValue)
   })
@@ -220,7 +219,7 @@ describe('copyConfigurationExtendedSlice test suite', () => {
       setDataflowVariableValues({
         checkBoxId: 'dataflow2',
         variables: newDataflowVariables,
-      })
+      }),
     )
     expect(newState.configurations[0].branches[1].variables).toEqual(newDataflowVariables)
   })
