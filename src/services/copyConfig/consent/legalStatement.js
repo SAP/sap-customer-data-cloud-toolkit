@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -70,7 +69,7 @@ class LegalStatement {
       }
     }
     for (const statementToDelete of statementsToDelete) {
-      delete legalStatements[type][statementToDelete]
+      delete legalStatements[type][statementToDelete].LegalStatementStatus
     }
     if (statementsToDelete.length > 0) {
       // to avoid that minDocVersion references a deleted ${status} version

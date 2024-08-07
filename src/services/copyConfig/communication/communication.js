@@ -3,10 +3,9 @@
  * License: Apache-2.0
  */
 
-
 import Channel from './channel.js'
 import Topic from './topic.js'
-import { removePropertyFromObjectCascading, stringToJson } from '../objectHelper.js'
+import { stringToJson } from '../objectHelper.js'
 
 class Communication {
   #credentials
@@ -63,18 +62,10 @@ class Communication {
   async copyTopics(destinationSite, destinationSiteConfiguration) {
     let responses = []
 
-    let response = await this.#topic.get()
+    let response = await this.#topic.searchTopics()
+
     if (response.errorCode === 0) {
-      let topicsPayload
-      const isParentSite = !this.#isChildSite(destinationSiteConfiguration, destinationSite)
-      if (isParentSite) {
-        removePropertyFromObjectCascading(response.CommunicationSettings, 'dependsOn')
-        removePropertyFromObjectCascading(response.CommunicationSettings, 'lastModified')
-        topicsPayload = Communication.#splitTopics(response.CommunicationSettings)
-      } else {
-        topicsPayload = Communication.#createTopicsPayloadForChildSite(response.CommunicationSettings)
-      }
-      for (const topic of topicsPayload) {
+      for (const topic of response.results) {
         responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration.dataCenter, topic))
       }
     } else {
@@ -91,26 +82,6 @@ class Communication {
       channelsList.push(payload)
     }
     return channelsList
-  }
-
-  static #splitTopics(topics) {
-    const topicsList = []
-    for (const topic of Object.keys(topics)) {
-      const payload = { CommunicationSettings: {} }
-      payload.CommunicationSettings[topic] = topics[topic]
-      topicsList.push(payload)
-    }
-    return topicsList
-  }
-
-  static #createTopicsPayloadForChildSite(topics) {
-    const topicsList = []
-    for (const topic of Object.keys(topics)) {
-      const payload = { CommunicationSettings: {} }
-      payload.CommunicationSettings[topic] = { isActive: topics[topic].isActive }
-      topicsList.push(payload)
-    }
-    return topicsList
   }
 
   static hasCommunicationTopics(response) {
