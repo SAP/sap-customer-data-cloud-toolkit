@@ -18,7 +18,6 @@ jest.mock('axios')
 describe('RBA test suite', () => {
   const apiKey = 'apiKey'
   const dataCenter = 'eu1'
-
   const rba = new Rba(credentials, apiKey, { dataCenter })
   const options = new RbaOptions(rba)
 
@@ -62,22 +61,22 @@ describe('RBA test suite', () => {
     // Verify if the final merged response has more policies
     expect(finalMergedPolicyLength).toBeGreaterThan(initialDestinationPolicyLength)
   })
-  
- test('copy unsuccessfully', async () => {
-   axios
-     .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
-     .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
-     .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
-     .mockResolvedValueOnce({ data: getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, RiskAssessment.CONTEXT_ID, apiKey) })
-     .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey) })
-     .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk }) // Mock for initial destination policy response
-     .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey) })
 
-   const responses = await rba.copy(apiKey, { dataCenter }, options)
-   expect(responses[0]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, RiskAssessment.CONTEXT_ID, apiKey))
-   expect(responses[1]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey))
-   expect(responses[2]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey))
- })
+  test('copy unsuccessfully', async () => {
+    axios
+      .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+      .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, RiskAssessment.CONTEXT_ID, apiKey) })
+      .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey) })
+      .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk }) // Mock for initial destination policy response
+      .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey) })
+
+    const responses = await rba.copy(apiKey, { dataCenter }, options)
+    expect(responses[0]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, RiskAssessment.CONTEXT_ID, apiKey))
+    expect(responses[1]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey))
+    expect(responses[2]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey))
+  })
 
   test('copy successfully with replace', async () => {
     axios
@@ -108,6 +107,4 @@ describe('RBA test suite', () => {
     expect(responses.length).toBe(1)
     expect(responses[0].errorCode).toStrictEqual(ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE)
   })
-
- 
 })
