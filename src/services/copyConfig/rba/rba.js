@@ -50,6 +50,7 @@ export default class Rba {
     if (responses.every((r) => r.errorCode === 0)) {
       responses = (await this.#copyRba(destinationSite, destinationSiteConfiguration, responses, options)).flat()
     }
+    if (responses)
     stringToJson(responses, 'context')
     return responses
   }
