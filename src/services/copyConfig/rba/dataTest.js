@@ -125,3 +125,34 @@ export const expectedGetUnknownLocationNotificationResponseOk = {
     signDeviceId: 'js_latest',
   },
 }
+
+export const expectedGetDestinationRbaPolicyResponseOk = {
+  callId: 'destination_call_id',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-08T14:03:08.655Z',
+  policy: {
+    commonRules: [
+      {
+        action: {
+          type: 'captcha',
+        },
+        rootFactor: {
+          type: 'failedLogins',
+          scope: ['account'],
+          threshold: 5,
+        },
+        id: 'On multiple failed login attempts > force CAPTCHA on account',
+        scope: 'Login',
+        description: 'On multiple failed login attempts > force CAPTCHA on account',
+        enabled: true,
+      },
+    ],
+    rulesSets: [],
+    tfaRegistrationScope: false,
+    defaultPolicy: '',
+    allowOverrideMode: 'no',
+  },
+}

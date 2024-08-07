@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export const siteId = 'dcdd5bcc-0c9d-40f3-897b-cbb07138d0f7'
 
 export const sitesConfigurations = [
@@ -61,6 +60,7 @@ export const initialState = {
   edit: false,
   isCopyConfigurationDialogOpen: false,
   sourceSiteAdded: false,
+  operation: 'merge',
 }
 
 export const stateWithConfigurations = {
