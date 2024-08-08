@@ -24,6 +24,7 @@ const SiteConfigurations = ({
   setConfigurationStatus,
   setDataflowVariableValue,
   setDataflowVariableValues,
+  setRbaRulesOperation,
   t,
 }) => {
   const classes = useStyles()
@@ -70,6 +71,7 @@ const SiteConfigurations = ({
                 setConfigurationStatus={setConfigurationStatus}
                 setDataflowVariableValue={setDataflowVariableValue}
                 setDataflowVariableValues={setDataflowVariableValues}
+                setRbaRulesOperation={setRbaRulesOperation}
               />
             ))}
           </FlexBox>
