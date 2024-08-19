@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export const TENANT_ID_CLASS = 'fd-info-label__text'
 export const ADMIN_BUTTON_SELECTOR = '.fd-nested-list__icon.sap-icon--action-settings'
 export const ADMIN_BUTTON_CLASSES = 'fd-nested-list__icon sap-icon--action-settings'
@@ -26,6 +25,7 @@ export const ROUTE_SITE_DEPLOYER = '/cdc-toolbox/site-deployer'
 export const ROUTE_EMAIL_TEMPLATES = '/user-interfacing/email-templates'
 export const ROUTE_SMS_TEMPLATES = '/user-interfacing/sms-templates'
 export const ROUTE_COPY_CONFIG_EXTENDED = '/cdc-toolbox/copy-configuration-extended'
+export const ROUTE_SCREEN_SET = '/user-interfacing/screen-sets-app'
 
 export const INCOMPATIBLE_ROUTE_FRAGMENTS = ['/flow-builder-web-app']
 export const MENU_ELEMENTS = [
@@ -33,4 +33,5 @@ export const MENU_ELEMENTS = [
   { name: 'Email Templates', route: ROUTE_EMAIL_TEMPLATES },
   { name: 'SMS Templates', route: ROUTE_SMS_TEMPLATES },
   { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
+  { name: 'UI Builder', route: ROUTE_SCREEN_SET },
 ]

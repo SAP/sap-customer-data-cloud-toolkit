@@ -1,0 +1,119 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+/*eslint no-implied-eval: "error"*/
+import { withTranslation } from 'react-i18next'
+
+import React from 'react'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/javascript/javascript'
+
+// import Code from '../../codeMirror'
+import { Bar, Button } from '@ui5/webcomponents-react'
+import { createUseStyles } from 'react-jss'
+import styles from './email-templates.styles.js'
+import CodeMirror from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+
+const CodeMirrorEditor = () => {
+  // Locate the existing CodeMirror instance
+  const mainApp = document.querySelector('main-app')
+
+  const shadowRoot = mainApp.shadowRoot
+  const screenSet = shadowRoot.querySelector('app-root')
+  const iframe = screenSet.querySelector('iframe.console-app-iframe')
+
+  const iframeDocument = iframe.contentDocument || iframe.contentWindow.document
+  if (!iframeDocument) {
+    console.log("iframe couldn't be found in DOM.")
+    return
+  }
+
+  const mainAppIframe = iframeDocument.querySelectorAll('#screenSet')
+  console.log('Original mainAppIframe:', mainAppIframe)
+  const playground = mainAppIframe[0].querySelectorAll('#playground')
+  console.log('Original playground:', playground)
+  const codeMirrorClass = playground[0].querySelector('.CodeMirror')
+  console.log('Original CodeMirrorSizer:', codeMirrorClass)
+  console.log('Original CodeMirrorSizer:value', codeMirrorClass.value)
+  codeMirrorClass.value = `export default {
+    // Called when an error occurs.
+    onError: function(event) {
+   a + b
+    },
+};
+`
+  const code = CodeMirror.fromTextArea(codeMirrorClass, {
+    mode: javascript,
+    lineNumbers: true,
+  })
+  console.log('code', code)
+  // const existingCodeMirrorElement = document.querySelector('.CodeMirror.cm-s-default.CodeMirror-wrap')
+}
+
+// Function to update the CodeMirror value
+// const updateValue = (newValue) => {
+//   if (codeMirrorRef.current) {
+//     codeMirrorRef.current.setValue('TEXT')
+//   }
+// }
+
+// return (
+//   <div>
+//     <h1>Edit Existing CodeMirror Instance</h1>
+//     <p>Current Value:</p>
+//     <textarea value={'value'} onChange={(e) => updateValue(e.target.value)} rows={10} cols={50} />
+//   </div>
+// )
+
+// function getCodeMirrorValue() {
+//   const instances = manipulateCodeMirror()
+//   console.log('instances', instances)
+//   if (instances.length > 0) {
+//     console.log('instances[index].getValue()', instances.getValue())
+//     return { value: instances.getValue() }
+//   } else {
+//     return { error: 'Instance not found' }
+//   }
+// }
+// Function to handle the button click
+// const handleButtonClick = () => {
+//   const mainApp = document.querySelector('main-app')
+//   const shadowRoot = mainApp?.shadowRoot
+//   const screenSet = shadowRoot?.querySelector('app-root')
+//   const iframe = screenSet?.querySelector('iframe.console-app-iframe')
+
+//   const iframeDocument = iframe?.contentDocument || iframe?.contentWindow.document
+//   const mainAppIframe = iframeDocument?.querySelectorAll('#screenSet')
+//   console.log('Original mainAppIframe:', mainAppIframe)
+//   const playground = mainAppIframe?.[0]?.querySelectorAll('#playground')
+//   console.log('Original playground:', playground)
+//   const codeMirrorClass = playground?.[0]?.querySelector('.CodeMirror')
+
+//   if (codeMirrorClass) {
+//     console.log('Original codeMirrorScroll:', playground[0])
+//     manipulateCodeMirror(playground[0])
+//   } else {
+//     console.error('Could not find the CodeMirror div.')
+//   }
+// }
+const CodeLinter = () => {
+  const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
+  const classes = useStyles()
+
+  return (
+    <>
+      <Bar
+        className={classes.outerBarStyle}
+        endContent={
+          <Button id="importAllEmailTemplatesButton" data-cy="importAllEmailTemplatesButton" className={classes.importAllButtonStyle} onClick={CodeMirrorEditor}>
+            Edit Code
+          </Button>
+        }
+      ></Bar>
+    </>
+  )
+}
+
+export default withTranslation()(CodeLinter)

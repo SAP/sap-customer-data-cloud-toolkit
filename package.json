@@ -3,6 +3,11 @@
   "version": "1.7.0",
   "private": true,
   "dependencies": {
+    "@codemirror/commands": "^6.6.0",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lint": "^6.8.1",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.29.1",
     "@reduxjs/toolkit": "^1.8.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -11,16 +16,22 @@
     "@ui5/webcomponents-fiori": "^1.24.0",
     "@ui5/webcomponents-icons": "^1.24.0",
     "@ui5/webcomponents-react": "^1.28.1",
+    "@uiw/react-codemirror": "^4.23.0",
     "@webcomponents/custom-elements": "^1.6.0",
     "axios": "^1.1.3",
+    "codemirror": "^5.65.17",
     "crypto-js": "^4.2.0",
+    "eslint-linter-browserify": "^9.8.0",
     "fast-xml-parser": "^4.2.5",
+    "globals": "^15.8.0",
     "i18next": "^23.0.0",
+    "jshint": "^2.13.6",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "os": "^0.1.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-codemirror2": "^8.0.0",
+    "react-dom": "^18.3.1",
     "react-i18next": "^12.1.4",
     "react-jss": "^10.9.2",
     "react-redux": "^8.0.4",
@@ -28,23 +39,22 @@
     "redux-mock-store": "^1.5.4",
     "sass": "^1.58.0",
     "wait-on": "^7.0.1",
-    "web-vitals": "^3.0.3"
+    "web-vitals": "^3.0.3",
+    "webpack": "^5.93.0"
   },
   "scripts": {
     "start": "react-scripts -r @cypress/instrument-cra start",
-    "prebuild": "npm run lint",
-    "build": "CI=true react-scripts build",
+    "build": "set CI=true && react-scripts build",
     "cypress:open": "cypress open",
     "cypress:stage": "cypress run --browser chrome ",
     "cypress:ci": "start-server-and-test start http://localhost:3000 cypress:stage",
     "postbuild": "node ./scripts/postbuild.js",
     "test": "CI=true react-scripts test --collect-coverage --coverage --watch=all --coverageDirectory=coverage/unit",
     "eject": "react-scripts eject",
-    "lint": "npx eslint --ext .jsx,.js src/",
-    "prerelease": "npm run lint && npm run test",
     "release": "CI=true release-it",
     "compress": "zip -r ${npm_package_name}-${npm_package_version}.zip ./build/",
-    "manifest": "./public/scripts/manifest.sh ${npm_package_version}"
+    "manifest": "./public/scripts/manifest.sh ${npm_package_version}",
+    "sonarLint": "npx eslint src/WebScreenSets  "
   },
   "jest": {
     "transformIgnorePatterns": [
@@ -91,6 +101,7 @@
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
     "@cypress/xvfb": "^1.2.4",
+    "@types/codemirror": "^5.60.15",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "concurrently": "^8.0.0",
@@ -100,6 +111,8 @@
     "cypress-jest-coverage-merge": "^1.0.2",
     "cypress-real-events": "^1.7.6",
     "cypress-wait-until": "^2.0.0",
+    "eslint": "^8.57.0",
+    "eslint4b": "^7.32.0",
     "identity-obj-proxy": "^3.0.0",
     "istanbul": "^0.4.5",
     "istanbul-merge": "^2.0.0",
@@ -108,6 +121,6 @@
     "react-scripts": "5.0.1",
     "release-it": "^16.0.0",
     "start-server-and-test": "^2.0.0",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "webpack-cli": "^5.1.4"
   }
 }

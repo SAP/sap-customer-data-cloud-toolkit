@@ -3,18 +3,15 @@
  * License: Apache-2.0
  */
 
-
 import { useState, useEffect } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import MessageList from '../../components/message-list/message-list.component'
 import EmailsImportPopup from '../../components/emails-import-popup/emails-import-popup.component'
 import CredentialsErrorDialog from '../../components/credentials-error-dialog/credentials-error-dialog.component'
-
 import {
   getEmailTemplatesArrayBuffer,
   selectExportFile,
@@ -37,7 +34,6 @@ import styles from './email-templates.styles.js'
 import { errorConditions } from '../../redux/errorConditions'
 import { Tracker } from '../../tracker/tracker'
 const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
-
 const EmailTemplates = ({ t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
@@ -54,7 +50,6 @@ const EmailTemplates = ({ t }) => {
 
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [showCredentialsErrorDialog, setShowCredentialsErrorDialog] = useState(false)
-
   useEffect(() => {
     setShowErrorDialog(errors.length > 0)
   }, [errors.length])
