@@ -7,6 +7,8 @@ export default class Policy {
   static #ERROR_GET_POLICY_CONFIG = 'Error retrieving RBA policy configuration'
   static #ERROR_SET_POLICY_CONFIG = 'Error setting RBA policy configuration'
   static CONTEXT_ID = 'rba.policy'
+  static #GETPOLICY = 'accounts.rba.getPolicy'
+  static #SETPOLICY = 'accounts.rba.setPolicy'
   #credentials
 
   constructor(credentials, apiKey, dataCenter) {
@@ -16,7 +18,7 @@ export default class Policy {
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, this.originDataCenter, 'accounts.rba.getPolicy', this.#credentials.gigyaConsole)
+    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, this.originDataCenter, Policy.#GETPOLICY, this.#credentials.gigyaConsole)
     try {
       const response = await client.post(url, this.#getPolicyParameters(this.originApiKey))
       return response.data
@@ -26,7 +28,7 @@ export default class Policy {
   }
 
   async set(apiKey, policy, targetDataCenter) {
-    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, targetDataCenter, 'accounts.rba.setPolicy', this.#credentials.gigyaConsole)
+    const url = UrlBuilder.buildUrl(Policy.#NAMESPACE, targetDataCenter, Policy.#SETPOLICY, this.#credentials.gigyaConsole)
     try {
       const response = await client.post(url, this.#setPolicyParameters(apiKey, policy))
       return response.data

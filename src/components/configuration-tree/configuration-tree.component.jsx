@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */ 
+
 import { useDispatch } from 'react-redux'
 import React, { useState } from 'react'
 import { withTranslation } from 'react-i18next'
