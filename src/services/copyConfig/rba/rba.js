@@ -25,9 +25,9 @@ export default class Rba {
     this.#site = site
     this.#dataCenter = dataCenter
 
-    this.#rbaPolicy = new RbaPolicy(credentials, site, dataCenter)
-    this.#policies = new Policies(credentials, site, dataCenter)
-    this.#riskAssessment = new RiskAssessment(credentials, site)
+    this.#rbaPolicy = new RbaPolicy(credentials, this.#site, this.#dataCenter)
+    this.#policies = new Policies(credentials, this.#site, this.#dataCenter)
+    this.#riskAssessment = new RiskAssessment(credentials, this.#site)
   }
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
@@ -50,8 +50,7 @@ export default class Rba {
     if (responses.every((r) => r.errorCode === 0)) {
       responses = (await this.#copyRba(destinationSite, destinationSiteConfiguration, responses, options)).flat()
     }
-    if (responses)
-    stringToJson(responses, 'context')
+    if (responses) stringToJson(responses, 'context')
     return responses
   }
 

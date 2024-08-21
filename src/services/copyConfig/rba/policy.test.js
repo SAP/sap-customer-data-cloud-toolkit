@@ -39,7 +39,7 @@ describe('User sites test suite', () => {
       userKey: credentials.userKey,
       policy: JSON.stringify(rbaPolicy),
     }
-    const spy = await jest.spyOn(client, 'post')
+    const spy = jest.spyOn(client, 'post')
     axios.mockResolvedValueOnce({ data: expectedGigyaResponseOk })
 
     const policy = new Policy(credentials, apiKey, dataCenter)
