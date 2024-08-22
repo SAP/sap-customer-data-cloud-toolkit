@@ -108,6 +108,21 @@ export default class Rba {
 
     return destinationCommonRules
   }
+  // Merge originRuleSets into destinationRulesSets by id
+  mergeRulesSets(originRulesSets, destinationRulesSets) {
+    const destinationRulesSetsMap = new Map(destinationRulesSets.map((rule) => [rule.id, rule]))
+
+    originRulesSets.forEach((originRule) => {
+      if (destinationRulesSetsMap.has(originRule.id)) {
+        const destinationRuleIndex = destinationRulesSets.findIndex((r) => r.id === originRule.id)
+        destinationRulesSets[destinationRuleIndex] = { ...destinationRulesSetsMap.get(originRule.id), ...originRule }
+      } else {
+        destinationRulesSets.push(originRule)
+      }
+    })
+
+    return destinationRulesSets
+  }
 
   async setRbaRulesAndSettings(destinationApiKey, destinationSiteConfiguration, payload, operation = Rba.OPERATION.MERGE) {
     if (operation === Rba.OPERATION.MERGE) {
@@ -115,8 +130,12 @@ export default class Rba {
       const destinationSitePolicies = await destinationSiteRbaPolicy.get()
 
       const originCommonRules = payload.policy.commonRules || []
+      const originRulesSets = payload.policy.rulesSets || []
       const destinationCommonRules = destinationSitePolicies.policy && destinationSitePolicies.policy.commonRules ? destinationSitePolicies.policy.commonRules : []
-
+      if (destinationSitePolicies.policy && destinationSitePolicies.policy.rulesSets) {
+        const destinationRulesSets = destinationSitePolicies.policy.rulesSets
+        payload.policy.rulesSets = this.mergeRulesSets(originRulesSets, destinationRulesSets)
+      }
       payload.policy.commonRules = this.mergeCommonRules(originCommonRules, destinationCommonRules)
     }
     const response = await this.#rbaPolicy.set(destinationApiKey, payload, destinationSiteConfiguration.dataCenter)
