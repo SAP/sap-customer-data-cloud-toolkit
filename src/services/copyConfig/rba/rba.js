@@ -93,7 +93,6 @@ export default class Rba {
     return response
   }
 
-  // Merge originCommonRules into destinationCommonRules by id
   mergeCommonRules(originCommonRules, destinationCommonRules) {
     const destinationCommonRulesMap = new Map(destinationCommonRules.map((rule) => [rule.id, rule]))
 
@@ -108,7 +107,7 @@ export default class Rba {
 
     return destinationCommonRules
   }
-  // Merge originRuleSets into destinationRulesSets by id
+  
   mergeRulesSets(originRulesSets, destinationRulesSets) {
     const destinationRulesSetsMap = new Map(destinationRulesSets.map((rule) => [rule.id, rule]))
 

@@ -55,10 +55,8 @@ describe('RBA test suite', () => {
     expect(responses[2]).toStrictEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey))
     expect(spy).toHaveBeenCalled()
 
-    //expected result of the poilicy length
     const finalMergedPolicyLength = spy.mock.calls[0][1].length
 
-    // Verify if the final merged response has more policies
     expect(finalMergedPolicyLength).toBeGreaterThan(initialDestinationPolicyLength)
   })
 

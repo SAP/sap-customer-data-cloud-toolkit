@@ -46,7 +46,6 @@ const ConfigurationTree = ({
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
 
-    // Call the utility function to handle RBA checkbox state
     handleRBACheckboxChange(checkBoxId, value, setIsRBAChecked)
 
     if (siteId) {
