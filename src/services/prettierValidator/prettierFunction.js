@@ -5,10 +5,10 @@
 import { format } from 'prettier/standalone'
 import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
-import UrlBuilder from '../../gigya/urlBuilder.js'
-import client from '../../gigya/client.js'
-import { stringToJson } from '../objectHelper.js'
-import generateErrorResponse from '../../errors/generateErrorResponse.js'
+import { stringToJson } from '../copyConfig/objectHelper.js'
+import UrlBuilder from '../gigya/urlBuilder.js'
+import generateErrorResponse from '../errors/generateErrorResponse.js'
+import client from '../gigya/client.js'
 
 class StringPrettierFormatter {
   static #ERROR_MSG_GET_CONFIG = 'Error getting screen sets'
@@ -51,6 +51,24 @@ class StringPrettierFormatter {
     stringToJson(response, 'context')
 
     return response
+  }
+
+  async prettierCode(screenSetClicked, siteApiKey, code) {
+    //get screenSetId from url
+    let response = await this.get()
+    console.log('code--->', code)
+    let prettifyCode = await this.myFormat(code)
+    console.log('response--->', response)
+    console.log('prettifyCode--->', prettifyCode)
+    console.log('responsescreenSetID)--->', response.screenSets)
+    for (const screenSet of response.screenSets) {
+      console.log('SCREENSETSscreenSet.screenSetID-->', screenSet.screenSetID)
+      if (screenSet.screenSetID === screenSetClicked) {
+        screenSet.javascript = prettifyCode
+        this.#copyScreenSet(siteApiKey, screenSet.screenSetID, 'us1', response)
+        console.log('SCREENSETS-->', screenSet)
+      }
+    }
   }
 
   #getScreenSetParameters(apiKey) {
@@ -112,6 +130,8 @@ class StringPrettierFormatter {
 
   #copyScreenSet(destinationSite, screenSetID, dataCenter, response) {
     const screenSet = this.#getScreenSet(screenSetID, response)
+    console.log('GETSCREENSET--->', screenSet)
+    console.log('GETresponseT--->', response)
     return this.set(destinationSite, dataCenter, screenSet)
   }
 
@@ -119,16 +139,19 @@ class StringPrettierFormatter {
     return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 
-  static async myFormat(_inputString) {
+  async myFormat(_inputString) {
     const prettierConfig = {
       parser: 'babel',
       plugins: [prettierPluginBabel, prettierPluginEstree],
       tabWidth: 4,
     }
+    console.log('_inputString', _inputString)
 
     const withExportDefault = `export default ${_inputString.trimStart()}`
+    console.log('responsewithExportDefault', withExportDefault)
     try {
       const formattedString = await format(withExportDefault, prettierConfig)
+      console.log('responseformattedString', formattedString)
       return formattedString.replace(/^export default\s*/, '')
     } catch (error) {
       console.error('Error formatting string:', error.message)

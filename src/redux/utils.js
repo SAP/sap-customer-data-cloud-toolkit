@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export const getApiKey = (hash) => {
   let apiKey
   if (hash.includes('login?returnUrl=')) {
@@ -13,7 +12,16 @@ export const getApiKey = (hash) => {
   }
   return apiKey !== undefined ? apiKey : ''
 }
-
+export const getScreenSet = (hash) => {
+  if (hash.href.includes('screenSetId')) {
+    const match = hash.href.split('?')[1]
+    const params = new URLSearchParams(match)
+    const screenSetId = params.get('screenSetId')
+    return screenSetId
+  } else {
+    console.log('SCREEN SET NOT FOUND')
+  }
+}
 export const getErrorAsArray = (error) => {
   return Array.isArray(error) ? error : [error]
 }
