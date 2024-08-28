@@ -30,6 +30,8 @@ import DataflowOptions from '../dataflow/dataflowOptions.js'
 import Dataflow from '../dataflow/dataflow.js'
 import Rba from '../rba/rba.js'
 import RbaOptions from '../rba/rbaOptions.js'
+import RecaptchaOptions from '../recaptcha/recaptchaOptions.js'
+import RecaptchaConfiguration from '../recaptcha/recaptchaConfiguration.js'
 
 class Info {
   #credentials
@@ -58,6 +60,7 @@ class Info {
       this.#getWebhooks(),
       this.#getExtensions(),
       this.#getRba(),
+      this.#getRecaptcha(),
     ]).then((infos) => {
       infos.forEach((info) => {
         if (Info.#hasConfiguration(info)) {
@@ -181,7 +184,6 @@ class Info {
   async #getEmailTemplates() {
     const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await emailOptions.getConfiguration().get()
-
     if (response.errorCode === 0) {
       emailOptions.addEmails(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
@@ -210,7 +212,6 @@ class Info {
   async #getPolicies() {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
-
     if (response.errorCode === 0) {
       policyOptions.addSupportedPolicies(response)
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))
@@ -273,6 +274,25 @@ class Info {
       return Promise.resolve(info)
     } else {
       return Promise.reject(responses)
+    }
+  }
+  async #getRecaptcha() {
+    const recaptchaOptions = new RecaptchaOptions(new RecaptchaConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const response = await recaptchaOptions.getConfiguration().get()
+
+    if (response.errorCode === 0) {
+      const info = recaptchaOptions.getOptionsDisabled()
+
+      if (info && info.value !== false && RecaptchaConfiguration.hasRecaptchaPolicies(response)) {
+        recaptchaOptions.removeRecaptchaPolicies(info)
+      } else {
+        console.warn('Recaptcha policies are inactive or not present, skipping removal.')
+      }
+
+      return Promise.resolve(info)
+    } else {
+      stringToJson(response, 'context')
+      return Promise.reject([response])
     }
   }
 }

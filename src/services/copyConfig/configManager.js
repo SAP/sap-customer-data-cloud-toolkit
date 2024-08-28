@@ -32,6 +32,8 @@ import Dataflow from './dataflow/dataflow.js'
 import DataflowOptions from './dataflow/dataflowOptions.js'
 import RbaOptions from './rba/rbaOptions.js'
 import Rba from './rba/rba.js'
+import RecaptchaOptions from './recaptcha/recaptchaOptions.js'
+import RecaptchaConfiguration from './recaptcha/recaptchaConfiguration.js'
 
 class ConfigManager {
   #configurations = []
@@ -48,7 +50,6 @@ class ConfigManager {
   }
 
   async copy(targetApiKeys, options, sorter = new ParentChildSorter(this.#credentials)) {
-    //console.log(`targetApiKeys=${targetApiKeys}, options=${JSON.stringify(options)}`)
     try {
       const responses = []
       await this.#init()
@@ -85,7 +86,6 @@ class ConfigManager {
     } catch (error) {
       responses.push(error)
     }
-
     return (await Promise.all(responses)).flat()
   }
 
@@ -127,6 +127,7 @@ class ConfigManager {
     this.#configurations.push(new ExtensionOptions(new Extension(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new DataflowOptions(new Dataflow(this.#credentials, this.#originApiKey, originDataCenter)))
     this.#configurations.push(new RbaOptions(new Rba(this.#credentials, this.#originApiKey, originDataCenter)))
+    this.#configurations.push(new RecaptchaOptions(new RecaptchaConfiguration(this.#credentials, this.#originApiKey, originDataCenter)))
   }
 
   #getConfigurationsToCopy(options) {
