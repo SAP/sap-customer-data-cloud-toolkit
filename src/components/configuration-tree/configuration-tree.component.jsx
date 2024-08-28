@@ -1,7 +1,7 @@
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
- */ 
+ */
 
 import { useDispatch } from 'react-redux'
 import React, { useState } from 'react'
@@ -18,6 +18,7 @@ import { getHighestSeverity } from './utils.js'
 import { handleRBACheckboxChange, shouldShowRBARulesButtons } from '../../components/risk-based-authentication-rules-buttons/utils' // Import the new utility function
 import './configuration-tree.component.css'
 import styles from './configuration-tree.styles.js'
+import '@ui5/webcomponents-icons/dist/message-information.js'
 
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
