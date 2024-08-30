@@ -84,11 +84,7 @@ const ConfigurationTree = ({
   }
 
   const showRBARulesButtons = (treeNode) => {
-    return shouldShowRBARulesButtons(treeNode, isRBAChecked) ? (
-      <RiskBasedAuthenticationRulesButtons dataFlowTreeNode={treeNode} treeNode={treeNode} setRbaRulesOperation={setRbaRulesOperation} t={t} />
-    ) : (
-      ''
-    )
+    return shouldShowRBARulesButtons(treeNode, isRBAChecked) ? <RiskBasedAuthenticationRulesButtons treeNode={treeNode} setRbaRulesOperation={setRbaRulesOperation} t={t} /> : ''
   }
 
   const expandTree = (treeNode) => {
