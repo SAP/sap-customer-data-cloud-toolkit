@@ -4,9 +4,9 @@
  */
 
 export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation, t, dispatch) => {
-  const selectedItem = event.target
-  if (selectedItem) {
-    const selectedButton = selectedItem.text.trim()
+  const selectedButton = event.detail.selectedOption.dataset.id
+  
+  if (selectedButton) {
     if (selectedButton === t('CONFIGURATION_TREE.BUTTON_MERGE')) {
       dispatch(setRbaRulesOperation({ checkBoxId: treeNode.id, operation: 'merge' }))
     } else {

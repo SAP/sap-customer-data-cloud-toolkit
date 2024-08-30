@@ -5,7 +5,7 @@
 
 import React from 'react'
 import { withTranslation } from 'react-i18next'
-import { FlexBox, RadioButton } from '@ui5/webcomponents-react'
+import { Option, Select } from '@ui5/webcomponents-react'
 import { useDispatch } from 'react-redux'
 import { handleRadioButtonChange } from './utils'
 
@@ -13,19 +13,10 @@ const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesOperation, t
   const dispatch = useDispatch()
   return (
     <span>
-      <FlexBox role="radiogroup">
-        <RadioButton
-          name="MergeReplaceButton"
-          text={t('CONFIGURATION_TREE.BUTTON_REPLACE')}
-          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, t, dispatch)}
-        />
-        <RadioButton
-          name="MergeReplaceButton"
-          text={t('CONFIGURATION_TREE.BUTTON_MERGE')}
-          onClick={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, t, dispatch)}
-          checked
-        />
-      </FlexBox>
+      <Select label={{}} onChange={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, t, dispatch)} value="" valueState="None">
+        <Option data-id="merge">Merge</Option>
+        <Option data-id="replace">Replace</Option>
+      </Select>
     </span>
   )
 }
