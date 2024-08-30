@@ -1,8 +1,11 @@
 import Web from '@sap_oss/automated-usage-tracking-tool'
 
+const API_KEY = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_API_KEY_PROD : process.env.REACT_APP_TRACKER_API_KEY_DEV
+const DATA_CENTER = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_DATA_CENTER_PROD : process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+
 const trackingTool = new Web({
-  apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ',
-  dataCenter: 'eu1',
+  apiKey: API_KEY,
+  dataCenter: DATA_CENTER,
 })
 
 export async function requestConsentConfirmation() {
