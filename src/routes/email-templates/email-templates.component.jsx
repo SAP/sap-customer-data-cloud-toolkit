@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useState, useEffect } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { useDispatch, useSelector } from 'react-redux'

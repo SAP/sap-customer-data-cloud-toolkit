@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const styles = {
   errorDialogStyle: {
     textAlign: 'left',
@@ -19,7 +18,12 @@ const styles = {
   },
   importAllButtonStyle: {
     composes: 'fd-button fd-button--compact',
-    marginLeft: '5px !important',
+    marginRight: '110px !important',
+  },
+  smallActionSheet: {
+    width: '200px',
+    height: '200px',
+    padding: '10px',
   },
 }
 

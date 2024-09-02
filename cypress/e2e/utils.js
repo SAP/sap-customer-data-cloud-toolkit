@@ -19,6 +19,7 @@ import {
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
+  mockedPrettierGetScreenSetResponse,
   mockedGetSmsConfigsResponse,
   mockedGetSocialsConfigsResponse,
   mockedGetWebhookExpectedResponse,
@@ -48,9 +49,6 @@ export function startUp(pageName) {
       cy.stub(window, 'open').as('windowOpenStub')
     },
   })
-  cy.clearAllCookies()
-  cy.clearAllLocalStorage()
-  cy.clearAllSessionStorage()
 
   // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
   // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
@@ -97,7 +95,9 @@ export function resizeObserverLoopErrRe() {
     }
   })
 }
-
+export function getScreenSets() {
+  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedPrettierGetScreenSetResponse }).as('getScreenSets')
+}
 export function getBaseDomain(baseDomain, timeout) {
   cy.wait(1000)
   cy.get('[data-cy ="cdctools-baseDomain"]').should('be.visible')

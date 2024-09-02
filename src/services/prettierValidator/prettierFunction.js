@@ -53,22 +53,44 @@ class StringPrettierFormatter {
     return response
   }
 
-  async prettierCode(screenSetClicked, siteApiKey, code) {
-    //get screenSetId from url
-    let response = await this.get()
-    console.log('code--->', code)
-    let prettifyCode = await this.myFormat(code)
-    console.log('response--->', response)
-    console.log('prettifyCode--->', prettifyCode)
-    console.log('responsescreenSetID)--->', response.screenSets)
+  async prettierCode(screenSetClicked, siteApiKey) {
+    const response = await this.get()
+    const screenSets = []
+    let success = true
+    let error = null
     for (const screenSet of response.screenSets) {
-      console.log('SCREENSETSscreenSet.screenSetID-->', screenSet.screenSetID)
-      if (screenSet.screenSetID === screenSetClicked) {
-        screenSet.javascript = prettifyCode
-        this.#copyScreenSet(siteApiKey, screenSet.screenSetID, 'us1', response)
-        console.log('SCREENSETS-->', screenSet)
+      const { screenSetID, javascript } = screenSet
+
+      if (screenSetClicked === screenSetID && javascript) {
+        try {
+          screenSet.javascript = await this.myFormat(javascript)
+          screenSets.push(screenSet.screenSetID)
+          console.log('screenSet-1', screenSets)
+          await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+          success = true
+        } catch (err) {
+          error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+          break
+        }
+      }
+      if (screenSetClicked === undefined) {
+        if (javascript) {
+          try {
+            screenSet.javascript = await this.myFormat(javascript)
+            screenSets.push(screenSet.screenSetID)
+            console.log('screenSet-2', screenSets)
+
+            await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+            success = false
+          } catch (err) {
+            error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+            break
+          }
+        }
       }
     }
+
+    return { success, screenSets, error }
   }
 
   #getScreenSetParameters(apiKey) {
@@ -130,8 +152,6 @@ class StringPrettierFormatter {
 
   #copyScreenSet(destinationSite, screenSetID, dataCenter, response) {
     const screenSet = this.#getScreenSet(screenSetID, response)
-    console.log('GETSCREENSET--->', screenSet)
-    console.log('GETresponseT--->', response)
     return this.set(destinationSite, dataCenter, screenSet)
   }
 
@@ -145,13 +165,11 @@ class StringPrettierFormatter {
       plugins: [prettierPluginBabel, prettierPluginEstree],
       tabWidth: 4,
     }
-    console.log('_inputString', _inputString)
 
     const withExportDefault = `export default ${_inputString.trimStart()}`
-    console.log('responsewithExportDefault', withExportDefault)
+
     try {
       const formattedString = await format(withExportDefault, prettierConfig)
-      console.log('responseformattedString', formattedString)
       return formattedString.replace(/^export default\s*/, '')
     } catch (error) {
       console.error('Error formatting string:', error.message)

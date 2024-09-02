@@ -21,6 +21,7 @@ const emailTemplatesExportErrorHeaderMessage = 'Error - email templates were not
 const emailTemplatesExportErrorMessage = 'Error getting email templates'
 const emailTemplatesExportErrorMessageDetail =
   'Error getting email templatesThere was an error when getting the email templates or you do not have the required permissions to call it.'
+const uiBuilderIconName = 'UI Builder'
 const emailTemplatesIconName = 'Email Templates'
 const siteDeployerIconName = 'Site Deployer'
 const emailExampleFile = 'email-templates.zip'
@@ -434,7 +435,60 @@ const mockedGetSchemaResponse = {
     fields: {},
   },
 }
-
+const mockedPrettierGetScreenSetResponse = {
+  callId: '5a4395b432794df383c2a35740ae90b0',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-23T16:19:57.815Z',
+  screenSets: [
+    {
+      screenSetID: 'Default-LinkAccounts',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript: ' {onError: function (event) {}}',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+    {
+      screenSetID: 'Default-LiteRegistration',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript: '',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+  ],
+}
 const mockedGetScreenSetResponse = {
   callId: '5a4395b432794df383c2a35740ae90b0',
   errorCode: 0,
@@ -1642,6 +1696,7 @@ export {
   emailTemplatesExportErrorMessage,
   emailTemplatesExportErrorMessageDetail,
   emailTemplatesIconName,
+  uiBuilderIconName,
   errorToManualRemoveSiteMessage,
   expectedDuplicatedMessage,
   expectedErrorMessage,
@@ -1664,6 +1719,7 @@ export {
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
+  mockedPrettierGetScreenSetResponse,
   mockedGetSmsConfigsResponse,
   mockedGetSocialsConfigsResponse,
   mockedGetWebhookExpectedResponse,

@@ -74,6 +74,8 @@
   "GLOBAL.WARNING": "Warning",
   "GLOBAL.REPORT_USAGE": "Please report the successful usage to help us track usages and being able to continue improving this tool.",
   "GLOBAL.BUTTON_REPORT_USAGE": "Report Usage Via E-mail",
+  "PRETTIFY.SUCCESS": "Prettify Code has been successfull",
+  "PRETTIFY.MULTIPLE_SCREENS": "Prettified Screen Sets:",
   "MANUAL_REMOVAL_POPUP.MANUAL_ACTION_REQUIRED": "Manual Action Required!",
   "MANUAL_REMOVAL_POPUP.ERROR_MESSAGE": "The command was executed with errors, but some sites were created and could not be deleted.",
   "MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT": "I understand that manual action is required to avoid data duplication.",

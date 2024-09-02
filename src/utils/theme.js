@@ -6,3 +6,7 @@ export const getCurrentConsoleTheme = function () {
   const currentTheme = availableThemes.find((theme) => cssLinkElement?.href.includes(theme))
   return currentTheme || availableThemes[0]
 }
+export const getCurrentParameters = function (url) {
+  const urlParams = new URLSearchParams(url)
+  console.log('urlParamas', urlParams)
+}

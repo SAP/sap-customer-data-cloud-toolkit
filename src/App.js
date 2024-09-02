@@ -6,7 +6,7 @@
 import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme'
 import { ThemeProvider } from '@ui5/webcomponents-react'
 import React from 'react'
-import { getCurrentConsoleTheme } from './utils/theme'
+import { getCurrentConsoleTheme, getCurrentParameters } from './utils/theme'
 
 import './App.css'
 import { useThemeChange } from './hooks/useThemeChange'
@@ -15,10 +15,10 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
 import SmsTemplates from './routes/sms-templates/sms-templates.component'
-import CodeMirrorEditor from './routes/codeLinter/codeLinter.component'
+import CodeMirrorEditor from './routes/prettify-code/prettify-code.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
-
+  console.log('urlPararms', getCurrentParameters(window.location.href))
   return (
     <ThemeProvider>
       <div className="App">
@@ -36,6 +36,9 @@ function App() {
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIER}>
           <CodeMirrorEditor />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIER_ALL_CODE}>
+          <PrettifyAllScreensJavascript />
         </div>
       </div>
     </ThemeProvider>

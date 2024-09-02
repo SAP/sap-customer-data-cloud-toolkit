@@ -18,8 +18,6 @@ export const getScreenSet = (hash) => {
     const params = new URLSearchParams(match)
     const screenSetId = params.get('screenSetId')
     return screenSetId
-  } else {
-    console.log('SCREEN SET NOT FOUND')
   }
 }
 export const getErrorAsArray = (error) => {
