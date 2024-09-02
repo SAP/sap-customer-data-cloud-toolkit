@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */ 
+
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'

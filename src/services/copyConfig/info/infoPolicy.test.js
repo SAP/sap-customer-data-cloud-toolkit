@@ -20,6 +20,7 @@ import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../../recaptcha/dataTest.js'
 
 jest.mock('axios')
 
@@ -34,21 +35,21 @@ describe('Info Policy test suite', () => {
   })
 
   test.each([
-      ['accountOptions', 0],
-      ['authentication', 1],
-      ['codeVerification', 2],
-      ['emailNotifications', 3],
-      ['emailVerification', 4],
-      ['federation', 5],
-      ['passwordComplexity', 6],
-      ['gigyaPlugins', 7],
-      ['passwordReset', 8],
-      ['profilePhoto', 9],
-      ['registration', 10],
-      ['security', 11],
-      ['twoFactorAuth', 12],
-      ['doubleOptIn', 13],
-      ['preferencesCenter', 14]
+    ['accountOptions', 0],
+    ['authentication', 1],
+    ['codeVerification', 2],
+    ['emailNotifications', 3],
+    ['emailVerification', 4],
+    ['federation', 5],
+    ['passwordComplexity', 6],
+    ['gigyaPlugins', 7],
+    ['passwordReset', 8],
+    ['profilePhoto', 9],
+    ['registration', 10],
+    ['security', 11],
+    ['twoFactorAuth', 12],
+    ['doubleOptIn', 13],
+    ['preferencesCenter', 14],
   ])('get policy info successfully except %s', async (property, index) => {
     await executeInfoPolicyTest(property, index)
   })
@@ -72,6 +73,9 @@ describe('Info Policy test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
     const response = await info.get()
 

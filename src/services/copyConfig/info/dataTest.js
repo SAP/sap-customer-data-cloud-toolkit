@@ -10,6 +10,7 @@ import RbaOptions from '../rba/rbaOptions.js'
 import EmailOptions from '../emails/emailOptions.js'
 import { getPolicyConfig } from '../policies/dataTest.js'
 import { getEmailsExpectedResponse } from '../../emails/dataTest.js'
+import { recaptcha } from '../dataTest.js'
 
 export function getInfoExpectedResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
@@ -130,11 +131,17 @@ export function getInfoExpectedResponse(supports) {
       },
     ],
   }
+  const recaptcha = {
+    formatName: false,
+    id: 'recaptchaPolicies',
+    name: 'reCAPTCHA Policies',
+    value: supports,
+  }
 
   const rbaOptions = new RbaOptions(undefined)
   const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba]
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba, recaptcha]
 }
 
 export function getExpectedSchemaResponseExcept(exceptions) {

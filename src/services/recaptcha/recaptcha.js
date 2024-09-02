@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */ 
+
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
@@ -20,7 +25,7 @@ class Recaptcha {
     const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)
     try {
       const res = await client.post(url, this.#getRecaptchaParameters(site))
-      console.log('Recaptcha response data:', res.data) 
+      console.log('Recaptcha response data:', res.data)
       return res.data
     } catch (error) {
       return generateErrorResponse(error, Recaptcha.#ERROR_MSG_GET_CONFIG)

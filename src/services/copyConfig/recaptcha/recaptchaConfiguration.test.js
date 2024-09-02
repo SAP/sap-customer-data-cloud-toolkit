@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */ 
+
 import axios from 'axios'
 import RecaptchaConfiguration from './recaptchaConfiguration.js'
 
@@ -90,7 +95,7 @@ describe('RecaptchaConfiguration test suite ', () => {
     try {
       await recaptchaConfig.setPolicies(site, { riskAssessmentWithReCaptchaV3: true }, { requireCaptcha: true })
     } catch (error) {
-      expect(error.message).toBe('Erro ao obter a configuração atual das políticas: Failed to fetch policies')
+      expect(error.message).toBe('Error fetching current policies: Failed to fetch policies')
     }
   })
 

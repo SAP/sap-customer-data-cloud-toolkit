@@ -29,6 +29,7 @@ import {
   channelId,
   internalSchemaId,
   addressesSchemaId,
+  recaptchaId,
 } from '../dataTest.js'
 import { getExpectedScreenSetResponse } from '../screenset/dataTest.js'
 import { getConsentStatementExpectedResponse, getConsentStatementNotMigratedResponse } from '../consent/dataTest.js'
@@ -37,6 +38,7 @@ import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
+import { getRecaptchaExpectedResponse, getRiskProvidersResponse, getRecaptchaPoliciesResponse } from '../../recaptcha/dataTest.js'
 
 jest.mock('axios')
 
@@ -44,7 +46,7 @@ describe('Info test suite', () => {
   const apiKey = 'apiKey'
   const socialsKeys = 'APP KEY'
   const info = new Info(CommonTestData.credentials, apiKey, 'eu1')
-  test('get all info successfully', async () => {
+  test('Y', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
@@ -62,6 +64,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = getInfoExpectedResponse(false)
@@ -84,7 +89,7 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'dataflows', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'dataflows', apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseInvalidAPI, 'extensions', apiKey) })
-
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse(expectedGigyaResponseInvalidAPI, recaptchaId, apiKey) })
     await expect(info.get()).rejects.toEqual([getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, schemaId, apiKey)])
   })
 
@@ -107,6 +112,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -133,6 +141,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
 
     const response = await info.get()
@@ -161,6 +172,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -186,6 +200,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -213,6 +230,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -240,6 +260,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
@@ -275,7 +298,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
-
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
     expectedResponse.splice(2, 1) // remove communication topics
@@ -302,6 +327,9 @@ describe('Info test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const expectedResponse = JSON.parse(JSON.stringify(getInfoExpectedResponse(false)))
