@@ -1,8 +1,20 @@
+import { getApiKey, getQueryParam, getScreenSet } from '../redux/utils'
+
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-
+export const buildUrl = () => {
+  const apiKey = getApiKey(window.location.href)
+  console.log('apiKey', apiKey)
+  const screenSet = getScreenSet(window.location)
+  console.log('screenSet', screenSet)
+  const screenId = getQueryParam(window.location.href, 'screenId')
+  console.log('apscreenIdKey', screenId)
+  const url = `/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${screenSet}&apiKey=${apiKey}&screenId=${screenId}`
+  console.log('url', url)
+  return url
+}
 export const TENANT_ID_CLASS = 'fd-info-label__text'
 export const ADMIN_BUTTON_SELECTOR = '.fd-nested-list__icon.sap-icon--action-settings'
 export const ADMIN_BUTTON_CLASSES = 'fd-nested-list__icon sap-icon--action-settings'
@@ -25,7 +37,8 @@ export const ROUTE_SITE_DEPLOYER = '/cdc-toolbox/site-deployer'
 export const ROUTE_EMAIL_TEMPLATES = '/user-interfacing/email-templates'
 export const ROUTE_SMS_TEMPLATES = '/user-interfacing/sms-templates'
 export const ROUTE_COPY_CONFIG_EXTENDED = '/cdc-toolbox/copy-configuration-extended'
-export const ROUTE_PRETTIER = '/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=Default-LinkAccounts&apiKey=4_szAU-_K5osidXSQxNMyfIA&screenId=gigya-link-account-screen'
+// export const ROUTE_PRETTIER = '/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=Default-LinkAccounts&apiKey=4_6Tv6z8O6NmUO_BZoHcXIRw&screenId=gigya-link-account-screen'
+export const ROUTE_PRETTIER = buildUrl()
 // export const ROUTE_PRETTIER_ALL_CODE = '/user-interfacing/screen-sets-app/web/dashboard'
 //usar WildCard para inserir screenSetId=**&apiKey=**&screenId=**
 export const INCOMPATIBLE_ROUTE_FRAGMENTS = ['/flow-builder-web-app']
