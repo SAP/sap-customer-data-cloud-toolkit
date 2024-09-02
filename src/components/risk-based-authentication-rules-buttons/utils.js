@@ -3,15 +3,17 @@
  * License: Apache-2.0
  */
 
-export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation, t, dispatch) => {
-  const selectedButton = event.detail.selectedOption.dataset.id
-  
-  if (selectedButton) {
-    if (selectedButton === t('CONFIGURATION_TREE.BUTTON_MERGE')) {
-      dispatch(setRbaRulesOperation({ checkBoxId: treeNode.id, operation: 'merge' }))
-    } else {
-      dispatch(setRbaRulesOperation({ checkBoxId: treeNode.id, operation: 'replace' }))
-    }
+export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation,    dispatch) => {
+  const REPLACE_BUTTON_ID = 'replace'
+
+  var selectedButton = 'merge'
+
+  if (event.detail?.selectedOption?.dataset?.id) selectedButton = event.detail.selectedOption.dataset.id
+
+  if (selectedButton === REPLACE_BUTTON_ID) {
+    dispatch(setRbaRulesOperation({ checkBoxId: treeNode.id, operation: 'replace' }))
+  } else {
+    dispatch(setRbaRulesOperation({ checkBoxId: treeNode.id, operation: 'merge' }))
   }
 }
 

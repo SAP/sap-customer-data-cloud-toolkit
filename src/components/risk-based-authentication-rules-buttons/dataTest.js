@@ -16,11 +16,19 @@ export const dispatch = jest.fn()
 export const t = (key) => key
 
 export const eventMerge = {
-  target: { text: 'CONFIGURATION_TREE.BUTTON_MERGE' },
+  detail: {
+    selectedOption: {
+      dataset: { id: 'merge' },
+    },
+  },
 }
 
 export const eventReplace = {
-  target: { text: 'CONFIGURATION_TREE.BUTTON_REPLACE' },
+  detail: {
+    selectedOption: {
+      dataset: { id: 'replace' },
+    },
+  },
 }
 
 export const replaceValue = { operation: 'replace' }
