@@ -4,7 +4,7 @@
  */
 
 import { handleRadioButtonChange } from './utils'
-import { treeNodeExample, setRbaRulesOperation, dispatch, t, eventMerge, eventReplace, replaceValue, mergeValue } from './dataTest'
+import { treeNodeExample, setRbaRulesOperation, dispatch, eventMerge, eventReplace, replaceValue, mergeValue } from './dataTest'
 
 describe('handleRadioButtonChange function tests', () => {
   beforeEach(() => {
