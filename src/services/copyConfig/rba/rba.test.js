@@ -43,7 +43,7 @@ describe('RBA test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContext(expectedGigyaResponseOk, RiskAssessment.CONTEXT_ID, apiKey) })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey) })
-      .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk }) // Mock for initial destination policy response
+      .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey) })
 
     const spy = jest.spyOn(rba, 'mergeCommonRules')
@@ -67,7 +67,7 @@ describe('RBA test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContext(expectedGigyaResponseInvalidAPI, RiskAssessment.CONTEXT_ID, apiKey) })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Rba.UNKNOWN_LOCATION_NOTIFICATION_CONTEXT_ID, apiKey) })
-      .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk }) // Mock for initial destination policy response
+      .mockResolvedValueOnce({ data: expectedGetDestinationRbaPolicyResponseOk })
       .mockResolvedValueOnce({ data: getExpectedResponseWithContextAsString(expectedGigyaResponseOk, Policy.CONTEXT_ID, apiKey) })
 
     const responses = await rba.copy(apiKey, { dataCenter }, options)

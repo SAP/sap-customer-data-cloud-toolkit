@@ -22,8 +22,8 @@ const RiskBasedAuthenticationRulesButtons = ({ treeNode, setRbaRulesOperation, t
         onChange={(event) => handleRadioButtonChange(event, treeNode, setRbaRulesOperation, dispatch)}
         valueState="None"
       >
-        <Option data-id="merge">Merge</Option>
-        <Option data-id="replace">Replace</Option>
+        <Option data-id="merge">{t('CONFIGURATION_TREE.BUTTON_MERGE')}</Option>
+        <Option data-id="replace">{t('CONFIGURATION_TREE.BUTTON_REPLACE')}</Option>
       </Select>
     </span>
   )
