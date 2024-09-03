@@ -40,6 +40,11 @@ import {
   policiesPopoverText,
   siteConfigResponse,
   targetSitePopoverText,
+  getRecaptchaExpectedResponse,
+  getRiskProvidersResponse,
+  setCaptchaConfigMock,
+  setPoliciesMock,
+  setRiskProvidersMock,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -168,6 +173,9 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetRiskAssessmentResponseOk }).as('rba.riskAssessment.getConfig')
   cy.intercept('POST', 'accounts.rba.riskAssessment.getConfig', { body: expectedGetUnknownLocationNotificationResponseOk }).as('accounts.getPolicies')
   cy.intercept('POST', 'accounts.rba.getPolicy', { body: expectedGetRbaPolicyResponseOk }).as('rba.getPolicy')
+  cy.intercept('POST', 'admin.captcha.getConfig', { body: getRecaptchaExpectedResponse }).as('captcha.getConfig')
+  cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('accounts.getPolicies')
+  cy.intercept('POST', 'admin.riskProviders.getConfig', { body: getRiskProvidersResponse }).as('riskProviders.getConfig')
 }
 
 export function mockSetConfigurationRequests() {
@@ -185,6 +193,9 @@ export function mockSetConfigurationRequests() {
   mockResponse(mockedSetRiskAssessmentResponse, 'POST', 'accounts.rba.riskAssessment.setConfig')
   mockResponse(mockedSetUnknownLocationNotificationResponse, 'POST', 'accounts.setPolicies')
   mockResponse(mockedSetRbaPolicyResponse, 'POST', 'accounts.rba.setPolicy')
+  mockResponse(setCaptchaConfigMock, 'POST', 'admin.captcha.setConfig')
+  mockResponse(setPoliciesMock, 'POST', 'accounts.setPolicies')
+  mockResponse(setRiskProvidersMock, 'POST', 'admin.riskProviders.setConfig')
 }
 
 export function mockGetUserSitesRequest() {

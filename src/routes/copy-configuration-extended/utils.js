@@ -48,8 +48,11 @@ export const sendReportOnWarnings = (errors) => {
 }
 
 export const handleCheckboxChange = (dispatch, checkbox, value, siteId, setConfigurationStatus) => {
+  const checkBoxId = checkbox.id
   if (checkbox.link) {
-    const checkBoxId = checkbox.id
+    dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value: value }))
+  }
+  if (checkbox.id === 'recaptchaPolicies') {
     dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value: value }))
   }
 }
@@ -70,6 +73,10 @@ export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, sit
       processNestedBranches(dispatch, configuration.branches, false, siteId, setConfigurationStatus)
     }
     if (configuration.link) {
+      handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
+    }
+    if (configuration.id === 'recaptchaPolicies') {
+      console.log('configuration recaptchaPolicies')
       handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
     }
   })

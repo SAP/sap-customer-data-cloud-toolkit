@@ -46,7 +46,6 @@ describe('RiskProviders test suite', () => {
 
     try {
       const response = await riskProviders.get(site, dataCenter)
-      console.log('Erro tratado:', response) // Verificando o que está sendo retornado após a rejeição
       expect(response).toEqual({
         data: {
           errorCode: 500,
@@ -56,7 +55,7 @@ describe('RiskProviders test suite', () => {
         },
       })
     } catch (error) {
-      console.log('Erro capturado no catch:', error)
+      console.log('Error caught in the catch:', error)
     }
   })
 
@@ -84,7 +83,7 @@ describe('RiskProviders test suite', () => {
 
     try {
       const response = await riskProviders.set(site, dataCenter, { provider: 'testProvider' })
-      console.log('Erro tratado no set:', response) // Verificando o que está sendo retornado após a rejeição
+      console.log('Handled error in the set:', response)
       expect(response).toEqual({
         data: {
           errorCode: 500,
@@ -94,7 +93,7 @@ describe('RiskProviders test suite', () => {
         },
       })
     } catch (error) {
-      console.log('Erro capturado no catch do set:', error)
+      console.log(error)
     }
   })
 })
