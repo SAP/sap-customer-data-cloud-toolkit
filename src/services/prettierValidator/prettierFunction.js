@@ -77,6 +77,7 @@ class StringPrettierFormatter {
             break
           }
         } else {
+          isError = true
           error = `No JavaScript for ScreenSet ID ${screenSetID}`
 
           success = false
@@ -95,6 +96,12 @@ class StringPrettierFormatter {
           success = false
           break
         }
+      } else {
+        isError = true
+        error = `There is no javascript in the screens`
+
+        success = false
+        break
       }
     }
 

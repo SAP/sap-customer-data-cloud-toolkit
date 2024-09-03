@@ -13,11 +13,12 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey, getScreenSet } from '../../redux/utils.js'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
+
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const CodeMirrorEditor = ({ t }) => {
   const [showSuccess, setShowSuccess] = useState(false)
-  const [showInfo, setShowInfo] = useState(false)
+  // const [showInfo, setShowInfo] = useState(false)
   const [showError, setShowError] = useState(false)
   const [modifiedScreenSets, setModifiedScreenSets] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
@@ -29,17 +30,14 @@ const CodeMirrorEditor = ({ t }) => {
   const credentialsUpdated = { userKey: credentials.userKey, secret: credentials.secretKey, gigyaConsole: credentials.gigyaConsole }
 
   const getServices = async () => {
-    console.log('window', window.location)
     const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
     const screenSet = getScreenSet(window.location)
     const { success, screenSets, error, isError } = await prettier.prettierCode(screenSet, apikey)
-    console.log('success', success)
-    console.log('error', error)
-    console.log('isError', isError)
+
     if (isError) {
       setErrorMessage(error)
       setShowSuccess(false)
-      setShowInfo(false)
+      // setShowInfo(false)
       setShowError(true)
       setTimeout(() => {
         setShowError(false)
@@ -48,12 +46,10 @@ const CodeMirrorEditor = ({ t }) => {
     }
     if (success) {
       setShowSuccess(true)
-      console.log('success', showSuccess)
-      console.log('setInfo', showInfo)
       setModifiedScreenSets(screenSets)
       setTimeout(() => {
         setShowSuccess(false)
-        window.location.reload()
+        // window.location.reload()
       }, 2000)
     }
   }
@@ -75,9 +71,7 @@ const CodeMirrorEditor = ({ t }) => {
       <Text>{errorMessage}</Text>
     </DialogMessageInform>
   )
-  if (window.location.href.includes('uiBuilder?screenSetId')) {
-    console.log('location', window.location.href)
-  }
+
   return (
     <>
       <Bar
@@ -85,7 +79,7 @@ const CodeMirrorEditor = ({ t }) => {
         endContent={
           <>
             <Button id="prettifyCode" data-cy="prettifyCode" className={classes.importAllButtonStyle} onClick={getServices}>
-              Prettify Javascript
+              {t('PRETTIFY.BUTTON_LABEL')}
             </Button>
           </>
         }
