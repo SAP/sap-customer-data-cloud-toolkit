@@ -32,8 +32,11 @@ const CodeMirrorEditor = ({ t }) => {
     console.log('window', window.location)
     const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
     const screenSet = getScreenSet(window.location)
-    const { success, screenSets, error } = await prettier.prettierCode(screenSet, apikey)
-    if (error) {
+    const { success, screenSets, error, isError } = await prettier.prettierCode(screenSet, apikey)
+    console.log('success', success)
+    console.log('error', error)
+    console.log('isError', isError)
+    if (isError) {
       setErrorMessage(error)
       setShowSuccess(false)
       setShowInfo(false)
@@ -45,28 +48,19 @@ const CodeMirrorEditor = ({ t }) => {
     }
     if (success) {
       setShowSuccess(true)
+      console.log('success', showSuccess)
+      console.log('setInfo', showInfo)
       setModifiedScreenSets(screenSets)
       setTimeout(() => {
         setShowSuccess(false)
-        // window.location.reload()
-      }, 2000)
-    } else {
-      setModifiedScreenSets(screenSets)
-      setShowInfo(true)
-      setTimeout(() => {
-        setShowInfo(false)
-        // window.location.reload()
+        window.location.reload()
       }, 2000)
     }
   }
-  // const showSuccessMessage = () => (
-  //   <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
-  //     <Text>{t('PRETTIFY.SUCCESS')}</Text>
-  //   </DialogMessageInform>
-  // )
-  const InformationPopup = () => {
+
+  const successPopUp = () => {
     return (
-      <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="infoPopup" data-cy="informationPopup">
+      <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="infoPopup" data-cy="successPopUp">
         <Text>{t('PRETTIFY.MULTIPLE_SCREENS')}</Text>
         <ul>
           {modifiedScreenSets.map((screenSetID) => (
@@ -96,8 +90,7 @@ const CodeMirrorEditor = ({ t }) => {
           </>
         }
       ></Bar>
-      {showSuccess && InformationPopup()}
-      {showInfo && InformationPopup()}
+      {showSuccess && successPopUp()}
       {showError && showErrorPopup()}
     </>
   )

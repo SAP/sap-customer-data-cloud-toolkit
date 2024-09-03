@@ -58,40 +58,89 @@ class StringPrettierFormatter {
     const screenSets = []
     let success = true
     let error = null
+    let isError = null
+
     for (const screenSet of response.screenSets) {
       const { screenSetID, javascript } = screenSet
 
-      if (screenSetClicked === screenSetID && javascript) {
-        try {
-          screenSet.javascript = await this.myFormat(javascript)
-          screenSets.push(screenSet.screenSetID)
-          console.log('screenSet-1', screenSets)
-          await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-          success = true
-        } catch (err) {
-          error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
-          break
-        }
-      }
-      if (screenSetClicked === undefined) {
+      if (screenSetClicked === screenSetID) {
         if (javascript) {
           try {
             screenSet.javascript = await this.myFormat(javascript)
             screenSets.push(screenSet.screenSetID)
-            console.log('screenSet-2', screenSets)
-
+            console.log('screenSet-1', screenSets)
             await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-            success = false
           } catch (err) {
+            isError = true
             error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+            success = false
             break
           }
+        } else {
+          error = `No JavaScript for ScreenSet ID ${screenSetID}`
+
+          success = false
+          break
+        }
+      } else if (screenSetClicked === undefined && javascript) {
+        try {
+          console.log('pretty success2', success)
+          screenSet.javascript = await this.myFormat(javascript)
+          screenSets.push(screenSet.screenSetID)
+          console.log('screenSet-2', screenSets)
+          await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+        } catch (err) {
+          isError = true
+          error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+          success = false
+          break
         }
       }
     }
 
-    return { success, screenSets, error }
+    return { success, screenSets, error, isError }
   }
+  // async prettierCode(screenSetClicked, siteApiKey) {
+  //   const response = await this.get()
+  //   const screenSets = []
+  //   let success = true
+  //   let error = null
+  //   for (const screenSet of response.screenSets) {
+  //     const { screenSetID, javascript } = screenSet
+
+  //     if (screenSetClicked === screenSetID && javascript) {
+  //       try {
+  //         screenSet.javascript = await this.myFormat(javascript)
+  //         screenSets.push(screenSet.screenSetID)
+  //         console.log('screenSet-1', screenSets)
+  //         await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+  //         success = true
+  //       } catch (err) {
+  //         error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+  //         break
+  //       }
+  //     }
+  //     if (screenSetClicked === undefined) {
+  //       if (javascript) {
+  //         try {
+  //           screenSet.javascript = await this.myFormat(javascript)
+  //           screenSets.push(screenSet.screenSetID)
+  //           console.log('screenSet-2', screenSets)
+
+  //           await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+  //           success = true
+  //         } catch (err) {
+  //           error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+  //           break
+  //         }
+  //       } else {
+  //         success = false
+  //       }
+  //     }
+  //   }
+
+  //   return { success, screenSets, error }
+  // }
 
   #getScreenSetParameters(apiKey) {
     const parameters = Object.assign({})
@@ -164,6 +213,7 @@ class StringPrettierFormatter {
       parser: 'babel',
       plugins: [prettierPluginBabel, prettierPluginEstree],
       tabWidth: 4,
+      semi: false,
     }
 
     const withExportDefault = `export default ${_inputString.trimStart()}`
