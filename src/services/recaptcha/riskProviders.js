@@ -1,7 +1,7 @@
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
- */ 
+ */
 
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
@@ -35,10 +35,7 @@ class RiskProviders {
         apiKey: site,
         userKey: this.userKey,
         secret: this.secret,
-        config: JSON.stringify({
-          configType: 0,
-          config: JSON.stringify(config),
-        }),
+        config: JSON.stringify(config),
       }
       const response = await client.post(url, params)
       return response.data

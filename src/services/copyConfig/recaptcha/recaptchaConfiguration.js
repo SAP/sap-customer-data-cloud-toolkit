@@ -70,11 +70,6 @@ class RecaptchaConfiguration {
 
   async setPolicies(targetSite, securityPolicies, registrationPolicies) {
     try {
-      const currentConfig = await this.#policy.get(targetSite, this.#dataCenter)
-      if (currentConfig.errorCode !== 0) {
-        throw new Error(`Error fetching current policies: ${currentConfig.errorMessage}`)
-      }
-
       const newSecurityConfig = {
         riskAssessmentWithReCaptchaV3: securityPolicies.riskAssessmentWithReCaptchaV3,
         riskAssessmentWithTransUnion: securityPolicies.riskAssessmentWithTransUnion,
@@ -83,7 +78,6 @@ class RecaptchaConfiguration {
       const newConfig = {
         security: newSecurityConfig,
         registration: {
-          ...currentConfig.registration,
           requireCaptcha: registrationPolicies.requireCaptcha,
           requireSecurityQuestion: registrationPolicies.requireSecurityQuestion,
           requireLoginID: registrationPolicies.requireLoginID,
@@ -95,7 +89,7 @@ class RecaptchaConfiguration {
       if (response.errorCode === 0) {
         return response
       } else {
-        throw new Error(`Error setting policies: ${response.errorMessage}`)
+        throw new Error(`Error fetching current policies: ${response.errorMessage}`)
       }
     } catch (error) {
       console.error(`Error in setPolicies: ${error.message || error}`)

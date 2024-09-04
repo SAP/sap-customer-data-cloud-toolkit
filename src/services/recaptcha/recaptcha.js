@@ -21,11 +21,9 @@ class Recaptcha {
   }
 
   async get(site, dataCenter) {
-    console.log('Fetching reCAPTCHA config for site:', site)
     const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)
     try {
       const res = await client.post(url, this.#getRecaptchaParameters(site))
-      console.log('Recaptcha response data:', res.data)
       return res.data
     } catch (error) {
       return generateErrorResponse(error, Recaptcha.#ERROR_MSG_GET_CONFIG)
@@ -43,12 +41,8 @@ class Recaptcha {
     return this.get(site, dataCenter)
   }
 
-  // Método para configurar o reCAPTCHA
   async set(site, dataCenter, Config) {
-    console.log('Setting reCAPTCHA config for site:', site, Config)
     const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getSetRecaptchaEndpoint(), this.gigyaConsole)
-
-    console.log('Built URL:', url)
 
     try {
       const params = await client.post(url, this.#setRecaptchaParameters(site, Config))
