@@ -3,9 +3,8 @@
  * License: Apache-2.0
  */
 
-
 import { useDispatch } from 'react-redux'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import lodash from 'lodash'
@@ -14,24 +13,42 @@ import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/web
 
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component'
 import DataflowSettings from '../dataflow-settings/dataflow-settings.component'
-import { getHighestSeverity } from './utils'
-
-import '@ui5/webcomponents-icons/dist/message-information.js'
+import RiskBasedAuthenticationRulesButtons from '../risk-based-authentication-rules-buttons/risk-based-authentication-rules-buttons.component'
+import { getHighestSeverity } from './utils.js'
+import { handleRBACheckboxChange, shouldShowRBARulesButtons } from '../../components/risk-based-authentication-rules-buttons/utils' // Import the new utility function
 import './configuration-tree.component.css'
 import styles from './configuration-tree.styles.js'
+import '@ui5/webcomponents-icons/dist/message-information.js'
 
 const useStyles = createUseStyles(styles, { name: 'ConfigurationTree' })
 
-const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setDataflowVariableValue, setDataflowVariableValues, t }) => {
+const ConfigurationTree = ({
+  siteId,
+  id,
+  name,
+  value,
+  error,
+  branches,
+  tooltip,
+  setConfigurationStatus,
+  setDataflowVariableValue,
+  setDataflowVariableValues,
+  setRbaRulesOperation,
+  t,
+}) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
+  const [isRBAChecked, setIsRBAChecked] = useState(false)
 
   const onCheckBoxStateChangeHandler = (event) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
+
+    handleRBACheckboxChange(checkBoxId, value, setIsRBAChecked)
+
     if (siteId) {
       dispatch(setConfigurationStatus({ siteId, checkBoxId, value }))
     } else {
@@ -66,6 +83,10 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
     )
   }
 
+  const showRBARulesButtons = (treeNode) => {
+    return shouldShowRBARulesButtons(treeNode, isRBAChecked) ? <RiskBasedAuthenticationRulesButtons treeNode={treeNode} setRbaRulesOperation={setRbaRulesOperation} t={t} /> : ''
+  }
+
   const expandTree = (treeNode) => {
     return (
       <TreeItemCustom
@@ -97,6 +118,7 @@ const ConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, 
             )}
             {showDataflowSettings(treeNode)}
             {showError(treeNode)}
+            {showRBARulesButtons(treeNode)}
           </FlexBox>
         }
       >
