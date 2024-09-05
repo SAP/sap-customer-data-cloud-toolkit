@@ -1,10 +1,10 @@
 const styles = {
   rbaSelectButtonAlignment: {
     alignContent: 'center',
-    marginLeft: '0.3vw',
+    marginLeft: '10px',
   },
   rbaButtonSize: {
-    width: '7vw',
+    width: '100px',
   },
 }
 
