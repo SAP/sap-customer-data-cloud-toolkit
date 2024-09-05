@@ -73,6 +73,24 @@ export function verifyTrackerDialog() {
   cy.get('#automated-usage-tracking-tool-dialog').should('be.visible')
   cy.get('#automated-usage-tracking-tool-dialog-content').should('contain.text', trackingToolText)
   cy.get('#automated-usage-tracking-tool-dialog-confirm-button').click()
+
+  cy.intercept('POST', 'https://accounts.undefined.gigya.com/accounts.initRegistration', {
+    statusCode: 200,
+    body: {
+      callId: 'mockCallId',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      time: Date.now(),
+      regToken: 'mockRegToken',
+    },
+  })
+
+  cy.intercept('POST', 'https://accounts.undefined.gigya.com/accounts.setAccountInfo', {
+    statusCode: 200,
+    body: { callId: 'mockCallId', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', time: Date.now() },
+  })
 }
 
 export function clearCredentials() {
