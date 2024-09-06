@@ -52,7 +52,6 @@ export const updateCredentialsAsync = createAsyncThunk(UPDATE_CREDENTIALS_ACTION
 
 export const { setUserKey, setSecretKey, setGigyaConsole, updateCredentials } = credentialsSlice.actions
 
-//Importar esta constante para poder usar as credenciais, no componente usar o getState para poder usar
 export const selectCredentials = (state) => state.credentials.credentials
 
 export default credentialsSlice.reducer
