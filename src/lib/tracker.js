@@ -29,7 +29,7 @@ export async function requestConsentConfirmation() {
 export async function trackUsage({ featureName }) {
   if (trackingTool) {
     return await trackingTool.trackUsage({
-      toolName: 'sap-customer-data-cloud-toolkit',
+      toolName: 'Customer Data Cloud toolkit',
       featureName,
     })
   }
