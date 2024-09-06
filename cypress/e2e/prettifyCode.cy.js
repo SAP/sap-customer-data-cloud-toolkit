@@ -4,40 +4,118 @@
  */
 
 import * as utils from './utils'
+import * as datatest from './dataTest'
 
 describe('UI Builder - Prettify Code', () => {
   const liteRegistration = 'Default-LiteRegistration'
   const linkAccounts = 'Default-LinkAccounts'
-  context('Viewing informational PopUp', () => {
-    beforeEach(() => {
-      cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${liteRegistration}`)
-      utils.getScreenSets()
+  const organizationRegistration = 'Default-OrganizationRegistration'
+  describe('Prettify Code - Single Screen', () => {
+    context('Single Screen - No javascript on the screenSet', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${liteRegistration}`)
+        utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should informe the user when there is no changes in the code', () => {
+        cy.get('[data-cy="prettifySingleScreen"]').click()
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `There is no Javascript on this screen ${liteRegistration}`)
+      })
     })
-    afterEach(() => {
-      cy.clearAllCookies()
-      cy.clearAllLocalStorage()
-      cy.clearAllSessionStorage()
+
+    context('Single Screen - View Success PopUp', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${linkAccounts}`)
+        utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should show success popUp', () => {
+        cy.get('[data-cy="prettifySingleScreen"]').click()
+        cy.get('[data-cy="prettierSuccessPopup"]').should('be.visible').should('contains.text', `ClosePrettify Code has been successfull${linkAccounts}`)
+      })
     })
-    it('Should show information popUp when there is no changes in the code', () => {
-      cy.get('[data-cy="prettifyCode"]').click()
-      cy.get('#infoPopup').should('be.visible').should('contains.text', 'THERE WHERE NO CHANGES IN THE CODE')
+
+    context('Single Screen - View Error PopUp', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${organizationRegistration}`)
+        utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should show error popUp when there is an error in the code', () => {
+        cy.get('[data-cy="prettifySingleScreen"]').click()
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${organizationRegistration}:`)
+      })
     })
   })
-  context('Viewing Successfull PopUp', () => {
-    beforeEach(() => {
-      cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${linkAccounts}`)
-      utils.getScreenSets()
+
+  describe('Prettify Code - All Screens', () => {
+    context('All Screens - Success Prettier', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+
+        utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should show success popUp when there is javascript on the screenSets and no Error', () => {
+        cy.get('[data-cy="prettifyAllCode"]').click()
+        cy.get('[data-cy="prettierSuccessPopup"]')
+          .should('be.visible')
+          .should('contains.text', `ClosePrettify Code has been successfull${linkAccounts}${liteRegistration}${organizationRegistration}`)
+      })
     })
-    afterEach(() => {
-      cy.clearAllCookies()
-      cy.clearAllLocalStorage()
-      cy.clearAllSessionStorage()
+
+    context('All Screens - No Javascript on any screen', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+        utils.removeJavascript(datatest.mockGetAllSuccessScreenSets)
+        utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should show error popUp when there is no javascript in the code', () => {
+        cy.get('[data-cy="prettifyAllCode"]').click()
+        cy.get('[data-cy="errorPopup"]')
+          .should('be.visible')
+          .should(
+            'contains.text',
+            `CloseThere is no Javascript on this screen ${linkAccounts}\nThere is no Javascript on this screen ${liteRegistration}\nThere is no Javascript on this screen ${organizationRegistration}`,
+          )
+      })
     })
-    it('Should show information popUp when there is no changes in the code', () => {
-      cy.get('[data-cy="prettifyCode"]').click()
-      cy.get('[data-cy="prettierSuccessPopup"]')
-        .should('be.visible')
-        .should('contains.text', 'Please report the successful usage to help us track usages and being able to continue improving this tool.')
+    context('All Screens - Javascript error on a single screenSet', () => {
+      beforeEach(() => {
+        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+        utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
+        utils.addErrorOnJavascript(datatest.mockGetAllSuccessScreenSets, liteRegistration)
+      })
+      afterEach(() => {
+        cy.clearAllCookies()
+        cy.clearAllLocalStorage()
+        cy.clearAllSessionStorage()
+      })
+      it('Should show error popUp when there is an error in the code', () => {
+        cy.get('[data-cy="prettifyAllCode"]').click()
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${liteRegistration}:`)
+      })
     })
   })
 })

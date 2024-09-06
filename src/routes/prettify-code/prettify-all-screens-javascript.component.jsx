@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import React, { useState } from 'react'
 import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
-import styles from './email-templates.styles.js'
+import styles from './prettify-code.styles.js'
 import StringPrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey, getScreenSet } from '../../redux/utils.js'
@@ -28,9 +28,10 @@ const PrettifyAllScreens = ({ t }) => {
   const credentialsUpdated = { userKey: credentials.userKey, secret: credentials.secretKey, gigyaConsole: credentials.gigyaConsole }
 
   const getServices = async () => {
-    const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
     const screenSet = getScreenSet(window.location)
-    const { success, screenSets, error } = await prettier.prettierCode(screenSet, apikey)
+    const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
+    const { success, screenSetArray, error } = await prettier.prettierCode(screenSet, apikey)
+
     if (error) {
       setErrorMessage(error)
       setShowSuccess(false)
@@ -43,15 +44,9 @@ const PrettifyAllScreens = ({ t }) => {
     }
     if (success) {
       setShowSuccess(true)
+      setModifiedScreenSets(screenSetArray)
       setTimeout(() => {
         setShowSuccess(false)
-        window.location.reload()
-      }, 2000)
-    } else {
-      setModifiedScreenSets(screenSets)
-      setShowInfo(true)
-      setTimeout(() => {
-        setShowInfo(false)
         window.location.reload()
       }, 2000)
     }
@@ -59,6 +54,11 @@ const PrettifyAllScreens = ({ t }) => {
   const showSuccessMessage = () => (
     <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
       <Text>{t('PRETTIFY.SUCCESS')}</Text>
+      <ul>
+        {modifiedScreenSets.map((screenSetID) => (
+          <li key={screenSetID}>{screenSetID}</li>
+        ))}
+      </ul>
     </DialogMessageInform>
   )
   const InformationPopup = () => {
@@ -84,8 +84,8 @@ const PrettifyAllScreens = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <>
-            <Button id="prettifyAllCode" data-cy="prettifyAllCode" className={classes.importAllButtonStyle} onClick={getServices}>
-              Prettify All Screens Javascript
+            <Button id="prettifyAllCode" data-cy="prettifyAllCode" className={classes.prettifyAllButtons} onClick={getServices}>
+              {t('PRETTIFY_ALL_BUTTONS.LABEL')}
             </Button>
           </>
         }

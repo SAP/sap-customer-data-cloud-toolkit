@@ -53,101 +53,73 @@ class StringPrettierFormatter {
     return response
   }
 
-  async prettierCode(screenSetClicked, siteApiKey) {
-    const response = await this.get()
-    const screenSets = []
+  async specificScreenSet(specificScreenSet, siteApiKey, javascript, response) {
+    const screenSetArray = []
     let success = true
     let error = null
-    let isError = null
+    try {
+      if (javascript) {
+        specificScreenSet.javascript = await this.myFormat(javascript)
+        screenSetArray.push(specificScreenSet.screenSetID)
+        await this.#copyScreenSet(siteApiKey, specificScreenSet.screenSetID, this.#dataCenter, response)
+        success = true
+        return { success, screenSetArray, error }
+      } else {
+        error = `There is no Javascript on this screen ${specificScreenSet.screenSetID}`
+      }
+    } catch (err) {
+      error = `Error formatting ScreenSet ID ${specificScreenSet.screenSetID}: ${err.message}`
+    }
+    return { success, screenSetArray, error }
+  }
 
+  async prettifyAllScreens(screenSet, siteApiKey, javascript, response, screenSetID) {
+    let success = true
+    let error = null
+    const screenSetArray = []
+    try {
+      if (javascript) {
+        screenSet.javascript = await this.myFormat(javascript)
+        screenSetArray.push(screenSetID)
+        await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+        success = true
+        return { success, screenSetArray, error }
+      } else {
+        error = `There is no Javascript on this screen ${screenSetID}`
+      }
+    } catch (err) {
+      success = false
+      error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+    }
+    return { success, screenSetArray, error }
+  }
+  async prettierCode(screenSetClicked = undefined, siteApiKey) {
+    const response = await this.get()
+    const allScreenSetArrays = []
+    let success = true
+    let error = null
     for (const screenSet of response.screenSets) {
       const { screenSetID, javascript } = screenSet
 
       if (screenSetClicked === screenSetID) {
-        if (javascript) {
-          try {
-            screenSet.javascript = await this.myFormat(javascript)
-            screenSets.push(screenSet.screenSetID)
-            console.log('screenSet-1', screenSets)
-            await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-          } catch (err) {
-            isError = true
-            error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
-            success = false
-            break
-          }
-        } else {
-          isError = true
-          error = `No JavaScript for ScreenSet ID ${screenSetID}`
+        const { success, screenSetArray, error } = await this.specificScreenSet(screenSet, siteApiKey, javascript, response)
 
-          success = false
-          break
+        return { success, screenSetArray, error }
+      }
+      if (screenSetClicked === undefined) {
+        const result = await this.prettifyAllScreens(screenSet, siteApiKey, javascript, response, screenSetID)
+        if (!result.success) {
+          return { success: result.success, screenSetArray: allScreenSetArrays, error: result.error }
         }
-      } else if (screenSetClicked === undefined && javascript) {
-        try {
-          console.log('pretty success2', success)
-          screenSet.javascript = await this.myFormat(javascript)
-          screenSets.push(screenSet.screenSetID)
-          console.log('screenSet-2', screenSets)
-          await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-        } catch (err) {
-          isError = true
-          error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
-          success = false
-          break
-        }
-      } else {
-        isError = true
-        error = `There is no javascript in the screens`
 
-        success = false
-        break
+        if (result.error) {
+          error = error ? `${error}\n${result.error}` : result.error
+        }
+        allScreenSetArrays.push(...result.screenSetArray)
       }
     }
-
-    return { success, screenSets, error, isError }
+    return { success, screenSetArray: allScreenSetArrays, error }
   }
-  // async prettierCode(screenSetClicked, siteApiKey) {
-  //   const response = await this.get()
-  //   const screenSets = []
-  //   let success = true
-  //   let error = null
-  //   for (const screenSet of response.screenSets) {
-  //     const { screenSetID, javascript } = screenSet
-
-  //     if (screenSetClicked === screenSetID && javascript) {
-  //       try {
-  //         screenSet.javascript = await this.myFormat(javascript)
-  //         screenSets.push(screenSet.screenSetID)
-  //         console.log('screenSet-1', screenSets)
-  //         await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-  //         success = true
-  //       } catch (err) {
-  //         error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
-  //         break
-  //       }
-  //     }
-  //     if (screenSetClicked === undefined) {
-  //       if (javascript) {
-  //         try {
-  //           screenSet.javascript = await this.myFormat(javascript)
-  //           screenSets.push(screenSet.screenSetID)
-  //           console.log('screenSet-2', screenSets)
-
-  //           await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-  //           success = true
-  //         } catch (err) {
-  //           error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
-  //           break
-  //         }
-  //       } else {
-  //         success = false
-  //       }
-  //     }
-  //   }
-
-  //   return { success, screenSets, error }
-  // }
 
   #getScreenSetParameters(apiKey) {
     const parameters = Object.assign({})
@@ -220,7 +192,6 @@ class StringPrettierFormatter {
       parser: 'babel',
       plugins: [prettierPluginBabel, prettierPluginEstree],
       tabWidth: 4,
-      semi: false,
     }
 
     const withExportDefault = `export default ${_inputString.trimStart()}`

@@ -25,7 +25,8 @@ export const ROUTE_SITE_DEPLOYER = '/cdc-toolbox/site-deployer'
 export const ROUTE_EMAIL_TEMPLATES = '/user-interfacing/email-templates'
 export const ROUTE_SMS_TEMPLATES = '/user-interfacing/sms-templates'
 export const ROUTE_COPY_CONFIG_EXTENDED = '/cdc-toolbox/copy-configuration-extended'
-export const ROUTE_PRETTIER = '/user-interfacing/screen-sets-app'
+export const ROUTE_PRETTIER = '/user-interfacing/screen-sets-app/web/uiBuilder'
+export const ROUTE_PRETTIFY_ALL_SCREENS = '/user-interfacing/screen-sets-app'
 export const INCOMPATIBLE_ROUTE_FRAGMENTS = ['/flow-builder-web-app']
 export const MENU_ELEMENTS = [
   { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
@@ -33,4 +34,5 @@ export const MENU_ELEMENTS = [
   { name: 'SMS Templates', route: ROUTE_SMS_TEMPLATES },
   { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
   { name: 'Prettier', route: ROUTE_PRETTIER },
+  { name: 'Prettify all screens', route: ROUTE_PRETTIFY_ALL_SCREENS },
 ]

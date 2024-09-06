@@ -9,13 +9,21 @@ import React from 'react'
 import { getCurrentConsoleTheme } from './utils/theme'
 import './App.css'
 import { useThemeChange } from './hooks/useThemeChange'
-import { ROUTE_CONTAINER_CLASS, ROUTE_COPY_CONFIG_EXTENDED, ROUTE_EMAIL_TEMPLATES, ROUTE_SITE_DEPLOYER, ROUTE_SMS_TEMPLATES, ROUTE_PRETTIER } from './inject/constants'
+import {
+  ROUTE_CONTAINER_CLASS,
+  ROUTE_COPY_CONFIG_EXTENDED,
+  ROUTE_EMAIL_TEMPLATES,
+  ROUTE_SITE_DEPLOYER,
+  ROUTE_SMS_TEMPLATES,
+  ROUTE_PRETTIER,
+  ROUTE_PRETTIFY_ALL_SCREENS,
+} from './inject/constants'
 import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
 import SmsTemplates from './routes/sms-templates/sms-templates.component'
-import CodeMirrorEditor from './routes/prettify-code/prettify-code.component'
-
+import PrettifyAllScreens from './routes/prettify-code/prettify-all-screens-javascript.component'
+import PrettifySingleScreenComponent from './routes/prettify-code/prettify-single-screen.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
   return (
@@ -34,7 +42,10 @@ function App() {
           <CopyConfigurationExtended />
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIER}>
-          <CodeMirrorEditor />
+          <PrettifySingleScreenComponent />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIFY_ALL_SCREENS}>
+          <PrettifyAllScreens />
         </div>
       </div>
     </ThemeProvider>

@@ -4,8 +4,11 @@
  */
 
 import StringPrettierFormatter from './prettierFunction.js'
-
+import { credentials } from '../servicesDataTest.js'
 describe('Prettier Formatter Test Suite', () => {
+  const targetApiKey = 'targetApiKey'
+  const dataCenter = 'us1'
+  const prettify = new StringPrettierFormatter(credentials, targetApiKey, dataCenter)
   const testString = `{
   // Called when an error occurs.
   onError: function (event) {
@@ -198,8 +201,7 @@ describe('Prettier Formatter Test Suite', () => {
 };
 `
   test('Should format a messy string of code to a prettier version', async () => {
-    const result = await StringPrettierFormatter.myFormat(testString)
-    console.log(result)
+    const result = await prettify.myFormat(testString)
     expect(result).toBe(expectedString)
   })
 })
