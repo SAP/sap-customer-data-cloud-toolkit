@@ -15,23 +15,23 @@ if (API_KEY && DATA_CENTER) {
 }
 
 export async function requestConsentConfirmation() {
-  if (trackingTool) {
-    return await trackingTool.requestConsentConfirmation({
-      message: `
-      <h2>SAP Customer Data Cloud toolkit</h2>
-      This app collects anonymous usage data to help deliver and improve this product. By installing this app, you agree to share this information with SAP. If you wish to revoke your consent, please uninstall the app. Do you want to continue?
-    `,
-    })
+  if (!trackingTool) {
+    return null
   }
-  return null
+  return await trackingTool.requestConsentConfirmation({
+    message: `
+    <h2>SAP Customer Data Cloud toolkit</h2>
+    This app collects anonymous usage data to help deliver and improve this product. By installing this app, you agree to share this information with SAP. If you wish to revoke your consent, please uninstall the app. Do you want to continue?
+  `,
+  })
 }
 
 export async function trackUsage({ featureName }) {
-  if (trackingTool) {
-    return await trackingTool.trackUsage({
-      toolName: 'Customer Data Cloud toolkit',
-      featureName,
-    })
+  if (!trackingTool) {
+    return null
   }
-  return null
+  return await trackingTool.trackUsage({
+    toolName: 'Customer Data Cloud toolkit',
+    featureName,
+  })
 }
