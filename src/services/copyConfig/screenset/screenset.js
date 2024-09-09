@@ -3,12 +3,11 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import { stringToJson } from '../objectHelper.js'
-
+import { getScreenSetParameters, setScreenSetParameters } from '../utils.js'
 class ScreenSet {
   static #ERROR_MSG_GET_CONFIG = 'Error getting screen sets'
   static #ERROR_MSG_SET_CONFIG = 'Error setting screen sets'
@@ -25,7 +24,7 @@ class ScreenSet {
 
   async get() {
     const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, this.#dataCenter, ScreenSet.getGetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, this.#getScreenSetParameters(this.#site)).catch(function (error) {
+    const res = await client.post(url, getScreenSetParameters(this.#site, this.#credentials)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_GET_CONFIG)
     })
 
@@ -34,7 +33,7 @@ class ScreenSet {
 
   async set(site, dataCenter, body) {
     const url = UrlBuilder.buildUrl(ScreenSet.#NAMESPACE, dataCenter, ScreenSet.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
+    const res = await client.post(url, setScreenSetParameters(site, body, this.#credentials)).catch(function (error) {
       return generateErrorResponse(error, ScreenSet.#ERROR_MSG_SET_CONFIG)
     })
 
@@ -52,40 +51,40 @@ class ScreenSet {
     return response
   }
 
-  #getScreenSetParameters(apiKey) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters.include = 'screenSetID,html,css,javascript,translations,metadata'
+  // #getScreenSetParameters(apiKey) {
+  //   const parameters = Object.assign({})
+  //   parameters.apiKey = apiKey
+  //   parameters.userKey = this.#credentials.userKey
+  //   parameters.secret = this.#credentials.secret
+  //   parameters.include = 'screenSetID,html,css,javascript,translations,metadata'
 
-    parameters.context = JSON.stringify({ id: 'screenSet', targetApiKey: apiKey })
+  //   parameters.context = JSON.stringify({ id: 'screenSet', targetApiKey: apiKey })
 
-    return parameters
-  }
+  //   return parameters
+  // }
 
-  #setScreenSetParameters(apiKey, body) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters['screenSetID'] = body.screenSetID
-    parameters['html'] = body.html
-    if (body.css) {
-      parameters['css'] = body.css
-    }
-    if (body.javascript) {
-      parameters['javascript'] = body.javascript
-    }
-    if (body.translations) {
-      parameters['translations'] = JSON.stringify(body.translations)
-    }
-    if (body.metadata) {
-      parameters['metadata'] = JSON.stringify(body.metadata)
-    }
-    parameters['context'] = JSON.stringify({ id: body.screenSetID, targetApiKey: apiKey })
-    return parameters
-  }
+  // #setScreenSetParameters(apiKey, body) {
+  //   const parameters = Object.assign({})
+  //   parameters.apiKey = apiKey
+  //   parameters.userKey = this.#credentials.userKey
+  //   parameters.secret = this.#credentials.secret
+  //   parameters['screenSetID'] = body.screenSetID
+  //   parameters['html'] = body.html
+  //   if (body.css) {
+  //     parameters['css'] = body.css
+  //   }
+  //   if (body.javascript) {
+  //     parameters['javascript'] = body.javascript
+  //   }
+  //   if (body.translations) {
+  //     parameters['translations'] = JSON.stringify(body.translations)
+  //   }
+  //   if (body.metadata) {
+  //     parameters['metadata'] = JSON.stringify(body.metadata)
+  //   }
+  //   parameters['context'] = JSON.stringify({ id: body.screenSetID, targetApiKey: apiKey })
+  //   return parameters
+  // }
 
   static getGetScreenSetEndpoint() {
     return `${ScreenSet.#NAMESPACE}.getScreenSets`
