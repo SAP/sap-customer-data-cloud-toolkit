@@ -5,7 +5,6 @@
 import { format } from 'prettier/standalone'
 import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
-// import { stringToJson } from '../copyConfig/objectHelper.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
 import client from '../gigya/client.js'
@@ -41,17 +40,6 @@ class StringPrettierFormatter {
 
     return res.data
   }
-
-  // async copy(destinationSite, destinationSiteConfiguration, options) {
-  //   let response = await this.get()
-
-  //   if (response.errorCode === 0) {
-  //     response = await this.copyScreenSets(destinationSite, destinationSiteConfiguration.dataCenter, response, options)
-  //   }
-  //   stringToJson(response, 'context')
-
-  //   return response
-  // }
 
   async specificScreenSet(specificScreenSet, siteApiKey, javascript, response) {
     const screenSetArray = []
@@ -164,20 +152,6 @@ class StringPrettierFormatter {
   static getSetScreenSetEndpoint() {
     return `${StringPrettierFormatter.#NAMESPACE}.setScreenSet`
   }
-
-  // async copyScreenSets(destinationSite, dataCenter, response, options) {
-  //   const promises = []
-  //   for (const screenSetCollectionInfo of options.getOptions().branches) {
-  //     for (const screenSetInfo of screenSetCollectionInfo.branches) {
-  //       if (screenSetInfo.value) {
-  //         const index = response.screenSets.findIndex((arrayId) => arrayId.screenSetID === screenSetInfo.id)
-  //         response.screenSets[index].javascript = await this.myFormat(response.screenSets[index].javascript)
-  //         promises.push(this.#copyScreenSet(destinationSite, screenSetInfo.name, dataCenter, response))
-  //       }
-  //     }
-  //   }
-  //   return Promise.all(promises)
-  // }
 
   #copyScreenSet(destinationSite, screenSetID, dataCenter, response) {
     const screenSet = this.#getScreenSet(screenSetID, response)
