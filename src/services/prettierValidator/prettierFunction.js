@@ -83,8 +83,6 @@ class StringPrettierFormatter {
         screenSetArray.push(screenSetID)
         await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
         return { success, screenSetArray, error }
-      } else {
-        error = `There is no Javascript on this screen ${screenSetID}`
       }
     } catch (err) {
       success = false
@@ -117,6 +115,9 @@ class StringPrettierFormatter {
         }
         allScreenSetArrays.push(...result.screenSetArray)
       }
+    }
+    if (allScreenSetArrays.length === 0) {
+      error = `There is no Javascript on any screen`
     }
     return { success, screenSetArray: allScreenSetArrays, error }
   }

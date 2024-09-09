@@ -93,12 +93,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is no javascript in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]')
-          .should('be.visible')
-          .should(
-            'contains.text',
-            `CloseThere is no Javascript on this screen ${linkAccounts}\nThere is no Javascript on this screen ${liteRegistration}\nThere is no Javascript on this screen ${organizationRegistration}`,
-          )
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseThere is no Javascript on any screen`)
       })
     })
     context('All Screens - Javascript error on a single screenSet', () => {
@@ -114,7 +109,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${liteRegistration}:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID Default-LiteRegistration:`)
       })
     })
   })
