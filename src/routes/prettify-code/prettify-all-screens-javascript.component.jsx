@@ -30,7 +30,7 @@ const PrettifyAllScreens = ({ t }) => {
   const getServices = async () => {
     const screenSet = getScreenSet(window.location)
     const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
-    const { success, screenSetArray, error } = await prettier.prettierCode(screenSet, apikey)
+    const { success, screenSetArray, error } = await prettier.prettierCode(apikey, screenSet)
 
     if (error) {
       setErrorMessage(error)

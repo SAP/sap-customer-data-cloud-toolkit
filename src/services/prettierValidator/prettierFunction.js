@@ -62,12 +62,12 @@ class StringPrettierFormatter {
         specificScreenSet.javascript = await this.myFormat(javascript)
         screenSetArray.push(specificScreenSet.screenSetID)
         await this.#copyScreenSet(siteApiKey, specificScreenSet.screenSetID, this.#dataCenter, response)
-        success = true
         return { success, screenSetArray, error }
       } else {
         error = `There is no Javascript on this screen ${specificScreenSet.screenSetID}`
       }
     } catch (err) {
+      success = false
       error = `Error formatting ScreenSet ID ${specificScreenSet.screenSetID}: ${err.message}`
     }
     return { success, screenSetArray, error }
@@ -82,7 +82,6 @@ class StringPrettierFormatter {
         screenSet.javascript = await this.myFormat(javascript)
         screenSetArray.push(screenSetID)
         await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
-        success = true
         return { success, screenSetArray, error }
       } else {
         error = `There is no Javascript on this screen ${screenSetID}`
@@ -93,7 +92,8 @@ class StringPrettierFormatter {
     }
     return { success, screenSetArray, error }
   }
-  async prettierCode(screenSetClicked = undefined, siteApiKey) {
+
+  async prettierCode(siteApiKey, screenSetClicked = undefined) {
     const response = await this.get()
     const allScreenSetArrays = []
     let success = true
