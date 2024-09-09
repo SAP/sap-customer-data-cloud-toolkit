@@ -12,7 +12,7 @@ import client from '../gigya/client.js'
 
 class StringPrettierFormatter {
   static #ERROR_MSG_GET_CONFIG = 'Error getting screen sets'
-  // static #ERROR_MSG_SET_CONFIG = 'Error setting screen sets'
+  static #ERROR_MSG_SET_CONFIG = 'Error setting screen sets'
   static #NAMESPACE = 'accounts'
   #credentials
   #site
@@ -33,14 +33,14 @@ class StringPrettierFormatter {
     return res.data
   }
 
-  // async set(site, dataCenter, body) {
-  //   const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, dataCenter, StringPrettierFormatter.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-  //   const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
-  //     return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_SET_CONFIG)
-  //   })
+  async set(site, dataCenter, body) {
+    const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, dataCenter, StringPrettierFormatter.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
+    const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
+      return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_SET_CONFIG)
+    })
 
-  //   return res.data
-  // }
+    return res.data
+  }
 
   // async copy(destinationSite, destinationSiteConfiguration, options) {
   //   let response = await this.get()
@@ -134,36 +134,36 @@ class StringPrettierFormatter {
     return parameters
   }
 
-  // #setScreenSetParameters(apiKey, body) {
-  //   const parameters = Object.assign({})
-  //   parameters.apiKey = apiKey
-  //   parameters.userKey = this.#credentials.userKey
-  //   parameters.secret = this.#credentials.secret
-  //   parameters['screenSetID'] = body.screenSetID
-  //   parameters['html'] = body.html
-  //   if (body.css) {
-  //     parameters['css'] = body.css
-  //   }
-  //   if (body.javascript) {
-  //     parameters['javascript'] = body.javascript
-  //   }
-  //   if (body.translations) {
-  //     parameters['translations'] = JSON.stringify(body.translations)
-  //   }
-  //   if (body.metadata) {
-  //     parameters['metadata'] = JSON.stringify(body.metadata)
-  //   }
-  //   parameters['context'] = JSON.stringify({ id: body.screenSetID, targetApiKey: apiKey })
-  //   return parameters
-  // }
+  #setScreenSetParameters(apiKey, body) {
+    const parameters = Object.assign({})
+    parameters.apiKey = apiKey
+    parameters.userKey = this.#credentials.userKey
+    parameters.secret = this.#credentials.secret
+    parameters['screenSetID'] = body.screenSetID
+    parameters['html'] = body.html
+    if (body.css) {
+      parameters['css'] = body.css
+    }
+    if (body.javascript) {
+      parameters['javascript'] = body.javascript
+    }
+    if (body.translations) {
+      parameters['translations'] = JSON.stringify(body.translations)
+    }
+    if (body.metadata) {
+      parameters['metadata'] = JSON.stringify(body.metadata)
+    }
+    parameters['context'] = JSON.stringify({ id: body.screenSetID, targetApiKey: apiKey })
+    return parameters
+  }
 
   static getGetScreenSetEndpoint() {
     return `${StringPrettierFormatter.#NAMESPACE}.getScreenSets`
   }
 
-  // static getSetScreenSetEndpoint() {
-  //   return `${StringPrettierFormatter.#NAMESPACE}.setScreenSet`
-  // }
+  static getSetScreenSetEndpoint() {
+    return `${StringPrettierFormatter.#NAMESPACE}.setScreenSet`
+  }
 
   // async copyScreenSets(destinationSite, dataCenter, response, options) {
   //   const promises = []
