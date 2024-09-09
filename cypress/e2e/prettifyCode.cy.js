@@ -109,7 +109,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID Default-LiteRegistration:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${liteRegistration}:`)
       })
     })
   })
