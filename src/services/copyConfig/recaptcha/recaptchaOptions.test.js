@@ -22,7 +22,7 @@ describe('RecaptchaOptions test suite', () => {
 
   test('removeRecaptchaPolicies logs warning when info is invalid', () => {
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
-    recaptchaOptions.removeRecaptchaPolicies(null) // Testing invalid info
+    recaptchaOptions.removeRecaptchaPolicies(null) 
     expect(consoleWarnSpy).toHaveBeenCalledWith('Recaptcha info is invalid or does not contain branches:', null)
     consoleWarnSpy.mockRestore()
   })

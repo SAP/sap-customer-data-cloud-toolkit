@@ -46,7 +46,7 @@ describe('Info test suite', () => {
   const apiKey = 'apiKey'
   const socialsKeys = 'APP KEY'
   const info = new Info(CommonTestData.credentials, apiKey, 'eu1')
-  test('Y', async () => {
+  test('get all info successfully', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })

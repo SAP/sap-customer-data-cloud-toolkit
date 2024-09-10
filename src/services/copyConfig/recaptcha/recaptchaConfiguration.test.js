@@ -9,12 +9,7 @@ import {
   getRecaptchaExpectedResponse,
   getRecaptchaPoliciesResponse,
   getRiskProvidersResponse,
-  setRecaptchaConfigResponse,
-  setRecaptchaPoliciesResponse,
-  setRiskProvidersResponse,
 } from '../../recaptcha/dataTest.js'
-import { getResponseWithContext, recaptchaId } from '../dataTest.js'
-import { expectedGigyaResponseOk } from '../../servicesDataTest.js'
 jest.mock('axios')
 
 describe('RecaptchaConfiguration test suite ', () => {

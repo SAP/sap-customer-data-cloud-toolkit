@@ -76,7 +76,6 @@ export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, sit
       handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
     }
     if (configuration.id === 'recaptchaPolicies') {
-      console.log('configuration recaptchaPolicies')
       handleCheckboxChange(dispatch, configuration, false, siteId, setConfigurationStatus)
     }
   })
