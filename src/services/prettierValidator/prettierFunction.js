@@ -36,7 +36,7 @@ class StringPrettierFormatter {
       }
     } catch (err) {
       success = false
-      error = `Error formatting ScreenSet ID ${specificScreenSet.screenSetID}: ${err.message}`
+      error = `Error formatting Screen-Set ID ${specificScreenSet.screenSetID}: ${err.message}`
     }
     return { success, screenSetArray, error }
   }
@@ -54,7 +54,7 @@ class StringPrettierFormatter {
       }
     } catch (err) {
       success = false
-      error = `Error formatting ScreenSet ID ${screenSetID}: ${err.message}`
+      error = `Error formatting Screen-Set ID ${screenSetID}: ${err.message}`
     }
     return { success, screenSetArray, error }
   }
