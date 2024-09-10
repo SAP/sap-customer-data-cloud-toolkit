@@ -3,29 +3,32 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import React, { useState } from 'react'
+import React from 'react'
 import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './prettify-code.styles.js'
 import StringPrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
-import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-import { getApiKey, getScreenSet } from '../../redux/utils.js'
-import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
+import { getScreenSet } from '../../redux/utils.js'
 import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
 import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
+import useCommonState from './useCommonState.js'
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const PrettifyAllScreens = ({ t }) => {
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [showError, setShowError] = useState(false)
-  const [modifiedScreenSets, setModifiedScreenSets] = useState([])
-  const [errorMessage, setErrorMessage] = useState('')
   const classes = useStyles()
-  const credentials = useSelector(selectCredentials)
-  const apikey = getApiKey(window.location.hash)
-  const currentSiteInfo = useSelector(selectCurrentSiteInformation)
-  const credentialsUpdated = { userKey: credentials.userKey, secret: credentials.secretKey, gigyaConsole: credentials.gigyaConsole }
+  const {
+    showSuccess,
+    setShowSuccess,
+    showError,
+    setShowError,
+    modifiedScreenSets,
+    setModifiedScreenSets,
+    errorMessage,
+    setErrorMessage,
+    apikey,
+    currentSiteInfo,
+    credentialsUpdated,
+  } = useCommonState()
 
   const getServices = async () => {
     const screenSet = getScreenSet(window.location)
