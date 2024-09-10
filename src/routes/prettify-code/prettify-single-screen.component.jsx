@@ -12,7 +12,8 @@ import StringPrettierFormatter from '../../services/prettierValidator/prettierFu
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey, getScreenSet } from '../../redux/utils.js'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
+import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
+import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const PrettifySingleScreen = ({ t }) => {
@@ -49,22 +50,9 @@ const PrettifySingleScreen = ({ t }) => {
   const onAfterCloseErrorDialogHandle = () => {
     setShowError(false)
   }
-  const showSuccessMessage = () => (
-    <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
-      <Text>{t('PRETTIFY.SUCCESS')}</Text>
-      <ul>
-        {modifiedScreenSets.map((screenSetID) => (
-          <li key={screenSetID}>{screenSetID}</li>
-        ))}
-      </ul>
-    </DialogMessageInform>
-  )
+  const showSuccessMessage = () => <PrettierSuccessDialog modifiedScreenSets={modifiedScreenSets} />
 
-  const showErrorPopup = () => (
-    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup" onAfterClose={onAfterCloseErrorDialogHandle}>
-      <Text>{errorMessage}</Text>
-    </DialogMessageInform>
-  )
+  const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={onAfterCloseErrorDialogHandle} errorMessage={errorMessage} />
   return (
     <>
       <Bar

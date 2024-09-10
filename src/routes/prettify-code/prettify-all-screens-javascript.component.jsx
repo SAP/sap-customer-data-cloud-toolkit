@@ -5,14 +5,15 @@
 import { withTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import React, { useState } from 'react'
-import { Bar, Button, ValueState, Text } from '@ui5/webcomponents-react'
+import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './prettify-code.styles.js'
 import StringPrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey, getScreenSet } from '../../redux/utils.js'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
+import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
+import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const PrettifyAllScreens = ({ t }) => {
@@ -50,22 +51,9 @@ const PrettifyAllScreens = ({ t }) => {
     setShowError(false)
   }
 
-  const showSuccessMessage = () => (
-    <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
-      <Text>{t('PRETTIFY.SUCCESS')}</Text>
-      <ul>
-        {modifiedScreenSets.map((screenSetID) => (
-          <li key={screenSetID}>{screenSetID}</li>
-        ))}
-      </ul>
-    </DialogMessageInform>
-  )
+  const showSuccessMessage = () => <PrettierSuccessDialog modifiedScreenSets={modifiedScreenSets} />
 
-  const showErrorPopup = () => (
-    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup" onAfterClose={onAfterCloseErrorDialogHandle}>
-      <Text>{errorMessage}</Text>
-    </DialogMessageInform>
-  )
+  const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={onAfterCloseErrorDialogHandle} errorMessage={errorMessage} />
   return (
     <>
       <Bar
