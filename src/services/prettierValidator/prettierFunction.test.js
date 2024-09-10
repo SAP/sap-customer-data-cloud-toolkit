@@ -5,7 +5,7 @@
 
 import StringPrettierFormatter from './prettierFunction.js'
 import { credentials, expectedGigyaResponseOk, expectedPrettierError } from '../servicesDataTest.js'
-import { getExpectedScreenSetResponse, mockErrorScreenSets, mockGetAllSuccessScreenSets } from '../copyConfig/screenset/dataTest.js'
+import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest.js'
 import axios from 'axios'
 import { getResponseWithContext } from '../copyConfig/dataTest.js'
 jest.mock('axios')
@@ -230,7 +230,8 @@ describe('Prettier Formatter Test Suite', () => {
     expect(result.success).toBe(true)
   })
   test('Should send an error on all', async () => {
-    const expectedResponse = mockErrorScreenSets
+    const expectedResponse = getExpectedScreenSetResponse()
+    addJavascriptError(expectedResponse, expectedResponse.screenSets[0].screenSetID)
     const serverResponse = expectedPrettierError
     axios
       .mockResolvedValueOnce({ data: expectedResponse })
@@ -256,6 +257,14 @@ describe('Prettier Formatter Test Suite', () => {
   function removeJavascript(response) {
     for (const screenSet of response.screenSets) {
       delete screenSet.javascript
+    }
+    return response
+  }
+  function addJavascriptError(response, screenSetID) {
+    for (const screenSet of response.screenSets) {
+      if (screenSet.screenSetID === screenSetID) {
+        screenSet.javascript = '{\n    // Called when an error occurs.\n    onError: function (event) };\n'
+      }
     }
     return response
   }
