@@ -39,7 +39,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show success popUp', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="prettierSuccessPopup"]').should('be.visible').should('contains.text', `ClosePrettify Code has been successfull${linkAccounts}`)
+        cy.get('[data-cy="prettierSuccessPopup"]').should('be.visible').should('contains.text', `ClosePrettify Javascript has been successful.${linkAccounts}`)
       })
     })
 
@@ -55,7 +55,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${organizationRegistration}:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting Screen-Set ID ${organizationRegistration}:`)
       })
     })
   })
@@ -76,7 +76,7 @@ describe('UI Builder - Prettify Code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
         cy.get('[data-cy="prettierSuccessPopup"]')
           .should('be.visible')
-          .should('contains.text', `ClosePrettify Code has been successfull${linkAccounts}${liteRegistration}${organizationRegistration}`)
+          .should('contains.text', `ClosePrettify Javascript has been successful.${linkAccounts}${liteRegistration}${organizationRegistration}`)
       })
     })
 
@@ -109,7 +109,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting ScreenSet ID ${liteRegistration}:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting Screen-Set ID ${liteRegistration}:`)
       })
     })
   })
