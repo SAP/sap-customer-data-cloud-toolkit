@@ -35,9 +35,6 @@ const PrettifySingleScreen = ({ t }) => {
       setErrorMessage(error)
       setShowSuccess(false)
       setShowError(true)
-      setTimeout(() => {
-        setShowError(false)
-      }, 5000)
       return
     }
     if (success) {
@@ -48,6 +45,9 @@ const PrettifySingleScreen = ({ t }) => {
         window.location.reload()
       }, 3000)
     }
+  }
+  const onAfterCloseErrorDialogHandle = () => {
+    setShowError(false)
   }
   const showSuccessMessage = () => (
     <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
@@ -61,7 +61,7 @@ const PrettifySingleScreen = ({ t }) => {
   )
 
   const showErrorPopup = () => (
-    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup">
+    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup" onAfterClose={onAfterCloseErrorDialogHandle}>
       <Text>{errorMessage}</Text>
     </DialogMessageInform>
   )

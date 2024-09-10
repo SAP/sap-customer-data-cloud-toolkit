@@ -17,7 +17,6 @@ const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const PrettifyAllScreens = ({ t }) => {
   const [showSuccess, setShowSuccess] = useState(false)
-  const [showInfo, setShowInfo] = useState(false)
   const [showError, setShowError] = useState(false)
   const [modifiedScreenSets, setModifiedScreenSets] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
@@ -35,11 +34,7 @@ const PrettifyAllScreens = ({ t }) => {
     if (error) {
       setErrorMessage(error)
       setShowSuccess(false)
-      setShowInfo(false)
       setShowError(true)
-      setTimeout(() => {
-        setShowError(false)
-      }, 2000)
       return
     }
     if (success) {
@@ -51,6 +46,10 @@ const PrettifyAllScreens = ({ t }) => {
       }, 2000)
     }
   }
+  const onAfterCloseErrorDialogHandle = () => {
+    setShowError(false)
+  }
+
   const showSuccessMessage = () => (
     <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="successPopup" data-cy="prettierSuccessPopup">
       <Text>{t('PRETTIFY.SUCCESS')}</Text>
@@ -61,20 +60,9 @@ const PrettifyAllScreens = ({ t }) => {
       </ul>
     </DialogMessageInform>
   )
-  const InformationPopup = () => {
-    return (
-      <DialogMessageInform headerText={t('GLOBAL.SUCCESS')} state={ValueState.Success} id="infoPopup" data-cy="informationPopup">
-        <Text>{t('PRETTIFY.MULTIPLE_SCREENS')}</Text>
-        <ul>
-          {modifiedScreenSets.map((screenSetID) => (
-            <li key={screenSetID}>{screenSetID}</li>
-          ))}
-        </ul>
-      </DialogMessageInform>
-    )
-  }
+
   const showErrorPopup = () => (
-    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup">
+    <DialogMessageInform headerText={t('GLOBAL.ERROR')} state={ValueState.Error} id="errorPopup" data-cy="errorPopup" onAfterClose={onAfterCloseErrorDialogHandle}>
       <Text>{errorMessage}</Text>
     </DialogMessageInform>
   )
@@ -91,7 +79,6 @@ const PrettifyAllScreens = ({ t }) => {
         }
       ></Bar>
       {showSuccess && showSuccessMessage()}
-      {showInfo && InformationPopup()}
       {showError && showErrorPopup()}
     </>
   )

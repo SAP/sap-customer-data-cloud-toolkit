@@ -13,7 +13,7 @@ describe('UI Builder - Prettify Code', () => {
   describe('Prettify Code - Single Screen', () => {
     context('Single Screen - No javascript on the screenSet', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${liteRegistration}`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${liteRegistration}`)
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
       afterEach(() => {
@@ -29,7 +29,7 @@ describe('UI Builder - Prettify Code', () => {
 
     context('Single Screen - View Success PopUp', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${linkAccounts}`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${linkAccounts}`)
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
       afterEach(() => {
@@ -45,7 +45,7 @@ describe('UI Builder - Prettify Code', () => {
 
     context('Single Screen - View Error PopUp', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${organizationRegistration}`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${organizationRegistration}`)
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
       afterEach(() => {
@@ -63,7 +63,7 @@ describe('UI Builder - Prettify Code', () => {
   describe('Prettify Code - All Screens', () => {
     context('All Screens - Success Prettier', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
 
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
       })
@@ -82,7 +82,7 @@ describe('UI Builder - Prettify Code', () => {
 
     context('All Screens - No Javascript on any screen', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
         utils.removeJavascript(datatest.mockGetAllSuccessScreenSets)
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
       })
@@ -98,7 +98,7 @@ describe('UI Builder - Prettify Code', () => {
     })
     context('All Screens - Javascript error on a single screenSet', () => {
       beforeEach(() => {
-        cy.visit(`http://localhost:3000/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
+        cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
         utils.addErrorOnJavascript(datatest.mockGetAllSuccessScreenSets, liteRegistration)
       })

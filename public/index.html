@@ -2346,7 +2346,6 @@
                                     <li class="gigya-card gigya-passkey-card">
                                       <div class="gigya-card-container">
                                         <div class="gigya-row">
-                                          <h4 class="gigya-card-header" data-binding="true">{{passkeys.deviceName}}</h4>
                                           <div class="gigya-new-tag"><span class="gigya-tag-label">New</span></div>
                                           <button class="gigya-remove-passkey-icon" title="remove passkey" aria-label="remove passkey">
                                             <img class="gigya-remove-icon" alt="remove-icon" />
@@ -2355,15 +2354,12 @@
                                         <div class="gigya-table">
                                           <div class="gigya-row">
                                             <div class="gigya-column gigya-label-last-login">Last login:</div>
-                                            <div class="gigya-column gigya-label-last-login-value" data-binding="true">{{passkeys.lastLogin}}</div>
                                           </div>
                                           <div class="gigya-row">
                                             <div class="gigya-column gigya-label-country">Country:</div>
-                                            <div class="gigya-column gigya-label-country-value" data-binding="true">{{passkeys.country}}</div>
                                           </div>
                                           <div class="gigya-row">
                                             <div class="gigya-column gigya-label-last-login-ip">Last login IP:</div>
-                                            <div class="gigya-column gigya-label-last-login-ip-value" data-binding="true">{{passkeys.ipAddress}}</div>
                                           </div>
                                         </div>
                                       </div>
@@ -2857,11 +2853,7 @@
                                             <div class="form">
                                               <div class="form-row">
                                                 <div class="gigya-tfa-authenticator-qr-code">
-                                                  <img
-                                                    src="https://static.gigya.com/screen-sets/assets/authenticator-method-qr-code.png"
-                                                    alt="QR Code"
-                                                    class="gigya-tfa-authenticator-qr-code-image"
-                                                  />
+                                                  <img alt="QR Code" class="gigya-tfa-authenticator-qr-code-image" />
                                                 </div>
                                               </div>
                                               <div class="gigya-tfa-authenticator-secret form-row">
