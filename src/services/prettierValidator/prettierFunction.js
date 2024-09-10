@@ -8,7 +8,7 @@ import * as prettierPluginEstree from 'prettier/plugins/estree'
 import UrlBuilder from '../gigya/urlBuilder.js'
 import generateErrorResponse from '../errors/generateErrorResponse.js'
 import client from '../gigya/client.js'
-import { getScreenSetParameters, setScreenSetParameters } from '../copyConfig/utils.js'
+
 class StringPrettierFormatter {
   static #ERROR_MSG_GET_CONFIG = 'Error getting screen sets'
   static #ERROR_MSG_SET_CONFIG = 'Error setting screen sets'
@@ -25,7 +25,7 @@ class StringPrettierFormatter {
 
   async get() {
     const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, this.#dataCenter, StringPrettierFormatter.getGetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, getScreenSetParameters(this.#site, this.#credentials)).catch(function (error) {
+    const res = await client.post(url, this.#getScreenSetParameters(this.#site)).catch(function (error) {
       return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_GET_CONFIG)
     })
 
@@ -34,7 +34,7 @@ class StringPrettierFormatter {
 
   async set(site, dataCenter, body) {
     const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, dataCenter, StringPrettierFormatter.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, setScreenSetParameters(site, body, this.#credentials)).catch(function (error) {
+    const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_SET_CONFIG)
     })
 
@@ -86,7 +86,6 @@ class StringPrettierFormatter {
     let error = null
     for (const screenSet of response.screenSets) {
       const { screenSetID, javascript } = screenSet
-
       if (screenSetClicked === screenSetID) {
         const { success, screenSetArray, error } = await this.specificScreenSet(screenSet, siteApiKey, javascript, response)
 
