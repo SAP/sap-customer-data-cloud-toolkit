@@ -5,40 +5,20 @@
 import { format } from 'prettier/standalone'
 import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
-import UrlBuilder from '../gigya/urlBuilder.js'
-import generateErrorResponse from '../errors/generateErrorResponse.js'
-import client from '../gigya/client.js'
+import ScreenSet from '../copyConfig/screenset/screenset.js'
 
 class StringPrettierFormatter {
-  static #ERROR_MSG_GET_CONFIG = 'Error getting screen sets'
-  static #ERROR_MSG_SET_CONFIG = 'Error setting screen sets'
   static #NAMESPACE = 'accounts'
   #credentials
   #site
   #dataCenter
+  #screenSet
 
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
-  }
-
-  async get() {
-    const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, this.#dataCenter, StringPrettierFormatter.getGetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, this.#getScreenSetParameters(this.#site)).catch(function (error) {
-      return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_GET_CONFIG)
-    })
-
-    return res.data
-  }
-
-  async set(site, dataCenter, body) {
-    const url = UrlBuilder.buildUrl(StringPrettierFormatter.#NAMESPACE, dataCenter, StringPrettierFormatter.getSetScreenSetEndpoint(), this.#credentials.gigyaConsole)
-    const res = await client.post(url, this.#setScreenSetParameters(site, body)).catch(function (error) {
-      return generateErrorResponse(error, StringPrettierFormatter.#ERROR_MSG_SET_CONFIG)
-    })
-
-    return res.data
+    this.#screenSet = new ScreenSet(credentials, site, dataCenter)
   }
 
   async specificScreenSet(specificScreenSet, siteApiKey, javascript, response) {
@@ -80,12 +60,13 @@ class StringPrettierFormatter {
   }
 
   async prettierCode(siteApiKey, screenSetClicked = undefined) {
-    const response = await this.get()
+    const response = await this.#screenSet.get()
     const allScreenSetArrays = []
     let success = true
     let error = null
     for (const screenSet of response.screenSets) {
       const { screenSetID, javascript } = screenSet
+
       if (screenSetClicked === screenSetID) {
         const { success, screenSetArray, error } = await this.specificScreenSet(screenSet, siteApiKey, javascript, response)
 
@@ -109,41 +90,6 @@ class StringPrettierFormatter {
     return { success, screenSetArray: allScreenSetArrays, error }
   }
 
-  #getScreenSetParameters(apiKey) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters.include = 'screenSetID,html,css,javascript,translations,metadata'
-
-    parameters.context = JSON.stringify({ id: 'screenSet', targetApiKey: apiKey })
-
-    return parameters
-  }
-
-  #setScreenSetParameters(apiKey, body) {
-    const parameters = Object.assign({})
-    parameters.apiKey = apiKey
-    parameters.userKey = this.#credentials.userKey
-    parameters.secret = this.#credentials.secret
-    parameters['screenSetID'] = body.screenSetID
-    parameters['html'] = body.html
-    if (body.css) {
-      parameters['css'] = body.css
-    }
-    if (body.javascript) {
-      parameters['javascript'] = body.javascript
-    }
-    if (body.translations) {
-      parameters['translations'] = JSON.stringify(body.translations)
-    }
-    if (body.metadata) {
-      parameters['metadata'] = JSON.stringify(body.metadata)
-    }
-    parameters['context'] = JSON.stringify({ id: body.screenSetID, targetApiKey: apiKey })
-    return parameters
-  }
-
   static getGetScreenSetEndpoint() {
     return `${StringPrettierFormatter.#NAMESPACE}.getScreenSets`
   }
@@ -154,7 +100,7 @@ class StringPrettierFormatter {
 
   #copyScreenSet(destinationSite, screenSetID, dataCenter, response) {
     const screenSet = this.#getScreenSet(screenSetID, response)
-    return this.set(destinationSite, dataCenter, screenSet)
+    return this.#screenSet.set(destinationSite, dataCenter, screenSet)
   }
 
   #getScreenSet(screenSetID, response) {
