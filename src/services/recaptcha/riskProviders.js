@@ -35,7 +35,10 @@ class RiskProviders {
         apiKey: site,
         userKey: this.userKey,
         secret: this.secret,
-        config: JSON.stringify(config),
+        config: JSON.stringify({
+          configType: 0,
+          config: JSON.stringify(config),
+        }),
       }
       const response = await client.post(url, params)
       return response.data
