@@ -83,7 +83,6 @@ describe('RiskProviders test suite', () => {
 
     try {
       const response = await riskProviders.set(site, dataCenter, { provider: 'testProvider' })
-      console.log('Handled error in the set:', response)
       expect(response).toEqual({
         data: {
           errorCode: 500,
