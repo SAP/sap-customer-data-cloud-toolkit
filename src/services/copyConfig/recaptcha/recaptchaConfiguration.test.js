@@ -5,14 +5,10 @@
 
 import axios from 'axios'
 import RecaptchaConfiguration from './recaptchaConfiguration.js'
-import {
-  getRecaptchaExpectedResponse,
-  getRecaptchaPoliciesResponse,
-  getRiskProvidersResponse,
-} from '../../recaptcha/dataTest.js'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../../recaptcha/dataTest.js'
 jest.mock('axios')
 
-describe('RecaptchaConfiguration test suite ', () => {
+describe('RecaptchaConfiguration test suite', () => {
   const credentials = {
     userKey: 'testUserKey',
     secret: 'testSecret',
@@ -56,11 +52,7 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    try {
-      await recaptchaConfig.get()
-    } catch (error) {
-      expect(error.message).toBe('Error fetching reCAPTCHA policies: Internal server error')
-    }
+    await expect(recaptchaConfig.get()).rejects.toThrow('Error fetching reCAPTCHA policies: Internal server error')
   })
 
   test('set recaptcha configuration successfully', async () => {
@@ -81,11 +73,7 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    try {
-      await recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })
-    } catch (error) {
-      expect(error.message).toBe('Error setting reCAPTCHA configuration: Internal server error')
-    }
+    await expect(recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })).rejects.toThrow('Error setting reCAPTCHA configuration: Internal server error')
   })
 
   test('setPolicies throws error when current config fetch fails', async () => {
@@ -96,11 +84,9 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    try {
-      await recaptchaConfig.setPolicies(site, { riskAssessmentWithReCaptchaV3: true }, { requireCaptcha: true })
-    } catch (error) {
-      expect(error.message).toBe('Error fetching current policies: Failed to fetch policies')
-    }
+    await expect(recaptchaConfig.setPolicies(site, { riskAssessmentWithReCaptchaV3: true }, { requireCaptcha: true })).rejects.toThrow(
+      'Error fetching current policies: Failed to fetch policies',
+    )
   })
 
   test('setRiskProvidersConfig throws error when response has non-zero errorCode', async () => {
@@ -111,11 +97,9 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    try {
-      await recaptchaConfig.setRiskProvidersConfig(site, dataCenter, { provider: 'testProvider' })
-    } catch (error) {
-      expect(error.message).toBe('Error setting Risk Providers configuration: Failed to set risk providers')
-    }
+    await expect(recaptchaConfig.setRiskProvidersConfig(site, dataCenter, { provider: 'testProvider' })).rejects.toThrow(
+      'Error setting Risk Providers configuration: Failed to set risk providers',
+    )
   })
 
   test('copy configurations should handle missing configurations gracefully', async () => {
@@ -135,11 +119,7 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
 
-    try {
-      await recaptchaConfig.copy('targetSite', 'eu1')
-    } catch (error) {
-      expect(error.message).toBe('Recaptcha config is invalid or undefined.')
-    }
+    await expect(recaptchaConfig.copy('targetSite', 'eu1')).rejects.toThrow('Recaptcha config is invalid or undefined.')
   })
 
   test('copy fails when setRecaptchaConfig fails', async () => {
@@ -154,11 +134,7 @@ describe('RecaptchaConfiguration test suite ', () => {
       .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
       .mockResolvedValueOnce({ data: mockSetRecaptchaError })
 
-    try {
-      await recaptchaConfig.copy('targetSite', 'eu1')
-    } catch (error) {
-      expect(error.message).toBe('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
-    }
+    await expect(recaptchaConfig.copy('targetSite', 'eu1')).rejects.toThrow('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
   })
   test('get recaptcha configuration with invalid risk providers', async () => {
     const mockRecaptchaResponse = getRecaptchaExpectedResponse()
@@ -198,8 +174,7 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     const response = await recaptchaConfig.copy('targetSite', 'eu1')
 
-    axios.mock.calls.forEach((call, index) => {
-    })
+    axios.mock.calls.forEach((call, index) => {})
 
     expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
     expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
