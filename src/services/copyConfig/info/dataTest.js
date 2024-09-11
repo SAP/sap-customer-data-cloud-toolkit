@@ -133,7 +133,7 @@ export function getInfoExpectedResponse(supports) {
   const recaptcha = {
     formatName: false,
     id: 'recaptchaPolicies',
-    name: 'reCAPTCHA Policies',
+    name: 'CAPTCHA Policies',
     value: supports,
   }
 
