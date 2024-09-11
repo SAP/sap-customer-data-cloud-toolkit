@@ -8,7 +8,6 @@ import * as prettierPluginEstree from 'prettier/plugins/estree'
 import ScreenSet from '../copyConfig/screenset/screenset.js'
 
 class StringPrettierFormatter {
-  static #NAMESPACE = 'accounts'
   #credentials
   #site
   #dataCenter
@@ -88,14 +87,6 @@ class StringPrettierFormatter {
       error = `There is no Javascript on any screen`
     }
     return { success, screenSetArray: allScreenSetArrays, error }
-  }
-
-  static getGetScreenSetEndpoint() {
-    return `${StringPrettierFormatter.#NAMESPACE}.getScreenSets`
-  }
-
-  static getSetScreenSetEndpoint() {
-    return `${StringPrettierFormatter.#NAMESPACE}.setScreenSet`
   }
 
   #copyScreenSet(destinationSite, screenSetID, dataCenter, response) {
