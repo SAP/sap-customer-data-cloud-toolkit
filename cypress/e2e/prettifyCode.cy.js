@@ -23,7 +23,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should informe the user when there is no changes in the code', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `There is no Javascript on this screen ${liteRegistration}`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifySingleNoJavascript} ${liteRegistration}`)
       })
     })
 
@@ -39,7 +39,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show success popUp', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="prettierSuccessPopup"]').should('be.visible').should('contains.text', `ClosePrettify Javascript has been successful.${linkAccounts}`)
+        cy.get('[data-cy="prettierSuccessPopup"]').should('be.visible').should('contains.text', `${datatest.prettifySingleSuccess}${linkAccounts}`)
       })
     })
 
@@ -55,7 +55,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting Screen-Set ID ${organizationRegistration}:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifySingleError} ${organizationRegistration}:`)
       })
     })
   })
@@ -76,7 +76,7 @@ describe('UI Builder - Prettify Code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
         cy.get('[data-cy="prettierSuccessPopup"]')
           .should('be.visible')
-          .should('contains.text', `ClosePrettify Javascript has been successful.${linkAccounts}${liteRegistration}${organizationRegistration}`)
+          .should('contains.text', `${datatest.prettifySingleSuccess}${linkAccounts}${liteRegistration}${organizationRegistration}`)
       })
     })
 
@@ -93,7 +93,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is no javascript in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseThere is no Javascript on any screen`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifyMultipleScreensNoJavascript}`)
       })
     })
     context('All Screens - Javascript error on a single screenSet', () => {
@@ -109,7 +109,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is an error in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `CloseError formatting Screen-Set ID ${liteRegistration}:`)
+        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifySingleError} ${liteRegistration}:`)
       })
     })
   })

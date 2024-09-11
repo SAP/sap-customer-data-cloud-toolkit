@@ -60,6 +60,10 @@ const identityConnectOption = 'Connect'
 const gigyaURL = 'console.gigya.com'
 const dataflowOption = 'Dataflows'
 const testDataflow = 'TESTING DATAFLOW'
+const prettifySingleNoJavascript = 'There is no Javascript on this screen'
+const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
+const prettifySingleError = 'CloseError formatting Screen-Set ID'
+const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript on any screen'
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
@@ -1869,4 +1873,8 @@ export {
   webSDKConfiguration,
   webSdkCopyTest,
   webhooksOption,
+  prettifySingleNoJavascript,
+  prettifySingleSuccess,
+  prettifySingleError,
+  prettifyMultipleScreensNoJavascript,
 }
