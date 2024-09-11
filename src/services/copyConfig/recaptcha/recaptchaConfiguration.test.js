@@ -198,10 +198,7 @@ describe('RecaptchaConfiguration test suite ', () => {
 
     const response = await recaptchaConfig.copy('targetSite', 'eu1')
 
-    console.log('Response final:', response)
-    console.log(`Número de chamadas do axios: ${axios.mock.calls.length}`)
     axios.mock.calls.forEach((call, index) => {
-      console.log(`Chamada ${index + 1}:`, call)
     })
 
     expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
