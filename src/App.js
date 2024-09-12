@@ -15,7 +15,7 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
 import SmsTemplates from './routes/sms-templates/sms-templates.component'
-import CodeLinter from './routes/codeLinter/codeLinter.component'
+import ESLINT from './routes/codeLinter/codeLinter.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
 
@@ -35,7 +35,7 @@ function App() {
           <CopyConfigurationExtended />
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_SCREEN_SET}>
-          <CodeLinter />
+          <ESLINT />
         </div>
       </div>
     </ThemeProvider>

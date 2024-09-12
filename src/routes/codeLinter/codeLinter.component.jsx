@@ -6,49 +6,16 @@
 import { withTranslation } from 'react-i18next'
 
 import React from 'react'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/javascript/javascript'
 
 // import Code from '../../codeMirror'
 import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './email-templates.styles.js'
-import CodeMirror from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-
+import CodeLinter from '../../services/linter/eslint.js'
 const CodeMirrorEditor = () => {
+  const linter = new CodeLinter()
+  console.log('linter', linter.codeLinter())
   // Locate the existing CodeMirror instance
-  const mainApp = document.querySelector('main-app')
-
-  const shadowRoot = mainApp.shadowRoot
-  const screenSet = shadowRoot.querySelector('app-root')
-  const iframe = screenSet.querySelector('iframe.console-app-iframe')
-
-  const iframeDocument = iframe.contentDocument || iframe.contentWindow.document
-  if (!iframeDocument) {
-    console.log("iframe couldn't be found in DOM.")
-    return
-  }
-
-  const mainAppIframe = iframeDocument.querySelectorAll('#screenSet')
-  console.log('Original mainAppIframe:', mainAppIframe)
-  const playground = mainAppIframe[0].querySelectorAll('#playground')
-  console.log('Original playground:', playground)
-  const codeMirrorClass = playground[0].querySelector('.CodeMirror')
-  console.log('Original CodeMirrorSizer:', codeMirrorClass)
-  console.log('Original CodeMirrorSizer:value', codeMirrorClass.value)
-  codeMirrorClass.value = `export default {
-    // Called when an error occurs.
-    onError: function(event) {
-   a + b
-    },
-};
-`
-  const code = CodeMirror.fromTextArea(codeMirrorClass, {
-    mode: javascript,
-    lineNumbers: true,
-  })
-  console.log('code', code)
   // const existingCodeMirrorElement = document.querySelector('.CodeMirror.cm-s-default.CodeMirror-wrap')
 }
 
@@ -98,7 +65,7 @@ const CodeMirrorEditor = () => {
 //     console.error('Could not find the CodeMirror div.')
 //   }
 // }
-const CodeLinter = () => {
+const ESLINT = () => {
   const useStyles = createUseStyles(styles, { name: 'EmailTemplates' })
   const classes = useStyles()
 
@@ -116,4 +83,4 @@ const CodeLinter = () => {
   )
 }
 
-export default withTranslation()(CodeLinter)
+export default withTranslation()(ESLINT)
