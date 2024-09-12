@@ -40,57 +40,17 @@ import {
   policiesPopoverText,
   siteConfigResponse,
   targetSitePopoverText,
-  trackingToolText,
 } from './dataTest'
 
 export function startUp(pageName) {
   cy.visit('')
-  this.verifyTrackerDialog()
+
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
-
-  // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
-  // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
-
-  cy.contains(pageName).realClick()
-}
-export function startUpCopyConfig(pageName) {
-  cy.visit('')
-  this.verifyTrackerDialog()
-  cy.clearAllCookies()
-  cy.clearAllLocalStorage()
-  cy.clearAllSessionStorage()
-
-  // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
-  // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
 
   cy.contains(pageName).realClick()
   cy.reload()
-}
-
-export function verifyTrackerDialog() {
-  cy.get('#automated-usage-tracking-tool-dialog').should('be.visible')
-  cy.get('#automated-usage-tracking-tool-dialog-content').should('contain.text', trackingToolText)
-  cy.get('#automated-usage-tracking-tool-dialog-confirm-button').click()
-
-  cy.intercept('POST', 'https://accounts.undefined.gigya.com/accounts.initRegistration', {
-    statusCode: 200,
-    body: {
-      callId: 'mockCallId',
-      errorCode: 0,
-      apiVersion: 2,
-      statusCode: 200,
-      statusReason: 'OK',
-      time: Date.now(),
-      regToken: 'mockRegToken',
-    },
-  })
-
-  cy.intercept('POST', 'https://accounts.undefined.gigya.com/accounts.setAccountInfo', {
-    statusCode: 200,
-    body: { callId: 'mockCallId', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', time: Date.now() },
-  })
 }
 
 export function clearCredentials() {

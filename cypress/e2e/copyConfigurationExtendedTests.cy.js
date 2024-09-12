@@ -11,8 +11,7 @@ describe('Copy Configuration extended test suite', () => {
   context('Check initial elements state', () => {
     beforeEach(() => {
       utils.mockGetConfigurationRequests()
-      utils.startUpCopyConfig(dataTest.copyConfigExtendendMenuOption)
-      utils.verifyTrackerDialog()
+      utils.startUp(dataTest.copyConfigExtendendMenuOption)
     })
 
     it('should display all expected elements', () => {
@@ -75,8 +74,7 @@ describe('Copy Configuration extended test suite', () => {
   context('Display success messages', () => {
     beforeEach(() => {
       utils.mockGetConfigurationRequests()
-      utils.startUpCopyConfig(dataTest.copyConfigExtendendMenuOption)
-      utils.verifyTrackerDialog()
+      utils.startUp(dataTest.copyConfigExtendendMenuOption)
     })
 
     it('should display success popup after successfully copy on save', () => {
