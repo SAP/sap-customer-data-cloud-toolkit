@@ -1,21 +1,39 @@
 import Web from '@sap_oss/automated-usage-tracking-tool'
 
-const API_KEY = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_API_KEY_PROD : process.env.REACT_APP_TRACKER_API_KEY_DEV
-const DATA_CENTER = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_DATA_CENTER_PROD : process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+const getCredentials = () => {
+  if (
+    !process.env.REACT_APP_TRACKER_API_KEY_DEV ||
+    !process.env.REACT_APP_TRACKER_DATA_CENTER_DEV ||
+    !process.env.REACT_APP_TRACKER_API_KEY_PROD ||
+    !process.env.REACT_APP_TRACKER_DATA_CENTER_PROD
+  ) {
+    return null
+  }
 
-let trackingTool = null
+  const API_KEY = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_API_KEY_PROD : process.env.REACT_APP_TRACKER_API_KEY_DEV
+  const DATA_CENTER = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_DATA_CENTER_PROD : process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+  return { apiKey: API_KEY, dataCenter: DATA_CENTER }
+}
 
-if (API_KEY && DATA_CENTER) {
-  trackingTool = new Web({
-    apiKey: API_KEY,
-    dataCenter: DATA_CENTER,
-  })
-} else {
-  console.log('Tracking tool was not initialized due to missing API key or data center configuration.')
+export const initTracker = () => {
+  const credentials = getCredentials()
+
+  if (!credentials) {
+    console.log('Tracking tool was not initialized due to missing API key or data center configuration.')
+    return null
+  }
+
+  return new Web(credentials)
+}
+
+const trackingTool = initTracker()
+
+function shouldSkipTracking() {
+  return !trackingTool || window.Cypress
 }
 
 export async function requestConsentConfirmation() {
-  if (!trackingTool) {
+  if (shouldSkipTracking()) {
     return null
   }
   return await trackingTool.requestConsentConfirmation({
@@ -27,7 +45,7 @@ export async function requestConsentConfirmation() {
 }
 
 export async function trackUsage({ featureName }) {
-  if (!trackingTool) {
+  if (shouldSkipTracking()) {
     return null
   }
   return await trackingTool.trackUsage({
