@@ -135,6 +135,7 @@ export function getInfoExpectedResponse(supports) {
     id: 'recaptchaPolicies',
     name: 'CAPTCHA Policies',
     value: supports,
+    link: '-',
   }
 
   const rbaOptions = new RbaOptions(undefined)
