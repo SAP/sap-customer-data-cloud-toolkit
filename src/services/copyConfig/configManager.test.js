@@ -80,7 +80,6 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
       .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
     const response = await configManager.getConfiguration()
-    //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
   })
 

@@ -14,6 +14,7 @@ class RecaptchaOptions extends Options {
       name: 'CAPTCHA Policies',
       formatName: false,
       value: true,
+      link: '-',
     })
     this.#recaptchaConfiguration = recaptchaConfiguration
   }
