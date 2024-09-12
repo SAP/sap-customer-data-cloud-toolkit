@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-import StringPrettierFormatter from './prettierFunction.js'
+import PrettierFormatter from './prettierFunction.js'
 import { credentials, expectedGigyaResponseOk, expectedPrettierError } from '../servicesDataTest.js'
 import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest.js'
 import axios from 'axios'
@@ -12,7 +12,7 @@ jest.mock('axios')
 describe('Prettier Formatter Test Suite', () => {
   const targetApiKey = 'targetApiKey'
   const dataCenter = 'us1'
-  const prettify = new StringPrettierFormatter(credentials, targetApiKey, dataCenter)
+  const prettify = new PrettierFormatter(credentials, targetApiKey, dataCenter)
   const testString = `{
   // Called when an error occurs.
   onError: function (event) {
@@ -205,7 +205,7 @@ describe('Prettier Formatter Test Suite', () => {
 };
 `
   test('Should format a messy string of code to a prettier version', async () => {
-    const result = await prettify.myFormat(testString)
+    const result = await prettify.formatWithPrettier(testString)
     expect(result).toBe(expectedString)
   })
   test('Should prettified all the screenSets successfully', async () => {
@@ -216,7 +216,7 @@ describe('Prettier Formatter Test Suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[0].screenSetID, targetApiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[1].screenSetID, targetApiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[2].screenSetID, targetApiKey) })
-    const result = await prettify.prettierCode(targetApiKey, undefined)
+    const result = await prettify.formatScreenSets(targetApiKey, undefined)
     expect(result.success).toBe(true)
   })
   test('Should prettified single screenSets successfully', async () => {
@@ -225,7 +225,7 @@ describe('Prettier Formatter Test Suite', () => {
     axios
       .mockResolvedValueOnce({ data: expectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[0].screenSetID, targetApiKey) })
-    const result = await prettify.prettierCode(targetApiKey, expectedResponse.screenSets[0].screenSetID)
+    const result = await prettify.formatScreenSets(targetApiKey, expectedResponse.screenSets[0].screenSetID)
     expect(result.screenSetArray.length).toBe(0)
     expect(result.success).toBe(true)
   })
@@ -237,7 +237,7 @@ describe('Prettier Formatter Test Suite', () => {
       .mockResolvedValueOnce({ data: expectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[0].screenSetID, targetApiKey) })
 
-    const result = await prettify.prettierCode(targetApiKey, undefined)
+    const result = await prettify.formatScreenSets(targetApiKey, undefined)
     expect(result.success).toBe(false)
     expect(result.screenSetArray.length).toBe(0)
   })
@@ -250,7 +250,7 @@ describe('Prettier Formatter Test Suite', () => {
       .mockResolvedValueOnce({ data: expectedResponse })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[0].screenSetID, targetApiKey) })
 
-    const result = await prettify.prettierCode(targetApiKey, undefined)
+    const result = await prettify.formatScreenSets(targetApiKey, undefined)
     expect(result.error).toBe('There is no Javascript on any screen')
   })
 

@@ -7,7 +7,7 @@ import React from 'react'
 import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './prettify-code.styles.js'
-import StringPrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
+import PrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
 import { getScreenSet } from '../../redux/utils.js'
 import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
 import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
@@ -32,8 +32,8 @@ const PrettifyAllScreens = ({ t }) => {
 
   const getServices = async () => {
     const screenSet = getScreenSet(window.location)
-    const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
-    const { success, screenSetArray, error } = await prettier.prettierCode(apikey, screenSet)
+    const prettier = new PrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
+    const { success, screenSetArray, error } = await prettier.formatScreenSets(apikey, screenSet)
 
     if (error) {
       setErrorMessage(error)

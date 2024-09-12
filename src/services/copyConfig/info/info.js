@@ -181,6 +181,7 @@ class Info {
   async #getEmailTemplates() {
     const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
     const response = await emailOptions.getConfiguration().get()
+
     if (response.errorCode === 0) {
       emailOptions.addEmails(response)
       const info = JSON.parse(JSON.stringify(emailOptions.getOptionsDisabled()))
@@ -209,6 +210,7 @@ class Info {
   async #getPolicies() {
     const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
+
     if (response.errorCode === 0) {
       policyOptions.addSupportedPolicies(response)
       const info = JSON.parse(JSON.stringify(policyOptions.getOptionsDisabled()))

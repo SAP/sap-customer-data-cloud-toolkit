@@ -29,10 +29,6 @@ const styles = {
     textAlign: 'left',
     marginLeft: '150px !important',
   },
-  importAllButtonStyle: {
-    composes: 'fd-button fd-button--compact',
-    marginRight: '110px !important',
-  },
   singlePrettifyButton: {
     composes: 'fd-button fd-button--compact',
     marginRight: '45px !important',

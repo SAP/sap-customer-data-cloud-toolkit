@@ -7,11 +7,13 @@ import React from 'react'
 import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './prettify-code.styles.js'
-import StringPrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
+import PrettierFormatter from '../../services/prettierValidator/prettierFunction.js'
 import { getScreenSet } from '../../redux/utils.js'
 import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
 import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
 import useCommonState from './useCommonState.js'
+import { useState } from 'react'
+import PrettifyNoJavascriptDialogComponent from '../../components/prettify-no-javascript-dialog/prettify-no-javascript-dialog.component.jsx'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
@@ -30,12 +32,19 @@ const PrettifySingleScreen = ({ t }) => {
     currentSiteInfo,
     credentialsUpdated,
   } = useCommonState()
+  const [showInfo, setShowInfo] = useState(false)
+  const [screenSet, setscreenSet] = useState(false)
 
   const getServices = async () => {
-    const prettier = new StringPrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
-    const screenSet = getScreenSet(window.location)
-    const { success, screenSetArray, error } = await prettier.prettierCode(apikey, screenSet)
-
+    const prettier = new PrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
+    let screenSet = getScreenSet(window.location)
+    const { success, screenSetArray, error } = await prettier.formatScreenSets(apikey, screenSet)
+    if (screenSetArray.length === 0 && error === null) {
+      setscreenSet(screenSet)
+      setShowSuccess(false)
+      setShowInfo(true)
+      return
+    }
     if (error) {
       setErrorMessage(error)
       setShowSuccess(false)
@@ -54,8 +63,11 @@ const PrettifySingleScreen = ({ t }) => {
   const onAfterCloseErrorDialogHandle = () => {
     setShowError(false)
   }
+  const onAfterCloseInformationDialogHandle = () => {
+    setShowInfo(false)
+  }
   const showSuccessMessage = () => <PrettierSuccessDialog modifiedScreenSets={modifiedScreenSets} />
-
+  const showInformationPopUp = () => <PrettifyNoJavascriptDialogComponent onAfterCloseHandle={onAfterCloseInformationDialogHandle} screenSet={screenSet} />
   const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={onAfterCloseErrorDialogHandle} errorMessage={errorMessage} />
   return (
     <>
@@ -70,6 +82,7 @@ const PrettifySingleScreen = ({ t }) => {
         }
       ></Bar>
       {showSuccess && showSuccessMessage()}
+      {showInfo && showInformationPopUp()}
       {showError && showErrorPopup()}
     </>
   )

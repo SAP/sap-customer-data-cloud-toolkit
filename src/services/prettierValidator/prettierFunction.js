@@ -7,7 +7,7 @@ import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
 import ScreenSet from '../copyConfig/screenset/screenset.js'
 
-class StringPrettierFormatter {
+class PrettierFormatter {
   #credentials
   #site
   #dataCenter
@@ -20,45 +20,25 @@ class StringPrettierFormatter {
     this.#screenSet = new ScreenSet(credentials, site, dataCenter)
   }
 
-  async specificScreenSet(specificScreenSet, siteApiKey, javascript, response) {
+  async formatScreenSet(screenSet, siteApiKey, javascript, response) {
     const screenSetArray = []
     let success = true
     let error = null
     try {
       if (javascript) {
-        specificScreenSet.javascript = await this.myFormat(javascript)
-        screenSetArray.push(specificScreenSet.screenSetID)
-        await this.#copyScreenSet(siteApiKey, specificScreenSet.screenSetID, this.#dataCenter, response)
-        return { success, screenSetArray, error }
-      } else {
-        error = `There is no Javascript on this screen ${specificScreenSet.screenSetID}`
-      }
-    } catch (err) {
-      success = false
-      error = `Error formatting Screen-Set ID ${specificScreenSet.screenSetID}: ${err.message}`
-    }
-    return { success, screenSetArray, error }
-  }
-
-  async prettifyAllScreens(screenSet, siteApiKey, javascript, response, screenSetID) {
-    let success = true
-    let error = null
-    const screenSetArray = []
-    try {
-      if (javascript) {
-        screenSet.javascript = await this.myFormat(javascript)
-        screenSetArray.push(screenSetID)
-        await this.#copyScreenSet(siteApiKey, screenSetID, this.#dataCenter, response)
+        screenSet.javascript = await this.formatWithPrettier(javascript)
+        screenSetArray.push(screenSet.screenSetID)
+        await this.#copyScreenSet(siteApiKey, screenSet.screenSetID, this.#dataCenter, response)
         return { success, screenSetArray, error }
       }
     } catch (err) {
       success = false
-      error = `Error formatting Screen-Set ID ${screenSetID}: ${err.message}`
+      error = `Error formatting Screen-Set ID ${screenSet.screenSetID}: ${err.message}`
     }
     return { success, screenSetArray, error }
   }
 
-  async prettierCode(siteApiKey, screenSetClicked = undefined) {
+  async formatScreenSets(siteApiKey, screenSetClicked = undefined) {
     const response = await this.#screenSet.get()
     const allScreenSetArrays = []
     let success = true
@@ -67,12 +47,13 @@ class StringPrettierFormatter {
       const { screenSetID, javascript } = screenSet
 
       if (screenSetClicked === screenSetID) {
-        const { success, screenSetArray, error } = await this.specificScreenSet(screenSet, siteApiKey, javascript, response)
+        const { success, screenSetArray, error } = await this.formatScreenSet(screenSet, siteApiKey, javascript, response)
 
         return { success, screenSetArray, error }
       }
+
       if (screenSetClicked === undefined) {
-        const result = await this.prettifyAllScreens(screenSet, siteApiKey, javascript, response, screenSetID)
+        const result = await this.formatScreenSet(screenSet, siteApiKey, javascript, response, screenSetID)
         if (!result.success) {
           return { success: result.success, screenSetArray: allScreenSetArrays, error: result.error }
         }
@@ -98,14 +79,14 @@ class StringPrettierFormatter {
     return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 
-  async myFormat(_inputString) {
+  async formatWithPrettier(inputString) {
     const prettierConfig = {
       parser: 'babel',
       plugins: [prettierPluginBabel, prettierPluginEstree],
       tabWidth: 4,
     }
 
-    const withExportDefault = `export default ${_inputString.trimStart()}`
+    const withExportDefault = `export default ${inputString.trimStart()}`
 
     try {
       const formattedString = await format(withExportDefault, prettierConfig)
@@ -117,4 +98,4 @@ class StringPrettierFormatter {
   }
 }
 
-export default StringPrettierFormatter
+export default PrettierFormatter

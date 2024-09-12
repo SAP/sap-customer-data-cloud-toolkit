@@ -23,7 +23,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should informe the user when there is no changes in the code', () => {
         cy.get('[data-cy="prettifySingleScreen"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifySingleNoJavascript} ${liteRegistration}`)
+        cy.get('[data-cy="noJavascriptPopUp"]').should('be.visible').should('contains.text', `${datatest.prettifySingleNoJavascript} ${liteRegistration}`)
       })
     })
 
