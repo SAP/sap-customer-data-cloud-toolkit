@@ -6,6 +6,7 @@ import { format } from 'prettier/standalone'
 import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
 import ScreenSet from '../copyConfig/screenset/screenset.js'
+import { t } from '../../services/i18n.js'
 
 class PrettierFormatter {
   #credentials
@@ -33,7 +34,7 @@ class PrettierFormatter {
       }
     } catch (err) {
       success = false
-      error = `Error formatting Screen-Set ID ${screenSet.screenSetID}: ${err.message}`
+      error = `${t('PRETTIFY_ERROR.LABEL')} ${screenSet.screenSetID}: ${err.message}`
     }
     return { success, screenSetArray, error }
   }
@@ -64,9 +65,7 @@ class PrettierFormatter {
         allScreenSetArrays.push(...result.screenSetArray)
       }
     }
-    if (allScreenSetArrays.length === 0) {
-      error = `There is no Javascript on any screen`
-    }
+
     return { success, screenSetArray: allScreenSetArrays, error }
   }
 

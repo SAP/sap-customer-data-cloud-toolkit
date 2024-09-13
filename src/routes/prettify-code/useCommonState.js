@@ -9,7 +9,8 @@ const useCommonState = () => {
   const [showError, setShowError] = useState(false)
   const [modifiedScreenSets, setModifiedScreenSets] = useState([])
   const [errorMessage, setErrorMessage] = useState('')
-
+  const [showInfo, setShowInfo] = useState(false)
+  const [screenSet, setscreenSet] = useState(false)
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
@@ -28,6 +29,10 @@ const useCommonState = () => {
     setModifiedScreenSets,
     errorMessage,
     setErrorMessage,
+    showInfo,
+    setShowInfo,
+    screenSet,
+    setscreenSet,
     apikey,
     currentSiteInfo,
     credentialsUpdated,

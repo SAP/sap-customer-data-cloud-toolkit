@@ -2,20 +2,18 @@ import { withTranslation } from 'react-i18next'
 import { ValueState, Text } from '@ui5/webcomponents-react'
 import DialogMessageInform from '../dialog-message-inform/dialog-message-inform.component'
 
-const PrettierNoJavascriptDialog = ({ onAfterCloseHandle, t, screenSet }) => {
+const PrettierNoJavascriptMultipleScreenSets = ({ onAfterCloseHandle, t }) => {
   return (
     <DialogMessageInform
-      headerText={t('PRETTIFY_SINGLE_SCREEN_INFORMATIONAL_NO_JAVASCRIPT')}
+      headerText={t('PRETTIFY_ALL_SCREEN_SETS_NO_JAVASCRIPT.LABEL')}
       state={ValueState.Information}
       id="noJavascriptPopUp"
       data-cy="noJavascriptPopUp"
       onAfterClose={onAfterCloseHandle}
     >
-      <Text>
-        {t('PRETTIFY_SINGLE_SCREEN_SET_NO_JAVASCRIPT.LABEL')} : {screenSet}.
-      </Text>
+      <Text>{t('PRETTIFY_ALL_SCREEN-SETS_INFORMATIONAL_NO_JAVASCRIPT')}</Text>
     </DialogMessageInform>
   )
 }
 
-export default withTranslation()(PrettierNoJavascriptDialog)
+export default withTranslation()(PrettierNoJavascriptMultipleScreenSets)
