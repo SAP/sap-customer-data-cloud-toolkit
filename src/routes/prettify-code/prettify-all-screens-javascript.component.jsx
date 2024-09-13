@@ -87,7 +87,6 @@ const PrettifyAllScreens = ({ t }) => {
       ></Bar>
       {showSuccess && showSuccessMessage()}
       {showInfo && showInformationPopUp()}
-
       {showError && showErrorPopup()}
     </>
   )

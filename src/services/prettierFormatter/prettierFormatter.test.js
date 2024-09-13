@@ -251,7 +251,9 @@ describe('Prettier Formatter Test Suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedResponse.screenSets[0].screenSetID, targetApiKey) })
 
     const result = await prettify.formatScreenSets(targetApiKey, undefined)
-    expect(result.error).toBe('There is no Javascript on any screen')
+    expect(result.error).toBe(null)
+    expect(result.success).toBe(true)
+    expect(result.screenSetArray.length).toBe(0)
   })
 
   function removeJavascript(response) {
