@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-import PrettierFormatter from './prettierFunction.js'
+import PrettierFormatter from './prettierFormatter.js'
 import { credentials, expectedGigyaResponseOk, expectedPrettierError } from '../servicesDataTest.js'
 import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest.js'
 import axios from 'axios'
