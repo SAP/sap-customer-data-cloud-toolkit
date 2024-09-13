@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 /**
  * @jest-environment jsdom
  */
@@ -32,13 +31,13 @@ import sitesReducer, {
 import { getPartnerId, getCreationSuccessMessage } from './utils'
 
 import * as data from './dataTest'
-import { Tracker } from '../../tracker/tracker'
+import * as Tracker from '../../lib/tracker'
 
 describe('Site slice test suite', () => {
   let tracker
 
   beforeEach(() => {
-    tracker = jest.spyOn(Tracker, 'reportUsage')
+    tracker = jest.spyOn(Tracker, 'trackUsage').mockImplementation(() => {})
   })
 
   test('should return initial state', () => {
@@ -131,7 +130,7 @@ describe('Site slice test suite', () => {
       deleteChild({
         parentSiteTempId: '1234',
         tempId: '5678',
-      })
+      }),
     )
     expect(newState.sites[0].childSites.length).toEqual(0)
   })
@@ -141,7 +140,7 @@ describe('Site slice test suite', () => {
       data.stateWithParentWithChild,
       deleteParent({
         tempId: '1234',
-      })
+      }),
     )
     expect(newState.sites.length).toEqual(0)
   })

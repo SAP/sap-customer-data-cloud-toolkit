@@ -49,6 +49,8 @@ import {
 
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
+import { trackUsage } from '../../lib/tracker.js'
+
 import { areCredentialsFilled } from '../../redux/credentials/utils'
 
 import { cleanTreeVerticalScrolls, areConfigurationsFilled, sendReportOnWarnings } from './utils'
@@ -62,8 +64,6 @@ import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
 import styles from './copy-configuration-extended.styles'
-
-import { Tracker } from '../../tracker/tracker'
 
 import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
 
@@ -146,12 +146,12 @@ const CopyConfigurationExtended = ({ t }) => {
     }
   }
 
-  const onSuccessDialogAfterCloseHandler = () => {
+  const onSuccessDialogAfterCloseHandler = async () => {
     setTarketApiKeyInputValue('')
     dispatch(clearConfigurations())
     dispatch(clearTargetApiKeys())
     setSelectAllCheckboxState(false)
-    Tracker.reportUsage()
+    await trackUsage({ featureName: PAGE_TITLE })
   }
 
   const onTarketApiKeyDeleteHandler = (event) => {
@@ -169,12 +169,12 @@ const CopyConfigurationExtended = ({ t }) => {
       open={showSuccessDialog}
       headerText={t('GLOBAL.SUCCESS')}
       state={ValueState.Success}
-      closeButtonContent={t('GLOBAL.BUTTON_REPORT_USAGE')}
+      closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterCloseHandler}
       id="copyConfigSuccessPopup"
       data-cy="copyConfigSuccessPopup"
     >
-      <Text>{t('GLOBAL.REPORT_USAGE')}</Text>
+      <Text>{t('COPY_CONFIGURATION_EXTENDED.COPY_SUCCESS_MESSAGE')}</Text>
     </DialogMessageInform>
   )
 
@@ -198,7 +198,7 @@ const CopyConfigurationExtended = ({ t }) => {
   }
 
   const showErrorList = () => {
-    sendReportOnWarnings(errors)
+    sendReportOnWarnings(errors, PAGE_TITLE)
 
     return errors.length ? (
       <div className={classes.errorListOuterDivStyle}>

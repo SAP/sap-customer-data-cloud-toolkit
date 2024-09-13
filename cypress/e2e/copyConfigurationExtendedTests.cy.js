@@ -84,7 +84,7 @@ describe('Copy Configuration extended test suite', () => {
       utils.setConfigurationCopyConfig()
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').shadow().find('button').should('be.enabled')
       cy.get('[data-cy ="copyConfigExtendedSaveButton"]').click()
-      cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedSuccessMessage)
+      cy.get('[data-cy ="copyConfigSuccessPopup"]').should('have.text', dataTest.expectedCopyConfigSuccessMessage)
       cy.get('[data-cy ="copyConfigSuccessPopup"]').find('#closeButton').click()
     })
 
