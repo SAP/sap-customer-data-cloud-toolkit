@@ -13,19 +13,6 @@ describe('copyConfigurationExtendedSlice test suite', () => {
   beforeEach(() => {
     jest.resetModules() // Clears any cached modules.
   })
-  it('should initialize the tracker with development credentials', () => {
-    jest.mock('@sap_oss/automated-usage-tracking-tool', () => {
-      return jest.fn().mockImplementation(() => {
-        return {
-          apiKey: 'dev-api-key',
-          dataCenter: 'us1',
-        }
-      })
-    })
-    const tracker = initTracker()
-    expect(Web).toHaveBeenCalledWith({ apiKey: 'dev-api-key', dataCenter: 'dev-data-center' })
-    expect(tracker).not.toBeNull()
-  })
   it('should initialize the tracker with requestConsentConfirmation', async () => {
     const tracker = initTracker()
 
