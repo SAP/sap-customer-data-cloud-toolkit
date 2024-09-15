@@ -28,7 +28,7 @@ export const initTracker = () => {
 
 const trackingTool = initTracker()
 
-function shouldSkipTracking() {
+export function shouldSkipTracking() {
   return !trackingTool || window.Cypress
 }
 
