@@ -45,4 +45,7 @@ export default class RbaOptions extends Options {
   removeRules(info) {
     return this.removeInfo(RbaOptions.RULES, info)
   }
+  removeAllOptions(info) {
+    info.branches = []
+  }
 }

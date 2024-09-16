@@ -33,13 +33,15 @@ import RbaOptions from '../rba/rbaOptions.js'
 
 class Info {
   #credentials
-  #site
+  #apiKey
   #dataCenter
+  #siteInfo
 
-  constructor(credentials, site, dataCenter) {
+  constructor(credentials, apiKey, siteInfo) {
     this.#credentials = credentials
-    this.#site = site
-    this.#dataCenter = dataCenter
+    this.#apiKey = apiKey
+    this.#dataCenter = siteInfo.dataCenter
+    this.#siteInfo = siteInfo
   }
 
   async get() {
@@ -73,7 +75,7 @@ class Info {
   }
 
   async #getDataflows() {
-    const dataflowOptions = new DataflowOptions(new Dataflow(this.#credentials, this.#site, this.#dataCenter))
+    const dataflowOptions = new DataflowOptions(new Dataflow(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await dataflowOptions.getConfiguration().search()
     if (response.errorCode === 0) {
       dataflowOptions.add(response)
@@ -86,7 +88,7 @@ class Info {
   }
 
   async #getWebSdk() {
-    const webSdkOptions = new WebSdkOptions(new WebSdk(this.#credentials, this.#site, this.#dataCenter))
+    const webSdkOptions = new WebSdkOptions(new WebSdk(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await webSdkOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(webSdkOptions.getOptionsDisabled()))
@@ -101,7 +103,7 @@ class Info {
   }
 
   async #getConsents() {
-    const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const consentOptions = new ConsentOptions(new ConsentConfiguration(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await consentOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(consentOptions.getOptionsDisabled()))
@@ -124,7 +126,7 @@ class Info {
   }
 
   async #getSchema() {
-    const schemaOptions = new SchemaOptions(new Schema(this.#credentials, this.#site, this.#dataCenter))
+    const schemaOptions = new SchemaOptions(new Schema(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await schemaOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(schemaOptions.getOptionsDisabled()))
@@ -151,7 +153,7 @@ class Info {
   }
 
   async #getScreenSets() {
-    const screenSetOptions = new ScreenSetOptions(new ScreenSet(this.#credentials, this.#site, this.#dataCenter))
+    const screenSetOptions = new ScreenSetOptions(new ScreenSet(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await screenSetOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       screenSetOptions.addCollection(response)
@@ -164,7 +166,7 @@ class Info {
   }
 
   async #getSocialIdentities() {
-    const socialOptions = new SocialOptions(new Social(this.#credentials, this.#site, this.#dataCenter))
+    const socialOptions = new SocialOptions(new Social(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await socialOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = socialOptions.getOptionsDisabled()
@@ -179,7 +181,7 @@ class Info {
   }
 
   async #getEmailTemplates() {
-    const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const emailOptions = new EmailOptions(new EmailConfiguration(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await emailOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
@@ -193,7 +195,7 @@ class Info {
   }
 
   async #getSmsTemplates() {
-    const smsOptions = new SmsOptions(new SmsConfiguration(this.#credentials, this.#site, this.#dataCenter))
+    const smsOptions = new SmsOptions(new SmsConfiguration(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await smsOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = smsOptions.getOptionsDisabled()
@@ -208,7 +210,7 @@ class Info {
   }
 
   async #getPolicies() {
-    const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#site, this.#dataCenter))
+    const policyOptions = new PolicyOptions(new Policy(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await policyOptions.getConfiguration().get()
 
     if (response.errorCode === 0) {
@@ -222,7 +224,7 @@ class Info {
   }
 
   async #getCommunicationTopics() {
-    const communicationOptions = new CommunicationOptions(new Communication(this.#credentials, this.#site, this.#dataCenter))
+    const communicationOptions = new CommunicationOptions(new Communication(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await communicationOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       const info = JSON.parse(JSON.stringify(communicationOptions.getOptionsDisabled()))
@@ -237,7 +239,7 @@ class Info {
   }
 
   async #getWebhooks() {
-    const webhookOptions = new WebhookOptions(new Webhook(this.#credentials, this.#site, this.#dataCenter))
+    const webhookOptions = new WebhookOptions(new Webhook(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await webhookOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       webhookOptions.addWebhooks(response)
@@ -250,7 +252,7 @@ class Info {
   }
 
   async #getExtensions() {
-    const extensionOptions = new ExtensionOptions(new Extension(this.#credentials, this.#site, this.#dataCenter))
+    const extensionOptions = new ExtensionOptions(new Extension(this.#credentials, this.#apiKey, this.#dataCenter))
     const response = await extensionOptions.getConfiguration().get()
     if (response.errorCode === 0) {
       extensionOptions.addExtensions(response)
@@ -263,16 +265,25 @@ class Info {
   }
 
   async #getRba() {
-    const rbaOptions = new RbaOptions(new Rba(this.#credentials, this.#site, this.#dataCenter))
+    const rbaOptions = new RbaOptions(new Rba(this.#credentials, this.#apiKey, this.#dataCenter))
     const responses = await rbaOptions.getConfiguration().get()
     if (responses.every((r) => r.errorCode === 0)) {
       const info = JSON.parse(JSON.stringify(rbaOptions.getOptionsDisabled()))
       if (!Rba.hasRules(responses[2])) {
         rbaOptions.removeRules(info)
       }
+      if (this.#isChildSite(this.#siteInfo)) {
+        rbaOptions.removeAllOptions(info)
+      }
       return Promise.resolve(info)
     } else {
       return Promise.reject(responses)
+    }
+  }
+
+  #isChildSite(siteInfo) {
+    if (siteInfo) {
+      return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== this.#apiKey
     }
   }
 }

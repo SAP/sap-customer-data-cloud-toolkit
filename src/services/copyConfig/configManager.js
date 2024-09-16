@@ -92,7 +92,7 @@ class ConfigManager {
   async getConfiguration() {
     try {
       await this.#init()
-      const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration.dataCenter)
+      const info = new Info(this.#credentials, this.#originApiKey, this.#originSiteConfiguration)
       return info.get()
     } catch (error) {
       return Promise.reject(Array.isArray(error) ? error : [error])
