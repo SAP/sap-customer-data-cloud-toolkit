@@ -4,7 +4,7 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { trackUsage } from '../../lib/tracker.js'
-const PAGE_TITLE = 'UI Builder'
+const PAGE_TITLE = 'Prettify Screen-Set Javascript'
 export const useCommonState = () => {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showError, setShowError] = useState(false)
