@@ -93,7 +93,7 @@ describe('UI Builder - Prettify Code', () => {
       })
       it('Should show error popUp when there is no javascript in the code', () => {
         cy.get('[data-cy="prettifyAllCode"]').click()
-        cy.get('[data-cy="errorPopup"]').should('be.visible').should('contains.text', `${datatest.prettifyMultipleScreensNoJavascript}`)
+        cy.get('[data-cy="noJavascriptPopUp"]').should('be.visible').should('contains.text', `${datatest.prettifyMultipleScreensNoJavascript}`)
       })
     })
     context('All Screens - Javascript error on a single screenSet', () => {
