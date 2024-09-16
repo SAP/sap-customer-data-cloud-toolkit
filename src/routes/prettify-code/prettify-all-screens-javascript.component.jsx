@@ -7,12 +7,12 @@ import React from 'react'
 import { Bar, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './prettify-code.styles.js'
-import PrettierFormatter from '../../services/prettierFormatter/prettierFormatter.js'
-import { getScreenSet } from '../../redux/utils.js'
 import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
 import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
 import { useCommonState, onAfterCloseErrorDialogHandle, onAfterCloseInformationDialogHandle, onAfterCloseSuccessDialogHandle } from './useCommonState.js'
 import PrettierNoJavascriptMultipleScreenSets from '../../components/prettify-no-javascript-all-screen-set-dialog/prettify-no-javascript-all-screen-set-dialog.component.jsx'
+import { getServices } from './handleServices.js'
+
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const PrettifyAllScreens = ({ t }) => {
@@ -34,28 +34,19 @@ const PrettifyAllScreens = ({ t }) => {
     credentialsUpdated,
   } = useCommonState()
 
-  const getServices = async () => {
-    const screenSet = getScreenSet(window.location)
-    const prettier = new PrettierFormatter(credentialsUpdated, apikey, currentSiteInfo.dataCenter)
-    const { success, screenSetArray, error } = await prettier.formatScreenSets(apikey, screenSet)
+  const handleGetServices = () =>
+    getServices({
+      credentialsUpdated,
+      apikey,
+      currentSiteInfo,
+      setShowSuccess,
+      setscreenSet,
+      setShowInfo,
+      setShowError,
+      setErrorMessage,
+      setModifiedScreenSets,
+    })
 
-    if (screenSetArray.length === 0 && error === null) {
-      setscreenSet(screenSet)
-      setShowSuccess(false)
-      setShowInfo(true)
-      return
-    }
-    if (error) {
-      setErrorMessage(error)
-      setShowSuccess(false)
-      setShowError(true)
-      return
-    }
-    if (success) {
-      setShowSuccess(true)
-      setModifiedScreenSets(screenSetArray)
-    }
-  }
   const showSuccessMessage = () => <PrettierSuccessDialog onAfterCloseHandle={() => onAfterCloseSuccessDialogHandle({ setShowSuccess })} modifiedScreenSets={modifiedScreenSets} />
   const showInformationPopUp = () => <PrettierNoJavascriptMultipleScreenSets onAfterCloseHandle={() => onAfterCloseInformationDialogHandle({ setShowInfo })} />
   const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={() => onAfterCloseErrorDialogHandle({ setShowError })} errorMessage={errorMessage} />
@@ -65,7 +56,7 @@ const PrettifyAllScreens = ({ t }) => {
         className={classes.outerBarStyle}
         endContent={
           <>
-            <Button id="prettifyAllCode" data-cy="prettifyAllCode" className={classes.prettifyAllButtons} onClick={getServices}>
+            <Button id="prettifyAllCode" data-cy="prettifyAllCode" className={classes.prettifyAllButtons} onClick={handleGetServices}>
               {t('PRETTIFY_ALL_BUTTONS.LABEL')}
             </Button>
           </>
