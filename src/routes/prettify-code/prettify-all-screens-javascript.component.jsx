@@ -11,7 +11,7 @@ import PrettierFormatter from '../../services/prettierFormatter/prettierFormatte
 import { getScreenSet } from '../../redux/utils.js'
 import PrettierErrorDialog from '../../components/prettify-error-dialog/prettify-error-dialog.component.jsx'
 import PrettierSuccessDialog from '../../components/prettify-success-dialog/prettify-success-dialog.component.jsx'
-import useCommonState from './useCommonState.js'
+import { useCommonState, onAfterCloseErrorDialogHandle, onAfterCloseInformationDialogHandle, onAfterCloseSuccessDialogHandle } from './useCommonState.js'
 import PrettierNoJavascriptMultipleScreenSets from '../../components/prettify-no-javascript-all-screen-set-dialog/prettify-no-javascript-all-screen-set-dialog.component.jsx'
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
@@ -56,23 +56,9 @@ const PrettifyAllScreens = ({ t }) => {
       setModifiedScreenSets(screenSetArray)
     }
   }
-
-  const onAfterCloseErrorDialogHandle = () => {
-    setShowError(false)
-  }
-
-  const onAfterCloseInformationDialogHandle = () => {
-    setShowInfo(false)
-  }
-
-  const onAfterCloseSuccessDialogHandle = () => {
-    setShowSuccess(false)
-    window.location.reload()
-  }
-
-  const showSuccessMessage = () => <PrettierSuccessDialog onAfterCloseHandle={onAfterCloseSuccessDialogHandle} modifiedScreenSets={modifiedScreenSets} />
-  const showInformationPopUp = () => <PrettierNoJavascriptMultipleScreenSets onAfterCloseHandle={onAfterCloseInformationDialogHandle} />
-  const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={onAfterCloseErrorDialogHandle} errorMessage={errorMessage} />
+  const showSuccessMessage = () => <PrettierSuccessDialog onAfterCloseHandle={() => onAfterCloseSuccessDialogHandle({ setShowSuccess })} modifiedScreenSets={modifiedScreenSets} />
+  const showInformationPopUp = () => <PrettierNoJavascriptMultipleScreenSets onAfterCloseHandle={() => onAfterCloseInformationDialogHandle({ setShowInfo })} />
+  const showErrorPopup = () => <PrettierErrorDialog onAfterCloseHandle={() => onAfterCloseErrorDialogHandle({ setShowError })} errorMessage={errorMessage} />
   return (
     <>
       <Bar

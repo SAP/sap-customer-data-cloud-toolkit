@@ -4,7 +4,7 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 
-const useCommonState = () => {
+export const useCommonState = () => {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showError, setShowError] = useState(false)
   const [modifiedScreenSets, setModifiedScreenSets] = useState([])
@@ -38,5 +38,16 @@ const useCommonState = () => {
     credentialsUpdated,
   }
 }
+export const onAfterCloseErrorDialogHandle = ({ setShowError }) => {
+  setShowError(false)
+}
 
+export const onAfterCloseInformationDialogHandle = ({ setShowInfo }) => {
+  setShowInfo(false)
+}
+
+export const onAfterCloseSuccessDialogHandle = ({ setShowSuccess }) => {
+  setShowSuccess(false)
+  window.location.reload()
+}
 export default useCommonState
