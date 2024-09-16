@@ -14,6 +14,7 @@ const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
 const expectedSuccessMessage = 'OkAll sites have been created successfully.'
+const expectedCopyConfigSuccessMessage = 'OkAll selected configurations were copied successfully.'
 const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
@@ -1822,6 +1823,7 @@ export {
   mockedGetEmailTemplatesConfigsResponse,
   mockedGetExtensionExpectedResponse,
   mockedGetPartnersResponse,
+  expectedCopyConfigSuccessMessage,
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
