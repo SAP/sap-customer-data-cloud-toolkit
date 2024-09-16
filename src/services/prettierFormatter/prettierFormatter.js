@@ -2,11 +2,11 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import { format } from 'prettier/standalone'
 import * as prettierPluginBabel from 'prettier/plugins/babel'
 import * as prettierPluginEstree from 'prettier/plugins/estree'
-import ScreenSet from '../copyConfig/screenset/screenset.js'
+import { format } from 'prettier/standalone'
 import { t } from '../../services/i18n.js'
+import ScreenSet from '../copyConfig/screenset/screenset.js'
 
 class PrettierFormatter {
   #credentials
@@ -87,13 +87,8 @@ class PrettierFormatter {
 
     const withExportDefault = `export default ${inputString.trimStart()}`
 
-    try {
-      const formattedString = await format(withExportDefault, prettierConfig)
-      return formattedString.replace(/^export default\s*/, '')
-    } catch (error) {
-      console.error('Error formatting string:', error.message)
-      throw error // Re-throw the error to handle it in the calling code
-    }
+    const formattedString = await format(withExportDefault, prettierConfig)
+    return formattedString.replace(/^export default\s*/, '')
   }
 }
 
