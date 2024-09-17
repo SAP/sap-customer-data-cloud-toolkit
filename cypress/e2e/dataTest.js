@@ -13,7 +13,8 @@ const smsTemplatesOption = 'SMS Templates'
 const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
-const expectedSuccessMessage = 'Report Usage Via E-mailPlease report the successful usage to help us track usages and being able to continue improving this tool.'
+const expectedSuccessMessage = 'OkAll sites have been created successfully.'
+const expectedCopyConfigSuccessMessage = 'OkAll selected configurations were copied successfully.'
 const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
@@ -1643,6 +1644,7 @@ export {
   emailTemplatesExportErrorMessageDetail,
   emailTemplatesIconName,
   errorToManualRemoveSiteMessage,
+  expectedCopyConfigSuccessMessage,
   expectedDuplicatedMessage,
   expectedErrorMessage,
   expectedSuccessMessage,

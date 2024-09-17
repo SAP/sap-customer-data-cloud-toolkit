@@ -15,9 +15,12 @@ import CopyConfigurationExtended from './routes/copy-configuration-extended/copy
 import EmailTemplates from './routes/email-templates/email-templates.component'
 import SiteDeployer from './routes/site-deployer/site-deployer.component'
 import SmsTemplates from './routes/sms-templates/sms-templates.component'
+import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
+import { requestConsentConfirmation } from './lib/tracker'
 
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
+  requestConsentConfirmation()
 
   return (
     <ThemeProvider>
@@ -38,4 +41,5 @@ function App() {
     </ThemeProvider>
   )
 }
+
 export default App
