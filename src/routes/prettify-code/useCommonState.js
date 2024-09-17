@@ -1,9 +1,9 @@
-import { useSelector } from 'react-redux'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { trackUsage } from '../../lib/tracker.js'
+import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
-import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import { trackUsage } from '../../lib/tracker.js'
 const PAGE_TITLE = 'Prettify Screen-Set Javascript'
 export const useCommonState = () => {
   const [showSuccess, setShowSuccess] = useState(false)
@@ -50,6 +50,10 @@ export const onAfterCloseInformationDialogHandle = ({ setShowInfo }) => {
 export const onAfterCloseSuccessDialogHandle = async ({ setShowSuccess }) => {
   await trackUsage({ featureName: PAGE_TITLE })
   setShowSuccess(false)
-  window.location.reload()
+
+  const isInUiBuilder = window.location.hash.includes('uiBuilder')
+  if (isInUiBuilder) {
+    window.location.reload()
+  }
 }
 export default useCommonState
