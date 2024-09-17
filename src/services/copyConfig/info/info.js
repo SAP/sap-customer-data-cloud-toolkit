@@ -282,13 +282,6 @@ class Info {
 
     if (response.errorCode === 0) {
       const info = recaptchaOptions.getOptionsDisabled()
-
-      if (info && info.value !== false && RecaptchaConfiguration.hasRecaptchaPolicies(response)) {
-        recaptchaOptions.removeRecaptchaPolicies(info)
-      } else {
-        console.warn('Recaptcha policies are inactive or not present, skipping removal.')
-      }
-
       return Promise.resolve(info)
     } else {
       stringToJson(response, 'context')
