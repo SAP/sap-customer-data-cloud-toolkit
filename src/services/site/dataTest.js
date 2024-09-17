@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import * as CommonTestData from '../servicesDataTest.js'
 
 const Endpoints = {
@@ -214,7 +213,6 @@ function createObject(numberOfParents, numberOfChildrenPerParent) {
       parent.childSites.push(child)
     }
   }
-  //console.log(`Created Object ${JSON.stringify(obj)}`)
   return obj
 }
 

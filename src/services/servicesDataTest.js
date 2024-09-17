@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const HttpStatus = {
   OK: 200,
   //   BAD_REQUEST: 400,
@@ -28,11 +27,27 @@ const expectedGigyaResponseOk = {
 
 const badRequest = 'Bad Request'
 const invalidApiParam = 'Invalid ApiKey parameter'
+const invalidCode = `Error formatting ScreenSet ID Default-LinkAccounts: Unexpected token, expected "{" (3:31)\n' +
+'  1 | export default {\n' +
+'  2 |     // Called when an error occurs.\n' +
+'> 3 |     onError: function (event) };\n' +
+'    |                               ^\n' +
+'  4 |`
 const expectedGigyaResponseInvalidAPI = {
   callId: 'callId',
   errorCode: 400093,
   errorDetails: invalidApiParam,
   errorMessage: invalidApiParam,
+  apiVersion: 2,
+  statusCode: 400,
+  statusReason: badRequest,
+  time: Date.now(),
+}
+const expectedPrettierError = {
+  callId: 'callId',
+  errorCode: 400093,
+  errorDetails: invalidCode,
+  errorMessage: invalidCode,
   apiVersion: 2,
   statusCode: 400,
   statusReason: badRequest,
@@ -98,6 +113,7 @@ export {
   credentials,
   siteCredentials,
   expectedGigyaResponseOk,
+  expectedPrettierError,
   expectedGigyaResponseInvalidAPI,
   createErrorObject,
   errorCallback,

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { onHashChange, querySelectorAllShadows, watchElement } from './utils'
 import {
   MENU_ELEMENT_CLASS,
@@ -34,7 +33,7 @@ const init = () => {
     element.addEventListener('click', (e) => {
       clearSelectionMenuLinks()
       setSelectedMenuElement(e.currentTarget)
-    })
+    }),
   )
 }
 
@@ -87,9 +86,12 @@ const isRouteIncompatible = (route) => !!INCOMPATIBLE_ROUTE_FRAGMENTS.find((inco
 
 const getFilterRouteFromExtension = (route) => {
   route = route.endsWith('/') ? route.slice(0, -1) : route
-  const isFromExtension = MENU_ELEMENTS.find((menuElement) => route === menuElement.route) ? true : false
-  if (isFromExtension) {
-    return route
+  const foundMenuElement = MENU_ELEMENTS.find((menuElement) => route.includes(menuElement.route))
+
+  const isFromExtension = !!foundMenuElement
+
+  if (isFromExtension && foundMenuElement) {
+    return foundMenuElement.route
   }
   // If not found, try to find it recursively by removing the last element of the route
   const routeArray = route.split('/')

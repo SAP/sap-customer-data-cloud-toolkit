@@ -19,6 +19,7 @@ import {
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
+  mockedPrettierGetScreenSetResponse,
   mockedGetSmsConfigsResponse,
   mockedGetSocialsConfigsResponse,
   mockedGetWebhookExpectedResponse,
@@ -91,7 +92,23 @@ export function resizeObserverLoopErrRe() {
     }
   })
 }
-
+export function removeJavascript(mockResponse) {
+  for (const screenSet of mockResponse.screenSets) {
+    delete screenSet.javascript
+  }
+  return mockResponse
+}
+export function addErrorOnJavascript(mockResponse, screenID) {
+  for (const screenSet of mockResponse.screenSets) {
+    if (screenSet.screenSetID === screenID) {
+      screenSet.javascript = '{\n    // Called when an error occurs.\n    onError: function (event) {\n'
+    }
+  }
+  return mockResponse
+}
+export function getScreenSets(mockedPrettierGetScreenSetResponse) {
+  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedPrettierGetScreenSetResponse }).as('getScreenSets')
+}
 export function getBaseDomain(baseDomain, timeout) {
   cy.wait(1000)
   cy.get('[data-cy ="cdctools-baseDomain"]').should('be.visible')

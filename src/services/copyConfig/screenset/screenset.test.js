@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { credentials } from '../../servicesDataTest.js'
 import { getExpectedScreenSetResponse, getScreenSetExpectedBody } from './dataTest.js'
 import axios from 'axios'

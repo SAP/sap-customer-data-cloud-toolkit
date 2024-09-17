@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const screenSetTemplate = {
   screenSetID: 'Default-LinkAccounts',
   html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
