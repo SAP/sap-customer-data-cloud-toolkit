@@ -9,14 +9,15 @@ export default class RiskAssessment {
   static CONTEXT_ID = 'rba.riskAssessment'
   #credentials
 
-  constructor(credentials, apiKey) {
+  constructor(credentials, apiKey, dataCenter) {
     // this class do not uses the data center because these endpoints only work on the primary data center
     this.#credentials = credentials
     this.originApiKey = apiKey
+    this.originDataCenter = dataCenter
   }
 
   async get() {
-    const url = UrlBuilder.buildUrl(RiskAssessment.#NAMESPACE, undefined, 'accounts.rba.riskAssessment.getConfig', this.#credentials.gigyaConsole)
+    const url = UrlBuilder.buildUrl(RiskAssessment.#NAMESPACE, this.originDataCenter, 'accounts.rba.riskAssessment.getConfig', this.#credentials.gigyaConsole)
     const response = await client.post(url, this.#getParameters(this.originApiKey)).catch(function (error) {
       return generateErrorResponse(error, RiskAssessment.#ERROR_GET_RISK_ASSESSMENT_CONFIG)
     })

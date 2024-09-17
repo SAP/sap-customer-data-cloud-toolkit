@@ -25,22 +25,23 @@ export default class Rba {
     this.#dataCenter = dataCenter
     this.#rbaPolicy = new RbaPolicy(credentials, site, dataCenter)
     this.#policies = new Policies(credentials, site, dataCenter)
-    this.#riskAssessment = new RiskAssessment(credentials, site)
+    this.#riskAssessment = new RiskAssessment(credentials, site, dataCenter)
   }
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
     if(this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
       return [{
-        errorCode: ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
-        errorDetails: 'Cannot change RBA data on child site.',
-        errorMessage: 'Cannot copy RBA data to the destination site',
-        statusCode: 412,
-        statusReason: 'Precondition Failed',
-        time: Date.now(),
-        severity: ERROR_SEVERITY_WARNING,
-        context: { targetApiKey: destinationSite, id: 'rba.' },
-      }]
+          errorCode: ERROR_CODE_CANNOT_CHANGE_RBA_ON_CHILD_SITE,
+          errorDetails: 'Cannot change RBA data on child site.',
+          errorMessage: 'Cannot copy RBA data to the destination site',
+          statusCode: 412,
+          statusReason: 'Precondition Failed',
+          time: Date.now(),
+          severity: ERROR_SEVERITY_WARNING,
+          context: { targetApiKey: destinationSite, id: 'rba.' },
+        },
+      ]
     }
     responses = await this.get()
     if (responses.every((r) => r.errorCode === 0)) {
