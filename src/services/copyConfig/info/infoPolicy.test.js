@@ -26,7 +26,10 @@ jest.mock('axios')
 describe('Info Policy test suite', () => {
   const apiKey = 'apiKey'
   const socialsKeys = 'APP KEY'
-  const info = new Info(CommonTestData.credentials, apiKey, 'eu1')
+  const siteInfo = {
+    dataCenter: 'eu1',
+  }
+  const info = new Info(CommonTestData.credentials, apiKey, siteInfo)
   let expectedResponse
 
   beforeEach(() => {

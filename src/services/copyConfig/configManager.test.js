@@ -45,7 +45,7 @@ import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, ex
 
 jest.mock('axios')
 
-const apiKey = 'apiKey'
+const apiKey = 'parentApiKey'
 const screenSetId = 'screenSet'
 
 describe('Config Manager test suite', () => {

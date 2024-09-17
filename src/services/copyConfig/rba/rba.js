@@ -24,14 +24,14 @@ export default class Rba {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
-
     this.#rbaPolicy = new RbaPolicy(credentials, this.#site, this.#dataCenter)
     this.#policies = new Policies(credentials, this.#site, this.#dataCenter)
-    this.#riskAssessment = new RiskAssessment(credentials, this.#site)
+    this.#riskAssessment = new RiskAssessment(credentials, this.#site, this.#dataCenter)
   }
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
+
     if (this.#isChildSite(destinationSiteConfiguration, destinationSite)) {
       return [
         {
@@ -107,7 +107,7 @@ export default class Rba {
 
     return destinationCommonRules
   }
-  
+
   mergeRulesSets(originRulesSets, destinationRulesSets) {
     const destinationRulesSetsMap = new Map(destinationRulesSets.map((rule) => [rule.id, rule]))
 
