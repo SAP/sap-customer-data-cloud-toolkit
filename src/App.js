@@ -17,6 +17,7 @@ import {
   ROUTE_SMS_TEMPLATES,
   ROUTE_PRETTIER,
   ROUTE_PRETTIFY_ALL_SCREENS,
+  ROUTE_VERSION_CONTROL,
 } from './inject/constants'
 import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
 import EmailTemplates from './routes/email-templates/email-templates.component'
@@ -26,6 +27,7 @@ import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 import { requestConsentConfirmation } from './lib/tracker'
 import PrettifyAllScreens from './routes/prettify-code/prettify-all-screens-javascript.component'
 import PrettifySingleScreenComponent from './routes/prettify-code/prettify-single-screen.component'
+import VersionControlComponent from './routes/version-control/version-control.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
   requestConsentConfirmation()
@@ -44,6 +46,9 @@ function App() {
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_COPY_CONFIG_EXTENDED}>
           <CopyConfigurationExtended />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_VERSION_CONTROL}>
+          <VersionControlComponent />
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIER}>
           <PrettifySingleScreenComponent />
