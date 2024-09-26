@@ -1,7 +1,7 @@
 import { Octokit } from 'octokit'
 import { Base64 } from 'js-base64'
-import Info from '../copyConfig/info/info'
 import WebSdk from '../copyConfig/websdk/websdk'
+
 class VersionControl {
   #credentials
   #apiKey
@@ -16,7 +16,7 @@ class VersionControl {
     //Fazer os gets individualmente todos
     //Fazer os sets individualmente todos
     this.octokit = new Octokit({
-      auth: process.env.GITHUB_ACCESS_TOKEN,
+      auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN,
     })
     this.owner = 'SAP'
     this.repo = 'sap-customer-data-cloud-toolkit'
@@ -60,7 +60,8 @@ class VersionControl {
   async updateFile(content, sha) {
     try {
       const encodedContent = Base64.encode(JSON.stringify(content, null, 2))
-
+      console.log('token', process.env.REACT_APP_GITHUB_ACCESS_TOKEN)
+      console.log('REACT_APP_USERKEY', process.env.REACT_APP_USERKEY)
       await this.octokit.rest.repos.createOrUpdateFileContents({
         owner: this.owner,
         repo: this.repo,
@@ -78,7 +79,6 @@ class VersionControl {
   }
   async writeFile(credentials, apiKey, siteInfo) {
     try {
-      const info = new Info(credentials, apiKey, siteInfo)
       //   const content = await webSdk.get()
       console.log('asdasdasdasdas', await this.getResponseContent())
       const content = await this.getResponseContent()
@@ -92,7 +92,7 @@ class VersionControl {
       //   await this.disableBranchProtection()
       await this.updateFile(content, data.sha)
 
-      //   await this.getCommits()
+      await this.getCommits()
       console.log('File updated successfully')
       console.log('file data', Base64.decode(data.content))
     } catch (error) {
