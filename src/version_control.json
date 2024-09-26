@@ -1,16 +1,16 @@
 [
   {
-    "callId": "140f74139437443984ec03d2516bc03c",
+    "callId": "d773540bb3294490b207a8274a203a43",
     "errorCode": 0,
     "apiVersion": 2,
     "statusCode": 200,
     "statusReason": "OK",
-    "time": "2024-09-26T17:39:06.019Z",
-    "baseDomain": "dev.au.parent.danielc.test",
-    "dataCenter": "au1",
+    "time": "2024-09-26T17:51:05.734Z",
+    "baseDomain": "gaspar.another.test",
+    "dataCenter": "eu1",
     "trustedSiteURLs": [
-      "dev.au.parent.danielc.test/*",
-      "*.dev.au.parent.danielc.test/*"
+      "gaspar.another.test/*",
+      "*.gaspar.another.test/*"
     ],
     "tags": [],
     "description": "",
@@ -23,7 +23,10 @@
     },
     "siteGroupConfig": {
       "members": [
-        "4_gyeXUDkTDIFszM1uV-vWvw"
+        "4_EjcWNm6ShlfoY8cQrzsaZQ",
+        "4_GHEapnIY0cT-nen_hSxcVA",
+        "4_qXZYYKG3a4Hse4Yw3Zxrkw",
+        "4_Ole8xqhgjrBoA_rDGIo6lw"
       ],
       "enableSSO": false
     },
@@ -42,6 +45,6 @@
     "funCaptcha": {},
     "customAPIDomainPrefix": "",
     "jwtKeyVersion": 2,
-    "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_3CvH5QMijlQyzKUlLVEUDw\"}"
+    "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}"
   }
 ]
