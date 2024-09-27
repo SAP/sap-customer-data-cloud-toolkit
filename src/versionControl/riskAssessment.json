@@ -1,1 +1,10 @@
-[object Object]
+{
+  "callId": "9efe038a7fb64a8ca61331a70c9b5796",
+  "context": "{\"id\":\"rba.riskAssessment\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+  "errorCode": 0,
+  "apiVersion": 2,
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-09-27T13:22:56.896Z",
+  "Enabled": false
+}
