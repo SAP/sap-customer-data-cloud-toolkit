@@ -1,11 +1,11 @@
 [
   {
-    "callId": "d773540bb3294490b207a8274a203a43",
+    "callId": "4a1fb2ebf5174999ba5744e3555df2ee",
     "errorCode": 0,
     "apiVersion": 2,
     "statusCode": 200,
     "statusReason": "OK",
-    "time": "2024-09-26T17:51:05.734Z",
+    "time": "2024-09-27T08:37:46.065Z",
     "baseDomain": "gaspar.another.test",
     "dataCenter": "eu1",
     "trustedSiteURLs": [
@@ -46,5 +46,15 @@
     "customAPIDomainPrefix": "",
     "jwtKeyVersion": 2,
     "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}"
+  },
+  {
+    "callId": "cc2b652607874ace8c13299f0ac0a3b8",
+    "context": "{\"id\":\"dataflows_search\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+    "errorCode": 0,
+    "apiVersion": 2,
+    "statusCode": 200,
+    "statusReason": "OK",
+    "time": "2024-09-27T08:37:45.979Z",
+    "resultCount": 0
   }
 ]
