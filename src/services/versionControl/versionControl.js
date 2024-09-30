@@ -11,7 +11,6 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
-
 class VersionControl {
   #credentials
   #apiKey
@@ -60,42 +59,37 @@ class VersionControl {
       console.log('error', error)
     }
   }
-
+  async getFileSHA(filePath) {
+    try {
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath,
+        ref: this.branch,
+      })
+      return data.sha
+    } catch (error) {
+      if (error.status === 404) {
+        return undefined // File does not exist, return undefined
+      }
+      throw error // Throw other errors
+    }
+  }
   async updateFile(filePath, fileContent) {
     const encodedContent = Base64.encode(fileContent, null, 2)
-    let sha = null
-    // if (filePath) {
-    //   const data = await this.octokit.rest.repos.getContent({
-    //     owner: this.owner,
-    //     repo: this.repo,
-    //     path: filePath,
-    //     ref: this.branch,
-    //   })
-    //   console.log('data--->', data)
-    //   sha = data.data.sha
-    // } else {
-    //   console.log(`${filePath} does not exist`)
-    // }
+    let sha
+    try {
+      sha = this.getFileSHA(filePath)
+    } catch (error) {
+      console.error(`Failed to get file SHA for ${filePath}:`, error)
+      sha = undefined
+    }
 
-    // if (sha) {
-    //   console.log('token', process.env.REACT_APP_GITHUB_ACCESS_TOKEN)
-    //   console.log('REACT_APP_USERKEY', process.env.REACT_APP_USERKEY)
-    //   await this.octokit.rest.repos.createOrUpdateFileContents({
-    //     owner: this.owner,
-    //     repo: this.repo,        path: filePath,
-    //     message: `Updating ${filePath}`,
-    //     content: encodedContent,
-    //     branch: this.branch,
-    //     sha,
-    //   })
-
-    //   console.log('File updated successfully')
-    // } else {
-    const response = await this.octokit.repos.createOrUpdateFileContents({
+    const response = await this.octokit.rest.repos.createOrUpdateFileContents({
       owner: this.owner,
       repo: this.repo,
-      path: filePath,
-      message: `Create ${filePath} via Octokit`,
+      path: 'src/versionControl/webSdk.json',
+      message: 'FILE UPDATED/CREATED',
       content: encodedContent,
       branch: this.branch,
     })
@@ -115,29 +109,30 @@ class VersionControl {
       //   ref: this.branch,
       // })
       //   await this.disableBranchProtection()
-      const responses = [
-        { name: 'webSdk', promise: this.webSdk.get() },
-        { name: 'dataflow', promise: this.dataflow.search() },
-        { name: 'emails', promise: this.emails.get() },
-        { name: 'extension', promise: this.extension.get() },
-        { name: 'policies', promise: this.policies.get() },
-        { name: 'rba', promise: this.rba.get() },
-        { name: 'riskAssessment', promise: this.riskAssessment.get() },
-        { name: 'schema', promise: this.schema.get() },
-        { name: 'screenSets', promise: this.screenSets.get() },
-        { name: 'sms', promise: this.sms.get() },
-        { name: 'channel', promise: this.channel.get() },
-      ]
-      const results = await Promise.all(responses.map((response) => response.promise))
-
-      await Promise.all(
-        results.map((result, index) => {
-          const responseName = responses[index].name
-          const filePath = `src/versionControl/${responseName}.json`
-          const fileContent = JSON.stringify(result, null, 2)
-          return this.updateFile(filePath, fileContent)
-        }),
-      )
+      // const responses = [
+      //   { name: 'webSdk', promise: this.webSdk.get() },
+      //   { name: 'dataflow', promise: this.dataflow.search() },
+      //   { name: 'emails', promise: this.emails.get() },
+      //   { name: 'extension', promise: this.extension.get() },
+      //   { name: 'policies', promise: this.policies.get() },
+      //   { name: 'rba', promise: this.rba.get() },
+      //   { name: 'riskAssessment', promise: this.riskAssessment.get() },
+      //   { name: 'schema', promise: this.schema.get() },
+      //   { name: 'screenSets', promise: this.screenSets.get() },
+      //   { name: 'sms', promise: this.sms.get() },
+      //   { name: 'channel', promise: this.channel.get() },
+      // ]
+      // const results = await Promise.all(responses.map((response) => response.promise))
+      const result = await this.webSdk.get()
+      this.updateFile('src/versionControl/webSdk.json', result)
+      // await Promise.all(
+      //   results.map((result, index) => {
+      //     const responseName = responses[index].name
+      //     const filePath = `src/versionControl/${responseName}.json`
+      //     const fileContent = JSON.stringify(result, null, 2)
+      //     return this.updateFile(filePath, fileContent)
+      //   }),
+      // )
 
       // await this.getCommits()
       console.log('File updated successfully')
@@ -196,19 +191,20 @@ class VersionControl {
     // responses.push(this.schema.get())
     // responses.push(this.screenSets.get())
     // responses.push(this.sms.get())
-    const responses = [
-      { name: 'webSdk', promise: this.webSdk.get() },
-      { name: 'dataflow', promise: this.dataflow.search() },
-      { name: 'emails', promise: this.emails.get() },
-      { name: 'extension', promise: this.extension.get() },
-      { name: 'policies', promise: this.policies.get() },
-      { name: 'rba', promise: this.rba.get() },
-      { name: 'riskAssessment', promise: this.riskAssessment.get() },
-      { name: 'schema', promise: this.schema.get() },
-      { name: 'screenSets', promise: this.screenSets.get() },
-      { name: 'sms', promise: this.sms.get() },
-    ]
-    const results = await Promise.all(responses.map((response) => response.promise))
+    // const responses = [
+    //   { name: 'webSdk', promise: this.webSdk.get() },
+    //   { name: 'dataflow', promise: this.dataflow.search() },
+    //   { name: 'emails', promise: this.emails.get() },
+    //   { name: 'extension', promise: this.extension.get() },
+    //   { name: 'policies', promise: this.policies.get() },
+    //   { name: 'rba', promise: this.rba.get() },
+    //   { name: 'riskAssessment', promise: this.riskAssessment.get() },
+    //   { name: 'schema', promise: this.schema.get() },
+    //   { name: 'screenSets', promise: this.screenSets.get() },
+    //   { name: 'sms', promise: this.sms.get() },
+    // ]
+    const result = await this.webSdk.get()
+    // const results = await Promise.all(responses.map((response) => response.promise))
 
     // await Promise.all(
     //   results.map((result, index) => {
@@ -218,7 +214,53 @@ class VersionControl {
     //     return
     //   }),
     // )
-    return (await Promise.all(responses)).flat()
+    // return (await Promise.all(responses)).flat()
+    // if (filePath) {
+
+    // } else {
+    //   console.log(`${filePath} does not exist`)
+    // }
+
+    // if (sha) {
+    //   console.log('token', process.env.REACT_APP_GITHUB_ACCESS_TOKEN)
+    //   console.log('REACT_APP_USERKEY', process.env.REACT_APP_USERKEY)
+    //   await this.octokit.rest.repos.createOrUpdateFileContents({
+    //     owner: this.owner,
+    //     repo: this.repo,        path: filePath,
+    //     message: `Updating ${filePath}`,
+    //     content: encodedContent,
+    //     branch: this.branch,
+    //     sha,
+    //   })
+
+    //   console.log('File updated successfully')
+    // } else {
+    // fs.access(filePath, fs.constants.F_OK, (err) => {
+    //   if (err) {
+    //     fs.writeFile(filePath)
+    //     console.log(`File ${filePath} created successfully:`)
+    //   }
+    // })
+    // const response = await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+    //   owner: this.owner,
+    //   repo: this.repo,
+    //   path: filePath,
+    //   headers: {
+    //     'X-GitHub-Api-Version': '2022-11-28',
+    //   },
+    //   message: 'my commit message',
+    //   content: encodedContent,
+    // })
+    // const response = await this.octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
+    //   owner: this.owner,
+    //   repo: this.repo,
+    //   path: filePath,
+    //   message: 'my commit message',
+    //   content: encodedContent,
+    //   headers: {
+    //     'X-GitHub-Api-Version': '2022-11-28',
+    //   },
+    // })
   }
 }
 export default VersionControl
