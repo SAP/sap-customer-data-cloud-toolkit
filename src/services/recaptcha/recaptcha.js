@@ -21,7 +21,7 @@ class Recaptcha {
   }
 
   async get(site, dataCenter) {
-    const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)
+    const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)    
     try {
       const res = await client.post(url, this.#getRecaptchaParameters(site))
       return res.data

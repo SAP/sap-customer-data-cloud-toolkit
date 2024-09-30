@@ -18,16 +18,16 @@ describe('User sites test suite', () => {
   test('get rba policy successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
 
-    const policy = new Policy(credentials)
-    const response = await policy.get(apiKey)
+    const policy = new Policy(credentials, apiKey, dataCenter)
+    const response = await policy.get()
     expect(response).toBe(expectedGetRbaPolicyResponseOk)
   })
 
   test('get rba policy unsuccessfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
 
-    const policy = new Policy(credentials)
-    const response = await policy.get(apiKey)
+    const policy = new Policy(credentials, apiKey, dataCenter)
+    const response = await policy.get()
     expect(response).toBe(expectedGigyaResponseInvalidAPI)
   })
 
@@ -39,10 +39,10 @@ describe('User sites test suite', () => {
       userKey: credentials.userKey,
       policy: JSON.stringify(rbaPolicy),
     }
-    const spy = await jest.spyOn(client, 'post')
+    const spy = jest.spyOn(client, 'post')
     axios.mockResolvedValueOnce({ data: expectedGigyaResponseOk })
 
-    const policy = new Policy(credentials)
+    const policy = new Policy(credentials, apiKey, dataCenter)
     const response = await policy.set(apiKey, { policy: rbaPolicy }, dataCenter)
     expect(response).toBe(expectedGigyaResponseOk)
     expect(spy).toHaveBeenCalledWith(`https://accounts.${dataCenter}.gigya.com/accounts.rba.setPolicy`, payload)
@@ -51,8 +51,8 @@ describe('User sites test suite', () => {
   test('set rba policy unsuccessfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedGigyaResponseInvalidAPI })
 
-    const policy = new Policy(credentials)
-    const response = await policy.set(apiKey, rbaPolicy, dataCenter)
+    const policy = new Policy(credentials, apiKey, dataCenter)
+    const response = await policy.set(apiKey, { policy: rbaPolicy }, dataCenter)
     expect(response).toBe(expectedGigyaResponseInvalidAPI)
   })
 })

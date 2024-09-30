@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 export const expectedGetRbaPolicyResponseOk = {
   callId: 'c5bb6737b2124c36a93ee840ffe5d3e9',
   errorCode: 0,
@@ -123,5 +128,36 @@ export const expectedGetUnknownLocationNotificationResponseOk = {
     riskAssessmentWithTransUnion: false,
     sendUnknownLocationNotification: false,
     signDeviceId: 'js_latest',
+  },
+}
+
+export const expectedGetDestinationRbaPolicyResponseOk = {
+  callId: 'destination_call_id',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-08T14:03:08.655Z',
+  policy: {
+    commonRules: [
+      {
+        action: {
+          type: 'captcha',
+        },
+        rootFactor: {
+          type: 'failedLogins',
+          scope: ['account'],
+          threshold: 5,
+        },
+        id: 'On multiple failed login attempts > force CAPTCHA on account',
+        scope: 'Login',
+        description: 'On multiple failed login attempts > force CAPTCHA on account',
+        enabled: true,
+      },
+    ],
+    rulesSets: [],
+    tfaRegistrationScope: false,
+    defaultPolicy: '',
+    allowOverrideMode: 'no',
   },
 }

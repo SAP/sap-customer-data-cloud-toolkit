@@ -13,7 +13,8 @@ const smsTemplatesOption = 'SMS Templates'
 const parentBaseDomain = 'Manually add parent site'
 const parentSiteDescription = 'Manually added description'
 const expectedErrorMessage = 'Missing required parameter (Manually add parent site - eu1)Missing required parameter : partnerID'
-const expectedSuccessMessage = 'Report Usage Via E-mailPlease report the successful usage to help us track usages and being able to continue improving this tool.'
+const expectedSuccessMessage = 'OkAll sites have been created successfully.'
+const expectedCopyConfigSuccessMessage = 'OkAll selected configurations were copied successfully.'
 const childrenBaseDomain = 'Children site domain'
 const childrenSiteDescription = 'Children site description'
 const missingCredentialsErrorMessage = 'OkPlease insert User and Secret Keys in the Credentials menu.'
@@ -59,6 +60,167 @@ const identityConnectOption = 'Connect'
 const gigyaURL = 'console.gigya.com'
 const dataflowOption = 'Dataflows'
 const testDataflow = 'TESTING DATAFLOW'
+const uiBuilderIconName = 'UI Builder'
+const prettifySingleNoJavascript = 'CloseThere is no Javascript on this Screen-Set :'
+const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
+const prettifySingleError = 'CloseError formatting Screen-Set ID'
+const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Format on any Screen-Set.'
+const mockedPrettierGetScreenSetResponse = {
+  callId: '5a4395b432794df383c2a35740ae90b0',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-23T16:19:57.815Z',
+  screenSets: [
+    {
+      screenSetID: 'Default-LinkAccounts',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript:
+        '{\n    // Called when an error occurs.\n    onError: function (event) {\n        console.log("oasijdaosdjasdasdasdasdasa");\n    },\n\n    // Called before validation of the form.\n    onBeforeValidation: function (event) {},\n\n    // Called before a form is submitted. This event gives you an opportunity to perform certain actions before the form is submitted, or cancel the submission by returning false.\n    onBeforeSubmit: function (event) {},\n\n    // Called when a form is submitted, can return a value or a promise. This event gives you an opportunity to modify the form data when it is submitted.\n    onSubmit: function (event) {},\n\n    // Called after a form is submitted.\n    onAfterSubmit: function (event) {},\n\n    // Called before a new screen is rendered. This event gives you an opportunity to cancel the navigation by returning false.\n    onBeforeScreenLoad: function (event) {},\n};\n',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+    {
+      screenSetID: 'Default-LiteRegistration',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript: '',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+    {
+      screenSetID: 'Default-OrganizationRegistration',
+      html: '<div class="gigya-screen-set" id="Default-OrganizationRegistration" data-on-pending-registration-screen="Default-OrganizationRegistration/gigya-org-register-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript: '{// Called when an error occurs.onError: function (event) {console.log("asdasdasd");',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-OrganizationRegistration" data-on-pending-registration-screen="Default-OrganizationRegistration/gigya-org-register-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+  ],
+}
+const mockGetAllSuccessScreenSets = {
+  callId: '5a4395b432794df383c2a35740ae90b0',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-02-23T16:19:57.815Z',
+  screenSets: [
+    {
+      screenSetID: 'Default-LinkAccounts',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript:
+        '{\n    // Called when an error occurs.\n    onError: function (event) {\n        console.log("oasijdaosdjasdasdasdasdasa");\n    },\n\n    // Called before validation of the form.\n    onBeforeValidation: function (event) {},\n\n    // Called before a form is submitted. This event gives you an opportunity to perform certain actions before the form is submitted, or cancel the submission by returning false.\n    onBeforeSubmit: function (event) {},\n\n    // Called when a form is submitted, can return a value or a promise. This event gives you an opportunity to modify the form data when it is submitted.\n    onSubmit: function (event) {},\n\n    // Called after a form is submitted.\n    onAfterSubmit: function (event) {},\n\n    // Called before a new screen is rendered. This event gives you an opportunity to cancel the navigation by returning false.\n    onBeforeScreenLoad: function (event) {},\n};\n',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+    {
+      screenSetID: 'Default-LiteRegistration',
+      html: '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript:
+        '{\n    // Called when an error occurs.\n    onError: function (event) {\n        console.log("oasijdaosdjasdasdasdasdasa");\n    },\n\n    // Called before validation of the form.\n    onBeforeValidation: function (event) {},\n\n    // Called before a form is submitted. This event gives you an opportunity to perform certain actions before the form is submitted, or cancel the submission by returning false.\n    onBeforeSubmit: function (event) {},\n\n    // Called when a form is submitted, can return a value or a promise. This event gives you an opportunity to modify the form data when it is submitted.\n    onSubmit: function (event) {},\n\n    // Called after a form is submitted.\n    onAfterSubmit: function (event) {},\n\n    // Called before a new screen is rendered. This event gives you an opportunity to cancel the navigation by returning false.\n    onBeforeScreenLoad: function (event) {},\n};\n',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-LinkAccounts" data-on-pending-registration-screen="Default-RegistrationLogin/gigya-complete-registration-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+    {
+      screenSetID: 'Default-OrganizationRegistration',
+      html: '<div class="gigya-screen-set" id="Default-OrganizationRegistration" data-on-pending-registration-screen="Default-OrganizationRegistration/gigya-org-register-screen"/>',
+      css: '.gigya-screen-caption{font-family:arial;padding-left:11px;line-height:40px}.gigya-screen,.gigya-screen *{margin:0 auto;padding:0;border:none;color:inherit;',
+      javascript:
+        '{\n    // Called when an error occurs.\n    onError: function (event) {\n        console.log("oasijdaosdjasdasdasdasdasa");\n    },\n\n    // Called before validation of the form.\n    onBeforeValidation: function (event) {},\n\n    // Called before a form is submitted. This event gives you an opportunity to perform certain actions before the form is submitted, or cancel the submission by returning false.\n    onBeforeSubmit: function (event) {},\n\n    // Called when a form is submitted, can return a value or a promise. This event gives you an opportunity to modify the form data when it is submitted.\n    onSubmit: function (event) {},\n\n    // Called after a form is submitted.\n    onAfterSubmit: function (event) {},\n\n    // Called before a new screen is rendered. This event gives you an opportunity to cancel the navigation by returning false.\n    onBeforeScreenLoad: function (event) {},\n};\n',
+      metadata: {
+        version: 1,
+        lastModified: 1667560399,
+        desc: '',
+        designerHtml:
+          '<div class="gigya-screen-set" id="Default-OrganizationRegistration" data-on-pending-registration-screen="Default-OrganizationRegistration/gigya-org-register-screen"/>',
+        comment: 'Created via UI Builder',
+      },
+      translations: {
+        default: {
+          HEADER_119803489452460820_LABEL: 'Log in with an existing site account:',
+          HEADER_145260704159400830_LABEL: 'To connect with your existing account, please enter your password:',
+        },
+      },
+      rawTranslations: '',
+      compressionType: 1,
+    },
+  ],
+}
 const errorToManualRemoveSiteMessage = {
   callId: '079f19c68315418dae4179eca5373122',
   errorCode: 400,
@@ -268,7 +430,7 @@ const mockedSiteConfig = {
   enableDataSharing: true,
   isCDP: false,
   globalConf:
-    '{\r\n  // A comma-delimited list of provider names to enable.\r\n  enabledProviders: "*",\r\n\r\n  // Define the language of Gigya\'s user interface and error message.\r\n  lang: "en",\r\n\r\n  // Bind globally to events.\r\n  customEventMap: {\r\n    eventMap: [\r\n      {\r\n        events: "*",\r\n        args: [\r\n          function (e) {\r\n            return e;\r\n          },\r\n        ],\r\n        method: function (e) {\r\n          if (e.fullEventName === "login") {\r\n            // Handle login event here.\r\n          } else if (e.fullEventName === "logout") {\r\n            // Handle logout event here.\r\n          }\r\n\r\n          // help.sap.com/viewer/8b8d6fffe113457094a17701f63e3d6a/GIGYA/en-US/4169a10d70b21014bbc5a10ce4041860.html\r\n          if (e.fullEventName === "accounts.login") {\r\n            // Increment number of logins count.\r\n            gigya.accounts.setAccountInfo({\r\n              data: {\r\n                previousLogins: (e.data.previousLogins || 0) + 1,\r\n              },\r\n            });\r\n            // 5th login.\r\n            if (typeof e.data.previousLogins !== "undefined") {\r\n              console.log("previousLogins", e.data.previousLogins);\r\n              if (e.data.previousLogins == 4) {\r\n                gigya.accounts.showScreenSet({\r\n                  screenSet: "test2-ProfileUpdate",\r\n                  startScreen: "custom-update-favorite-car-manufacturer-screen",\r\n                });\r\n\r\n                alert("This is your 5th login");\r\n              }\r\n            }\r\n          }\r\n        },\r\n      },\r\n      {\r\n        events: "afterResponse",\r\n        args: [\r\n          function (e) {\r\n            return e;\r\n          },\r\n        ],\r\n        method: function (e) {\r\n\t\t  if(typeof window.afterResponseLitePreferenceCenter != \'undefined\') {\r\n            window.afterResponseLite_PreferenceCenter(e);\r\n          }\r\n        },\r\n      },\r\n    ],\r\n  },\r\n\r\n  // Helper ajax funciton\r\n  /*\r\n  ajaxCallService: function (url, callback) {\r\n    var xmlHttp = new XMLHttpRequest();\r\n    xmlHttp.onreadystatechange = function () {\r\n      if (xmlHttp.readyState == 4 && xmlHttp.status == 200 && callback) {\r\n        callback(xmlHttp.responseText.replace(/<[^>]*>/g, ""));\r\n      }\r\n    };\r\n    xmlHttp.open("GET", url);\r\n    xmlHttp.send(null);\r\n  },\r\n  */\r\n  ajaxCallService: function(url, payload, callback)\r\n    {\r\n        var xmlHttp = new XMLHttpRequest();\r\n        xmlHttp.onreadystatechange = function()\r\n        {\r\n            if (xmlHttp.readyState == 4 && xmlHttp.status == 200 && callback)\r\n            {           \r\n                callback(xmlHttp.responseText);\r\n            }\r\n        };\r\n        xmlHttp.open("POST", url, false);\r\n        xmlHttp.setRequestHeader("Content-Type", "application/json");\r\n        xmlHttp.send(payload);\r\n    },\r\n\r\n  // Add fields helpers\r\n\r\n  addMetadata: function (parentContainer, data) {\r\n    var divHidden = document.createElement("div");\r\n    divHidden.setAttribute("class", "gigya-composite-control-metadata");\r\n\r\n    var inputHidden = document.createElement("input");\r\n    inputHidden.setAttribute("type", "hidden");\r\n    inputHidden.setAttribute("class", "gigya-metadata");\r\n    inputHidden.setAttribute("name", "data." + data.id + ".text");\r\n    //   inputHidden.setAttribute("value", questionDescription);\r\n    inputHidden.setAttribute("value", data.description);\r\n    inputHidden.setAttribute("data-screenset-element-id-publish", "false");\r\n    inputHidden.setAttribute("data-screenset-roles", "template");\r\n    inputHidden.setAttribute("data-gigya-name", "data." + data.id + ".text");\r\n    inputHidden.setAttribute("data-original-value", data.description);\r\n\r\n    divHidden.appendChild(inputHidden);\r\n\r\n    parentContainer.parentNode.insertBefore(divHidden, parentContainer);\r\n    //   $(parentContainer).before(divHidden);\r\n  },\r\n\r\n  addElement: function (parentContainer, data) {\r\n    var div = document.createElement("div");\r\n    div.setAttribute(\r\n      "class",\r\n      "gigya-composite-control gigya-composite-control-textbox"\r\n    );\r\n    div.setAttribute("data-screenset-element-id-publish", "true");\r\n    div.setAttribute("data-screenset-roles", "instance");\r\n\r\n    var label = document.createElement("label");\r\n    label.setAttribute("class", "gigya-label");\r\n    label.setAttribute("for", "gigya-textbox-qa_" + data.id);\r\n\r\n    div.appendChild(label);\r\n\r\n    var span = document.createElement("span");\r\n    span.setAttribute("class", "gigya-label-text");\r\n    span.setAttribute("data-screenset-element-id-publish", "false");\r\n    span.setAttribute("data-screenset-roles", "instance");\r\n    span.innerText = data.description;\r\n\r\n    label.appendChild(span);\r\n\r\n    var label2 = document.createElement("label");\r\n    label2.setAttribute(\r\n      "class",\r\n      "gigya-required-display gigya-reset gigya-hidden"\r\n    );\r\n    //   label2.setAttribute("data-bound-to", "data." + data.id + ".answer.0.Text");\r\n    label2.setAttribute("data-bound-to", "data." + data.id);\r\n    label2.setAttribute("for", "gigya-textbox-qa_" + data.id);\r\n    label2.setAttribute("data-screenset-element-id-publish", "false");\r\n    label2.setAttribute("data-screenset-roles", "instance");\r\n    label2.setAttribute("aria-hidden", "true");\r\n    label2.innerText = "*";\r\n\r\n    label.appendChild(label2);\r\n\r\n    var inputText = document.createElement("input");\r\n    inputText.setAttribute("type", "text");\r\n    inputText.setAttribute("class", "gigya-input-text");\r\n    inputText.setAttribute("show-valid-checkmark", "true");\r\n    inputText.setAttribute("data-gigya-type", "text");\r\n    //   inputText.setAttribute("name", "data." + data.id + ".answer.0.Text");\r\n    inputText.setAttribute("name", "data." + data.id);\r\n    inputText.setAttribute(\r\n      "data-screenset-element-id",\r\n      "gigya-textbox-qa_" + data.id\r\n    );\r\n    inputText.setAttribute("data-screenset-element-id-publish", "true");\r\n    inputText.setAttribute("data-screenset-roles", "instance");\r\n    inputText.setAttribute(\r\n      "data-gigya-name",\r\n      // "data." + data.id + ".answer.0.Text"\r\n      "data." + data.id\r\n    );\r\n    inputText.setAttribute("id", "gigya-textbox-qa_" + data.id);\r\n    inputText.setAttribute("aria-required", "false");\r\n    inputText.setAttribute("aria-invalid", "false");\r\n\r\n    div.appendChild(inputText);\r\n\r\n    var span2 = document.createElement("span");\r\n    span2.setAttribute("class", "gigya-error-msg");\r\n    //   span2.setAttribute("data-bound-to", "data." + data.id + ".answer.0.Text");\r\n    span2.setAttribute("data-bound-to", "data." + data.id);\r\n    span2.setAttribute("data-screenset-element-id-publish", "false");\r\n    span2.setAttribute("data-screenset-roles", "instance");\r\n    span2.setAttribute("role", "alert");\r\n\r\n    div.appendChild(span2);\r\n\r\n    parentContainer.parentNode.insertBefore(div, parentContainer);\r\n    //   $(parentContainer).before(div);\r\n\r\n    // Add Metadata field in order to record the question description\r\n    gigya.thisScript.globalConf.addMetadata(parentContainer, data);\r\n    //   window.addMetadata(parentContainer, data);\r\n  },\r\n}\r\n\r\n',
+    '{\r\n  // A comma-delimited list of provider names to enable.\r\n  enabledProviders: "*",\r\n\r\n  // Define the language of Gigya\'s user interface and error message.\r\n  lang: "en",\r\n\r\n  // Bind globally to events.\r\n  customEventMap: {\r\n    eventMap: [\r\n      {\r\n        events: "*",\r\n        args: [\r\n          function (e) {\r\n            return e;\r\n          },\r\n        ],\r\n        method: function (e) {\r\n          if (e.fullEventName === "login") {\r\n            // Handle login event here.\r\n          } else if (e.fullEventName === "logout") {\r\n            // Handle logout event here.\r\n          }\r\n\r\n          // help.sap.com/viewer/8b8d6fffe113457094a17701f63e3d6a/GIGYA/en-US/4169a10d70b21014bbc5a10ce4041860.html\r\n          if (e.fullEventName === "accounts.login") {\r\n            // Increment number of logins count.\r\n            gigya.accounts.setAccountInfo({\r\n              data: {\r\n                previousLogins: (e.data.previousLogins || 0) + 1,\r\n              },\r\n            });\r\n            // 5th login.\r\n            if (typeof e.data.previousLogins !== "undefined") {\r\n              console.log("previousLogins", e.data.previousLogins);\r\n              if (e.data.previousLogins == 4) {\r\n                gigya.accounts.showScreenSet({\r\n                  screenSet: "test2-ProfileUpdate",\r\n                  startScreen: "custom-update-favorite-car-manufacturer-screen",\r\n                });\r\n\r\n                alert("This is your 5th login");\r\n              }\r\n            }\r\n          }\r\n        },\r\n      },\r\n      {\r\n        events: "afterResponse",\r\n        args: [\r\n          function (e) {\r\n            return e;\r\n          },\r\n        ],\r\n        method: function (e) {\r\n\t\t  if(typeof window.afterResponseLitePreferenceCenter != \'undefined\') {\r\n            window.afterResponseLite_PreferenceCenter(e);\r\n          }\r\n        },\r\n      },\r\n    ],\r\n  },\r\n\r\n  // Helper ajax funciton\r\n  /*\r\n  ajaxCallService: function (url, callback) {\r\n    var xmlHttp = new XMLHttpRequest();\r\n    xmlHttp.onreadystatechange = function () {\r\n      if (xmlHttp.readyState == 4 && xmlHttp.status == 200 && callback) {\r\n        callback(xmlHttp.responseText.replace(/<[^>]*>/g, ""));\r\n      }\r\n    };\r\n    xmlHttp.open("GET", url);\r\n    xmlHttp.send(null);\r\n  },\r\n  */\r\n  ajaxCallService: function(url, payload, callback)\r\n    {\r\n        var xmlHttp = new XMLHttpRequest();\r\n        xmlHttp.onreadystatechange = function()\r\n        {\r\n            if (xmlHttp.readyState == 4 && xmlHttp.status == 200 && callback)\r\n            {           \r\n                callback(xmlHttp.responseText);\r\n            }\r\n        };\r\n        xmlHttp.open("POST", url, false);\r\n        xmlHttp.setRequestHeader("Content-Type", "application/json");\r\n        xmlHttp.send(payload);\r\n    },\r\n\r\n  // Add fields helpers\r\n\r\n  addMetadata: function (parentContainer, data) {\r\n    var divHidden = document.nonotlement("div");\r\n    divHidden.setAttribute("class", "gigya-composite-control-metadata");\r\n\r\n    var inputHidden = document.createElement("input");\r\n    inputHidden.setAttribute("type", "hidden");\r\n    inputHidden.setAttribute("class", "gigya-metadata");\r\n    inputHidden.setAttribute("name", "data." + data.id + ".text");\r\n    //   inputHidden.setAttribute("value", questionDescription);\r\n    inputHidden.setAttribute("value", data.description);\r\n    inputHidden.setAttribute("data-screenset-element-id-publish", "false");\r\n    inputHidden.setAttribute("data-screenset-roles", "template");\r\n    inputHidden.setAttribute("data-gigya-name", "data." + data.id + ".text");\r\n    inputHidden.setAttribute("data-original-value", data.description);\r\n\r\n    divHidden.appendChild(inputHidden);\r\n\r\n    parentContainer.parentNode.insertBefore(divHidden, parentContainer);\r\n    //   $(parentContainer).before(divHidden);\r\n  },\r\n\r\n  addElement: function (parentContainer, data) {\r\n    var div = document.createElement("div");\r\n    div.setAttribute(\r\n      "class",\r\n      "gigya-composite-control gigya-composite-control-textbox"\r\n    );\r\n    div.setAttribute("data-screenset-element-id-publish", "true");\r\n    div.setAttribute("data-screenset-roles", "instance");\r\n\r\n    var label = document.createElement("label");\r\n    label.setAttribute("class", "gigya-label");\r\n    label.setAttribute("for", "gigya-textbox-qa_" + data.id);\r\n\r\n    div.appendChild(label);\r\n\r\n    var span = document.createElement("span");\r\n    span.setAttribute("class", "gigya-label-text");\r\n    span.setAttribute("data-screenset-element-id-publish", "false");\r\n    span.setAttribute("data-screenset-roles", "instance");\r\n    span.innerText = data.description;\r\n\r\n    label.appendChild(span);\r\n\r\n    var label2 = document.createElement("label");\r\n    label2.setAttribute(\r\n      "class",\r\n      "gigya-required-display gigya-reset gigya-hidden"\r\n    );\r\n    //   label2.setAttribute("data-bound-to", "data." + data.id + ".answer.0.Text");\r\n    label2.setAttribute("data-bound-to", "data." + data.id);\r\n    label2.setAttribute("for", "gigya-textbox-qa_" + data.id);\r\n    label2.setAttribute("data-screenset-element-id-publish", "false");\r\n    label2.setAttribute("data-screenset-roles", "instance");\r\n    label2.setAttribute("aria-hidden", "true");\r\n    label2.innerText = "*";\r\n\r\n    label.appendChild(label2);\r\n\r\n    var inputText = document.createElement("input");\r\n    inputText.setAttribute("type", "text");\r\n    inputText.setAttribute("class", "gigya-input-text");\r\n    inputText.setAttribute("show-valid-checkmark", "true");\r\n    inputText.setAttribute("data-gigya-type", "text");\r\n    //   inputText.setAttribute("name", "data." + data.id + ".answer.0.Text");\r\n    inputText.setAttribute("name", "data." + data.id);\r\n    inputText.setAttribute(\r\n      "data-screenset-element-id",\r\n      "gigya-textbox-qa_" + data.id\r\n    );\r\n    inputText.setAttribute("data-screenset-element-id-publish", "true");\r\n    inputText.setAttribute("data-screenset-roles", "instance");\r\n    inputText.setAttribute(\r\n      "data-gigya-name",\r\n      // "data." + data.id + ".answer.0.Text"\r\n      "data." + data.id\r\n    );\r\n    inputText.setAttribute("id", "gigya-textbox-qa_" + data.id);\r\n    inputText.setAttribute("aria-required", "false");\r\n    inputText.setAttribute("aria-invalid", "false");\r\n\r\n    div.appendChild(inputText);\r\n\r\n    var span2 = document.createElement("span");\r\n    span2.setAttribute("class", "gigya-error-msg");\r\n    //   span2.setAttribute("data-bound-to", "data." + data.id + ".answer.0.Text");\r\n    span2.setAttribute("data-bound-to", "data." + data.id);\r\n    span2.setAttribute("data-screenset-element-id-publish", "false");\r\n    span2.setAttribute("data-screenset-roles", "instance");\r\n    span2.setAttribute("role", "alert");\r\n\r\n    div.appendChild(span2);\r\n\r\n    parentContainer.parentNode.insertBefore(div, parentContainer);\r\n    //   $(parentContainer).before(div);\r\n\r\n    // Add Metadata field in order to record the question description\r\n    gigya.thisScript.globalConf.addMetadata(parentContainer, data);\r\n    //   window.addMetadata(parentContainer, data);\r\n  },\r\n}\r\n\r\n',
   invisibleRecaptcha: {
     SiteKey: '',
     Secret: '',
@@ -1737,6 +1899,7 @@ export {
   mockedGetEmailTemplatesConfigsResponse,
   mockedGetExtensionExpectedResponse,
   mockedGetPartnersResponse,
+  expectedCopyConfigSuccessMessage,
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
@@ -1785,6 +1948,13 @@ export {
   webSDKConfiguration,
   webSdkCopyTest,
   webhooksOption,
+  prettifySingleNoJavascript,
+  prettifySingleSuccess,
+  prettifySingleError,
+  prettifyMultipleScreensNoJavascript,
+  mockedPrettierGetScreenSetResponse,
+  mockGetAllSuccessScreenSets,
+  uiBuilderIconName,
   getRecaptchaExpectedResponse,
   getRiskProvidersResponse,
   setCaptchaConfigMock,

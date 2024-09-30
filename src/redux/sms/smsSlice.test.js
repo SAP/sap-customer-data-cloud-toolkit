@@ -3,13 +3,12 @@
  * License: Apache-2.0
  */
 
-
 import smsReducer, { setIsImportPopupOpen, clearExportFile, clearErrors, getSmsTemplatesArrayBuffer, sendSmsTemplatesArrayBuffer, clearErrorCondition } from './smsSlice'
 import SmsManager from '../../services/sms/smsManager'
 import { Buffer } from 'buffer'
 import * as data from './dataTest'
 import { errorConditions } from '../errorConditions'
-import { Tracker } from '../../tracker/tracker'
+import * as Tracker from '../../lib/tracker'
 
 jest.mock('../../services/sms/smsManager')
 
@@ -17,7 +16,7 @@ describe('Site slice test suite', () => {
   let tracker
 
   beforeEach(() => {
-    tracker = jest.spyOn(Tracker, 'reportUsage')
+    tracker = jest.spyOn(Tracker, 'trackUsage').mockImplementation(() => {})
   })
 
   test('should return initial state', () => {

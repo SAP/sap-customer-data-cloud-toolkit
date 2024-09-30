@@ -46,7 +46,7 @@ import { getRecaptchaExpectedResponse, getRiskProvidersResponse, getRecaptchaPol
 
 jest.mock('axios')
 
-const apiKey = 'apiKey'
+const apiKey = 'parentApiKey'
 const screenSetId = 'screenSet'
 
 describe('Config Manager test suite', () => {
@@ -198,6 +198,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
+    infoExpectedResponse[12].branches[2].operation = 'replace'
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
 
@@ -398,6 +399,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, addressesSchemaId, apiKey) })
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
+    infoExpectedResponse[12].branches[2].operation = 'replace'
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(37)
@@ -453,6 +455,7 @@ describe('Config Manager test suite', () => {
 
   async function executeCopyAllUnsuccessfully(mockedResponse, numberOfExpectedResponses) {
     const infoExpectedResponse = getInfoExpectedResponse(true)
+    infoExpectedResponse[12].branches[2].operation = 'replace'
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
     expect(response.length).toEqual(numberOfExpectedResponses)
