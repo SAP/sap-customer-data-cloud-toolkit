@@ -72,7 +72,7 @@ class RecaptchaConfiguration {
       const newConfig = {
         security: newSecurityConfig,
         registration: {
-          requireCaptcha: registrationPolicies.requireCaptcha
+          requireCaptcha: registrationPolicies.requireCaptcha,
         },
       }
 
@@ -88,7 +88,6 @@ class RecaptchaConfiguration {
   }
 
   async setRiskProvidersConfig(site, dataCenter, riskProvidersConfig) {
-    // try {
     const response = await this.#riskProviders.set(site, dataCenter, riskProvidersConfig)
     if (response.errorCode === 0) {
       return response
