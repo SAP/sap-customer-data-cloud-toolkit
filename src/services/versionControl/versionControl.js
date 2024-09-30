@@ -88,10 +88,11 @@ class VersionControl {
     const response = await this.octokit.rest.repos.createOrUpdateFileContents({
       owner: this.owner,
       repo: this.repo,
-      path: 'src/versionControl/webSdk.json',
+      path: filePath,
       message: 'FILE UPDATED/CREATED',
       content: encodedContent,
       branch: this.branch,
+      sha: sha,
     })
     console.log(`File ${filePath} created successfully:`, response.data)
     // }
@@ -109,30 +110,30 @@ class VersionControl {
       //   ref: this.branch,
       // })
       //   await this.disableBranchProtection()
-      // const responses = [
-      //   { name: 'webSdk', promise: this.webSdk.get() },
-      //   { name: 'dataflow', promise: this.dataflow.search() },
-      //   { name: 'emails', promise: this.emails.get() },
-      //   { name: 'extension', promise: this.extension.get() },
-      //   { name: 'policies', promise: this.policies.get() },
-      //   { name: 'rba', promise: this.rba.get() },
-      //   { name: 'riskAssessment', promise: this.riskAssessment.get() },
-      //   { name: 'schema', promise: this.schema.get() },
-      //   { name: 'screenSets', promise: this.screenSets.get() },
-      //   { name: 'sms', promise: this.sms.get() },
-      //   { name: 'channel', promise: this.channel.get() },
-      // ]
-      // const results = await Promise.all(responses.map((response) => response.promise))
-      const result = await this.webSdk.get()
-      this.updateFile('src/versionControl/webSdk.json', result)
-      // await Promise.all(
-      //   results.map((result, index) => {
-      //     const responseName = responses[index].name
-      //     const filePath = `src/versionControl/${responseName}.json`
-      //     const fileContent = JSON.stringify(result, null, 2)
-      //     return this.updateFile(filePath, fileContent)
-      //   }),
-      // )
+      const responses = [
+        { name: 'webSdk', promise: this.webSdk.get() },
+        { name: 'dataflow', promise: this.dataflow.search() },
+        { name: 'emails', promise: this.emails.get() },
+        { name: 'extension', promise: this.extension.get() },
+        { name: 'policies', promise: this.policies.get() },
+        { name: 'rba', promise: this.rba.get() },
+        { name: 'riskAssessment', promise: this.riskAssessment.get() },
+        { name: 'schema', promise: this.schema.get() },
+        { name: 'screenSets', promise: this.screenSets.get() },
+        { name: 'sms', promise: this.sms.get() },
+        { name: 'channel', promise: this.channel.get() },
+      ]
+      const results = await Promise.all(responses.map((response) => response.promise))
+      // const result = await this.webSdk.get()
+      // this.updateFile('src/versionControl/webSdk.json', results)
+      await Promise.all(
+        results.map((result, index) => {
+          const responseName = responses[index].name
+          const filePath = `src/versionControl/${responseName}.json`
+          const fileContent = JSON.stringify(result, null, 2)
+          return this.updateFile(filePath, fileContent)
+        }),
+      )
 
       // await this.getCommits()
       console.log('File updated successfully')
