@@ -33,6 +33,9 @@ const VersionControlComponent = ({ t }) => {
 
     versionControl.writeFile()
   }
+  const handleRevertServices = () => {
+    versionControl.readFile()
+  }
 
   return (
     <>
@@ -43,7 +46,7 @@ const VersionControlComponent = ({ t }) => {
             <Button id="prettifySingleScreen" data-cy="prettifySingleScreen" className={classes.singlePrettifyButton} onClick={handleGetServices}>
               Store Previous Version
             </Button>
-            <Button id="prettifySingleScreen" data-cy="prettifySingleScreen" className={classes.singlePrettifyButton} onClick={handleGetServices}>
+            <Button id="prettifySingleScreen" data-cy="prettifySingleScreen" className={classes.singlePrettifyButton} onClick={handleRevertServices}>
               Revert Back to the Previous Version
             </Button>
           </>

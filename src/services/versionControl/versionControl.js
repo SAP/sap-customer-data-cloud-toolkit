@@ -43,30 +43,37 @@ class VersionControl {
     this.sms = new SmsConfiguration(this.#credentials, this.#apiKey, this.#dataCenter)
     this.channel = new Channel(this.#credentials, this.#apiKey, this.#dataCenter)
   }
-
+  async setContent(config) {
+    this.webSdk.set(this.#apiKey, config, this.#dataCenter)
+  }
   async readFile() {
-    try {
-      const { data } = await this.octokit.rest.repos.getContent({
-        owner: this.owner,
-        repo: this.repo,
-        path: this.path,
-        ref: this.branch,
-      })
-      const content = Base64.decode(data.content)
-      console.log('file content', content)
-      console.log('file data', data)
-    } catch (error) {
-      console.log('error', error)
+    const fileName = this.getFileName()
+    console.log('fileName', fileName)
+    for (const file of fileName) {
+      const filePath = `src/versionControl/${file.name}.json`
+
+      try {
+        let fileContent = await this.getFileSHA(filePath)
+        if (file.name === 'webSdk') {
+          await this.setContent(fileContent.content)
+          console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+        }
+        console.log('filecontent', fileContent.content)
+        const content = Base64.decode(fileContent.content)
+      } catch (error) {
+        console.log('error', error)
+      }
     }
   }
   async getFileSHA(filePath) {
     try {
-      const { data } = await this.octokit.repos.getContent({
+      const { data } = await this.octokit.rest.repos.getContent({
         owner: this.owner,
         repo: this.repo,
         path: filePath,
         ref: this.branch,
       })
+      console.log('data....>', data)
       return { content: Base64.decode(data.content), sha: data.sha }
     } catch (error) {
       if (error.status === 404) {
@@ -78,26 +85,55 @@ class VersionControl {
   async updateFile(filePath, fileContent) {
     // const encodedContent = Base64.encode(fileContent, null, 2)
     let sha
+    let response
     try {
-      sha = this.getFileSHA(filePath)
+      sha = await this.getFileSHA(filePath)
     } catch (error) {
-      console.error(`Failed to get file SHA for ${filePath}:`, error)
       sha = undefined
     }
-    const results = await this.channel.get()
-    const encodedContent = Base64.encode(results, null, 2)
+    console.log('sha', sha)
+    const encodedContent = Base64.encode(fileContent, null, 2)
+    if (sha === undefined) {
+      response = await this.octokit.rest.repos.createOrUpdateFileContents({
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath,
+        message: 'FILE UPDATED/CREATED',
+        content: encodedContent,
+        branch: this.branch,
+      })
+    } else {
+      response = await this.octokit.rest.repos.createOrUpdateFileContents({
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath,
+        message: 'FILE UPDATED/CREATED',
+        content: encodedContent,
+        branch: this.branch,
+        sha: sha.sha,
+      })
+    }
 
-    const response = await this.octokit.rest.repos.createOrUpdateFileContents({
-      owner: this.owner,
-      repo: this.repo,
-      path: 'src/versionControl/channel.json',
-      message: 'FILE UPDATED/CREATED',
-      content: encodedContent,
-      branch: this.branch,
-      sha: JSON.stringify(sha),
-    })
-    console.log(`File ${filePath} created successfully:`, response.data)
+    console.log('File updated successfully')
   }
+
+  getFileName() {
+    const fileNames = [
+      { name: 'webSdk' },
+      { name: 'dataflow' },
+      { name: 'emails' },
+      { name: 'extension' },
+      { name: 'policies' },
+      { name: 'rba' },
+      { name: 'riskAssessment' },
+      { name: 'schema' },
+      { name: 'screenSets' },
+      { name: 'sms' },
+      { name: 'channel' },
+    ]
+    return fileNames
+  }
+
   async getResponses() {
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
@@ -117,7 +153,7 @@ class VersionControl {
   async writeFile() {
     try {
       const responses = await this.getResponses()
-      console.log(`responses ----> ${responses}`)
+      // console.log(`responses ----> ${responses}`)
       // const responses = [
       //   { name: 'webSdk', promise: this.webSdk.get() },
       //   { name: 'dataflow', promise: this.dataflow.search() },
@@ -131,34 +167,46 @@ class VersionControl {
       //   { name: 'sms', promise: this.sms.get() },
       //   { name: 'channel', promise: this.channel.get() },
       // ]
-      // const results = await Promise.all(responses.map((response) => response.promise))
+      const results = await Promise.all(responses.map((response) => response.promise))
 
-      // await Promise.all(
-      //   results.map((result, index) => {
-      //     const responseName = responses[index].name
-      //     const filePath = `src/versionControl/${responseName}.json`
-      //     const fileContent = JSON.stringify(result, null, 2)
-      //     return this.updateFile(filePath, fileContent)
-      //   }),
-      // )
-      let sha
-      try {
-        sha = this.getFileSHA('src/versionControl/channel.json')
-      } catch (error) {
-        sha = undefined
-      }
-      const results = await this.channel.get()
-      console.log('results', results)
-      const encodedContent = Base64.encode(results, null, 2)
-      const response = await this.octokit.rest.repos.createOrUpdateFileContents({
-        owner: this.owner,
-        repo: this.repo,
-        path: 'src/versionControl/channel.json',
-        message: 'FILE UPDATED/CREATED',
-        content: encodedContent,
-        branch: this.branch,
-        sha: JSON.stringify(sha),
-      })
+      await Promise.all(
+        results.map((result, index) => {
+          const responseName = responses[index].name
+          const filePath = `src/versionControl/${responseName}.json`
+          const fileContent = JSON.stringify(result, null, 2)
+          return this.updateFile(filePath, fileContent)
+        }),
+      )
+      // let sha
+      // try {
+      //   sha = await this.getFileSHA('src/versionControl/webSdk.json')
+      // } catch (error) {
+      //   sha = undefined
+      // }
+      // const results = await this.channel.get()
+      // console.log('sha', sha)
+      // console.log('results', results)
+      // const encodedContent = Base64.encode(results, null, 2)
+      // if (sha === undefined) {
+      //   await this.octokit.rest.repos.createOrUpdateFileContents({
+      //     owner: this.owner,
+      //     repo: this.repo,
+      //     path: 'src/versionControl/webSdk.json',
+      //     message: 'FILE UPDATED/CREATED',
+      //     content: encodedContent,
+      //     branch: this.branch,
+      //   })
+      // } else {
+      //   await this.octokit.rest.repos.createOrUpdateFileContents({
+      //     owner: this.owner,
+      //     repo: this.repo,
+      //     path: 'src/versionControl/webSdk.json',
+      //     message: 'FILE UPDATED/CREATED',
+      //     content: encodedContent,
+      //     branch: this.branch,
+      //     sha: sha.sha,
+      //   })
+      // }
 
       console.log('File updated successfully')
     } catch (error) {
