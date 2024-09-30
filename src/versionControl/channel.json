@@ -1,0 +1,36 @@
+{
+  "callId": "b5b7204607e744268b358004a1f007e6",
+  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+  "errorCode": 0,
+  "apiVersion": 2,
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-09-30T13:29:31.061Z",
+  "Channels": {
+    "SMS": {
+      "dependsOn": [
+        {
+          "fieldID": "phoneNumber",
+          "required": true
+        }
+      ],
+      "description": "You can send SMS campaigns via this preconfigured channel",
+      "doubleOptIn": {
+        "validationType": "external",
+        "expiration": 336
+      }
+    },
+    "Email": {
+      "dependsOn": [
+        {
+          "fieldID": "profile.email",
+          "required": true
+        }
+      ],
+      "description": "You can send email campaigns via this preconfigured channel",
+      "doubleOptIn": {
+        "validationType": "emailLink"
+      }
+    }
+  }
+}
