@@ -44,7 +44,24 @@ class VersionControl {
     this.channel = new Channel(this.#credentials, this.#apiKey, this.#dataCenter)
   }
   async setContent(config) {
-    this.webSdk.set(this.#apiKey, config, this.#dataCenter)
+    this.#cleanResponse(config)
+    const response = await this.policies.set(this.#apiKey, config, this.#dataCenter)
+    console.log('this was the response-->', response)
+  }
+  #cleanResponse(response) {
+    delete response['rba']
+    if (response.security) {
+      delete response.security.accountLockout
+      delete response.security.captcha
+      delete response.security.ipLockout
+    }
+    // the following fields should only be copied when processing emails
+    if (response.passwordReset) {
+      delete response.passwordReset.resetURL
+    }
+    if (response.preferencesCenter) {
+      delete response.preferencesCenter.redirectURL
+    }
   }
   async readFile() {
     const fileName = this.getFileName()
@@ -54,11 +71,10 @@ class VersionControl {
 
       try {
         let fileContent = await this.getFileSHA(filePath)
-        if (file.name === 'webSdk') {
+        if (file.name === 'policies') {
           await this.setContent(fileContent.content)
           console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
         }
-        console.log('filecontent', fileContent.content)
         const content = Base64.decode(fileContent.content)
       } catch (error) {
         console.log('error', error)
