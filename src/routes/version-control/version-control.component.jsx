@@ -31,7 +31,7 @@ const VersionControlComponent = ({ t }) => {
   const handleGetServices = () => {
     console.log('currentSite', currentSite)
 
-    versionControl.writeFile(credentialsUpdated, apikey, currentSite)
+    versionControl.writeFile()
   }
 
   return (
@@ -41,7 +41,10 @@ const VersionControlComponent = ({ t }) => {
         endContent={
           <>
             <Button id="prettifySingleScreen" data-cy="prettifySingleScreen" className={classes.singlePrettifyButton} onClick={handleGetServices}>
-              {t('PRETTIFY.BUTTON_LABEL')}
+              Store Previous Version
+            </Button>
+            <Button id="prettifySingleScreen" data-cy="prettifySingleScreen" className={classes.singlePrettifyButton} onClick={handleGetServices}>
+              Revert Back to the Previous Version
             </Button>
           </>
         }
