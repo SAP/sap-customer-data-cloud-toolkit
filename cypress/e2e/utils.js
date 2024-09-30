@@ -19,6 +19,7 @@ import {
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
+  mockedPrettierGetScreenSetResponse,
   mockedGetSmsConfigsResponse,
   mockedGetSocialsConfigsResponse,
   mockedGetWebhookExpectedResponse,
@@ -48,17 +49,11 @@ import {
 } from './dataTest'
 
 export function startUp(pageName) {
-  cy.visit('', {
-    onBeforeLoad(window) {
-      cy.stub(window, 'open').as('windowOpenStub')
-    },
-  })
+  cy.visit('')
+
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
-
-  // mockResponse(siteConfigResponse, 'POST', 'admin.getSiteConfig')
-  // mockResponse(mockPolicyResponse, 'POST', 'accounts.getPolicies')
 
   cy.contains(pageName).realClick()
   cy.reload()
@@ -102,7 +97,23 @@ export function resizeObserverLoopErrRe() {
     }
   })
 }
-
+export function removeJavascript(mockResponse) {
+  for (const screenSet of mockResponse.screenSets) {
+    delete screenSet.javascript
+  }
+  return mockResponse
+}
+export function addErrorOnJavascript(mockResponse, screenID) {
+  for (const screenSet of mockResponse.screenSets) {
+    if (screenSet.screenSetID === screenID) {
+      screenSet.javascript = '{\n    // Called when an error occurs.\n    onError: function (event) {\n'
+    }
+  }
+  return mockResponse
+}
+export function getScreenSets(mockedPrettierGetScreenSetResponse) {
+  cy.intercept('POST', 'accounts.getScreenSets', { body: mockedPrettierGetScreenSetResponse }).as('getScreenSets')
+}
 export function getBaseDomain(baseDomain, timeout) {
   cy.wait(1000)
   cy.get('[data-cy ="cdctools-baseDomain"]').should('be.visible')
@@ -254,8 +265,9 @@ export function fillSourceApiKeyInput() {
   cy.get('[data-cy ="siteCopyConfigurationDialog"]')
     .find('#apiKeyInput')
     .then((input) => {
-      cy.wrap(input).shadow().find('input').click().focus().type(dummyApiKey)
-      cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-list').find('ui5-li-suggestion-item').eq(0).click()
+      cy.wrap(input).shadow().find('input').click().focus().type(`${dummyApiKey}`).should('have.value', dummyApiKey)
+      cy.wait(1000)
+      cy.get(':nth-child(2) > [data-cy="apiKeyInput"] > [data-cy="addTargetSiteButton"]').click()
     })
 }
 

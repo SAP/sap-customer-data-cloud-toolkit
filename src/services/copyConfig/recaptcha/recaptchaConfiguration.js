@@ -1,7 +1,7 @@
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
- */ 
+ */
 
 import Recaptcha from '../../recaptcha/recaptcha.js'
 import Policy from '../policies/policies.js'
@@ -49,26 +49,20 @@ class RecaptchaConfiguration {
         riskProvidersConfig: riskProvidersResponse.config,
       }
     } catch (error) {
-      console.error(`Error in RecaptchaConfiguration.get: ${error}`)
-      throw error
+      throw new Error(`Error in RecaptchaConfiguration.get: ${error}`)
     }
   }
 
   async setRecaptchaConfig(site, dataCenter, recaptchaConfig) {
-    try {
-      const response = await this.getRecaptcha().set(site, dataCenter, recaptchaConfig)
-      if (response.errorCode === 0) {
-        return response
-      } else {
-        throw new Error(`Error setting reCAPTCHA configuration: ${response.errorMessage}`)
-      }
-    } catch (error) {
-      console.error('Error in setRecaptchaConfig:', error.message || error)
-      throw error
+    const response = await this.getRecaptcha().set(site, dataCenter, recaptchaConfig)
+    if (response.errorCode === 0) {
+      return response
+    } else {
+      throw new Error(`Error setting reCAPTCHA configuration: ${response.errorMessage}`)
     }
   }
 
-  async setPolicies(targetSite, securityPolicies, registrationPolicies) {
+  async setPolicies(targetSite, targetDataCenter, securityPolicies, registrationPolicies) {
     try {
       const newSecurityConfig = {
         riskAssessmentWithReCaptchaV3: securityPolicies.riskAssessmentWithReCaptchaV3,
@@ -78,67 +72,54 @@ class RecaptchaConfiguration {
       const newConfig = {
         security: newSecurityConfig,
         registration: {
-          requireCaptcha: registrationPolicies.requireCaptcha,
-          requireSecurityQuestion: registrationPolicies.requireSecurityQuestion,
-          requireLoginID: registrationPolicies.requireLoginID,
-          enforceCoppa: registrationPolicies.enforceCoppa,
+          requireCaptcha: registrationPolicies.requireCaptcha
         },
       }
 
-      const response = await this.#policy.set(targetSite, newConfig, this.#dataCenter)
+      const response = await this.#policy.set(targetSite, newConfig, targetDataCenter)
       if (response.errorCode === 0) {
         return response
       } else {
         throw new Error(`Error fetching current policies: ${response.errorMessage}`)
       }
     } catch (error) {
-      console.error(`Error in setPolicies: ${error.message || error}`)
-      throw error
+      throw new Error(`Error in setPolicies: ${error.message || error}`)
     }
   }
 
   async setRiskProvidersConfig(site, dataCenter, riskProvidersConfig) {
-    try {
-      const response = await this.#riskProviders.set(site, dataCenter, riskProvidersConfig)
-      if (response.errorCode === 0) {
-        return response
-      } else {
-        throw new Error(`Error setting Risk Providers configuration: ${response.errorMessage}`)
-      }
-    } catch (error) {
-      console.error('Error in setRiskProvidersConfig:', error.message || error)
-      throw error
+    // try {
+    const response = await this.#riskProviders.set(site, dataCenter, riskProvidersConfig)
+    if (response.errorCode === 0) {
+      return response
+    } else {
+      throw new Error(`Error setting Risk Providers configuration: ${response.errorMessage}`)
     }
   }
 
   async copy(targetSite, targetDataCenter) {
-    try {
-      const config = await this.get()
-      const dataCenter = targetDataCenter.dataCenter || targetDataCenter
+    const config = await this.get()
+    const dataCenter = targetDataCenter.dataCenter || targetDataCenter
 
-      if (config.recaptchaConfig) {
-        await this.setRecaptchaConfig(targetSite, dataCenter, config.recaptchaConfig)
-      } else {
-        throw new Error('Recaptcha config is invalid or undefined.')
-      }
-
-      if (config.securityPolicies && config.registrationPolicies) {
-        await this.setPolicies(targetSite, config.securityPolicies, config.registrationPolicies)
-      } else {
-        throw new Error('Policies are invalid or undefined.')
-      }
-
-      if (config.riskProvidersConfig) {
-        await this.setRiskProvidersConfig(targetSite, dataCenter, config.riskProvidersConfig)
-      } else {
-        console.warn('Risk Providers config is invalid or undefined, skipping.')
-      }
-
-      return config
-    } catch (error) {
-      console.error('Error during copyAllConfigs:', error.message || error)
-      throw error
+    if (config.recaptchaConfig) {
+      await this.setRecaptchaConfig(targetSite, dataCenter, config.recaptchaConfig)
+    } else {
+      throw new Error('Recaptcha config is invalid or undefined.')
     }
+
+    if (config.securityPolicies && config.registrationPolicies) {
+      await this.setPolicies(targetSite, dataCenter, config.securityPolicies, config.registrationPolicies)
+    } else {
+      throw new Error('Policies are invalid or undefined.')
+    }
+
+    if (config.riskProvidersConfig) {
+      await this.setRiskProvidersConfig(targetSite, dataCenter, config.riskProvidersConfig)
+    } else {
+      console.warn('Risk Providers config is invalid or undefined, skipping.')
+    }
+
+    return config
   }
 
   getRecaptcha() {
