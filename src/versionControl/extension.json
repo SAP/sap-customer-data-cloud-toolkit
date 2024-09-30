@@ -1,0 +1,25 @@
+{
+  "callId": "8b5cb2b611ff4b48b0985f3129d27f92",
+  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+  "errorCode": 0,
+  "apiVersion": 2,
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-09-30T14:37:31.089Z",
+  "result": [
+    {
+      "created": "2023-08-31T09:08:57.8205297Z",
+      "lastModified": "2023-08-31T09:09:02.9763216Z",
+      "extensionFuncUrl": "https://f21b-62-249-8-147.ngrok-free.app",
+      "description": "",
+      "timeout": 1000,
+      "fallback": "IgnoreAllErrors",
+      "headers": [],
+      "integration": "Generic",
+      "id": "5f93e6e9876a424587977117d596cf82",
+      "extensionPoint": "OnBeforeAccountsRegister",
+      "friendlyName": "ExtesntionTest",
+      "enabled": true
+    }
+  ]
+}
