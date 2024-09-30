@@ -115,7 +115,7 @@ class RecaptchaConfiguration {
     if (config.riskProvidersConfig) {
       await this.setRiskProvidersConfig(targetSite, dataCenter, config.riskProvidersConfig)
     } else {
-      console.warn('Risk Providers config is invalid or undefined, skipping.')
+      throw new Error('Risk Providers config is invalid or undefined, skipping.')
     }
 
     return config
