@@ -48,31 +48,18 @@ class VersionControl {
     const response = await this.policies.set(this.#apiKey, config, this.#dataCenter)
     console.log('this was the response-->', response)
   }
-  #cleanResponse(response) {
-    delete response['rba']
-    if (response.security) {
-      delete response.security.accountLockout
-      delete response.security.captcha
-      delete response.security.ipLockout
-    }
-    // the following fields should only be copied when processing emails
-    if (response.passwordReset) {
-      delete response.passwordReset.resetURL
-    }
-    if (response.preferencesCenter) {
-      delete response.preferencesCenter.redirectURL
-    }
-  }
+
   async readFile() {
     const fileName = this.getFileName()
     console.log('fileName', fileName)
     for (const file of fileName) {
       const filePath = `src/versionControl/${file.name}.json`
-
+      //Set condition to check if the file.name is equal to a service do the each set individually
       try {
         let fileContent = await this.getFileSHA(filePath)
         if (file.name === 'policies') {
-          await this.setContent(fileContent.content)
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setContent(filteredResponse)
           console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
         }
         const content = Base64.decode(fileContent.content)
@@ -193,36 +180,6 @@ class VersionControl {
           return this.updateFile(filePath, fileContent)
         }),
       )
-      // let sha
-      // try {
-      //   sha = await this.getFileSHA('src/versionControl/webSdk.json')
-      // } catch (error) {
-      //   sha = undefined
-      // }
-      // const results = await this.channel.get()
-      // console.log('sha', sha)
-      // console.log('results', results)
-      // const encodedContent = Base64.encode(results, null, 2)
-      // if (sha === undefined) {
-      //   await this.octokit.rest.repos.createOrUpdateFileContents({
-      //     owner: this.owner,
-      //     repo: this.repo,
-      //     path: 'src/versionControl/webSdk.json',
-      //     message: 'FILE UPDATED/CREATED',
-      //     content: encodedContent,
-      //     branch: this.branch,
-      //   })
-      // } else {
-      //   await this.octokit.rest.repos.createOrUpdateFileContents({
-      //     owner: this.owner,
-      //     repo: this.repo,
-      //     path: 'src/versionControl/webSdk.json',
-      //     message: 'FILE UPDATED/CREATED',
-      //     content: encodedContent,
-      //     branch: this.branch,
-      //     sha: sha.sha,
-      //   })
-      // }
 
       console.log('File updated successfully')
     } catch (error) {
@@ -256,6 +213,21 @@ class VersionControl {
       return result
     } catch (error) {
       console.error('Error listing commits:', error)
+    }
+  }
+  #cleanResponse(response) {
+    delete response['rba']
+    if (response.security) {
+      delete response.security.accountLockout
+      delete response.security.captcha
+      delete response.security.ipLockout
+    }
+    // the following fields should only be copied when processing emails
+    if (response.passwordReset) {
+      delete response.passwordReset.resetURL
+    }
+    if (response.preferencesCenter) {
+      delete response.preferencesCenter.redirectURL
     }
   }
 }
