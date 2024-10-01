@@ -39,7 +39,7 @@ describe('RecaptchaConfiguration test suite', () => {
       .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
       .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
 
-    const response = await recaptchaConfig.copy('targetSite', 'eu1')
+    const response = await recaptchaConfig.copy('targetSite', { dataCenter: 'eu1' })
 
     expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
     expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
@@ -192,7 +192,7 @@ describe('RecaptchaConfiguration test suite', () => {
       .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
       .mockResolvedValueOnce({ data: mockSetRecaptchaError })
 
-    await expect(recaptchaConfig.copy('targetSite', 'eu1')).rejects.toThrow('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
+    await expect(recaptchaConfig.copy('targetSite', { dataCenter: 'eu1' })).rejects.toThrow('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
   })
   test('get recaptcha configuration with invalid risk providers', async () => {
     const mockRecaptchaResponse = getRecaptchaExpectedResponse()
