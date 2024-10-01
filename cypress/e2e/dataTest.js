@@ -1767,6 +1767,82 @@ const mockedSearchDataflowsEmptyResponse = {
   resultCount: 0,
 }
 
+const getRecaptchaExpectedResponse = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  Config: [
+    { Type: 1, Key: 'test', Secret: 'test' },
+    { Type: 3, Key: 'test', Secret: 'test' },
+    { Type: 2, Key: 'test', Secret: 'test' },
+    { Type: 4, Key: '', Secret: '' },
+  ],
+}
+
+const getRiskProvidersResponse = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  config: {
+    subscriberId: '',
+    account: '',
+    password: '',
+    environment: 0,
+    integrationPoint: '',
+  },
+  configType: 0,
+  siteId: 541014568338,
+}
+
+const setCaptchaConfigMock = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  Config: [
+    { Type: 1, Secret: 'test', Key: 'test' },
+    { Type: 3, Secret: 'test', Key: 'test' },
+    { Type: 2, Secret: 'test', Key: 'test' },
+    { Type: 4, Secret: '', Key: '' },
+  ],
+}
+
+const setPoliciesMock = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  security: { riskAssessmentWithReCaptchaV3: false, riskAssessmentWithTransUnion: false },
+  registration: { requireCaptcha: true },
+}
+
+const setRiskProvidersMock = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  config: {
+    subscriberId: '',
+    account: '',
+    password: '',
+    environment: 0,
+    integrationPoint: '',
+  },
+  configType: 0,
+  siteId: 541014568338,
+}
 const mockedCreateDataflowResponse = Object.assign(mockedGigyaResponseOk, { id: mockedSearchDataflowsResponse.result[0].id })
 
 const mockedSetDataflowResponse = Object.assign(mockedGigyaResponseOk, { version: mockedSearchDataflowsResponse.result[0].version + 1 })
@@ -1879,4 +1955,9 @@ export {
   mockedPrettierGetScreenSetResponse,
   mockGetAllSuccessScreenSets,
   uiBuilderIconName,
+  getRecaptchaExpectedResponse,
+  getRiskProvidersResponse,
+  setCaptchaConfigMock,
+  setPoliciesMock,
+  setRiskProvidersMock,
 }

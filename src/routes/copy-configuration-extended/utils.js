@@ -45,8 +45,8 @@ export const sendReportOnWarnings = async (errors, pageTitle) => {
 }
 
 export const handleCheckboxChange = (dispatch, checkbox, value, siteId, setConfigurationStatus) => {
+  const checkBoxId = checkbox.id
   if (checkbox.link) {
-    const checkBoxId = checkbox.id
     dispatch(setConfigurationStatus({ siteId: siteId, checkBoxId, value: value }))
   }
 }
