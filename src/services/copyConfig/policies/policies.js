@@ -45,7 +45,7 @@ class Policy {
 
     if (response.errorCode === 0) {
       response = await this.copyPolicies(targetApi, targetDataCenter, response, options)
-          }
+    }
     if (response.context) {
       response['context'] = response.context.replace(/&quot;/g, '"')
       stringToJson(response, 'context')

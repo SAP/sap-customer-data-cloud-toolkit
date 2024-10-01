@@ -98,7 +98,7 @@ class RecaptchaConfiguration {
 
   async copy(targetSite, targetDataCenter) {
     const config = await this.get()
-    const dataCenter = targetDataCenter.dataCenter || targetDataCenter
+    const dataCenter = targetDataCenter.dataCenter
 
     if (config.recaptchaConfig) {
       await this.setRecaptchaConfig(targetSite, dataCenter, config.recaptchaConfig)
