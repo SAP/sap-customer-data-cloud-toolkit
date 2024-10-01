@@ -30,21 +30,20 @@ class RiskProviders {
 
   async set(site, dataCenter, config) {
     const url = UrlBuilder.buildUrl(RiskProviders.#NAMESPACE, dataCenter, RiskProviders.getSetRiskProvidersEndpoint(), this.gigyaConsole)
-    try {
-      const params = {
-        apiKey: site,
-        userKey: this.userKey,
-        secret: this.secret,
-        config: JSON.stringify({
-          configType: 0,
-          config: JSON.stringify(config),
-        }),
-      }
-      const response = await client.post(url, params)
-      return response.data
-    } catch (error) {
-      return generateErrorResponse(error, RiskProviders.#ERROR_MSG_SET_CONFIG)
+    const params = {
+      apiKey: site,
+      userKey: this.userKey,
+      secret: this.secret,
+      config: JSON.stringify({
+        configType: 0,
+        config: JSON.stringify(config),
+      }),
     }
+    const response = await client.post(url, params).catch(function (error) {
+      return generateErrorResponse(error, RiskProviders.#ERROR_MSG_SET_CONFIG)
+    })
+
+    return response.data
   }
 
   #getRiskProvidersParameters(apiKey) {

@@ -34,29 +34,21 @@ describe('RiskProviders test suite', () => {
 
   test('get risk providers configuration with error', async () => {
     const mockErrorResponse = {
-      response: {
-        data: {
-          errorCode: 500,
-          errorMessage: 'Internal server error',
-        },
+      data: {
+        errorCode: 500,
+        errorDetails: 'Internal server error',
+        errorMessage: 'Error setting Risk Providers configuration',
       },
     }
 
-    axios.mockRejectedValueOnce(mockErrorResponse)
+    axios.mockResolvedValueOnce(mockErrorResponse)
 
-    try {
-      const response = await riskProviders.get(site, dataCenter)
-      expect(response).toEqual({
-        data: {
-          errorCode: 500,
-          errorDetails: 'Internal server error',
-          errorMessage: 'Error getting Risk Providers configuration',
-          time: expect.any(Number),
-        },
-      })
-    } catch (error) {
-      console.log('Error caught in the catch:', error)
-    }
+    const response = await riskProviders.get(site, dataCenter)
+    expect(response).toEqual({
+      errorCode: 500,
+      errorDetails: 'Internal server error',
+      errorMessage: 'Error setting Risk Providers configuration',
+    })
   })
 
   test('set risk providers configuration successfully', async () => {
@@ -71,28 +63,20 @@ describe('RiskProviders test suite', () => {
 
   test('set risk providers configuration with error', async () => {
     const mockErrorResponse = {
-      response: {
-        data: {
-          errorCode: 500,
-          errorMessage: 'Internal server error',
-        },
+      data: {
+        errorCode: 500,
+        errorDetails: 'Internal server error',
+        errorMessage: 'Error setting Risk Providers configuration',
       },
     }
 
-    axios.mockRejectedValueOnce(mockErrorResponse)
+    axios.mockResolvedValueOnce(mockErrorResponse)
 
-    try {
-      const response = await riskProviders.set(site, dataCenter, { provider: 'testProvider' })
-      expect(response).toEqual({
-        data: {
-          errorCode: 500,
-          errorDetails: 'Internal server error',
-          errorMessage: 'Error setting Risk Providers configuration',
-          time: expect.any(Number),
-        },
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    const response = await riskProviders.set(site, dataCenter, { provider: 'testProvider' })
+    expect(response).toEqual({
+      errorCode: 500,
+      errorDetails: 'Internal server error',
+      errorMessage: 'Error setting Risk Providers configuration',
+    })
   })
 })
