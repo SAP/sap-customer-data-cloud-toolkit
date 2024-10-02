@@ -50,7 +50,6 @@ class Policy {
       response['context'] = response.context.replace(/&quot;/g, '"')
       stringToJson(response, 'context')
     }
-
     return response
   }
 

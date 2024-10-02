@@ -1,18 +1,22 @@
 import Web from '@sap_oss/automated-usage-tracking-tool'
 
 const getCredentials = () => {
-  if (
-    !process.env.REACT_APP_TRACKER_API_KEY_DEV ||
-    !process.env.REACT_APP_TRACKER_DATA_CENTER_DEV ||
-    !process.env.REACT_APP_TRACKER_API_KEY_PROD ||
-    !process.env.REACT_APP_TRACKER_DATA_CENTER_PROD
-  ) {
+  const TRACKER_API_KEY_PROD = '4_wjgLxoy9B1oRh3zpBulDhw'
+  const TRACKER_DATA_CENTER_PROD = 'eu1'
+  const TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
+  const TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+
+  const IS_RELEASE = process.env.REACT_APP_USERKEY ? false : true
+
+  if (IS_RELEASE) {
+    return { apiKey: TRACKER_API_KEY_PROD, dataCenter: TRACKER_DATA_CENTER_PROD }
+  }
+
+  if (!TRACKER_API_KEY_DEV || !TRACKER_DATA_CENTER_DEV) {
     return null
   }
 
-  const API_KEY = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_API_KEY_PROD : process.env.REACT_APP_TRACKER_API_KEY_DEV
-  const DATA_CENTER = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_DATA_CENTER_PROD : process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
-  return { apiKey: API_KEY, dataCenter: DATA_CENTER }
+  return { apiKey: TRACKER_API_KEY_DEV, dataCenter: TRACKER_DATA_CENTER_DEV }
 }
 
 export const initTracker = () => {

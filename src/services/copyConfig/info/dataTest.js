@@ -178,11 +178,18 @@ export function getInfoExpectedResponse(supports) {
       },
     ],
   }
+  const recaptcha = {
+    formatName: false,
+    id: 'recaptchaPolicies',
+    name: 'CAPTCHA Policies',
+    value: supports,
+    link: '-',
+  }
 
   const rbaOptions = new RbaOptions(undefined)
   const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba]
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba, recaptcha]
 }
 
 export const getInfoExpectedResponseChild = (supports) => {
@@ -304,6 +311,13 @@ export const getInfoExpectedResponseChild = (supports) => {
       },
     ],
   }
+  const recaptcha = {
+    formatName: false,
+    id: 'recaptchaPolicies',
+    name: 'CAPTCHA Policies',
+    value: supports,
+    link: '-',
+  }
 
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions]
+  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, recaptcha]
 }

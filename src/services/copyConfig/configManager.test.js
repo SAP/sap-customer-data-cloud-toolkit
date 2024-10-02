@@ -42,6 +42,7 @@ import { getExpectedWebhookResponse } from './webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from './extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from './dataflow/dataTest.js'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from './rba/dataTest.js'
+import { getRecaptchaExpectedResponse, getRiskProvidersResponse, getRecaptchaPoliciesResponse } from '../recaptcha/dataTest.js'
 
 jest.mock('axios')
 
@@ -75,8 +76,10 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
     const response = await configManager.getConfiguration()
-    //console.log('response=' + JSON.stringify(response))
     expect(response).toEqual(getInfoExpectedResponse(false))
   })
 
@@ -331,6 +334,8 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, internalSchemaId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, addressesSchemaId, apiKey) })
 
+    const infoExpectedResponse = getInfoExpectedResponse(true)
+    disableFeatures(infoExpectedResponse)
     await executeCopyAllUnsuccessfully(mockedResponse, 37)
   })
 
@@ -512,6 +517,7 @@ function disableFeatures(infoExpectedResponse) {
   disableDataflows(infoExpectedResponse)
   disableWebhooks(infoExpectedResponse)
   disableExtensions(infoExpectedResponse)
+  disableRecaptcha(infoExpectedResponse)
 }
 
 function disableWebhooks(infoExpectedResponse) {
@@ -526,9 +532,15 @@ function disableDataflows(infoExpectedResponse) {
   disableFeature(infoExpectedResponse, 9)
 }
 
+function disableRecaptcha(infoExpectedResponse) {
+  disableFeature(infoExpectedResponse, 13)
+}
+
 function disableFeature(infoExpectedResponse, featureIndex) {
-  // the feature have their own tests, there is no need to add complexity to this test suite
   infoExpectedResponse[featureIndex].value = false
-  infoExpectedResponse[featureIndex].branches[0].value = false
-  infoExpectedResponse[featureIndex].branches[1].value = false
+  if (infoExpectedResponse[featureIndex].branches) {
+    infoExpectedResponse[featureIndex].branches[0].value = false
+    infoExpectedResponse[featureIndex].branches[1].value = false
+  }
+  return
 }

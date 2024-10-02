@@ -43,6 +43,7 @@ describe('Copy Configuration extended test suite', () => {
       cy.get('ui5-tree').find('[id="pdoubleOptIn-nextUrl-Link"]').should('not.be.checked')
       cy.get('ui5-tree').find('[id="pdoubleOptIn-nextExpiredUrl-Link"]').should('not.be.checked')
       cy.get('ui5-tree').find('[id="pemailVerification-Link"]').should('not.be.checked')
+      cy.get('ui5-tree').find('[id="recaptchaPolicies"]').should('not.be.checked')
     })
 
     it('should delete an added Target Site from the Targe Sites list', () => {

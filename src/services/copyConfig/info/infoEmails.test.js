@@ -20,7 +20,7 @@ import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
-
+import { getRecaptchaExpectedResponse, getRiskProvidersResponse, getRecaptchaPoliciesResponse } from '../../recaptcha/dataTest.js'
 jest.mock('axios')
 
 describe('Info Email Templates test suite', () => {
@@ -112,6 +112,9 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     const emailsIndex = 6
@@ -138,6 +141,9 @@ describe('Info Email Templates test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       .mockResolvedValueOnce({ data: topicsExpectedResponse })
     const response = await info.get()
     expectedResponse[6].branches.splice(templateIndex, 1)

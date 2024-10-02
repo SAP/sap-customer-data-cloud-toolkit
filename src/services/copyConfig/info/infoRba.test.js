@@ -21,6 +21,7 @@ import { getExpectedWebhookResponse } from '../webhook/dataTest.js'
 import { getExpectedListExtensionResponse } from '../extension/dataTest.js'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../dataflow/dataTest.js'
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../rba/dataTest.js'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../../recaptcha/dataTest.js'
 
 jest.mock('axios')
 
@@ -57,6 +58,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
     const response = await configManager.getConfiguration()
     expect(response).toEqual(getInfoExpectedResponse(false))
@@ -66,7 +70,7 @@ describe('Config Manager test suite', () => {
     configManager = new ConfigManager(CommonTestData.credentials, childApiKey)
 
     axios
-      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }) // Child site configuration
+      .mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }) 
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
       .mockResolvedValueOnce({ data: channelsExpectedResponse })
@@ -83,6 +87,9 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+      .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+      .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
     const response = await configManager.getConfiguration()
 
