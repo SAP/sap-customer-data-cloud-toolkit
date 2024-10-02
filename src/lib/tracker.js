@@ -5,6 +5,7 @@ const getCredentials = () => {
   const TRACKER_DATA_CENTER_PROD = 'eu1'
   const TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
   const TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+
   const IS_RELEASE = process.env.REACT_APP_USERKEY ? false : true
 
   if (IS_RELEASE) {
