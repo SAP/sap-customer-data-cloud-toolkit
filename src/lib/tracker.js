@@ -1,18 +1,23 @@
 import Web from '@sap_oss/automated-usage-tracking-tool'
 
 const getCredentials = () => {
-  if (
-    !process.env.REACT_APP_TRACKER_API_KEY_DEV ||
-    !process.env.REACT_APP_TRACKER_DATA_CENTER_DEV ||
-    !process.env.REACT_APP_TRACKER_API_KEY_PROD ||
-    !process.env.REACT_APP_TRACKER_DATA_CENTER_PROD
-  ) {
+  const REACT_APP_TRACKER_API_KEY_PROD = '4_wjgLxoy9B1oRh3zpBulDhw'
+  const REACT_APP_TRACKER_DATA_CENTER_PROD = 'eu1'
+  const REACT_APP_TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
+  const REACT_APP_TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+
+  // This variable is replaced to "false" on "beforeRelease.js" script
+  const isDev = '{{REPLACED_IN_RELEASE}}'
+
+  if (!isDev) {
+    return { apiKey: REACT_APP_TRACKER_API_KEY_PROD, dataCenter: REACT_APP_TRACKER_DATA_CENTER_PROD }
+  }
+
+  if (!REACT_APP_TRACKER_API_KEY_DEV || !REACT_APP_TRACKER_DATA_CENTER_DEV) {
     return null
   }
 
-  const API_KEY = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_API_KEY_PROD : process.env.REACT_APP_TRACKER_API_KEY_DEV
-  const DATA_CENTER = process.env.REACT_APP_RELEASE_BUILD ? process.env.REACT_APP_TRACKER_DATA_CENTER_PROD : process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
-  return { apiKey: API_KEY, dataCenter: DATA_CENTER }
+  return { apiKey: REACT_APP_TRACKER_API_KEY_DEV, dataCenter: REACT_APP_TRACKER_DATA_CENTER_DEV }
 }
 
 export const initTracker = () => {
