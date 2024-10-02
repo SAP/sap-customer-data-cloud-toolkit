@@ -7,14 +7,6 @@ const getCredentials = () => {
   const TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
   const TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
 
-  console.log({
-    IS_RELEASE,
-    TRACKER_API_KEY_DEV,
-    TRACKER_DATA_CENTER_DEV,
-    TRACKER_API_KEY_PROD,
-    TRACKER_DATA_CENTER_PROD,
-  })
-
   if (IS_RELEASE) {
     return { apiKey: TRACKER_API_KEY_PROD, dataCenter: TRACKER_DATA_CENTER_PROD }
   }
