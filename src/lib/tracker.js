@@ -1,23 +1,21 @@
 import Web from '@sap_oss/automated-usage-tracking-tool'
 
 const getCredentials = () => {
-  const REACT_APP_TRACKER_API_KEY_PROD = '4_wjgLxoy9B1oRh3zpBulDhw'
-  const REACT_APP_TRACKER_DATA_CENTER_PROD = 'eu1'
-  const REACT_APP_TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
-  const REACT_APP_TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
+  const IS_RELEASE = process.env.REACT_APP_IS_RELEASE
+  const TRACKER_API_KEY_PROD = '4_wjgLxoy9B1oRh3zpBulDhw'
+  const TRACKER_DATA_CENTER_PROD = 'eu1'
+  const TRACKER_API_KEY_DEV = process.env.REACT_APP_TRACKER_API_KEY_DEV
+  const TRACKER_DATA_CENTER_DEV = process.env.REACT_APP_TRACKER_DATA_CENTER_DEV
 
-  // This variable is replaced to "false" on "beforeRelease.js" script
-  const isDev = '{{REPLACED_IN_RELEASE}}'
-
-  if (!isDev) {
-    return { apiKey: REACT_APP_TRACKER_API_KEY_PROD, dataCenter: REACT_APP_TRACKER_DATA_CENTER_PROD }
+  if (IS_RELEASE) {
+    return { apiKey: TRACKER_API_KEY_PROD, dataCenter: TRACKER_DATA_CENTER_PROD }
   }
 
-  if (!REACT_APP_TRACKER_API_KEY_DEV || !REACT_APP_TRACKER_DATA_CENTER_DEV) {
+  if (!TRACKER_API_KEY_DEV || !TRACKER_DATA_CENTER_DEV) {
     return null
   }
 
-  return { apiKey: REACT_APP_TRACKER_API_KEY_DEV, dataCenter: REACT_APP_TRACKER_DATA_CENTER_DEV }
+  return { apiKey: TRACKER_API_KEY_DEV, dataCenter: TRACKER_DATA_CENTER_DEV }
 }
 
 export const initTracker = () => {
