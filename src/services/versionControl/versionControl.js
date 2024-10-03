@@ -43,11 +43,6 @@ class VersionControl {
     this.sms = new SmsConfiguration(this.#credentials, this.#apiKey, this.#dataCenter)
     this.channel = new Channel(this.#credentials, this.#apiKey, this.#dataCenter)
   }
-  async setContent(config) {
-    this.#cleanResponse(config)
-    const response = await this.policies.set(this.#apiKey, config, this.#dataCenter)
-    console.log('this was the response-->', response)
-  }
 
   async readFile() {
     const fileName = this.getFileName()
@@ -59,10 +54,18 @@ class VersionControl {
         let fileContent = await this.getFileSHA(filePath)
         if (file.name === 'policies') {
           const filteredResponse = JSON.parse(fileContent.content)
-          await this.setContent(filteredResponse)
+          await this.setPolicies(filteredResponse)
           console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
         }
-        const content = Base64.decode(fileContent.content)
+        if (file.name === 'webSdk') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setWebSDK(filteredResponse)
+        }
+        if (file.name === 'sms') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setSMS(filteredResponse)
+          console.log('filtered response....>', filteredResponse)
+        }
       } catch (error) {
         console.log('error', error)
       }
@@ -86,7 +89,6 @@ class VersionControl {
     }
   }
   async updateFile(filePath, fileContent) {
-    // const encodedContent = Base64.encode(fileContent, null, 2)
     let sha
     let response
     try {
@@ -192,7 +194,7 @@ class VersionControl {
         owner: this.owner,
         repo: this.repo,
         headers: {
-          'X-GitHub-Api-Version': '2022-11-28',
+          'X-GitHub-Api-Version': '2024-10-01',
         },
       })
       console.log('branches', branches)
@@ -214,6 +216,19 @@ class VersionControl {
     } catch (error) {
       console.error('Error listing commits:', error)
     }
+  }
+  async setPolicies(config) {
+    this.#cleanResponse(config)
+    const response = await this.policies.set(this.#apiKey, config, this.#dataCenter)
+    console.log('this was the policies response-->', response)
+  }
+  async setWebSDK(config) {
+    const response = await this.webSdk.set(this.#apiKey, config, this.#dataCenter)
+    console.log('this was the webSdk response-->', response)
+  }
+  async setSMS(config) {
+    const response = await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
+    console.log('this was the setSMS response-->', response)
   }
   #cleanResponse(response) {
     delete response['rba']
