@@ -66,6 +66,12 @@ class VersionControl {
           await this.setSMS(filteredResponse)
           console.log('filtered response....>', filteredResponse)
         }
+        if (file.name === 'extension') {
+          const filteredResponse = JSON.parse(fileContent.content)
+
+          await this.setExtension(filteredResponse)
+          console.log('filtered response....>', filteredResponse)
+        }
       } catch (error) {
         console.log('error', error)
       }
@@ -108,18 +114,23 @@ class VersionControl {
         branch: this.branch,
       })
     } else {
-      response = await this.octokit.rest.repos.createOrUpdateFileContents({
-        owner: this.owner,
-        repo: this.repo,
-        path: filePath,
-        message: 'FILE UPDATED/CREATED',
-        content: encodedContent,
-        branch: this.branch,
-        sha: sha.sha,
-      })
-    }
+      try {
+        response = await this.octokit.rest.repos.createOrUpdateFileContents({
+          owner: this.owner,
+          repo: this.repo,
+          path: filePath,
+          message: 'FILE UPDATED/CREATED',
+          content: encodedContent,
+          branch: this.branch,
+          sha: sha.sha,
+        })
+        console.log('File updated successfully')
+      } catch (error) {
+        console.log('this was the error', error)
+      }
 
-    console.log('File updated successfully')
+      console.log('File entered')
+    }
   }
 
   getFileName() {
@@ -229,6 +240,12 @@ class VersionControl {
   async setSMS(config) {
     const response = await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
     console.log('this was the setSMS response-->', response)
+  }
+  async setExtension(config) {
+    console.log('datacenter', this.#dataCenter)
+    const response = await this.extension.set(this.#apiKey, this.#dataCenter, config.result[0])
+    console.log('this was the setExtension response-->', response)
+    console.log('this was the config.result[0] response-->', config.result[0])
   }
   #cleanResponse(response) {
     delete response['rba']
