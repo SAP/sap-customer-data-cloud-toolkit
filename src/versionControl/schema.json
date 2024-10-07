@@ -1,11 +1,11 @@
 {
-  "callId": "7c42e700034743c1a49318765854e9c3",
-  "context": "{\"id\":\"schema\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+  "callId": "f7fea9f79e7d4948983eccfa340f136a",
+  "context": "{\"id\":\"schema\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-09-30T14:45:43.100Z",
+  "time": "2024-10-07T11:27:14.118Z",
   "profileSchema": {
     "fields": {
       "education.startYear": {
@@ -135,6 +135,7 @@
       },
       "birthYear": {
         "required": false,
+        "format": "1900-2050",
         "type": "long",
         "allowNull": true,
         "writeAccess": "clientModify"
