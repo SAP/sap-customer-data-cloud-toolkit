@@ -1,11 +1,11 @@
 {
-  "callId": "6429b86640df466ca7038467437ecb43",
+  "callId": "2f82f40a1cc24f679ea89754129aebed",
   "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-07T16:36:31.846Z",
+  "time": "2024-10-07T16:37:45.125Z",
   "Channels": {
     "WiFi": {
       "dependsOn": [
