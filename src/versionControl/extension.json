@@ -1,25 +1,35 @@
 {
-  "callId": "d97df0e0c76c4aa0abcfc8aed1ec3a29",
-  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_OeB5tcE_TxP3TA-dpWFc5w\"}",
+  "callId": "2075f4570107462cbc08c1aa6077eebe",
+  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-09-30T14:45:43.176Z",
+  "time": "2024-10-07T11:27:14.133Z",
   "result": [
     {
-      "created": "2023-08-31T09:08:57.8205297Z",
-      "lastModified": "2023-08-31T09:09:02.9763216Z",
-      "extensionFuncUrl": "https://f21b-62-249-8-147.ngrok-free.app",
-      "description": "",
+      "created": "2024-09-26T12:39:28.2872349Z",
+      "lastModified": "2024-10-07T09:07:05.9603517Z",
+      "extensionFuncUrl": "https://console.gigya.com/#/79597568/4_6Tv6z8O6NmUO_BZoHcXIRw",
       "timeout": 1000,
       "fallback": "IgnoreAllErrors",
       "headers": [],
       "integration": "Generic",
-      "id": "5f93e6e9876a424587977117d596cf82",
+      "id": "1b9fcc9f9916414a8128ab07ebcb4221",
       "extensionPoint": "OnBeforeAccountsRegister",
-      "friendlyName": "ExtesntionTest",
-      "enabled": true
+      "friendlyName": "testingExtension",
+      "enabled": false
+    },
+    {
+      "created": "2024-10-07T09:07:06.5468089Z",
+      "lastModified": "2024-10-07T09:07:06.5468089Z",
+      "extensionFuncUrl": "https://console.gigya.com/#/79597568/4_6Tv6z8O6NmUO_BZoHcXIRw",
+      "timeout": 1000,
+      "fallback": "IgnoreAllErrors",
+      "id": "ffe4b136393c47058547dd26b3e494f2",
+      "extensionPoint": "OnBeforeSetAccountInfo",
+      "friendlyName": "testingTool",
+      "enabled": false
     }
   ]
 }
