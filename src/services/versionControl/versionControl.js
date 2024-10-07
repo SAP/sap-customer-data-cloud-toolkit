@@ -68,15 +68,36 @@ class VersionControl {
         }
         if (file.name === 'extension') {
           const filteredResponse = JSON.parse(fileContent.content)
-
           await this.setExtension(filteredResponse)
           console.log('filtered response....>', filteredResponse)
+        }
+        if (file.name === 'schema') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          console.log('filtered response....>', filteredResponse)
+          const config = await this.setSchema(filteredResponse)
+          console.log(' config....>', config)
+          const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
+          console.log(' response....>', response)
+        }
+        if (file.name === 'rba') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setRBA(filteredResponse)
+          console.log('filtered response....>', filteredResponse)
+        }
+        if (file.name === 'emails') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setEmailTemplates(filteredResponse)
+        }
+        if (file.name === 'screenSets') {
+          const filteredResponse = JSON.parse(fileContent.content)
+          await this.setScreenSets(filteredResponse)
         }
       } catch (error) {
         console.log('error', error)
       }
     }
   }
+
   async getFileSHA(filePath) {
     try {
       const { data } = await this.octokit.rest.repos.getContent({
@@ -135,15 +156,20 @@ class VersionControl {
 
   getFileName() {
     const fileNames = [
+      //.
       { name: 'webSdk' },
       { name: 'dataflow' },
       { name: 'emails' },
+      //
       { name: 'extension' },
+      //
       { name: 'policies' },
       { name: 'rba' },
       { name: 'riskAssessment' },
+      //
       { name: 'schema' },
       { name: 'screenSets' },
+      //
       { name: 'sms' },
       { name: 'channel' },
     ]
@@ -230,22 +256,84 @@ class VersionControl {
   }
   async setPolicies(config) {
     this.#cleanResponse(config)
-    const response = await this.policies.set(this.#apiKey, config, this.#dataCenter)
-    console.log('this was the policies response-->', response)
+    await this.policies.set(this.#apiKey, config, this.#dataCenter)
   }
   async setWebSDK(config) {
-    const response = await this.webSdk.set(this.#apiKey, config, this.#dataCenter)
-    console.log('this was the webSdk response-->', response)
+    await this.webSdk.set(this.#apiKey, config, this.#dataCenter)
   }
   async setSMS(config) {
-    const response = await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
-    console.log('this was the setSMS response-->', response)
+    await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
   }
   async setExtension(config) {
-    console.log('datacenter', this.#dataCenter)
-    const response = await this.extension.set(this.#apiKey, this.#dataCenter, config.result[0])
-    console.log('this was the setExtension response-->', response)
-    console.log('this was the config.result[0] response-->', config.result[0])
+    await this.extension.set(this.#apiKey, this.#dataCenter, config.result[0])
+  }
+  async setSchema(config) {
+    for (let key in config) {
+      if (config.hasOwnProperty(key)) {
+        if (key === 'dataSchema') {
+          await this.schema.set(this.#apiKey, this.#dataCenter, config.dataSchema)
+        }
+        if (key === 'addressesSchema') {
+          await this.schema.set(this.#apiKey, this.#dataCenter, config.addressesSchema)
+        }
+        if (key === 'internalSchema') {
+          await this.schema.set(this.#apiKey, this.#dataCenter, config.internalSchema)
+        }
+        if (key === 'profileSchema') {
+          await this.schema.set(this.#apiKey, this.#dataCenter, config.profileSchema)
+        }
+        if (key === 'subscriptionsSchema') {
+          await this.schema.set(this.#apiKey, this.#dataCenter, config.subscriptionsSchema)
+        }
+      }
+    }
+  }
+  async setScreenSets(config) {
+    for (const screenSet of config) {
+      console.log('screen-SET', screenSet)
+    }
+  }
+  async setRBA(response) {
+    if (response[0]) {
+      const result = await this.rba.setAccountTakeoverProtection(this.#apiKey, response[0])
+    }
+    if (response[1]) {
+      const result = await this.rba.setUnknownLocationNotification(this.#apiKey, this.#siteInfo, response[1])
+    }
+    if (response[2]) {
+      const result = await this.rba.setRbaRulesAndSettings(this.#apiKey, this.#siteInfo, response[2])
+    }
+  }
+  async setEmailTemplates(response) {
+    this.#cleanEmailResponse(response)
+    for (let key in response) {
+      if (key !== 'errorCode') {
+        const result = await this.emails.getEmail().setSiteEmailsWithDataCenter(this.#apiKey, key, response[key], this.#dataCenter)
+        console.log('resultEmails', result)
+      }
+    }
+  }
+  #cleanEmailResponse(response) {
+    if (response.doubleOptIn) {
+      delete response.doubleOptIn.nextURL
+      delete response.doubleOptIn.nextExpiredURL
+    }
+    if (response.emailVerification) {
+      delete response.emailVerification.nextURL
+    }
+    if (response.callId) {
+      delete response.callId
+    }
+    if (response.context) {
+      delete response.context
+    }
+    if (response.errorCode) {
+      delete response.errorCode
+    }
+    delete response.statusCode
+    delete response.statusReason
+    delete response.time
+    delete response.apiVersion
   }
   #cleanResponse(response) {
     delete response['rba']
@@ -261,6 +349,9 @@ class VersionControl {
     if (response.preferencesCenter) {
       delete response.preferencesCenter.redirectURL
     }
+  }
+  #getScreenSet(screenSetID, response) {
+    return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 }
 export default VersionControl
