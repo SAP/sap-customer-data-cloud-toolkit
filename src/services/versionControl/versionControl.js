@@ -52,45 +52,45 @@ class VersionControl {
       //Set condition to check if the file.name is equal to a service do the each set individually
       try {
         let fileContent = await this.getFileSHA(filePath)
-        if (file.name === 'policies') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setPolicies(filteredResponse)
-          console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        }
-        if (file.name === 'webSdk') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setWebSDK(filteredResponse)
-        }
-        if (file.name === 'sms') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setSMS(filteredResponse)
-          console.log('filtered response....>', filteredResponse)
-        }
-        if (file.name === 'extension') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setExtension(filteredResponse)
-          console.log('filtered response....>', filteredResponse)
-        }
-        if (file.name === 'schema') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          console.log('filtered response....>', filteredResponse)
-          const config = await this.setSchema(filteredResponse)
-          console.log(' config....>', config)
-          const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
-          console.log(' response....>', response)
-        }
-        if (file.name === 'rba') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setRBA(filteredResponse)
-          console.log('filtered response....>', filteredResponse)
-        }
-        if (file.name === 'emails') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setEmailTemplates(filteredResponse)
-        }
+        // if (file.name === 'policies') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setPolicies(filteredResponse)
+        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+        // }
+        // if (file.name === 'webSdk') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setWebSDK(filteredResponse)
+        // }
+        // if (file.name === 'sms') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setSMS(filteredResponse)
+        //   console.log('filtered response....>', filteredResponse)
+        // }
+        // if (file.name === 'extension') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setExtension(filteredResponse)
+        //   console.log('filtered response....>', filteredResponse)
+        // }
+        // if (file.name === 'schema') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   console.log('filtered response....>', filteredResponse)
+        //   const config = await this.setSchema(filteredResponse)
+        //   console.log(' config....>', config)
+        //   const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
+        //   console.log(' response....>', response)
+        // }
+        // if (file.name === 'rba') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setRBA(filteredResponse)
+        // }
+        // if (file.name === 'emails') {
+        //   const filteredResponse = JSON.parse(fileContent.content)
+        //   await this.setEmailTemplates(filteredResponse)
+        // }
         if (file.name === 'screenSets') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setScreenSets(filteredResponse)
+          console.log('filtered filePath....>', filePath)
+          console.log('filtered fileContent.content....>', fileContent.content)
+          await this.setScreenSets(fileContent.content)
         }
       } catch (error) {
         console.log('error', error)
@@ -292,7 +292,7 @@ class VersionControl {
     }
   }
   async setScreenSets(config) {
-    for (const screenSet of config) {
+    for (const screenSet of config.screenSets) {
       console.log('screen-SET', screenSet)
     }
   }
@@ -353,6 +353,7 @@ class VersionControl {
       delete response.preferencesCenter.redirectURL
     }
   }
+
   #getScreenSet(screenSetID, response) {
     return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
