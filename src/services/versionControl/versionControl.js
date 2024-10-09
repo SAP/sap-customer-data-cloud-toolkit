@@ -52,7 +52,7 @@ class VersionControl {
       //Set condition to check if the file.name is equal to a service do the each set individually
       try {
         //src/versionControl/screenSets.json
-        let fileContent = await this.getFileSHA('/src/versionControl/screenSets.json')
+        let fileContent = await this.getFileSHA('/src/versionControl/schema.json')
         // if (file.name === 'policies') {
         //   const filteredResponse = JSON.parse(fileContent.content)
         //   await this.setPolicies(filteredResponse)
@@ -169,7 +169,7 @@ class VersionControl {
       { name: 'riskAssessment' },
       //
       { name: 'schema' },
-      { name: 'screenSets' },
+      { name: 'sets' },
       //
       { name: 'sms' },
       { name: 'channel' },
@@ -189,7 +189,7 @@ class VersionControl {
       { name: 'rba', promise: this.rba.get() },
       { name: 'riskAssessment', promise: this.riskAssessment.get() },
       { name: 'schema', promise: this.schema.get() },
-      { name: 'screenSets', promise: screenSet },
+      { name: 'sets', promise: screenSet },
       { name: 'sms', promise: this.sms.get() },
       { name: 'channel', promise: this.channel.get() },
     ]
