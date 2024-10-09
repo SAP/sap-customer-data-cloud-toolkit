@@ -178,7 +178,7 @@ class VersionControl {
 
   async getResponses() {
     const screenSet = await this.screenSets.get()
-    console.log('dasdasda', screenSet.screenSets)
+    console.log('dasdasda', screenSet)
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
@@ -188,7 +188,7 @@ class VersionControl {
       { name: 'rba', promise: this.rba.get() },
       { name: 'riskAssessment', promise: this.riskAssessment.get() },
       { name: 'schema', promise: this.schema.get() },
-      { name: 'screenSets', promise: screenSet.screenSets },
+      { name: 'screenSets', promise: screenSet },
       { name: 'sms', promise: this.sms.get() },
       { name: 'channel', promise: this.channel.get() },
     ]
