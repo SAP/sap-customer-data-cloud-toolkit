@@ -51,7 +51,8 @@ class VersionControl {
       const filePath = `src/versionControl/${file.name}.json`
       //Set condition to check if the file.name is equal to a service do the each set individually
       try {
-        let fileContent = await this.getFileSHA(filePath)
+        //src/versionControl/screenSets.json
+        let fileContent = await this.getFileSHA('/src/versionControl/screenSets.json')
         // if (file.name === 'policies') {
         //   const filteredResponse = JSON.parse(fileContent.content)
         //   await this.setPolicies(filteredResponse)
