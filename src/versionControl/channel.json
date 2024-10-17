@@ -1,12 +1,25 @@
 {
-  "callId": "bc04178b0f5545bdbe2c19df2ab543bf",
-  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_6Tv6z8O6NmUO_BZoHcXIRw\"}",
+  "callId": "39192ab0ea9b424f93561b9011ea5491",
+  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-17T14:26:54.717Z",
+  "time": "2024-10-17T14:35:20.984Z",
   "Channels": {
+    "WiFi": {
+      "dependsOn": [
+        {
+          "fieldID": "firstName",
+          "required": true
+        }
+      ],
+      "description": "You can send campaigns using WiFi",
+      "doubleOptIn": {
+        "validationType": "external",
+        "expiration": 336
+      }
+    },
     "SMS": {
       "dependsOn": [
         {
@@ -30,19 +43,6 @@
       "description": "You can send email campaigns via this preconfigured channel",
       "doubleOptIn": {
         "validationType": "emailLink"
-      }
-    },
-    "Testes_turn2": {
-      "dependsOn": [
-        {
-          "fieldID": "lastName",
-          "required": true
-        }
-      ],
-      "description": "description aoasjdoaNF DASDFASDMFAÇSA ",
-      "doubleOptIn": {
-        "validationType": "external",
-        "expiration": 336
       }
     }
   }
