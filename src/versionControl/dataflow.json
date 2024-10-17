@@ -21,89 +21,7 @@
           "id": "account",
           "type": "datasource.read.gigya.account",
           "params": {
-<<<<<<< HEAD
-            "select": "UID,profile.email,profile.firstName,profile.lastName,profile.userName,data.mailchimp.subscribePlatformUpdates",
-            "from": "accounts",
-            "deltaField": "lastUpdatedTimestamp",
-            "keepFieldNamesWithDotAsIs": false,
-            "batchSize": 300,
-            "maxConcurrency": 1
-          },
-          "next": ["rename"]
-        },
-        {
-          "id": "rename",
-          "type": "field.rename",
-          "params": {
-            "fields": [
-              {
-                "sourceField": "profile.email",
-                "targetField": "EMAIL"
-              },
-              {
-                "sourceField": "profile.firstName",
-                "targetField": "FNAME"
-              },
-              {
-                "sourceField": "profile.lastName",
-                "targetField": "LNAME"
-              },
-              {
-                "sourceField": "profile.userName",
-                "targetField": "UNAME"
-              },
-              {
-                "sourceField": "data.mailchimp.subscribePlatformUpdates",
-                "targetField": "newsletterField"
-              }
-            ]
-          },
-          "next": ["remove"]
-        },
-        {
-          "id": "remove",
-          "type": "field.remove",
-          "params": {
-            "fields": ["profile", "data"]
-          },
-          "next": ["mailchimp"]
-        },
-        {
-          "id": "mailchimp",
-          "type": "datasource.write.mailchimp",
-          "params": {
-            "apiUrl": "https://<dc>.api.mailchimp.com/3.0/",
-            "apiKey": "********",
-            "listId": "",
-            "newsletterField": "newsletterField",
-            "retryIntervalSeconds": 10,
-            "maxRetry": 30,
-            "timeout": 120,
-            "maxConnections": 10
-          }
-        }
-      ],
-      "version": 1,
-      "createTime": "2024-10-11T15:08:56.804Z",
-      "updateTime": "2024-10-11T15:08:56.804Z",
-      "updatedByEmail": "g.lopes@sap.com"
-    },
-    {
-      "apiKey": "4_lmz9vRjSv9-0hg1oPajsmA",
-      "siteId": 116859446169,
-      "id": "6a0b36de75e2466e9503587fa69760d2",
-      "name": "Marketo_Dataflow_Outbound",
-      "status": "published",
-      "description": "account > rename > remove > marketo",
-      "steps": [
-        {
-          "id": "account",
-          "type": "datasource.read.gigya.account",
-          "params": {
-            "select": "UID,profile.email,profile.firstName,profile.lastName,profile.likes",
-=======
             "select": "UID,profile.gender,profile.age",
->>>>>>> d8a3e368cd28c11ef75e0cb6e536e84a17b5c7f5
             "from": "accounts",
             "deltaField": "lastUpdatedTimestamp",
             "keepFieldNamesWithDotAsIs": false,
@@ -135,9 +53,7 @@
               }
             ]
           },
-          "next": [
-            "krux"
-          ]
+          "next": ["krux"]
         },
         {
           "id": "krux",
@@ -148,9 +64,7 @@
             "quoteFields": false,
             "separator": ";"
           },
-          "next": [
-            "lzo"
-          ]
+          "next": ["lzo"]
         },
         {
           "id": "lzo",
@@ -158,9 +72,7 @@
           "params": {
             "createIndexFile": true
           },
-          "next": [
-            "s3"
-          ]
+          "next": ["s3"]
         },
         {
           "id": "s3",
@@ -200,9 +112,7 @@
             "sortBy": "time",
             "timeout": 60
           },
-          "next": [
-            "parse JSON"
-          ]
+          "next": ["parse JSON"]
         },
         {
           "id": "parse JSON",
@@ -210,9 +120,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "sharedvariable"
-          ]
+          "next": ["sharedvariable"]
         },
         {
           "id": "Import Lite Account",
@@ -240,9 +148,7 @@
             "addResponse": false
           },
           "next": [],
-          "error": [
-            "Format Error File"
-          ]
+          "error": ["Format Error File"]
         },
         {
           "id": "Format Error File",
@@ -252,9 +158,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Save errors to SFTP"
-          ]
+          "next": ["Save errors to SFTP"]
         },
         {
           "id": "Save errors to SFTP",
@@ -272,9 +176,7 @@
         {
           "id": "sharedvariable",
           "type": "datasource.read.sharedvariable",
-          "next": [
-            "Import Lite Account"
-          ]
+          "next": ["Import Lite Account"]
         }
       ],
       "version": 1,
@@ -301,9 +203,7 @@
             "batchSize": 300,
             "maxConcurrency": 1
           },
-          "next": [
-            "rename"
-          ]
+          "next": ["rename"]
         },
         {
           "id": "rename",
@@ -376,9 +276,7 @@
           "params": {
             "fields": ["profile"]
           },
-          "next": [
-            "dsv"
-          ]
+          "next": ["dsv"]
         },
         {
           "id": "dsv",
@@ -394,16 +292,12 @@
             "lineEnd": "\n",
             "createEmptyFile": false
           },
-          "next": [
-            "gzip"
-          ]
+          "next": ["gzip"]
         },
         {
           "id": "gzip",
           "type": "file.compress.gzip",
-          "next": [
-            "sftp"
-          ]
+          "next": ["sftp"]
         },
         {
           "id": "sftp",
@@ -445,9 +339,7 @@
             "sortBy": "time",
             "timeout": 60
           },
-          "next": [
-            "parse JSON"
-          ]
+          "next": ["parse JSON"]
         },
         {
           "id": "parse JSON",
@@ -455,9 +347,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "sharedvariable"
-          ]
+          "next": ["sharedvariable"]
         },
         {
           "id": "Import Lite Account",
@@ -485,9 +375,7 @@
             "addResponse": false
           },
           "next": [],
-          "error": [
-            "Format Error File"
-          ]
+          "error": ["Format Error File"]
         },
         {
           "id": "Format Error File",
@@ -497,9 +385,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Save errors to SFTP"
-          ]
+          "next": ["Save errors to SFTP"]
         },
         {
           "id": "Save errors to SFTP",
@@ -517,9 +403,7 @@
         {
           "id": "sharedvariable",
           "type": "datasource.read.sharedvariable",
-          "next": [
-            "Import Lite Account"
-          ]
+          "next": ["Import Lite Account"]
         }
       ],
       "version": 3,
@@ -542,9 +426,7 @@
             "pgpKey.importedPrivateKey": "LS0tLS1CRUdJTiBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQoKbFFjWUJGMEhuYkVCRUFDeVh1K3pCc2p2L3lJaTZBWEhQZy9PNW9lZ0RlQ000TGgzMWNsTDFYYytCdHVhUG9QdApLVURyS0F1YUdUOHJ4MzRpc3hMWHZib0k1RUVPejU3eVRFcVg4TExxWnZWOFNWRWVLVXcxNVlYSlZKRVQ4RVlyClU1dE5lbytGaWo3dXpRMFh1d2tCUzhqcTBERnBUVHl5dXN2a3h0bWVjZ0FvOWtxZUNCZjhBd1dBMEl6YkZqbU8KUm1QWEkwY2JjMllqZVV2dVlJMjl1TmtoTG1DOVRVQ3FPYzBZU2gyQ1lWemt4QWYxeXRlTmdQbUJFZ0UwVjZhYgppQzBYZUhEQUkzdGd2cVdnNDZPK1hTQ012U3JVZ3V1d2l0aW5rTm1weUlrWnZxb1hPZFJrQTdIQnJnNVVUalRDCjhTOS95RzJRd2pzb0VLUUZsYVhzNjc2SXUwcGkzNitZdER1bmJzSE5WZm5xK2kreWRxRHJpT0Q2YUZqVzRBVWEKdjUzcDlSUEFxMnQ3QlZzdEpJYnh1dk1kUXAySThKdDFtdjVxU3hyQTlWU3lPQTFxTHFJeDR3eE9LdEZYV2VyYQpxZlZEWld0bUtDZEMrT0RKZ251RzB3U0ZEMkRWNlhzd2EzZHVyeEpOUWhGaXNiaU1ySU42YXNHc0lOVlJvWDZhCndYUThFNitnMk43Sm4rQnh6ZDQ5ZWdodWd5NnR0eCszY20wSUNpWFU1SUU2cmVXZzU1RVNnMXc0OEtwdUplbTMKNk1oVFBFMHJLMmNHNnpuRWVFdEdHRU84cXFwbUQ1Y25lM1cyUXRoSS93blU0eGoraUlyWldDUmwrWGZHZXNsWAo2ZDQ1TEk2QStwaUxkZGlXVElhWUs0NTh1a1Zxa3k0UVJuUmVaak92c2w2NG1ZRnQxT2J5aUloZXN3QVJBUUFCCkFBLzhDMnpYcDF6UlpSeXZWK2kxdjEvaklsVVRnelhiQXNXOWV5RGgvbTREYjh2VS9YOGJTSWNpY0kyYTcwN0cKV1pjSWUzb3Q3dmRvOXZzcjRhSW5PUXp0b0QyR01FdlNWZTR2b3lJYnVXaTZGajNJOXl2UTlYaUFVNTVSOEIzOQpUdmdxYWx2aGIvTDdRUjNVZEdnWDhialRxT2xGeWpJeUtXMkdpbDNVQk12cXY5S3hSYktaa3RxV1l1ZzdFZS9sCkx4NHN0aGhRSysxWnJHMlhPN2psaktIRzJIM3kxWnJ5bU0xU1Z6VHhjL3BsYTVZMjBUUDdhTmlpK1c4T1d5TDEKV3YvZ2hicmZEbFA5RlphNUFNTmhZUk1HWFV3Q3dvUjZVbFdyVG5FMnExdFlqazB5LzIvQ1RiNzdmeEN4clVVMgpXeWdmRENQY1FoM2k1cDR4M2IzSE5uTDJUblZKOVpML2dhRXJRNUhGWDA5a2JPUzRSTWVQbzY3K1JLckowZ2F6CmZoYjdsNUlIdHdpajg1NVIxWWlyWGtQd0lxcEVIaXQ3Q2U1RWtRTEk4Nm42QnNJdHpnM3ZWKzcrTmFjS0RGRDQKK3BwTnhaYUYxdGFsWGo5N2NIS1hjOTNKNDhmc2NoYWNJekZVa2JLbjJZMGI0c2EvVWVMUHM4Y2drWkhuT3R3egppOEZ3M1o2RHVWSEdKbzdKdmJlMnFzdXdsQjFXZHprVUxEdzl5OUJvSjlTTTJhT1hsVWpQOFl6Um1ROVhkWXJQCmg0MGFuUURsN2lxT3RoNHVQSjgzZGI0ZHdPY1M1K0FGNTZlcitwZ3hpeE14ZzI1V1lEbWxMQXlHV2JqMDBXcGYKTndibDlwU3BRdmxvQnUwd1MrVlgwKzFqZEVlMVZ4SFF4bFNZenNReHJKTU9Xd1VJQU1pcEpqUjQxVXA1LzNGawpxc0hOS29BSndzakQ0TFpLeTRrWVJCUElHMXhDL3VtdlFFK3luL0VxczdvYm9raVU5aDBoWUJ5OXF5c2trK2pICldhZ0NTQjAyU0pNK25mSVcxazhVWTRnSHJBd3hJSC9BY1dtSUlLZmZYb1VzMENYMGhsdEUyTGxaS2pWd0hEdkoKbTJSbG8yeU5McHVtSkd0TCtGU3QveTVRTEY3VlNYck1HaDA1YVE1OGZORDFhcG5yKy9tekE1bkdIMFNUeEU5agorellpM3Axak91UkVUZmE1cWl6anJhNGZGVWlJeWFRdThpakRaUGNUUVBYTTBaK1pBMTJFUlFNbFBzK1ZZWlFECndkMXl2RUFmK0JsMG1KNFBzb2VKdHF3TElvZHFhV1lUS0VzeG5lbU43TTdMaDJzdWRsQ1c4MFh0a2owc3NZNmIKWXNmdUd0MElBT09RR1Jvai9zbFJ2ZzV2ODhUNElOMWtvRXI3OUZnWk1kb1VURS9vN2FjWjlMN0E1c25qdWp3UgpBM2dLNXpHelBPeVAxdW80ellEdWMycStBSjNQcXdoTDFleXNCWWNWVFg0Y3F1M3c3Qkk5VW5UbG9ObytHb3FyCi9JN3VCaThGNys1a2w3K3ovb3JwelAxc1RCdHNVRUs1V0YyVFdobnN2aGR4OVRWSDNZLzFuY3Y5dFdEWWVWR1gKZ0FTcUI3L2xCWkI5UmNkTDl4Y3haUU5ZeitoVFQyeEIvbDZXNDBSZHc0cUJ2UVNoV3NpcUFESEdsS1o3QysrSgpSZUhreU5iWFljUndhQnA2eExiS1NZeWM3WW5YMU03YUFMc3licGVpMkxDWHowNWNpWm9FNkl6UWRhamVEZlByCjNHK2Z3WXhUbU9yZ0pabmYwUUx1TUhWNFJFSzUzczhJQUs5cGNOQ09EODZxZGtrRmlGaWEwZ2tSZjRTTjBGK3IKZzJFT3F4UkJ5VlRoRzdUVTRVcEgrN0oySFlyV1ErVjg5b05oZjlIcTNKMXlEN1Z4Q2Q5UGRlVTBVTEJ3YTFEVQoyVGdHZ3kzVEgvcFQ5Zjl3MUpOd2lQZjZOODNUQTFGUG03R1hBVlhaMXRsYTZiMGE5T1NWSXQ0cVpMRXRIZnNpCllJN1pWSVFpL0ZiVXF2WnRBSzB6VnRZaFdUVDdPalVzQ2owbWNNNmJBRHhlZ1ZSRTNyTjJ0VGJxemRiR1U0ZTYKVmU2UDdWMmlUbUtkSWNBZVAzVFBZQzMyNEdCck1zUC8rdWZReWQ4RkY3U1paWlUrKzI0TUJRMlUwejBpdUxVbgo5WGRKZGR0dVVwUFZoeUdLc29XaVB3cTltK0ovMFRoaUxTOUJKdkJoa3M4K0ZTMVdIRjBtSU9hVW1MUWRRMGxCClRTQkpiWEJ2Y25RZ1BHTnBZVzFBYm1WemRHeGxMbU52YlQ2SkFrNEVFd0VJQURnV0lRUW51MlMzdjZxSGY1SVYKd0JzcTBjTnF4TU84NmdVQ1hRZWRzUUliQXdVTENRZ0hBZ1lWQ2drSUN3SUVGZ0lEQVFJZUFRSVhnQUFLQ1JBcQowY05xeE1PODZ0UGdELzBiVFZxeGk2ZnFVVmpoMGp6QlVvVUFRRWtHTGlQU1RVYnpxTjZtbGJZb3UrTXFJT1NTCkZiOTNnQ2luMVBHbitUdkNNOHJ5WW9JZkNVc0Qzckh0d1ZvRG5PbzMvaFBnWHhpcEJRTkdxMHovK2lsZ2hVdUwKWHovRlNhVkQ3RlJOSnYzbzdFUGk5K1oycUFFMGEvaFpDZXhBQlZtRnZGeml6dlRzYlh3dlZkbHFiUVR3K0gxQQpGbnFmZ2FjbnQ4SHFVVTBqYzF4cHh5U2dISVJBYWh1ZXVFaFhnZVhMeE1OcjZ1aHZqTXVydE80QTdJRDAxdGZPCnJKR1NPbXdEVndaNitVWVYrWE5CeFUyZWxWaXdhbXR1RWlWdXJwYzVYM3BJZ1ZlOEF3b3l4SmlIRkI4S3dpZkoKU1I3YlJ0VG16RzlFenN3NkcvSTdrZDBWVDJiZC9GcE1hU2l1Ulk5SllsOGNkcW9tYVNoKzNWWE9Ibnl1cjNXQQpUS2hYZjZjQ1dhUFpyNmJ0R3RPZXFIdFYwcXVMSnBYNDBjRi9GOU9MS0RFeU5mNWl4UGx1WW13d3dBaXBRVXBSCi96SGNFalUrU0xzVHRhcmhuTnRDUWk3MkVNUFIxVkxFdHVjdU1iT2VvNUx1dGhKM1VWM2FsTndKeWNEYVFmUG8KZUJCbGFneFhkcFZEVmw2TWkyQ1RSNTF0aitzOWs2NEROR0k0NU9KRHVPbElMUDFYYTRNTE5OMmhPKzlKZk1JYQp5aVpoUmx5R3BDR3pvOFFwdzU5NHB4MXJ4ZVEvYmN0WTduWU1KbkRKQ3pEV2E4aWRkSnJTMS9VSmlGVTFjeGtBCms0LzhtZXBSYUQ4bXhMV3UrNEFyMzFNOUJWOFNjNk5nU2ROcWhyQnpMSkxDTzVZMjNFVXpSOVVNMDUwSEdBUmQKQjUyeEFSQUF6bFJLc2ZqZVlUQzhvblNzRGV1ODNNU0JEWTJldXdUcS9EYSt0clFFbkEraWFpNHRLSXNhRHQ3aQp1SGtlMnFLR2VaOUN3eG9VZVJKZ1JRN1hwWEhoeGhpbTJsSytLZUNzZVJtdnY5R01wZThob054OXRkako2TWxTCmtvRVhxZHZ1d0dUcGNGZjFtWjJPVzVYK3daNUpuaU05UGVJYlVPVGp5NUxGRUg2bmhTYzRPV1lVL2tSdlRUQmUKZkRLc0lMa3Jucm5nSkVRTExIcjhQeUtISlRQYWJ0aXg4TUNIK0tpWloyOUNzL3JUd2U0ODhEaHBBZVRSbWgwTQp2Ni9MOHZSNHZHeXQ1R1R0ZmdHSzUzTDRCaDluVWZ5UkdGa25OMllqM3JlcGRWVHJUdnJIdFdONzlwMCtlYUUzCmZVRm9uWlVqc1pXd1BwS3hKZytKOVN4NWNUZ2ZydCtDd1RDdi80bVRCcUE0bmdraTZrYjBqZWc2WHZNRzhpVS8KTnFCeXlxdTRxMnQzOHFlNTA3VUFvTVJtTm5tajN1ZWhGTEFEWXdQMmVOaXNQSFhZc1VCQm8yZExaQkZ0QnpHRAora2Vub1Z2UE5CQ2V0Y21tbXNpSlRMT3dBNzFNU2ZOMlpVTVYxbEZtOUM2Y1V5aE1BODNYdWhhdENnQzdLcnpiCllHaUxGdS9WOGowQlFveWJjM0FhVVc2UUkvWlNNRUx1LzJGTndPRHRGbU5CVzdJUVpXb3NsdEsrcXU2L3I0TmYKZldmelZzaVYyMHZ6YURJSCszaXUyUDI2dmRPbFFJMUthRDVocjNWZG1vTU5lU3FGb2hiOVRqSC82RkFDcElPNgpHS1JrVktLNWpscWY5R3VkTTRZckZBVGVMUWY0Mzh0dUszMVhjS3d3Y2R3NWJEQXpyZFVBRVFFQUFRQVArUUVnCkhaNXJqcFZJb21oUXJaR0EzdTdXejN2d1RwdjYrQmsrU1paek1kQStDT1crVmRwZ3lBVFJab2wybzlNQXEvelgKV0xtaGNwMVZUQjJpZUtZb3ZydGttbUNMcndraHRqMUk4WE1JVDh1NXIzTXRiYVF4RkdaQXd3ZVA1WUx2bGRDUApSUGhTZHg3YnQyZU4xVVFWaHd2WmtTcU1NTDlnZ0kzNlVDODNMUWZLQ21HYko4NjhqN1lEMDR3ZEUzM3dSN1pFCkViY3NubUdGM2RTUXQyWlpFY1dnSVdTQVJ0QU9lV0NDaW5PVnJuL25OZktkYTlsZHFTMlJXcnAzb3hNUUs3NEsKbXk1TG5jdDdRZDFyMVM0V1N2VWVncFl0MFQwS2ZKRzN6UVM4ZFk2cWpyZTlqa2JDWXU3ZnBJQS9PK0R5eVZTZApQeCttdHljQXRSNTFDRWdxaDYrejV5WCt0dlJub1F5V2tBN0k1ZExEaHN0RW5McFozUW1Ec3V5WjVwZDRDS1BOClVacGU1di8wRDQ2dW1iQUliM1I1bEt2b1V2K1UwYVVXZDJJcDVEdER1VTd0OWk3L090a09RS2RKU25xSlJMOFkKd0VIWFdvcU1UVHA3U1dBMHo2Q29HSm43cDhHQ1RNUDdsQlUwWjdHUkFuaUljVVc5YnN4MkcvQUc4S29QVWF6eQpPUjVkVzFiUVpNY003S2xWRVVyZkowYzFCWGFGOVhkellFWW12QnFaYzUyR0Jrd0g1bFRKYkt2dWtLazF0MmVBClluWmJ3Rm9CeFQ1UVlSS3NTOFVsSWhFYnFkd1JicURwSk1oTzZwVEFFNFpLWEozUzR6cUJSN3NJN09KT0VNUC8KVGxiblZXeFN2cWVvdDdVYmpVQUFSSjgwcXA3b3dUT010cVdqcmxOcENBRGRnM2ExODVZejZMcGxYeWxlUG1KMApLWEEzQUtEcGtmV3hXcGpBRzhFaEtKYzcvNWdvZGtXZFdsUkR4eVpETEVEMGU2VG92MlN3bEdHeHlqUURjQXNNCkdxZ3hDd09QcWhsRjhLcjhxTkc5OEFNMllVd1ppVE5xalVRMEdZaHpXU1MzOGloSGtnYkpvcXc1cU1URnlmVXgKSG9pUkl2V25BandFRFVqL1RtRUdCRXI0YmtFUDZtWFFEZlR4d3BISnh2cUdFNVRGc2c3d1NibGpiSFBRRVRDNQpzbVl0QnF2Z1l5THMvT1p0N29iSDI4YzdLd1QwK0tjY21UVnl6bWF4b3RqRkNsMzFOMDRXTWdEdmhPV3JzTFd0ClBJQy9kNkhZVllENVUxeWllM1NnSjQyd2NtaXpldUlkTTJwREF5Zk0zVzI2K2xZZ3ZZeE11cGFnU2dTYjBmNVoKQ0FEdWM2YThwOEJNR1hHMGNjaEQ4UXNlZTJOT1VpaDdJQVV4b0hQcWE1OXNpNmJlWWRiSUp6aFZxMDJXYnJaVgpmVkJWeUp4Y0xTR2ttUFJUbDZSbjcxSHBpbTBkdlZzdkpZazRKYXlDNWJTTE02Tm9Ccyt5Z3o4RXkyVkxXQm4wCmlKQVFVck5EQXRpWDZyL1RoYW1wUlRpSjhKZnlxc1E3WHFPZll0MWVhZEFGdnBHZlpJdmxOYkJnV0I0UlY5R3cKbDhJTnlDUENSK3NKc2laZXRWenZXZ0tzS2h5K1hGV1E1NTVuWHdQOC91MlAxQXdKVVNGMndBcGpRbUNZQkxGRAo3Wi8va2dQWFREUG96T2lxRTdRZG5WK2ZxalBQY215eHlGRjJiZFhUNDFiWEErNW9UU2NsTklJUm1qV01LTW92CmZWTGZXZktuYUtITE9mcmNEZVBlRHBQZENBREFJSC8ra2tjUklnd2lhYmZXSGRKK1NhQ3ZHUG5ONkJNNHczODAKQVcxOEp2MGo3b2V6Y0ZSWjZSejQzYzZYVzh0Q2ZVT2cyb2ZCU1EyeDZEd3BSb3VlZkJ4TVQ2a2lPRlFjb3duZQpXVVRLbkJUR092Um1wRElhbkhocWZGODNhenQ5djF5TlRZc2dnNVFSNnlqWm13ZGZxVnJmWnNOMU04bzRqUHFBCnI2U1Azb05SZlM5RElzUjVubXVhYy9HSE80QnRaRkszeHpzUTFVL05md2hoSlFubTZvVE9rUEVQeWN6S2dZK1QKWTVrU0Nrb3RhQUhxZi8xMklSYVNieEdzeFBZNVpsc0tEazBkWEx1bWVtTFN0YlE3Y2pucThJbTdUZHJvdy9FNgo5dm9HOWJFeFZwTEIxSk9DeXdiZ2RobldEOFhlWGNma0lWczNGUUtvSDcwNUNDYjZkak9KQWpZRUdBRUlBQ0FXCklRUW51MlMzdjZxSGY1SVZ3QnNxMGNOcXhNTzg2Z1VDWFFlZHNRSWJEQUFLQ1JBcTBjTnF4TU84NmlNMUVBQ0wKV093Q1JyTFRuR2U2WTNpZ0hBdU9HelpPVW5NSGFNc1o5aFgvZlE5MjlYTFdTeGNhZDVsVE9SVkErS05wOTViQQpVRGpUZlZGZWE2aUoremYyZ1dqTTJ2SzlmbmJKbFRHUWRIVk42Ynd5am9GR0ZjWnZLTmJvVmJhdTZWRDFRTGlVCld5WWF5eVUvR1NCaFkyRTJBbEFUWFFoZkYxT1JYYWx4L0F2ZzZYNS85bk5oVjdObjF0bU0rdXFFdDJvdlJrRmgKWTBFMi9XWS9icFIrYlozckdtbHVvZVZtWE43Z0ZUZEduY08rS0d4SnFUQUJzV3M5UlJ0RzY2dTYydTM1bWpYcgpqY1JGZG4zTE5VRjlaZFRwRVRvQlEvOTBoLzFxOVRBTUdJRmdXdzNOREtoN1A5S2JEdmpzR01BeUw1RkZmYmVuCjZKaGV5K2F2YlFSZU4vREprUmRlbDRibGRadjhURndpVnZUc2NubjI1M0xMems3eEs1VmFLVXd0Umw0UC9QeEIKMWVuVVkvUnZ2K0JXVXNGdlJMUWpJVittdm9nVS9JdzJJYW8xT09PNWlaWUNqemt3THJ5Z0NpQUZvRWFsdC9veQowdExmZnZXcmVJWUtjdzVHSGJNeVQ5M2dva1RLY1B6cWlOM0hpQVM4YUNqNGZuZURHc2p3blBXL0lETEpMVGZ6CnZqZE9GTnFXczZ0aGYxRzZwQnZZaTVBUmZOb2N0SHROb3NtZTBLNDJZSXpVdWM5SDdYR2dtTVlmd2p6QU8vTDgKb29QclRaYU90bnNnMndhRHo2dkE3S1dnMkRhYXU1STI5VzUrTWdRdm5kRzBEekg3SmlJeW1NTXI5dnhXQmQyNwpQZjYraU4yUkF6SkVyZHdOcEdGWWVzb0doYmMxTmowS2U1S1FqV0toQVE9PQo9ZmtPRAotLS0tLUVORCBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQ==",
             "pgpKey": "LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkYwSG5iRUJFQUN5WHUrekJzanYveUlpNkFYSFBnL081b2VnRGVDTTRMaDMxY2xMMVhjK0J0dWFQb1B0CktVRHJLQXVhR1Q4cngzNGlzeExYdmJvSTVFRU96NTd5VEVxWDhMTHFadlY4U1ZFZUtVdzE1WVhKVkpFVDhFWXIKVTV0TmVvK0Zpajd1elEwWHV3a0JTOGpxMERGcFRUeXl1c3ZreHRtZWNnQW85a3FlQ0JmOEF3V0EwSXpiRmptTwpSbVBYSTBjYmMyWWplVXZ1WUkyOXVOa2hMbUM5VFVDcU9jMFlTaDJDWVZ6a3hBZjF5dGVOZ1BtQkVnRTBWNmFiCmlDMFhlSERBSTN0Z3ZxV2c0Nk8rWFNDTXZTclVndXV3aXRpbmtObXB5SWtadnFvWE9kUmtBN0hCcmc1VVRqVEMKOFM5L3lHMlF3anNvRUtRRmxhWHM2NzZJdTBwaTM2K1l0RHVuYnNITlZmbnEraSt5ZHFEcmlPRDZhRmpXNEFVYQp2NTNwOVJQQXEydDdCVnN0SklieHV2TWRRcDJJOEp0MW12NXFTeHJBOVZTeU9BMXFMcUl4NHd4T0t0RlhXZXJhCnFmVkRaV3RtS0NkQytPREpnbnVHMHdTRkQyRFY2WHN3YTNkdXJ4Sk5RaEZpc2JpTXJJTjZhc0dzSU5WUm9YNmEKd1hROEU2K2cyTjdKbitCeHpkNDllZ2h1Z3k2dHR4KzNjbTBJQ2lYVTVJRTZyZVdnNTVFU2cxdzQ4S3B1SmVtMwo2TWhUUEUwcksyY0c2em5FZUV0R0dFTzhxcXBtRDVjbmUzVzJRdGhJL3duVTR4aitpSXJaV0NSbCtYZkdlc2xYCjZkNDVMSTZBK3BpTGRkaVdUSWFZSzQ1OHVrVnFreTRRUm5SZVpqT3ZzbDY0bVlGdDFPYnlpSWhlc3dBUkFRQUIKdEIxRFNVRk5JRWx0Y0c5eWRDQThZMmxoYlVCdVpYTjBiR1V1WTI5dFBva0NUZ1FUQVFnQU9CWWhCQ2U3WkxlLwpxb2Qva2hYQUd5clJ3MnJFdzd6cUJRSmRCNTJ4QWhzREJRc0pDQWNDQmhVS0NRZ0xBZ1FXQWdNQkFoNEJBaGVBCkFBb0pFQ3JSdzJyRXc3enEwK0FQL1J0TldyR0xwK3BSV09IU1BNRlNoUUJBU1FZdUk5Sk5Sdk9vM3FhVnRpaTcKNHlvZzVKSVZ2M2VBS0tmVThhZjVPOEl6eXZKaWdoOEpTd1Blc2UzQldnT2M2amYrRStCZkdLa0ZBMGFyVFAvNgpLV0NGUzR0ZlA4VkpwVVBzVkUwbS9lanNRK0wzNW5hb0FUUnIrRmtKN0VBRldZVzhYT0xPOU94dGZDOVYyV3B0CkJQRDRmVUFXZXArQnB5ZTN3ZXBSVFNOelhHbkhKS0FjaEVCcUc1NjRTRmVCNWN2RXcydnE2RytNeTZ1MDdnRHMKZ1BUVzE4NnNrWkk2YkFOWEJucjVSaFg1YzBIRlRaNlZXTEJxYTI0U0pXNnVsemxmZWtpQlY3d0RDakxFbUljVQpId3JDSjhsSkh0dEcxT2JNYjBUT3pEb2I4anVSM1JWUFp0MzhXa3hwS0s1RmowbGlYeHgycWlacEtIN2RWYzRlCmZLNnZkWUJNcUZkL3B3SlpvOW12cHUwYTA1Nm9lMVhTcTRzbWxmalJ3WDhYMDRzb01USTEvbUxFK1c1aWJEREEKQ0tsQlNsSC9NZHdTTlQ1SXV4TzFxdUdjMjBKQ0x2WVF3OUhWVXNTMjV5NHhzNTZqa3U2MkVuZFJYZHFVM0FuSgp3TnBCOCtoNEVHVnFERmQybFVOV1hveUxZSk5IblcyUDZ6MlRyZ00wWWpqazRrTzQ2VWdzL1Zkcmd3czAzYUU3CjcwbDh3aHJLSm1GR1hJYWtJYk9qeENuRG4zaW5IV3ZGNUQ5dHkxanVkZ3dtY01rTE1OWnJ5SjEwbXRMWDlRbUkKVlRWekdRQ1RqL3laNmxGb1B5YkV0YTc3Z0N2ZlV6MEZYeEp6bzJCSjAycUdzSE1za3NJN2xqYmNSVE5IMVF6VAp1UUlOQkYwSG5iRUJFQURPVkVxeCtONWhNTHlpZEt3TjY3emN4SUVOalo2N0JPcjhOcjYydEFTY0Q2SnFMaTBvCml4b08zdUs0ZVI3YW9vWjVuMExER2hSNUVtQkZEdGVsY2VIR0dLYmFVcjRwNEt4NUdhKy8wWXlsN3lHZzNIMjEKMk1ub3lWS1NnUmVwMis3QVpPbHdWL1dablk1YmxmN0Jua21lSXowOTRodFE1T1BMa3NVUWZxZUZKemc1WmhUKwpSRzlOTUY1OE1xd2d1U3VldWVBa1JBc3NldncvSW9jbE05cHUyTEh3d0lmNHFKbG5iMEt6K3RQQjdqendPR2tCCjVOR2FIUXkvcjh2eTlIaThiSzNrWk8xK0FZcm5jdmdHSDJkUi9KRVlXU2MzWmlQZXQ2bDFWT3RPK3NlMVkzdjIKblQ1NW9UZDlRV2lkbFNPeGxiQStrckVtRDRuMUxIbHhPQit1MzRMQk1LLy9pWk1Hb0RpZUNTTHFSdlNONkRwZQo4d2J5SlQ4Mm9ITEtxN2lyYTNmeXA3blR0UUNneEdZMmVhUGU1NkVVc0FOakEvWjQyS3c4ZGRpeFFFR2paMHRrCkVXMEhNWVA2UjZlaFc4ODBFSjYxeWFhYXlJbE1zN0FEdlV4SjgzWmxReFhXVVdiMExweFRLRXdEemRlNkZxMEsKQUxzcXZOdGdhSXNXNzlYeVBRRkNqSnR6Y0JwUmJwQWo5bEl3UXU3L1lVM0E0TzBXWTBGYnNoQmxhaXlXMHI2cQo3cit2ZzE5OVovTld5SlhiUy9Ob01nZjdlSzdZL2JxOTA2VkFqVXBvUG1HdmRWMmFndzE1S29XaUZ2MU9NZi9vClVBS2tnN29ZcEdSVW9ybU9XcC8wYTUwemhpc1VCTjR0Qi9qZnkyNHJmVmR3ckRCeDNEbHNNRE90MVFBUkFRQUIKaVFJMkJCZ0JDQUFnRmlFRUo3dGt0NytxaDMrU0ZjQWJLdEhEYXNURHZPb0ZBbDBIbmJFQ0d3d0FDZ2tRS3RIRAphc1REdk9vak5SQUFpMWpzQWtheTA1eG51bU40b0J3TGpoczJUbEp6QjJqTEdmWVYvMzBQZHZWeTFrc1hHbmVaClV6a1ZRUGlqYWZlV3dGQTQwMzFSWG11b2lmczM5b0Zvek5yeXZYNTJ5WlV4a0hSMVRlbThNbzZCUmhYR2J5alcKNkZXMnJ1bFE5VUM0bEZzbUdzc2xQeGtnWVdOaE5nSlFFMTBJWHhkVGtWMnBjZndMNE9sK2YvWnpZVmV6WjliWgpqUHJxaExkcUwwWkJZV05CTnYxbVAyNlVmbTJkNnhwcGJxSGxabHplNEJVM1JwM0R2aWhzU2Frd0FiRnJQVVViClJ1dXJ1dHJ0K1pvMTY0M0VSWFo5eXpWQmZXWFU2UkU2QVVQL2RJZjlhdlV3REJpQllGc056UXlvZXovU213NzQKN0JqQU1pK1JSWDIzcCtpWVhzdm1yMjBFWGpmd3laRVhYcGVHNVhXYi9FeGNJbGIwN0hKNTl1ZHl5ODVPOFN1VgpXaWxNTFVaZUQvejhRZFhwMUdQMGI3L2dWbExCYjBTMEl5RmZwcjZJRlB5TU5pR3FOVGpqdVltV0FvODVNQzY4Cm9Bb2dCYUJHcGJmNk10TFMzMzcxcTNpR0NuTU9SaDJ6TWsvZDRLSkV5bkQ4Nm9qZHg0Z0V2R2dvK0g1M2d4ckkKOEp6MXZ5QXl5UzAzODc0M1RoVGFsck9yWVg5UnVxUWIySXVRRVh6YUhMUjdUYUxKbnRDdU5tQ00xTG5QUisxeApvSmpHSDhJOHdEdnkvS0tENjAyV2pyWjdJTnNHZzgrcndPeWxvTmcybXJ1U052VnVmaklFTDUzUnRBOHgreVlpCk1wakRLL2I4VmdYZHV6Myt2b2pka1FNeVJLM2NEYVJoV0hyS0JvVzNOVFk5Q251U2tJMWlvUUU9Cj1pMDlqCi0tLS0tRU5EIFBHUCBQVUJMSUMgS0VZIEJMT0NLLS0tLS0="
           },
-          "next": [
-            "3. Parse JSON"
-          ]
+          "next": ["3. Parse JSON"]
         },
         {
           "id": "3. Parse JSON",
@@ -552,9 +434,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "3. Rename Fields To Merge"
-          ]
+          "next": ["3. Rename Fields To Merge"]
         },
         {
           "id": "8. Evaluate Subscriptions & Preferences",
@@ -568,12 +448,8 @@
             ],
             "language": "jexl"
           },
-          "next": [
-            "9. Import lite account"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["9. Import lite account"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "9. Import lite account",
@@ -605,12 +481,8 @@
               }
             ]
           },
-          "next": [
-            "10A. Check if Preferences exists"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10A. Check if Preferences exists"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "4A. Existing Accounts",
@@ -633,13 +505,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "5A. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["5A. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "4B. New Accounts",
@@ -662,12 +529,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "5B. Rename Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["5B. Rename Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "3. Rename Fields To Merge",
@@ -704,13 +567,8 @@
               }
             ]
           },
-          "next": [
-            "4A. Existing Accounts",
-            "4B. New Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["4A. Existing Accounts", "4B. New Accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "5A. Perform Merge Logic",
@@ -720,12 +578,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "5A bis. Perform Merge Area of Interest Logic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["5A bis. Perform Merge Area of Interest Logic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "5B. Rename Fields",
@@ -758,12 +612,8 @@
               }
             ]
           },
-          "next": [
-            "6B. Set Standard Data"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6B. Set Standard Data"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "11. Lite InitRegistrationgigya.generic",
@@ -780,12 +630,8 @@
             ],
             "addResponse": true
           },
-          "next": [
-            "12. setAccountInfo"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["12. setAccountInfo"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "12. setAccountInfo",
@@ -818,30 +664,16 @@
             ]
           },
           "next": [],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "6A. Remove Fields",
           "type": "field.remove",
           "params": {
-            "fields": [
-              "data._areaOfInterest",
-              "data._child",
-              "data._pet",
-              "data._externalApplication",
-              "_lastUpdated",
-              "data._initialAppSourceCode",
-              "_subscriptions"
-            ]
+            "fields": ["data._areaOfInterest", "data._child", "data._pet", "data._externalApplication", "_lastUpdated", "data._initialAppSourceCode", "_subscriptions"]
           },
-          "next": [
-            "7. Add data.idxImportJobId"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["7. Add data.idxImportJobId"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10A. Check if Preferences exists",
@@ -851,12 +683,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "11. Lite InitRegistrationgigya.generic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["11. Lite InitRegistrationgigya.generic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "6B. Set Standard Data",
@@ -866,12 +694,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "6B bis. Set standard Area of Interest"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6B bis. Set standard Area of Interest"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "1. Read From Blob Storage",
@@ -882,9 +706,7 @@
             "container": "{{AZURE_CONTAINER}}",
             "blobPrefix": "{{AZURE_BLOB_PREFIX}}"
           },
-          "next": [
-            "2. Decrypt PGP"
-          ]
+          "next": ["2. Decrypt PGP"]
         },
         {
           "id": "Prepare fields to extract email",
@@ -894,9 +716,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Generate file",
@@ -906,9 +726,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Encrypt file",
@@ -917,9 +735,7 @@
             "publicKey": "{{PGP_Public_Key_Base64_Encoded}}",
             "asciiArmor": true
           },
-          "next": [
-            "Upload to Blob Storage"
-          ]
+          "next": ["Upload to Blob Storage"]
         },
         {
           "id": "Prepare existent accounts to extract",
@@ -929,9 +745,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate Existent Accounts File"
-          ]
+          "next": ["Generate Existent Accounts File"]
         },
         {
           "id": "Generate Existent Accounts File",
@@ -941,9 +755,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "7. Add data.idxImportJobId",
@@ -956,12 +768,8 @@
               }
             ]
           },
-          "next": [
-            "8. Evaluate Subscriptions & Preferences"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["8. Evaluate Subscriptions & Preferences"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "6B bis. Set standard Area of Interest",
@@ -971,12 +779,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "6A. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6A. Remove Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "5A bis. Perform Merge Area of Interest Logic",
@@ -986,12 +790,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "6A. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6A. Remove Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Upload to Blob Storage",
@@ -1042,12 +842,8 @@
               "_subscriptions"
             ]
           },
-          "next": [
-            "11C. Update Account"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["11C. Update Account"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": " 7A. Perform Merge Logic",
@@ -1057,12 +853,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "7A bis. Perform Merge Logic Area of Interest"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["7A bis. Perform Merge Logic Area of Interest"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "7B. Rename Fields To Merge",
@@ -1103,13 +895,8 @@
               }
             ]
           },
-          "next": [
-            "8B. Existing Accounts",
-            "8C. New Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["8B. Existing Accounts", "8C. New Accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8A. New Accounts",
@@ -1132,12 +919,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "Process new phone account error"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["Process new phone account error"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "6A. Existing Accounts",
@@ -1168,13 +951,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            " 7A. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": [" 7A. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "5. Generate UID and check lang",
@@ -1184,13 +962,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "6A. PhoneNumber accounts",
-            "6B. Email accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6A. PhoneNumber accounts", "6B. Email accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "2. Decrypt PGP",
@@ -1199,9 +972,7 @@
             "pgpKey": "LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkYwSG5iRUJFQUN5WHUrekJzanYveUlpNkFYSFBnL081b2VnRGVDTTRMaDMxY2xMMVhjK0J0dWFQb1B0CktVRHJLQXVhR1Q4cngzNGlzeExYdmJvSTVFRU96NTd5VEVxWDhMTHFadlY4U1ZFZUtVdzE1WVhKVkpFVDhFWXIKVTV0TmVvK0Zpajd1elEwWHV3a0JTOGpxMERGcFRUeXl1c3ZreHRtZWNnQW85a3FlQ0JmOEF3V0EwSXpiRmptTwpSbVBYSTBjYmMyWWplVXZ1WUkyOXVOa2hMbUM5VFVDcU9jMFlTaDJDWVZ6a3hBZjF5dGVOZ1BtQkVnRTBWNmFiCmlDMFhlSERBSTN0Z3ZxV2c0Nk8rWFNDTXZTclVndXV3aXRpbmtObXB5SWtadnFvWE9kUmtBN0hCcmc1VVRqVEMKOFM5L3lHMlF3anNvRUtRRmxhWHM2NzZJdTBwaTM2K1l0RHVuYnNITlZmbnEraSt5ZHFEcmlPRDZhRmpXNEFVYQp2NTNwOVJQQXEydDdCVnN0SklieHV2TWRRcDJJOEp0MW12NXFTeHJBOVZTeU9BMXFMcUl4NHd4T0t0RlhXZXJhCnFmVkRaV3RtS0NkQytPREpnbnVHMHdTRkQyRFY2WHN3YTNkdXJ4Sk5RaEZpc2JpTXJJTjZhc0dzSU5WUm9YNmEKd1hROEU2K2cyTjdKbitCeHpkNDllZ2h1Z3k2dHR4KzNjbTBJQ2lYVTVJRTZyZVdnNTVFU2cxdzQ4S3B1SmVtMwo2TWhUUEUwcksyY0c2em5FZUV0R0dFTzhxcXBtRDVjbmUzVzJRdGhJL3duVTR4aitpSXJaV0NSbCtYZkdlc2xYCjZkNDVMSTZBK3BpTGRkaVdUSWFZSzQ1OHVrVnFreTRRUm5SZVpqT3ZzbDY0bVlGdDFPYnlpSWhlc3dBUkFRQUIKdEIxRFNVRk5JRWx0Y0c5eWRDQThZMmxoYlVCdVpYTjBiR1V1WTI5dFBva0NUZ1FUQVFnQU9CWWhCQ2U3WkxlLwpxb2Qva2hYQUd5clJ3MnJFdzd6cUJRSmRCNTJ4QWhzREJRc0pDQWNDQmhVS0NRZ0xBZ1FXQWdNQkFoNEJBaGVBCkFBb0pFQ3JSdzJyRXc3enEwK0FQL1J0TldyR0xwK3BSV09IU1BNRlNoUUJBU1FZdUk5Sk5Sdk9vM3FhVnRpaTcKNHlvZzVKSVZ2M2VBS0tmVThhZjVPOEl6eXZKaWdoOEpTd1Blc2UzQldnT2M2amYrRStCZkdLa0ZBMGFyVFAvNgpLV0NGUzR0ZlA4VkpwVVBzVkUwbS9lanNRK0wzNW5hb0FUUnIrRmtKN0VBRldZVzhYT0xPOU94dGZDOVYyV3B0CkJQRDRmVUFXZXArQnB5ZTN3ZXBSVFNOelhHbkhKS0FjaEVCcUc1NjRTRmVCNWN2RXcydnE2RytNeTZ1MDdnRHMKZ1BUVzE4NnNrWkk2YkFOWEJucjVSaFg1YzBIRlRaNlZXTEJxYTI0U0pXNnVsemxmZWtpQlY3d0RDakxFbUljVQpId3JDSjhsSkh0dEcxT2JNYjBUT3pEb2I4anVSM1JWUFp0MzhXa3hwS0s1RmowbGlYeHgycWlacEtIN2RWYzRlCmZLNnZkWUJNcUZkL3B3SlpvOW12cHUwYTA1Nm9lMVhTcTRzbWxmalJ3WDhYMDRzb01USTEvbUxFK1c1aWJEREEKQ0tsQlNsSC9NZHdTTlQ1SXV4TzFxdUdjMjBKQ0x2WVF3OUhWVXNTMjV5NHhzNTZqa3U2MkVuZFJYZHFVM0FuSgp3TnBCOCtoNEVHVnFERmQybFVOV1hveUxZSk5IblcyUDZ6MlRyZ00wWWpqazRrTzQ2VWdzL1Zkcmd3czAzYUU3CjcwbDh3aHJLSm1GR1hJYWtJYk9qeENuRG4zaW5IV3ZGNUQ5dHkxanVkZ3dtY01rTE1OWnJ5SjEwbXRMWDlRbUkKVlRWekdRQ1RqL3laNmxGb1B5YkV0YTc3Z0N2ZlV6MEZYeEp6bzJCSjAycUdzSE1za3NJN2xqYmNSVE5IMVF6VAp1UUlOQkYwSG5iRUJFQURPVkVxeCtONWhNTHlpZEt3TjY3emN4SUVOalo2N0JPcjhOcjYydEFTY0Q2SnFMaTBvCml4b08zdUs0ZVI3YW9vWjVuMExER2hSNUVtQkZEdGVsY2VIR0dLYmFVcjRwNEt4NUdhKy8wWXlsN3lHZzNIMjEKMk1ub3lWS1NnUmVwMis3QVpPbHdWL1dablk1YmxmN0Jua21lSXowOTRodFE1T1BMa3NVUWZxZUZKemc1WmhUKwpSRzlOTUY1OE1xd2d1U3VldWVBa1JBc3NldncvSW9jbE05cHUyTEh3d0lmNHFKbG5iMEt6K3RQQjdqendPR2tCCjVOR2FIUXkvcjh2eTlIaThiSzNrWk8xK0FZcm5jdmdHSDJkUi9KRVlXU2MzWmlQZXQ2bDFWT3RPK3NlMVkzdjIKblQ1NW9UZDlRV2lkbFNPeGxiQStrckVtRDRuMUxIbHhPQit1MzRMQk1LLy9pWk1Hb0RpZUNTTHFSdlNONkRwZQo4d2J5SlQ4Mm9ITEtxN2lyYTNmeXA3blR0UUNneEdZMmVhUGU1NkVVc0FOakEvWjQyS3c4ZGRpeFFFR2paMHRrCkVXMEhNWVA2UjZlaFc4ODBFSjYxeWFhYXlJbE1zN0FEdlV4SjgzWmxReFhXVVdiMExweFRLRXdEemRlNkZxMEsKQUxzcXZOdGdhSXNXNzlYeVBRRkNqSnR6Y0JwUmJwQWo5bEl3UXU3L1lVM0E0TzBXWTBGYnNoQmxhaXlXMHI2cQo3cit2ZzE5OVovTld5SlhiUy9Ob01nZjdlSzdZL2JxOTA2VkFqVXBvUG1HdmRWMmFndzE1S29XaUZ2MU9NZi9vClVBS2tnN29ZcEdSVW9ybU9XcC8wYTUwemhpc1VCTjR0Qi9qZnkyNHJmVmR3ckRCeDNEbHNNRE90MVFBUkFRQUIKaVFJMkJCZ0JDQUFnRmlFRUo3dGt0NytxaDMrU0ZjQWJLdEhEYXNURHZPb0ZBbDBIbmJFQ0d3d0FDZ2tRS3RIRAphc1REdk9vak5SQUFpMWpzQWtheTA1eG51bU40b0J3TGpoczJUbEp6QjJqTEdmWVYvMzBQZHZWeTFrc1hHbmVaClV6a1ZRUGlqYWZlV3dGQTQwMzFSWG11b2lmczM5b0Zvek5yeXZYNTJ5WlV4a0hSMVRlbThNbzZCUmhYR2J5alcKNkZXMnJ1bFE5VUM0bEZzbUdzc2xQeGtnWVdOaE5nSlFFMTBJWHhkVGtWMnBjZndMNE9sK2YvWnpZVmV6WjliWgpqUHJxaExkcUwwWkJZV05CTnYxbVAyNlVmbTJkNnhwcGJxSGxabHplNEJVM1JwM0R2aWhzU2Frd0FiRnJQVVViClJ1dXJ1dHJ0K1pvMTY0M0VSWFo5eXpWQmZXWFU2UkU2QVVQL2RJZjlhdlV3REJpQllGc056UXlvZXovU213NzQKN0JqQU1pK1JSWDIzcCtpWVhzdm1yMjBFWGpmd3laRVhYcGVHNVhXYi9FeGNJbGIwN0hKNTl1ZHl5ODVPOFN1VgpXaWxNTFVaZUQvejhRZFhwMUdQMGI3L2dWbExCYjBTMEl5RmZwcjZJRlB5TU5pR3FOVGpqdVltV0FvODVNQzY4Cm9Bb2dCYUJHcGJmNk10TFMzMzcxcTNpR0NuTU9SaDJ6TWsvZDRLSkV5bkQ4Nm9qZHg0Z0V2R2dvK0g1M2d4ckkKOEp6MXZ5QXl5UzAzODc0M1RoVGFsck9yWVg5UnVxUWIySXVRRVh6YUhMUjdUYUxKbnRDdU5tQ00xTG5QUisxeApvSmpHSDhJOHdEdnkvS0tENjAyV2pyWjdJTnNHZzgrcndPeWxvTmcybXJ1U052VnVmaklFTDUzUnRBOHgreVlpCk1wakRLL2I4VmdYZHV6Myt2b2pka1FNeVJLM2NEYVJoV0hyS0JvVzNOVFk5Q251U2tJMWlvUUU9Cj1pMDlqCi0tLS0tRU5EIFBHUCBQVUJMSUMgS0VZIEJMT0NLLS0tLS0=",
             "pgpKey.importedPrivateKey": "LS0tLS1CRUdJTiBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQoKbFFjWUJGMEhuYkVCRUFDeVh1K3pCc2p2L3lJaTZBWEhQZy9PNW9lZ0RlQ000TGgzMWNsTDFYYytCdHVhUG9QdApLVURyS0F1YUdUOHJ4MzRpc3hMWHZib0k1RUVPejU3eVRFcVg4TExxWnZWOFNWRWVLVXcxNVlYSlZKRVQ4RVlyClU1dE5lbytGaWo3dXpRMFh1d2tCUzhqcTBERnBUVHl5dXN2a3h0bWVjZ0FvOWtxZUNCZjhBd1dBMEl6YkZqbU8KUm1QWEkwY2JjMllqZVV2dVlJMjl1TmtoTG1DOVRVQ3FPYzBZU2gyQ1lWemt4QWYxeXRlTmdQbUJFZ0UwVjZhYgppQzBYZUhEQUkzdGd2cVdnNDZPK1hTQ012U3JVZ3V1d2l0aW5rTm1weUlrWnZxb1hPZFJrQTdIQnJnNVVUalRDCjhTOS95RzJRd2pzb0VLUUZsYVhzNjc2SXUwcGkzNitZdER1bmJzSE5WZm5xK2kreWRxRHJpT0Q2YUZqVzRBVWEKdjUzcDlSUEFxMnQ3QlZzdEpJYnh1dk1kUXAySThKdDFtdjVxU3hyQTlWU3lPQTFxTHFJeDR3eE9LdEZYV2VyYQpxZlZEWld0bUtDZEMrT0RKZ251RzB3U0ZEMkRWNlhzd2EzZHVyeEpOUWhGaXNiaU1ySU42YXNHc0lOVlJvWDZhCndYUThFNitnMk43Sm4rQnh6ZDQ5ZWdodWd5NnR0eCszY20wSUNpWFU1SUU2cmVXZzU1RVNnMXc0OEtwdUplbTMKNk1oVFBFMHJLMmNHNnpuRWVFdEdHRU84cXFwbUQ1Y25lM1cyUXRoSS93blU0eGoraUlyWldDUmwrWGZHZXNsWAo2ZDQ1TEk2QStwaUxkZGlXVElhWUs0NTh1a1Zxa3k0UVJuUmVaak92c2w2NG1ZRnQxT2J5aUloZXN3QVJBUUFCCkFBLzhDMnpYcDF6UlpSeXZWK2kxdjEvaklsVVRnelhiQXNXOWV5RGgvbTREYjh2VS9YOGJTSWNpY0kyYTcwN0cKV1pjSWUzb3Q3dmRvOXZzcjRhSW5PUXp0b0QyR01FdlNWZTR2b3lJYnVXaTZGajNJOXl2UTlYaUFVNTVSOEIzOQpUdmdxYWx2aGIvTDdRUjNVZEdnWDhialRxT2xGeWpJeUtXMkdpbDNVQk12cXY5S3hSYktaa3RxV1l1ZzdFZS9sCkx4NHN0aGhRSysxWnJHMlhPN2psaktIRzJIM3kxWnJ5bU0xU1Z6VHhjL3BsYTVZMjBUUDdhTmlpK1c4T1d5TDEKV3YvZ2hicmZEbFA5RlphNUFNTmhZUk1HWFV3Q3dvUjZVbFdyVG5FMnExdFlqazB5LzIvQ1RiNzdmeEN4clVVMgpXeWdmRENQY1FoM2k1cDR4M2IzSE5uTDJUblZKOVpML2dhRXJRNUhGWDA5a2JPUzRSTWVQbzY3K1JLckowZ2F6CmZoYjdsNUlIdHdpajg1NVIxWWlyWGtQd0lxcEVIaXQ3Q2U1RWtRTEk4Nm42QnNJdHpnM3ZWKzcrTmFjS0RGRDQKK3BwTnhaYUYxdGFsWGo5N2NIS1hjOTNKNDhmc2NoYWNJekZVa2JLbjJZMGI0c2EvVWVMUHM4Y2drWkhuT3R3egppOEZ3M1o2RHVWSEdKbzdKdmJlMnFzdXdsQjFXZHprVUxEdzl5OUJvSjlTTTJhT1hsVWpQOFl6Um1ROVhkWXJQCmg0MGFuUURsN2lxT3RoNHVQSjgzZGI0ZHdPY1M1K0FGNTZlcitwZ3hpeE14ZzI1V1lEbWxMQXlHV2JqMDBXcGYKTndibDlwU3BRdmxvQnUwd1MrVlgwKzFqZEVlMVZ4SFF4bFNZenNReHJKTU9Xd1VJQU1pcEpqUjQxVXA1LzNGawpxc0hOS29BSndzakQ0TFpLeTRrWVJCUElHMXhDL3VtdlFFK3luL0VxczdvYm9raVU5aDBoWUJ5OXF5c2trK2pICldhZ0NTQjAyU0pNK25mSVcxazhVWTRnSHJBd3hJSC9BY1dtSUlLZmZYb1VzMENYMGhsdEUyTGxaS2pWd0hEdkoKbTJSbG8yeU5McHVtSkd0TCtGU3QveTVRTEY3VlNYck1HaDA1YVE1OGZORDFhcG5yKy9tekE1bkdIMFNUeEU5agorellpM3Axak91UkVUZmE1cWl6anJhNGZGVWlJeWFRdThpakRaUGNUUVBYTTBaK1pBMTJFUlFNbFBzK1ZZWlFECndkMXl2RUFmK0JsMG1KNFBzb2VKdHF3TElvZHFhV1lUS0VzeG5lbU43TTdMaDJzdWRsQ1c4MFh0a2owc3NZNmIKWXNmdUd0MElBT09RR1Jvai9zbFJ2ZzV2ODhUNElOMWtvRXI3OUZnWk1kb1VURS9vN2FjWjlMN0E1c25qdWp3UgpBM2dLNXpHelBPeVAxdW80ellEdWMycStBSjNQcXdoTDFleXNCWWNWVFg0Y3F1M3c3Qkk5VW5UbG9ObytHb3FyCi9JN3VCaThGNys1a2w3K3ovb3JwelAxc1RCdHNVRUs1V0YyVFdobnN2aGR4OVRWSDNZLzFuY3Y5dFdEWWVWR1gKZ0FTcUI3L2xCWkI5UmNkTDl4Y3haUU5ZeitoVFQyeEIvbDZXNDBSZHc0cUJ2UVNoV3NpcUFESEdsS1o3QysrSgpSZUhreU5iWFljUndhQnA2eExiS1NZeWM3WW5YMU03YUFMc3licGVpMkxDWHowNWNpWm9FNkl6UWRhamVEZlByCjNHK2Z3WXhUbU9yZ0pabmYwUUx1TUhWNFJFSzUzczhJQUs5cGNOQ09EODZxZGtrRmlGaWEwZ2tSZjRTTjBGK3IKZzJFT3F4UkJ5VlRoRzdUVTRVcEgrN0oySFlyV1ErVjg5b05oZjlIcTNKMXlEN1Z4Q2Q5UGRlVTBVTEJ3YTFEVQoyVGdHZ3kzVEgvcFQ5Zjl3MUpOd2lQZjZOODNUQTFGUG03R1hBVlhaMXRsYTZiMGE5T1NWSXQ0cVpMRXRIZnNpCllJN1pWSVFpL0ZiVXF2WnRBSzB6VnRZaFdUVDdPalVzQ2owbWNNNmJBRHhlZ1ZSRTNyTjJ0VGJxemRiR1U0ZTYKVmU2UDdWMmlUbUtkSWNBZVAzVFBZQzMyNEdCck1zUC8rdWZReWQ4RkY3U1paWlUrKzI0TUJRMlUwejBpdUxVbgo5WGRKZGR0dVVwUFZoeUdLc29XaVB3cTltK0ovMFRoaUxTOUJKdkJoa3M4K0ZTMVdIRjBtSU9hVW1MUWRRMGxCClRTQkpiWEJ2Y25RZ1BHTnBZVzFBYm1WemRHeGxMbU52YlQ2SkFrNEVFd0VJQURnV0lRUW51MlMzdjZxSGY1SVYKd0JzcTBjTnF4TU84NmdVQ1hRZWRzUUliQXdVTENRZ0hBZ1lWQ2drSUN3SUVGZ0lEQVFJZUFRSVhnQUFLQ1JBcQowY05xeE1PODZ0UGdELzBiVFZxeGk2ZnFVVmpoMGp6QlVvVUFRRWtHTGlQU1RVYnpxTjZtbGJZb3UrTXFJT1NTCkZiOTNnQ2luMVBHbitUdkNNOHJ5WW9JZkNVc0Qzckh0d1ZvRG5PbzMvaFBnWHhpcEJRTkdxMHovK2lsZ2hVdUwKWHovRlNhVkQ3RlJOSnYzbzdFUGk5K1oycUFFMGEvaFpDZXhBQlZtRnZGeml6dlRzYlh3dlZkbHFiUVR3K0gxQQpGbnFmZ2FjbnQ4SHFVVTBqYzF4cHh5U2dISVJBYWh1ZXVFaFhnZVhMeE1OcjZ1aHZqTXVydE80QTdJRDAxdGZPCnJKR1NPbXdEVndaNitVWVYrWE5CeFUyZWxWaXdhbXR1RWlWdXJwYzVYM3BJZ1ZlOEF3b3l4SmlIRkI4S3dpZkoKU1I3YlJ0VG16RzlFenN3NkcvSTdrZDBWVDJiZC9GcE1hU2l1Ulk5SllsOGNkcW9tYVNoKzNWWE9Ibnl1cjNXQQpUS2hYZjZjQ1dhUFpyNmJ0R3RPZXFIdFYwcXVMSnBYNDBjRi9GOU9MS0RFeU5mNWl4UGx1WW13d3dBaXBRVXBSCi96SGNFalUrU0xzVHRhcmhuTnRDUWk3MkVNUFIxVkxFdHVjdU1iT2VvNUx1dGhKM1VWM2FsTndKeWNEYVFmUG8KZUJCbGFneFhkcFZEVmw2TWkyQ1RSNTF0aitzOWs2NEROR0k0NU9KRHVPbElMUDFYYTRNTE5OMmhPKzlKZk1JYQp5aVpoUmx5R3BDR3pvOFFwdzU5NHB4MXJ4ZVEvYmN0WTduWU1KbkRKQ3pEV2E4aWRkSnJTMS9VSmlGVTFjeGtBCms0LzhtZXBSYUQ4bXhMV3UrNEFyMzFNOUJWOFNjNk5nU2ROcWhyQnpMSkxDTzVZMjNFVXpSOVVNMDUwSEdBUmQKQjUyeEFSQUF6bFJLc2ZqZVlUQzhvblNzRGV1ODNNU0JEWTJldXdUcS9EYSt0clFFbkEraWFpNHRLSXNhRHQ3aQp1SGtlMnFLR2VaOUN3eG9VZVJKZ1JRN1hwWEhoeGhpbTJsSytLZUNzZVJtdnY5R01wZThob054OXRkako2TWxTCmtvRVhxZHZ1d0dUcGNGZjFtWjJPVzVYK3daNUpuaU05UGVJYlVPVGp5NUxGRUg2bmhTYzRPV1lVL2tSdlRUQmUKZkRLc0lMa3Jucm5nSkVRTExIcjhQeUtISlRQYWJ0aXg4TUNIK0tpWloyOUNzL3JUd2U0ODhEaHBBZVRSbWgwTQp2Ni9MOHZSNHZHeXQ1R1R0ZmdHSzUzTDRCaDluVWZ5UkdGa25OMllqM3JlcGRWVHJUdnJIdFdONzlwMCtlYUUzCmZVRm9uWlVqc1pXd1BwS3hKZytKOVN4NWNUZ2ZydCtDd1RDdi80bVRCcUE0bmdraTZrYjBqZWc2WHZNRzhpVS8KTnFCeXlxdTRxMnQzOHFlNTA3VUFvTVJtTm5tajN1ZWhGTEFEWXdQMmVOaXNQSFhZc1VCQm8yZExaQkZ0QnpHRAora2Vub1Z2UE5CQ2V0Y21tbXNpSlRMT3dBNzFNU2ZOMlpVTVYxbEZtOUM2Y1V5aE1BODNYdWhhdENnQzdLcnpiCllHaUxGdS9WOGowQlFveWJjM0FhVVc2UUkvWlNNRUx1LzJGTndPRHRGbU5CVzdJUVpXb3NsdEsrcXU2L3I0TmYKZldmelZzaVYyMHZ6YURJSCszaXUyUDI2dmRPbFFJMUthRDVocjNWZG1vTU5lU3FGb2hiOVRqSC82RkFDcElPNgpHS1JrVktLNWpscWY5R3VkTTRZckZBVGVMUWY0Mzh0dUszMVhjS3d3Y2R3NWJEQXpyZFVBRVFFQUFRQVArUUVnCkhaNXJqcFZJb21oUXJaR0EzdTdXejN2d1RwdjYrQmsrU1paek1kQStDT1crVmRwZ3lBVFJab2wybzlNQXEvelgKV0xtaGNwMVZUQjJpZUtZb3ZydGttbUNMcndraHRqMUk4WE1JVDh1NXIzTXRiYVF4RkdaQXd3ZVA1WUx2bGRDUApSUGhTZHg3YnQyZU4xVVFWaHd2WmtTcU1NTDlnZ0kzNlVDODNMUWZLQ21HYko4NjhqN1lEMDR3ZEUzM3dSN1pFCkViY3NubUdGM2RTUXQyWlpFY1dnSVdTQVJ0QU9lV0NDaW5PVnJuL25OZktkYTlsZHFTMlJXcnAzb3hNUUs3NEsKbXk1TG5jdDdRZDFyMVM0V1N2VWVncFl0MFQwS2ZKRzN6UVM4ZFk2cWpyZTlqa2JDWXU3ZnBJQS9PK0R5eVZTZApQeCttdHljQXRSNTFDRWdxaDYrejV5WCt0dlJub1F5V2tBN0k1ZExEaHN0RW5McFozUW1Ec3V5WjVwZDRDS1BOClVacGU1di8wRDQ2dW1iQUliM1I1bEt2b1V2K1UwYVVXZDJJcDVEdER1VTd0OWk3L090a09RS2RKU25xSlJMOFkKd0VIWFdvcU1UVHA3U1dBMHo2Q29HSm43cDhHQ1RNUDdsQlUwWjdHUkFuaUljVVc5YnN4MkcvQUc4S29QVWF6eQpPUjVkVzFiUVpNY003S2xWRVVyZkowYzFCWGFGOVhkellFWW12QnFaYzUyR0Jrd0g1bFRKYkt2dWtLazF0MmVBClluWmJ3Rm9CeFQ1UVlSS3NTOFVsSWhFYnFkd1JicURwSk1oTzZwVEFFNFpLWEozUzR6cUJSN3NJN09KT0VNUC8KVGxiblZXeFN2cWVvdDdVYmpVQUFSSjgwcXA3b3dUT010cVdqcmxOcENBRGRnM2ExODVZejZMcGxYeWxlUG1KMApLWEEzQUtEcGtmV3hXcGpBRzhFaEtKYzcvNWdvZGtXZFdsUkR4eVpETEVEMGU2VG92MlN3bEdHeHlqUURjQXNNCkdxZ3hDd09QcWhsRjhLcjhxTkc5OEFNMllVd1ppVE5xalVRMEdZaHpXU1MzOGloSGtnYkpvcXc1cU1URnlmVXgKSG9pUkl2V25BandFRFVqL1RtRUdCRXI0YmtFUDZtWFFEZlR4d3BISnh2cUdFNVRGc2c3d1NibGpiSFBRRVRDNQpzbVl0QnF2Z1l5THMvT1p0N29iSDI4YzdLd1QwK0tjY21UVnl6bWF4b3RqRkNsMzFOMDRXTWdEdmhPV3JzTFd0ClBJQy9kNkhZVllENVUxeWllM1NnSjQyd2NtaXpldUlkTTJwREF5Zk0zVzI2K2xZZ3ZZeE11cGFnU2dTYjBmNVoKQ0FEdWM2YThwOEJNR1hHMGNjaEQ4UXNlZTJOT1VpaDdJQVV4b0hQcWE1OXNpNmJlWWRiSUp6aFZxMDJXYnJaVgpmVkJWeUp4Y0xTR2ttUFJUbDZSbjcxSHBpbTBkdlZzdkpZazRKYXlDNWJTTE02Tm9Ccyt5Z3o4RXkyVkxXQm4wCmlKQVFVck5EQXRpWDZyL1RoYW1wUlRpSjhKZnlxc1E3WHFPZll0MWVhZEFGdnBHZlpJdmxOYkJnV0I0UlY5R3cKbDhJTnlDUENSK3NKc2laZXRWenZXZ0tzS2h5K1hGV1E1NTVuWHdQOC91MlAxQXdKVVNGMndBcGpRbUNZQkxGRAo3Wi8va2dQWFREUG96T2lxRTdRZG5WK2ZxalBQY215eHlGRjJiZFhUNDFiWEErNW9UU2NsTklJUm1qV01LTW92CmZWTGZXZktuYUtITE9mcmNEZVBlRHBQZENBREFJSC8ra2tjUklnd2lhYmZXSGRKK1NhQ3ZHUG5ONkJNNHczODAKQVcxOEp2MGo3b2V6Y0ZSWjZSejQzYzZYVzh0Q2ZVT2cyb2ZCU1EyeDZEd3BSb3VlZkJ4TVQ2a2lPRlFjb3duZQpXVVRLbkJUR092Um1wRElhbkhocWZGODNhenQ5djF5TlRZc2dnNVFSNnlqWm13ZGZxVnJmWnNOMU04bzRqUHFBCnI2U1Azb05SZlM5RElzUjVubXVhYy9HSE80QnRaRkszeHpzUTFVL05md2hoSlFubTZvVE9rUEVQeWN6S2dZK1QKWTVrU0Nrb3RhQUhxZi8xMklSYVNieEdzeFBZNVpsc0tEazBkWEx1bWVtTFN0YlE3Y2pucThJbTdUZHJvdy9FNgo5dm9HOWJFeFZwTEIxSk9DeXdiZ2RobldEOFhlWGNma0lWczNGUUtvSDcwNUNDYjZkak9KQWpZRUdBRUlBQ0FXCklRUW51MlMzdjZxSGY1SVZ3QnNxMGNOcXhNTzg2Z1VDWFFlZHNRSWJEQUFLQ1JBcTBjTnF4TU84NmlNMUVBQ0wKV093Q1JyTFRuR2U2WTNpZ0hBdU9HelpPVW5NSGFNc1o5aFgvZlE5MjlYTFdTeGNhZDVsVE9SVkErS05wOTViQQpVRGpUZlZGZWE2aUoremYyZ1dqTTJ2SzlmbmJKbFRHUWRIVk42Ynd5am9GR0ZjWnZLTmJvVmJhdTZWRDFRTGlVCld5WWF5eVUvR1NCaFkyRTJBbEFUWFFoZkYxT1JYYWx4L0F2ZzZYNS85bk5oVjdObjF0bU0rdXFFdDJvdlJrRmgKWTBFMi9XWS9icFIrYlozckdtbHVvZVZtWE43Z0ZUZEduY08rS0d4SnFUQUJzV3M5UlJ0RzY2dTYydTM1bWpYcgpqY1JGZG4zTE5VRjlaZFRwRVRvQlEvOTBoLzFxOVRBTUdJRmdXdzNOREtoN1A5S2JEdmpzR01BeUw1RkZmYmVuCjZKaGV5K2F2YlFSZU4vREprUmRlbDRibGRadjhURndpVnZUc2NubjI1M0xMems3eEs1VmFLVXd0Umw0UC9QeEIKMWVuVVkvUnZ2K0JXVXNGdlJMUWpJVittdm9nVS9JdzJJYW8xT09PNWlaWUNqemt3THJ5Z0NpQUZvRWFsdC9veQowdExmZnZXcmVJWUtjdzVHSGJNeVQ5M2dva1RLY1B6cWlOM0hpQVM4YUNqNGZuZURHc2p3blBXL0lETEpMVGZ6CnZqZE9GTnFXczZ0aGYxRzZwQnZZaTVBUmZOb2N0SHROb3NtZTBLNDJZSXpVdWM5SDdYR2dtTVlmd2p6QU8vTDgKb29QclRaYU90bnNnMndhRHo2dkE3S1dnMkRhYXU1STI5VzUrTWdRdm5kRzBEekg3SmlJeW1NTXI5dnhXQmQyNwpQZjYraU4yUkF6SkVyZHdOcEdGWWVzb0doYmMxTmowS2U1S1FqV0toQVE9PQo9ZmtPRAotLS0tLUVORCBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQ=="
           },
-          "next": [
-            "3. Parse JSON"
-          ],
+          "next": ["3. Parse JSON"],
           "error": []
         },
         {
@@ -1210,9 +981,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "4. Add data.idxImportJobId"
-          ],
+          "next": ["4. Add data.idxImportJobId"],
           "error": []
         },
         {
@@ -1224,9 +993,7 @@
             "container": "{{AZURE_CONTAINER}}",
             "blobPrefix": "{{AZURE_BLOB_PREFIX}}"
           },
-          "next": [
-            "2. Decrypt PGP"
-          ],
+          "next": ["2. Decrypt PGP"],
           "error": []
         },
         {
@@ -1237,12 +1004,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "7A. Rename Fields To Merge"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["7A. Rename Fields To Merge"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "6B. Email accounts",
@@ -1252,12 +1015,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "7B. Rename Fields To Merge"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["7B. Rename Fields To Merge"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8B. Existing Accounts",
@@ -1284,13 +1043,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            " 9B. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": [" 9B. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": " 9B. Perform Merge Logic",
@@ -1300,12 +1054,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "9B bis. Perform Merge Area Of Interest Logic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["9B bis. Perform Merge Area Of Interest Logic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10C. Remove Fields",
@@ -1325,12 +1075,8 @@
               "_subscriptions"
             ]
           },
-          "next": [
-            "11D. Import Full Account Upsert"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["11D. Import Full Account Upsert"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8C. New Accounts",
@@ -1357,12 +1103,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "Process new email account error"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["Process new email account error"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Process new email account error",
@@ -1373,9 +1115,7 @@
             "notifyLastRecord": false
           },
           "next": [],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "7A. Rename Fields To Merge",
@@ -1432,13 +1172,8 @@
               }
             ]
           },
-          "next": [
-            "8A. New Accounts",
-            "6A. Existing Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["8A. New Accounts", "6A. Existing Accounts"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "12C. Set Account Info Webhook",
@@ -1455,9 +1190,7 @@
             ],
             "addResponse": false
           },
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Generate file",
@@ -1467,9 +1200,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Prepare fields to extract phone as ID",
@@ -1479,9 +1210,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Prepare fields to extract email",
@@ -1491,9 +1220,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Encrypt file",
@@ -1502,9 +1229,7 @@
             "publicKey": "{{PGP_Public_Key_Base64_Encoded}}",
             "asciiArmor": true
           },
-          "next": [
-            "Upload to Blob Storage"
-          ]
+          "next": ["Upload to Blob Storage"]
         },
         {
           "id": "Generate Existent Accounts File",
@@ -1514,9 +1239,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Prepare existent accounts to extract",
@@ -1526,9 +1249,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate Existent Accounts File"
-          ]
+          "next": ["Generate Existent Accounts File"]
         },
         {
           "id": "4. Add data.idxImportJobId",
@@ -1545,9 +1266,7 @@
               }
             ]
           },
-          "next": [
-            "5. Generate UID and check lang"
-          ]
+          "next": ["5. Generate UID and check lang"]
         },
         {
           "id": "9B bis. Perform Merge Area Of Interest Logic",
@@ -1557,12 +1276,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "10C. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10C. Remove Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "7A bis. Perform Merge Logic Area of Interest",
@@ -1572,12 +1287,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "10B. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["10B. Remove Fields"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "Upload to Blob Storage",
@@ -1596,12 +1307,8 @@
             "maxConnections": 20,
             "addResponse": false
           },
-          "next": [
-            "12A. Rename Fields To Register"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["12A. Rename Fields To Register"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "12A. Rename Fields To Register",
@@ -1626,12 +1333,8 @@
               }
             ]
           },
-          "next": [
-            "13A. Existing Account to Register"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["13A. Existing Account to Register"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "13A. Existing Account to Register",
@@ -1662,12 +1365,8 @@
             "batchSize": 200,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "14A. Check isRegistered"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["14A. Check isRegistered"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "14A. Check isRegistered",
@@ -1677,12 +1376,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "15. Notify Login"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["15. Notify Login"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "15. Notify Login",
@@ -1699,9 +1394,7 @@
             ],
             "addResponse": false
           },
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "11D. Import Full Account Upsert",
@@ -1711,12 +1404,8 @@
             "maxConnections": 20,
             "addResponse": false
           },
-          "next": [
-            "12C. Set Account Info Webhook"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["12C. Set Account Info Webhook"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Process new phone account error",
@@ -1726,9 +1415,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "error": ["Prepare fields to extract phone as ID"]
         }
       ],
       "version": 1,
@@ -1770,12 +1457,8 @@
               "_subscriptions"
             ]
           },
-          "next": [
-            "11C. Update Account"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["11C. Update Account"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": " 7A. Perform Merge Logic",
@@ -1785,12 +1468,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "7A bis. Perform Merge Logic Area of Interest"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["7A bis. Perform Merge Logic Area of Interest"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "12B. Import Full Account Insert",
@@ -1800,12 +1479,8 @@
             "maxConnections": 10,
             "addResponse": false
           },
-          "next": [
-            "13. Take phone number for update"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["13. Take phone number for update"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "7B. Rename Fields To Merge",
@@ -1846,13 +1521,8 @@
               }
             ]
           },
-          "next": [
-            "8B. Existing Accounts",
-            "8C. New Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["8B. Existing Accounts", "8C. New Accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8A. New Accounts",
@@ -1875,12 +1545,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "9A. Rename Fields"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["9A. Rename Fields"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "6A. Existing Accounts",
@@ -1911,13 +1577,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            " 7A. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": [" 7A. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "9A. Rename Fields",
@@ -1970,12 +1631,8 @@
               }
             ]
           },
-          "next": [
-            "10A. Set standard data"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["10A. Set standard data"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "5. Generate UID and check lang",
@@ -1985,13 +1642,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "6A. PhoneNumber accounts",
-            "6B. Email accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6A. PhoneNumber accounts", "6B. Email accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10A. Set standard data",
@@ -2001,12 +1653,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "10A bis. Set standard Area of Interest"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["10A bis. Set standard Area of Interest"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "2. Decrypt PGP",
@@ -2015,9 +1663,7 @@
             "pgpKey": "LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkYwSG5iRUJFQUN5WHUrekJzanYveUlpNkFYSFBnL081b2VnRGVDTTRMaDMxY2xMMVhjK0J0dWFQb1B0CktVRHJLQXVhR1Q4cngzNGlzeExYdmJvSTVFRU96NTd5VEVxWDhMTHFadlY4U1ZFZUtVdzE1WVhKVkpFVDhFWXIKVTV0TmVvK0Zpajd1elEwWHV3a0JTOGpxMERGcFRUeXl1c3ZreHRtZWNnQW85a3FlQ0JmOEF3V0EwSXpiRmptTwpSbVBYSTBjYmMyWWplVXZ1WUkyOXVOa2hMbUM5VFVDcU9jMFlTaDJDWVZ6a3hBZjF5dGVOZ1BtQkVnRTBWNmFiCmlDMFhlSERBSTN0Z3ZxV2c0Nk8rWFNDTXZTclVndXV3aXRpbmtObXB5SWtadnFvWE9kUmtBN0hCcmc1VVRqVEMKOFM5L3lHMlF3anNvRUtRRmxhWHM2NzZJdTBwaTM2K1l0RHVuYnNITlZmbnEraSt5ZHFEcmlPRDZhRmpXNEFVYQp2NTNwOVJQQXEydDdCVnN0SklieHV2TWRRcDJJOEp0MW12NXFTeHJBOVZTeU9BMXFMcUl4NHd4T0t0RlhXZXJhCnFmVkRaV3RtS0NkQytPREpnbnVHMHdTRkQyRFY2WHN3YTNkdXJ4Sk5RaEZpc2JpTXJJTjZhc0dzSU5WUm9YNmEKd1hROEU2K2cyTjdKbitCeHpkNDllZ2h1Z3k2dHR4KzNjbTBJQ2lYVTVJRTZyZVdnNTVFU2cxdzQ4S3B1SmVtMwo2TWhUUEUwcksyY0c2em5FZUV0R0dFTzhxcXBtRDVjbmUzVzJRdGhJL3duVTR4aitpSXJaV0NSbCtYZkdlc2xYCjZkNDVMSTZBK3BpTGRkaVdUSWFZSzQ1OHVrVnFreTRRUm5SZVpqT3ZzbDY0bVlGdDFPYnlpSWhlc3dBUkFRQUIKdEIxRFNVRk5JRWx0Y0c5eWRDQThZMmxoYlVCdVpYTjBiR1V1WTI5dFBva0NUZ1FUQVFnQU9CWWhCQ2U3WkxlLwpxb2Qva2hYQUd5clJ3MnJFdzd6cUJRSmRCNTJ4QWhzREJRc0pDQWNDQmhVS0NRZ0xBZ1FXQWdNQkFoNEJBaGVBCkFBb0pFQ3JSdzJyRXc3enEwK0FQL1J0TldyR0xwK3BSV09IU1BNRlNoUUJBU1FZdUk5Sk5Sdk9vM3FhVnRpaTcKNHlvZzVKSVZ2M2VBS0tmVThhZjVPOEl6eXZKaWdoOEpTd1Blc2UzQldnT2M2amYrRStCZkdLa0ZBMGFyVFAvNgpLV0NGUzR0ZlA4VkpwVVBzVkUwbS9lanNRK0wzNW5hb0FUUnIrRmtKN0VBRldZVzhYT0xPOU94dGZDOVYyV3B0CkJQRDRmVUFXZXArQnB5ZTN3ZXBSVFNOelhHbkhKS0FjaEVCcUc1NjRTRmVCNWN2RXcydnE2RytNeTZ1MDdnRHMKZ1BUVzE4NnNrWkk2YkFOWEJucjVSaFg1YzBIRlRaNlZXTEJxYTI0U0pXNnVsemxmZWtpQlY3d0RDakxFbUljVQpId3JDSjhsSkh0dEcxT2JNYjBUT3pEb2I4anVSM1JWUFp0MzhXa3hwS0s1RmowbGlYeHgycWlacEtIN2RWYzRlCmZLNnZkWUJNcUZkL3B3SlpvOW12cHUwYTA1Nm9lMVhTcTRzbWxmalJ3WDhYMDRzb01USTEvbUxFK1c1aWJEREEKQ0tsQlNsSC9NZHdTTlQ1SXV4TzFxdUdjMjBKQ0x2WVF3OUhWVXNTMjV5NHhzNTZqa3U2MkVuZFJYZHFVM0FuSgp3TnBCOCtoNEVHVnFERmQybFVOV1hveUxZSk5IblcyUDZ6MlRyZ00wWWpqazRrTzQ2VWdzL1Zkcmd3czAzYUU3CjcwbDh3aHJLSm1GR1hJYWtJYk9qeENuRG4zaW5IV3ZGNUQ5dHkxanVkZ3dtY01rTE1OWnJ5SjEwbXRMWDlRbUkKVlRWekdRQ1RqL3laNmxGb1B5YkV0YTc3Z0N2ZlV6MEZYeEp6bzJCSjAycUdzSE1za3NJN2xqYmNSVE5IMVF6VAp1UUlOQkYwSG5iRUJFQURPVkVxeCtONWhNTHlpZEt3TjY3emN4SUVOalo2N0JPcjhOcjYydEFTY0Q2SnFMaTBvCml4b08zdUs0ZVI3YW9vWjVuMExER2hSNUVtQkZEdGVsY2VIR0dLYmFVcjRwNEt4NUdhKy8wWXlsN3lHZzNIMjEKMk1ub3lWS1NnUmVwMis3QVpPbHdWL1dablk1YmxmN0Jua21lSXowOTRodFE1T1BMa3NVUWZxZUZKemc1WmhUKwpSRzlOTUY1OE1xd2d1U3VldWVBa1JBc3NldncvSW9jbE05cHUyTEh3d0lmNHFKbG5iMEt6K3RQQjdqendPR2tCCjVOR2FIUXkvcjh2eTlIaThiSzNrWk8xK0FZcm5jdmdHSDJkUi9KRVlXU2MzWmlQZXQ2bDFWT3RPK3NlMVkzdjIKblQ1NW9UZDlRV2lkbFNPeGxiQStrckVtRDRuMUxIbHhPQit1MzRMQk1LLy9pWk1Hb0RpZUNTTHFSdlNONkRwZQo4d2J5SlQ4Mm9ITEtxN2lyYTNmeXA3blR0UUNneEdZMmVhUGU1NkVVc0FOakEvWjQyS3c4ZGRpeFFFR2paMHRrCkVXMEhNWVA2UjZlaFc4ODBFSjYxeWFhYXlJbE1zN0FEdlV4SjgzWmxReFhXVVdiMExweFRLRXdEemRlNkZxMEsKQUxzcXZOdGdhSXNXNzlYeVBRRkNqSnR6Y0JwUmJwQWo5bEl3UXU3L1lVM0E0TzBXWTBGYnNoQmxhaXlXMHI2cQo3cit2ZzE5OVovTld5SlhiUy9Ob01nZjdlSzdZL2JxOTA2VkFqVXBvUG1HdmRWMmFndzE1S29XaUZ2MU9NZi9vClVBS2tnN29ZcEdSVW9ybU9XcC8wYTUwemhpc1VCTjR0Qi9qZnkyNHJmVmR3ckRCeDNEbHNNRE90MVFBUkFRQUIKaVFJMkJCZ0JDQUFnRmlFRUo3dGt0NytxaDMrU0ZjQWJLdEhEYXNURHZPb0ZBbDBIbmJFQ0d3d0FDZ2tRS3RIRAphc1REdk9vak5SQUFpMWpzQWtheTA1eG51bU40b0J3TGpoczJUbEp6QjJqTEdmWVYvMzBQZHZWeTFrc1hHbmVaClV6a1ZRUGlqYWZlV3dGQTQwMzFSWG11b2lmczM5b0Zvek5yeXZYNTJ5WlV4a0hSMVRlbThNbzZCUmhYR2J5alcKNkZXMnJ1bFE5VUM0bEZzbUdzc2xQeGtnWVdOaE5nSlFFMTBJWHhkVGtWMnBjZndMNE9sK2YvWnpZVmV6WjliWgpqUHJxaExkcUwwWkJZV05CTnYxbVAyNlVmbTJkNnhwcGJxSGxabHplNEJVM1JwM0R2aWhzU2Frd0FiRnJQVVViClJ1dXJ1dHJ0K1pvMTY0M0VSWFo5eXpWQmZXWFU2UkU2QVVQL2RJZjlhdlV3REJpQllGc056UXlvZXovU213NzQKN0JqQU1pK1JSWDIzcCtpWVhzdm1yMjBFWGpmd3laRVhYcGVHNVhXYi9FeGNJbGIwN0hKNTl1ZHl5ODVPOFN1VgpXaWxNTFVaZUQvejhRZFhwMUdQMGI3L2dWbExCYjBTMEl5RmZwcjZJRlB5TU5pR3FOVGpqdVltV0FvODVNQzY4Cm9Bb2dCYUJHcGJmNk10TFMzMzcxcTNpR0NuTU9SaDJ6TWsvZDRLSkV5bkQ4Nm9qZHg0Z0V2R2dvK0g1M2d4ckkKOEp6MXZ5QXl5UzAzODc0M1RoVGFsck9yWVg5UnVxUWIySXVRRVh6YUhMUjdUYUxKbnRDdU5tQ00xTG5QUisxeApvSmpHSDhJOHdEdnkvS0tENjAyV2pyWjdJTnNHZzgrcndPeWxvTmcybXJ1U052VnVmaklFTDUzUnRBOHgreVlpCk1wakRLL2I4VmdYZHV6Myt2b2pka1FNeVJLM2NEYVJoV0hyS0JvVzNOVFk5Q251U2tJMWlvUUU9Cj1pMDlqCi0tLS0tRU5EIFBHUCBQVUJMSUMgS0VZIEJMT0NLLS0tLS0=",
             "pgpKey.importedPrivateKey": "LS0tLS1CRUdJTiBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQoKbFFjWUJGMEhuYkVCRUFDeVh1K3pCc2p2L3lJaTZBWEhQZy9PNW9lZ0RlQ000TGgzMWNsTDFYYytCdHVhUG9QdApLVURyS0F1YUdUOHJ4MzRpc3hMWHZib0k1RUVPejU3eVRFcVg4TExxWnZWOFNWRWVLVXcxNVlYSlZKRVQ4RVlyClU1dE5lbytGaWo3dXpRMFh1d2tCUzhqcTBERnBUVHl5dXN2a3h0bWVjZ0FvOWtxZUNCZjhBd1dBMEl6YkZqbU8KUm1QWEkwY2JjMllqZVV2dVlJMjl1TmtoTG1DOVRVQ3FPYzBZU2gyQ1lWemt4QWYxeXRlTmdQbUJFZ0UwVjZhYgppQzBYZUhEQUkzdGd2cVdnNDZPK1hTQ012U3JVZ3V1d2l0aW5rTm1weUlrWnZxb1hPZFJrQTdIQnJnNVVUalRDCjhTOS95RzJRd2pzb0VLUUZsYVhzNjc2SXUwcGkzNitZdER1bmJzSE5WZm5xK2kreWRxRHJpT0Q2YUZqVzRBVWEKdjUzcDlSUEFxMnQ3QlZzdEpJYnh1dk1kUXAySThKdDFtdjVxU3hyQTlWU3lPQTFxTHFJeDR3eE9LdEZYV2VyYQpxZlZEWld0bUtDZEMrT0RKZ251RzB3U0ZEMkRWNlhzd2EzZHVyeEpOUWhGaXNiaU1ySU42YXNHc0lOVlJvWDZhCndYUThFNitnMk43Sm4rQnh6ZDQ5ZWdodWd5NnR0eCszY20wSUNpWFU1SUU2cmVXZzU1RVNnMXc0OEtwdUplbTMKNk1oVFBFMHJLMmNHNnpuRWVFdEdHRU84cXFwbUQ1Y25lM1cyUXRoSS93blU0eGoraUlyWldDUmwrWGZHZXNsWAo2ZDQ1TEk2QStwaUxkZGlXVElhWUs0NTh1a1Zxa3k0UVJuUmVaak92c2w2NG1ZRnQxT2J5aUloZXN3QVJBUUFCCkFBLzhDMnpYcDF6UlpSeXZWK2kxdjEvaklsVVRnelhiQXNXOWV5RGgvbTREYjh2VS9YOGJTSWNpY0kyYTcwN0cKV1pjSWUzb3Q3dmRvOXZzcjRhSW5PUXp0b0QyR01FdlNWZTR2b3lJYnVXaTZGajNJOXl2UTlYaUFVNTVSOEIzOQpUdmdxYWx2aGIvTDdRUjNVZEdnWDhialRxT2xGeWpJeUtXMkdpbDNVQk12cXY5S3hSYktaa3RxV1l1ZzdFZS9sCkx4NHN0aGhRSysxWnJHMlhPN2psaktIRzJIM3kxWnJ5bU0xU1Z6VHhjL3BsYTVZMjBUUDdhTmlpK1c4T1d5TDEKV3YvZ2hicmZEbFA5RlphNUFNTmhZUk1HWFV3Q3dvUjZVbFdyVG5FMnExdFlqazB5LzIvQ1RiNzdmeEN4clVVMgpXeWdmRENQY1FoM2k1cDR4M2IzSE5uTDJUblZKOVpML2dhRXJRNUhGWDA5a2JPUzRSTWVQbzY3K1JLckowZ2F6CmZoYjdsNUlIdHdpajg1NVIxWWlyWGtQd0lxcEVIaXQ3Q2U1RWtRTEk4Nm42QnNJdHpnM3ZWKzcrTmFjS0RGRDQKK3BwTnhaYUYxdGFsWGo5N2NIS1hjOTNKNDhmc2NoYWNJekZVa2JLbjJZMGI0c2EvVWVMUHM4Y2drWkhuT3R3egppOEZ3M1o2RHVWSEdKbzdKdmJlMnFzdXdsQjFXZHprVUxEdzl5OUJvSjlTTTJhT1hsVWpQOFl6Um1ROVhkWXJQCmg0MGFuUURsN2lxT3RoNHVQSjgzZGI0ZHdPY1M1K0FGNTZlcitwZ3hpeE14ZzI1V1lEbWxMQXlHV2JqMDBXcGYKTndibDlwU3BRdmxvQnUwd1MrVlgwKzFqZEVlMVZ4SFF4bFNZenNReHJKTU9Xd1VJQU1pcEpqUjQxVXA1LzNGawpxc0hOS29BSndzakQ0TFpLeTRrWVJCUElHMXhDL3VtdlFFK3luL0VxczdvYm9raVU5aDBoWUJ5OXF5c2trK2pICldhZ0NTQjAyU0pNK25mSVcxazhVWTRnSHJBd3hJSC9BY1dtSUlLZmZYb1VzMENYMGhsdEUyTGxaS2pWd0hEdkoKbTJSbG8yeU5McHVtSkd0TCtGU3QveTVRTEY3VlNYck1HaDA1YVE1OGZORDFhcG5yKy9tekE1bkdIMFNUeEU5agorellpM3Axak91UkVUZmE1cWl6anJhNGZGVWlJeWFRdThpakRaUGNUUVBYTTBaK1pBMTJFUlFNbFBzK1ZZWlFECndkMXl2RUFmK0JsMG1KNFBzb2VKdHF3TElvZHFhV1lUS0VzeG5lbU43TTdMaDJzdWRsQ1c4MFh0a2owc3NZNmIKWXNmdUd0MElBT09RR1Jvai9zbFJ2ZzV2ODhUNElOMWtvRXI3OUZnWk1kb1VURS9vN2FjWjlMN0E1c25qdWp3UgpBM2dLNXpHelBPeVAxdW80ellEdWMycStBSjNQcXdoTDFleXNCWWNWVFg0Y3F1M3c3Qkk5VW5UbG9ObytHb3FyCi9JN3VCaThGNys1a2w3K3ovb3JwelAxc1RCdHNVRUs1V0YyVFdobnN2aGR4OVRWSDNZLzFuY3Y5dFdEWWVWR1gKZ0FTcUI3L2xCWkI5UmNkTDl4Y3haUU5ZeitoVFQyeEIvbDZXNDBSZHc0cUJ2UVNoV3NpcUFESEdsS1o3QysrSgpSZUhreU5iWFljUndhQnA2eExiS1NZeWM3WW5YMU03YUFMc3licGVpMkxDWHowNWNpWm9FNkl6UWRhamVEZlByCjNHK2Z3WXhUbU9yZ0pabmYwUUx1TUhWNFJFSzUzczhJQUs5cGNOQ09EODZxZGtrRmlGaWEwZ2tSZjRTTjBGK3IKZzJFT3F4UkJ5VlRoRzdUVTRVcEgrN0oySFlyV1ErVjg5b05oZjlIcTNKMXlEN1Z4Q2Q5UGRlVTBVTEJ3YTFEVQoyVGdHZ3kzVEgvcFQ5Zjl3MUpOd2lQZjZOODNUQTFGUG03R1hBVlhaMXRsYTZiMGE5T1NWSXQ0cVpMRXRIZnNpCllJN1pWSVFpL0ZiVXF2WnRBSzB6VnRZaFdUVDdPalVzQ2owbWNNNmJBRHhlZ1ZSRTNyTjJ0VGJxemRiR1U0ZTYKVmU2UDdWMmlUbUtkSWNBZVAzVFBZQzMyNEdCck1zUC8rdWZReWQ4RkY3U1paWlUrKzI0TUJRMlUwejBpdUxVbgo5WGRKZGR0dVVwUFZoeUdLc29XaVB3cTltK0ovMFRoaUxTOUJKdkJoa3M4K0ZTMVdIRjBtSU9hVW1MUWRRMGxCClRTQkpiWEJ2Y25RZ1BHTnBZVzFBYm1WemRHeGxMbU52YlQ2SkFrNEVFd0VJQURnV0lRUW51MlMzdjZxSGY1SVYKd0JzcTBjTnF4TU84NmdVQ1hRZWRzUUliQXdVTENRZ0hBZ1lWQ2drSUN3SUVGZ0lEQVFJZUFRSVhnQUFLQ1JBcQowY05xeE1PODZ0UGdELzBiVFZxeGk2ZnFVVmpoMGp6QlVvVUFRRWtHTGlQU1RVYnpxTjZtbGJZb3UrTXFJT1NTCkZiOTNnQ2luMVBHbitUdkNNOHJ5WW9JZkNVc0Qzckh0d1ZvRG5PbzMvaFBnWHhpcEJRTkdxMHovK2lsZ2hVdUwKWHovRlNhVkQ3RlJOSnYzbzdFUGk5K1oycUFFMGEvaFpDZXhBQlZtRnZGeml6dlRzYlh3dlZkbHFiUVR3K0gxQQpGbnFmZ2FjbnQ4SHFVVTBqYzF4cHh5U2dISVJBYWh1ZXVFaFhnZVhMeE1OcjZ1aHZqTXVydE80QTdJRDAxdGZPCnJKR1NPbXdEVndaNitVWVYrWE5CeFUyZWxWaXdhbXR1RWlWdXJwYzVYM3BJZ1ZlOEF3b3l4SmlIRkI4S3dpZkoKU1I3YlJ0VG16RzlFenN3NkcvSTdrZDBWVDJiZC9GcE1hU2l1Ulk5SllsOGNkcW9tYVNoKzNWWE9Ibnl1cjNXQQpUS2hYZjZjQ1dhUFpyNmJ0R3RPZXFIdFYwcXVMSnBYNDBjRi9GOU9MS0RFeU5mNWl4UGx1WW13d3dBaXBRVXBSCi96SGNFalUrU0xzVHRhcmhuTnRDUWk3MkVNUFIxVkxFdHVjdU1iT2VvNUx1dGhKM1VWM2FsTndKeWNEYVFmUG8KZUJCbGFneFhkcFZEVmw2TWkyQ1RSNTF0aitzOWs2NEROR0k0NU9KRHVPbElMUDFYYTRNTE5OMmhPKzlKZk1JYQp5aVpoUmx5R3BDR3pvOFFwdzU5NHB4MXJ4ZVEvYmN0WTduWU1KbkRKQ3pEV2E4aWRkSnJTMS9VSmlGVTFjeGtBCms0LzhtZXBSYUQ4bXhMV3UrNEFyMzFNOUJWOFNjNk5nU2ROcWhyQnpMSkxDTzVZMjNFVXpSOVVNMDUwSEdBUmQKQjUyeEFSQUF6bFJLc2ZqZVlUQzhvblNzRGV1ODNNU0JEWTJldXdUcS9EYSt0clFFbkEraWFpNHRLSXNhRHQ3aQp1SGtlMnFLR2VaOUN3eG9VZVJKZ1JRN1hwWEhoeGhpbTJsSytLZUNzZVJtdnY5R01wZThob054OXRkako2TWxTCmtvRVhxZHZ1d0dUcGNGZjFtWjJPVzVYK3daNUpuaU05UGVJYlVPVGp5NUxGRUg2bmhTYzRPV1lVL2tSdlRUQmUKZkRLc0lMa3Jucm5nSkVRTExIcjhQeUtISlRQYWJ0aXg4TUNIK0tpWloyOUNzL3JUd2U0ODhEaHBBZVRSbWgwTQp2Ni9MOHZSNHZHeXQ1R1R0ZmdHSzUzTDRCaDluVWZ5UkdGa25OMllqM3JlcGRWVHJUdnJIdFdONzlwMCtlYUUzCmZVRm9uWlVqc1pXd1BwS3hKZytKOVN4NWNUZ2ZydCtDd1RDdi80bVRCcUE0bmdraTZrYjBqZWc2WHZNRzhpVS8KTnFCeXlxdTRxMnQzOHFlNTA3VUFvTVJtTm5tajN1ZWhGTEFEWXdQMmVOaXNQSFhZc1VCQm8yZExaQkZ0QnpHRAora2Vub1Z2UE5CQ2V0Y21tbXNpSlRMT3dBNzFNU2ZOMlpVTVYxbEZtOUM2Y1V5aE1BODNYdWhhdENnQzdLcnpiCllHaUxGdS9WOGowQlFveWJjM0FhVVc2UUkvWlNNRUx1LzJGTndPRHRGbU5CVzdJUVpXb3NsdEsrcXU2L3I0TmYKZldmelZzaVYyMHZ6YURJSCszaXUyUDI2dmRPbFFJMUthRDVocjNWZG1vTU5lU3FGb2hiOVRqSC82RkFDcElPNgpHS1JrVktLNWpscWY5R3VkTTRZckZBVGVMUWY0Mzh0dUszMVhjS3d3Y2R3NWJEQXpyZFVBRVFFQUFRQVArUUVnCkhaNXJqcFZJb21oUXJaR0EzdTdXejN2d1RwdjYrQmsrU1paek1kQStDT1crVmRwZ3lBVFJab2wybzlNQXEvelgKV0xtaGNwMVZUQjJpZUtZb3ZydGttbUNMcndraHRqMUk4WE1JVDh1NXIzTXRiYVF4RkdaQXd3ZVA1WUx2bGRDUApSUGhTZHg3YnQyZU4xVVFWaHd2WmtTcU1NTDlnZ0kzNlVDODNMUWZLQ21HYko4NjhqN1lEMDR3ZEUzM3dSN1pFCkViY3NubUdGM2RTUXQyWlpFY1dnSVdTQVJ0QU9lV0NDaW5PVnJuL25OZktkYTlsZHFTMlJXcnAzb3hNUUs3NEsKbXk1TG5jdDdRZDFyMVM0V1N2VWVncFl0MFQwS2ZKRzN6UVM4ZFk2cWpyZTlqa2JDWXU3ZnBJQS9PK0R5eVZTZApQeCttdHljQXRSNTFDRWdxaDYrejV5WCt0dlJub1F5V2tBN0k1ZExEaHN0RW5McFozUW1Ec3V5WjVwZDRDS1BOClVacGU1di8wRDQ2dW1iQUliM1I1bEt2b1V2K1UwYVVXZDJJcDVEdER1VTd0OWk3L090a09RS2RKU25xSlJMOFkKd0VIWFdvcU1UVHA3U1dBMHo2Q29HSm43cDhHQ1RNUDdsQlUwWjdHUkFuaUljVVc5YnN4MkcvQUc4S29QVWF6eQpPUjVkVzFiUVpNY003S2xWRVVyZkowYzFCWGFGOVhkellFWW12QnFaYzUyR0Jrd0g1bFRKYkt2dWtLazF0MmVBClluWmJ3Rm9CeFQ1UVlSS3NTOFVsSWhFYnFkd1JicURwSk1oTzZwVEFFNFpLWEozUzR6cUJSN3NJN09KT0VNUC8KVGxiblZXeFN2cWVvdDdVYmpVQUFSSjgwcXA3b3dUT010cVdqcmxOcENBRGRnM2ExODVZejZMcGxYeWxlUG1KMApLWEEzQUtEcGtmV3hXcGpBRzhFaEtKYzcvNWdvZGtXZFdsUkR4eVpETEVEMGU2VG92MlN3bEdHeHlqUURjQXNNCkdxZ3hDd09QcWhsRjhLcjhxTkc5OEFNMllVd1ppVE5xalVRMEdZaHpXU1MzOGloSGtnYkpvcXc1cU1URnlmVXgKSG9pUkl2V25BandFRFVqL1RtRUdCRXI0YmtFUDZtWFFEZlR4d3BISnh2cUdFNVRGc2c3d1NibGpiSFBRRVRDNQpzbVl0QnF2Z1l5THMvT1p0N29iSDI4YzdLd1QwK0tjY21UVnl6bWF4b3RqRkNsMzFOMDRXTWdEdmhPV3JzTFd0ClBJQy9kNkhZVllENVUxeWllM1NnSjQyd2NtaXpldUlkTTJwREF5Zk0zVzI2K2xZZ3ZZeE11cGFnU2dTYjBmNVoKQ0FEdWM2YThwOEJNR1hHMGNjaEQ4UXNlZTJOT1VpaDdJQVV4b0hQcWE1OXNpNmJlWWRiSUp6aFZxMDJXYnJaVgpmVkJWeUp4Y0xTR2ttUFJUbDZSbjcxSHBpbTBkdlZzdkpZazRKYXlDNWJTTE02Tm9Ccyt5Z3o4RXkyVkxXQm4wCmlKQVFVck5EQXRpWDZyL1RoYW1wUlRpSjhKZnlxc1E3WHFPZll0MWVhZEFGdnBHZlpJdmxOYkJnV0I0UlY5R3cKbDhJTnlDUENSK3NKc2laZXRWenZXZ0tzS2h5K1hGV1E1NTVuWHdQOC91MlAxQXdKVVNGMndBcGpRbUNZQkxGRAo3Wi8va2dQWFREUG96T2lxRTdRZG5WK2ZxalBQY215eHlGRjJiZFhUNDFiWEErNW9UU2NsTklJUm1qV01LTW92CmZWTGZXZktuYUtITE9mcmNEZVBlRHBQZENBREFJSC8ra2tjUklnd2lhYmZXSGRKK1NhQ3ZHUG5ONkJNNHczODAKQVcxOEp2MGo3b2V6Y0ZSWjZSejQzYzZYVzh0Q2ZVT2cyb2ZCU1EyeDZEd3BSb3VlZkJ4TVQ2a2lPRlFjb3duZQpXVVRLbkJUR092Um1wRElhbkhocWZGODNhenQ5djF5TlRZc2dnNVFSNnlqWm13ZGZxVnJmWnNOMU04bzRqUHFBCnI2U1Azb05SZlM5RElzUjVubXVhYy9HSE80QnRaRkszeHpzUTFVL05md2hoSlFubTZvVE9rUEVQeWN6S2dZK1QKWTVrU0Nrb3RhQUhxZi8xMklSYVNieEdzeFBZNVpsc0tEazBkWEx1bWVtTFN0YlE3Y2pucThJbTdUZHJvdy9FNgo5dm9HOWJFeFZwTEIxSk9DeXdiZ2RobldEOFhlWGNma0lWczNGUUtvSDcwNUNDYjZkak9KQWpZRUdBRUlBQ0FXCklRUW51MlMzdjZxSGY1SVZ3QnNxMGNOcXhNTzg2Z1VDWFFlZHNRSWJEQUFLQ1JBcTBjTnF4TU84NmlNMUVBQ0wKV093Q1JyTFRuR2U2WTNpZ0hBdU9HelpPVW5NSGFNc1o5aFgvZlE5MjlYTFdTeGNhZDVsVE9SVkErS05wOTViQQpVRGpUZlZGZWE2aUoremYyZ1dqTTJ2SzlmbmJKbFRHUWRIVk42Ynd5am9GR0ZjWnZLTmJvVmJhdTZWRDFRTGlVCld5WWF5eVUvR1NCaFkyRTJBbEFUWFFoZkYxT1JYYWx4L0F2ZzZYNS85bk5oVjdObjF0bU0rdXFFdDJvdlJrRmgKWTBFMi9XWS9icFIrYlozckdtbHVvZVZtWE43Z0ZUZEduY08rS0d4SnFUQUJzV3M5UlJ0RzY2dTYydTM1bWpYcgpqY1JGZG4zTE5VRjlaZFRwRVRvQlEvOTBoLzFxOVRBTUdJRmdXdzNOREtoN1A5S2JEdmpzR01BeUw1RkZmYmVuCjZKaGV5K2F2YlFSZU4vREprUmRlbDRibGRadjhURndpVnZUc2NubjI1M0xMems3eEs1VmFLVXd0Umw0UC9QeEIKMWVuVVkvUnZ2K0JXVXNGdlJMUWpJVittdm9nVS9JdzJJYW8xT09PNWlaWUNqemt3THJ5Z0NpQUZvRWFsdC9veQowdExmZnZXcmVJWUtjdzVHSGJNeVQ5M2dva1RLY1B6cWlOM0hpQVM4YUNqNGZuZURHc2p3blBXL0lETEpMVGZ6CnZqZE9GTnFXczZ0aGYxRzZwQnZZaTVBUmZOb2N0SHROb3NtZTBLNDJZSXpVdWM5SDdYR2dtTVlmd2p6QU8vTDgKb29QclRaYU90bnNnMndhRHo2dkE3S1dnMkRhYXU1STI5VzUrTWdRdm5kRzBEekg3SmlJeW1NTXI5dnhXQmQyNwpQZjYraU4yUkF6SkVyZHdOcEdGWWVzb0doYmMxTmowS2U1S1FqV0toQVE9PQo9ZmtPRAotLS0tLUVORCBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQ=="
           },
-          "next": [
-            "3. Parse JSON"
-          ],
+          "next": ["3. Parse JSON"],
           "error": []
         },
         {
@@ -2026,9 +1672,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "4. Add data.idxImportJobId"
-          ],
+          "next": ["4. Add data.idxImportJobId"],
           "error": []
         },
         {
@@ -2039,12 +1683,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "14. Update account phone number"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["14. Update account phone number"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "14. Update account phone number",
@@ -2053,9 +1693,7 @@
             "updatePolicy": "append",
             "maxConnections": 10
           },
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "1. Read From Blob Storage",
@@ -2066,9 +1704,7 @@
             "container": "{{AZURE_CONTAINER}}",
             "blobPrefix": "{{AZURE_BLOB_PREFIX}}"
           },
-          "next": [
-            "2. Decrypt PGP"
-          ],
+          "next": ["2. Decrypt PGP"],
           "error": []
         },
         {
@@ -2079,12 +1715,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "7A. Rename Fields To Merge"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["7A. Rename Fields To Merge"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "6B. Email accounts",
@@ -2094,12 +1726,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "7B. Rename Fields To Merge"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["7B. Rename Fields To Merge"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8B. Existing Accounts",
@@ -2126,13 +1754,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            " 9B. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": [" 9B. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": " 9B. Perform Merge Logic",
@@ -2142,12 +1765,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "9B bis. Perform Merge Area Of Interest Logic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["9B bis. Perform Merge Area Of Interest Logic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10C. Remove Fields",
@@ -2167,12 +1786,8 @@
               "_subscriptions"
             ]
           },
-          "next": [
-            "11D. Import Full Account Upsert"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["11D. Import Full Account Upsert"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "8C. New Accounts",
@@ -2199,12 +1814,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "9C. Rename fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["9C. Rename fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "9C. Rename fields",
@@ -2237,12 +1848,8 @@
               }
             ]
           },
-          "next": [
-            "10E. Set Standard Data"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10E. Set Standard Data"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10E. Set Standard Data",
@@ -2252,12 +1859,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "10E bis. Set standard Area Of Interest"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10E bis. Set standard Area Of Interest"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "11F. Import Full Account Insert",
@@ -2267,12 +1870,8 @@
             "maxConnections": 20,
             "addResponse": false
           },
-          "next": [
-            "12C. Set Account Info Webhook"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["12C. Set Account Info Webhook"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "7A. Rename Fields To Merge",
@@ -2329,29 +1928,17 @@
               }
             ]
           },
-          "next": [
-            "8A. New Accounts",
-            "6A. Existing Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["8A. New Accounts", "6A. Existing Accounts"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "11B. Remove Fields",
           "type": "field.remove",
           "params": {
-            "fields": [
-              "lastUpdated",
-              "_subscriptions"
-            ]
+            "fields": ["lastUpdated", "_subscriptions"]
           },
-          "next": [
-            "12B. Import Full Account Insert"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["12B. Import Full Account Insert"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "12C. Set Account Info Webhook",
@@ -2368,9 +1955,7 @@
             ],
             "addResponse": false
           },
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Generate file",
@@ -2380,9 +1965,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Prepare fields to extract phone as ID",
@@ -2392,9 +1975,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Prepare fields to extract email",
@@ -2404,9 +1985,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Encrypt file",
@@ -2415,25 +1994,16 @@
             "publicKey": "{{PGP_Public_Key_Base64_Encoded}}",
             "asciiArmor": true
           },
-          "next": [
-            "Upload to Blob Storage"
-          ]
+          "next": ["Upload to Blob Storage"]
         },
         {
           "id": "Remove auxiliar fields",
           "type": "field.remove",
           "params": {
-            "fields": [
-              "_lastUpdated",
-              "_subscriptions"
-            ]
+            "fields": ["_lastUpdated", "_subscriptions"]
           },
-          "next": [
-            "11F. Import Full Account Insert"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["11F. Import Full Account Insert"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Generate Existent Accounts File",
@@ -2443,9 +2013,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Prepare existent accounts to extract",
@@ -2455,9 +2023,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate Existent Accounts File"
-          ]
+          "next": ["Generate Existent Accounts File"]
         },
         {
           "id": "4. Add data.idxImportJobId",
@@ -2474,9 +2040,7 @@
               }
             ]
           },
-          "next": [
-            "5. Generate UID and check lang"
-          ]
+          "next": ["5. Generate UID and check lang"]
         },
         {
           "id": "9B bis. Perform Merge Area Of Interest Logic",
@@ -2486,12 +2050,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "10C. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10C. Remove Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10E bis. Set standard Area Of Interest",
@@ -2501,12 +2061,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Remove auxiliar fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["Remove auxiliar fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "7A bis. Perform Merge Logic Area of Interest",
@@ -2516,12 +2072,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "10B. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["10B. Remove Fields"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "10A bis. Set standard Area of Interest",
@@ -2531,12 +2083,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "11B. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["11B. Remove Fields"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "Upload to Blob Storage",
@@ -2555,12 +2103,8 @@
             "maxConnections": 20,
             "addResponse": false
           },
-          "next": [
-            "12A. Rename Fields To Register"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["12A. Rename Fields To Register"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "12A. Rename Fields To Register",
@@ -2585,12 +2129,8 @@
               }
             ]
           },
-          "next": [
-            "13A. Existing Account to Register"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["13A. Existing Account to Register"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "13A. Existing Account to Register",
@@ -2621,12 +2161,8 @@
             "batchSize": 200,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "14A. Check isRegistered"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["14A. Check isRegistered"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "14A. Check isRegistered",
@@ -2636,12 +2172,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "15. Notify Login"
-          ],
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "next": ["15. Notify Login"],
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "15. Notify Login",
@@ -2658,9 +2190,7 @@
             ],
             "addResponse": false
           },
-          "error": [
-            "Prepare fields to extract phone as ID"
-          ]
+          "error": ["Prepare fields to extract phone as ID"]
         },
         {
           "id": "11D. Import Full Account Upsert",
@@ -2670,12 +2200,8 @@
             "maxConnections": 20,
             "addResponse": false
           },
-          "next": [
-            "12C. Set Account Info Webhook"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["12C. Set Account Info Webhook"],
+          "error": ["Prepare fields to extract email"]
         }
       ],
       "version": 1,
@@ -2698,9 +2224,7 @@
             "pgpKey.importedPrivateKey": "LS0tLS1CRUdJTiBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQoKbFFjWUJGMEhuYkVCRUFDeVh1K3pCc2p2L3lJaTZBWEhQZy9PNW9lZ0RlQ000TGgzMWNsTDFYYytCdHVhUG9QdApLVURyS0F1YUdUOHJ4MzRpc3hMWHZib0k1RUVPejU3eVRFcVg4TExxWnZWOFNWRWVLVXcxNVlYSlZKRVQ4RVlyClU1dE5lbytGaWo3dXpRMFh1d2tCUzhqcTBERnBUVHl5dXN2a3h0bWVjZ0FvOWtxZUNCZjhBd1dBMEl6YkZqbU8KUm1QWEkwY2JjMllqZVV2dVlJMjl1TmtoTG1DOVRVQ3FPYzBZU2gyQ1lWemt4QWYxeXRlTmdQbUJFZ0UwVjZhYgppQzBYZUhEQUkzdGd2cVdnNDZPK1hTQ012U3JVZ3V1d2l0aW5rTm1weUlrWnZxb1hPZFJrQTdIQnJnNVVUalRDCjhTOS95RzJRd2pzb0VLUUZsYVhzNjc2SXUwcGkzNitZdER1bmJzSE5WZm5xK2kreWRxRHJpT0Q2YUZqVzRBVWEKdjUzcDlSUEFxMnQ3QlZzdEpJYnh1dk1kUXAySThKdDFtdjVxU3hyQTlWU3lPQTFxTHFJeDR3eE9LdEZYV2VyYQpxZlZEWld0bUtDZEMrT0RKZ251RzB3U0ZEMkRWNlhzd2EzZHVyeEpOUWhGaXNiaU1ySU42YXNHc0lOVlJvWDZhCndYUThFNitnMk43Sm4rQnh6ZDQ5ZWdodWd5NnR0eCszY20wSUNpWFU1SUU2cmVXZzU1RVNnMXc0OEtwdUplbTMKNk1oVFBFMHJLMmNHNnpuRWVFdEdHRU84cXFwbUQ1Y25lM1cyUXRoSS93blU0eGoraUlyWldDUmwrWGZHZXNsWAo2ZDQ1TEk2QStwaUxkZGlXVElhWUs0NTh1a1Zxa3k0UVJuUmVaak92c2w2NG1ZRnQxT2J5aUloZXN3QVJBUUFCCkFBLzhDMnpYcDF6UlpSeXZWK2kxdjEvaklsVVRnelhiQXNXOWV5RGgvbTREYjh2VS9YOGJTSWNpY0kyYTcwN0cKV1pjSWUzb3Q3dmRvOXZzcjRhSW5PUXp0b0QyR01FdlNWZTR2b3lJYnVXaTZGajNJOXl2UTlYaUFVNTVSOEIzOQpUdmdxYWx2aGIvTDdRUjNVZEdnWDhialRxT2xGeWpJeUtXMkdpbDNVQk12cXY5S3hSYktaa3RxV1l1ZzdFZS9sCkx4NHN0aGhRSysxWnJHMlhPN2psaktIRzJIM3kxWnJ5bU0xU1Z6VHhjL3BsYTVZMjBUUDdhTmlpK1c4T1d5TDEKV3YvZ2hicmZEbFA5RlphNUFNTmhZUk1HWFV3Q3dvUjZVbFdyVG5FMnExdFlqazB5LzIvQ1RiNzdmeEN4clVVMgpXeWdmRENQY1FoM2k1cDR4M2IzSE5uTDJUblZKOVpML2dhRXJRNUhGWDA5a2JPUzRSTWVQbzY3K1JLckowZ2F6CmZoYjdsNUlIdHdpajg1NVIxWWlyWGtQd0lxcEVIaXQ3Q2U1RWtRTEk4Nm42QnNJdHpnM3ZWKzcrTmFjS0RGRDQKK3BwTnhaYUYxdGFsWGo5N2NIS1hjOTNKNDhmc2NoYWNJekZVa2JLbjJZMGI0c2EvVWVMUHM4Y2drWkhuT3R3egppOEZ3M1o2RHVWSEdKbzdKdmJlMnFzdXdsQjFXZHprVUxEdzl5OUJvSjlTTTJhT1hsVWpQOFl6Um1ROVhkWXJQCmg0MGFuUURsN2lxT3RoNHVQSjgzZGI0ZHdPY1M1K0FGNTZlcitwZ3hpeE14ZzI1V1lEbWxMQXlHV2JqMDBXcGYKTndibDlwU3BRdmxvQnUwd1MrVlgwKzFqZEVlMVZ4SFF4bFNZenNReHJKTU9Xd1VJQU1pcEpqUjQxVXA1LzNGawpxc0hOS29BSndzakQ0TFpLeTRrWVJCUElHMXhDL3VtdlFFK3luL0VxczdvYm9raVU5aDBoWUJ5OXF5c2trK2pICldhZ0NTQjAyU0pNK25mSVcxazhVWTRnSHJBd3hJSC9BY1dtSUlLZmZYb1VzMENYMGhsdEUyTGxaS2pWd0hEdkoKbTJSbG8yeU5McHVtSkd0TCtGU3QveTVRTEY3VlNYck1HaDA1YVE1OGZORDFhcG5yKy9tekE1bkdIMFNUeEU5agorellpM3Axak91UkVUZmE1cWl6anJhNGZGVWlJeWFRdThpakRaUGNUUVBYTTBaK1pBMTJFUlFNbFBzK1ZZWlFECndkMXl2RUFmK0JsMG1KNFBzb2VKdHF3TElvZHFhV1lUS0VzeG5lbU43TTdMaDJzdWRsQ1c4MFh0a2owc3NZNmIKWXNmdUd0MElBT09RR1Jvai9zbFJ2ZzV2ODhUNElOMWtvRXI3OUZnWk1kb1VURS9vN2FjWjlMN0E1c25qdWp3UgpBM2dLNXpHelBPeVAxdW80ellEdWMycStBSjNQcXdoTDFleXNCWWNWVFg0Y3F1M3c3Qkk5VW5UbG9ObytHb3FyCi9JN3VCaThGNys1a2w3K3ovb3JwelAxc1RCdHNVRUs1V0YyVFdobnN2aGR4OVRWSDNZLzFuY3Y5dFdEWWVWR1gKZ0FTcUI3L2xCWkI5UmNkTDl4Y3haUU5ZeitoVFQyeEIvbDZXNDBSZHc0cUJ2UVNoV3NpcUFESEdsS1o3QysrSgpSZUhreU5iWFljUndhQnA2eExiS1NZeWM3WW5YMU03YUFMc3licGVpMkxDWHowNWNpWm9FNkl6UWRhamVEZlByCjNHK2Z3WXhUbU9yZ0pabmYwUUx1TUhWNFJFSzUzczhJQUs5cGNOQ09EODZxZGtrRmlGaWEwZ2tSZjRTTjBGK3IKZzJFT3F4UkJ5VlRoRzdUVTRVcEgrN0oySFlyV1ErVjg5b05oZjlIcTNKMXlEN1Z4Q2Q5UGRlVTBVTEJ3YTFEVQoyVGdHZ3kzVEgvcFQ5Zjl3MUpOd2lQZjZOODNUQTFGUG03R1hBVlhaMXRsYTZiMGE5T1NWSXQ0cVpMRXRIZnNpCllJN1pWSVFpL0ZiVXF2WnRBSzB6VnRZaFdUVDdPalVzQ2owbWNNNmJBRHhlZ1ZSRTNyTjJ0VGJxemRiR1U0ZTYKVmU2UDdWMmlUbUtkSWNBZVAzVFBZQzMyNEdCck1zUC8rdWZReWQ4RkY3U1paWlUrKzI0TUJRMlUwejBpdUxVbgo5WGRKZGR0dVVwUFZoeUdLc29XaVB3cTltK0ovMFRoaUxTOUJKdkJoa3M4K0ZTMVdIRjBtSU9hVW1MUWRRMGxCClRTQkpiWEJ2Y25RZ1BHTnBZVzFBYm1WemRHeGxMbU52YlQ2SkFrNEVFd0VJQURnV0lRUW51MlMzdjZxSGY1SVYKd0JzcTBjTnF4TU84NmdVQ1hRZWRzUUliQXdVTENRZ0hBZ1lWQ2drSUN3SUVGZ0lEQVFJZUFRSVhnQUFLQ1JBcQowY05xeE1PODZ0UGdELzBiVFZxeGk2ZnFVVmpoMGp6QlVvVUFRRWtHTGlQU1RVYnpxTjZtbGJZb3UrTXFJT1NTCkZiOTNnQ2luMVBHbitUdkNNOHJ5WW9JZkNVc0Qzckh0d1ZvRG5PbzMvaFBnWHhpcEJRTkdxMHovK2lsZ2hVdUwKWHovRlNhVkQ3RlJOSnYzbzdFUGk5K1oycUFFMGEvaFpDZXhBQlZtRnZGeml6dlRzYlh3dlZkbHFiUVR3K0gxQQpGbnFmZ2FjbnQ4SHFVVTBqYzF4cHh5U2dISVJBYWh1ZXVFaFhnZVhMeE1OcjZ1aHZqTXVydE80QTdJRDAxdGZPCnJKR1NPbXdEVndaNitVWVYrWE5CeFUyZWxWaXdhbXR1RWlWdXJwYzVYM3BJZ1ZlOEF3b3l4SmlIRkI4S3dpZkoKU1I3YlJ0VG16RzlFenN3NkcvSTdrZDBWVDJiZC9GcE1hU2l1Ulk5SllsOGNkcW9tYVNoKzNWWE9Ibnl1cjNXQQpUS2hYZjZjQ1dhUFpyNmJ0R3RPZXFIdFYwcXVMSnBYNDBjRi9GOU9MS0RFeU5mNWl4UGx1WW13d3dBaXBRVXBSCi96SGNFalUrU0xzVHRhcmhuTnRDUWk3MkVNUFIxVkxFdHVjdU1iT2VvNUx1dGhKM1VWM2FsTndKeWNEYVFmUG8KZUJCbGFneFhkcFZEVmw2TWkyQ1RSNTF0aitzOWs2NEROR0k0NU9KRHVPbElMUDFYYTRNTE5OMmhPKzlKZk1JYQp5aVpoUmx5R3BDR3pvOFFwdzU5NHB4MXJ4ZVEvYmN0WTduWU1KbkRKQ3pEV2E4aWRkSnJTMS9VSmlGVTFjeGtBCms0LzhtZXBSYUQ4bXhMV3UrNEFyMzFNOUJWOFNjNk5nU2ROcWhyQnpMSkxDTzVZMjNFVXpSOVVNMDUwSEdBUmQKQjUyeEFSQUF6bFJLc2ZqZVlUQzhvblNzRGV1ODNNU0JEWTJldXdUcS9EYSt0clFFbkEraWFpNHRLSXNhRHQ3aQp1SGtlMnFLR2VaOUN3eG9VZVJKZ1JRN1hwWEhoeGhpbTJsSytLZUNzZVJtdnY5R01wZThob054OXRkako2TWxTCmtvRVhxZHZ1d0dUcGNGZjFtWjJPVzVYK3daNUpuaU05UGVJYlVPVGp5NUxGRUg2bmhTYzRPV1lVL2tSdlRUQmUKZkRLc0lMa3Jucm5nSkVRTExIcjhQeUtISlRQYWJ0aXg4TUNIK0tpWloyOUNzL3JUd2U0ODhEaHBBZVRSbWgwTQp2Ni9MOHZSNHZHeXQ1R1R0ZmdHSzUzTDRCaDluVWZ5UkdGa25OMllqM3JlcGRWVHJUdnJIdFdONzlwMCtlYUUzCmZVRm9uWlVqc1pXd1BwS3hKZytKOVN4NWNUZ2ZydCtDd1RDdi80bVRCcUE0bmdraTZrYjBqZWc2WHZNRzhpVS8KTnFCeXlxdTRxMnQzOHFlNTA3VUFvTVJtTm5tajN1ZWhGTEFEWXdQMmVOaXNQSFhZc1VCQm8yZExaQkZ0QnpHRAora2Vub1Z2UE5CQ2V0Y21tbXNpSlRMT3dBNzFNU2ZOMlpVTVYxbEZtOUM2Y1V5aE1BODNYdWhhdENnQzdLcnpiCllHaUxGdS9WOGowQlFveWJjM0FhVVc2UUkvWlNNRUx1LzJGTndPRHRGbU5CVzdJUVpXb3NsdEsrcXU2L3I0TmYKZldmelZzaVYyMHZ6YURJSCszaXUyUDI2dmRPbFFJMUthRDVocjNWZG1vTU5lU3FGb2hiOVRqSC82RkFDcElPNgpHS1JrVktLNWpscWY5R3VkTTRZckZBVGVMUWY0Mzh0dUszMVhjS3d3Y2R3NWJEQXpyZFVBRVFFQUFRQVArUUVnCkhaNXJqcFZJb21oUXJaR0EzdTdXejN2d1RwdjYrQmsrU1paek1kQStDT1crVmRwZ3lBVFJab2wybzlNQXEvelgKV0xtaGNwMVZUQjJpZUtZb3ZydGttbUNMcndraHRqMUk4WE1JVDh1NXIzTXRiYVF4RkdaQXd3ZVA1WUx2bGRDUApSUGhTZHg3YnQyZU4xVVFWaHd2WmtTcU1NTDlnZ0kzNlVDODNMUWZLQ21HYko4NjhqN1lEMDR3ZEUzM3dSN1pFCkViY3NubUdGM2RTUXQyWlpFY1dnSVdTQVJ0QU9lV0NDaW5PVnJuL25OZktkYTlsZHFTMlJXcnAzb3hNUUs3NEsKbXk1TG5jdDdRZDFyMVM0V1N2VWVncFl0MFQwS2ZKRzN6UVM4ZFk2cWpyZTlqa2JDWXU3ZnBJQS9PK0R5eVZTZApQeCttdHljQXRSNTFDRWdxaDYrejV5WCt0dlJub1F5V2tBN0k1ZExEaHN0RW5McFozUW1Ec3V5WjVwZDRDS1BOClVacGU1di8wRDQ2dW1iQUliM1I1bEt2b1V2K1UwYVVXZDJJcDVEdER1VTd0OWk3L090a09RS2RKU25xSlJMOFkKd0VIWFdvcU1UVHA3U1dBMHo2Q29HSm43cDhHQ1RNUDdsQlUwWjdHUkFuaUljVVc5YnN4MkcvQUc4S29QVWF6eQpPUjVkVzFiUVpNY003S2xWRVVyZkowYzFCWGFGOVhkellFWW12QnFaYzUyR0Jrd0g1bFRKYkt2dWtLazF0MmVBClluWmJ3Rm9CeFQ1UVlSS3NTOFVsSWhFYnFkd1JicURwSk1oTzZwVEFFNFpLWEozUzR6cUJSN3NJN09KT0VNUC8KVGxiblZXeFN2cWVvdDdVYmpVQUFSSjgwcXA3b3dUT010cVdqcmxOcENBRGRnM2ExODVZejZMcGxYeWxlUG1KMApLWEEzQUtEcGtmV3hXcGpBRzhFaEtKYzcvNWdvZGtXZFdsUkR4eVpETEVEMGU2VG92MlN3bEdHeHlqUURjQXNNCkdxZ3hDd09QcWhsRjhLcjhxTkc5OEFNMllVd1ppVE5xalVRMEdZaHpXU1MzOGloSGtnYkpvcXc1cU1URnlmVXgKSG9pUkl2V25BandFRFVqL1RtRUdCRXI0YmtFUDZtWFFEZlR4d3BISnh2cUdFNVRGc2c3d1NibGpiSFBRRVRDNQpzbVl0QnF2Z1l5THMvT1p0N29iSDI4YzdLd1QwK0tjY21UVnl6bWF4b3RqRkNsMzFOMDRXTWdEdmhPV3JzTFd0ClBJQy9kNkhZVllENVUxeWllM1NnSjQyd2NtaXpldUlkTTJwREF5Zk0zVzI2K2xZZ3ZZeE11cGFnU2dTYjBmNVoKQ0FEdWM2YThwOEJNR1hHMGNjaEQ4UXNlZTJOT1VpaDdJQVV4b0hQcWE1OXNpNmJlWWRiSUp6aFZxMDJXYnJaVgpmVkJWeUp4Y0xTR2ttUFJUbDZSbjcxSHBpbTBkdlZzdkpZazRKYXlDNWJTTE02Tm9Ccyt5Z3o4RXkyVkxXQm4wCmlKQVFVck5EQXRpWDZyL1RoYW1wUlRpSjhKZnlxc1E3WHFPZll0MWVhZEFGdnBHZlpJdmxOYkJnV0I0UlY5R3cKbDhJTnlDUENSK3NKc2laZXRWenZXZ0tzS2h5K1hGV1E1NTVuWHdQOC91MlAxQXdKVVNGMndBcGpRbUNZQkxGRAo3Wi8va2dQWFREUG96T2lxRTdRZG5WK2ZxalBQY215eHlGRjJiZFhUNDFiWEErNW9UU2NsTklJUm1qV01LTW92CmZWTGZXZktuYUtITE9mcmNEZVBlRHBQZENBREFJSC8ra2tjUklnd2lhYmZXSGRKK1NhQ3ZHUG5ONkJNNHczODAKQVcxOEp2MGo3b2V6Y0ZSWjZSejQzYzZYVzh0Q2ZVT2cyb2ZCU1EyeDZEd3BSb3VlZkJ4TVQ2a2lPRlFjb3duZQpXVVRLbkJUR092Um1wRElhbkhocWZGODNhenQ5djF5TlRZc2dnNVFSNnlqWm13ZGZxVnJmWnNOMU04bzRqUHFBCnI2U1Azb05SZlM5RElzUjVubXVhYy9HSE80QnRaRkszeHpzUTFVL05md2hoSlFubTZvVE9rUEVQeWN6S2dZK1QKWTVrU0Nrb3RhQUhxZi8xMklSYVNieEdzeFBZNVpsc0tEazBkWEx1bWVtTFN0YlE3Y2pucThJbTdUZHJvdy9FNgo5dm9HOWJFeFZwTEIxSk9DeXdiZ2RobldEOFhlWGNma0lWczNGUUtvSDcwNUNDYjZkak9KQWpZRUdBRUlBQ0FXCklRUW51MlMzdjZxSGY1SVZ3QnNxMGNOcXhNTzg2Z1VDWFFlZHNRSWJEQUFLQ1JBcTBjTnF4TU84NmlNMUVBQ0wKV093Q1JyTFRuR2U2WTNpZ0hBdU9HelpPVW5NSGFNc1o5aFgvZlE5MjlYTFdTeGNhZDVsVE9SVkErS05wOTViQQpVRGpUZlZGZWE2aUoremYyZ1dqTTJ2SzlmbmJKbFRHUWRIVk42Ynd5am9GR0ZjWnZLTmJvVmJhdTZWRDFRTGlVCld5WWF5eVUvR1NCaFkyRTJBbEFUWFFoZkYxT1JYYWx4L0F2ZzZYNS85bk5oVjdObjF0bU0rdXFFdDJvdlJrRmgKWTBFMi9XWS9icFIrYlozckdtbHVvZVZtWE43Z0ZUZEduY08rS0d4SnFUQUJzV3M5UlJ0RzY2dTYydTM1bWpYcgpqY1JGZG4zTE5VRjlaZFRwRVRvQlEvOTBoLzFxOVRBTUdJRmdXdzNOREtoN1A5S2JEdmpzR01BeUw1RkZmYmVuCjZKaGV5K2F2YlFSZU4vREprUmRlbDRibGRadjhURndpVnZUc2NubjI1M0xMems3eEs1VmFLVXd0Umw0UC9QeEIKMWVuVVkvUnZ2K0JXVXNGdlJMUWpJVittdm9nVS9JdzJJYW8xT09PNWlaWUNqemt3THJ5Z0NpQUZvRWFsdC9veQowdExmZnZXcmVJWUtjdzVHSGJNeVQ5M2dva1RLY1B6cWlOM0hpQVM4YUNqNGZuZURHc2p3blBXL0lETEpMVGZ6CnZqZE9GTnFXczZ0aGYxRzZwQnZZaTVBUmZOb2N0SHROb3NtZTBLNDJZSXpVdWM5SDdYR2dtTVlmd2p6QU8vTDgKb29QclRaYU90bnNnMndhRHo2dkE3S1dnMkRhYXU1STI5VzUrTWdRdm5kRzBEekg3SmlJeW1NTXI5dnhXQmQyNwpQZjYraU4yUkF6SkVyZHdOcEdGWWVzb0doYmMxTmowS2U1S1FqV0toQVE9PQo9ZmtPRAotLS0tLUVORCBQR1AgUFJJVkFURSBLRVkgQkxPQ0stLS0tLQ==",
             "pgpKey": "LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkYwSG5iRUJFQUN5WHUrekJzanYveUlpNkFYSFBnL081b2VnRGVDTTRMaDMxY2xMMVhjK0J0dWFQb1B0CktVRHJLQXVhR1Q4cngzNGlzeExYdmJvSTVFRU96NTd5VEVxWDhMTHFadlY4U1ZFZUtVdzE1WVhKVkpFVDhFWXIKVTV0TmVvK0Zpajd1elEwWHV3a0JTOGpxMERGcFRUeXl1c3ZreHRtZWNnQW85a3FlQ0JmOEF3V0EwSXpiRmptTwpSbVBYSTBjYmMyWWplVXZ1WUkyOXVOa2hMbUM5VFVDcU9jMFlTaDJDWVZ6a3hBZjF5dGVOZ1BtQkVnRTBWNmFiCmlDMFhlSERBSTN0Z3ZxV2c0Nk8rWFNDTXZTclVndXV3aXRpbmtObXB5SWtadnFvWE9kUmtBN0hCcmc1VVRqVEMKOFM5L3lHMlF3anNvRUtRRmxhWHM2NzZJdTBwaTM2K1l0RHVuYnNITlZmbnEraSt5ZHFEcmlPRDZhRmpXNEFVYQp2NTNwOVJQQXEydDdCVnN0SklieHV2TWRRcDJJOEp0MW12NXFTeHJBOVZTeU9BMXFMcUl4NHd4T0t0RlhXZXJhCnFmVkRaV3RtS0NkQytPREpnbnVHMHdTRkQyRFY2WHN3YTNkdXJ4Sk5RaEZpc2JpTXJJTjZhc0dzSU5WUm9YNmEKd1hROEU2K2cyTjdKbitCeHpkNDllZ2h1Z3k2dHR4KzNjbTBJQ2lYVTVJRTZyZVdnNTVFU2cxdzQ4S3B1SmVtMwo2TWhUUEUwcksyY0c2em5FZUV0R0dFTzhxcXBtRDVjbmUzVzJRdGhJL3duVTR4aitpSXJaV0NSbCtYZkdlc2xYCjZkNDVMSTZBK3BpTGRkaVdUSWFZSzQ1OHVrVnFreTRRUm5SZVpqT3ZzbDY0bVlGdDFPYnlpSWhlc3dBUkFRQUIKdEIxRFNVRk5JRWx0Y0c5eWRDQThZMmxoYlVCdVpYTjBiR1V1WTI5dFBva0NUZ1FUQVFnQU9CWWhCQ2U3WkxlLwpxb2Qva2hYQUd5clJ3MnJFdzd6cUJRSmRCNTJ4QWhzREJRc0pDQWNDQmhVS0NRZ0xBZ1FXQWdNQkFoNEJBaGVBCkFBb0pFQ3JSdzJyRXc3enEwK0FQL1J0TldyR0xwK3BSV09IU1BNRlNoUUJBU1FZdUk5Sk5Sdk9vM3FhVnRpaTcKNHlvZzVKSVZ2M2VBS0tmVThhZjVPOEl6eXZKaWdoOEpTd1Blc2UzQldnT2M2amYrRStCZkdLa0ZBMGFyVFAvNgpLV0NGUzR0ZlA4VkpwVVBzVkUwbS9lanNRK0wzNW5hb0FUUnIrRmtKN0VBRldZVzhYT0xPOU94dGZDOVYyV3B0CkJQRDRmVUFXZXArQnB5ZTN3ZXBSVFNOelhHbkhKS0FjaEVCcUc1NjRTRmVCNWN2RXcydnE2RytNeTZ1MDdnRHMKZ1BUVzE4NnNrWkk2YkFOWEJucjVSaFg1YzBIRlRaNlZXTEJxYTI0U0pXNnVsemxmZWtpQlY3d0RDakxFbUljVQpId3JDSjhsSkh0dEcxT2JNYjBUT3pEb2I4anVSM1JWUFp0MzhXa3hwS0s1RmowbGlYeHgycWlacEtIN2RWYzRlCmZLNnZkWUJNcUZkL3B3SlpvOW12cHUwYTA1Nm9lMVhTcTRzbWxmalJ3WDhYMDRzb01USTEvbUxFK1c1aWJEREEKQ0tsQlNsSC9NZHdTTlQ1SXV4TzFxdUdjMjBKQ0x2WVF3OUhWVXNTMjV5NHhzNTZqa3U2MkVuZFJYZHFVM0FuSgp3TnBCOCtoNEVHVnFERmQybFVOV1hveUxZSk5IblcyUDZ6MlRyZ00wWWpqazRrTzQ2VWdzL1Zkcmd3czAzYUU3CjcwbDh3aHJLSm1GR1hJYWtJYk9qeENuRG4zaW5IV3ZGNUQ5dHkxanVkZ3dtY01rTE1OWnJ5SjEwbXRMWDlRbUkKVlRWekdRQ1RqL3laNmxGb1B5YkV0YTc3Z0N2ZlV6MEZYeEp6bzJCSjAycUdzSE1za3NJN2xqYmNSVE5IMVF6VAp1UUlOQkYwSG5iRUJFQURPVkVxeCtONWhNTHlpZEt3TjY3emN4SUVOalo2N0JPcjhOcjYydEFTY0Q2SnFMaTBvCml4b08zdUs0ZVI3YW9vWjVuMExER2hSNUVtQkZEdGVsY2VIR0dLYmFVcjRwNEt4NUdhKy8wWXlsN3lHZzNIMjEKMk1ub3lWS1NnUmVwMis3QVpPbHdWL1dablk1YmxmN0Jua21lSXowOTRodFE1T1BMa3NVUWZxZUZKemc1WmhUKwpSRzlOTUY1OE1xd2d1U3VldWVBa1JBc3NldncvSW9jbE05cHUyTEh3d0lmNHFKbG5iMEt6K3RQQjdqendPR2tCCjVOR2FIUXkvcjh2eTlIaThiSzNrWk8xK0FZcm5jdmdHSDJkUi9KRVlXU2MzWmlQZXQ2bDFWT3RPK3NlMVkzdjIKblQ1NW9UZDlRV2lkbFNPeGxiQStrckVtRDRuMUxIbHhPQit1MzRMQk1LLy9pWk1Hb0RpZUNTTHFSdlNONkRwZQo4d2J5SlQ4Mm9ITEtxN2lyYTNmeXA3blR0UUNneEdZMmVhUGU1NkVVc0FOakEvWjQyS3c4ZGRpeFFFR2paMHRrCkVXMEhNWVA2UjZlaFc4ODBFSjYxeWFhYXlJbE1zN0FEdlV4SjgzWmxReFhXVVdiMExweFRLRXdEemRlNkZxMEsKQUxzcXZOdGdhSXNXNzlYeVBRRkNqSnR6Y0JwUmJwQWo5bEl3UXU3L1lVM0E0TzBXWTBGYnNoQmxhaXlXMHI2cQo3cit2ZzE5OVovTld5SlhiUy9Ob01nZjdlSzdZL2JxOTA2VkFqVXBvUG1HdmRWMmFndzE1S29XaUZ2MU9NZi9vClVBS2tnN29ZcEdSVW9ybU9XcC8wYTUwemhpc1VCTjR0Qi9qZnkyNHJmVmR3ckRCeDNEbHNNRE90MVFBUkFRQUIKaVFJMkJCZ0JDQUFnRmlFRUo3dGt0NytxaDMrU0ZjQWJLdEhEYXNURHZPb0ZBbDBIbmJFQ0d3d0FDZ2tRS3RIRAphc1REdk9vak5SQUFpMWpzQWtheTA1eG51bU40b0J3TGpoczJUbEp6QjJqTEdmWVYvMzBQZHZWeTFrc1hHbmVaClV6a1ZRUGlqYWZlV3dGQTQwMzFSWG11b2lmczM5b0Zvek5yeXZYNTJ5WlV4a0hSMVRlbThNbzZCUmhYR2J5alcKNkZXMnJ1bFE5VUM0bEZzbUdzc2xQeGtnWVdOaE5nSlFFMTBJWHhkVGtWMnBjZndMNE9sK2YvWnpZVmV6WjliWgpqUHJxaExkcUwwWkJZV05CTnYxbVAyNlVmbTJkNnhwcGJxSGxabHplNEJVM1JwM0R2aWhzU2Frd0FiRnJQVVViClJ1dXJ1dHJ0K1pvMTY0M0VSWFo5eXpWQmZXWFU2UkU2QVVQL2RJZjlhdlV3REJpQllGc056UXlvZXovU213NzQKN0JqQU1pK1JSWDIzcCtpWVhzdm1yMjBFWGpmd3laRVhYcGVHNVhXYi9FeGNJbGIwN0hKNTl1ZHl5ODVPOFN1VgpXaWxNTFVaZUQvejhRZFhwMUdQMGI3L2dWbExCYjBTMEl5RmZwcjZJRlB5TU5pR3FOVGpqdVltV0FvODVNQzY4Cm9Bb2dCYUJHcGJmNk10TFMzMzcxcTNpR0NuTU9SaDJ6TWsvZDRLSkV5bkQ4Nm9qZHg0Z0V2R2dvK0g1M2d4ckkKOEp6MXZ5QXl5UzAzODc0M1RoVGFsck9yWVg5UnVxUWIySXVRRVh6YUhMUjdUYUxKbnRDdU5tQ00xTG5QUisxeApvSmpHSDhJOHdEdnkvS0tENjAyV2pyWjdJTnNHZzgrcndPeWxvTmcybXJ1U052VnVmaklFTDUzUnRBOHgreVlpCk1wakRLL2I4VmdYZHV6Myt2b2pka1FNeVJLM2NEYVJoV0hyS0JvVzNOVFk5Q251U2tJMWlvUUU9Cj1pMDlqCi0tLS0tRU5EIFBHUCBQVUJMSUMgS0VZIEJMT0NLLS0tLS0="
           },
-          "next": [
-            "3. Parse JSON"
-          ]
+          "next": ["3. Parse JSON"]
         },
         {
           "id": "3. Parse JSON",
@@ -2708,9 +2232,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "3. Rename Fields To Merge"
-          ]
+          "next": ["3. Rename Fields To Merge"]
         },
         {
           "id": "8. Evaluate Subscriptions & Preferences",
@@ -2724,12 +2246,8 @@
             ],
             "language": "jexl"
           },
-          "next": [
-            "9. Import lite account"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["9. Import lite account"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "9. Import lite account",
@@ -2761,12 +2279,8 @@
               }
             ]
           },
-          "next": [
-            "10A. Check if Preferences exists"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["10A. Check if Preferences exists"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "4A. Existing Accounts",
@@ -2789,13 +2303,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "5A. Perform Merge Logic",
-            "Prepare existent accounts to extract"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["5A. Perform Merge Logic", "Prepare existent accounts to extract"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "4B. New Accounts",
@@ -2818,12 +2327,8 @@
             "maxConcurrency": 1,
             "multiMatchBehavior": "error"
           },
-          "next": [
-            "Prepare new accounts error"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["Prepare new accounts error"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "3. Rename Fields To Merge",
@@ -2860,13 +2365,8 @@
               }
             ]
           },
-          "next": [
-            "4A. Existing Accounts",
-            "4B. New Accounts"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["4A. Existing Accounts", "4B. New Accounts"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "5A. Perform Merge Logic",
@@ -2876,12 +2376,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "5A bis. Perform Merge Area of Interest Logic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["5A bis. Perform Merge Area of Interest Logic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "11. Lite InitRegistrationgigya.generic",
@@ -2898,12 +2394,8 @@
             ],
             "addResponse": true
           },
-          "next": [
-            "12. setAccountInfo"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["12. setAccountInfo"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "12. setAccountInfo",
@@ -2936,30 +2428,16 @@
             ]
           },
           "next": [],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "6A. Remove Fields",
           "type": "field.remove",
           "params": {
-            "fields": [
-              "data._areaOfInterest",
-              "data._child",
-              "data._pet",
-              "data._externalApplication",
-              "_lastUpdated",
-              "data._initialAppSourceCode",
-              "_subscriptions"
-            ]
+            "fields": ["data._areaOfInterest", "data._child", "data._pet", "data._externalApplication", "_lastUpdated", "data._initialAppSourceCode", "_subscriptions"]
           },
-          "next": [
-            "7. Add data.idxImportJobId"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["7. Add data.idxImportJobId"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "10A. Check if Preferences exists",
@@ -2969,12 +2447,8 @@
             "notifyLastRecord": false,
             "ECMAScriptVersion": "12"
           },
-          "next": [
-            "11. Lite InitRegistrationgigya.generic"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["11. Lite InitRegistrationgigya.generic"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Prepare new accounts error",
@@ -2985,9 +2459,7 @@
             "ECMAScriptVersion": "12"
           },
           "next": [],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "1. Read From Blob Storage",
@@ -2998,9 +2470,7 @@
             "container": "{{AZURE_CONTAINER}}",
             "blobPrefix": "{{AZURE_BLOB_PREFIX}}"
           },
-          "next": [
-            "2. Decrypt PGP"
-          ]
+          "next": ["2. Decrypt PGP"]
         },
         {
           "id": "Prepare fields to extract email",
@@ -3010,9 +2480,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate file"
-          ]
+          "next": ["Generate file"]
         },
         {
           "id": "Generate file",
@@ -3022,9 +2490,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "Encrypt file",
@@ -3033,9 +2499,7 @@
             "publicKey": "{{PGP_Public_Key_Base64_Encoded}}",
             "asciiArmor": true
           },
-          "next": [
-            "Upload to Blob Storage"
-          ]
+          "next": ["Upload to Blob Storage"]
         },
         {
           "id": "Prepare existent accounts to extract",
@@ -3045,9 +2509,7 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "Generate Existent Accounts File"
-          ]
+          "next": ["Generate Existent Accounts File"]
         },
         {
           "id": "Generate Existent Accounts File",
@@ -3057,9 +2519,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Encrypt file"
-          ]
+          "next": ["Encrypt file"]
         },
         {
           "id": "7. Add data.idxImportJobId",
@@ -3072,12 +2532,8 @@
               }
             ]
           },
-          "next": [
-            "8. Evaluate Subscriptions & Preferences"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["8. Evaluate Subscriptions & Preferences"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "5A bis. Perform Merge Area of Interest Logic",
@@ -3087,12 +2543,8 @@
             "ECMAScriptVersion": "12",
             "notifyLastRecord": false
           },
-          "next": [
-            "6A. Remove Fields"
-          ],
-          "error": [
-            "Prepare fields to extract email"
-          ]
+          "next": ["6A. Remove Fields"],
+          "error": ["Prepare fields to extract email"]
         },
         {
           "id": "Upload to Blob Storage",
@@ -3128,9 +2580,7 @@
             "batchSize": 300,
             "maxConcurrency": 1
           },
-          "next": [
-            "rename"
-          ]
+          "next": ["rename"]
         },
         {
           "id": "rename",
@@ -3155,9 +2605,7 @@
               }
             ]
           },
-          "next": [
-            "krux"
-          ]
+          "next": ["krux"]
         },
         {
           "id": "krux",
@@ -3168,9 +2616,7 @@
             "quoteFields": false,
             "separator": ";"
           },
-          "next": [
-            "lzo"
-          ]
+          "next": ["lzo"]
         },
         {
           "id": "lzo",
@@ -3178,9 +2624,7 @@
           "params": {
             "createIndexFile": true
           },
-          "next": [
-            "s3"
-          ]
+          "next": ["s3"]
         },
         {
           "id": "s3",
@@ -3220,9 +2664,7 @@
             "sortBy": "time",
             "timeout": 60
           },
-          "next": [
-            "parse JSON"
-          ]
+          "next": ["parse JSON"]
         },
         {
           "id": "parse JSON",
@@ -3230,9 +2672,7 @@
           "params": {
             "addFilename": false
           },
-          "next": [
-            "sharedvariable"
-          ]
+          "next": ["sharedvariable"]
         },
         {
           "id": "Import Lite Account",
@@ -3260,9 +2700,7 @@
             "addResponse": false
           },
           "next": [],
-          "error": [
-            "Format Error File"
-          ]
+          "error": ["Format Error File"]
         },
         {
           "id": "Format Error File",
@@ -3272,9 +2710,7 @@
             "maxFileSize": 5000,
             "createEmptyFile": false
           },
-          "next": [
-            "Save errors to SFTP"
-          ]
+          "next": ["Save errors to SFTP"]
         },
         {
           "id": "Save errors to SFTP",
@@ -3292,9 +2728,7 @@
         {
           "id": "sharedvariable",
           "type": "datasource.read.sharedvariable",
-          "next": [
-            "Import Lite Account"
-          ]
+          "next": ["Import Lite Account"]
         }
       ],
       "version": 1,
