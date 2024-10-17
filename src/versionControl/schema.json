@@ -1,11 +1,11 @@
 {
-  "callId": "540b84dfd8fb4550a4fd53bed40380aa",
-  "context": "{\"id\":\"schema\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
+  "callId": "f6c91361667442b2ae26d81b240b4052",
+  "context": "{\"id\":\"schema\",\"targetApiKey\":\"4_6Tv6z8O6NmUO_BZoHcXIRw\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-17T14:35:20.794Z",
+  "time": "2024-10-17T14:56:01.681Z",
   "profileSchema": {
     "fields": {
       "education.startYear": {
@@ -44,7 +44,7 @@
         "format": "regex('^(?=(.{1,64}@.{1,255}))([!#$%&'*+\\-\\/=?\\^_`{|}~a-zA-Z0-9}]{1,64}(\\.[!#$%&'*+\\-\\/=?\\^_`{|}~a-zA-Z0-9]{0,}){0,})@((\\[(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}\\])|([a-zA-Z0-9-]{1,63}(\\.[a-zA-Z0-9-]{2,63}){1,}))$')",
         "type": "string",
         "allowNull": true,
-        "writeAccess": "clientModify",
+        "writeAccess": "serverOnly",
         "encrypt": "AES"
       },
       "lastLoginLocation.city": {
@@ -135,7 +135,6 @@
       },
       "birthYear": {
         "required": false,
-        "format": "1900-2050",
         "type": "long",
         "allowNull": true,
         "writeAccess": "clientModify"
@@ -743,7 +742,7 @@
         "required": false,
         "type": "string",
         "allowNull": true,
-        "writeAccess": "clientModify",
+        "writeAccess": "serverOnly",
         "encrypt": "AES"
       },
       "oidcData.address.postal_code": {
@@ -789,6 +788,19 @@
   },
   "dataSchema": {
     "fields": {
+      "integerField": {
+        "required": false,
+        "type": "integer",
+        "allowNull": false,
+        "writeAccess": "clientModify"
+      },
+      "data_test_schema_2": {
+        "required": false,
+        "type": "string",
+        "allowNull": true,
+        "writeAccess": "clientModify",
+        "subType": "phone"
+      },
       "terms": {
         "required": false,
         "type": "boolean",
@@ -800,12 +812,38 @@
         "type": "boolean",
         "allowNull": true,
         "writeAccess": "clientModify"
+      },
+      "data_test_schema": {
+        "required": false,
+        "type": "string",
+        "allowNull": true,
+        "writeAccess": "clientModify",
+        "subType": "phone"
+      },
+      "test": {
+        "required": false,
+        "type": "string",
+        "allowNull": true,
+        "writeAccess": "clientModify",
+        "subType": "phone"
       }
     },
     "dynamicSchema": true
   },
   "subscriptionsSchema": {
-    "fields": {}
+    "fields": {
+      "subscription_test_field": {
+        "email": {
+          "required": false,
+          "type": "subscription",
+          "writeAccess": "clientModify",
+          "doubleOptIn": false,
+          "description": "",
+          "enableConditionalDoubleOptIn": false,
+          "relatedConsentIds": []
+        }
+      }
+    }
   },
   "internalSchema": {
     "fields": {},
