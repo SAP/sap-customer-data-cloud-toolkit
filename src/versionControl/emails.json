@@ -1,11 +1,11 @@
 {
-  "callId": "6aa8732895114eac9529fc01bd9a6c60",
+  "callId": "c8f23f107d3b4aebb2302c4c038a84ab",
   "context": "{\"id\":\"emailTemplates\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-18T15:36:03.104Z",
+  "time": "2024-10-18T16:14:49.089Z",
   "magicLink": {
     "defaultLanguage": "en",
     "urlPlaceHolder": "$url",
