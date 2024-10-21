@@ -11,6 +11,7 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
+import Social from '../copyConfig/social/social'
 class VersionControl {
   #credentials
   #apiKey
@@ -42,6 +43,7 @@ class VersionControl {
     this.screenSets = new ScreenSet(this.#credentials, this.#apiKey, this.#dataCenter)
     this.sms = new SmsConfiguration(this.#credentials, this.#apiKey, this.#dataCenter)
     this.channel = new Channel(this.#credentials, this.#apiKey, this.#dataCenter)
+    this.social = new Social(this.#credentials, this.#apiKey, this.#dataCenter)
   }
 
   async readFile() {
@@ -52,11 +54,10 @@ class VersionControl {
       //Set condition to check if the file.name is equal to a service do the each set individually
       try {
         //src/versionControl/screenSets.json
-        let fileContent = await this.getFileSHA('src/versionControl/channel.json')
+        let fileContent = await this.getFileSHA(filePath)
         // if (file.name === 'policies') {
         //   const filteredResponse = JSON.parse(fileContent.content)
         //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
         // }
         // if (file.name === 'webSdk') {
         //   const filteredResponse = JSON.parse(fileContent.content)
@@ -67,16 +68,14 @@ class VersionControl {
         //   await this.setSMS(filteredResponse)
         //   console.log('filtered response....>', filteredResponse)
         // }
-        // if (file.name === 'extension') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setExtension(filteredResponse)
-        //   console.log('filtered response....>', filteredResponse)
-        // }
+        if (file.name === 'extension') {
+          console.log('fileContent.content', fileContent.content)
+          await this.setExtension(fileContent.content)
+        }
         // if (file.name === 'schema') {
         //   const filteredResponse = JSON.parse(fileContent.content)
         //   console.log('filtered response....>', filteredResponse)
         //   const config = await this.setSchema(filteredResponse)
-        //   console.log(' config....>', config)
         //   const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
         //   console.log(' response....>', response)
         // }
@@ -88,11 +87,17 @@ class VersionControl {
         //   const filteredResponse = JSON.parse(fileContent.content)
         //   await this.setEmailTemplates(filteredResponse)
         // }
-        if (file.name === 'channel') {
-          console.log('filtered filePath....>', filePath)
-          console.log('filtered fileContent.content....>', fileContent.content)
-          console.log('filtered fileContent.content....>', JSON.parse(fileContent.content))
-          await this.setScreenSets(JSON.parse(fileContent.content))
+        // if (file.name === 'screenSets') {
+        //   console.log('filtered filePath....>', filePath)
+        //   console.log('filtered fileContent.content....>', fileContent.content)
+        //   await this.setScreenSets(fileContent.content)
+        // }
+
+        if (file.name === 'social') {
+          console.log('entered')
+          console.log('JSON.parse(fileContent.content)', JSON.parse(fileContent.content))
+          const res = await this.social.set(this.#apiKey, JSON.parse(fileContent.content), this.#dataCenter)
+          console.log('res-social', res)
         }
       } catch (error) {
         console.log('error', error)
@@ -108,7 +113,6 @@ class VersionControl {
         path: filePath,
         ref: this.branch,
       })
-      console.log('data....>', data)
       return { content: Base64.decode(data.content), sha: data.sha }
     } catch (error) {
       if (error.status === 404) {
@@ -174,6 +178,7 @@ class VersionControl {
       //
       { name: 'sms' },
       { name: 'channel' },
+      { name: 'social' },
     ]
     return fileNames
   }
@@ -193,6 +198,7 @@ class VersionControl {
       { name: 'sets', promise: JSON.stringify(screenSet.screenSets) },
       { name: 'sms', promise: this.sms.get() },
       { name: 'channel', promise: this.channel.get() },
+      { name: 'social', promise: this.social.get() },
     ]
 
     return responses
@@ -269,9 +275,6 @@ class VersionControl {
   async setSMS(config) {
     await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
   }
-  async setExtension(config) {
-    await this.extension.set(this.#apiKey, this.#dataCenter, config.result[0])
-  }
   async setSchema(config) {
     for (let key in config) {
       if (config.hasOwnProperty(key)) {
@@ -314,8 +317,14 @@ class VersionControl {
     for (let key in response) {
       if (key !== 'errorCode') {
         const result = await this.emails.getEmail().setSiteEmailsWithDataCenter(this.#apiKey, key, response[key], this.#dataCenter)
-        console.log('resultEmails', result)
       }
+    }
+  }
+  async setExtension(extensionPayload) {
+    const parsedPayload = JSON.parse(extensionPayload)
+    for (const item of parsedPayload.result) {
+      const res = await this.extension.set(this.#apiKey, this.#siteInfo.dataCenter, item)
+      console.log('res', res)
     }
   }
   #cleanEmailResponse(response) {

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -34,9 +33,11 @@ class Extension {
 
   async set(site, dataCenter, body) {
     const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getSetExtensionEndpoint(), this.#credentials.gigyaConsole)
+    console.log('url', url)
     const res = await client.post(url, this.#setExtensionParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Extension.#ERROR_MSG_SET_CONFIG)
     })
+    console.log('res', res.data)
     return res.data
   }
 
@@ -187,7 +188,7 @@ class Extension {
         destinationSite,
         destinationSiteConfiguration.dataCenter,
         sourceSiteExtension,
-        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite)
+        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite),
       )
     }
   }
