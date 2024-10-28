@@ -34,7 +34,7 @@ export const MENU_ELEMENTS = [
   { name: 'Email Templates', route: ROUTE_EMAIL_TEMPLATES },
   { name: 'SMS Templates', route: ROUTE_SMS_TEMPLATES },
   { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
-  { name: 'DataFlow WorkBench', appendAfterText: 'Dataflows', route: ROUTE_DATAFLOW_WORKBENCH },
+  { name: 'Import Accounts', appendAfterText: 'Dataflows', route: ROUTE_DATAFLOW_WORKBENCH },
   { name: 'Prettier', route: ROUTE_PRETTIER },
   { name: 'Prettify all screens', route: ROUTE_PRETTIFY_ALL_SCREENS },
 ]
