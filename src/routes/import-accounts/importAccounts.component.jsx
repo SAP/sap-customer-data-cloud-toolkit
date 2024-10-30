@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
@@ -22,28 +22,28 @@ const ConfigurationTreeComponent = (credentialsUpdated, apikey, currentSiteInfo)
   const dispatch = useDispatch()
   // Fetch configuration data using useEffect
   const getConfig = useSelector(selectConfigurations)
-  console.log('getConfig', getConfig)
+  const memoizedCredentialsUpdated = useMemo(() => credentialsUpdated, [credentialsUpdated])
+  const memoizedApikey = useMemo(() => apikey, [apikey])
+  const memoizedCurrentSiteInfo = useMemo(() => currentSiteInfo, [currentSiteInfo])
   useEffect(() => {
     const fetchConfigurations = async () => {
       try {
-        if (credentialsUpdated && apikey && currentSiteInfo.dataCenter) {
-          dispatch(getConfigurations()).then((value) => {
-            console.log('value', value.payload)
-          })
-          dispatch(getCurrentSiteInformation())
-          const importAccounts = await new ImportAccounts(credentialsUpdated, apikey, currentSiteInfo.dataCenter).importAccountToConfigTree()
-          if (importAccounts) {
-            console.log('importAccounts', importAccounts)
-            setConfigurations(importAccounts)
+        if (memoizedCredentialsUpdated && memoizedApikey && memoizedCurrentSiteInfo.dataCenter) {
+          //   const importAccounts = await new ImportAccounts(memoizedCredentialsUpdated, memoizedApikey, memoizedCurrentSiteInfo.dataCenter).importAccountToConfigTree()
+          //   if (importAccounts) {
+          //     setConfigurations(importAccounts)
+          //   }
+          if (getConfig) {
+            console.log('Fetched configurations:', getConfig)
           }
         }
       } catch (err) {
-        console.error('Error fetching configurations:', err)
+        console.error('Error fetching custom configurations:', err)
       }
     }
 
     fetchConfigurations()
-  }, [credentialsUpdated, apikey, currentSiteInfo])
+  }, [credentialsUpdated, apikey, currentSiteInfo, dispatch, getConfig])
 
   return (
     <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
