@@ -1,6 +1,8 @@
 import ConsentStatement from '../copyConfig/consent/consentStatement'
 import Schema from '../copyConfig/schema/schema'
-
+import { exportToCSV } from '../exportToCsv/exportToCsv'
+//for profile e data, internal e address só é necessario os headers não e preciso o conteudo
+//cdc-toolkit-data-workbench-utility
 class ImportAccounts {
   #credentials
   #site
@@ -17,7 +19,6 @@ class ImportAccounts {
 
   async importAccountToConfigTree() {
     const result = []
-
     const schemaData = await this.getSchema()
     const consent = await this.getConsent()
     if (schemaData.errorCode === 0 && schemaData.errorCode === 0) {
@@ -35,7 +36,7 @@ class ImportAccounts {
       if (value && typeof value === 'object' && value.fields) {
         const transformed = {
           id: key,
-          name: key,
+          name: key.replace('Schema', ''),
           value: false,
           branches: this.transformSchema(value.fields, key),
         }
@@ -44,7 +45,7 @@ class ImportAccounts {
       if (key === 'preferences' && value && typeof value === 'object') {
         const transformed = {
           id: key,
-          name: key,
+          name: 'ConsentStatements',
           value: false,
           branches: this.transformSchema(value, key),
         }
@@ -71,7 +72,6 @@ class ImportAccounts {
         const fieldDetail = fields[key]
         let branches = []
 
-        // Skip the transformation if the current object has an 'email' key
         if (parentKey === 'subscriptionsSchema') {
           const transformed = {
             id: key,
@@ -116,6 +116,53 @@ class ImportAccounts {
 
     return transformedSchema
   }
+  getOptionsFromTree(items) {
+    let ids = []
+    items.forEach((item) => {
+      if (item.value === true) {
+        ids.push(item.id)
+      }
+      if (item.branches && item.branches.length > 0) {
+        ids = ids.concat(this.getOptionsFromTree(item.branches))
+      }
+    })
+
+    return ids
+  }
+  getValueByKey(obj, key) {
+    return obj[key]
+  }
+  findValueByKeyInCombinedData(data, key) {
+    if (data == null || typeof data !== 'object') {
+      return null
+    }
+
+    if (data.hasOwnProperty(key)) {
+      return data[key]
+    }
+
+    for (let prop in data) {
+      if (data.hasOwnProperty(prop)) {
+        let result = this.findValueByKeyInCombinedData(data[prop], key)
+        if (result !== null) {
+          return result
+        }
+      }
+    }
+
+    return null
+  }
+  async exportDataToCsv(items) {
+    const schemaData = await this.getSchema()
+    const consentData = await this.getConsent()
+    if (schemaData.errorCode === 0 && consentData.errorCode === 0) {
+      const cleanSchemaData = this.cleanSchemaData(schemaData)
+      const cleanConsentData = this.getConsentData(consentData)
+      const combinedData = { ...cleanSchemaData, ...cleanConsentData }
+      exportToCSV(items, combinedData)
+    }
+  }
+
   cleanSchemaData(schemaResponse) {
     delete schemaResponse.apiVersion
     delete schemaResponse.context

@@ -3,111 +3,83 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, CardHeader, Label, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, ValueState, BusyIndicator, MessageStrip } from '@ui5/webcomponents-react'
-import ConfigurationTree from './customTree.component.jsx'
-import { setConfigurationStatus } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
-import { getConfigurations, selectConfigurations } from '../../redux/importAccounts/importAccountsSlice.js'
-import ImportAccounts from '../../services/importAccounts/importAccounts.js'
-const useStyles = createUseStyles(styles, { name: 'WorkBench' })
+import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button } from '@ui5/webcomponents-react'
+import { getConfigurations, selectConfigurations, setConfigurationStatus, setConfigurations } from '../../redux/importAccounts/importAccountsSlice.js'
+import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
+const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
-const ConfigurationTreeComponent = (credentialsUpdated, apikey, currentSiteInfo) => {
-  const [configurations, setConfigurations] = useState([])
-  const dispatch = useDispatch()
-  // Fetch configuration data using useEffect
-  const getConfig = useSelector(selectConfigurations)
-  const memoizedCredentialsUpdated = useMemo(() => credentialsUpdated, [credentialsUpdated])
-  const memoizedApikey = useMemo(() => apikey, [apikey])
-  const memoizedCurrentSiteInfo = useMemo(() => currentSiteInfo, [currentSiteInfo])
-  useEffect(() => {
-    const fetchConfigurations = async () => {
-      try {
-        if (memoizedCredentialsUpdated && memoizedApikey && memoizedCurrentSiteInfo.dataCenter) {
-          //   const importAccounts = await new ImportAccounts(memoizedCredentialsUpdated, memoizedApikey, memoizedCurrentSiteInfo.dataCenter).importAccountToConfigTree()
-          //   if (importAccounts) {
-          //     setConfigurations(importAccounts)
-          //   }
-          if (getConfig) {
-            console.log('Fetched configurations:', getConfig)
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching custom configurations:', err)
-      }
-    }
 
-    fetchConfigurations()
-  }, [credentialsUpdated, apikey, currentSiteInfo, dispatch, getConfig])
-
-  return (
-    <FlexBox alignItems="Stretch" direction="Column" justifyContent="Start" wrap="Wrap">
-      {configurations.map((configuration) => (
-        <ConfigurationTree key={configuration.id} {...configuration} setConfigurationStatus={setConfigurationStatus} />
-      ))}
-    </FlexBox>
-  )
-}
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
-
+  const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-  const currentSiteInfo = useSelector(selectCurrentSiteInformation)
-  const credentialsUpdated = {
-    userKey: credentials.userKey,
-    secret: credentials.secretKey,
-    gigyaConsole: credentials.gigyaConsole,
-  }
-  const handleGetServices = async () => {}
-  // console.log('configs--->', configs)
 
-  //Configurations
-  // [{id,name,value,branches}]
+  const currentSiteInfo = useSelector(selectCurrentSiteInformation)
+  const configurations = useSelector(selectConfigurations)
+  useEffect(() => {
+    dispatch(getCurrentSiteInformation())
+    dispatch(getConfigurations())
+  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
+
+  const onSaveHandler = () => {
+    dispatch(setConfigurations())
+  }
+  const showConfigurations = () => {
+    return <ImportAccountsConfigurations configurations={configurations} setConfigurationStatus={setConfigurationStatus} />
+  }
+
   return (
     <>
       <Bar
         design="Header"
         startContent={
           <>
-            <Title id="copyConfigurationExtendedPageTitle" data-cy="copyConfigurationExtendedPageTitle" level={TitleLevel.H3} className={classes.titleStyle}>
+            <Title id="importAccountsTitle" data-cy="importAccountsTitle" level={TitleLevel.H3} className={classes.titleStyle}>
               <span className={classes.titleSpanStyle}>{PAGE_TITLE}</span>
             </Title>
           </>
         }
-        className={classes.innerBarStyle}
       ></Bar>
       <div className={classes.outerDivStyle}>
         <div className={classes.headerOuterDivStyle}>
           <div className={classes.headerInnerDivStyle}>
             <FlexBox className={classes.headerTextFlexboxStyle}>
               <Text id="workBenchHeaderText" data-cy="workBenchHeaderText" className={classes.componentTextStyle}>
-                {'Import accounts and generate csv with schema and legal fields'}
+                {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
               </Text>
             </FlexBox>
-            <Card header={<CardHeader titleText={'Download Template'} />}>
+            <Card header={<CardHeader titleText={t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')} />}>
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
-                    <Title level="H3" className={classes.currentInfoContainerTitle}>
-                      {'Select Schema Fields'}
+                    <Title level="H4" className={classes.currentInfoContainerTitle}>
+                      {t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
                     </Title>
                     <ui5-select>
                       <ui5-option>Full</ui5-option>
                       <ui5-option>Lite</ui5-option>
                     </ui5-select>
-                    <Card className={classes.currentInfoContainerCard}>{ConfigurationTreeComponent(credentialsUpdated, apikey, currentSiteInfo)}</Card>
-                    <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.singlePrettifyButton} onClick={handleGetServices}>
-                      {'Download Template'}
-                    </Button>
+                    {showConfigurations()}
                   </div>
                 </>
               </Grid>
+              <div className={classes.selectConfigurationOuterDivStyle}>
+                <div className={classes.selectConfigurationInnerDivStyle}>
+                  <div>
+                    <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.downloadTemplateButton} onClick={onSaveHandler}>
+                      {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </Card>
           </div>
         </div>
