@@ -10,8 +10,15 @@ import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../r
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button } from '@ui5/webcomponents-react'
-import { getConfigurations, selectConfigurations, setConfigurationStatus, setConfigurations } from '../../redux/importAccounts/importAccountsSlice.js'
+import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Switch } from '@ui5/webcomponents-react'
+import {
+  getConfigurations,
+  selectConfigurations,
+  selectSwitchId,
+  setConfigurationStatus,
+  setConfigurations,
+  setSwitchOptions,
+} from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
@@ -24,6 +31,7 @@ const ImportAccountsComponent = ({ t }) => {
 
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
+  const switchConfig = useSelector(selectSwitchId)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -32,6 +40,7 @@ const ImportAccountsComponent = ({ t }) => {
   const onSaveHandler = () => {
     dispatch(setConfigurations())
   }
+
   const showConfigurations = () => {
     return <ImportAccountsConfigurations configurations={configurations} setConfigurationStatus={setConfigurationStatus} />
   }
@@ -67,6 +76,7 @@ const ImportAccountsComponent = ({ t }) => {
                       <ui5-option>Full</ui5-option>
                       <ui5-option>Lite</ui5-option>
                     </ui5-select>
+
                     {showConfigurations()}
                   </div>
                 </>

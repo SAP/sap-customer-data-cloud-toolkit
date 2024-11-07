@@ -58,6 +58,14 @@ const styles = {
     ...spacing.sapUiMediumMarginTop,
     boxSizing: 'border-box',
   },
+  customSwitch: {
+    width: '500px',
+    height: '40px',
+    padding: '0 10px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    margin: '10px',
+  },
 }
 
 export default styles

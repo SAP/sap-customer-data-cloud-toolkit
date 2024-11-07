@@ -12,9 +12,47 @@ export async function exportToCSV(items, combinedData) {
       valueToCsv.push(value)
     }
   }
-
-  jsonToCSV(options, valueToCsv)
+  const keys = matchKeys(combinedData, options)
+  createCSVFile(keys)
 }
+
+const matchKeys = (schema, matchArray) => {
+  const resultKeys = []
+
+  const findMatches = (obj, parentKey = '') => {
+    Object.entries(obj).forEach(([key, value]) => {
+      const fullKey = parentKey ? `${parentKey}.${key}` : key
+
+      const keySegments = fullKey.split('.')
+      const lastSegment = keySegments[keySegments.length - 1]
+
+      if (matchArray.includes(lastSegment)) {
+        resultKeys.push(fullKey)
+      }
+
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        findMatches(value, fullKey)
+      }
+    })
+  }
+  findMatches(schema)
+
+  return resultKeys
+}
+function createCSVFile(resultKeys) {
+  const removeFields = resultKeys.map((item) => {
+    return item.replace('.fields', '').replace('Schema', '')
+  })
+  const csvData = new Blob([removeFields], { type: 'text/csv' })
+  const csvURL = URL.createObjectURL(csvData)
+  const link = document.createElement('a')
+  link.href = csvURL
+  link.download = `csv_File.csv`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
 function getOptionsFromTree(items) {
   let ids = []
   items.forEach((item) => {
@@ -27,7 +65,7 @@ function getOptionsFromTree(items) {
   })
   return ids
 }
-function jsonToCSV(headers, value) {
+function valueToCSV(headers, value) {
   // const csvValues = value.map((value) => {
   //   if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
   //     return `"${value}"`

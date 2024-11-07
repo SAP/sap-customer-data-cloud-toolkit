@@ -45,7 +45,7 @@ class ImportAccounts {
       if (key === 'preferences' && value && typeof value === 'object') {
         const transformed = {
           id: key,
-          name: 'ConsentStatements',
+          name: 'consent statements',
           value: false,
           branches: this.transformSchema(value, key),
         }
@@ -72,16 +72,7 @@ class ImportAccounts {
         const fieldDetail = fields[key]
         let branches = []
 
-        if (parentKey === 'subscriptionsSchema') {
-          const transformed = {
-            id: key,
-            name: key,
-            value: false,
-          }
-          transformedSchema.push(transformed)
-          continue
-        }
-        if (parentKey === 'preferences') {
+        if (parentKey === 'subscriptionsSchema' || parentKey === 'preferences') {
           const transformed = {
             id: key,
             name: key,
@@ -91,31 +82,45 @@ class ImportAccounts {
           continue
         }
 
-        if (this.hasNestedObject(fieldDetail)) {
-          branches = this.transformSchema(fieldDetail, parentKey)
-          if (branches.length > 0) {
-            const transformed = {
-              id: key,
-              name: key,
+        const splitKeys = key.split('.')
+        let currentLevel = transformedSchema
+
+        splitKeys.forEach((part, index) => {
+          let existing = currentLevel.find((item) => item.id === part)
+
+          if (!existing) {
+            existing = {
+              id: part,
+              name: part,
               value: false,
-              branches,
+              branches: [],
             }
-            transformedSchema.push(transformed)
-            continue
+            currentLevel.push(existing)
           }
-        }
 
-        const transformed = {
-          id: key,
-          name: key,
-          value: false,
-        }
-        transformedSchema.push(transformed)
+          if (index === splitKeys.length - 1) {
+            if (this.isFieldDetailObject(fieldDetail) && this.hasNestedObject(fieldDetail)) {
+              console.log('existing', existing)
+              console.log('existing.branches', existing.branches)
+              existing.branches = this.transformSchema(fieldDetail, parentKey)
+            }
+          } else {
+            currentLevel = existing.branches
+          }
+        })
       }
     }
 
     return transformedSchema
   }
+  isFieldDetailObject(fieldDetail) {
+    if (fieldDetail && typeof fieldDetail === 'object') {
+      const stopFields = ['required', 'type', 'allowNull', 'writeAccess', 'tags']
+      return !stopFields.some((field) => field in fieldDetail)
+    }
+    return false
+  }
+
   getOptionsFromTree(items) {
     let ids = []
     items.forEach((item) => {

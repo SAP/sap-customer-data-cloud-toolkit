@@ -15,6 +15,7 @@ export const importAccountsSlice = createSlice({
     isLoading: false,
     showSuccessMessage: false,
     currentSiteInformation: {},
+    switchId: {},
   },
   reducers: {
     setConfigurationStatus(state, action) {
@@ -26,6 +27,11 @@ export const importAccountsSlice = createSlice({
       state.apiCardError = undefined
       clearConfigurationsErrors(state.configurations)
       clearTargetSitesErrors(state.targetSites)
+    },
+    setSwitchOptions(state, action) {
+      console.log('action.payload', action)
+      console.log('state.configurations', state.configurations)
+      state.switchId = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -82,8 +88,9 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
     return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
   } catch (error) {}
 })
-export const { setConfigurationStatus, clearErrors } = importAccountsSlice.actions
+export const { setConfigurationStatus, clearErrors, setSwitchOptions } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
+export const selectSwitchId = (state) => state.switchId
 
 export default importAccountsSlice.reducer
