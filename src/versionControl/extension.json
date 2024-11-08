@@ -1,35 +1,25 @@
 {
-  "callId": "ba3ab88954ff42b2b045195511682ef2",
-  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
+  "callId": "02d6f6dd669d45f4a5ff3a1761676c16",
+  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-18T16:14:49.163Z",
+  "time": "2024-11-08T15:01:14.044Z",
   "result": [
     {
-      "created": "2024-09-26T12:39:28.2872349Z",
-      "lastModified": "2024-10-18T16:11:52.0753366Z",
-      "extensionFuncUrl": "https://console.gigya.com/#/79597568/4_6Tv6z8O6NmUO_BZoHcXIRw",
+      "created": "2024-09-25T14:18:07.1904438Z",
+      "lastModified": "2024-09-25T14:18:25.4805729Z",
+      "extensionFuncUrl": "https://b75a-2001-8a0-6f04-7100-f857-e539-4af4-e8b0.ngrok-free.app",
+      "description": "Avoid Automatic login after Social Registration",
       "timeout": 1000,
       "fallback": "IgnoreAllErrors",
       "headers": [],
       "integration": "Generic",
-      "id": "1b9fcc9f9916414a8128ab07ebcb4221",
+      "id": "7ad046fc7af84d119a9a1f05e16b91a0",
       "extensionPoint": "OnBeforeAccountsRegister",
-      "friendlyName": "testingExtension",
-      "enabled": false
-    },
-    {
-      "created": "2024-10-07T09:07:06.5468089Z",
-      "lastModified": "2024-10-18T16:11:52.5287878Z",
-      "extensionFuncUrl": "https://console.gigya.com/#/79597568/4_6Tv6z8O6NmUO_BZoHcXIRw",
-      "timeout": 1000,
-      "fallback": "IgnoreAllErrors",
-      "id": "ffe4b136393c47058547dd26b3e494f2",
-      "extensionPoint": "OnBeforeSetAccountInfo",
-      "friendlyName": "testingTool",
-      "enabled": false
+      "friendlyName": "TestBlockSocialLoginAfterRegistration",
+      "enabled": true
     }
   ]
 }
