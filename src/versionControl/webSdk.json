@@ -1,18 +1,18 @@
 {
-  "callId": "94d16367cf3f4d9b8ab61158a99e3118",
+  "callId": "6fedb52882a94700a32f2bb6e64128aa",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-18T16:14:49.817Z",
-  "baseDomain": "test",
-  "dataCenter": "au1",
+  "time": "2024-11-08T15:01:14.061Z",
+  "baseDomain": "dev.au.parent.gaspar.test",
+  "dataCenter": "eu1",
   "trustedSiteURLs": [
-    "test/*",
-    "*.test/*"
+    "dev.au.parent.gaspar.test/*",
+    "*.dev.au.parent.gaspar.test/*"
   ],
   "tags": [],
-  "description": "",
+  "description": "NA6",
   "captchaProvider": "Google",
   "settings": {
     "CNAME": "",
@@ -21,6 +21,9 @@
     "encryptPII": true
   },
   "siteGroupConfig": {
+    "members": [
+      "4_tgFwWM4Lx25GQ6G4KNOKAQ"
+    ],
     "enableSSO": false
   },
   "trustedShareURLs": [
@@ -33,14 +36,14 @@
   ],
   "enableDataSharing": true,
   "isCDP": false,
-  "globalConf": "undefined",
+  "globalConf": "\r\n{\r\n    // A comma-delimited list of provider names to enable.\r\n    //Testing Initializer\r\n    enabledProviders: '*',\r\n\r\n    // Define the language of Gigya's user interface and error message.\r\n    lang: 'en',\r\n\r\n    // Bind globally to events.\r\n    customEventMap: {\r\n        eventMap: [{\r\n            events: '*',\r\n            args: [function(e) {\r\n                return e;\r\n            }],\r\n            method: function(e) {\r\n                if (e.fullEventName === 'login') {\r\n                    // Handle login event here.\r\n                } else if (e.fullEventName === 'logout') {\r\n                    // Handle logout event here.\r\n                }\r\n            }\r\n        }]\r\n    }\r\n}\r\n",
   "invisibleRecaptcha": {
-    "SiteKey": "fin",
-    "Secret": "fin"
+    "SiteKey": "teste",
+    "Secret": "teste"
   },
   "recaptchaV2": {
-    "SiteKey": "fin",
-    "Secret": "fin"
+    "SiteKey": "teste",
+    "Secret": "teste"
   },
   "funCaptcha": {
     "SiteKey": "",
@@ -49,5 +52,5 @@
   "customAPIDomainPrefix": "",
   "jwtKeyVersion": 2,
   "enableHSTS": false,
-  "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}"
+  "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}"
 }
