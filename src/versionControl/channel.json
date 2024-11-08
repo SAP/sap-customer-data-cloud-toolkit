@@ -1,25 +1,12 @@
 {
-  "callId": "9e87324424bb44c09c96999717dbac85",
-  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
+  "callId": "aa8dd1abbbfa402592221a4fdfd4eccb",
+  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-18T16:14:49.557Z",
+  "time": "2024-11-08T15:01:14.072Z",
   "Channels": {
-    "WiFi": {
-      "dependsOn": [
-        {
-          "fieldID": "firstName",
-          "required": true
-        }
-      ],
-      "description": "You can send campaigns using WiFi",
-      "doubleOptIn": {
-        "validationType": "external",
-        "expiration": 336
-      }
-    },
     "SMS": {
       "dependsOn": [
         {
