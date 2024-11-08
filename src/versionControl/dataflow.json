@@ -1,27 +1,27 @@
 {
-  "callId": "9640fb8c051347afafc20a81417753ad",
-  "context": "{\"id\":\"dataflows_search\",\"targetApiKey\":\"4_lmz9vRjSv9-0hg1oPajsmA\"}",
+  "callId": "71f42cf4a69c468d88e3d78c25ccbcc9",
+  "context": "{\"id\":\"dataflows_search\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-10-18T16:14:49.515Z",
-  "resultCount": 2,
-  "totalCount": 2,
+  "time": "2024-11-08T15:01:14.082Z",
+  "resultCount": 1,
+  "totalCount": 1,
   "result": [
     {
-      "apiKey": "4_lmz9vRjSv9-0hg1oPajsmA",
-      "siteId": 116859446169,
-      "id": "5add83214b114d37996bae4731fc648d",
-      "name": "Mailchimp - Outbound",
+      "apiKey": "4_sUL-oKZjA8PVkZ4xFFCbSg",
+      "siteId": 749820184589,
+      "id": "056eda8b90dd4046989529164c56ba16",
+      "name": "Export from Gigya to SFTP",
       "status": "published",
-      "description": "account > rename > remove > mailchimp",
+      "description": "account > rename > dsv > gzip > sftp",
       "steps": [
         {
           "id": "account",
           "type": "datasource.read.gigya.account",
           "params": {
-            "select": "UID,profile.email,profile.firstName,profile.lastName,profile.userName,data.mailchimp.subscribePlatformUpdates",
+            "select": "profile.email,profile.lastName,profile.firstName,profile.gender,profile.birthDay,profile.birthMonth,profile.birthYear,profile.address,profile.zip,profile.city,profile.state,profile.country,profile.phones.number,profile.nickname",
             "from": "accounts",
             "deltaField": "lastUpdatedTimestamp",
             "keepFieldNamesWithDotAsIs": false,
@@ -39,110 +39,59 @@
             "fields": [
               {
                 "sourceField": "profile.email",
-                "targetField": "EMAIL"
-              },
-              {
-                "sourceField": "profile.firstName",
-                "targetField": "FNAME"
+                "targetField": "MAIL"
               },
               {
                 "sourceField": "profile.lastName",
-                "targetField": "LNAME"
-              },
-              {
-                "sourceField": "profile.userName",
-                "targetField": "UNAME"
-              },
-              {
-                "sourceField": "data.mailchimp.subscribePlatformUpdates",
-                "targetField": "newsletterField"
-              }
-            ]
-          },
-          "next": [
-            "remove"
-          ]
-        },
-        {
-          "id": "remove",
-          "type": "field.remove",
-          "params": {
-            "fields": [
-              "profile",
-              "data"
-            ]
-          },
-          "next": [
-            "mailchimp"
-          ]
-        },
-        {
-          "id": "mailchimp",
-          "type": "datasource.write.mailchimp",
-          "params": {
-            "apiUrl": "https://<dc>.api.mailchimp.com/3.0/",
-            "apiKey": "********",
-            "listId": "",
-            "newsletterField": "newsletterField",
-            "retryIntervalSeconds": 10,
-            "maxRetry": 30,
-            "timeout": 120,
-            "maxConnections": 10
-          }
-        }
-      ],
-      "version": 1,
-      "createTime": "2024-10-11T15:08:56.804Z",
-      "updateTime": "2024-10-11T15:08:56.804Z",
-      "updatedByEmail": "g.lopes@sap.com"
-    },
-    {
-      "apiKey": "4_lmz9vRjSv9-0hg1oPajsmA",
-      "siteId": 116859446169,
-      "id": "6a0b36de75e2466e9503587fa69760d2",
-      "name": "Marketo_Dataflow_Outbound",
-      "status": "published",
-      "description": "account > rename > remove > marketo",
-      "steps": [
-        {
-          "id": "account",
-          "type": "datasource.read.gigya.account",
-          "params": {
-            "select": "UID,profile.email,profile.firstName,profile.lastName,profile.likes",
-            "from": "accounts",
-            "deltaField": "lastUpdatedTimestamp",
-            "keepFieldNamesWithDotAsIs": false,
-            "batchSize": 300,
-            "maxConcurrency": 1
-          },
-          "next": [
-            "rename"
-          ]
-        },
-        {
-          "id": "rename",
-          "type": "field.rename",
-          "params": {
-            "fields": [
-              {
-                "sourceField": "UID",
-                "targetField": "gUID"
-              },
-              {
-                "sourceField": "profile.email",
-                "targetField": "email"
+                "targetField": "NAME"
               },
               {
                 "sourceField": "profile.firstName",
-                "targetField": "firstName"
+                "targetField": "FIRSTNAME"
               },
               {
-                "sourceField": "profile.lastName",
-                "targetField": "lastName"
+                "sourceField": "profile.gender",
+                "targetField": "GENDER"
               },
               {
-                "sourceField": "profile.likes",
-                "targetField": "fblikes"
+                "sourceField": "profile.birthDay",
+                "targetField": "BIRTH_DAY"
+              },
+              {
+                "sourceField": "profile.birthMonth",
+                "targetField": "BIRTH_MONTH"
+              },
+              {
+                "sourceField": "profile.birthYear",
+                "targetField": "BIRTH_YEAR"
+              },
+              {
+                "sourceField": "profile.address",
+                "targetField": "STREET"
+              },
+              {
+                "sourceField": "profile.zip",
+                "targetField": "POSTALCODE"
+              },
+              {
+                "sourceField": "profile.city",
+                "targetField": "CITY"
+              },
+              {
+                "sourceField": "profile.state",
+                "targetField": "PROVINCE"
+              },
+              {
+                "sourceField": "profile.country",
+                "targetField": "COUNTRY"
+              },
+              {
+                "sourceField": "profile.phones",
+                "targetField": "PHONE"
+              },
+              {
+                "sourceField": "profile.nickname",
+                "targetField": "USERNAME"
               }
             ]
           },
@@ -159,26 +108,53 @@
             ]
           },
           "next": [
-            "marketo"
+            "dsv"
           ]
         },
         {
-          "id": "marketo",
-          "type": "datasource.write.marketo",
+          "id": "dsv",
+          "type": "file.format.dsv",
           "params": {
-            "baseUrl": "...",
-            "clientId": "...",
-            "clientSecret": "********",
-            "retryIntervalSeconds": 3,
+            "fileName": "GIGYA_TO_SFTP_${now}.csv",
+            "columnSeparator": ",",
+            "escapeCharacter": "\"",
+            "quoteFields": true,
+            "maxFileSize": 5000,
+            "writeHeader": true,
+            "dsvFormatVersion": "Legacy",
+            "lineEnd": "\n",
+            "createEmptyFile": false
+          },
+          "next": [
+            "gzip"
+          ]
+        },
+        {
+          "id": "gzip",
+          "type": "file.compress.gzip",
+          "next": [
+            "sftp"
+          ]
+        },
+        {
+          "id": "sftp",
+          "type": "datasource.write.sftp",
+          "params": {
+            "host": "...",
+            "username": "...",
+            "password": "********",
+            "remotePath": "GigyaDaily",
+            "port": 22,
             "timeout": 60,
-            "maxConnections": 1
+            "temporaryUploadExtension": false
           }
         }
       ],
       "version": 1,
-      "createTime": "2024-10-11T15:09:40.859Z",
-      "updateTime": "2024-10-11T15:09:40.859Z",
-      "updatedByEmail": "g.lopes@sap.com"
+      "createTime": "2024-09-25T14:18:07.019Z",
+      "updateTime": "2024-09-25T14:18:07.019Z",
+      "updatedByName": "Tiago Gaspar",
+      "updatedByEmail": "tiago.gaspar@sap.com"
     }
   ]
 }
