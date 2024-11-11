@@ -1,16 +1,15 @@
 {
-  "callId": "45f8c526b5924358a183e3fa005cf8c4",
+  "callId": "d9cb9bd0e3b149108bc969396ae2637a",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-11-11T09:16:43.780Z",
-  "baseDomain": "captcha.us.2.child.gaspar",
-  "siteGroupOwner": "4_HgwE90Jy_09MaMcqOjgLvA",
-  "dataCenter": "us1",
+  "time": "2024-11-11T10:26:23.216Z",
+  "baseDomain": "dev.au.parent.gaspar.test",
+  "dataCenter": "eu1",
   "trustedSiteURLs": [
-    "captcha.us.2.child.gaspar/*",
-    "*.captcha.us.2.child.gaspar/*"
+    "dev.au.parent.gaspar.test/*",
+    "*.dev.au.parent.gaspar.test/*"
   ],
   "tags": [],
   "description": "NA6",
@@ -22,6 +21,9 @@
     "encryptPII": true
   },
   "siteGroupConfig": {
+    "members": [
+      "4_tgFwWM4Lx25GQ6G4KNOKAQ"
+    ],
     "enableSSO": false
   },
   "trustedShareURLs": [
@@ -34,13 +36,14 @@
   ],
   "enableDataSharing": true,
   "isCDP": false,
+  "globalConf": "\r\n{\r\n    // A comma-delimited list of provider names to enable.\r\n    //Testing Initializer\r\n    enabledProviders: '*',\r\n\r\n    // Define the language of Gigya's user interface and error message.\r\n    lang: 'en',\r\n\r\n    // Bind globally to events.\r\n    customEventMap: {\r\n        eventMap: [{\r\n            events: '*',\r\n            args: [function(e) {\r\n                return e;\r\n            }],\r\n            method: function(e) {\r\n                if (e.fullEventName === 'login') {\r\n                    // Handle login event here.\r\n                } else if (e.fullEventName === 'logout') {\r\n                    // Handle logout event here.\r\n                }\r\n            }\r\n        }]\r\n    }\r\n}\r\n",
   "invisibleRecaptcha": {
-    "SiteKey": "fin",
-    "Secret": "fin"
+    "SiteKey": "teste",
+    "Secret": "teste"
   },
   "recaptchaV2": {
-    "SiteKey": "fin",
-    "Secret": "fin"
+    "SiteKey": "teste",
+    "Secret": "teste"
   },
   "funCaptcha": {
     "SiteKey": "",
@@ -49,5 +52,5 @@
   "customAPIDomainPrefix": "",
   "jwtKeyVersion": 2,
   "enableHSTS": false,
-  "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_B9XQnwui5cazybbc8YXM9A\"}"
+  "context": "{\"id\":\"webSdk\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}"
 }
