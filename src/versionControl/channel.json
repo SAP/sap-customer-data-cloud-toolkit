@@ -1,13 +1,36 @@
 {
-  "callId": "71f79e9234aa42eda6ff52a471838781",
-  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_B9XQnwui5cazybbc8YXM9A\"}",
-  "errorCode": 301001,
-  "errorDetails": "This API key is served by another data center.",
-  "errorMessage": "Invalid data center",
+  "callId": "dcbba5fa0a9a439d9d408ffbed49a347",
+  "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
+  "errorCode": 0,
   "apiVersion": 2,
-  "statusCode": 301,
-  "statusReason": "Moved Permanently",
-  "time": "2024-11-11T09:16:43.322Z",
-  "apiDomain": "us1.gigya.com",
-  "location": "https://accounts.us1.gigya.com/accounts.communication.getChannels"
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-11-11T10:26:22.845Z",
+  "Channels": {
+    "SMS": {
+      "dependsOn": [
+        {
+          "fieldID": "phoneNumber",
+          "required": true
+        }
+      ],
+      "description": "You can send SMS campaigns via this preconfigured channel",
+      "doubleOptIn": {
+        "validationType": "external",
+        "expiration": 336
+      }
+    },
+    "Email": {
+      "dependsOn": [
+        {
+          "fieldID": "profile.email",
+          "required": true
+        }
+      ],
+      "description": "You can send email campaigns via this preconfigured channel",
+      "doubleOptIn": {
+        "validationType": "emailLink"
+      }
+    }
+  }
 }
