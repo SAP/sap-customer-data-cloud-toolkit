@@ -1,0 +1,160 @@
+{
+  "callId": "8440fa04eb01495eb7e39a1ef2b3e4eb",
+  "context": "{\"id\":\"dataflows_search\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
+  "errorCode": 0,
+  "apiVersion": 2,
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-11-11T15:59:32.299Z",
+  "resultCount": 1,
+  "totalCount": 1,
+  "result": [
+    {
+      "apiKey": "4_sUL-oKZjA8PVkZ4xFFCbSg",
+      "siteId": 749820184589,
+      "id": "056eda8b90dd4046989529164c56ba16",
+      "name": "Export from Gigya to SFTP",
+      "status": "published",
+      "description": "account > rename > dsv > gzip > sftp",
+      "steps": [
+        {
+          "id": "account",
+          "type": "datasource.read.gigya.account",
+          "params": {
+            "select": "profile.email,profile.lastName,profile.firstName,profile.gender,profile.birthDay,profile.birthMonth,profile.birthYear,profile.address,profile.zip,profile.city,profile.state,profile.country,profile.phones.number,profile.nickname",
+            "from": "accounts",
+            "deltaField": "lastUpdatedTimestamp",
+            "keepFieldNamesWithDotAsIs": false,
+            "batchSize": 300,
+            "maxConcurrency": 1
+          },
+          "next": [
+            "rename"
+          ]
+        },
+        {
+          "id": "rename",
+          "type": "field.rename",
+          "params": {
+            "fields": [
+              {
+                "sourceField": "profile.email",
+                "targetField": "MAIL"
+              },
+              {
+                "sourceField": "profile.lastName",
+                "targetField": "NAME"
+              },
+              {
+                "sourceField": "profile.firstName",
+                "targetField": "FIRSTNAME"
+              },
+              {
+                "sourceField": "profile.gender",
+                "targetField": "GENDER"
+              },
+              {
+                "sourceField": "profile.birthDay",
+                "targetField": "BIRTH_DAY"
+              },
+              {
+                "sourceField": "profile.birthMonth",
+                "targetField": "BIRTH_MONTH"
+              },
+              {
+                "sourceField": "profile.birthYear",
+                "targetField": "BIRTH_YEAR"
+              },
+              {
+                "sourceField": "profile.address",
+                "targetField": "STREET"
+              },
+              {
+                "sourceField": "profile.zip",
+                "targetField": "POSTALCODE"
+              },
+              {
+                "sourceField": "profile.city",
+                "targetField": "CITY"
+              },
+              {
+                "sourceField": "profile.state",
+                "targetField": "PROVINCE"
+              },
+              {
+                "sourceField": "profile.country",
+                "targetField": "COUNTRY"
+              },
+              {
+                "sourceField": "profile.phones",
+                "targetField": "PHONE"
+              },
+              {
+                "sourceField": "profile.nickname",
+                "targetField": "USERNAME"
+              }
+            ]
+          },
+          "next": [
+            "remove"
+          ]
+        },
+        {
+          "id": "remove",
+          "type": "field.remove",
+          "params": {
+            "fields": [
+              "profile"
+            ]
+          },
+          "next": [
+            "dsv"
+          ]
+        },
+        {
+          "id": "dsv",
+          "type": "file.format.dsv",
+          "params": {
+            "fileName": "GIGYA_TO_SFTP_${now}.csv",
+            "columnSeparator": ",",
+            "escapeCharacter": "\"",
+            "quoteFields": true,
+            "maxFileSize": 5000,
+            "writeHeader": true,
+            "dsvFormatVersion": "Legacy",
+            "lineEnd": "\n",
+            "createEmptyFile": false
+          },
+          "next": [
+            "gzip"
+          ]
+        },
+        {
+          "id": "gzip",
+          "type": "file.compress.gzip",
+          "next": [
+            "sftp"
+          ]
+        },
+        {
+          "id": "sftp",
+          "type": "datasource.write.sftp",
+          "params": {
+            "host": "...",
+            "username": "...",
+            "password": "********",
+            "remotePath": "GigyaDaily",
+            "port": 22,
+            "timeout": 60,
+            "temporaryUploadExtension": false
+          }
+        }
+      ],
+      "version": 1,
+      "createTime": "2024-09-25T14:18:07.019Z",
+      "updateTime": "2024-09-25T14:18:07.019Z",
+      "updatedByName": "Tiago Gaspar",
+      "updatedByEmail": "tiago.gaspar@sap.com"
+    }
+  ]
+}
