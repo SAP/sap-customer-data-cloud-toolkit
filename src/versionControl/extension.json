@@ -1,13 +1,25 @@
 {
-  "callId": "601174686f6b463a85f70f1151d8d0fc",
-  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_B9XQnwui5cazybbc8YXM9A\"}",
-  "errorCode": 301001,
-  "errorDetails": "This API key is served by another data center.",
-  "errorMessage": "Invalid data center",
+  "callId": "07989f0889f646ecb5d0ced9846ef942",
+  "context": "{\"id\":\"extensions\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
+  "errorCode": 0,
   "apiVersion": 2,
-  "statusCode": 301,
-  "statusReason": "Moved Permanently",
-  "time": "2024-11-11T09:16:43.324Z",
-  "apiDomain": "us1.gigya.com",
-  "location": "https://accounts.us1.gigya.com/accounts.extensions.list"
+  "statusCode": 200,
+  "statusReason": "OK",
+  "time": "2024-11-11T10:26:22.851Z",
+  "result": [
+    {
+      "created": "2024-09-25T14:18:07.1904438Z",
+      "lastModified": "2024-09-25T14:18:25.4805729Z",
+      "extensionFuncUrl": "https://b75a-2001-8a0-6f04-7100-f857-e539-4af4-e8b0.ngrok-free.app",
+      "description": "Avoid Automatic login after Social Registration",
+      "timeout": 1000,
+      "fallback": "IgnoreAllErrors",
+      "headers": [],
+      "integration": "Generic",
+      "id": "7ad046fc7af84d119a9a1f05e16b91a0",
+      "extensionPoint": "OnBeforeAccountsRegister",
+      "friendlyName": "TestBlockSocialLoginAfterRegistration",
+      "enabled": true
+    }
+  ]
 }
