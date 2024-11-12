@@ -1,11 +1,11 @@
 {
-  "callId": "7815c05384f441bea0845f250481f92e",
+  "callId": "2549679348de4a8888486627cdcafeb8",
   "context": "{\"id\":\"smsTemplates\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-11-12T09:49:19.650Z",
+  "time": "2024-11-12T09:51:41.090Z",
   "templates": {
     "otp": {
       "globalTemplates": {
