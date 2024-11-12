@@ -1,10 +1,10 @@
 {
-  "callId": "73c47f9e79c44b49b7341de7cb4bdb9a",
+  "callId": "5906e34a01734204b5e003873d7f8206",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-11-12T15:37:07.418Z",
+  "time": "2024-11-12T15:50:41.998Z",
   "baseDomain": "dev.au.parent.gaspar.test",
   "dataCenter": "eu1",
   "trustedSiteURLs": [
@@ -36,7 +36,7 @@
   ],
   "enableDataSharing": true,
   "isCDP": false,
-  "globalConf": "\r\n{\r\n    // A comma-delimited list of provider names to enable.\r\n    //Testing Initializer\r\n    enabledProviders: '*',\r\n\r\n    // Define the language of Gigya's user interface and error message.\r\n    lang: 'en',\r\n\r\n    // Bind globally to events.\r\n    customEventMap: {\r\n        eventMap: [{\r\n            events: '*',\r\n            args: [function(e) {\r\n                return e;\r\n            }],\r\n            method: function(e) {\r\n                if (e.fullEventName === 'login') {\r\n                    // Handle login event here.\r\n                } else if (e.fullEventName === 'logout') {\r\n                    // Handle logout event here.\r\n                }\r\n            }\r\n        }]\r\n    }\r\n}\r\n",
+  "globalConf": "undefined",
   "invisibleRecaptcha": {
     "SiteKey": "teste",
     "Secret": "teste"
