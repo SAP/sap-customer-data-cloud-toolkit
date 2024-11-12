@@ -1,11 +1,11 @@
 {
-  "callId": "eeb85a9dee1b433784f67d330b8bbe85",
+  "callId": "f9db7eabef4249e586c41d21062c20e2",
   "context": "{\"id\":\"communication_channel_get\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-11-12T11:14:25.167Z",
+  "time": "2024-11-12T11:15:40.453Z",
   "Channels": {
     "SMS": {
       "dependsOn": [
