@@ -1,11 +1,11 @@
 {
-  "callId": "3ca374745bb04f74b9785a01a86d0f82",
+  "callId": "4832abad05624d04a7988ee9ebdc275b",
   "context": "{\"id\":\"schema\",\"targetApiKey\":\"4_sUL-oKZjA8PVkZ4xFFCbSg\"}",
   "errorCode": 0,
   "apiVersion": 2,
   "statusCode": 200,
   "statusReason": "OK",
-  "time": "2024-11-12T14:21:56.195Z",
+  "time": "2024-11-12T14:27:26.782Z",
   "profileSchema": {
     "fields": {
       "photoURL": {
@@ -1359,6 +1359,197 @@
     "dynamicSchema": false
   },
   "addressesSchema": {
-    "fields": {}
+    "fields": {
+      "trabalhoParaVC": {
+        "floor": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "entrance": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "zipCode": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "houseNumber": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "street": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "countryISOCode3": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "postOfficeBox": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "apartment": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "city": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "neighborhood": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "building": {
+          "type": "string",
+          "required": false,
+          "writeAccess": "clientModify",
+          "allowNull": true,
+          "format": null,
+          "encrypt": "AES"
+        },
+        "metadata": {
+          "selectedSuggestion": {
+            "type": "string",
+            "required": false,
+            "writeAccess": "serverOnly",
+            "allowNull": true,
+            "format": null,
+            "encrypt": "AES"
+          },
+          "verifiedAddress": {
+            "apartment": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "neighborhood": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "floor": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "street": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "zipCode": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "entrance": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "houseNumber": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "postOfficeBox": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "city": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "countryISOCode3": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            },
+            "building": {
+              "type": "string",
+              "required": false,
+              "writeAccess": "serverOnly",
+              "allowNull": true,
+              "format": null,
+              "encrypt": "AES"
+            }
+          }
+        }
+      }
+    }
   }
 }
