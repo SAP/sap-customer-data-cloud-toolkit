@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
@@ -34,6 +33,9 @@ class WebSdk {
     const response = await client.post(url, this.#setWebSdkConfigParameters(apiKey, config)).catch(function (error) {
       return generateErrorResponse(error, WebSdk.#ERROR_SET_WEB_SDK_CONFIG)
     })
+    console.log('====================================')
+    console.log('websdk set:', response)
+    console.log('====================================')
     return response.data
   }
 

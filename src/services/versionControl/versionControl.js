@@ -1,4 +1,4 @@
-import { Octokit } from 'octokit'
+import { Octokit } from '@octokit/rest'
 import { Base64 } from 'js-base64'
 import WebSdk from '../copyConfig/websdk/websdk'
 import Dataflow from '../copyConfig/dataflow/dataflow'
@@ -22,7 +22,6 @@ class VersionControl {
     this.#dataCenter = siteInfo.dataCenter
     this.#siteInfo = siteInfo
 
-    //Fazer os gets individualmente todos
     //Fazer os sets individualmente todos
     this.octokit = new Octokit({
       auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN,
