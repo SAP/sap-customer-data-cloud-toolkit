@@ -65,117 +65,169 @@ class VersionControl {
     }
   }
 
+  // async readFile() {
+  //   const fileName = this.getFileName()
+  //   console.log('fileName', fileName)
+  //   for (const file of fileName) {
+  //     const filePath = `src/versionControl/${file.name}.json`
+  //     //Set condition to check if the file.name is equal to a service do the each set individually
+  //     try {
+  //       //src/versionControl/screenSets.json
+  //       let fileContent = await this.getFileSHA(filePath)
+
+  //       //communication
+  //       // if (file.name === 'communication') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //consent
+  //       // if (file.name === 'consent') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //dataflow
+  //       // if (file.name === 'dataflow') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //emails
+  //       if (file.name === 'emails') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         await this.setEmailTemplates(filteredResponse)
+  //       }
+  //       //extension
+  //       if (file.name === 'extension') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         await this.setExtension(filteredResponse)
+  //         console.log('filtered response....>', filteredResponse)
+  //       }
+  //       //info
+  //       // if (file.name === 'info') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //policies
+  //       if (file.name === 'policies') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         await this.setPolicies(filteredResponse)
+  //         console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       }
+  //       //rba
+  //       if (file.name === 'rba') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         await this.setRBA(filteredResponse)
+  //       }
+  //       //recaptcha
+  //       // if (file.name === 'recaptcha') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       ///schema
+  //       if (file.name === 'schema') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         console.log('filtered response....>', filteredResponse)
+  //         const config = await this.setSchema(filteredResponse)
+  //         console.log(' config....>', config)
+  //         const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
+  //         console.log(' response....>', response)
+  //       }
+  //       //screenset
+  //       // if (file.name === 'screenset') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //sms
+  //       if (file.name === 'sms') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         await this.setSMS(filteredResponse)
+  //         console.log('filtered response....>', filteredResponse)
+  //       }
+  //       //social
+  //       // if (file.name === 'social') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       //webhook
+  //       // if (file.name === 'webhook') {
+  //       //   const filteredResponse = JSON.parse(fileContent.content)
+  //       //   await this.setPolicies(filteredResponse)
+  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
+  //       // }
+  //       if (file.name === 'webSdk') {
+  //         const filteredResponse = JSON.parse(fileContent.content)
+  //         debugger
+  //         await this.setWebSDK(filteredResponse)
+  //         //  console.log('filtered fileContent.content....>', fileContent.content)
+  //       }
+
+  //       // if (file.name === 'channel') {
+  //       //   debugger
+  //       //   console.log('filtered filePath....>', filePath)
+  //       //   console.log('filtered fileContent.content....>', fileContent.content)
+  //       //   console.log('filtered fileContent.content....>', JSON.parse(fileContent.content))
+  //       //   await this.setScreenSets(JSON.parse(fileContent.content))
+  //       // }
+  //     } catch (error) {
+  //       console.log('error', error)
+  //     }
+  //   }
+  // }
   async readFile() {
     const fileName = this.getFileName()
-    console.log('fileName', fileName)
+    console.log('fileName', fileName) // Log file names
+
     for (const file of fileName) {
       const filePath = `src/versionControl/${file.name}.json`
-      //Set condition to check if the file.name is equal to a service do the each set individually
+      console.log('Processing file:', filePath) // Log each file path
+
       try {
-        //src/versionControl/screenSets.json
         let fileContent = await this.getFileSHA(filePath)
+        console.log('File content fetched:', fileContent) // Log file content fetched
 
-        //communication
-        // if (file.name === 'communication') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //consent
-        // if (file.name === 'consent') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //dataflow
-        // if (file.name === 'dataflow') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //emails
-        if (file.name === 'emails') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setEmailTemplates(filteredResponse)
-        }
-        //extension
-        if (file.name === 'extension') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setExtension(filteredResponse)
-          console.log('filtered response....>', filteredResponse)
-        }
-        //info
-        // if (file.name === 'info') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //policies
-        if (file.name === 'policies') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setPolicies(filteredResponse)
-          console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        }
-        //rba
-        if (file.name === 'rba') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setRBA(filteredResponse)
-        }
-        //recaptcha
-        // if (file.name === 'recaptcha') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        ///schema
-        if (file.name === 'schema') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          console.log('filtered response....>', filteredResponse)
-          const config = await this.setSchema(filteredResponse)
-          console.log(' config....>', config)
-          const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
-          console.log(' response....>', response)
-        }
-        //screenset
-        // if (file.name === 'screenset') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //sms
-        if (file.name === 'sms') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          await this.setSMS(filteredResponse)
-          console.log('filtered response....>', filteredResponse)
-        }
-        //social
-        // if (file.name === 'social') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        //webhook
-        // if (file.name === 'webhook') {
-        //   const filteredResponse = JSON.parse(fileContent.content)
-        //   await this.setPolicies(filteredResponse)
-        //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-        // }
-        if (file.name === 'webSdk') {
-          const filteredResponse = JSON.parse(fileContent.content)
-          debugger
-          await this.setWebSDK(filteredResponse)
-          //  console.log('filtered fileContent.content....>', fileContent.content)
+        if (!fileContent || !fileContent.content) {
+          throw new Error('File content is invalid')
         }
 
-        // if (file.name === 'channel') {
-        //   debugger
-        //   console.log('filtered filePath....>', filePath)
-        //   console.log('filtered fileContent.content....>', fileContent.content)
-        //   console.log('filtered fileContent.content....>', JSON.parse(fileContent.content))
-        //   await this.setScreenSets(JSON.parse(fileContent.content))
-        // }
+        const decodedContent = Base64.decode(fileContent.content)
+        console.log('Decoded content:', decodedContent) // Log decoded content
+
+        const filteredResponse = JSON.parse(decodedContent)
+        console.log('filteredResponse:', filteredResponse) // Log the filtered response
+
+        switch (file.name) {
+          case 'emails':
+            await this.setEmailTemplates(filteredResponse)
+            break
+          case 'extension':
+            await this.setExtension(filteredResponse)
+            break
+          case 'policies':
+            await this.setPolicies(filteredResponse)
+            break
+          case 'rba':
+            await this.setRBA(filteredResponse)
+            break
+          case 'schema':
+            await this.setSchema(filteredResponse)
+            break
+          case 'sms':
+            await this.setSMS(filteredResponse)
+            break
+          case 'webSdk':
+            await this.setWebSDK(filteredResponse)
+            break
+          default:
+            console.log(`No matching case for: ${file.name}`)
+        }
       } catch (error) {
-        console.log('error', error)
+        console.error('Error processing file:', filePath, error)
       }
     }
   }

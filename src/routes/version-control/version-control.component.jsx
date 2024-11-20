@@ -35,10 +35,21 @@ const VersionControlComponent = ({ t }) => {
     handleCommitListRequestServices()
   }, [])
 
-  const handleGetServices = async () => {
-    console.log('currentSite', currentSite)
+  // const handleGetServices = async () => {
+  //   console.log('currentSite', currentSite)
+  //   await versionControl.writeFile()
+  // }
+
+const handleGetServices = async () => {
+  try {
     await versionControl.writeFile()
+    alert('Backup created successfully!')
+  } catch (error) {
+    console.error('Error creating backup:', error)
+    alert('Failed to create backup. Please try again.')
   }
+}
+
   const handleRevertServices = async () => {
     await versionControl.readFile()
   }
