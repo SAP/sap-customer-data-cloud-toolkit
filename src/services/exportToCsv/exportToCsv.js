@@ -1,3 +1,5 @@
+import { exportSchemaData } from './schemaMatches'
+
 export async function exportToCSV(items, combinedData) {
   const { ids: options, switchIds: switchOptions } = getOptionsFromTree(items)
 
@@ -17,9 +19,7 @@ export async function exportToCSV(items, combinedData) {
   }
 
   const removeFields = [...new Set([...optionKeys, ...switchRemoveFields])]
-  console.log('removeFields', removeFields)
-
-  createCSVFile(removeFields)
+  // createCSVFile(removeFields)
 }
 const matchKeys = (schema, matchArray) => {
   return findMatches(schema, matchArray)
@@ -31,12 +31,12 @@ const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
     const lastSegment = keySegments[keySegments.length - 1]
     matchArray.forEach((match) => {
       const [matchKey, matchParentKey] = match.split('.')
-      if (key === 'preferences') {
-        resultKeys.push(...preferencesKeys(value, match, key))
-      }
-      if (key === 'subscriptionsSchema') {
-        resultKeys.push(...generateSubscriptionStrings(value, match, fullKey))
-      }
+      // if (key === 'preferences') {
+      //   resultKeys.push(...preferencesKeys(value, match, key))
+      // }
+      // if (key === 'subscriptionsSchema') {
+      //   resultKeys.push(...generateSubscriptionStrings(value, match, fullKey))
+      // }
       if (key === 'communications') {
         resultKeys.push(...generateCommunicationStrings(value, match, fullKey))
       }
@@ -175,7 +175,7 @@ const getAllNestedKeys = (obj, parentKey, includeValues = false, specificKeys = 
   })
   return keys
 }
-function createCSVFile(resultKeys) {
+export function createCSVFile(resultKeys) {
   console.log('RESULT-KEYS', resultKeys)
   const csvData = new Blob([resultKeys], { type: 'text/csv' })
   const csvURL = URL.createObjectURL(csvData)

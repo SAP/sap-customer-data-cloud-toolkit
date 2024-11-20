@@ -12,7 +12,7 @@ import styles from './import-account-configurations.styles'
 
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
-const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptions, setConfigurationStatus, t }) => {
+const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptions, checkParentNode, setConfigurationStatus, t }) => {
   const classes = useStyles()
 
   return configurations && configurations.length ? (
@@ -26,6 +26,7 @@ const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptio
               handleSelectChange={handleSelectChange}
               setConfigurationStatus={setConfigurationStatus}
               setSwitchOptions={setSwitchOptions}
+              checkParentNode={checkParentNode}
             />
           ))}
         </div>

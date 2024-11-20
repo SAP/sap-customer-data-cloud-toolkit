@@ -18,27 +18,47 @@ import ArrayObjectOutputButtons from '../array-object-output-buttons/array-objec
 import { handleSelectChange } from './utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccountConfigurationTree' })
 
-const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, t }) => {
+const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, checkParentNode, t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
   const [selectedValues, setSelectedValues] = useState({})
   const [treeData, setTreeData] = useState([{ id, name, value, error, branches, tooltip }])
+  const [checkedStatus, setCheckedStatus] = useState({})
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
   const switchConfig = useSelector(selectSwitchId)
-  const onCheckBoxStateChangeHandler = (event) => {
+
+  const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
+    const isChecked = event.target.checked
+    setCheckedStatus((prevState) => ({
+      ...prevState,
+      [treeNodeId]: isChecked,
+    }))
+    checkParentNode(treeNodeId)
+    if (parentNode) {
+      setCheckedStatus((prevState) => {
+        const statusNode = parentNode.branches.find((branch) => branch.id.startsWith('status.'))
+        const siblingChecked = parentNode.branches.some((branch) => branch.id !== statusNode?.id && branch.id !== treeNodeId && prevState[branch.id])
 
-    if (siteId) {
-      dispatch(setConfigurationStatus({ siteId, checkBoxId, value }))
-      console.log('switchConfig-->', switchConfig)
-    } else {
-      dispatch(setConfigurationStatus({ checkBoxId, value }))
-      console.log('switchConfig-->', switchConfig)
+        if (isChecked || siblingChecked) {
+          if (statusNode) {
+            document.getElementById(statusNode.id).readOnly = true
+            return {
+              ...prevState,
+              [statusNode.id]: true,
+            }
+          }
+        }
+        return prevState
+      })
     }
+
+    dispatch(setConfigurationStatus({ checkBoxId, value }))
+    console.log('switchConfig-->', switchConfig)
   }
 
   const onMouseOverHandler = (event) => {
@@ -65,6 +85,7 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
         return true
       }
       if (shouldRenderSelect(branch)) {
+        console.log('branch', branch)
         return true
       }
     }
@@ -72,16 +93,21 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
   }
 
   const expandTree = (treeNode, isParentLoyalty = false, level = 0) => {
-    const isLoyaltyNode = ['internalSchema', 'dataSchema', 'soldTo.addressesSchema', 'shipTo.addressesSchema'].includes(treeNode.id)
-      ? shouldRenderSelect(treeNode)
-      : isParentLoyalty
+    const isLoyaltyNode = ['internalSchema', 'dataSchema', 'addressesSchema'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
+    const isReadOnly = treeNode.id.startsWith('status.') && checkedStatus[treeNode.id]
 
     return (
       <TreeItemCustom
         key={treeNode.id}
         content={
           <FlexBox direction="Row" justifyContent="Start">
-            <CheckBox id={`${treeNode.id}`} text={treeNode.formatName === false ? treeNode.name : treeNode.name} checked={treeNode.value} onChange={onCheckBoxStateChangeHandler} />
+            <CheckBox
+              id={`${treeNode.id}`}
+              readOnly={isReadOnly}
+              text={treeNode.formatName === false ? treeNode.name : treeNode.name}
+              checked={treeNode.value}
+              onChange={(event) => onCheckBoxStateChangeHandler(event, treeNode.id, treeNode)}
+            />
             {treeNode.tooltip ? (
               <>
                 <Icon
@@ -100,7 +126,7 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
               ''
             )}
             {showError(treeNode)}
-            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'dataSchema' && treeNode.id !== 'internalSchema' && (
+            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'dataSchema' && treeNode.id !== 'internalSchema' && treeNode.id !== 'addressesSchema' && (
               <ArrayObjectOutputButtons
                 treeNode={treeNode}
                 t={t}

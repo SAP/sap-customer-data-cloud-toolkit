@@ -1,4 +1,5 @@
 import ConsentStatement from '../../copyConfig/consent/consentStatement'
+import { extractAndTransformPreferencesFields } from './transformPreferencesFields'
 
 class PreferencesImportFields {
   #credentials
@@ -17,6 +18,13 @@ class PreferencesImportFields {
       this.getPreferencesData(preferencesResponse)
       return preferencesResponse
     }
+  }
+  async exportTransformedPreferencesData() {
+    const result = []
+    const cleanPreferencesResponse = await this.exportPreferencesData()
+    result.push(...extractAndTransformPreferencesFields(cleanPreferencesResponse))
+
+    return result
   }
   async getPreferences() {
     return this.#preferences.get()

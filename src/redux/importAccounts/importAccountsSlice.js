@@ -36,6 +36,10 @@ export const importAccountsSlice = createSlice({
       const configuration = findConfiguration(state.configurations, action.payload.inputValue)
       configuration.value = true
     },
+    setSingleConfigurationStatus(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.value = action.payload.value
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getConfigurations.pending, (state) => {
@@ -99,7 +103,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
     return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
   } catch (error) {}
 })
-export const { setConfigurationStatus, clearErrors, setSugestionSchema, setSwitchOptions } = importAccountsSlice.actions
+export const { setConfigurationStatus, clearErrors, setSugestionSchema, setSingleConfigurationStatus, setSwitchOptions } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectSwitchId = (state) => state.switchId

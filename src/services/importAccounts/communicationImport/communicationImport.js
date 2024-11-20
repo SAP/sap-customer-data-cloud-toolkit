@@ -1,4 +1,5 @@
 import Topic from '../../copyConfig/communication/topic'
+import { extractAndTransformCommunicationFields } from './transformCommunicationFields'
 
 class TopicImportFields {
   #credentials
@@ -16,6 +17,13 @@ class TopicImportFields {
     if (topicResponse.errorCode === 0) {
       return this.getTopicsData(topicResponse)
     }
+  }
+  async exportTransformedCommunicationData() {
+    const result = []
+    const cleanCommunicationResponse = await this.exportTopicData()
+    result.push(...extractAndTransformCommunicationFields(cleanCommunicationResponse))
+
+    return result
   }
   async getTopic() {
     return this.#topic.searchTopics()

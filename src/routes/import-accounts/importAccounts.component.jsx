@@ -17,7 +17,7 @@ import {
   selectSwitchId,
   setConfigurationStatus,
   setConfigurations,
-  setSugestionSchema,
+  setSingleConfigurationStatus,
   setSwitchOptions,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
@@ -34,10 +34,13 @@ const ImportAccountsComponent = ({ t }) => {
   const [selectedValues, setSelectedValues] = useState({})
   const [treeNodeIds, setTreeNodeIds] = useState([])
   const [schemaInputValue, setSchemaInputValue] = useState('')
+  const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   console.log('CONFIGURATIONS--->', configurations)
   const switchConfig = useSelector(selectSwitchId)
+  const [selectedTreeNodeId, setSelectedTreeNodeId] = useState([])
+
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -46,7 +49,35 @@ const ImportAccountsComponent = ({ t }) => {
   const onSaveHandler = () => {
     dispatch(setConfigurations())
   }
+  const checkParentNode = (treeNodeId) => {
+    const parentNode = getParentBranchById(configurations, treeNodeId)
+    if (parentNode) {
+      dispatch(setSingleConfigurationStatus({ checkBoxId: parentNode.id, value: true }))
+    }
 
+    console.log('parentNodeafter-->', parentNode)
+  }
+  const getParentBranchById = (branches, id) => {
+    let parent = null
+
+    function findParent(branches, parentNode) {
+      for (let branch of branches) {
+        if (branch.id === id) {
+          parent = parentNode
+          return true
+        }
+        if (branch.branches && branch.branches.length > 0) {
+          if (findParent(branch.branches, branch)) {
+            return true
+          }
+        }
+      }
+      return false
+    }
+
+    findParent(branches, null)
+    return parent
+  }
   const handleSelectChange = (event, treeNodeId) => {
     const selectedValue = event.target.selectedOption.dataset.id
     console.log(`Selected value: ${selectedValue}, TreeNode ID: ${treeNodeId}`)
@@ -55,14 +86,39 @@ const ImportAccountsComponent = ({ t }) => {
       [treeNodeId]: selectedValue,
     }))
   }
-
-  const showConfigurations = () => {
+  const handleTreeNodeClick = (treeNodeId) => {
+    console.log('treeNodeId-->', treeNodeId)
+    console.log('config-->', configurations)
+    const object = getObjectById(configurations, treeNodeId)
+    if (object) {
+      setSelectedTreeNodeId([object])
+    }
+    setTreeNodeInputValue(treeNodeId)
+    console.log('selectedObject-->', selectedTreeNodeId)
+  }
+  const getObjectById = (data, id) => {
+    for (let item of data) {
+      if (item.id === id) {
+        return item
+      }
+      if (item.branches && item.branches.length > 0) {
+        const result = getObjectById(item.branches, id)
+        if (result) {
+          console.log('result-->', result)
+          return result
+        }
+      }
+    }
+    return null
+  }
+  const showConfigurations = (config) => {
     return (
       <ImportAccountsConfigurations
         handleSelectChange={handleSelectChange}
-        configurations={configurations}
+        configurations={config}
         setConfigurationStatus={setConfigurationStatus}
         setSwitchOptions={setSwitchOptions}
+        checkParentNode={checkParentNode}
       />
     )
   }
@@ -105,12 +161,13 @@ const ImportAccountsComponent = ({ t }) => {
                       treeNodeIds={treeNodeIds}
                       configurations={configurations}
                       setSchemaInputValue={setSchemaInputValue}
-                      setSugestionSchema={setSugestionSchema}
+                      schemaInputValue={schemaInputValue}
+                      handleTreeNodeClick={handleTreeNodeClick} // Pass the click handler to SearchBar
                     />
                   </div>
                 </>
               </Grid>
-              {showConfigurations()}
+              {showConfigurations(treeNodeInputValue ? selectedTreeNodeId : configurations)}{' '}
               <FlexBox justifyContent="End" className={classes.buttonContainer}>
                 <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.downloadTemplateButton} onClick={onSaveHandler}>
                   {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}

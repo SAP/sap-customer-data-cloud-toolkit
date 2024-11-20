@@ -1,4 +1,5 @@
 import Schema from '../../copyConfig/schema/schema'
+import { extractAndTransformSchemaFields } from './transformSchemaFields'
 
 class SchemaImportFields {
   #credentials
@@ -17,6 +18,13 @@ class SchemaImportFields {
       this.cleanSchemaData(schemaResponse)
       return schemaResponse
     }
+  }
+  async exportTransformedSchemaData() {
+    const result = []
+    const cleanSchemaResponse = await this.exportSchemaData()
+    result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
+
+    return result
   }
   async getSchema() {
     return this.#schema.get()
