@@ -19,6 +19,10 @@ const styles = {
   removeIncludedUrlButton: {
     margin: '3px 12px 0 0',
   },
+  fullWidth: {
+    width: '100%',
+    height: '100%',
+  },
 }
 
 export default styles

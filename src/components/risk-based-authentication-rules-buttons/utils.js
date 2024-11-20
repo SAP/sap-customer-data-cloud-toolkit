@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation,    dispatch) => {
+export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation, dispatch) => {
   const REPLACE_BUTTON_ID = 'replace'
 
   var selectedButton = 'merge'

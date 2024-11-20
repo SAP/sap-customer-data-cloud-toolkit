@@ -14,12 +14,16 @@ import { getHighestSeverity } from '../configuration-tree/utils.js'
 import './import-accounts-configuration-tree.component.css'
 import styles from './import-accounts-configuration-tree.styles.js'
 import '@ui5/webcomponents-icons/dist/message-information.js'
-
+import ArrayObjectOutputButtons from '../array-object-output-buttons/array-object-output-buttons.component.jsx'
+import { handleSelectChange } from './utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccountConfigurationTree' })
 
-const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, t }) => {
+const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
+
+  const [selectedValues, setSelectedValues] = useState({})
+  const [treeData, setTreeData] = useState([{ id, name, value, error, branches, tooltip }])
 
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
@@ -55,8 +59,23 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
   const showError = (treeNode) => {
     return treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''
   }
+  const shouldRenderSelect = (node) => {
+    for (const branch of node.branches) {
+      if (branch.branches.length === 0) {
+        return true
+      }
+      if (shouldRenderSelect(branch)) {
+        return true
+      }
+    }
+    return false
+  }
 
-  const expandTree = (treeNode) => {
+  const expandTree = (treeNode, isParentLoyalty = false, level = 0) => {
+    const isLoyaltyNode = ['internalSchema', 'dataSchema', 'soldTo.addressesSchema', 'shipTo.addressesSchema'].includes(treeNode.id)
+      ? shouldRenderSelect(treeNode)
+      : isParentLoyalty
+
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -81,10 +100,17 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
               ''
             )}
             {showError(treeNode)}
+            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'dataSchema' && treeNode.id !== 'internalSchema' && (
+              <ArrayObjectOutputButtons
+                treeNode={treeNode}
+                t={t}
+                handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch, treeNode, setSelectedValues)}
+              />
+            )}
           </FlexBox>
         }
       >
-        {treeNode.branches ? treeNode.branches.map((branch) => expandTree(branch)) : ''}
+        {treeNode.branches.length > 0 && treeNode.branches.map((branch) => expandTree(branch, isLoyaltyNode, level + 1))}
       </TreeItemCustom>
     )
   }

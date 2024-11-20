@@ -29,9 +29,12 @@ export const importAccountsSlice = createSlice({
       clearTargetSitesErrors(state.targetSites)
     },
     setSwitchOptions(state, action) {
-      console.log('action.payload', action)
-      console.log('state.configurations', state.configurations)
-      state.switchId = action.payload
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.switchId = action.payload
+    },
+    setSugestionSchema(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.inputValue)
+      configuration.value = true
     },
   },
   extraReducers: (builder) => {
@@ -65,6 +68,14 @@ export const importAccountsSlice = createSlice({
     })
   },
 })
+const updateSwitchIdInBranches = (branches, switchId) => {
+  branches.forEach((branch) => {
+    branch.switchId = switchId
+    if (branch.branches && branch.branches.length > 0) {
+      updateSwitchIdInBranches(branch.branches, switchId)
+    }
+  })
+}
 export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
@@ -88,7 +99,7 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
     return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
   } catch (error) {}
 })
-export const { setConfigurationStatus, clearErrors, setSwitchOptions } = importAccountsSlice.actions
+export const { setConfigurationStatus, clearErrors, setSugestionSchema, setSwitchOptions } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectSwitchId = (state) => state.switchId

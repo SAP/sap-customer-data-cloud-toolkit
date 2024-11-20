@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
@@ -17,9 +17,12 @@ import {
   selectSwitchId,
   setConfigurationStatus,
   setConfigurations,
+  setSugestionSchema,
   setSwitchOptions,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
+import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
+import { extractTreeNodeIds, getAllNames } from './utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
 
@@ -28,9 +31,12 @@ const ImportAccountsComponent = ({ t }) => {
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-
+  const [selectedValues, setSelectedValues] = useState({})
+  const [treeNodeIds, setTreeNodeIds] = useState([])
+  const [schemaInputValue, setSchemaInputValue] = useState('')
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
+  console.log('CONFIGURATIONS--->', configurations)
   const switchConfig = useSelector(selectSwitchId)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
@@ -41,8 +47,24 @@ const ImportAccountsComponent = ({ t }) => {
     dispatch(setConfigurations())
   }
 
+  const handleSelectChange = (event, treeNodeId) => {
+    const selectedValue = event.target.selectedOption.dataset.id
+    console.log(`Selected value: ${selectedValue}, TreeNode ID: ${treeNodeId}`)
+    setSelectedValues((prevValues) => ({
+      ...prevValues,
+      [treeNodeId]: selectedValue,
+    }))
+  }
+
   const showConfigurations = () => {
-    return <ImportAccountsConfigurations configurations={configurations} setConfigurationStatus={setConfigurationStatus} />
+    return (
+      <ImportAccountsConfigurations
+        handleSelectChange={handleSelectChange}
+        configurations={configurations}
+        setConfigurationStatus={setConfigurationStatus}
+        setSwitchOptions={setSwitchOptions}
+      />
+    )
   }
 
   return (
@@ -76,20 +98,24 @@ const ImportAccountsComponent = ({ t }) => {
                       <ui5-option>Full</ui5-option>
                       <ui5-option>Lite</ui5-option>
                     </ui5-select>
-
-                    {showConfigurations()}
+                  </div>
+                  <div className={classes.searchBarContainer} data-layout-span="XL5 L5 M5 S5">
+                    <SearchBar
+                      dispatch={dispatch}
+                      treeNodeIds={treeNodeIds}
+                      configurations={configurations}
+                      setSchemaInputValue={setSchemaInputValue}
+                      setSugestionSchema={setSugestionSchema}
+                    />
                   </div>
                 </>
               </Grid>
-              <div className={classes.selectConfigurationOuterDivStyle}>
-                <div className={classes.selectConfigurationInnerDivStyle}>
-                  <div>
-                    <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.downloadTemplateButton} onClick={onSaveHandler}>
-                      {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              {showConfigurations()}
+              <FlexBox justifyContent="End" className={classes.buttonContainer}>
+                <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.downloadTemplateButton} onClick={onSaveHandler}>
+                  {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}
+                </Button>
+              </FlexBox>
             </Card>
           </div>
         </div>

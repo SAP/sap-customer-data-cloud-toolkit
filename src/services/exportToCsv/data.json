@@ -1,0 +1,571 @@
+export async function exportToCSV(items, combinedData) {
+  const { ids: options, switchIds: switchOptions } = getOptionsFromTree(items)
+
+  console.log('options', options)
+  console.log('combinedData', combinedData)
+  console.log('switchOptions', switchOptions)
+
+  const optionKeys = matchKeys(combinedData, options)
+
+  let switchRemoveFields = []
+  if (switchOptions.length > 0) {
+    const switchKeys = matchKeys(combinedData, switchOptions)
+    switchRemoveFields = switchKeys.map((item) => {
+      return item.replace('.fields', '').replace('Schema', '')
+    })
+    switchRemoveFields = processArray(switchRemoveFields)
+  }
+
+  const removeFields = [...new Set([...optionKeys, ...switchRemoveFields])]
+  console.log('removeFields', removeFields)
+
+  createCSVFile(removeFields)
+}
+const matchKeys = (schema, matchArray) => {
+  return findMatches(schema, matchArray)
+}
+const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
+  Object.entries(obj).forEach(([key, value]) => {
+    const fullKey = parentKey ? `${parentKey}.${key}` : key
+    const keySegments = fullKey.split('.')
+    const lastSegment = keySegments[keySegments.length - 1]
+    matchArray.forEach((match) => {
+      const [matchKey, matchParentKey] = match.split('.')
+      if (key === 'preferences') {
+        resultKeys.push(...preferencesKeys(value, match, key))
+      }
+      if (key === 'subscriptionsSchema') {
+        resultKeys.push(...generateSubscriptionStrings(value, match, fullKey))
+      }
+      if (key === 'communications') {
+        resultKeys.push(...generateCommunicationStrings(value, match, fullKey))
+      }
+      if (lastSegment === matchKey && parentKey.includes(matchParentKey)) {
+        resultKeys.push(fullKey.replace('.fields', '').replace('Schema', ''))
+      }
+    })
+
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      findMatches(value, matchArray, fullKey, resultKeys)
+    }
+  })
+
+  return resultKeys
+}
+const generateCommunicationStrings = (communications, str) => {
+  const result = []
+
+  const parts = str.split('.')
+  const topicChannelId = parts[1]
+  const matchedItem = Object.values(communications).find((item) => item.topicChannelId === topicChannelId)
+
+  if (matchedItem) {
+    let fullKey = `communications.${matchedItem.topicChannelId}.`
+
+    if (matchedItem.schema && matchedItem.schema.properties && matchedItem.schema.properties.optIn) {
+      const optInProperties = matchedItem.schema.properties.optIn.properties
+      const optInKey = parts[0]
+
+      if (optInProperties[optInKey]) {
+        result.push(`${fullKey}.optIn.${optInKey}`)
+      } else {
+        Object.keys(optInProperties).forEach((key) => {
+          result.push(`${fullKey}.optIn.${key}`)
+        })
+      }
+    }
+  }
+
+  return result
+}
+
+const preferencesKeys = (obj, matchString, indexKey, resultKeys = []) => {
+  if (obj[matchString]) {
+    resultKeys.push(`${indexKey}.${matchString}`)
+    console.log('resultKeys', resultKeys)
+  }
+  return resultKeys
+}
+function generateSubscriptionStrings(schema, str, fullKey) {
+  const result = []
+
+  let current = schema.fields
+  const cleanfullKey = fullKey.replace('Schema', '')
+  const cleanString = str.replace('.subscriptionsSchema', '')
+  if (current[cleanString]) {
+    result.push(`${cleanfullKey}.${cleanString}.tags`)
+    result.push(`${cleanfullKey}.${cleanString}.doubleOptIn.isExternallyVerified`)
+    result.push(`${cleanfullKey}.${cleanString}.lastUpdatedSubscriptionState`)
+    result.push(`${cleanfullKey}.${cleanString}.isSubscribed`)
+  }
+  return result
+}
+
+const processNestedObject = (obj, parentKey, indexKey, resultKeys) => {
+  const allowedKeys = [
+    'isConsentGranted',
+    'actionTimestamp',
+    'lastConsentModified',
+    'language',
+    'isActive',
+    'isMandatory',
+    'docVersion',
+    'docDate',
+    'customData',
+    'tags',
+    'entitlements',
+    'locales',
+    'langs',
+  ]
+  Object.entries(obj).forEach(([key, value]) => {
+    if (allowedKeys.includes(key)) {
+      if (key === 'customData' && Array.isArray(value)) {
+        value.forEach((item, index) => {
+          Object.entries(item).forEach(([subKey, subValue]) => {
+            const fullKey = `${indexKey}.${parentKey}.${index}.${key}`
+            resultKeys.push(fullKey)
+          })
+        })
+      } else if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          const fullKey = `${indexKey}.${parentKey}.${index}.${key}`
+          resultKeys.push(fullKey)
+        })
+      } else {
+        const fullKey = `${indexKey}.${parentKey}.${key}`
+        resultKeys.push(fullKey)
+        if (typeof value === 'object' && value !== null) {
+          processNestedObject(value, fullKey, resultKeys)
+        }
+      }
+    }
+  })
+}
+
+const getAllNestedKeys = (obj, parentKey, includeValues = false, specificKeys = []) => {
+  const keys = []
+  Object.entries(obj).forEach(([key, value]) => {
+    const fullKey = `${parentKey}.${key}`
+    if (Array.isArray(value) && includeValues) {
+      value.forEach((item) => {
+        if (typeof item === 'object' && item !== null) {
+          Object.entries(item).forEach(([itemKey, itemValue]) => {
+            keys.push(`${fullKey}.${itemKey}.${itemValue}`)
+          })
+        } else {
+          keys.push(`${fullKey}.${value}`)
+        }
+      })
+    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      if (specificKeys.length > 0 && specificKeys.includes(key)) {
+        keys.push(fullKey)
+      } else if (specificKeys.length === 0) {
+        keys.push(...getAllNestedKeys(value, fullKey, includeValues, specificKeys))
+      }
+    } else {
+      keys.push(includeValues ? `${fullKey}.${value}` : fullKey)
+    }
+  })
+  return keys
+}
+function createCSVFile(resultKeys) {
+  const csvData = new Blob([resultKeys.join('\n')], { type: 'text/csv' })
+  const csvURL = URL.createObjectURL(csvData)
+  const link = document.createElement('a')
+  link.href = csvURL
+  link.download = 'csv_File.csv'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+function getOptionsFromTree(items) {
+  let ids = []
+  let switchIds = []
+
+  items.forEach((item) => {
+    if (item.value === true) {
+      if (item.switchId && item.switchId.operation === 'array') {
+        switchIds.push(item.switchId.checkBoxId)
+      } else {
+        ids.push(item.id)
+      }
+    }
+    if (item.branches && item.branches.length > 0) {
+      const { ids: childIds, switchIds: childSwitchIds } = getOptionsFromTree(item.branches)
+      ids = ids.concat(childIds)
+      switchIds = switchIds.concat(childSwitchIds)
+    }
+  })
+
+  return { ids, switchIds }
+}
+function valueToCSV(headers) {
+  const importAccountsData = [headers]
+
+  const csvData = new Blob([importAccountsData], { type: 'text/csv' })
+  const csvURL = URL.createObjectURL(csvData)
+  const link = document.createElement('a')
+  link.href = csvURL
+  link.download = `csv_File.csv`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+function processArray(inputArray) {
+  return inputArray.map((item) => {
+    let parts = item.split('.')
+    let result = []
+    for (let i = 0; i < parts.length; i++) {
+      result.push(parts[i])
+      if (i > 0 && i < parts.length - 1 && isNaN(parts[i + 1])) {
+        result.push('0')
+      }
+    }
+    return result.join('.')
+  })
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+import Topic from '../copyConfig/communication/topic'
+import ConsentStatement from '../copyConfig/consent/consentStatement'
+import Schema from '../copyConfig/schema/schema'
+import { exportToCSV } from '../exportToCsv/exportToCsv'
+//for profile e data, internal e address só é necessario os headers não e preciso o conteudo
+//cdc-toolkit-data-workbench-utility
+class ImportAccounts {
+  #credentials
+  #site
+  #dataCenter
+  #schema
+  #consent
+  #topic
+  constructor(credentials, site, dataCenter) {
+    this.#credentials = credentials
+    this.#site = site
+    this.#dataCenter = dataCenter
+    this.#schema = new Schema(credentials, site, dataCenter)
+    this.#consent = new ConsentStatement(credentials, site, dataCenter)
+    this.#topic = new Topic(credentials, site, dataCenter)
+  }
+
+  async importAccountToConfigTree() {
+    const result = []
+    const schemaData = await this.getSchema()
+    const consent = await this.getConsent()
+    const topics = await this.getTopics()
+    console.log('topics', topics)
+    if (schemaData.errorCode === 0 && schemaData.errorCode === 0) {
+      const cleanSchemaData = this.cleanSchemaData(schemaData)
+      const cleanConsentData = this.getConsentData(consent)
+
+      const cleanTopicsData = this.getTopicsData(topics)
+      const combinedData = { ...cleanSchemaData, ...cleanConsentData, ...cleanTopicsData }
+      console.log('combinedData', combinedData)
+      result.push(...this.extractAndTransformFields(combinedData))
+      return result
+    }
+  }
+  extractAndTransformFields(combinedData) {
+    const fieldsTransformed = []
+    Object.entries(combinedData).forEach(([key, value]) => {
+      if (value && typeof value === 'object') {
+        const transformed = this.transformField(key, value)
+        if (transformed) {
+          fieldsTransformed.push(transformed)
+        }
+      }
+    })
+    console.log('fieldsTransformed', fieldsTransformed)
+    return fieldsTransformed
+  }
+
+  transformField(key, value) {
+    if (value.fields) {
+      return {
+        id: key,
+        name: key.replace('Schema', ''),
+        value: false,
+        branches: this.transformSchema(value.fields, key),
+      }
+    }
+    if (key === 'preferences') {
+      return {
+        id: key,
+        name: 'consent statements',
+        value: false,
+        branches: this.transformSchema(value, key),
+      }
+    }
+    if (key === 'communications') {
+      const transformedCommunications = this.transformCommunications(value)
+      console.log(JSON.stringify(transformedCommunications, null, 2))
+      return transformedCommunications
+    }
+
+    return null
+  }
+  transformCommunications(communications) {
+    const result = {
+      id: 'communications',
+      name: 'communications',
+      value: false,
+      branches: [],
+    }
+
+    const channels = {}
+
+  Object.values(communications).forEach((item, index) => {
+    const unique_id = `${item.topic}.${item.topicChannelId}`
+
+    if (!channels[item.topicChannelId]) {
+      channels[item.topicChannelId] = {
+        id: item.topicChannelId,
+        name: item.topicChannelId,
+        value: false,
+        branches: [],
+      }
+    }
+
+    const marketingBranch = {
+      id: `${unique_id}.marketing`,
+      name: 'marketing',
+      value: false,
+      branches: [],
+    }
+    this.addCommunitacionBranches(marketingBranch.branches, marketingBranch.id)
+
+    const transactionalBranch = {
+      id: `${unique_id}.transactional`,
+      name: 'transactional',
+      value: false,
+      branches: [],
+    }
+    this.addCommunitacionBranches(transactionalBranch.branches, transactionalBranch.id)
+
+    channels[item.topicChannelId].branches.push(marketingBranch, transactionalBranch)
+  })
+
+
+    result.branches = Object.values(channels)
+    return result
+  }
+  hasNestedObject(field) {
+    for (let key in field) {
+      if (typeof field[key] === 'object' && field[key] !== null) {
+        return true
+      }
+    }
+    return false
+  }
+  addPreferencesBranches(branches, parentId) {
+    const additionalBranches = [
+      { id: `${parentId}.isConsentGranted`, name: 'isConsentGranted', value: false, branches: [] },
+      { id: `${parentId}.actionTimestamp`, name: 'actionTimestamp', value: false, branches: [] },
+      { id: `${parentId}.lastConsentModified`, name: 'lastConsentModified', value: false, branches: [] },
+      { id: `${parentId}.docVersion`, name: 'docVersion', value: false, branches: [] },
+      { id: `${parentId}.docDate`, name: 'docDate', value: false, branches: [] },
+      { id: `${parentId}.tags`, name: 'tags', value: false, branches: [] },
+      { id: `${parentId}.entitlements`, name: 'entitlements', value: false, branches: [] },
+    ]
+
+    branches.push(...additionalBranches)
+  }
+  addCommunitacionBranches(branches, parentId) {
+    const additionalBranches = [
+      { id: `${parentId}.status`, name: 'status', value: false, branches: [] },
+      { id: `${parentId}.optIn.brand `, name: 'optIn.brand', value: false, branches: [] },
+      { id: `${parentId}.optIn.sourceApplication`, name: 'optIn.sourceApplication', value: false, branches: [] },
+      { id: `${parentId}.optIn.acceptanceLocation `, name: 'optIn.acceptanceLocatio', value: false, branches: [] },
+      { id: `${parentId}.optIn.acceptanceEvent `, name: 'optIn.acceptanceEvent', value: false, branches: [] },
+      { id: `${parentId}.optIn.reason `, name: 'optIn.reason', value: false, branches: [] },
+      { id: `${parentId}.optIn.agentType`, name: 'optIn.agentType', value: false, branches: [] },
+      { id: `${parentId}.optIn.optIn.frequency`, name: 'optIn.optIn.frequenc', value: false, branches: [] },
+    ]
+
+    branches.push(...additionalBranches)
+  }
+  transformSubscriptions(splitKeys, currentLevel) {
+    const id = splitKeys.join('.')
+    let existing = currentLevel.find((item) => item.id === id)
+    if (!existing) {
+      existing = {
+        id: id,
+        name: id,
+        value: false,
+        branches: [],
+      }
+      currentLevel.push(existing)
+    }
+    return existing
+  }
+  transformSchema(fields, parentKey, skipFields = true) {
+    const transformedSchema = []
+    for (let key in fields) {
+      if (fields.hasOwnProperty(key)) {
+        const fieldDetail = fields[key]
+        const splitKeys = key.split('.')
+        let currentLevel = transformedSchema
+        if (parentKey === 'subscriptionsSchema' && splitKeys.length > 1) {
+          const existing = this.transformSubscriptions(splitKeys, currentLevel)
+          if (this.isFieldDetailObject(fieldDetail, parentKey, skipFields) && this.hasNestedObject(fieldDetail)) {
+            existing.branches = this.transformSchema(fieldDetail, parentKey, skipFields)
+          }
+          continue
+        }
+
+        splitKeys.forEach((part, index) => {
+          let id
+          if (parentKey === 'preferences') {
+            id = splitKeys.slice(0, index + 1).join('.')
+          } else {
+            id = `${part}.${parentKey}`
+          }
+          let existing = currentLevel.find((item) => item.id === id)
+          if (!existing) {
+            existing = {
+              id: id,
+              name: part,
+              value: false,
+              branches: [],
+            }
+            currentLevel.push(existing)
+          }
+
+          if (index === splitKeys.length - 1) {
+            if (this.isFieldDetailObject(fieldDetail, parentKey, skipFields) && this.hasNestedObject(fieldDetail)) {
+              existing.branches = this.transformSchema(fieldDetail, parentKey, skipFields)
+            }
+            if (parentKey === 'preferences') {
+              this.addPreferencesBranches(existing.branches, existing.id)
+            }
+            if (parentKey === 'communications') {
+              this.addCommunitacionBranches(existing.branches, existing.id)
+            }
+          } else {
+            currentLevel = existing.branches
+          }
+        })
+      }
+    }
+    return transformedSchema
+  }
+  isFieldDetailObject(fieldDetail, parentKey, skipFields = true) {
+    if (fieldDetail && typeof fieldDetail === 'object') {
+      const stopFields = ['required', 'type', 'allowNull', 'writeAccess', 'tags']
+      return skipFields ? !stopFields.some((field) => field in fieldDetail) : true
+    }
+    return false
+  }
+
+  getOptionsFromTree(items) {
+    let ids = []
+    items.forEach((item) => {
+      if (item.value === true) {
+        ids.push(item.id)
+      }
+      if (item.branches && item.branches.length > 0) {
+        ids = ids.concat(this.getOptionsFromTree(item.branches))
+      }
+    })
+
+    return ids
+  }
+  getValueByKey(obj, key) {
+    return obj[key]
+  }
+  findValueByKeyInCombinedData(data, key) {
+    if (data == null || typeof data !== 'object') {
+      return null
+    }
+
+    if (data.hasOwnProperty(key)) {
+      return data[key]
+    }
+
+    for (let prop in data) {
+      if (data.hasOwnProperty(prop)) {
+        let result = this.findValueByKeyInCombinedData(data[prop], key)
+        if (result !== null) {
+          return result
+        }
+      }
+    }
+
+    return null
+  }
+  async exportDataToCsv(items) {
+    const schemaData = await this.getSchema()
+    const consentData = await this.getConsent()
+    const topics = await this.getTopics()
+
+    if (schemaData.errorCode === 0 && consentData.errorCode === 0) {
+      const cleanTopicsData = this.getTopicsData(topics)
+
+      const cleanSchemaData = this.cleanSchemaData(schemaData)
+      const cleanConsentData = this.getConsentData(consentData)
+      const combinedData = { ...cleanSchemaData, ...cleanConsentData, ...cleanTopicsData }
+      exportToCSV(items, combinedData)
+    }
+  }
+
+  cleanSchemaData(schemaResponse) {
+    delete schemaResponse.apiVersion
+    delete schemaResponse.context
+    delete schemaResponse.errorCode
+    delete schemaResponse.statusCode
+    delete schemaResponse.statusReason
+    delete schemaResponse.time
+    delete schemaResponse.callId
+    this.removeFieldFromSubscriptionSchema(schemaResponse)
+    return schemaResponse
+  }
+  removeFieldFromSubscriptionSchema(schemaResponse) {
+    const traverseAndRemoveEmail = (obj) => {
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (key === 'email') {
+            delete obj[key]
+          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+            traverseAndRemoveEmail(obj[key])
+          }
+        }
+      }
+    }
+
+    traverseAndRemoveEmail(schemaResponse)
+    return schemaResponse
+  }
+
+  getConsentData(consentResponse) {
+    delete consentResponse.apiVersion
+    delete consentResponse.context
+    delete consentResponse.errorCode
+    delete consentResponse.statusCode
+    delete consentResponse.statusReason
+    delete consentResponse.time
+    delete consentResponse.callId
+    return consentResponse
+  }
+  getTopicsData(topicsResponse) {
+    const communications = {}
+    topicsResponse.results.forEach((obj, index) => {
+      communications[index] = obj
+    })
+    return { communications }
+  }
+
+  async getSchema() {
+    return this.#schema.get()
+  }
+  async getConsent() {
+    return this.#consent.get()
+  }
+  async getTopics() {
+    return this.#topic.searchTopics()
+  }
+}
+export default ImportAccounts

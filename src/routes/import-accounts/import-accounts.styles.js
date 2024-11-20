@@ -21,6 +21,7 @@ const styles = {
   currentInfoContainer: {
     ...spacing.sapUiMediumMarginBegin,
     ...spacing.sapUiMediumMarginTop,
+    width: '100%',
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',
@@ -35,6 +36,12 @@ const styles = {
   },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMarginBottom,
+  },
+  searchBarContainer: {
+    ...spacing.sapUiContentPadding,
+    ...spacing.sapUiMediumMarginBegin,
+    ...spacing.sapUiLargeMarginTop,
+    float: 'right',
   },
   componentTextStyle: {
     color: 'var(--sapNeutralElementColor)',
@@ -51,11 +58,10 @@ const styles = {
     textAlign: 'left',
     marginLeft: '150px !important',
   },
+
   downloadTemplateButton: {
     composes: 'fd-button fd-button--compact',
-    marginRight: '45px !important',
-    ...spacing.sapUiMediumMarginBegin,
-    ...spacing.sapUiMediumMarginTop,
+    marginRight: '15px !important',
     boxSizing: 'border-box',
   },
   customSwitch: {
@@ -64,6 +70,12 @@ const styles = {
     padding: '0 10px',
     cursor: 'pointer',
     fontSize: '16px',
+    margin: '10px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+
     margin: '10px',
   },
 }
