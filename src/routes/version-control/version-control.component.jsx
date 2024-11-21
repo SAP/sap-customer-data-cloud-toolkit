@@ -40,19 +40,19 @@ const VersionControlComponent = ({ t }) => {
   //   await versionControl.writeFile()
   // }
 
-const handleGetServices = async () => {
-  try {
-    await versionControl.writeFile()
-    alert('Backup created successfully!')
-  } catch (error) {
-    console.error('Error creating backup:', error)
-    alert('Failed to create backup. Please try again.')
+  const handleGetServices = async () => {
+    try {
+      await versionControl.writeFile()
+      alert('Backup created successfully!')
+    } catch (error) {
+      // console.error('Error creating backup:', error)
+      alert('Failed to create backup. Please try again.')
+    }
   }
-}
 
-  const handleRevertServices = async () => {
-    await versionControl.readFile()
-  }
+  // const handleRevertServices = async () => {
+  //   await versionControl.readFile()
+  // }
   // const handlePullRequestCheckServices = async () => {
   //   await versionControl.checkAndCreatePullRequest()
   // }
@@ -82,18 +82,17 @@ const handleGetServices = async () => {
               {t('VERSION_CONTROL.BACKUP')}
               {/* //TODO translate and use it */}
             </Button>
-            <Button id="revertButton" data-cy="revertButton" className={classes.singlePrettifyButton} onClick={handleRevertServices}>
+            {/* <Button id="revertButton" data-cy="revertButton" className={classes.singlePrettifyButton} onClick={handleRevertServices}>
               {t('VERSION_CONTROL.REVERT')}
-              {/* //TODO translate and use it */}
-              {/* </Button>
-            <Button id="checkPullRequestButton" data-cy="checkPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestCheckServices}>
+              </Button> */}
+            {/* <Button id="checkPullRequestButton" data-cy="checkPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestCheckServices}>
               Check and create Pull request
              
-            </Button>
-            <Button id="createPullRequestButton" data-cy="createPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestServices}>
+            </Button> */}
+            {/* <Button id="createPullRequestButton" data-cy="createPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestServices}>
               create Pull request
-               */}
-            </Button>
+              
+            </Button> */}
             <Button id="commitListButton" data-cy="commitListButton" className={classes.singlePrettifyButton} onClick={handleCommitListRequestServices}>
               Reresh commits
               {/* //TODO translate and use it */}

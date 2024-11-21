@@ -11,6 +11,7 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
+import { refactorData } from './refactorData'
 class VersionControl {
   #credentials
   #apiKey
@@ -65,120 +66,6 @@ class VersionControl {
     }
   }
 
-  // async readFile() {
-  //   const fileName = this.getFileName()
-  //   console.log('fileName', fileName)
-  //   for (const file of fileName) {
-  //     const filePath = `src/versionControl/${file.name}.json`
-  //     //Set condition to check if the file.name is equal to a service do the each set individually
-  //     try {
-  //       //src/versionControl/screenSets.json
-  //       let fileContent = await this.getFileSHA(filePath)
-
-  //       //communication
-  //       // if (file.name === 'communication') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //consent
-  //       // if (file.name === 'consent') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //dataflow
-  //       // if (file.name === 'dataflow') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //emails
-  //       if (file.name === 'emails') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         await this.setEmailTemplates(filteredResponse)
-  //       }
-  //       //extension
-  //       if (file.name === 'extension') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         await this.setExtension(filteredResponse)
-  //         console.log('filtered response....>', filteredResponse)
-  //       }
-  //       //info
-  //       // if (file.name === 'info') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //policies
-  //       if (file.name === 'policies') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         await this.setPolicies(filteredResponse)
-  //         console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       }
-  //       //rba
-  //       if (file.name === 'rba') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         await this.setRBA(filteredResponse)
-  //       }
-  //       //recaptcha
-  //       // if (file.name === 'recaptcha') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       ///schema
-  //       if (file.name === 'schema') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         console.log('filtered response....>', filteredResponse)
-  //         const config = await this.setSchema(filteredResponse)
-  //         console.log(' config....>', config)
-  //         const response = await this.schema.set(this.#apiKey, this.#dataCenter, filteredResponse.dataSchema)
-  //         console.log(' response....>', response)
-  //       }
-  //       //screenset
-  //       // if (file.name === 'screenset') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //sms
-  //       if (file.name === 'sms') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         await this.setSMS(filteredResponse)
-  //         console.log('filtered response....>', filteredResponse)
-  //       }
-  //       //social
-  //       // if (file.name === 'social') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       //webhook
-  //       // if (file.name === 'webhook') {
-  //       //   const filteredResponse = JSON.parse(fileContent.content)
-  //       //   await this.setPolicies(filteredResponse)
-  //       //   console.log(`SET HAS BEEN SUCCESSFULL FOR THIS ${file}`)
-  //       // }
-  //       if (file.name === 'webSdk') {
-  //         const filteredResponse = JSON.parse(fileContent.content)
-  //         debugger
-  //         await this.setWebSDK(filteredResponse)
-  //         //  console.log('filtered fileContent.content....>', fileContent.content)
-  //       }
-
-  //       // if (file.name === 'channel') {
-  //       //   debugger
-  //       //   console.log('filtered filePath....>', filePath)
-  //       //   console.log('filtered fileContent.content....>', fileContent.content)
-  //       //   console.log('filtered fileContent.content....>', JSON.parse(fileContent.content))
-  //       //   await this.setScreenSets(JSON.parse(fileContent.content))
-  //       // }
-  //     } catch (error) {
-  //       console.log('error', error)
-  //     }
-  //   }
-  // }
   async readFile() {
     const fileName = this.getFileName()
     console.log('fileName', fileName) // Log file names
@@ -231,6 +118,23 @@ class VersionControl {
       }
     }
   }
+  async checkIfExists(sha) {
+    const { data: commit } = await this.octokit.rest.repos.getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      ref: sha,
+    })
+
+    for (const file of commit.files) {
+      console.log('Processing file to be checked:', file)
+
+      if (file.filename.startsWith('src/versionControl/')) {
+        const fileContent = await this.fetchFileContent(file.contents_url)
+        console.log(file.contents_url)
+        return JSON.parse(fileContent)
+      }
+    }
+  }
 
   async readCommit(sha) {
     if (sha) {
@@ -247,6 +151,8 @@ class VersionControl {
 
           if (file.filename.startsWith('src/versionControl/')) {
             const fileContent = await this.fetchFileContent(file.contents_url)
+            console.log(file.contents_url)
+
             if (fileContent) {
               const filteredResponse = JSON.parse(fileContent)
 
@@ -290,142 +196,66 @@ class VersionControl {
         ref: this.branch,
       })
 
-      console.log('data....>', data)
-      return { content: Base64.decode(data.content), sha: data.sha, name: data.name }
+      console.log(`Fetched data for ${filePath}:`, data)
+      return {
+        content: Base64.decode(data.content),
+        sha: data.sha,
+        name: data.name,
+      }
     } catch (error) {
+      console.error(`Error fetching SHA for file ${filePath}:`, error)
       if (error.status === 404) {
         return undefined // File does not exist, return undefined
       }
       throw error // Throw other errors
     }
   }
-  async updateFile(filePath, fileContent) {
-    // await this.createBranch(this.branch) // Ensure the branch exists
 
-    let sha
-    let response
-    try {
-      sha = await this.getFileSHA(filePath)
-    } catch (error) {
-      sha = undefined
-    }
-    console.log('sha', sha)
-    const commitMessage = sha ? 'File updated' : 'File created'
-    const encodedContent = Base64.encode(fileContent, null, 2)
+  async updateFile(filePath, fileContent) {
+    const commitMessage = 'File updated/created'
+    const encodedContent = Base64.encode(fileContent)
+    let getGitFileInfo
+
+    getGitFileInfo = await this.getFileSHA(filePath)
     debugger
-    if (sha === undefined) {
-      response = await this.octokit.rest.repos.createOrUpdateFileContents({
+
+    console.log('encodedContent: ', encodedContent)
+
+    //TODO ver aqui se os ficheiros são diferentes
+    if (getGitFileInfo.content !== fileContent) {
+      console.log(`Diferentes`)
+      console.log(`filepath ---> ${filePath}`)
+      console.log('====================================')
+      console.log(`Getfileinfo content stringified :,${JSON.stringify(getGitFileInfo.content)}`)
+      console.log(`fileContent stringified :,${JSON.stringify(fileContent)}`)
+      console.log('====================================')
+      debugger
+      const updateParams = {
         owner: this.owner,
         repo: this.repo,
         path: filePath,
-
-        message: `${sha.name} FILE UPDATED/CREATED`,
+        message: `${getGitFileInfo.name} ${commitMessage}`,
         content: encodedContent,
         branch: this.branch,
-      })
-      console.log('mensagem: ', response.commit.commiter.message)
-    } else {
-      try {
-        response = await this.octokit.rest.repos.createOrUpdateFileContents({
-          owner: this.owner,
-          repo: this.repo,
-          path: filePath,
-          message: `${sha.name} FILE UPDATED/CREATED`,
-          content: encodedContent,
-          branch: this.branch,
-          sha: sha.sha,
-        })
-        console.log('mensagem: ', response.commit.commiter.message)
-        // console.log('File updated successfully')
-        debugger
-        console.log(response ? `${commitMessage} successfully` : `File created successfully`)
-      } catch (error) {
-        // console.log('this was the error', error)
-        console.error('Error creating/updating file:', error)
+        sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
       }
 
-      console.log('File entered', filePath)
+      try {
+        const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
+        console.log(`File ${filePath} created/updated:`, response.data.commit.message)
+      } catch (error) {
+        // console.error(`Error creating/updating file ${filePath}:`, error)
+        throw error
+      }
+    } else {
+      console.log(`Iguais`)
+      console.log(`filepath ---> ${filePath}`)
+      console.log('====================================')
+      console.log(`Getfileinfo content stringified :,${JSON.stringify(getGitFileInfo.content)}`)
+      console.log(`fileContent stringified :,${JSON.stringify(fileContent)}`)
+      console.log('====================================')
     }
   }
-
-  //******************* Pull requests ****************************** */
-
-  // async createPullRequest(branchName = this.branch, title) {
-  //   try {
-  //     const response = await this.octokit.rest.pulls.create({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       title,
-  //       head: branchName,
-  //       base: 'main', // or your default branch
-  //     })
-  //     console.log(`Pull request created: ${response.data.html_url}`)
-  //   } catch (error) {
-  //     console.log('Error creating pull request:', error)
-  //   }
-  // }
-
-  // async checkAndCreatePullRequest(branchName = this.branch, title) {
-  //   try {
-  //     // Get all pull requests
-  //     const { data: pullRequests } = await this.octokit.rest.pulls.list({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       state: 'open',
-  //       head: `${this.owner}:${branchName}`,
-  //     })
-
-  //     console.log('pullRequest List: ', pullRequests)
-
-  //     if (pullRequests.length > 0) {
-  //       console.log(`Existing pull request found: ${pullRequests[0].html_url}`)
-  //     } else {
-  //       // Create a new pull request if one doesn't exist
-  //       debugger
-  //       await this.createPullRequest(branchName, title)
-  //     }
-  //   } catch (error) {
-  //     console.log('Error checking/creating pull request:', error)
-  //   }
-  // }
-
-  // async createPullRequestViaButton() {
-  //   try {
-  //     // Ensure the branch exists and files are up to date before creating a pull request
-  //     await this.checkAndCreatePullRequest(this.branch, 'Automatic PR: Update from feature branch')
-  //   } catch (error) {
-  //     console.log('Error creating pull request from button:', error)
-  //   }
-  // }
-
-  // async createPullRequest(filePath, fileContent) {
-
-  //     try {
-  //       // octokit.rest.pulls.create({
-  //       //   owner,
-  //       //   repo,
-  //       //   head,
-  //       //   base,
-  //       // })
-  //       response = await this.octokit.rest.pulls.create({
-  //         owner: this.owner,
-  //         repo: this.repo,
-  //         path: filePath,
-  //         message: 'FILE UPDATED/CREATED',
-  //         content: encodedContent,
-  //         branch: this.branch,
-  //         sha: sha.sha,
-  //       })
-  //       debugger
-  //       console.log('File updated successfully')
-  //     } catch (error) {
-  //       console.log('this was the error', error)
-  //     }
-
-  //     console.log('File entered')
-  //   }
-
-  //************************************ */
 
   getFileName() {
     const fileNames = [
@@ -450,8 +280,6 @@ class VersionControl {
   }
 
   async getResponses() {
-    const screenSet = await this.screenSets.get()
-    console.log('dasdasda', JSON.stringify(screenSet.screenSets))
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
@@ -461,83 +289,42 @@ class VersionControl {
       { name: 'rba', promise: this.rba.get() },
       { name: 'riskAssessment', promise: this.riskAssessment.get() },
       { name: 'schema', promise: this.schema.get() },
-      { name: 'sets', promise: JSON.stringify(screenSet.screenSets) },
+      { name: 'sets', promise: this.screenSets.get() },
       { name: 'sms', promise: this.sms.get() },
       { name: 'channel', promise: this.channel.get() },
     ]
     return responses
   }
+
   async writeFile() {
     try {
       const responses = await this.getResponses()
-      console.log(`responses ----> ${responses}`)
-      // const responses = [
-      //   { name: 'webSdk', promise: this.webSdk.get() },
-      //   { name: 'dataflow', promise: this.dataflow.search() },
-      //   { name: 'emails', promise: this.emails.get() },
-      //   { name: 'extension', promise: this.extension.get() },
-      //   { name: 'policies', promise: this.policies.get() },
-      //   { name: 'rba', promise: this.rba.get() },
-      //   { name: 'riskAssessment', promise: this.riskAssessment.get() },
-      //   { name: 'schema', promise: this.schema.get() },
-      //   { name: 'screenSets', promise: this.screenSets.get() },
-      //   { name: 'sms', promise: this.sms.get() },
-      //   { name: 'channel', promise: this.channel.get() },
-      // ]
-      const results = await Promise.all(responses.map((response) => response.promise))
-      console.log('resonses map---->', results)
+      console.log('responses ---->', JSON.stringify(responses, null, 2))
 
-      //to be removed later and uncomment the const filePath
-      let filePath = undefined
+      const results = await Promise.all(responses.map((response) => response.promise))
+      const cleanData = refactorData(results)
+      console.log('cleanData: ', cleanData)
+
+      console.log('responses map ---->', JSON.stringify(results, null, 2))
+
       await Promise.all(
-        results.map((result, index) => {
+        cleanData.map(async (result, index) => {
           const responseName = responses[index].name
-          // const filePath = `src/versionControl/${responseName}.json`
-          filePath = `src/versionControl/${responseName}.json`
+          const filePath = `src/versionControl/${responseName}.json`
           const fileContent = JSON.stringify(result, null, 2)
-          console.log('fileContent----->', fileContent)
-          console.log('filePatht----->', filePath)
-          return this.updateFile(filePath, fileContent)
+          console.log(`fileContent [name: ${responseName}] ----->`, fileContent)
+          console.log('filePath ----->', filePath)
+
+          await this.updateFile(filePath, fileContent)
         }),
       )
 
-      console.log('File updated successfully: ', filePath)
+      console.log('All files updated successfully')
     } catch (error) {
-      console.error('Error writing file:', error)
+      // console.error('Error writing file:', error)
+      throw error
     }
   }
-
-  // *******************get commits beginning********************
-
-  // async getCommits() {
-  //   try {
-  //     const branches = await this.octokit.rest.repos.listBranches({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       // headers: {
-  //       //   'X-GitHub-Api-Version': '2024-10-01',m
-  //       // },
-  //     })
-  //     console.log('branches', branches)
-  //     const branchDetails = branches.data.find((b) => b.name === this.branch)
-
-  //     if (!branchDetails) {
-  //       throw new Error(`Branch ${this.branch} not found`)
-  //     }
-
-  //     const branchSha = branchDetails.commit.sha
-  //     const result = await this.octokit.rest.repos.listCommits({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       sha: branchSha,
-  //       per_page: 100,
-  //     })
-  //     console.log('List of commits:', result)
-  //     return result
-  //   } catch (error) {
-  //     console.error('Error listing commits:', error)
-  //   }
-  // }
 
   async getCommits() {
     let allCommits = []
