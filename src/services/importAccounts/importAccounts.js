@@ -11,8 +11,7 @@ import { passwordImportTreeFields } from './passwordImport/passwordImport'
 import PreferencesImportFields from './preferencesImport/preferencesImport'
 import SchemaImportFields from './schemaImport/schemaImportFields'
 import { extractAndTransformFields } from './utils'
-//for profile e data, internal e address só é necessario os headers não e preciso o conteudo
-//cdc-toolkit-data-workbench-utility
+
 class ImportAccounts {
   #credentials
   #site
@@ -51,7 +50,6 @@ class ImportAccounts {
     result.push(...exportCommunicationData(items, cleanTopicData))
     result.push(...exportPasswordData(items))
     createCSVFile(result)
-    // exportToCSV(items, combinedData)
   }
 }
 export default ImportAccounts

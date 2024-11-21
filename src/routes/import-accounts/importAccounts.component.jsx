@@ -22,7 +22,6 @@ import {
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-import { extractTreeNodeIds, getAllNames } from './utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
 

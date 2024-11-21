@@ -32,11 +32,12 @@ const SearchBar = ({ configurations, setSchemaInputValue, schemaInputValue, hand
   const onAddSchemaClickHandler = () => {
     if (schemaInputValue && schemaInputValue !== '') {
       setSuggestions('')
+      processInput(schemaInputValue)
     }
   }
   const onSchemaInputKeyPressHandler = (event) => {
     const inputValue = event.target.value.trim()
-
+    console.log('event--->', event)
     if (event.type === 'change') {
       setSchemaInputValue(inputValue)
       processInput(inputValue)
