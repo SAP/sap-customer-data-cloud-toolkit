@@ -45,7 +45,7 @@ const VersionControlComponent = ({ t }) => {
       await versionControl.writeFile()
       alert('Backup created successfully!')
     } catch (error) {
-      // console.error('Error creating backup:', error)
+      console.error('Error creating backup:', error)
       alert('Failed to create backup. Please try again.')
     }
   }
@@ -80,7 +80,6 @@ const VersionControlComponent = ({ t }) => {
           <>
             <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={handleGetServices}>
               {t('VERSION_CONTROL.BACKUP')}
-              {/* //TODO translate and use it */}
             </Button>
             {/* <Button id="revertButton" data-cy="revertButton" className={classes.singlePrettifyButton} onClick={handleRevertServices}>
               {t('VERSION_CONTROL.REVERT')}

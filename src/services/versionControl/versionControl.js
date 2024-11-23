@@ -197,63 +197,114 @@ class VersionControl {
       })
 
       console.log(`Fetched data for ${filePath}:`, data)
+
+      const decodedContent = Base64.decode(data.content)
+      console.log(`Decoded content for ${filePath}:`, decodedContent)
+
+      // Return an empty JSON if the content is empty or invalid
+      if (!decodedContent.trim()) {
+        return {
+          content: '{}', // Return empty JSON object
+          sha: data.sha,
+          name: data.name,
+        }
+      }
+
       return {
-        content: Base64.decode(data.content),
+        content: decodedContent,
         sha: data.sha,
         name: data.name,
       }
     } catch (error) {
       console.error(`Error fetching SHA for file ${filePath}:`, error)
       if (error.status === 404) {
-        return undefined // File does not exist, return undefined
+        return { content: '{}', sha: undefined, name: undefined } // Return empty JSON object for non-existent file
       }
       throw error // Throw other errors
     }
   }
 
+  // src/services/versionControl/versionControl.js
+  // src/services/versionControl/versionControl.js
   async updateFile(filePath, fileContent) {
     const commitMessage = 'File updated/created'
     const encodedContent = Base64.encode(fileContent)
+
     let getGitFileInfo
 
-    getGitFileInfo = await this.getFileSHA(filePath)
-    debugger
+    try {
+      getGitFileInfo = await this.getFileSHA(filePath)
+      const { content: rawCurrentContent } = getGitFileInfo
 
-    console.log('encodedContent: ', encodedContent)
+      // Log raw content
+      console.log(`Raw current content for ${filePath}: ${rawCurrentContent}`)
 
-    //TODO ver aqui se os ficheiros são diferentes
-    if (getGitFileInfo.content !== fileContent) {
-      console.log(`Diferentes`)
-      console.log(`filepath ---> ${filePath}`)
-      console.log('====================================')
-      console.log(`Getfileinfo content stringified :,${JSON.stringify(getGitFileInfo.content)}`)
-      console.log(`fileContent stringified :,${JSON.stringify(fileContent)}`)
-      console.log('====================================')
-      debugger
-      const updateParams = {
-        owner: this.owner,
-        repo: this.repo,
-        path: filePath,
-        message: `${getGitFileInfo.name} ${commitMessage}`,
-        content: encodedContent,
-        branch: this.branch,
-        sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
-      }
-
+      // Parse the current content safely
+      let currentContent
       try {
-        const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
-        console.log(`File ${filePath} created/updated:`, response.data.commit.message)
+        currentContent = JSON.parse(rawCurrentContent)
       } catch (error) {
-        // console.error(`Error creating/updating file ${filePath}:`, error)
-        throw error
+        console.warn(`Failed to parse current content for ${filePath}. Using empty object. Error: ${error.message}`)
+        currentContent = {} // Fallback to empty object
       }
-    } else {
-      console.log(`Iguais`)
-      console.log(`filepath ---> ${filePath}`)
-      console.log('====================================')
-      console.log(`Getfileinfo content stringified :,${JSON.stringify(getGitFileInfo.content)}`)
-      console.log(`fileContent stringified :,${JSON.stringify(fileContent)}`)
-      console.log('====================================')
+
+      // Log new content to be compared
+      console.log(`Raw new content for ${filePath}: ${fileContent}`)
+
+      // Parse the new content safely
+      let newContent
+      try {
+        newContent = JSON.parse(fileContent)
+      } catch (error) {
+        throw new Error(`Failed to parse new content for ${filePath}: ${error.message}`)
+      }
+
+      // Refactor the current and new content for comparison
+      const refactoredCurrentContent = refactorData(currentContent)
+      const refactoredNewContent = refactorData(newContent)
+
+      // Compare the contents
+      if (JSON.stringify(refactoredCurrentContent) !== JSON.stringify(refactoredNewContent)) {
+        console.log(`Differences found, proceeding to update file: ${filePath}`)
+
+        const updateParams = {
+          owner: this.owner,
+          repo: this.repo,
+          path: filePath,
+          message: `${getGitFileInfo.name} ${commitMessage}`,
+          content: encodedContent,
+          branch: this.branch,
+          sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
+        }
+
+        try {
+          const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
+          console.log(`File ${filePath} created/updated:`, response.data.commit.message)
+        } catch (error) {
+          if (error.status === 409) {
+            // Conflict error, fetch new SHA and retry
+            console.warn(`Conflict detected when updating ${filePath}. Fetching latest SHA and retrying...`)
+            const newGitFileInfo = await this.getFileSHA(filePath)
+
+            if (newGitFileInfo && newGitFileInfo.sha !== getGitFileInfo.sha) {
+              updateParams.sha = newGitFileInfo.sha
+              const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
+              console.log(`File ${filePath} created/updated on retry:`, response.data.commit.message)
+            } else {
+              console.error(`Sha mismatch even after refetching for ${filePath}`)
+              throw new Error(`Sha mismatch even after refetching for ${filePath}`)
+            }
+          } else {
+            console.error(`Error creating/updating file ${filePath}:`, error)
+            throw error
+          }
+        }
+      } else {
+        console.log(`Files ${filePath} are identical. Skipping update.`)
+      }
+    } catch (error) {
+      console.error(`Error creating/updating file ${filePath}:`, error)
+      throw error
     }
   }
 
@@ -299,8 +350,7 @@ class VersionControl {
   async writeFile() {
     try {
       const responses = await this.getResponses()
-      console.log('responses ---->', JSON.stringify(responses, null, 2))
-
+      // console.log('responses ---->', JSON.stringify(responses, null, 2))
       const results = await Promise.all(responses.map((response) => response.promise))
       const cleanData = refactorData(results)
       console.log('cleanData: ', cleanData)
@@ -321,8 +371,8 @@ class VersionControl {
 
       console.log('All files updated successfully')
     } catch (error) {
-      // console.error('Error writing file:', error)
-      throw error
+      console.error('Error writing file:', error)
+      throw error // Ensure the error is rethrown
     }
   }
 
