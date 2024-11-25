@@ -1,5 +1,6 @@
 import { Octokit } from '@octokit/rest'
 import { Base64 } from 'js-base64'
+
 import WebSdk from '../copyConfig/websdk/websdk'
 import Dataflow from '../copyConfig/dataflow/dataflow'
 import EmailConfiguration from '../copyConfig/emails/emailConfiguration'
@@ -11,52 +12,52 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
-import { refactorData } from './refactorData'
-class VersionControl {
-  #credentials
-  #apiKey
-  #dataCenter
-  #siteInfo
-  constructor(credentials, apiKey, siteInfo) {
-    this.#credentials = credentials
-    this.#apiKey = apiKey
-    this.#dataCenter = siteInfo.dataCenter
-    this.#siteInfo = siteInfo
 
-    //Fazer os sets individualmente todos
-    this.octokit = new Octokit({
-      auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN,
-    })
+class VersionControl {
+  constructor(credentials, apiKey, siteInfo) {
+    if (!credentials.userKey || !credentials.secret) {
+      throw new Error('GitHub credentials are required')
+    }
+
+    this.octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN })
     this.owner = 'iamGaspar'
     this.repo = 'CDCVersionControl'
-    this.path = 'src/testData.json'
-    this.branch = 'CDCRepo'
-    this.webSdk = new WebSdk(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.dataflow = new Dataflow(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.emails = new EmailConfiguration(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.extension = new Extension(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.policies = new Policy(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.rba = new Rba(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.riskAssessment = new RiskAssessment(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.schema = new Schema(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.screenSets = new ScreenSet(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.sms = new SmsConfiguration(this.#credentials, this.#apiKey, this.#dataCenter)
-    this.channel = new Channel(this.#credentials, this.#apiKey, this.#dataCenter)
+    this.defaultBranch = 'CDCRepo'
+
+    const { dataCenter } = siteInfo
+
+    this.credentials = credentials
+    this.apiKey = apiKey
+    this.dataCenter = dataCenter
+
+    this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
+    this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
+    this.emails = new EmailConfiguration(credentials, apiKey, dataCenter)
+    this.extension = new Extension(credentials, apiKey, dataCenter)
+    this.policies = new Policy(credentials, apiKey, dataCenter)
+    this.rba = new Rba(credentials, apiKey, dataCenter)
+    this.riskAssessment = new RiskAssessment(credentials, apiKey, dataCenter)
+    this.schema = new Schema(credentials, apiKey, dataCenter)
+    this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
+    this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
+    this.channel = new Channel(credentials, apiKey, dataCenter)
   }
 
   async createBranch(branchName) {
-    const response = await this.octokit.rest.repos.listBranches({
+    const branches = await this.octokit.rest.repos.listBranches({
       owner: this.owner,
       repo: this.repo,
     })
-    const branchExists = response.data.find((branch) => branch.name === branchName)
+
+    const branchExists = branches.data.some((branch) => branch.name === branchName)
 
     if (!branchExists) {
       const mainBranch = await this.octokit.rest.repos.getBranch({
         owner: this.owner,
         repo: this.repo,
-        branch: 'main', // or your default branch
+        branch: this.defaultBranch,
       })
+
       await this.octokit.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
@@ -66,243 +67,109 @@ class VersionControl {
     }
   }
 
-  async readFile() {
-    const fileName = this.getFileName()
-    console.log('fileName', fileName) // Log file names
+  async updateFilesInSingleCommit(commitMessage, files) {
+    // Get base (latest) tree SHA
+    const { data: refData } = await this.octokit.rest.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${this.defaultBranch}`,
+    })
 
-    for (const file of fileName) {
-      const filePath = `src/versionControl/${file.name}.json`
-      console.log('Processing file:', filePath) // Log each file path
+    const baseTreeSha = refData.object.sha
 
-      try {
-        let fileContent = await this.getFileSHA(filePath)
-        console.log('File content fetched:', fileContent) // Log file content fetched
-
-        if (!fileContent || !fileContent.content) {
-          throw new Error('File content is invalid')
+    // Create blobs for each file
+    const blobs = await Promise.all(
+      files.map(async (file) => {
+        const { data } = await this.octokit.rest.git.createBlob({
+          owner: this.owner,
+          repo: this.repo,
+          content: Base64.encode(file.content),
+          encoding: 'base64',
+        })
+        return {
+          path: file.path,
+          mode: '100644', // regular file
+          type: 'blob',
+          sha: data.sha,
         }
+      }),
+    )
 
-        const decodedContent = Base64.decode(fileContent.content)
-        console.log('Decoded content:', decodedContent) // Log decoded content
+    // Create a new tree
+    const { data: newTree } = await this.octokit.rest.git.createTree({
+      owner: this.owner,
+      repo: this.repo,
+      tree: blobs,
+      base_tree: baseTreeSha,
+    })
 
-        const filteredResponse = JSON.parse(decodedContent)
-        console.log('filteredResponse:', filteredResponse) // Log the filtered response
+    // Create a new commit
+    const { data: newCommit } = await this.octokit.rest.git.createCommit({
+      owner: this.owner,
+      repo: this.repo,
+      message: commitMessage,
+      tree: newTree.sha,
+      parents: [baseTreeSha],
+    })
 
-        switch (file.name) {
-          case 'emails':
-            await this.setEmailTemplates(filteredResponse)
-            break
-          case 'extension':
-            await this.setExtension(filteredResponse)
-            break
-          case 'policies':
-            await this.setPolicies(filteredResponse)
-            break
-          case 'rba':
-            await this.setRBA(filteredResponse)
-            break
-          case 'schema':
-            await this.setSchema(filteredResponse)
-            break
-          case 'sms':
-            await this.setSMS(filteredResponse)
-            break
-          case 'webSdk':
-            await this.setWebSDK(filteredResponse)
-            break
-          default:
-            console.log(`No matching case for: ${file.name}`)
-        }
-      } catch (error) {
-        console.error('Error processing file:', filePath, error)
-      }
+    // Update reference to point to the new commit
+    await this.octokit.rest.git.updateRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${this.defaultBranch}`,
+      sha: newCommit.sha,
+    })
+  }
+
+  async getFile(path) {
+    try {
+      const file = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        ref: this.defaultBranch,
+      })
+      return file.data
+    } catch (error) {
+      if (error.status === 404) return null
+      throw error
     }
   }
-  async checkIfExists(sha) {
-    const { data: commit } = await this.octokit.rest.repos.getCommit({
+
+  async getCommitFiles(sha) {
+    const commitData = await this.octokit.rest.repos.getCommit({
       owner: this.owner,
       repo: this.repo,
       ref: sha,
     })
+    const files = commitData.data.files.map((file) => ({
+      filename: file.filename,
+      contents_url: file.contents_url,
+    }))
 
-    for (const file of commit.files) {
-      console.log('Processing file to be checked:', file)
+    const fileContentsPromises = files.map(async (file) => {
+      const content = await this.fetchFileContent(file.contents_url)
+      return { ...file, content: JSON.parse(Base64.decode(content)) }
+    })
 
-      if (file.filename.startsWith('src/versionControl/')) {
-        const fileContent = await this.fetchFileContent(file.contents_url)
-        console.log(file.contents_url)
-        return JSON.parse(fileContent)
-      }
-    }
-  }
-
-  async readCommit(sha) {
-    if (sha) {
-      try {
-        const { data: commit } = await this.octokit.rest.repos.getCommit({
-          owner: this.owner,
-          repo: this.repo,
-          ref: sha,
-        })
-        console.log('Commit data:', commit)
-
-        for (const file of commit.files) {
-          console.log('Processing file:', file)
-
-          if (file.filename.startsWith('src/versionControl/')) {
-            const fileContent = await this.fetchFileContent(file.contents_url)
-            console.log(file.contents_url)
-
-            if (fileContent) {
-              const filteredResponse = JSON.parse(fileContent)
-
-              // Execute set functions based on file names
-              if (file.filename.includes('emails')) {
-                await this.setEmailTemplates(filteredResponse)
-              } else if (file.filename.includes('extension')) {
-                await this.setExtension(filteredResponse)
-              } else if (file.filename.includes('policies')) {
-                await this.setPolicies(filteredResponse)
-              } else if (file.filename.includes('schema')) {
-                await this.setSchema(filteredResponse)
-              } else if (file.filename.includes('webSdk')) {
-                await this.setWebSDK(filteredResponse)
-              }
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error reading commit:', error)
-      }
-    }
+    return Promise.all(fileContentsPromises)
   }
 
   async fetchFileContent(contents_url) {
-    try {
-      const { data } = await this.octokit.request(contents_url)
-      console.log('File content data:', data)
-      return Base64.decode(data.content)
-    } catch (error) {
-      console.error('Error fetching file content:', error)
-    }
+    const response = await this.octokit.request(contents_url)
+    const { content } = response.data
+    return content
   }
 
-  async getFileSHA(filePath) {
-    try {
-      const { data } = await this.octokit.rest.repos.getContent({
-        owner: this.owner,
-        repo: this.repo,
-        path: filePath,
-        ref: this.branch,
-      })
-
-      console.log(`Fetched data for ${filePath}:`, data)
-
-      const decodedContent = Base64.decode(data.content)
-      console.log(`Decoded content for ${filePath}:`, decodedContent)
-      if (filePath === 'src/versionControl/sets.json') {
-        debugger
-      }
-      // Return an empty JSON if the content is empty or invalid
-      if (!decodedContent.trim()) {
-        return {
-          content: '{}', // Return empty JSON object
-          sha: data.sha,
-          name: data.name,
-        }
-      }
-
-      return {
-        content: decodedContent,
-        sha: data.sha,
-        name: data.name,
-      }
-    } catch (error) {
-      console.error(`Error fetching SHA for file ${filePath}:`, error)
-      if (error.status === 404) {
-        return { content: '{}', sha: undefined, name: undefined } // Return empty JSON object for non-existent file
-      }
-      throw error // Throw other errors
-    }
+  async getCommits() {
+    const commits = await this.octokit.rest.repos.listCommits({
+      owner: this.owner,
+      repo: this.repo,
+    })
+    return commits.data
   }
 
-  async updateGitFile(filePath, cdcFileContent) {
-    const commitMessage = 'File updated/created'
-    const encodedCdcContent = Base64.encode(cdcFileContent)
-    console.log('==================encodedCdcContent==================')
-    console.log(cdcFileContent)
-    console.log('====================================')
-
-    let getGitFileInfo
-
-    if (filePath === 'src/versionControl/sets.json') {
-      debugger
-    }
-    getGitFileInfo = await this.getFileSHA(filePath)
-    const { content: rawGitContent } = getGitFileInfo
-
-    console.log(`Raw current Git content for ${filePath}: ${rawGitContent}`)
-
-    // Parse the current content safely
-    let currentGitContent
-    currentGitContent = JSON.parse(rawGitContent)
-
-    // Log new content to be compared
-    console.log(`Raw CDC content for ${filePath}: ${cdcFileContent}`)
-
-    // Parse the new content safely
-    let newContent
-    newContent = JSON.parse(cdcFileContent)
-
-    // Refactor the current and new content for comparison
-    const refactoredCurrentContent = JSON.stringify(refactorData(currentGitContent))
-    const refactoredNewContent = JSON.stringify(refactorData(newContent))
-    console.log('=================refactoredNewContent===================')
-    console.log(refactoredNewContent)
-    console.log('====================================')
-    // Compare the contents
-    if (refactoredCurrentContent !== refactoredNewContent) {
-      console.log(`Differences found, proceeding to update file: ${filePath}`)
-
-      const updateParams = {
-        owner: this.owner,
-        repo: this.repo,
-        path: filePath,
-        message: `${getGitFileInfo.name} ${commitMessage}`,
-        content: encodedCdcContent,
-        branch: this.branch,
-        sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
-      }
-      const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
-      console.log(`File ${filePath} created/updated:`, response.data.commit.message)
-    } else {
-      console.log(`Files ${filePath} are identical. Skipping update.`)
-    }
-  }
-
-  getFileName() {
-    const fileNames = [
-      //.
-      { name: 'webSdk' },
-      { name: 'dataflow' },
-      { name: 'emails' },
-      //
-      { name: 'extension' },
-      //
-      { name: 'policies' },
-      { name: 'rba' },
-      { name: 'riskAssessment' },
-      //
-      { name: 'schema' },
-      { name: 'sets' },
-      //
-      { name: 'sms' },
-      { name: 'channel' },
-    ]
-    return fileNames
-  }
-
-  async getCdcData() {
+  getCdcData() {
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
@@ -319,176 +186,92 @@ class VersionControl {
     return responses
   }
 
-  async writeFile() {
-    try {
-      const rawCdcData = await this.getCdcData()
-      // console.log('responses ---->', JSON.stringify(responses, null, 2))
-      const mappedCdcData = await Promise.all(rawCdcData.map((response) => response.promise))
-      const cleanData = refactorData(mappedCdcData)
-      console.log('cleanData: ', cleanData)
-
-      console.log('responses map ---->', JSON.stringify(mappedCdcData, null, 2))
-
-      await Promise.all(
-        cleanData.map(async (result, index) => {
-          const responseName = rawCdcData[index].name
-          const filePath = `src/versionControl/${responseName}.json`
-          const cdcFileContent = JSON.stringify(result, null, 2)
-          console.log(`fileContent [name: ${responseName}] ----->`, cdcFileContent)
-          console.log('filePath ----->', filePath)
-
-          await this.updateGitFile(filePath, cdcFileContent)
-        }),
-      )
-
-      console.log('All files updated successfully')
-    } catch (error) {
-      console.error('Error writing file:', error)
-      throw error // Ensure the error is rethrown
+  async fetchCDCConfigs() {
+    const cdcDataArray = this.getCdcData()
+    if (!Array.isArray(cdcDataArray)) {
+      throw new Error('getCdcData must return an array')
     }
+    const cdcData = await Promise.all(
+      cdcDataArray.map(async ({ name, promise }) => {
+        const data = await promise
+        return { [name]: data }
+      }),
+    )
+
+    return Object.assign({}, ...cdcData)
   }
 
-  async getCommits() {
-    let allCommits = []
-    let page = 1
-    const per_page = 100
+  async storeCdcDataInGit(commitMessage) {
+    const configs = await this.fetchCDCConfigs()
+    const files = Object.keys(configs).map((key) => ({
+      path: `src/versionControl/${key}.json`,
+      content: JSON.stringify(configs[key], null, 2),
+    }))
 
-    try {
-      while (true) {
-        const { data } = await this.octokit.rest.repos.listCommits({
-          owner: this.owner,
-          repo: this.repo,
-          sha: this.branch,
-          per_page,
-          page,
-        })
+    await this.updateFilesInSingleCommit(commitMessage, files)
+  }
 
-        if (data.length === 0) {
+  async applyCommitConfig(commitSha) {
+    const files = await this.getCommitFiles(commitSha)
+    for (let file of files) {
+      const fileType = this.getFileTypeFromFileName(file.filename)
+      switch (fileType) {
+        case 'webSdk':
+          await this.webSdk.apply(file.content)
           break
-        }
-
-        allCommits = allCommits.concat(data)
-
-        if (data.length < per_page) {
+        case 'dataflow':
+          await this.dataflow.apply(file.content)
           break
-        }
-
-        page += 1
-      }
-
-      console.log('All commits:', allCommits)
-      return allCommits
-    } catch (error) {
-      console.error('Error listing commits:', error)
-      return allCommits
-    }
-  }
-
-  // **********************get commits end ***************
-  async setPolicies(config) {
-    this.#cleanResponse(config)
-    await this.policies.set(this.#apiKey, config, this.#dataCenter)
-  }
-  async setWebSDK(config) {
-    await this.webSdk.set(this.#apiKey, config, this.#dataCenter)
-  }
-  async setSMS(config) {
-    await this.sms.getSms().set(this.#apiKey, this.#dataCenter, config.templates)
-  }
-  async setExtension(config) {
-    await this.extension.set(this.#apiKey, this.#dataCenter, config.result[0])
-  }
-  async setSchema(config) {
-    for (let key in config) {
-      if (config.hasOwnProperty(key)) {
-        if (key === 'dataSchema') {
-          await this.schema.set(this.#apiKey, this.#dataCenter, config.dataSchema)
-        }
-        if (key === 'addressesSchema') {
-          await this.schema.set(this.#apiKey, this.#dataCenter, config.addressesSchema)
-        }
-        if (key === 'internalSchema') {
-          await this.schema.set(this.#apiKey, this.#dataCenter, config.internalSchema)
-        }
-        if (key === 'profileSchema') {
-          await this.schema.set(this.#apiKey, this.#dataCenter, config.profileSchema)
-        }
-        if (key === 'subscriptionsSchema') {
-          await this.schema.set(this.#apiKey, this.#dataCenter, config.subscriptionsSchema)
-        }
+        case 'emails':
+          await this.emails.apply(file.content)
+          break
+        case 'extension':
+          await this.extension.apply(file.content)
+          break
+        case 'policies':
+          await this.policies.apply(file.content)
+          break
+        case 'rba':
+          await this.rba.apply(file.content)
+          break
+        case 'riskAssessment':
+          await this.riskAssessment.apply(file.content)
+          break
+        case 'schema':
+          await this.schema.apply(file.content)
+          break
+        case 'sets':
+          await this.screenSets.apply(file.content)
+          break
+        case 'sms':
+          await this.sms.apply(file.content)
+          break
+        case 'channel':
+          await this.channel.apply(file.content)
+          break
+        default:
+          break
       }
     }
   }
-  async setScreenSets(config) {
-    for (const screenSet of config.screenSets) {
-      console.log('screen-SET', screenSet)
-    }
-  }
-  // async setChannel(config) {
-  //   for (const channel of config.screenSets) {
-  //     console.log('screen-SET', channel)
-  //   }
-  // }
-  // async setRBA(response) {
-  //   if (response[0]) {
-  //     const result = await this.rba.setAccountTakeoverProtection(this.#apiKey, response[0])
-  //   }
-  //   if (response[1]) {
-  //     const result = await this.rba.setUnknownLocationNotification(this.#apiKey, this.#siteInfo, response[1])
-  //   }
-  //   if (response[2]) {
-  //     const result = await this.rba.setRbaRulesAndSettings(this.#apiKey, this.#siteInfo, response[2])
-  //   }
-  // }
-  async setEmailTemplates(response) {
-    this.#cleanEmailResponse(response)
-    for (let key in response) {
-      if (key !== 'errorCode') {
-        const result = await this.emails.getEmail().setSiteEmailsWithDataCenter(this.#apiKey, key, response[key], this.#dataCenter)
-        console.log('resultEmails', result)
-      }
-    }
-  }
-  #cleanEmailResponse(response) {
-    if (response.doubleOptIn) {
-      delete response.doubleOptIn.nextURL
-      delete response.doubleOptIn.nextExpiredURL
-    }
-    if (response.emailVerification) {
-      delete response.emailVerification.nextURL
-    }
-    if (response.callId) {
-      delete response.callId
-    }
-    if (response.context) {
-      delete response.context
-    }
-    if (response.errorCode) {
-      delete response.errorCode
-    }
-    delete response.statusCode
-    delete response.statusReason
-    delete response.time
-    delete response.apiVersion
-  }
-  #cleanResponse(response) {
-    delete response['rba']
-    if (response.security) {
-      delete response.security.accountLockout
-      delete response.security.captcha
-      delete response.security.ipLockout
-    }
-    // the following fields should only be copied when processing emails
-    if (response.passwordReset) {
-      delete response.passwordReset.resetURL
-    }
-    if (response.preferencesCenter) {
-      delete response.preferencesCenter.redirectURL
-    }
-  }
 
-  #getScreenSet(screenSetID, response) {
-    return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
+  getFileTypeFromFileName(filename) {
+    const mapping = {
+      'webSdk.json': 'webSdk',
+      'dataflow.json': 'dataflow',
+      'emails.json': 'emails',
+      'extension.json': 'extension',
+      'policies.json': 'policies',
+      'rba.json': 'rba',
+      'riskAssessment.json': 'riskAssessment',
+      'schema.json': 'schema',
+      'sets.json': 'sets',
+      'sms.json': 'sms',
+      'channel.json': 'channel',
+    }
+
+    return mapping[Object.keys(mapping).find((key) => filename.includes(key))]
   }
 }
+
 export default VersionControl

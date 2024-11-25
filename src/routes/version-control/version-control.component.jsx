@@ -1,7 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import { withTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
 import { Bar, Button } from '@ui5/webcomponents-react'
@@ -22,27 +18,23 @@ const VersionControlComponent = ({ t }) => {
 
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-  // const configurations = useSelector(selectConfigurations)
+
   const credentialsUpdated = {
     userKey: credentials.userKey,
     secret: credentials.secretKey,
     gigyaConsole: credentials.gigyaConsole,
   }
+
   const versionControl = new VersionControl(credentialsUpdated, apikey, currentSite)
   const [commits, setCommits] = useState([])
 
   useEffect(() => {
     handleCommitListRequestServices()
-  })
-
-  // const handleGetServices = async () => {
-  //   console.log('currentSite', currentSite)
-  //   await versionControl.writeFile()
-  // }
+  }, []) // Only run once when the component mounts
 
   const handleGetServices = async () => {
     try {
-      await versionControl.writeFile()
+      await versionControl.storeCdcDataInGit('Backup created')
       alert('Backup created successfully!')
     } catch (error) {
       console.error('Error creating backup:', error)
@@ -50,26 +42,28 @@ const VersionControlComponent = ({ t }) => {
     }
   }
 
-  // const handleRevertServices = async () => {
-  //   await versionControl.readFile()
-  // }
-  // const handlePullRequestCheckServices = async () => {
-  //   await versionControl.checkAndCreatePullRequest()
-  // }
-  // const handlePullRequestServices = async () => {
-  //   await versionControl.createPullRequest()
-  // }
   const handleCommitListRequestServices = async () => {
-    const commitList = await versionControl.getCommits()
-    if (commitList) {
-      setCommits(commitList)
-    } else {
-      setCommits([]) // Ensure commits is at least an empty array
-      console.error('Failed to fetch commits')
+    try {
+      const commitList = await versionControl.getCommits()
+      if (commitList) {
+        setCommits(commitList)
+      } else {
+        setCommits([]) // Ensure commits is at least an empty array
+        console.error('Failed to fetch commits')
+      }
+    } catch (error) {
+      console.error('Error fetching commits:', error)
     }
   }
+
   const handleCommitRevertServices = async (sha) => {
-    await versionControl.readCommit(sha)
+    try {
+      await versionControl.applyCommitConfig(sha)
+      alert('Configurations reverted successfully!')
+    } catch (error) {
+      console.error('Error reverting configurations:', error)
+      alert('Failed to revert configurations. Please try again.')
+    }
   }
 
   return (
@@ -81,20 +75,8 @@ const VersionControlComponent = ({ t }) => {
             <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={handleGetServices}>
               {t('VERSION_CONTROL.BACKUP')}
             </Button>
-            {/* <Button id="revertButton" data-cy="revertButton" className={classes.singlePrettifyButton} onClick={handleRevertServices}>
-              {t('VERSION_CONTROL.REVERT')}
-              </Button> */}
-            {/* <Button id="checkPullRequestButton" data-cy="checkPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestCheckServices}>
-              Check and create Pull request
-             
-            </Button> */}
-            {/* <Button id="createPullRequestButton" data-cy="createPullRequestButton" className={classes.singlePrettifyButton} onClick={handlePullRequestServices}>
-              create Pull request
-              
-            </Button> */}
             <Button id="commitListButton" data-cy="commitListButton" className={classes.singlePrettifyButton} onClick={handleCommitListRequestServices}>
-              Reresh commits
-              {/* //TODO translate and use it */}
+              Refresh commits
             </Button>
           </>
         }
@@ -124,7 +106,6 @@ const VersionControlComponent = ({ t }) => {
                   <td>
                     <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => handleCommitRevertServices(commit.sha)}>
                       REV
-                      {/* //TODO translate and use it */}
                     </Button>
                   </td>
                 </tr>
