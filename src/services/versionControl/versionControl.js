@@ -200,7 +200,9 @@ class VersionControl {
 
       const decodedContent = Base64.decode(data.content)
       console.log(`Decoded content for ${filePath}:`, decodedContent)
-
+      if (filePath === 'src/versionControl/sets.json') {
+        debugger
+      }
       // Return an empty JSON if the content is empty or invalid
       if (!decodedContent.trim()) {
         return {
@@ -224,87 +226,57 @@ class VersionControl {
     }
   }
 
-  // src/services/versionControl/versionControl.js
-  // src/services/versionControl/versionControl.js
-  async updateFile(filePath, fileContent) {
+  async updateGitFile(filePath, cdcFileContent) {
     const commitMessage = 'File updated/created'
-    const encodedContent = Base64.encode(fileContent)
+    const encodedCdcContent = Base64.encode(cdcFileContent)
+    console.log('==================encodedCdcContent==================')
+    console.log(cdcFileContent)
+    console.log('====================================')
 
     let getGitFileInfo
 
-    try {
-      getGitFileInfo = await this.getFileSHA(filePath)
-      const { content: rawCurrentContent } = getGitFileInfo
+    if (filePath === 'src/versionControl/sets.json') {
+      debugger
+    }
+    getGitFileInfo = await this.getFileSHA(filePath)
+    const { content: rawGitContent } = getGitFileInfo
 
-      // Log raw content
-      console.log(`Raw current content for ${filePath}: ${rawCurrentContent}`)
+    console.log(`Raw current Git content for ${filePath}: ${rawGitContent}`)
 
-      // Parse the current content safely
-      let currentContent
-      try {
-        currentContent = JSON.parse(rawCurrentContent)
-      } catch (error) {
-        console.warn(`Failed to parse current content for ${filePath}. Using empty object. Error: ${error.message}`)
-        currentContent = {} // Fallback to empty object
+    // Parse the current content safely
+    let currentGitContent
+    currentGitContent = JSON.parse(rawGitContent)
+
+    // Log new content to be compared
+    console.log(`Raw CDC content for ${filePath}: ${cdcFileContent}`)
+
+    // Parse the new content safely
+    let newContent
+    newContent = JSON.parse(cdcFileContent)
+
+    // Refactor the current and new content for comparison
+    const refactoredCurrentContent = JSON.stringify(refactorData(currentGitContent))
+    const refactoredNewContent = JSON.stringify(refactorData(newContent))
+    console.log('=================refactoredNewContent===================')
+    console.log(refactoredNewContent)
+    console.log('====================================')
+    // Compare the contents
+    if (refactoredCurrentContent !== refactoredNewContent) {
+      console.log(`Differences found, proceeding to update file: ${filePath}`)
+
+      const updateParams = {
+        owner: this.owner,
+        repo: this.repo,
+        path: filePath,
+        message: `${getGitFileInfo.name} ${commitMessage}`,
+        content: encodedCdcContent,
+        branch: this.branch,
+        sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
       }
-
-      // Log new content to be compared
-      console.log(`Raw new content for ${filePath}: ${fileContent}`)
-
-      // Parse the new content safely
-      let newContent
-      try {
-        newContent = JSON.parse(fileContent)
-      } catch (error) {
-        throw new Error(`Failed to parse new content for ${filePath}: ${error.message}`)
-      }
-
-      // Refactor the current and new content for comparison
-      const refactoredCurrentContent = refactorData(currentContent)
-      const refactoredNewContent = refactorData(newContent)
-
-      // Compare the contents
-      if (JSON.stringify(refactoredCurrentContent) !== JSON.stringify(refactoredNewContent)) {
-        console.log(`Differences found, proceeding to update file: ${filePath}`)
-
-        const updateParams = {
-          owner: this.owner,
-          repo: this.repo,
-          path: filePath,
-          message: `${getGitFileInfo.name} ${commitMessage}`,
-          content: encodedContent,
-          branch: this.branch,
-          sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
-        }
-
-        try {
-          const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
-          console.log(`File ${filePath} created/updated:`, response.data.commit.message)
-        } catch (error) {
-          if (error.status === 409) {
-            // Conflict error, fetch new SHA and retry
-            console.warn(`Conflict detected when updating ${filePath}. Fetching latest SHA and retrying...`)
-            const newGitFileInfo = await this.getFileSHA(filePath)
-
-            if (newGitFileInfo && newGitFileInfo.sha !== getGitFileInfo.sha) {
-              updateParams.sha = newGitFileInfo.sha
-              const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
-              console.log(`File ${filePath} created/updated on retry:`, response.data.commit.message)
-            } else {
-              console.error(`Sha mismatch even after refetching for ${filePath}`)
-              throw new Error(`Sha mismatch even after refetching for ${filePath}`)
-            }
-          } else {
-            console.error(`Error creating/updating file ${filePath}:`, error)
-            throw error
-          }
-        }
-      } else {
-        console.log(`Files ${filePath} are identical. Skipping update.`)
-      }
-    } catch (error) {
-      console.error(`Error creating/updating file ${filePath}:`, error)
-      throw error
+      const response = await this.octokit.rest.repos.createOrUpdateFileContents(updateParams)
+      console.log(`File ${filePath} created/updated:`, response.data.commit.message)
+    } else {
+      console.log(`Files ${filePath} are identical. Skipping update.`)
     }
   }
 
@@ -330,7 +302,7 @@ class VersionControl {
     return fileNames
   }
 
-  async getResponses() {
+  async getCdcData() {
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
@@ -349,23 +321,23 @@ class VersionControl {
 
   async writeFile() {
     try {
-      const responses = await this.getResponses()
+      const rawCdcData = await this.getCdcData()
       // console.log('responses ---->', JSON.stringify(responses, null, 2))
-      const results = await Promise.all(responses.map((response) => response.promise))
-      const cleanData = refactorData(results)
+      const mappedCdcData = await Promise.all(rawCdcData.map((response) => response.promise))
+      const cleanData = refactorData(mappedCdcData)
       console.log('cleanData: ', cleanData)
 
-      console.log('responses map ---->', JSON.stringify(results, null, 2))
+      console.log('responses map ---->', JSON.stringify(mappedCdcData, null, 2))
 
       await Promise.all(
         cleanData.map(async (result, index) => {
-          const responseName = responses[index].name
+          const responseName = rawCdcData[index].name
           const filePath = `src/versionControl/${responseName}.json`
-          const fileContent = JSON.stringify(result, null, 2)
-          console.log(`fileContent [name: ${responseName}] ----->`, fileContent)
+          const cdcFileContent = JSON.stringify(result, null, 2)
+          console.log(`fileContent [name: ${responseName}] ----->`, cdcFileContent)
           console.log('filePath ----->', filePath)
 
-          await this.updateFile(filePath, fileContent)
+          await this.updateGitFile(filePath, cdcFileContent)
         }),
       )
 
@@ -457,17 +429,17 @@ class VersionControl {
   //     console.log('screen-SET', channel)
   //   }
   // }
-  async setRBA(response) {
-    if (response[0]) {
-      const result = await this.rba.setAccountTakeoverProtection(this.#apiKey, response[0])
-    }
-    if (response[1]) {
-      const result = await this.rba.setUnknownLocationNotification(this.#apiKey, this.#siteInfo, response[1])
-    }
-    if (response[2]) {
-      const result = await this.rba.setRbaRulesAndSettings(this.#apiKey, this.#siteInfo, response[2])
-    }
-  }
+  // async setRBA(response) {
+  //   if (response[0]) {
+  //     const result = await this.rba.setAccountTakeoverProtection(this.#apiKey, response[0])
+  //   }
+  //   if (response[1]) {
+  //     const result = await this.rba.setUnknownLocationNotification(this.#apiKey, this.#siteInfo, response[1])
+  //   }
+  //   if (response[2]) {
+  //     const result = await this.rba.setRbaRulesAndSettings(this.#apiKey, this.#siteInfo, response[2])
+  //   }
+  // }
   async setEmailTemplates(response) {
     this.#cleanEmailResponse(response)
     for (let key in response) {

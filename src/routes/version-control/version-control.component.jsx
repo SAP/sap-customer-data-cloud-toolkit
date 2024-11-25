@@ -11,7 +11,7 @@ import VersionControl from '../../services/versionControl/versionControl.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useSelector } from 'react-redux'
-import { selectConfigurations, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
+import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import styles from './version-control.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
@@ -22,7 +22,7 @@ const VersionControlComponent = ({ t }) => {
 
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-  const configurations = useSelector(selectConfigurations)
+  // const configurations = useSelector(selectConfigurations)
   const credentialsUpdated = {
     userKey: credentials.userKey,
     secret: credentials.secretKey,
@@ -33,7 +33,7 @@ const VersionControlComponent = ({ t }) => {
 
   useEffect(() => {
     handleCommitListRequestServices()
-  }, [])
+  })
 
   // const handleGetServices = async () => {
   //   console.log('currentSite', currentSite)
