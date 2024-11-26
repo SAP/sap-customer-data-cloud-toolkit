@@ -14,6 +14,9 @@ import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
 
 class VersionControl {
+  #apiKey
+  #dataCenter
+  #siteInfo
   constructor(credentials, apiKey, siteInfo) {
     if (!credentials.userKey || !credentials.secret) {
       throw new Error('GitHub credentials are required')
@@ -29,6 +32,7 @@ class VersionControl {
     this.credentials = credentials
     this.apiKey = apiKey
     this.dataCenter = dataCenter
+    this.siteInfo = siteInfo
 
     this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
     this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
@@ -132,28 +136,62 @@ class VersionControl {
   }
 
   async getCommitFiles(sha) {
-    const commitData = await this.octokit.rest.repos.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      ref: sha,
-    })
-    const files = commitData.data.files.map((file) => ({
-      filename: file.filename,
-      contents_url: file.contents_url,
-    }))
+    try {
+      const { data: commitData } = await this.octokit.rest.repos.getCommit({
+        owner: this.owner,
+        repo: this.repo,
+        ref: sha,
+      })
 
-    const fileContentsPromises = files.map(async (file) => {
-      const content = await this.fetchFileContent(file.contents_url)
-      return { ...file, content: JSON.parse(Base64.decode(content)) }
-    })
+      if (!commitData.files) {
+        console.error(`No files found in commit: ${sha}`, commitData)
+        throw new Error(`No files found in commit: ${sha}`)
+      }
 
-    return Promise.all(fileContentsPromises)
+      const files = commitData.files.map((file) => ({
+        filename: file.filename,
+        contents_url: file.contents_url,
+      }))
+
+      const fileContentsPromises = files.map(async (file) => {
+        try {
+          const content = await this.fetchFileContent(file.contents_url)
+          return { ...file, content: JSON.parse(Base64.decode(content)) }
+        } catch (error) {
+          console.error(`Error fetching file content from ${file.contents_url}`, error)
+          throw error
+        }
+      })
+
+      return Promise.all(fileContentsPromises)
+    } catch (error) {
+      console.error(`Error fetching commit files for SHA: ${sha}`, error)
+      throw error
+    }
   }
 
   async fetchFileContent(contents_url) {
-    const response = await this.octokit.request(contents_url)
-    const { content } = response.data
-    return content
+    try {
+      const { data: response } = await this.octokit.request(contents_url)
+      if (!response || !response.content) {
+        const { url, sha } = response
+        console.warn(`Large file detected. Fetching via blob with SHA: ${sha}`)
+        const { data: blobData } = await this.octokit.rest.git.getBlob({
+          owner: this.owner,
+          repo: this.repo,
+          file_sha: sha,
+        })
+        if (!blobData || !blobData.content) {
+          console.error(`No content found at URL: ${contents_url}, SHA: ${sha}`, response)
+          throw new Error(`No content found at URL or blob: ${contents_url}`)
+        }
+        return blobData.content
+      }
+      return response.content
+    } catch (error) {
+      console.error(`Error fetching content from URL: ${contents_url}`, error)
+      throw error
+    }
   }
 
   async getCommits() {
@@ -230,46 +268,54 @@ class VersionControl {
   }
 
   async applyCommitConfig(commitSha) {
-    const files = await this.getCommitFiles(commitSha)
-    for (let file of files) {
-      const fileType = this.getFileTypeFromFileName(file.filename)
-      switch (fileType) {
-        case 'webSdk':
-          await this.webSdk.apply(file.content)
-          break
-        case 'dataflow':
-          await this.dataflow.apply(file.content)
-          break
-        case 'emails':
-          await this.emails.apply(file.content)
-          break
-        case 'extension':
-          await this.extension.apply(file.content)
-          break
-        case 'policies':
-          await this.policies.apply(file.content)
-          break
-        case 'rba':
-          await this.rba.apply(file.content)
-          break
-        case 'riskAssessment':
-          await this.riskAssessment.apply(file.content)
-          break
-        case 'schema':
-          await this.schema.apply(file.content)
-          break
-        case 'sets':
-          await this.screenSets.apply(file.content)
-          break
-        case 'sms':
-          await this.sms.apply(file.content)
-          break
-        case 'channel':
-          await this.channel.apply(file.content)
-          break
-        default:
-          break
+    debugger
+    try {
+      const files = await this.getCommitFiles(commitSha)
+      for (let file of files) {
+        const fileType = this.getFileTypeFromFileName(file.filename)
+        // const filteredResponse = JSON.parse(file.content)
+        const filteredResponse = file.content
+        switch (fileType) {
+          case 'webSdk':
+            await this.setWebSDK(filteredResponse)
+            break
+          // case 'dataflow':
+          //   await this.setDataflow(filteredResponse)
+          //   break
+          case 'emails':
+            await this.setEmailTemplates(filteredResponse)
+            break
+          case 'extension':
+            await this.setExtension(filteredResponse)
+            break
+          case 'policies':
+            await this.setPolicies(filteredResponse)
+            break
+          case 'rba':
+            await this.setRBA(filteredResponse)
+            break
+          // case 'riskAssessment':
+          //   await this.setRiskAssessment(filteredResponse)
+          //   break
+          case 'schema':
+            await this.setSchema(filteredResponse)
+            break
+          case 'sets':
+            await this.setScreenSets(filteredResponse)
+            break
+          case 'sms':
+            await this.setSMS(filteredResponse)
+            break
+          // case 'channel':
+          //   await this.setChannel(filteredResponse)
+          //   break
+          default:
+            console.warn(`Unknown file type: ${fileType}`)
+        }
       }
+    } catch (error) {
+      console.error(`Error applying commit config for SHA: ${commitSha}`, error)
+      throw error
     }
   }
 
@@ -289,6 +335,117 @@ class VersionControl {
     }
 
     return mapping[Object.keys(mapping).find((key) => filename.includes(key))]
+  }
+
+  async setPolicies(config) {
+    this.cleanResponse(config)
+    await this.policies.set(this.apiKey, config, this.dataCenter)
+  }
+
+  async setWebSDK(config) {
+    await this.webSdk.set(this.apiKey, config, this.dataCenter)
+  }
+
+  async setSMS(config) {
+    await this.sms.getSms().set(this.apiKey, this.dataCenter, config.templates)
+  }
+
+  async setExtension(config) {
+    await this.extension.set(this.apiKey, this.dataCenter, config.result[0])
+  }
+
+  async setSchema(config) {
+    for (let key in config) {
+      if (config.hasOwnProperty(key)) {
+        if (key === 'dataSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, config.dataSchema)
+        }
+        if (key === 'addressesSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, config.addressesSchema)
+        }
+        if (key === 'internalSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, config.internalSchema)
+        }
+        if (key === 'profileSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, config.profileSchema)
+        }
+        if (key === 'subscriptionsSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, config.subscriptionsSchema)
+        }
+      }
+    }
+  }
+
+  async setScreenSets(config) {
+    for (const screenSet of config.screenSets) {
+      console.log('ScreenSet:', screenSet)
+    }
+  }
+
+  async setRBA(response) {
+    debugger
+    if (response[0]) {
+      await this.rba.setAccountTakeoverProtection(this.apiKey, response[0])
+    }
+    if (response[1]) {
+      debugger
+      await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, response[1])
+    }
+    if (response[2]) {
+      await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, response[2])
+    }
+  }
+
+  async setEmailTemplates(response) {
+    this.cleanEmailResponse(response)
+    for (let key in response) {
+      if (key !== 'errorCode') {
+        const result = await this.emails.getEmail().setSiteEmailsWithDataCenter(this.apiKey, key, response[key], this.dataCenter)
+        console.log('resultEmails', result)
+      }
+    }
+  }
+
+  cleanEmailResponse(response) {
+    if (response.doubleOptIn) {
+      delete response.doubleOptIn.nextURL
+      delete response.doubleOptIn.nextExpiredURL
+    }
+    if (response.emailVerification) {
+      delete response.emailVerification.nextURL
+    }
+    if (response.callId) {
+      delete response.callId
+    }
+    if (response.context) {
+      delete response.context
+    }
+    if (response.errorCode) {
+      delete response.errorCode
+    }
+    delete response.statusCode
+    delete response.statusReason
+    delete response.time
+    delete response.apiVersion
+  }
+
+  cleanResponse(response) {
+    delete response.rba
+    if (response.security) {
+      delete response.security.accountLockout
+      delete response.security.captcha
+      delete response.security.ipLockout
+    }
+    if (response.passwordReset) {
+      delete response.passwordReset.resetURL
+    }
+    if (response.preferencesCenter) {
+      delete response.preferencesCenter.redirectURL
+    }
+  }
+
+  getScreenSet(screenSetID, response) {
+    return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 }
 
