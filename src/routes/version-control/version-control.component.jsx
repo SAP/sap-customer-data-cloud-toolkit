@@ -30,12 +30,13 @@ const VersionControlComponent = ({ t }) => {
 
   useEffect(() => {
     handleCommitListRequestServices()
-  }, []) // Only run once when the component mounts
+  }, [])
 
   const handleGetServices = async () => {
     try {
       await versionControl.storeCdcDataInGit('Backup created')
       alert('Backup created successfully!')
+      handleCommitListRequestServices() // Optional: refresh commits after backup
     } catch (error) {
       console.error('Error creating backup:', error)
       alert('Failed to create backup. Please try again.')
@@ -45,14 +46,15 @@ const VersionControlComponent = ({ t }) => {
   const handleCommitListRequestServices = async () => {
     try {
       const commitList = await versionControl.getCommits()
-      if (commitList) {
+      if (commitList.length > 0) {
         setCommits(commitList)
       } else {
         setCommits([]) // Ensure commits is at least an empty array
-        console.error('Failed to fetch commits')
+        console.error('No commits found')
       }
     } catch (error) {
       console.error('Error fetching commits:', error)
+      setCommits([]) // Ensure commits is at least an empty array
     }
   }
 
@@ -100,7 +102,7 @@ const VersionControlComponent = ({ t }) => {
             ) : (
               commits.map((commit, index) => (
                 <tr key={index}>
-                  <td>{commit.commit.committer.date}</td>
+                  <td>{new Date(commit.commit.committer.date).toLocaleString()}</td>
                   <td>{commit.commit.message}</td>
                   <td>{commit.sha}</td>
                   <td>

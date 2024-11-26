@@ -68,7 +68,6 @@ class VersionControl {
   }
 
   async updateFilesInSingleCommit(commitMessage, files) {
-    // Get base (latest) tree SHA
     const { data: refData } = await this.octokit.rest.git.getRef({
       owner: this.owner,
       repo: this.repo,
@@ -77,7 +76,6 @@ class VersionControl {
 
     const baseTreeSha = refData.object.sha
 
-    // Create blobs for each file
     const blobs = await Promise.all(
       files.map(async (file) => {
         const { data } = await this.octokit.rest.git.createBlob({
@@ -88,14 +86,13 @@ class VersionControl {
         })
         return {
           path: file.path,
-          mode: '100644', // regular file
+          mode: '100644',
           type: 'blob',
           sha: data.sha,
         }
       }),
     )
 
-    // Create a new tree
     const { data: newTree } = await this.octokit.rest.git.createTree({
       owner: this.owner,
       repo: this.repo,
@@ -103,7 +100,6 @@ class VersionControl {
       base_tree: baseTreeSha,
     })
 
-    // Create a new commit
     const { data: newCommit } = await this.octokit.rest.git.createCommit({
       owner: this.owner,
       repo: this.repo,
@@ -112,7 +108,6 @@ class VersionControl {
       parents: [baseTreeSha],
     })
 
-    // Update reference to point to the new commit
     await this.octokit.rest.git.updateRef({
       owner: this.owner,
       repo: this.repo,
@@ -162,11 +157,34 @@ class VersionControl {
   }
 
   async getCommits() {
-    const commits = await this.octokit.rest.repos.listCommits({
-      owner: this.owner,
-      repo: this.repo,
-    })
-    return commits.data
+    let allCommits = []
+    let page = 1
+    const per_page = 100
+
+    try {
+      while (true) {
+        const { data } = await this.octokit.rest.repos.listCommits({
+          owner: this.owner,
+          repo: this.repo,
+          sha: this.defaultBranch,
+          per_page,
+          page,
+        })
+
+        if (data.length === 0) break
+
+        allCommits = allCommits.concat(data)
+
+        if (data.length < per_page) break
+
+        page += 1
+      }
+
+      return allCommits
+    } catch (error) {
+      console.error('Error fetching commits:', error)
+      throw error
+    }
   }
 
   getCdcData() {
