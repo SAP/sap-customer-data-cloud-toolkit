@@ -17,6 +17,7 @@ class VersionControl {
   #apiKey
   #dataCenter
   #siteInfo
+
   constructor(credentials, apiKey, siteInfo) {
     if (!credentials.userKey || !credentials.secret) {
       throw new Error('GitHub credentials are required')
@@ -85,8 +86,8 @@ class VersionControl {
         const { data } = await this.octokit.rest.git.createBlob({
           owner: this.owner,
           repo: this.repo,
-          content: Base64.encode(file.content),
-          encoding: 'base64',
+          content: file.content,
+          encoding: 'utf-8', // Set content to 'utf-8' instead of Base64
         })
         return {
           path: file.path,
@@ -121,77 +122,72 @@ class VersionControl {
   }
 
   async getFile(path) {
-    try {
-      const file = await this.octokit.rest.repos.getContent({
+    const { data: file } = await this.octokit.rest.repos.getContent({
+      owner: this.owner,
+      repo: this.repo,
+      path,
+      ref: this.defaultBranch,
+    })
+
+    // If content is not provided in the response, fetch it via the Blob API
+    if (!file.content || file.size > 100 * 1024) {
+      // 100 KB
+      console.log(`Fetching content for large file: ${path}`)
+      const { data: blobData } = await this.octokit.rest.git.getBlob({
         owner: this.owner,
         repo: this.repo,
-        path,
-        ref: this.defaultBranch,
+        file_sha: file.sha,
       })
-      return file.data
-    } catch (error) {
-      if (error.status === 404) return null
-      throw error
+      file.content = blobData.content
     }
+
+    if (!file.content) {
+      throw new Error(`Failed to retrieve content for path: ${path}`)
+    }
+
+    return file
   }
 
   async getCommitFiles(sha) {
-    try {
-      const { data: commitData } = await this.octokit.rest.repos.getCommit({
-        owner: this.owner,
-        repo: this.repo,
-        ref: sha,
-      })
+    const { data: commitData } = await this.octokit.rest.repos.getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      ref: sha,
+    })
 
-      if (!commitData.files) {
-        console.error(`No files found in commit: ${sha}`, commitData)
-        throw new Error(`No files found in commit: ${sha}`)
-      }
-
-      const files = commitData.files.map((file) => ({
-        filename: file.filename,
-        contents_url: file.contents_url,
-      }))
-
-      const fileContentsPromises = files.map(async (file) => {
-        try {
-          const content = await this.fetchFileContent(file.contents_url)
-          return { ...file, content: JSON.parse(Base64.decode(content)) }
-        } catch (error) {
-          console.error(`Error fetching file content from ${file.contents_url}`, error)
-          throw error
-        }
-      })
-
-      return Promise.all(fileContentsPromises)
-    } catch (error) {
-      console.error(`Error fetching commit files for SHA: ${sha}`, error)
-      throw error
+    if (!commitData.files) {
+      throw new Error(`No files found in commit: ${sha}`)
     }
+
+    const files = commitData.files.map((file) => ({
+      filename: file.filename,
+      contents_url: file.contents_url,
+    }))
+
+    const fileContentsPromises = files.map(async (file) => {
+      const content = await this.fetchFileContent(file.contents_url)
+      return { ...file, content: JSON.parse(Base64.decode(content)) }
+    })
+
+    return Promise.all(fileContentsPromises)
   }
 
   async fetchFileContent(contents_url) {
-    try {
-      const { data: response } = await this.octokit.request(contents_url)
-      if (!response || !response.content) {
-        const { url, sha } = response
-        console.warn(`Large file detected. Fetching via blob with SHA: ${sha}`)
-        const { data: blobData } = await this.octokit.rest.git.getBlob({
-          owner: this.owner,
-          repo: this.repo,
-          file_sha: sha,
-        })
-        if (!blobData || !blobData.content) {
-          console.error(`No content found at URL: ${contents_url}, SHA: ${sha}`, response)
-          throw new Error(`No content found at URL or blob: ${contents_url}`)
-        }
-        return blobData.content
+    const { data: response } = await this.octokit.request(contents_url)
+    if (!response || !response.content) {
+      const { sha } = response
+      console.warn(`Large file detected. Fetching via blob API with SHA: ${sha}`)
+      const { data: blobData } = await this.octokit.rest.git.getBlob({
+        owner: this.owner,
+        repo: this.repo,
+        file_sha: sha,
+      })
+      if (!blobData || !blobData.content) {
+        throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
       }
-      return response.content
-    } catch (error) {
-      console.error(`Error fetching content from URL: ${contents_url}`, error)
-      throw error
+      return blobData.content
     }
+    return response.content
   }
 
   async getCommits() {
@@ -199,30 +195,25 @@ class VersionControl {
     let page = 1
     const per_page = 100
 
-    try {
-      while (true) {
-        const { data } = await this.octokit.rest.repos.listCommits({
-          owner: this.owner,
-          repo: this.repo,
-          sha: this.defaultBranch,
-          per_page,
-          page,
-        })
+    while (true) {
+      const { data } = await this.octokit.rest.repos.listCommits({
+        owner: this.owner,
+        repo: this.repo,
+        sha: this.defaultBranch,
+        per_page,
+        page,
+      })
 
-        if (data.length === 0) break
+      if (data.length === 0) break
 
-        allCommits = allCommits.concat(data)
+      allCommits = allCommits.concat(data)
 
-        if (data.length < per_page) break
+      if (data.length < per_page) break
 
-        page += 1
-      }
-
-      return allCommits
-    } catch (error) {
-      console.error('Error fetching commits:', error)
-      throw error
+      page += 1
     }
+
+    return allCommits
   }
 
   getCdcData() {
@@ -253,8 +244,71 @@ class VersionControl {
         return { [name]: data }
       }),
     )
-
     return Object.assign({}, ...cdcData)
+  }
+
+  removeIgnoredFields(obj) {
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.removeIgnoredFields(item))
+    } else if (obj && typeof obj === 'object') {
+      const newObj = {}
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key) && key !== 'callId' && key !== 'time') {
+          newObj[key] = this.removeIgnoredFields(obj[key])
+        }
+      }
+      return newObj
+    }
+    return obj
+  }
+
+  async updateGitFileContent(filePath, cdcFileContent) {
+    // Don't encode content in Base64, keep it as plain text.
+    const plainCdcContent = cdcFileContent
+    if (filePath === 'src/versionControl/webSdk.json') {
+      debugger
+    }
+    let getGitFileInfo
+
+    getGitFileInfo = await this.getFile(filePath)
+
+    if (!getGitFileInfo) {
+      console.log(`Creating new file: ${filePath}`)
+      getGitFileInfo = { content: '{}', sha: undefined }
+    }
+
+    const rawGitContent = getGitFileInfo.content
+    let currentGitContent
+    let refactoredCurrentContent
+    const currentGitContentDecoded = Base64.decode(rawGitContent)
+    if (currentGitContentDecoded) {
+      try {
+        currentGitContent = JSON.parse(currentGitContentDecoded)
+        currentGitContent = this.removeIgnoredFields(currentGitContent)
+      } catch {
+        currentGitContent = {}
+      }
+    }
+
+    let newContent
+
+    newContent = JSON.parse(cdcFileContent)
+    newContent = this.removeIgnoredFields(newContent)
+
+    refactoredCurrentContent = JSON.stringify(currentGitContent)
+    const refactoredNewContent = JSON.stringify(newContent)
+
+    if (refactoredCurrentContent !== refactoredNewContent) {
+      console.log(`Differences found, proceeding to update file: ${filePath}`)
+      return {
+        path: filePath,
+        content: plainCdcContent, // Set plain text content
+        sha: getGitFileInfo.sha,
+      }
+    } else {
+      console.log(`Files ${filePath} are identical. Skipping update.`)
+      return null
+    }
   }
 
   async storeCdcDataInGit(commitMessage) {
@@ -264,58 +318,70 @@ class VersionControl {
       content: JSON.stringify(configs[key], null, 2),
     }))
 
-    await this.updateFilesInSingleCommit(commitMessage, files)
+    const fileUpdates = await Promise.all(
+      files.map(async (file) => {
+        const updateFile = await this.updateGitFileContent(file.path, file.content)
+        if (file.path === 'src/versionControl/webSdk.json') {
+          console.log('==================updateFile==================')
+          console.log(updateFile)
+          console.log('====================================')
+        }
+        return updateFile
+      }),
+    )
+
+    const validUpdates = fileUpdates.filter((update) => update !== null)
+
+    if (validUpdates.length > 0) {
+      await this.updateFilesInSingleCommit(commitMessage, validUpdates)
+    } else {
+      console.log('No files to update. Skipping commit.')
+    }
   }
 
   async applyCommitConfig(commitSha) {
-    debugger
-    try {
-      const files = await this.getCommitFiles(commitSha)
-      for (let file of files) {
-        const fileType = this.getFileTypeFromFileName(file.filename)
-        // const filteredResponse = JSON.parse(file.content)
-        const filteredResponse = file.content
-        switch (fileType) {
-          case 'webSdk':
-            await this.setWebSDK(filteredResponse)
-            break
-          // case 'dataflow':
-          //   await this.setDataflow(filteredResponse)
-          //   break
-          case 'emails':
-            await this.setEmailTemplates(filteredResponse)
-            break
-          case 'extension':
-            await this.setExtension(filteredResponse)
-            break
-          case 'policies':
-            await this.setPolicies(filteredResponse)
-            break
-          case 'rba':
-            await this.setRBA(filteredResponse)
-            break
-          // case 'riskAssessment':
-          //   await this.setRiskAssessment(filteredResponse)
-          //   break
-          case 'schema':
-            await this.setSchema(filteredResponse)
-            break
-          case 'sets':
-            await this.setScreenSets(filteredResponse)
-            break
-          case 'sms':
-            await this.setSMS(filteredResponse)
-            break
-          // case 'channel':
-          //   await this.setChannel(filteredResponse)
-          //   break
-          default:
-            console.warn(`Unknown file type: ${fileType}`)
-        }
+    const files = await this.getCommitFiles(commitSha)
+    for (let file of files) {
+      const fileType = this.getFileTypeFromFileName(file.filename)
+      const filteredResponse = file.content
+
+      switch (fileType) {
+        case 'webSdk':
+          await this.setWebSDK(filteredResponse)
+          break
+        case 'dataflow':
+          await this.setDataflow(filteredResponse)
+          break
+        case 'emails':
+          await this.setEmailTemplates(filteredResponse)
+          break
+        case 'extension':
+          await this.setExtension(filteredResponse)
+          break
+        case 'policies':
+          await this.setPolicies(filteredResponse)
+          break
+        case 'rba':
+          await this.setRBA(filteredResponse)
+          break
+        case 'riskAssessment':
+          await this.setRiskAssessment(filteredResponse)
+          break
+        case 'schema':
+          await this.setSchema(filteredResponse)
+          break
+        case 'sets':
+          await this.setScreenSets(filteredResponse)
+          break
+        case 'sms':
+          await this.setSMS(filteredResponse)
+          break
+        case 'channel':
+          await this.setChannel(filteredResponse)
+          break
+        default:
+          console.warn(`Unknown file type: ${fileType}`)
       }
-    } catch (error) {
-      console.error(`Error applying commit config for SHA: ${commitSha}`, error)
-      throw error
     }
   }
 
@@ -383,12 +449,10 @@ class VersionControl {
   }
 
   async setRBA(response) {
-    debugger
     if (response[0]) {
       await this.rba.setAccountTakeoverProtection(this.apiKey, response[0])
     }
     if (response[1]) {
-      debugger
       await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, response[1])
     }
     if (response[2]) {
@@ -442,10 +506,6 @@ class VersionControl {
     if (response.preferencesCenter) {
       delete response.preferencesCenter.redirectURL
     }
-  }
-
-  getScreenSet(screenSetID, response) {
-    return response.screenSets.find((obj) => obj.screenSetID === screenSetID)
   }
 }
 
