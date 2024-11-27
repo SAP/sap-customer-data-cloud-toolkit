@@ -4,10 +4,10 @@
  */
 
 import { useDispatch, useSelector } from 'react-redux'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
+import { getParentBranchById, setMandatoryStatus, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import { createUseStyles } from 'react-jss'
-import { selectSwitchId } from '../../redux/importAccounts/importAccountsSlice.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
@@ -18,64 +18,63 @@ import ArrayObjectOutputButtons from '../array-object-output-buttons/array-objec
 import { handleSelectChange } from './utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccountConfigurationTree' })
 
-const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, checkParentNode, t }) => {
+const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, expandableNode, treeNodeInputValue, t }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
 
   const [selectedValues, setSelectedValues] = useState({})
-  const [treeData, setTreeData] = useState([{ id, name, value, error, branches, tooltip }])
-  const [checkedStatus, setCheckedStatus] = useState({})
-
-  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
-  const [tooltipTarget, setTooltipTarget] = useState('')
-  const switchConfig = useSelector(selectSwitchId)
 
   const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
-    const isChecked = event.target.checked
-    setCheckedStatus((prevState) => ({
-      ...prevState,
-      [treeNodeId]: isChecked,
-    }))
-    checkParentNode(treeNodeId)
-    if (parentNode) {
-      setCheckedStatus((prevState) => {
-        const statusNode = parentNode.branches.find((branch) => branch.id.startsWith('status.'))
-        const siblingChecked = parentNode.branches.some((branch) => branch.id !== statusNode?.id && branch.id !== treeNodeId && prevState[branch.id])
 
-        if (isChecked || siblingChecked) {
-          if (statusNode) {
-            document.getElementById(statusNode.id).readOnly = true
-            return {
-              ...prevState,
-              [statusNode.id]: true,
-            }
-          }
-        }
-        return prevState
-      })
-    }
-
+    mandatoryFields(treeNodeId)
+    console.log('CHECKED STATUS--->', checkBoxId)
+    console.log('CHECKED value--->', value)
+    console.log('CHECKED branches--->', branches)
+    console.log('treeNodeInputValue treeNodeInputValue--->', treeNodeInputValue)
     dispatch(setConfigurationStatus({ checkBoxId, value }))
-    console.log('switchConfig-->', switchConfig)
-  }
-
-  const onMouseOverHandler = (event) => {
-    if (event.target.shadowRoot) {
-      setTooltipTarget(event.target.shadowRoot.host.id)
-      setIsMouseOverIcon(true)
+    if (treeNodeInputValue) {
+      dispatch(setSugestionSchema({ checkBoxId, value }))
     }
   }
+  const findBranchAndSiblings = (structure, targetId) => {
+    let result = null
 
-  const onMouseOutHandler = () => {
-    setIsMouseOverIcon(false)
+    const traverse = (branches) => {
+      for (let branch of branches) {
+        if (branch.id === targetId) {
+          result = branches
+          return
+        }
+        if (branch.branches.length > 0) {
+          traverse(branch.branches)
+          if (result) return
+        }
+      }
+    }
+
+    traverse(structure)
+    return result
+  }
+  const returnMandatoryField = (siblings) => {
+    for (let branch of siblings) {
+      if (branch.id.includes('status')) {
+        dispatch(setMandatoryStatus({ checkBoxId: branch.id, value: true }))
+
+        return true
+      }
+    }
+    return false
   }
 
-  const openPopover = (id) => {
-    return isMouseOverIcon && tooltipTarget === `${id}TooltipIcon`
+  const mandatoryFields = (event) => {
+    const findSiblings = findBranchAndSiblings(branches, event)
+    if (findSiblings) {
+      const isMandatory = returnMandatoryField(findSiblings)
+      return isMandatory
+    }
   }
-
   const showError = (treeNode) => {
     return treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''
   }
@@ -85,7 +84,6 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
         return true
       }
       if (shouldRenderSelect(branch)) {
-        console.log('branch', branch)
         return true
       }
     }
@@ -93,40 +91,23 @@ const ImportAccountConfigurationTree = ({ siteId, id, name, value, error, branch
   }
 
   const expandTree = (treeNode, isParentLoyalty = false, level = 0) => {
-    const isLoyaltyNode = ['internalSchema', 'dataSchema', 'addressesSchema'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
-    const isReadOnly = treeNode.id.startsWith('status.') && checkedStatus[treeNode.id]
-
+    const isLoyaltyNode = ['internal', 'data', 'addresses', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
     return (
       <TreeItemCustom
         key={treeNode.id}
+        expanded={expandableNode}
         content={
           <FlexBox direction="Row" justifyContent="Start">
             <CheckBox
               id={`${treeNode.id}`}
-              readOnly={isReadOnly}
+              readonly={treeNode.mandatory ? treeNode.mandatory : false}
               text={treeNode.formatName === false ? treeNode.name : treeNode.name}
               checked={treeNode.value}
               onChange={(event) => onCheckBoxStateChangeHandler(event, treeNode.id, treeNode)}
             />
-            {treeNode.tooltip ? (
-              <>
-                <Icon
-                  id={`${treeNode.id}TooltipIcon`}
-                  name="message-information"
-                  design="Neutral"
-                  onMouseOver={onMouseOverHandler}
-                  onMouseOut={onMouseOutHandler}
-                  className={classes.tooltipIconStyle}
-                />
-                <Popover id={`${treeNode.id}Popover`} opener={`${treeNode.id}TooltipIcon`} open={openPopover(treeNode.id)}>
-                  {t(`CONFIGURATION_TREE.TOOLTIP_${treeNode.tooltip}`)}
-                </Popover>
-              </>
-            ) : (
-              ''
-            )}
+
             {showError(treeNode)}
-            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'dataSchema' && treeNode.id !== 'internalSchema' && treeNode.id !== 'addressesSchema' && (
+            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'addresses' && treeNode.id !== 'profile' && (
               <ArrayObjectOutputButtons
                 treeNode={treeNode}
                 t={t}

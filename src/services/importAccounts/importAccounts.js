@@ -41,15 +41,71 @@ class ImportAccounts {
 
   async exportDataToCsv(items) {
     let result = []
+    const options = this.getOptionsFromTree(items)
+    const { data, preferencesOptions, communicationsOptions, passwordOptions } = this.separateDataAndSubscriptions(items)
     const cleanSchemaData = await this.#schemaFields.exportSchemaData()
     const cleanPreferencesData = await this.#preferences.exportPreferencesData()
     const cleanTopicData = await this.#topic.exportTopicData()
-    const combinedData = { ...cleanSchemaData, ...cleanTopicData, ...cleanPreferencesData }
-    result.push(...exportSchemaData(items, cleanSchemaData))
-    result.push(...exportPreferencesData(items, cleanPreferencesData))
-    result.push(...exportCommunicationData(items, cleanTopicData))
-    result.push(...exportPasswordData(items))
+    if (data) {
+      result.push(...exportSchemaData(data, cleanSchemaData))
+    }
+    if (preferencesOptions) {
+      result.push(...exportPreferencesData(preferencesOptions, cleanPreferencesData))
+    }
+    if (communicationsOptions) {
+      result.push(...exportCommunicationData(communicationsOptions, cleanTopicData))
+    }
+    if (passwordOptions) {
+      result.push(...exportPasswordData(passwordOptions))
+    }
+    console.log('result', result)
     createCSVFile(result)
+  }
+  separateDataAndSubscriptions(items) {
+    const data = []
+    const preferencesOptions = []
+    const communicationsOptions = []
+    const passwordOptions = []
+    const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
+    const preferences = 'preferences'
+    const communications = 'communications'
+    const password = 'password'
+    items.forEach((item) => {
+      if (schemaFields.some((field) => item.id.startsWith(field))) {
+        data.push(item)
+      } else if (item.id.startsWith(preferences)) {
+        preferencesOptions.push(item)
+      } else if (item.id.startsWith(preferences)) {
+        preferencesOptions.push(item)
+      } else if (item.id.startsWith(communications)) {
+        communicationsOptions.push(item)
+      } else if (item.id.startsWith(password)) {
+        passwordOptions.push(item)
+      }
+    })
+
+    return { data, preferencesOptions, communicationsOptions, passwordOptions }
+  }
+  getOptionsFromTree(items) {
+    let ids = []
+    let switchIds = []
+
+    items.forEach((item) => {
+      if (item.value === true) {
+        if (item.switchId && item.switchId.operation === 'array') {
+          switchIds.push(item)
+        } else {
+          ids.push(item)
+        }
+      }
+      if (item.branches && item.branches.length > 0) {
+        const { ids: childIds, switchIds: childSwitchIds } = this.getOptionsFromTree(item.branches)
+        ids = ids.concat(childIds)
+        switchIds = switchIds.concat(childSwitchIds)
+      }
+    })
+
+    return { ids, switchIds }
   }
 }
 export default ImportAccounts

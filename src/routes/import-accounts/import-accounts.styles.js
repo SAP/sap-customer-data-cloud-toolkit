@@ -26,7 +26,6 @@ const styles = {
   outerDivStyle: {
     composes: 'cdc-tools-background',
     overflow: 'scroll',
-    height: 'calc(100vh - 100px)',
   },
   headerOuterDivStyle: {
     ...spacing.sapUiSmallMargin,

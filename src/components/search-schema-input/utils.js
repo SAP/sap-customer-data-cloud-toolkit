@@ -8,7 +8,7 @@ const targetSchemaContainsString = (string, availableTargetSite) => {
 
 export const filterTargetSchemas = (string, targetSites) => {
   if (string.length > 2) {
-    const filteredTargetSchema = targetSites.filter((targetSchema) => targetSchemaContainsString(string, targetSchema))
+    const filteredTargetSchema = targetSites.filter((targetSchema) => targetSchema === string)
     return filteredTargetSchema
   } else {
     return []

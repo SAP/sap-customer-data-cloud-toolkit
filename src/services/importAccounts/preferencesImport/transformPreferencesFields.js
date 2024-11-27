@@ -18,7 +18,7 @@ function transformField(key, value) {
   if (key === 'preferences') {
     return {
       id: key,
-      name: 'consent statements',
+      name: 'preferences',
       value: false,
       branches: transformSchema(value, key),
     }
@@ -34,13 +34,14 @@ function transformSchema(fields, parentKey, skipFields = true) {
       const splitKeys = key.split('.')
       let currentLevel = transformedSchema
       console.log('splitKeys', splitKeys)
-
+      let accumulatedKey = parentKey
       splitKeys.forEach((part, index) => {
         let id = splitKeys.slice(0, index + 1).join('.')
         let existing = currentLevel.find((item) => item.id === id)
+        accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part
         if (!existing) {
           existing = {
-            id: id,
+            id: accumulatedKey,
             name: part,
             value: false,
             branches: [],

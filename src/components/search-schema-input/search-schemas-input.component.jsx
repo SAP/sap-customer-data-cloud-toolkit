@@ -1,53 +1,45 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import '@ui5/webcomponents/dist/Input.js'
 import '@ui5/webcomponents/dist/SuggestionItem.js'
-import { Button, Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
-import lodash from 'lodash'
+import { Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
-import { filterTargetSchemas, findStringInAvailableTreeNode } from './utils'
 import { extractIds } from '../../routes/import-accounts/utils'
 import styles from './search-schema-input.styles'
-import { useDispatch } from 'react-redux'
+import { setSelectedConfiguration } from '../../redux/importAccounts/importAccountsSlice'
 
 const useStyles = createUseStyles(styles, { name: 'SearchSchemaInput' })
-const SearchBar = ({ configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick }) => {
+const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick }) => {
   const classes = useStyles()
   const [suggestions, setSuggestions] = useState([])
 
-  const onTargetSchemaInputHandler = lodash.debounce((event) => {
-    const allNames = extractIds(configurations)
+  const onTargetSchemaInputHandler = (event) => {
+    console.log('configurationsSearch', [configurations])
+    const allNames = extractIds([configurations])
+    console.log('allNames', allNames)
     const value = event.target.value
+
     setSchemaInputValue(value)
     if (value !== '') {
       const filteredSuggestions = allNames.filter((name) => name.includes(value))
       setSuggestions(filteredSuggestions)
+      if (filteredSuggestions) {
+        handleTreeNodeClick(filteredSuggestions[0])
+        // dispatch(setSelectedConfiguration(treeNodeId))
+      }
     }
-  })
+    if (value === '') {
+      handleTreeNodeClick('')
+    }
+  }
 
-  const onSuggestionItemSelectHandler = (event) => {
-    const inputValue = event.target.value.trim()
-    handleTreeNodeClick(inputValue)
-    setSchemaInputValue('')
-  }
-  const onAddSchemaClickHandler = () => {
-    if (schemaInputValue && schemaInputValue !== '') {
-      setSuggestions('')
-      processInput(schemaInputValue)
-    }
-  }
   const onSchemaInputKeyPressHandler = (event) => {
     const inputValue = event.target.value.trim()
-    console.log('event--->', event)
     if (event.type === 'change') {
       setSchemaInputValue(inputValue)
-      processInput(inputValue)
+      handleTreeNodeClick(inputValue)
     }
   }
-  const processInput = (inputValue) => {
-    if (inputValue && inputValue !== '') {
-      setSchemaInputValue('')
-    }
-  }
+
   return (
     <Input
       show-suggestions
@@ -59,12 +51,10 @@ const SearchBar = ({ configurations, setSchemaInputValue, schemaInputValue, hand
       type={InputType.Text}
       value={schemaInputValue}
       className={classes.targetInfoContainerInput}
-      onSuggestionItemSelect={onSuggestionItemSelectHandler}
     >
       {suggestions.map((name) => (
         <SuggestionItem key={name} text={name} />
       ))}
-      <Button id="searchSchemaField" data-cy="searchSchemaField" slot="icon" icon="add" onClick={onAddSchemaClickHandler} design="Transparent"></Button>
     </Input>
   )
 }

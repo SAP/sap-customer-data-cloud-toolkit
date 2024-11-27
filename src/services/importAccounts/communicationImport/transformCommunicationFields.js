@@ -38,7 +38,7 @@ function transformCommunications(communications) {
       }
     }
     const statusBranch = {
-      id: `status.${item.topicChannelId}`,
+      id: `${item.topicChannelId}.status`,
       name: 'status',
       value: false,
       branches: [],
@@ -48,7 +48,7 @@ function transformCommunications(communications) {
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties
       const optInBranches = Object.keys(optInProperties).map((key) => ({
-        id: `${key}.${item.topicChannelId}`,
+        id: `${item.topicChannelId}.${key}`,
         name: key,
         value: false,
         branches: [],

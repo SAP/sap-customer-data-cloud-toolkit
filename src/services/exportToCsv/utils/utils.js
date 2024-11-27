@@ -6,10 +6,10 @@ export function getOptionsFromTree(items) {
 
   items.forEach((item) => {
     if (item.value === true) {
-      if (item.switchId && item.switchId.operation === 'array') {
-        switchIds.push(item.switchId.checkBoxId)
+      if (item.switchId && item.branches.length === 0) {
+        switchIds.push(item)
       } else {
-        ids.push(item.id)
+        ids.push(item)
       }
     }
     if (item.branches && item.branches.length > 0) {
@@ -46,7 +46,7 @@ const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
 
   return resultKeys
 }
-export function processArray(inputArray) {
+export function exportArrayData(inputArray) {
   return inputArray.map((item) => {
     let parts = item.split('.')
     let result = []
@@ -58,4 +58,20 @@ export function processArray(inputArray) {
     }
     return result.join('.')
   })
+}
+export function processArray(items, parentKey = '') {
+  const resultArray = []
+  const objectArray = []
+  items.forEach((item) => {
+    const { id, switchId, branches } = item
+    const newParentKey = parentKey ? `${parentKey}.${id.split('.').pop()}` : id
+
+    if (switchId.operation === 'array') {
+      resultArray.push(id)
+    } else {
+      objectArray.push(id)
+    }
+  })
+
+  return { resultArray, objectArray }
 }

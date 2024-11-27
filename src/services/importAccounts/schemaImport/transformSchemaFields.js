@@ -1,4 +1,5 @@
 import { hasNestedObject, isFieldDetailObject } from '../utils'
+import { subscriptionObjectStructure } from './subscriptionFields/subscriptionFields'
 
 export function extractAndTransformSchemaFields(schemaData) {
   const fieldsTransformed = []
@@ -16,40 +17,45 @@ export function extractAndTransformSchemaFields(schemaData) {
 function transformSchemaField(key, value) {
   if (value.fields) {
     return {
-      id: key,
+      id: key.replace('Schema', ''),
       name: key.replace('Schema', ''),
       value: false,
-      branches: transformSchema(value.fields, key),
+      branches: transformSchema(value.fields, key.replace('Schema', '')),
     }
   }
 }
-function transformSchema(fields, parentKey, skipFields = true) {
+function transformSchema(fields, parentKey) {
   const transformedSchema = []
   for (let key in fields) {
+    console.log('key', key)
     if (fields.hasOwnProperty(key)) {
       const fieldDetail = fields[key]
       const splitKeys = key.split('.')
       let currentLevel = transformedSchema
-      if (parentKey === 'subscriptionsSchema' && splitKeys.length > 1) {
-        const existing = transformSubscriptions(splitKeys, currentLevel)
-        if (isFieldDetailObject(fieldDetail, parentKey, skipFields) && hasNestedObject(fieldDetail)) {
-          existing.branches = transformSchema(fieldDetail, parentKey, skipFields)
+      let accumulatedKey = parentKey
+
+      if (parentKey === 'subscriptions' && splitKeys.length > 0) {
+        const existing = transformSubscriptions(splitKeys, currentLevel, accumulatedKey)
+        if (isFieldDetailObject(fieldDetail, parentKey) && hasNestedObject(fieldDetail)) {
+          console.log('existing', existing)
+          existing.branches = transformSchema(fieldDetail, parentKey)
         }
         continue
       }
 
       if (parentKey === 'addressSchema' && splitKeys.length > 1) {
-        currentLevel = transformAddresses(splitKeys, currentLevel)
+        currentLevel = transformAddresses(splitKeys, currentLevel, accumulatedKey)
         continue
       }
       splitKeys.forEach((part, index) => {
         let id
+        accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
 
-        id = `${part}.${parentKey}`
-        let existing = currentLevel.find((item) => item.id === id)
+        id = `${parentKey}.${part}`
+        let existing = currentLevel.find((item) => item.id === accumulatedKey)
         if (!existing) {
           existing = {
-            id: id,
+            id: accumulatedKey,
             name: part,
             value: false,
             branches: [],
@@ -58,8 +64,8 @@ function transformSchema(fields, parentKey, skipFields = true) {
         }
 
         if (index === splitKeys.length - 1) {
-          if (isFieldDetailObject(fieldDetail, skipFields) && hasNestedObject(fieldDetail)) {
-            existing.branches = transformSchema(fieldDetail, parentKey, skipFields)
+          if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
+            existing.branches = transformSchema(fieldDetail, parentKey)
           }
         } else {
           currentLevel = existing.branches
@@ -69,21 +75,23 @@ function transformSchema(fields, parentKey, skipFields = true) {
   }
   return transformedSchema
 }
-function transformSubscriptions(splitKeys, currentLevel) {
+
+function transformSubscriptions(splitKeys, currentLevel, accumulatedKey) {
   const id = splitKeys.join('.')
+  accumulatedKey = accumulatedKey ? `${accumulatedKey}.${id}` : id
   let existing = currentLevel.find((item) => item.id === id)
   if (!existing) {
     existing = {
-      id: id,
+      id: accumulatedKey,
       name: id,
       value: false,
-      branches: [],
+      branches: subscriptionObjectStructure(accumulatedKey),
     }
     currentLevel.push(existing)
   }
   return existing
 }
-function transformAddresses(splitKeys, currentLevel) {
+function transformAddresses(splitKeys, currentLevel, accumulatedKey) {
   for (let index = 0; index < splitKeys.length; index++) {
     let id
     if (index === 0) {
@@ -95,7 +103,7 @@ function transformAddresses(splitKeys, currentLevel) {
     let existing = currentLevel.find((item) => item.id === id)
     if (!existing) {
       existing = {
-        id: id,
+        id: accumulatedKey ? `${accumulatedKey}.${id}` : id,
         name: id,
         value: false,
         branches: [],
