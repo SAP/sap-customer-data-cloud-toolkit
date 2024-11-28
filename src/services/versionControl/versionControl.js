@@ -12,8 +12,20 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
-import { createBranch, updateFilesInSingleCommit, getFile, getCommitFiles, fetchFileContent, getCommits } from './githubUtils'
-import { getCdcData, fetchCDCConfigs, updateGitFileContent, storeCdcDataInGit, applyCommitConfig } from './cdcUtils'
+
+import {
+  createBranch,
+  updateFilesInSingleCommit,
+  getFile,
+  getCommitFiles,
+  fetchFileContent,
+  getCommits,
+  updateGitFileContent,
+  storeCdcDataInGit,
+  applyCommitConfig,
+} from './githubUtils'
+
+import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
 
 class VersionControl {
