@@ -48,11 +48,13 @@ function transformCommunications(communications) {
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties
       const optInBranches = Object.keys(optInProperties).map((key) => ({
-        id: `${item.topicChannelId}.${key}`,
+        id: `${item.topicChannelId}.optIn.${key}`,
         name: key,
         value: false,
         branches: [],
       }))
+      console.log('id...>', `${item.topicChannelId}`)
+      console.log('optInBranches', optInBranches)
       channels[item.channel].branches.push(...optInBranches)
     }
   })

@@ -24,7 +24,6 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
       setSuggestions(filteredSuggestions)
       if (filteredSuggestions) {
         handleTreeNodeClick(filteredSuggestions[0])
-        // dispatch(setSelectedConfiguration(treeNodeId))
       }
     }
     if (value === '') {

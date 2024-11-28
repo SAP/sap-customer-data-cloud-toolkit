@@ -4,20 +4,31 @@ const styles = {
   formContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    width: '300px',
+    margin: '0 auto',
+    padding: '20px',
+    borderRadius: '4px',
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiMediumMarginBegin,
   },
   outerDiv: {
     ...spacing.sapUiTinyMarginBottom,
-    ...spacing.sapUiTinyMarginTop,
-    ...spacing.sapUiSmallMarginBegin,
+    ...spacing.sapUiSmallMarginTop,
   },
-  input: {
-    paddingRight: '16px',
+  createButtonBarStyle: {
+    display: 'flex',
+    width: '100%',
+    marginTop: '16px',
+  },
+  createButtonStyle: {
+    marginRight: 'auto', // Align to the right
+    marginTop: '10px',
+  },
+  titleContainer: {
+    ...spacing.sapUiMediumMarginBegin,
   },
   selectBox: {
-    paddingRight: '16px',
+    width: 'calc(100% )',
     marginTop: '16px',
   },
   submitButton: {

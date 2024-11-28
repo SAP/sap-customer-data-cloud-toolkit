@@ -1,19 +1,15 @@
-import { exportArrayData, getOptionsFromTree, processArray } from './utils/utils'
+import { exportArrayData, getOptionsFromSchemaTree, getOptionsFromTree, processArray } from './utils/utils'
 
 export function exportSchemaData(items) {
   const { ids: options, switchIds: switchOptions } = getOptionsFromTree(items)
-  const optionKeys = findMatches(options)
+  const optionKeys = findMatches(switchOptions)
   console.log('switchOptions', switchOptions)
   console.log('options', options)
   console.log('optionKeys', optionKeys)
-  let exportNested = []
-  if (switchOptions.length > 0) {
-    const { resultArray: arrayData, objectArray: objectData } = processArray(switchOptions)
-    const exportArray = exportArrayData(arrayData)
-    exportNested = transformObjectData(exportArray, optionKeys)
-    return exportNested
-  }
-  const removeFields = [...new Set([...optionKeys])]
+  const { resultArray: arrayData, objectArray: objectData } = processArray(switchOptions)
+  const exportArray = exportArrayData(arrayData)
+  console.log('objectData', objectData)
+  const removeFields = [...new Set([...objectData, ...exportArray])]
   console.log('removeFields', removeFields)
   return removeFields
 }

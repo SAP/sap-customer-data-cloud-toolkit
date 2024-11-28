@@ -22,36 +22,8 @@ const findMatches = (obj) => {
   const results = []
   for (let key of obj) {
     if (key.branches.length === 0) {
-      results.push(`preferences.${key.id}`)
+      results.push(`${key.id}`)
     }
   }
   return results
 }
-// const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
-//   Object.entries(obj).forEach(([key, value]) => {
-//     matchArray.forEach((match) => {
-//       if (key === 'preferences') {
-//         resultKeys.push(...preferencesKeys(value, match, key))
-//         return resultKeys
-//       }
-//     })
-//   })
-// }
-// const preferencesKeys = (obj, matchString, indexKey, resultKeys = []) => {
-//   const part = matchString.split('.')
-//   console.log('indexKey', indexKey)
-//   const matchingKeys = Object.keys(obj).filter((key) => key.startsWith(part[0]))
-//   if (matchingKeys.length > 0 && part.length > 2) {
-//     console.log('part', part)
-//     console.log('part.length', part.length)
-//     console.log('matchString', matchString)
-//     // Check if each segment length is greater than 3
-//     resultKeys.push(`${indexKey}.${matchString}`)
-//     // resultKeys.push(`${indexKey}.${matchString}`)
-//     console.log('resultKeys', resultKeys)
-
-//     return resultKeys
-//   }
-
-//   return resultKeys
-// }

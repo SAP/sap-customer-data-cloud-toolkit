@@ -21,6 +21,7 @@ function transformSchemaField(key, value) {
       name: key.replace('Schema', ''),
       value: false,
       branches: transformSchema(value.fields, key.replace('Schema', '')),
+      switchId: 'object',
     }
   }
 }
@@ -59,6 +60,7 @@ function transformSchema(fields, parentKey) {
             name: part,
             value: false,
             branches: [],
+            switchId: 'object',
           }
           currentLevel.push(existing)
         }
@@ -86,6 +88,7 @@ function transformSubscriptions(splitKeys, currentLevel, accumulatedKey) {
       name: id,
       value: false,
       branches: subscriptionObjectStructure(accumulatedKey),
+      switchId: 'object',
     }
     currentLevel.push(existing)
   }

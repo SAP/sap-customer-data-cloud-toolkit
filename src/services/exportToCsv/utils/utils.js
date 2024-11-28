@@ -7,6 +7,7 @@ export function getOptionsFromTree(items) {
   items.forEach((item) => {
     if (item.value === true) {
       if (item.switchId && item.branches.length === 0) {
+        console.log('item', item)
         switchIds.push(item)
       } else {
         ids.push(item)
@@ -20,6 +21,51 @@ export function getOptionsFromTree(items) {
   })
 
   return { ids, switchIds }
+}
+export function getOptionsFromSchemaTree(items) {
+  let ids = []
+  let switchIds = []
+
+  items.forEach((item) => {
+    if (item.switchId && item.value === true) {
+      switchIds.push(traverseStructure(item))
+    } else {
+      ids.push(item)
+    }
+    if (item.branches && item.branches.length > 0) {
+      const { ids: childIds, switchIds: childSwitchIds } = getOptionsFromSchemaTree(item.branches)
+      ids = ids.concat(childIds)
+      switchIds = switchIds.concat(childSwitchIds)
+    }
+  })
+
+  return { ids, switchIds }
+}
+export function traverseStructure(items) {
+  const result = []
+
+  const traverse = (node, path = '') => {
+    const currentPath = path ? `${path}.${node.name}` : node.name
+
+    if (node.switchId === 'object' && node.value === true && node.branches.length === 0) {
+      result.push(currentPath)
+    }
+
+    if (node.branches && node.branches.length > 0) {
+      node.branches.forEach((branch, index) => {
+        const newPath = node.switchId === 'array' && node.value === true ? `${currentPath}.${index}` : currentPath
+        traverse(branch, newPath)
+      })
+    }
+  }
+
+  if (Array.isArray(items)) {
+    items.forEach((item) => traverse(item))
+  } else {
+    traverse(items)
+  }
+
+  return result
 }
 
 const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
