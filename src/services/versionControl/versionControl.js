@@ -1,4 +1,7 @@
-// versionControl.js
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import { Octokit } from '@octokit/rest'
 
 import WebSdk from '../copyConfig/websdk/websdk'
@@ -30,9 +33,6 @@ import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets,
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo) {
-    if (!credentials.userKey || !credentials.secret) {
-      throw new Error('GitHub credentials are required')
-    }
 
     this.octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN })
     this.owner = 'iamGaspar'
