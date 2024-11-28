@@ -1,0 +1,168 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */ 
+import { Base64 } from 'js-base64'
+export const createBranch = async function (branchName) {
+  const branches = await this.octokit.rest.repos.listBranches({
+    owner: this.owner,
+    repo: this.repo,
+  })
+
+  const branchExists = branches.data.some((branch) => branch.name === branchName)
+
+  if (!branchExists) {
+    const mainBranch = await this.octokit.rest.repos.getBranch({
+      owner: this.owner,
+      repo: this.repo,
+      branch: this.defaultBranch,
+    })
+
+    await this.octokit.rest.git.createRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `refs/heads/${branchName}`,
+      sha: mainBranch.data.commit.sha,
+    })
+  }
+}
+
+export const updateFilesInSingleCommit = async function (commitMessage, files) {
+  const { data: refData } = await this.octokit.rest.git.getRef({
+    owner: this.owner,
+    repo: this.repo,
+    ref: `heads/${this.defaultBranch}`,
+  })
+
+  const baseTreeSha = refData.object.sha
+
+  const blobs = await Promise.all(
+    files.map(async (file) => {
+      const { data } = await this.octokit.rest.git.createBlob({
+        owner: this.owner,
+        repo: this.repo,
+        content: file.content,
+        encoding: 'utf-8',
+      })
+      return {
+        path: file.path,
+        mode: '100644',
+        type: 'blob',
+        sha: data.sha,
+      }
+    }),
+  )
+
+  const { data: newTree } = await this.octokit.rest.git.createTree({
+    owner: this.owner,
+    repo: this.repo,
+    tree: blobs,
+    base_tree: baseTreeSha,
+  })
+
+  const { data: newCommit } = await this.octokit.rest.git.createCommit({
+    owner: this.owner,
+    repo: this.repo,
+    message: commitMessage,
+    tree: newTree.sha,
+    parents: [baseTreeSha],
+  })
+
+  await this.octokit.rest.git.updateRef({
+    owner: this.owner,
+    repo: this.repo,
+    ref: `heads/${this.defaultBranch}`,
+    sha: newCommit.sha,
+  })
+}
+
+export const getFile = async function (path) {
+  const { data: file } = await this.octokit.rest.repos.getContent({
+    owner: this.owner,
+    repo: this.repo,
+    path,
+    ref: this.defaultBranch,
+  })
+
+  if (!file.content || file.size > 100 * 1024) {
+    const { data: blobData } = await this.octokit.rest.git.getBlob({
+      owner: this.owner,
+      repo: this.repo,
+      file_sha: file.sha,
+    })
+    file.content = blobData.content
+  }
+
+  if (!file.content) {
+    throw new Error(`Failed to retrieve content for path: ${path}`)
+  }
+
+  return file
+}
+
+export const getCommitFiles = async function (sha) {
+  const { data: commitData } = await this.octokit.rest.repos.getCommit({
+    owner: this.owner,
+    repo: this.repo,
+    ref: sha,
+  })
+
+  if (!commitData.files) {
+    throw new Error(`No files found in commit: ${sha}`)
+  }
+
+  const files = commitData.files.map((file) => ({
+    filename: file.filename,
+    contents_url: file.contents_url,
+  }))
+
+  const fileContentsPromises = files.map(async (file) => {
+    const content = await this.fetchFileContent(file.contents_url)
+    return { ...file, content: JSON.parse(Base64.decode(content)) }
+  })
+
+  return Promise.all(fileContentsPromises)
+}
+
+export const fetchFileContent = async function (contents_url) {
+  const { data: response } = await this.octokit.request(contents_url)
+  if (!response || !response.content) {
+    const { sha } = response
+    const { data: blobData } = await this.octokit.rest.git.getBlob({
+      owner: this.owner,
+      repo: this.repo,
+      file_sha: sha,
+    })
+    if (!blobData || !blobData.content) {
+      throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
+    }
+    return blobData.content
+  }
+  return response.content
+}
+
+export const getCommits = async function () {
+  let allCommits = []
+  let page = 1
+  const per_page = 100
+
+  while (true) {
+    const { data } = await this.octokit.rest.repos.listCommits({
+      owner: this.owner,
+      repo: this.repo,
+      sha: this.defaultBranch,
+      per_page,
+      page,
+    })
+
+    if (data.length === 0) break
+
+    allCommits = allCommits.concat(data)
+
+    if (data.length < per_page) break
+
+    page += 1
+  }
+
+  return allCommits
+}
