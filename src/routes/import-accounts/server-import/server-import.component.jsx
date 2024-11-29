@@ -20,7 +20,22 @@ const ServerImportComponent = ({ t }) => {
     blob: '',
     readFile: '',
   })
-
+  const formFields = {
+    option1: [
+      { name: 'Account Name', type: 'text', placeholder: 'Enter your Account Name' },
+      { name: 'Account Key', type: 'text', placeholder: 'Enter your Account Key' },
+      { name: 'Container', type: 'text', placeholder: 'Enter your Container' },
+      { name: 'File Name Regex', type: 'text', placeholder: 'Enter your File Name Regex' },
+      { name: 'Blob Prefix', type: 'text', placeholder: 'Enter your Blob Prefix' },
+    ],
+    option2: [
+      { name: 'Bucket Name', type: 'text', placeholder: 'Enter your Bucket Name' },
+      { name: 'Access Key', type: 'text', placeholder: 'Enter your Access Key' },
+      { name: 'Secret Key', type: 'text', placeholder: 'Enter your Secret Key' },
+      { name: 'Object Key Prefix', type: 'text', placeholder: 'Enter your Object Key Prefix' },
+    ],
+    option3: [{ name: 'field5', type: 'date', placeholder: 'Select date for Option 3' }],
+  }
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value)
   }
@@ -45,49 +60,22 @@ const ServerImportComponent = ({ t }) => {
             {PAGE_TITLE}
           </Title>
 
-          <div className={classes.formContainer}>
-            <Form labelSpanL={12}>
-              <FormItem className={classes.formItem}>
-                <Select className={classes.selectBox}>
-                  <Option value="option1">Amazon S3</Option>
-                  <Option value="option2">Azure</Option>
-                  <Option value="option3">SFTP</Option>
-                </Select>
-              </FormItem>
-              <FormItem className={classes.formItem}>
-                <Label required for="nameInp" className={classes.label}>
-                  Account Name:
-                </Label>
-                <Input id="nameInp" name="accountName" value={formData.accountName} onChange={handleInputChange} className={classes.input} />
-              </FormItem>
-
-              <FormItem className={classes.formItem}>
-                <Label for="addressInp" className={classes.label}>
-                  Account Key:
-                </Label>
-                <Input id="addressInp" name="accountKey" value={formData.accountKey} onChange={handleInputChange} className={classes.input} />
-              </FormItem>
-
-              <FormItem className={classes.formItem}>
-                <Label required for="containerInp" className={classes.label}>
-                  Container:
-                </Label>
-                <Input id="containerInp" name="container" value={formData.container} onChange={handleInputChange} className={classes.input} />
-              </FormItem>
-
-              <FormItem className={classes.formItem}>
-                <Label for="blobInp" className={classes.label}>
-                  Blob:
-                </Label>
-                <Input id="blobInp" name="blob" value={formData.blob} onChange={handleInputChange} className={classes.input} />
-              </FormItem>
-
-              <FormItem className={classes.formItem}>
-                <Label for="readFileInp" className={classes.label}>
-                  Read File:
-                </Label>
-                <Input id="readFileInp" name="readFile" value={formData.readFile} onChange={handleInputChange} className={classes.input} />
-              </FormItem>
+          <div id="container" style={{ maxWidth: '1500px', width: '800px', overflowX: 'auto' }}>
+            <div className={classes.serverDropDown}>
+              <Select onChange={handleOptionChange} className={classes.selectBox}>
+                <Option value="option1">Azure</Option>
+                <Option value="option2">Amazon</Option>
+                <Option value="option3">SFTP</Option>
+              </Select>
+            </div>
+            <Form headerText="Test Form" columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
+              <FormGroup>
+                {formFields[selectedOption].map((field) => (
+                  <FormItem key={field.name} label={<Label>{field.name}</Label>}>
+                    <Input type={field.type} name={field.name} placeholder={field.placeholder} value={formData[field.name] || ''} onInput={handleInputChange} />
+                  </FormItem>
+                ))}
+              </FormGroup>
             </Form>
           </div>
           <div>
