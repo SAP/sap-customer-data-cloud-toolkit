@@ -231,7 +231,7 @@ export const getCommits = async function () {
 }
 
 export const applyCommitConfig = async function (commitSha) {
-  const files = await this.getCommitFiles(commitSha)
+  const files = await getCommitFiles(commitSha)
   for (let file of files) {
     const fileType = getFileTypeFromFileName(file.filename)
     const filteredResponse = file.content
