@@ -6,52 +6,60 @@ import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from './dataSanitization'
 import { getFileTypeFromFileName } from './versionControlFiles'
 
-export const getFile = async function (path) {
-  const { data: file } = await this.octokit.rest.repos.getContent({
-    owner: this.owner,
-    repo: this.repo,
-    path,
-    ref: this.defaultBranch,
-  })
-
-  if (!file.content || file.size > 100 * 1024) {
-    const { data: blobData } = await this.octokit.rest.git.getBlob({
+export function getFile(path) {
+  console.log('getFile this:', this)
+  return this.octokit.rest.repos
+    .getContent({
       owner: this.owner,
       repo: this.repo,
-      file_sha: file.sha,
+      path,
+      ref: this.defaultBranch,
     })
-    file.content = blobData.content
-  }
-
-  if (!file.content) {
-    throw new Error(`Failed to retrieve content for path: ${path}`)
-  }
-
-  return file
+    .then(({ data: file }) => {
+      if (!file.content || file.size > 100 * 1024) {
+        return this.octokit.rest.git
+          .getBlob({
+            owner: this.owner,
+            repo: this.repo,
+            file_sha: file.sha,
+          })
+          .then(({ data: blobData }) => {
+            file.content = blobData.content
+            return file
+          })
+      }
+      return file
+    })
+    .catch((err) => {
+      throw new Error(`Failed to retrieve content for path: ${path}`)
+    })
 }
 
-export const getCommitFiles = async function (sha) {
-  const { data: commitData } = await this.octokit.rest.repos.getCommit({
-    owner: this.owner,
-    repo: this.repo,
-    ref: sha,
-  })
+export function getCommitFiles(sha) {
+  console.log('getCommitFiles this:', this)
+  return this.octokit.rest.repos
+    .getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      ref: sha,
+    })
+    .then(({ data: commitData }) => {
+      if (!commitData.files) {
+        throw new Error(`No files found in commit: ${sha}`)
+      }
 
-  if (!commitData.files) {
-    throw new Error(`No files found in commit: ${sha}`)
-  }
+      const files = commitData.files.map((file) => ({
+        filename: file.filename,
+        contents_url: file.contents_url,
+      }))
 
-  const files = commitData.files.map((file) => ({
-    filename: file.filename,
-    contents_url: file.contents_url,
-  }))
-
-  const fileContentsPromises = files.map(async (file) => {
-    const content = await this.fetchFileContent(file.contents_url)
-    return { ...file, content: JSON.parse(Base64.decode(content)) }
-  })
-
-  return Promise.all(fileContentsPromises)
+      return Promise.all(
+        files.map(async (file) => {
+          const content = await this.fetchFileContent(file.contents_url)
+          return { ...file, content: JSON.parse(Base64.decode(content)) }
+        }),
+      )
+    })
 }
 
 export const createBranch = async function (branchName) {
@@ -187,21 +195,25 @@ export const storeCdcDataInGit = async function (commitMessage) {
   }
 }
 
-export const fetchFileContent = async function (contents_url) {
-  const { data: response } = await this.octokit.request(contents_url)
-  if (!response || !response.content) {
-    const { sha } = response
-    const { data: blobData } = await this.octokit.rest.git.getBlob({
-      owner: this.owner,
-      repo: this.repo,
-      file_sha: sha,
-    })
-    if (!blobData || !blobData.content) {
-      throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
+export function fetchFileContent(contents_url) {
+  console.log('fetchFileContent this:', this)
+  return this.octokit.request(contents_url).then(({ data: response }) => {
+    if (!response || !response.content) {
+      return this.octokit.rest.git
+        .getBlob({
+          owner: this.owner,
+          repo: this.repo,
+          file_sha: response.sha,
+        })
+        .then(({ data: blobData }) => {
+          if (!blobData.content) {
+            throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
+          }
+          return blobData.content
+        })
     }
-    return blobData.content
-  }
-  return response.content
+    return response.content
+  })
 }
 
 export const getCommits = async function () {
@@ -230,48 +242,48 @@ export const getCommits = async function () {
   return allCommits
 }
 
-export const applyCommitConfig = async function (commitSha) {
-  const files = await getCommitFiles(commitSha)
-  for (let file of files) {
-    const fileType = getFileTypeFromFileName(file.filename)
-    const filteredResponse = file.content
+// export const applyCommitConfig = async function (commitSha) {
+//   const files = await getCommitFiles(commitSha)
+//   for (let file of files) {
+//     const fileType = getFileTypeFromFileName(file.filename)
+//     const filteredResponse = file.content
 
-    switch (fileType) {
-      case 'webSdk':
-        await this.setWebSDK(filteredResponse)
-        break
-      case 'dataflow':
-        await this.setDataflow(filteredResponse)
-        break
-      case 'emails':
-        await this.setEmailTemplates(filteredResponse)
-        break
-      case 'extension':
-        await this.setExtension(filteredResponse)
-        break
-      case 'policies':
-        await this.setPolicies(filteredResponse)
-        break
-      case 'rba':
-        await this.setRBA(filteredResponse)
-        break
-      case 'riskAssessment':
-        await this.setRiskAssessment(filteredResponse)
-        break
-      case 'schema':
-        await this.setSchema(filteredResponse)
-        break
-      case 'sets':
-        await this.setScreenSets(filteredResponse)
-        break
-      case 'sms':
-        await this.setSMS(filteredResponse)
-        break
-      case 'channel':
-        await this.setChannel(filteredResponse)
-        break
-      default:
-        console.warn(`Unknown file type: ${fileType}`)
-    }
-  }
-}
+//     switch (fileType) {
+//       case 'webSdk':
+//         await this.setWebSDK(filteredResponse)
+//         break
+//       case 'dataflow':
+//         await this.setDataflow(filteredResponse)
+//         break
+//       case 'emails':
+//         await this.setEmailTemplates(filteredResponse)
+//         break
+//       case 'extension':
+//         await this.setExtension(filteredResponse)
+//         break
+//       case 'policies':
+//         await this.setPolicies(filteredResponse)
+//         break
+//       case 'rba':
+//         await this.setRBA(filteredResponse)
+//         break
+//       case 'riskAssessment':
+//         await this.setRiskAssessment(filteredResponse)
+//         break
+//       case 'schema':
+//         await this.setSchema(filteredResponse)
+//         break
+//       case 'sets':
+//         await this.setScreenSets(filteredResponse)
+//         break
+//       case 'sms':
+//         await this.setSMS(filteredResponse)
+//         break
+//       case 'channel':
+//         await this.setChannel(filteredResponse)
+//         break
+//       default:
+//         console.warn(`Unknown file type: ${fileType}`)
+//     }
+//   }
+// }

@@ -4,7 +4,7 @@
  */
 import { withTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
-import { Bar, Input, SuggestionItem, SuggestionItemGroup, SuggestionListItem, ListItemStandard, Button, ListItemCustom, ListItemGroup, Icon } from '@ui5/webcomponents-react'
+import { Bar, Input, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 
 import VersionControl from '../../services/versionControl/versionControl.js'
@@ -64,12 +64,10 @@ const VersionControlComponent = ({ t }) => {
 
   const handleCommitRevertServices = async (sha) => {
     try {
-      debugger
       await versionControl.applyCommitConfig(sha)
       alert('Configurations reverted successfully!')
     } catch (error) {
       console.error('Error reverting configurations:', error)
-      alert('Failed to revert configurations. Please try again.')
     }
   }
 
