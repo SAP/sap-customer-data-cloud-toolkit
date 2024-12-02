@@ -52,10 +52,13 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit)).*\\.js$"
+      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit|universal-user-agent|before-after-hook)).*\\.js$"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
+    },
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
     }
   },
   "nyc": {
@@ -99,6 +102,7 @@
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
     "@cypress/xvfb": "^1.2.4",
+    "babel-jest": "^29.7.0",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "concurrently": "^8.0.0",

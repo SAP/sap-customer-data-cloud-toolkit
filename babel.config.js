@@ -3,8 +3,8 @@
  * License: Apache-2.0
  */
 
-
 module.exports = {
-  presets: ['@babel/preset-env'],
-  plugins: ['istanbul'],
+  presets: ['@babel/preset-env', '@babel/preset-react'],
+  plugins: ['istanbul', '@babel/plugin-transform-modules-commonjs'],
+  ignore: [],
 }
