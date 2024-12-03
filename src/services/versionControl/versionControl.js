@@ -57,7 +57,6 @@ class VersionControl {
     this.fetchCDCConfigs = fetchCDCConfigs.bind(this)
     this.updateGitFileContent = githubUtils.updateGitFileContent.bind(this)
     this.storeCdcDataInGit = githubUtils.storeCdcDataInGit.bind(this)
-    this.applyCommitConfig = this.applyCommitConfig.bind(this)
     this.setPolicies = setPolicies.bind(this)
     this.setWebSDK = setWebSDK.bind(this)
     this.setSMS = setSMS.bind(this)

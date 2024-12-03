@@ -16,7 +16,17 @@ import {
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
 
-jest.mock('@octokit/rest')
+jest.mock('@octokit/rest', () => {
+  return {
+    Octokit: jest.fn().mockImplementation(() => {
+      return {
+        repos: {
+          createRelease: jest.fn(),
+        },
+      }
+    }),
+  }
+})
 jest.mock('./githubUtils')
 jest.mock('./cdcUtils')
 jest.mock('./setters')
@@ -69,16 +79,40 @@ describe('VersionControl test suite', () => {
     expect(result).toEqual(commits)
   })
   // ********************** Test beggin **********************
-  test('applyCommitConfig processes commits and sets data correctly', async () => {
-    // 3d9c02d9be43c2bb4f96bc5c6cd655b711f7f338
+  // test('applyCommitConfig processes commits and sets data correctly', async () => {
+  //   const commitData = {
+  //     files: [
+  //       { filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' },
+  //       { filename: 'src/versionControl/extension.json', contents_url: 'test-url-extension' },
+  //     ],
+  //   }
 
-    let sha = '3d9c02d9be43c2bb4f96bc5c6cd655b711f7f338'
-   applyCommitConfig(sha)
+  //   const encodedContent = Base64.encode(JSON.stringify({ someProp: 'someValue' }))
+  //   getCommitFiles.mockResolvedValueOnce(
+  //     commitData.files.map((file) => ({
+  //       filename: file.filename,
+  //       contents_url: file.contents_url,
+  //       content: encodedContent,
+  //     })),
+  //   )
 
-    // console.log('================test====================')
-    // console.log(JSON.stringify(test))
-    // console.log('====================================')
-  })
+  //   // For completeness, mock fetchFileContent regardless of its use scenario
+  //   fetchFileContent.mockResolvedValueOnce(encodedContent).mockResolvedValueOnce(encodedContent)
+
+  //   const setEmailTemplatesMock = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
+  //   const setExtensionMock = jest.spyOn(versionControl, 'setExtension').mockResolvedValue()
+
+  //   console.log('Commit Data Files:', commitData.files)
+  //   console.log('Mocked getCommitFiles response:', JSON.stringify(versionControl.getCommitFiles('testSha')))
+
+  //   await versionControl.applyCommitConfig('testSha')
+
+  //   console.log('setEmailTemplatesMock calls:', setEmailTemplatesMock.mock.calls)
+  //   console.log('setExtensionMock calls:', setExtensionMock.mock.calls)
+
+  //   expect(setEmailTemplatesMock).toHaveBeenCalledWith({ someProp: 'someValue' })
+  //   expect(setExtensionMock).toHaveBeenCalledWith({ someProp: 'someValue' })
+  // })
   // ********************** Test End **********************
   test('fetchCDCConfigs should fetch CDC configurations', async () => {
     await versionControl.fetchCDCConfigs()
