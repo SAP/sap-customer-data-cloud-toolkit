@@ -1,28 +1,21 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
-import { withTranslation } from 'react-i18next'
 import React, { useState, useEffect } from 'react'
+import { withTranslation } from 'react-i18next'
 import { Bar, Input, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
-
-import VersionControl from '../../services/versionControl/versionControl.js'
-import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-import { getApiKey } from '../../redux/utils.js'
+import VersionControl from '../../services/versionControl/versionControl'
+import { selectCredentials } from '../../redux/credentials/credentialsSlice'
+import { getApiKey } from '../../redux/utils'
 import { useSelector } from 'react-redux'
-import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import styles from './version-control.styles.js'
+import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
+import styles from './version-control.styles'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const VersionControlComponent = ({ t }) => {
   const classes = useStyles()
   const currentSite = useSelector(selectCurrentSiteInformation)
-
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-
   const credentialsUpdated = {
     userKey: credentials.userKey,
     secret: credentials.secretKey,
@@ -32,12 +25,14 @@ const VersionControlComponent = ({ t }) => {
   const versionControl = new VersionControl(credentialsUpdated, apikey, currentSite)
   const [commits, setCommits] = useState([])
   const [gitToken, setGitToken] = useState('')
+
   useEffect(() => {
     handleCommitListRequestServices()
   }, [])
 
   const handleGetServices = async () => {
     try {
+      await versionControl.createBranch(apikey) // Ensure branch creation based on apiKey
       await versionControl.storeCdcDataInGit('Backup created')
       alert('Backup created successfully!')
       handleCommitListRequestServices() // Optional: refresh commits after backup
@@ -49,12 +44,18 @@ const VersionControlComponent = ({ t }) => {
 
   const handleCommitListRequestServices = async () => {
     try {
-      const commitList = await versionControl.getCommits()
-      if (commitList.length > 0) {
-        setCommits(commitList)
+      const hasBranch = await versionControl.branchExists(apikey) // Check if branch exists
+      if (hasBranch) {
+        const commitList = await versionControl.getCommits()
+        if (commitList.length > 0) {
+          setCommits(commitList)
+        } else {
+          setCommits([]) // Ensure commits are at least an empty array
+          console.error('No commits found')
+        }
       } else {
-        setCommits([]) // Ensure commits is at least an empty array
-        console.error('No commits found')
+        setCommits([]) // No branch found, no commits to display
+        console.warn(`No branch found for API key: ${apikey}`)
       }
     } catch (error) {
       console.error('Error fetching commits:', error)
@@ -65,7 +66,6 @@ const VersionControlComponent = ({ t }) => {
   const handleCommitRevertServices = async (sha) => {
     try {
       await versionControl.applyCommitConfig(sha)
-      alert('Configurations reverted successfully!')
     } catch (error) {
       console.error('Error reverting configurations:', error)
     }
@@ -78,18 +78,12 @@ const VersionControlComponent = ({ t }) => {
         endContent={
           <>
             <Input
-              // icon={<Icon name="employee" />}
               value={gitToken}
               onChange={(e) => setGitToken(e.target.value)}
-              onClose={function ks() {}}
-              onInput={function ks() {}}
-              onOpen={function ks() {}}
-              onSelect={function ks() {}}
-              onSelectionChange={function ks() {}}
               placeholder="Git Token"
               type="Password"
               valueState="Information"
-              valueStateMessage={<div>Insert here your Git Token so you can use this tool</div>}
+              valueStateMessage={<div>Insert your Git Token to use this tool</div>}
             />
             <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={handleGetServices}>
               {t('VERSION_CONTROL.BACKUP')}

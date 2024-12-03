@@ -1,8 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
-
 import { Octokit } from '@octokit/rest'
 import WebSdk from '../copyConfig/websdk/websdk'
 import Dataflow from '../copyConfig/dataflow/dataflow'
@@ -15,7 +10,6 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
-
 import * as githubUtils from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
@@ -26,7 +20,7 @@ class VersionControl {
     this.octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN })
     this.owner = 'iamGaspar'
     this.repo = 'CDCVersionControl'
-    this.defaultBranch = 'CDCRepo'
+    this.defaultBranch = apiKey // dynamically set default branch based on apiKey
 
     const { dataCenter } = siteInfo
 
@@ -53,10 +47,12 @@ class VersionControl {
     this.getCommitFiles = githubUtils.getCommitFiles.bind(this)
     this.fetchFileContent = githubUtils.fetchFileContent.bind(this)
     this.getCommits = githubUtils.getCommits.bind(this)
+    this.branchExists = githubUtils.branchExists.bind(this) // Ensure method is bound here
     this.getCdcData = getCdcData.bind(this)
     this.fetchCDCConfigs = fetchCDCConfigs.bind(this)
     this.updateGitFileContent = githubUtils.updateGitFileContent.bind(this)
     this.storeCdcDataInGit = githubUtils.storeCdcDataInGit.bind(this)
+    this.applyCommitConfig = this.applyCommitConfig.bind(this)
     this.setPolicies = setPolicies.bind(this)
     this.setWebSDK = setWebSDK.bind(this)
     this.setSMS = setSMS.bind(this)
@@ -70,9 +66,10 @@ class VersionControl {
   async applyCommitConfig(commitSha) {
     const files = await this.getCommitFiles(commitSha)
     for (const file of files) {
-      const fileType = getFileTypeFromFileName(file.filename)
-      const filteredResponse = file.content
+      const fileType = getFileTypeFromFileName(file.filename) // Determine file type
 
+      let filteredResponse = file.content
+      // Call appropriate setter method based on file type
       switch (fileType) {
         case 'webSdk':
           await this.setWebSDK(filteredResponse)

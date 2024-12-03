@@ -1,92 +1,113 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from './dataSanitization'
 import { getFileTypeFromFileName } from './versionControlFiles'
 
-export function getFile(path) {
-  console.log('getFile this:', this)
-  return this.octokit.rest.repos
-    .getContent({
+export async function getFile(path) {
+  try {
+    const { data: file } = await this.octokit.rest.repos.getContent({
       owner: this.owner,
       repo: this.repo,
       path,
       ref: this.defaultBranch,
     })
-    .then(({ data: file }) => {
-      if (!file.content || file.size > 100 * 1024) {
-        return this.octokit.rest.git
-          .getBlob({
-            owner: this.owner,
-            repo: this.repo,
-            file_sha: file.sha,
-          })
-          .then(({ data: blobData }) => {
-            file.content = blobData.content
-            return file
-          })
-      }
-      return file
-    })
-    .catch((err) => {
-      throw new Error(`Failed to retrieve content for path: ${path}`)
-    })
+
+    if (!file.content || file.size > 100 * 1024) {
+      // Large files
+      const { data: blobData } = await this.octokit.rest.git.getBlob({
+        owner: this.owner,
+        repo: this.repo,
+        file_sha: file.sha,
+      })
+      file.content = blobData.content
+    }
+    return file
+  } catch (err) {
+    if (err.status === 404) {
+      // File not found, handle it by logging the preparation for creation
+      console.log(`File not found: ${path}, preparing to create it.`)
+      return null
+    }
+    throw err
+  }
 }
 
-export function getCommitFiles(sha) {
-  console.log('getCommitFiles this:', this)
-  return this.octokit.rest.repos
-    .getCommit({
+export async function getCommitFiles(sha) {
+  const { data: commitData } = await this.octokit.rest.repos.getCommit({
+    owner: this.owner,
+    repo: this.repo,
+    ref: sha,
+  })
+
+  if (!commitData.files) {
+    throw new Error(`No files found in commit: ${sha}`)
+  }
+
+  const files = commitData.files.map((file) => ({
+    filename: file.filename,
+    contents_url: file.contents_url,
+  }))
+
+  return Promise.all(
+    files.map(async (file) => {
+      const content = await this.fetchFileContent(file.contents_url)
+      const fileType = getFileTypeFromFileName(file.filename)
+      return { ...file, content: JSON.parse(Base64.decode(content)), fileType }
+    }),
+  )
+}
+
+export async function fetchFileContent(contents_url) {
+  const { data: response } = await this.octokit.request(contents_url)
+
+  if (!response || !response.content) {
+    const { data: blobData } = await this.octokit.rest.git.getBlob({
       owner: this.owner,
       repo: this.repo,
-      ref: sha,
+      file_sha: response.sha,
     })
-    .then(({ data: commitData }) => {
-      if (!commitData.files) {
-        throw new Error(`No files found in commit: ${sha}`)
-      }
 
-      const files = commitData.files.map((file) => ({
-        filename: file.filename,
-        contents_url: file.contents_url,
-      }))
-
-      return Promise.all(
-        files.map(async (file) => {
-          const content = await this.fetchFileContent(file.contents_url)
-          return { ...file, content: JSON.parse(Base64.decode(content)) }
-        }),
-      )
-    })
+    if (!blobData.content) {
+      throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
+    }
+    return blobData.content
+  }
+  return response.content
 }
 
-export const createBranch = async function (branchName) {
-  const branches = await this.octokit.rest.repos.listBranches({
+export async function branchExists(branchName) {
+  const { data: branches } = await this.octokit.rest.repos.listBranches({
     owner: this.owner,
     repo: this.repo,
   })
 
-  const branchExists = branches.data.some((branch) => branch.name === branchName)
+  return branches.some((branch) => branch.name === branchName)
+}
 
-  if (!branchExists) {
-    const mainBranch = await this.octokit.rest.repos.getBranch({
+export async function createBranch(branchName) {
+  if (!branchName) {
+    throw new Error('Branch name is required')
+  }
+
+  const exists = await this.branchExists(branchName)
+  const sourceBranch = 'main' // or use predefined default branch
+
+  if (!exists) {
+    const { data: mainBranch } = await this.octokit.rest.repos.getBranch({
       owner: this.owner,
       repo: this.repo,
-      branch: this.defaultBranch,
+      branch: sourceBranch,
     })
 
     await this.octokit.rest.git.createRef({
       owner: this.owner,
       repo: this.repo,
       ref: `refs/heads/${branchName}`,
-      sha: mainBranch.data.commit.sha,
+      sha: mainBranch.commit.sha,
     })
   }
 }
 
-export const updateFilesInSingleCommit = async function (commitMessage, files) {
+export async function updateFilesInSingleCommit(commitMessage, files) {
   const { data: refData } = await this.octokit.rest.git.getRef({
     owner: this.owner,
     repo: this.repo,
@@ -135,17 +156,25 @@ export const updateFilesInSingleCommit = async function (commitMessage, files) {
   })
 }
 
-// Moved functions
-export const updateGitFileContent = async function (filePath, cdcFileContent) {
-  const plainCdcContent = cdcFileContent
-  let getGitFileInfo = await this.getFile(filePath)
+export async function updateGitFileContent(filePath, cdcFileContent) {
+  let getGitFileInfo
 
-  if (!getGitFileInfo) {
-    console.log(`Creating new file: ${filePath}`)
-    getGitFileInfo = { content: '{}', sha: undefined }
+  try {
+    getGitFileInfo = await this.getFile(filePath)
+  } catch (error) {
+    if (error.status === 404) {
+      // Log missing file and prepare creating it
+      console.log(`Creating new file: ${filePath}`)
+      return {
+        path: filePath,
+        content: cdcFileContent,
+        sha: undefined,
+      }
+    }
+    throw error
   }
 
-  const rawGitContent = getGitFileInfo.content
+  const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
   let currentGitContent
   const currentGitContentDecoded = Base64.decode(rawGitContent)
   if (currentGitContentDecoded) {
@@ -164,8 +193,8 @@ export const updateGitFileContent = async function (filePath, cdcFileContent) {
     console.log(`Differences found, proceeding to update file: ${filePath}`)
     return {
       path: filePath,
-      content: plainCdcContent,
-      sha: getGitFileInfo.sha,
+      content: cdcFileContent,
+      sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
     }
   } else {
     console.log(`Files ${filePath} are identical. Skipping update.`)
@@ -173,7 +202,7 @@ export const updateGitFileContent = async function (filePath, cdcFileContent) {
   }
 }
 
-export const storeCdcDataInGit = async function (commitMessage) {
+export async function storeCdcDataInGit(commitMessage) {
   const configs = await this.fetchCDCConfigs()
   const files = Object.keys(configs).map((key) => ({
     path: `src/versionControl/${key}.json`,
@@ -182,8 +211,7 @@ export const storeCdcDataInGit = async function (commitMessage) {
 
   const fileUpdates = await Promise.all(
     files.map(async (file) => {
-      const updateFile = await this.updateGitFileContent(file.path, file.content)
-      return updateFile
+      return this.updateGitFileContent(file.path, file.content)
     }),
   )
 
@@ -195,95 +223,33 @@ export const storeCdcDataInGit = async function (commitMessage) {
   }
 }
 
-export function fetchFileContent(contents_url) {
-  console.log('fetchFileContent this:', this)
-  return this.octokit.request(contents_url).then(({ data: response }) => {
-    if (!response || !response.content) {
-      return this.octokit.rest.git
-        .getBlob({
-          owner: this.owner,
-          repo: this.repo,
-          file_sha: response.sha,
-        })
-        .then(({ data: blobData }) => {
-          if (!blobData.content) {
-            throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
-          }
-          return blobData.content
-        })
-    }
-    return response.content
-  })
-}
-
-export const getCommits = async function () {
+export async function getCommits() {
   let allCommits = []
   let page = 1
   const per_page = 100
 
-  while (true) {
-    const { data } = await this.octokit.rest.repos.listCommits({
-      owner: this.owner,
-      repo: this.repo,
-      sha: this.defaultBranch,
-      per_page,
-      page,
-    })
+  try {
+    while (true) {
+      const { data } = await this.octokit.rest.repos.listCommits({
+        owner: this.owner,
+        repo: this.repo,
+        sha: this.defaultBranch,
+        per_page,
+        page,
+      })
 
-    if (data.length === 0) break
+      if (data.length === 0) break
 
-    allCommits = allCommits.concat(data)
+      allCommits = allCommits.concat(data)
 
-    if (data.length < per_page) break
+      if (data.length < per_page) break
 
-    page += 1
+      page += 1
+    }
+  } catch (error) {
+    console.error(`Failed to fetch commits for branch: ${this.defaultBranch}`, error)
+    throw error
   }
 
   return allCommits
 }
-
-// export const applyCommitConfig = async function (commitSha) {
-//   const files = await getCommitFiles(commitSha)
-//   for (let file of files) {
-//     const fileType = getFileTypeFromFileName(file.filename)
-//     const filteredResponse = file.content
-
-//     switch (fileType) {
-//       case 'webSdk':
-//         await this.setWebSDK(filteredResponse)
-//         break
-//       case 'dataflow':
-//         await this.setDataflow(filteredResponse)
-//         break
-//       case 'emails':
-//         await this.setEmailTemplates(filteredResponse)
-//         break
-//       case 'extension':
-//         await this.setExtension(filteredResponse)
-//         break
-//       case 'policies':
-//         await this.setPolicies(filteredResponse)
-//         break
-//       case 'rba':
-//         await this.setRBA(filteredResponse)
-//         break
-//       case 'riskAssessment':
-//         await this.setRiskAssessment(filteredResponse)
-//         break
-//       case 'schema':
-//         await this.setSchema(filteredResponse)
-//         break
-//       case 'sets':
-//         await this.setScreenSets(filteredResponse)
-//         break
-//       case 'sms':
-//         await this.setSMS(filteredResponse)
-//         break
-//       case 'channel':
-//         await this.setChannel(filteredResponse)
-//         break
-//       default:
-//         console.warn(`Unknown file type: ${fileType}`)
-//     }
-//   }
-// }
