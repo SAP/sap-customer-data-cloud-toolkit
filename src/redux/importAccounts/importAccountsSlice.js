@@ -36,6 +36,11 @@ export const importAccountsSlice = createSlice({
       clearConfigurationsErrors(state.configurations)
       clearTargetSitesErrors(state.targetSites)
     },
+    clearConfigurations(state) {
+      state.configurations.forEach((configuration) => {
+        propagateConfigurationState(configuration, false)
+      })
+    },
     setSwitchOptions(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       propagateConfigurationSelectBox(configuration, action.payload)
@@ -99,7 +104,7 @@ export const importAccountsSlice = createSlice({
   },
 })
 
-export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
+export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (selectedValue, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
@@ -107,7 +112,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
 
   try {
     if (currentDataCenter) {
-      return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).importAccountToConfigTree()
+      return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).importAccountToConfigTree(selectedValue)
     }
   } catch (error) {}
 })
@@ -132,9 +137,11 @@ export const {
   getParentBranchById,
   getParentBranch,
   setSwitchOptions,
+  clearConfigurations,
 } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
+export const selectIsLoading = (state) => state.importAccounts.isLoading
 export const selectSugestionConfigurations = (state) => state.importAccounts.selectedConfiguration
 export const selectParentNode = (state) => state.importAccounts.parentNode
 export const selectSwitchId = (state) => state.switchId

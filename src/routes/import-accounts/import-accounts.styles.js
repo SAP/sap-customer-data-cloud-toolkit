@@ -14,6 +14,7 @@ const styles = {
     ...spacing.sapUiTinyMarginBottom,
     ...spacing.sapUiTinyMarginTop,
     ...spacing.sapUiSmallMarginBegin,
+    fontSize: '0.875rem', // Adjust the size as needed
   },
   currentInfoContainerTitle: {
     ...spacing.sapUiSmallMarginBottom,
@@ -21,41 +22,41 @@ const styles = {
   currentInfoContainer: {
     ...spacing.sapUiMediumMarginBegin,
     ...spacing.sapUiMediumMarginTop,
-    width: '100%',
+  },
+  cardHeaderStyle: {
+    ...spacing.sapUiSmallMarginTop,
+    ...spacing.sapUiSmallMarginBegin,
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',
-    overflow: 'scroll',
+    maxHeight: '80vh', // Adjust the height as needed
+    overflowY: 'auto',
   },
   headerOuterDivStyle: {
-    ...spacing.sapUiSmallMargin,
+    width: '100%',
   },
-  headerInnerDivStyle: {
-    ...spacing.sapUiTinyMargin,
-  },
+
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMarginBottom,
   },
+  searchBarGridItem: {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginRight: '15px',
+    marginTop: '22px',
+  },
   searchBarContainer: {
-    ...spacing.sapUiContentPadding,
-    ...spacing.sapUiMediumMarginBegin,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+
     ...spacing.sapUiLargeMarginTop,
-    float: 'right',
+    ...spacing.sapUiLargeMarginEnd,
   },
   componentTextStyle: {
     color: 'var(--sapNeutralElementColor)',
     ...spacing.sapUiTinyMarginBegin,
-  },
-  innerBarStyle: {
-    width: '300px',
-    position: 'absolute',
-    top: '5px',
-    right: '1px',
-    boxShadow: 'none',
-    zIndex: 10,
-    background: 'transparent',
-    textAlign: 'left',
-    marginLeft: '150px !important',
   },
 
   downloadTemplateButton: {
@@ -63,14 +64,7 @@ const styles = {
     marginRight: '15px !important',
     boxSizing: 'border-box',
   },
-  customSwitch: {
-    width: '500px',
-    height: '40px',
-    padding: '0 10px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    margin: '10px',
-  },
+
   buttonContainer: {
     display: 'flex',
     justifyContent: 'flex-end',

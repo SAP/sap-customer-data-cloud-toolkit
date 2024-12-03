@@ -10,7 +10,7 @@ import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../r
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button } from '@ui5/webcomponents-react'
+import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option } from '@ui5/webcomponents-react'
 import {
   getConfigurations,
   selectConfigurations,
@@ -19,10 +19,13 @@ import {
   setConfigurations,
   setSelectedConfiguration,
   setSwitchOptions,
+  selectIsLoading,
+  clearConfigurations,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
 import { getAllParentNodes } from './utils.js'
+import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
 
@@ -31,7 +34,7 @@ const ImportAccountsComponent = ({ t }) => {
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
-
+  const isLoading = useSelector(selectIsLoading)
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
@@ -42,11 +45,17 @@ const ImportAccountsComponent = ({ t }) => {
 
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurations())
+    dispatch(getConfigurations('Full'))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = () => {
     dispatch(setConfigurations())
+  }
+  const handleSelectChange = (event) => {
+    const selectedValue = event.target.value
+    console.log('selectedValue', selectedValue)
+    dispatch(getCurrentSiteInformation())
+    dispatch(getConfigurations(selectedValue))
   }
 
   const handleTreeNodeClick = (treeNodeId) => {
@@ -79,6 +88,9 @@ const ImportAccountsComponent = ({ t }) => {
     }
     return null
   }
+  const disableSaveButton = () => {
+    return !areConfigurationsFilled(configurations) || isLoading
+  }
   const showConfigurations = (config) => {
     return (
       <ImportAccountsConfigurations
@@ -90,6 +102,11 @@ const ImportAccountsComponent = ({ t }) => {
         selectedTreeNodeId={selectedTreeNodeId}
       />
     )
+  }
+  const onCancelHandler = () => {
+    if (!isLoading) {
+      dispatch(clearConfigurations())
+    }
   }
 
   return (
@@ -111,35 +128,68 @@ const ImportAccountsComponent = ({ t }) => {
               {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
             </Text>
           </FlexBox>
-          <Card header={<CardHeader titleText={t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')} />}>
+          <Card className={classes.cardContainer}>
+            <Title id="importAccountsTitle" data-cy="importAccountsTitle" level={TitleLevel.H3} className={classes.cardHeaderStyle}>
+              <span className={classes.titleSpanStyle}>Select Schema Fields</span>
+            </Title>
             <Grid>
               <>
                 <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
                   <Title level="H4" className={classes.currentInfoContainerTitle}>
-                    {t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
+                    Select Account Type
                   </Title>
-                  <ui5-select>
-                    <ui5-option>Full</ui5-option>
-                    <ui5-option>Lite</ui5-option>
-                  </ui5-select>
+                  <Select onChange={handleSelectChange}>
+                    <Option>Full</Option>
+                    <Option>Lite</Option>
+                  </Select>
                 </div>
-                <div className={classes.searchBarContainer} data-layout-span="XL5 L5 M5 S5">
-                  <SearchBar
-                    treeNodeInputValue={treeNodeInputValue}
-                    configurations={configurations}
-                    setSchemaInputValue={setSchemaInputValue}
-                    schemaInputValue={schemaInputValue}
-                    handleTreeNodeClick={handleTreeNodeClick}
-                  />
+                <div className={classes.searchBarGridItem} data-layout-span="XL7 L7 M7 S7">
+                  <div className={classes.searchBarContainer}>
+                    <SearchBar
+                      treeNodeInputValue={treeNodeInputValue}
+                      configurations={configurations}
+                      setSchemaInputValue={setSchemaInputValue}
+                      schemaInputValue={schemaInputValue}
+                      handleTreeNodeClick={handleTreeNodeClick}
+                    />
+                  </div>
                 </div>
               </>
             </Grid>
-            {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
-            <FlexBox justifyContent="End" className={classes.buttonContainer}>
-              <Button id="WorkBenchComponent" data-cy="WorkBenchComponent" className={classes.downloadTemplateButton} onClick={onSaveHandler}>
-                {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}
-              </Button>
-            </FlexBox>
+            <div className={classes.configurationContainer}>{showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}</div>
+
+            <div className={classes.selectConfigurationOuterDivStyle}>
+              <div className={classes.selectConfigurationInnerDivStyle}>
+                <Bar
+                  design="Footer"
+                  endContent={
+                    <div>
+                      <Button
+                        type="submit"
+                        id="copyConfigExtendedSaveButton"
+                        className="fd-button fd-button--emphasized fd-button--compact"
+                        onClick={onSaveHandler}
+                        data-cy="copyConfigExtendedSaveButton"
+                        design="Emphasized"
+                        disabled={disableSaveButton()}
+                      >
+                        Download Template
+                      </Button>
+                      <Button
+                        type="button"
+                        id="copyConfigExtendedCancelButton"
+                        data-cy="copyConfigExtendedCancelButton"
+                        className="fd-button fd-button--transparent fd-button--compact"
+                        disabled={isLoading}
+                        onClick={onCancelHandler}
+                      >
+                        {t('GLOBAL.CANCEL')}
+                      </Button>
+                    </div>
+                  }
+                ></Bar>
+              </div>
+            </div>
           </Card>
         </div>
       </div>

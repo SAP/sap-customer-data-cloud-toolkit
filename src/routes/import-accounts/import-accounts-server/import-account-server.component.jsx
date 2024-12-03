@@ -16,8 +16,8 @@ const AccountServerImport = ({ t }) => {
   return (
     <>
       <div className={classes.container}>
-        {/* <ImportAccountsComponent /> */}
-        <ServerImportComponent />
+        <ImportAccountsComponent />
+        {/* <ServerImportComponent /> */}
       </div>
     </>
   )
