@@ -28,6 +28,7 @@ export const ROUTE_COPY_CONFIG_EXTENDED = '/cdc-toolbox/copy-configuration-exten
 export const ROUTE_VERSION_CONTROL = '/cdc-toolbox/version-control'
 export const ROUTE_PRETTIER = '/user-interfacing/screen-sets-app/web/uiBuilder'
 export const ROUTE_PRETTIFY_ALL_SCREENS = '/user-interfacing/screen-sets-app'
+export const ROUTE_IMPORT_ACCOUNTS = '/cdc-toolbox/import-accounts'
 export const INCOMPATIBLE_ROUTE_FRAGMENTS = ['/flow-builder-web-app']
 export const MENU_ELEMENTS = [
   { name: 'Site Deployer', appendAfterText: 'Site Settings', route: ROUTE_SITE_DEPLOYER },
