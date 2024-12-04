@@ -11,50 +11,17 @@ describe('Revert', () => {
   const siteInfo = { dataCenter: 'testDataCenter' }
 
   const mockCommitFiles = [
-    {
-      content: JSON.stringify({ someProp: 'someValue for WebsdK' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/webSdk.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for EmailTemplates' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/emails.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for Extension' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/extension.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for Policies' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/policies.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for RBA' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/rba.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for ScreenSets' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/sets.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for SMS' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/sms.json',
-    },
-    {
-      content: JSON.stringify({ someProp: 'someValue for Schema' }),
-      contents_url: 'test-url',
-      filename: 'src/versionControl/schema.json',
-    },
+    { filename: 'src/versionControl/webSdk.json', content: JSON.stringify({ someProp: 'someValue for WebsdK' }), contents_url: 'test-url-webSdk' },
+    { filename: 'src/versionControl/emails.json', content: JSON.stringify({ someProp: 'someValue for EmailTemplates' }), contents_url: 'test-url-emails' },
+    { filename: 'src/versionControl/extension.json', content: JSON.stringify({ someProp: 'someValue for Extension' }), contents_url: 'test-url-extension' },
+    { filename: 'src/versionControl/policies.json', content: JSON.stringify({ someProp: 'someValue for Policies' }), contents_url: 'test-url-policies' },
+    { filename: 'src/versionControl/rba.json', content: JSON.stringify({ someProp: 'someValue for RBA' }), contents_url: 'test-url-rba' },
+    { filename: 'src/versionControl/sets.json', content: JSON.stringify({ someProp: 'someValue for ScreenSets' }), contents_url: 'test-url-sets' },
+    { filename: 'src/versionControl/sms.json', content: JSON.stringify({ someProp: 'someValue for SMS' }), contents_url: 'test-url-sms' },
+    { filename: 'src/versionControl/schema.json', content: JSON.stringify({ someProp: 'someValue for Schema' }), contents_url: 'test-url-schema' },
   ]
 
   beforeEach(() => {
-    // Initialize VersionControl
     versionControl = new VersionControl(credentials, apiKey, siteInfo)
   })
 
@@ -62,46 +29,53 @@ describe('Revert', () => {
     jest.clearAllMocks()
   })
 
-  test('Revert Flow', async () => {
-    let spyGetCommitFiles = jest.spyOn(versionControl, 'getCommitFiles').mockResolvedValue(
-      mockCommitFiles.map((file) => ({
-        ...file,
-        content: JSON.parse(file.content), // Ensure `content` is parsed
-      })),
-    )
+  test('applyCommitConfig works correctly', async () => {
+    jest.spyOn(versionControl, 'getCommitFiles').mockResolvedValue(mockCommitFiles.map((file) => ({ ...file, content: JSON.parse(file.content) })))
 
-    let spySetWebSDK = jest.spyOn(versionControl, 'setWebSDK').mockResolvedValue()
-    let spySetSMS = jest.spyOn(versionControl, 'setSMS').mockResolvedValue()
-    let spySetExtension = jest.spyOn(versionControl, 'setExtension').mockResolvedValue()
-    let spySetPolicies = jest.spyOn(versionControl, 'setPolicies').mockResolvedValue()
-    let spySetSchema = jest.spyOn(versionControl, 'setSchema').mockResolvedValue()
-    let spySetScreenSets = jest.spyOn(versionControl, 'setScreenSets').mockResolvedValue()
-    let spySetRBA = jest.spyOn(versionControl, 'setRBA').mockResolvedValue()
-    let spySetEmailTemplates = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
+    const configApplyMocks = ['setWebSDK', 'setEmailTemplates', 'setExtension', 'setPolicies', 'setRBA', 'setScreenSets', 'setSMS', 'setSchema'].reduce((acc, method) => {
+      acc[method] = jest.spyOn(versionControl, method).mockResolvedValue()
+      return acc
+    }, {})
 
-    const sha = 'cd082512618469bda1afb8eebc4c1692d3d50b05'
+    const sha = 'testSha'
     await versionControl.applyCommitConfig(sha)
 
-    // Validate that getCommitFiles and setWebSDK were called with expected args
+    expect(versionControl.getCommitFiles).toHaveBeenCalledWith(sha)
+    expect(versionControl.getCommitFiles).toHaveBeenCalledTimes(1)
 
-    expect(spyGetCommitFiles).toHaveBeenCalledWith(sha)
-    expect(spyGetCommitFiles).toHaveBeenCalledTimes(1)
+    const paramsByFilename = {
+      webSdk: { someProp: 'someValue for WebsdK' },
+      emails: { someProp: 'someValue for EmailTemplates' },
+      extension: { someProp: 'someValue for Extension' },
+      policies: { someProp: 'someValue for Policies' },
+      rba: { someProp: 'someValue for RBA' },
+      sets: { someProp: 'someValue for ScreenSets' },
+      sms: { someProp: 'someValue for SMS' },
+      schema: { someProp: 'someValue for Schema' },
+    }
 
-    expect(spySetWebSDK).toHaveBeenCalledWith({ someProp: 'someValue for WebsdK' })
-    expect(spySetWebSDK).toHaveBeenCalledTimes(1)
-    expect(spySetSMS).toHaveBeenCalledWith({ someProp: 'someValue for SMS' })
-    expect(spySetSMS).toHaveBeenCalledTimes(1)
-    expect(spySetExtension).toHaveBeenCalledWith({ someProp: 'someValue for Extension' })
-    expect(spySetExtension).toHaveBeenCalledTimes(1)
-    expect(spySetPolicies).toHaveBeenCalledWith({ someProp: 'someValue for Policies' })
-    expect(spySetPolicies).toHaveBeenCalledTimes(1)
-    expect(spySetSchema).toHaveBeenCalledWith({ someProp: 'someValue for Schema' })
-    expect(spySetSchema).toHaveBeenCalledTimes(1)
-    expect(spySetScreenSets).toHaveBeenCalledWith({ someProp: 'someValue for ScreenSets' })
-    expect(spySetScreenSets).toHaveBeenCalledTimes(1)
-    expect(spySetRBA).toHaveBeenCalledWith({ someProp: 'someValue for RBA' })
-    expect(spySetRBA).toHaveBeenCalledTimes(1)
-    expect(spySetEmailTemplates).toHaveBeenCalledWith({ someProp: 'someValue for EmailTemplates' })
-    expect(spySetEmailTemplates).toHaveBeenCalledTimes(1)
+    Object.keys(configApplyMocks).forEach((method, index) => {
+      const { filename } = mockCommitFiles[index]
+      const [type] = filename.split('/').slice(-1)
+      expect(configApplyMocks[method]).toHaveBeenCalledWith(paramsByFilename[type.split('.')[0]])
+      expect(configApplyMocks[method]).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  test('applyCommitConfig handles missing filenames', async () => {
+    const incompleteCommitFiles = [{ filename: 'src/versionControl/unknownFile.json', content: '{}' }]
+
+    jest.spyOn(versionControl, 'getCommitFiles').mockResolvedValue(incompleteCommitFiles.map((file) => ({ ...file, content: JSON.parse(file.content) })))
+
+    const configApplyMocks = ['setWebSDK', 'setSMS', 'setExtension', 'setPolicies', 'setSchema', 'setScreenSets', 'setRBA', 'setEmailTemplates'].reduce((acc, method) => {
+      acc[method] = jest.spyOn(versionControl, method).mockResolvedValue()
+      return acc
+    }, {})
+
+    await versionControl.applyCommitConfig('someSha')
+
+    Object.keys(configApplyMocks).forEach((method) => {
+      expect(configApplyMocks[method]).not.toHaveBeenCalled()
+    })
   })
 })

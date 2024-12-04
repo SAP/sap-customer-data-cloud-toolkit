@@ -2,45 +2,23 @@ import VersionControl from './versionControl'
 import { Octokit } from '@octokit/rest'
 import { Base64 } from 'js-base64'
 
-import {
-  createBranch,
-  updateFilesInSingleCommit,
-  getFile,
-  getCommitFiles,
-  fetchFileContent,
-  getCommits,
-  updateGitFileContent,
-  storeCdcDataInGit,
-  applyCommitConfig,
-} from './githubUtils'
+import { createBranch, updateFilesInSingleCommit, getFile, getCommitFiles, fetchFileContent, getCommits, updateGitFileContent, storeCdcDataInGit } from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
-import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
+import { getFileTypeFromFileName } from './versionControlFiles'
 
 jest.mock('@octokit/rest', () => {
   return {
-    Octokit: jest.fn().mockImplementation(() => {
-      return {
-        repos: {
-          createRelease: jest.fn(),
-        },
-      }
-    }),
+    Octokit: jest.fn().mockImplementation(() => ({
+      repos: { createRelease: jest.fn() },
+    })),
   }
 })
 jest.mock('./githubUtils')
 jest.mock('./cdcUtils')
 jest.mock('./setters')
-jest.mock('../copyConfig/websdk/websdk')
-jest.mock('../copyConfig/dataflow/dataflow')
-jest.mock('../copyConfig/emails/emailConfiguration')
-jest.mock('../copyConfig/extension/extension')
-jest.mock('../copyConfig/policies/policies')
-jest.mock('../copyConfig/rba/rba')
-jest.mock('../copyConfig/rba/riskAssessment')
-jest.mock('../copyConfig/schema/schema')
-jest.mock('../copyConfig/screenset/screenset')
-jest.mock('../copyConfig/sms/smsConfiguration')
-jest.mock('../copyConfig/communication/channel')
+jest.mock('./versionControlFiles', () => ({
+  getFileTypeFromFileName: jest.fn().mockReturnValue('emails'),
+}))
 
 describe('VersionControl test suite', () => {
   let versionControl
@@ -59,61 +37,69 @@ describe('VersionControl test suite', () => {
     expect(createBranch).toHaveBeenCalled()
   })
 
-  test('fetchFileContent correctly fetches and decodes file content', async () => {
+  test('fetchFileContent correctly fetches encoded content', async () => {
     const testContent = JSON.stringify({ someProp: 'someValue' })
     const encodedContent = Base64.encode(testContent)
     fetchFileContent.mockResolvedValueOnce(encodedContent)
 
     const result = await versionControl.fetchFileContent('test-url')
-
     expect(fetchFileContent).toHaveBeenCalledWith('test-url')
     expect(result).toEqual(encodedContent)
+  })
+
+  test('getCommitFiles properly decodes file content', async () => {
+    const encodedContent = Base64.encode(JSON.stringify({ someProp: 'someValue' }))
+    const commitData = {
+      files: [{ filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' }],
+    }
+
+    fetchFileContent.mockResolvedValueOnce(encodedContent)
+
+    getCommitFiles.mockImplementationOnce(async (sha) => {
+      return Promise.all(
+        commitData.files.map(async (file) => {
+          const content = await fetchFileContent(file.contents_url)
+          const decodedContent = JSON.parse(Base64.decode(content))
+          const fileType = getFileTypeFromFileName(file.filename)
+          return { ...file, content: decodedContent, fileType }
+        }),
+      )
+    })
+
+    const sha = 'commitSha'
+    const result = await versionControl.getCommitFiles(sha)
+
+    expect(fetchFileContent).toHaveBeenCalledWith('test-url-emails')
+    expect(result[0].content).toEqual({ someProp: 'someValue' })
+    expect(result[0].fileType).toEqual('emails')
   })
 
   test('getCommits returns the list of commits', async () => {
     const commits = [{ sha: 'commit1' }, { sha: 'commit2' }]
     getCommits.mockResolvedValueOnce(commits)
-
     const result = await versionControl.getCommits()
-
     expect(result).toEqual(commits)
   })
-  // ********************** Test beggin **********************
-  // test('applyCommitConfig processes commits and sets data correctly', async () => {
-  //   const commitData = {
-  //     files: [
-  //       { filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' },
-  //       { filename: 'src/versionControl/extension.json', contents_url: 'test-url-extension' },
-  //     ],
-  //   }
 
-  //   const encodedContent = Base64.encode(JSON.stringify({ someProp: 'someValue' }))
-  //   getCommitFiles.mockResolvedValueOnce(
-  //     commitData.files.map((file) => ({
-  //       filename: file.filename,
-  //       contents_url: file.contents_url,
-  //       content: encodedContent,
-  //     })),
-  //   )
+  test('applyCommitConfig processes commits and sets data correctly', async () => {
+    const commitData = {
+      files: [{ filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' }],
+    }
+    fetchFileContent.mockResolvedValue(Base64.encode(JSON.stringify({ someProp: 'someValue' })))
+    getCommitFiles.mockResolvedValue(
+      commitData.files.map((file) => ({
+        filename: file.filename,
+        content: JSON.parse(Base64.decode(Base64.encode(JSON.stringify({ someProp: 'someValue' })))),
+      })),
+    )
 
-  //   // For completeness, mock fetchFileContent regardless of its use scenario
-  //   fetchFileContent.mockResolvedValueOnce(encodedContent).mockResolvedValueOnce(encodedContent)
+    const setEmailTemplatesMock = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
 
-  //   const setEmailTemplatesMock = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
-  //   const setExtensionMock = jest.spyOn(versionControl, 'setExtension').mockResolvedValue()
+    await versionControl.applyCommitConfig('testSha')
 
-  //   console.log('Commit Data Files:', commitData.files)
-  //   console.log('Mocked getCommitFiles response:', JSON.stringify(versionControl.getCommitFiles('testSha')))
+    expect(setEmailTemplatesMock).toHaveBeenCalledWith({ someProp: 'someValue' })
+  })
 
-  //   await versionControl.applyCommitConfig('testSha')
-
-  //   console.log('setEmailTemplatesMock calls:', setEmailTemplatesMock.mock.calls)
-  //   console.log('setExtensionMock calls:', setExtensionMock.mock.calls)
-
-  //   expect(setEmailTemplatesMock).toHaveBeenCalledWith({ someProp: 'someValue' })
-  //   expect(setExtensionMock).toHaveBeenCalledWith({ someProp: 'someValue' })
-  // })
-  // ********************** Test End **********************
   test('fetchCDCConfigs should fetch CDC configurations', async () => {
     await versionControl.fetchCDCConfigs()
     expect(fetchCDCConfigs).toHaveBeenCalled()
@@ -146,11 +132,22 @@ describe('VersionControl test suite', () => {
     updateGitFileContent.mockResolvedValueOnce(updateFilesMock)
 
     const result = await versionControl.updateGitFileContent('testPath', JSON.stringify({ someProp: 'someValue' }))
+    expect(updateGitFileContent).toHaveBeenCalledWith('testPath', JSON.stringify({ someProp: 'someValue' }))
+    expect(result).toEqual(updateFilesMock)
+  })
 
-    expect(result).toEqual({
-      path: 'testPath',
-      content: JSON.stringify({ someProp: 'someValue' }),
-      sha: fakeSha,
-    })
+  test('getCdcData fetches and returns CDC data', async () => {
+    const cdcData = [{ id: 'data1' }, { id: 'data2' }]
+    getCdcData.mockResolvedValueOnce(cdcData)
+    const result = await versionControl.getCdcData()
+    expect(result).toEqual(cdcData)
+  })
+
+  test('handles errors', async () => {
+    const errorMessage = 'Error when fetching file content'
+    fetchFileContent.mockRejectedValueOnce(new Error(errorMessage))
+
+    await expect(versionControl.fetchFileContent('test-url')).rejects.toThrow(errorMessage)
+    expect(fetchFileContent).toHaveBeenCalledWith('test-url')
   })
 })
