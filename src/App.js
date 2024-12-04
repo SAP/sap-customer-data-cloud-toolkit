@@ -29,6 +29,7 @@ import { requestConsentConfirmation } from './lib/tracker'
 import PrettifyAllScreens from './routes/prettify-code/prettify-all-screens-javascript.component'
 import PrettifySingleScreenComponent from './routes/prettify-code/prettify-single-screen.component'
 import VersionControlComponent from './routes/version-control/version-control.component'
+
 import ImportAccountsComponent from './routes/import-accounts/importAccounts.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
@@ -57,6 +58,9 @@ function App() {
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIFY_ALL_SCREENS}>
           <PrettifyAllScreens />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_IMPORT_ACCOUNTS}>
+          <ImportAccountsComponent />
         </div>
       </div>
     </ThemeProvider>
