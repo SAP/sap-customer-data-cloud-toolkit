@@ -17,7 +17,7 @@ jest.mock('./githubUtils')
 jest.mock('./cdcUtils')
 jest.mock('./setters')
 jest.mock('./versionControlFiles', () => ({
-  getFileTypeFromFileName: jest.fn().mockReturnValue('emails'),
+  getFileTypeFromFileName: jest.fn(),
 }))
 
 describe('VersionControl test suite', () => {
@@ -27,8 +27,10 @@ describe('VersionControl test suite', () => {
   const siteInfo = { dataCenter: 'testDataCenter' }
 
   beforeEach(() => {
+    console.log('Setting up test environment')
     versionControl = new VersionControl(credentials, apiKey, siteInfo)
     jest.clearAllMocks()
+    getFileTypeFromFileName.mockReturnValueOnce('emails') // Ensure it returns 'emails'
   })
 
   test('createBranch creates a new branch if it does not exist', async () => {
@@ -48,26 +50,51 @@ describe('VersionControl test suite', () => {
   })
 
   test('getCommitFiles properly decodes file content', async () => {
+    console.log('Starting test for getCommitFiles')
+
     const encodedContent = Base64.encode(JSON.stringify({ someProp: 'someValue' }))
     const commitData = {
-      files: [{ filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' }],
+      files: [
+        {
+          filename: 'src/versionControl/emails.json',
+          contents_url: 'test-url-emails',
+        },
+      ],
     }
 
-    fetchFileContent.mockResolvedValueOnce(encodedContent)
-
-    getCommitFiles.mockImplementationOnce(async (sha) => {
-      return Promise.all(
-        commitData.files.map(async (file) => {
-          const content = await fetchFileContent(file.contents_url)
-          const decodedContent = JSON.parse(Base64.decode(content))
-          const fileType = getFileTypeFromFileName(file.filename)
-          return { ...file, content: decodedContent, fileType }
-        }),
-      )
+    fetchFileContent.mockImplementation((url) => {
+      console.log(`Mocking fetchFileContent with URL: ${url}`)
+      if (url === 'test-url-emails') {
+        return Promise.resolve(encodedContent)
+      }
+      return Promise.reject(new Error(`Unknown URL: ${url}`))
     })
 
+    getFileTypeFromFileName.mockReturnValueOnce('emails')
+    console.log('File type setup complete')
+
     const sha = 'commitSha'
+    getCommitFiles.mockImplementation(async (shaValue) => {
+      console.log('getCommitFiles for SHA:', shaValue)
+      if (shaValue === 'commitSha') {
+        const files = await Promise.all(
+          commitData.files.map(async (file) => ({
+            ...file,
+            content: await fetchFileContent(file.contents_url),
+          })),
+        )
+        console.log('Files in commit:', files)
+        return files.map((file) => ({
+          ...file,
+          content: JSON.parse(Base64.decode(file.content)),
+          fileType: 'emails',
+        }))
+      }
+      throw new Error(`Unknown SHA: ${shaValue}`)
+    })
+
     const result = await versionControl.getCommitFiles(sha)
+    console.log('Result from getCommitFiles:', result)
 
     expect(fetchFileContent).toHaveBeenCalledWith('test-url-emails')
     expect(result[0].content).toEqual({ someProp: 'someValue' })
@@ -83,10 +110,22 @@ describe('VersionControl test suite', () => {
 
   test('applyCommitConfig processes commits and sets data correctly', async () => {
     const commitData = {
-      files: [{ filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' }],
+      files: [
+        {
+          filename: 'src/versionControl/emails.json',
+          contents_url: 'test-url-emails',
+        },
+      ],
     }
-    fetchFileContent.mockResolvedValue(Base64.encode(JSON.stringify({ someProp: 'someValue' })))
-    getCommitFiles.mockResolvedValue(
+
+    fetchFileContent.mockImplementation(async (url) => {
+      if (url === 'test-url-emails') {
+        return Base64.encode(JSON.stringify({ someProp: 'someValue' }))
+      }
+      throw new Error(`Unknown URL: ${url}`)
+    })
+
+    getCommitFiles.mockResolvedValueOnce(
       commitData.files.map((file) => ({
         filename: file.filename,
         content: JSON.parse(Base64.decode(Base64.encode(JSON.stringify({ someProp: 'someValue' })))),
@@ -125,10 +164,18 @@ describe('VersionControl test suite', () => {
 
   test('updateGitFileContent updates or creates a file on GitHub', async () => {
     const fakeSha = 'fakeSha'
-    const fileContentMock = { content: Base64.encode(JSON.stringify({ someProp: 'someValue' })), sha: fakeSha, name: 'testFile' }
+    const fileContentMock = {
+      content: Base64.encode(JSON.stringify({ someProp: 'someValue' })),
+      sha: fakeSha,
+      name: 'testFile',
+    }
     getFile.mockResolvedValueOnce(fileContentMock)
 
-    const updateFilesMock = { path: 'testPath', content: JSON.stringify({ someProp: 'someValue' }), sha: fakeSha }
+    const updateFilesMock = {
+      path: 'testPath',
+      content: JSON.stringify({ someProp: 'someValue' }),
+      sha: fakeSha,
+    }
     updateGitFileContent.mockResolvedValueOnce(updateFilesMock)
 
     const result = await versionControl.updateGitFileContent('testPath', JSON.stringify({ someProp: 'someValue' }))
@@ -143,7 +190,7 @@ describe('VersionControl test suite', () => {
     expect(result).toEqual(cdcData)
   })
 
-  test('handles errors', async () => {
+  test('handles errors gracefully', async () => {
     const errorMessage = 'Error when fetching file content'
     fetchFileContent.mockRejectedValueOnce(new Error(errorMessage))
 
