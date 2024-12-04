@@ -35,6 +35,7 @@ export const MENU_ELEMENTS = [
   { name: 'SMS Templates', route: ROUTE_SMS_TEMPLATES },
   { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
   { name: 'GitHub Version Control', appendAfterText: 'Certificate Provisioning', route: ROUTE_VERSION_CONTROL },
+  { name: 'Import Accounts', appendAfterText: 'Dataflows', route: ROUTE_IMPORT_ACCOUNTS },
   { name: 'Prettier', route: ROUTE_PRETTIER },
   { name: 'Prettify all screens', route: ROUTE_PRETTIFY_ALL_SCREENS },
 ]
