@@ -1,7 +1,7 @@
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
-import { getApiKey } from '../utils'
-import { setParentsTrue, propagateConfigurationState, propagateConfigurationSelectBox, propagateSugestionState, getAllConfiguration } from './utils'
+import { getApiKey, getErrorAsArray } from '../utils'
+import { setParentsTrue, propagateConfigurationState, propagateConfigurationSelectBox, getAllConfiguration, getParent } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurations`
@@ -23,8 +23,8 @@ export const importAccountsSlice = createSlice({
   reducers: {
     setConfigurationStatus(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      setParentsTrue(state.configurations, action.payload.checkBoxId)
-      propagateConfigurationState(configuration, action.payload.value)
+
+      setParentsTrue(state.configurations, action.payload.checkBoxId, action.payload.value)
     },
     getConfiguration(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
@@ -47,27 +47,19 @@ export const importAccountsSlice = createSlice({
     },
     setSugestionSchema(state, action) {
       const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
-      setParentsTrue(state.selectedConfiguration, action.payload.checkBoxId)
-      propagateConfigurationState(configuration, action.payload.value)
+      setParentsTrue(state.selectedConfiguration, action.payload.checkBoxId, action.payload.value)
     },
-    setSingleConfigurationStatus(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      configuration.value = action.payload.value
-    },
-    getParentBranch(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      state.configurations = [configuration]
-    },
-    getParentBranchById(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      state.parentNode = [configuration]
-    },
+
     setMandatoryStatus(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      configuration.mandatory = true
-      configuration.value = true
+      const parent = getParent(state.configurations, 'communications', action.payload.checkBoxId)
+      if (parent) {
+        configuration.mandatory = true
+        configuration.value = true
+      }
     },
     setSelectedConfiguration(state, action) {
+      console.log('action.payload--->', action.payload)
       const configuration = getAllConfiguration(state.configurations, action.payload)
       state.selectedConfiguration = configuration
     },
@@ -114,7 +106,9 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
     if (currentDataCenter) {
       return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).importAccountToConfigTree(selectedValue)
     }
-  } catch (error) {}
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error))
+  }
 })
 
 export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
@@ -125,20 +119,12 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
 
   try {
     return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
-  } catch (error) {}
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error))
+  }
 })
-export const {
-  setMandatoryStatus,
-  setSelectedConfiguration,
-  setConfigurationStatus,
-  clearErrors,
-  setSugestionSchema,
-  setSingleConfigurationStatus,
-  getParentBranchById,
-  getParentBranch,
-  setSwitchOptions,
-  clearConfigurations,
-} = importAccountsSlice.actions
+export const { setMandatoryStatus, setSelectedConfiguration, setConfigurationStatus, clearErrors, setSugestionSchema, setSwitchOptions, clearConfigurations } =
+  importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectIsLoading = (state) => state.importAccounts.isLoading

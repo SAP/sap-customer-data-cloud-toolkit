@@ -15,41 +15,115 @@ export const propagateSugestionState = (configuration, value) => {
     })
   }
 }
-export const getAllConfiguration = (branches, targetId) => {
-  for (const branch of branches) {
-    if (branch.id === targetId) {
-      return [branch]
-    }
-    if (branch.branches.length > 0) {
-      const path = getAllConfiguration(branch.branches, targetId)
-      if (path.length > 0) {
-        return [{ ...branch, branches: path }]
+export const getAllConfiguration = (configurations, ids) => {
+  const result = []
+
+  ids.forEach((id) => {
+    const path = id.split('.')
+    let currentLevel = configurations
+    let parentConfig = null
+
+    path.forEach((part, index) => {
+      const configId = path.slice(0, index + 1).join('.')
+      const config = currentLevel.find((c) => c.id === configId || c.id.endsWith(`.${part}`) || c.id === part)
+      if (config) {
+        if (!parentConfig) {
+          parentConfig = findOrCreateConfig(result, config)
+        } else {
+          parentConfig = findOrCreateConfig(parentConfig.branches, config)
+        }
+        currentLevel = config.branches
       }
+    })
+
+    // Ensure children are included
+    if (parentConfig && parentConfig.branches.length === 0) {
+      parentConfig.branches = currentLevel
     }
-  }
-  return []
+  })
+
+  return result
 }
-export const setParentsTrue = (structure, childId) => {
+
+const findOrCreateConfig = (configs, config) => {
+  let existingConfig = configs.find((c) => c.id === config.id)
+  if (!existingConfig) {
+    existingConfig = { ...config, branches: [] }
+    configs.push(existingConfig)
+  }
+  return existingConfig
+}
+
+export const setParentsTrue = (structure, childId, value) => {
   function traverse(branches, childId, setParent) {
     for (let branch of branches) {
       if (branch.id === childId) {
-        return true
+        propagateConfigurationState(branch, value)
+        return value
       }
       if (traverse(branch.branches, childId, setParent)) {
         branch.value = setParent
-        return true
+        return value
       }
     }
     return false
   }
 
-  traverse(structure, childId, true)
+  function checkAndSetParents(branches) {
+    for (let branch of branches) {
+      if (branch.branches && branch.branches.length > 0) {
+        checkAndSetParents(branch.branches)
+        branch.value = branch.branches.some((child) => child.value)
+      }
+    }
+  }
+
+  traverse(structure, childId, value)
+  checkAndSetParents(structure)
 }
-export const propagateConfigurationSelectBox = (configuration, operation) => {
+export const getParent = (structure, parentId, targetId) => {
+  const findParent = (nodes) => {
+    for (const node of nodes) {
+      if (node.id === parentId) {
+        return node
+      }
+      if (node.branches && node.branches.length > 0) {
+        const result = findParent(node.branches)
+        if (result) {
+          return result
+        }
+      }
+    }
+    return null
+  }
+
+  const parent = findParent(structure)
+  if (!parent) {
+    return false
+  }
+
+  const traverse = (nodes) => {
+    for (const node of nodes) {
+      if (node.id === targetId) {
+        return true
+      }
+      if (node.branches && node.branches.length > 0) {
+        const result = traverse(node.branches)
+        if (result) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  return traverse(parent.branches)
+}
+export const propagateConfigurationSelectBox = (configuration, payload) => {
+  configuration.switchId = payload.operation
   for (let branch of configuration.branches) {
-    console.log('branch....>', branch)
     if (branch.branches.length === 0) {
-      branch.switchId = operation
+      branch.switchId = payload.operation
     }
   }
 }

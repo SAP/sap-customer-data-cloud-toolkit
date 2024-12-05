@@ -28,7 +28,6 @@ function transformSchemaField(key, value) {
 function transformSchema(fields, parentKey) {
   const transformedSchema = []
   for (let key in fields) {
-    console.log('key', key)
     if (fields.hasOwnProperty(key)) {
       const fieldDetail = fields[key]
       const splitKeys = key.split('.')
@@ -44,10 +43,6 @@ function transformSchema(fields, parentKey) {
         continue
       }
 
-      if (parentKey === 'addressSchema' && splitKeys.length > 1) {
-        currentLevel = transformAddresses(splitKeys, currentLevel, accumulatedKey)
-        continue
-      }
       splitKeys.forEach((part, index) => {
         let id
         accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
@@ -93,27 +88,4 @@ function transformSubscriptions(splitKeys, currentLevel, accumulatedKey) {
     currentLevel.push(existing)
   }
   return existing
-}
-function transformAddresses(splitKeys, currentLevel, accumulatedKey) {
-  for (let index = 0; index < splitKeys.length; index++) {
-    let id
-    if (index === 0) {
-      id = splitKeys[index] // First level id
-    } else {
-      id = splitKeys.slice(0, index + 1).join('.') // Subsequent levels id
-    }
-
-    let existing = currentLevel.find((item) => item.id === id)
-    if (!existing) {
-      existing = {
-        id: accumulatedKey ? `${accumulatedKey}.${id}` : id,
-        name: id,
-        value: false,
-        branches: [],
-      }
-      currentLevel.push(existing)
-    }
-    currentLevel = existing.branches
-  }
-  return currentLevel
 }

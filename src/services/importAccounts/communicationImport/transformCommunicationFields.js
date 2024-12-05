@@ -28,23 +28,23 @@ function transformCommunications(communications) {
 
   const channels = {}
 
-  Object.values(communications).forEach((item, index) => {
-    if (!channels[item.channel]) {
-      channels[item.channel] = {
+  Object.values(communications).forEach((item) => {
+    if (!channels[item.topicChannelId]) {
+      channels[item.topicChannelId] = {
         id: item.topicChannelId,
         name: item.topicChannelId,
         value: false,
         branches: [],
       }
     }
+
     const statusBranch = {
       id: `${item.topicChannelId}.status`,
       name: 'status',
       value: false,
       branches: [],
     }
-
-    channels[item.channel].branches = [statusBranch]
+    channels[item.topicChannelId].branches.push(statusBranch)
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties
       const optInBranches = Object.keys(optInProperties).map((key) => ({
@@ -53,9 +53,7 @@ function transformCommunications(communications) {
         value: false,
         branches: [],
       }))
-      console.log('id...>', `${item.topicChannelId}`)
-      console.log('optInBranches', optInBranches)
-      channels[item.channel].branches.push(...optInBranches)
+      channels[item.topicChannelId].branches.push(...optInBranches)
     }
   })
 

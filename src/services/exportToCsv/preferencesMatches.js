@@ -1,29 +1,27 @@
-import { getOptionsFromTree, processArray } from './utils/utils'
-
-export function exportPreferencesData(items, preferencesData) {
-  const { ids: options, switchIds: switchOptions } = getOptionsFromTree(items)
-  const optionKeys = findMatches(options)
+export function exportPreferencesData(items) {
+  const optionKeys = findMatches(items)
   if (optionKeys === undefined) {
     return
   }
-  let switchRemoveFields = []
-  if (switchOptions.length > 0) {
-    const switchKeys = findMatches(preferencesData, switchOptions)
-    switchRemoveFields = switchKeys.map((item) => {
-      return item.replace('.fields', '').replace('Schema', '')
-    })
-    switchRemoveFields = processArray(switchRemoveFields)
-  }
-  const removeFields = [...new Set([...optionKeys, ...switchRemoveFields])]
-  console.log('removeFieldspreferences', removeFields)
-  return removeFields
+
+  return optionKeys
 }
 const findMatches = (obj) => {
   const results = []
-  for (let key of obj) {
-    if (key.branches.length === 0) {
-      results.push(`${key.id}`)
+
+  const traverse = (node) => {
+    if (node.branches.length === 0) {
+      results.push(`${node.id}`)
+    } else {
+      for (let branch of node.branches) {
+        traverse(branch)
+      }
     }
   }
+
+  for (let key of obj) {
+    traverse(key)
+  }
+
   return results
 }

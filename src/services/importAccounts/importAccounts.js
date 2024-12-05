@@ -1,6 +1,4 @@
-import Topic from '../copyConfig/communication/topic'
 import ConsentStatement from '../copyConfig/consent/consentStatement'
-import Schema from '../copyConfig/schema/schema'
 import { exportCommunicationData } from '../exportToCsv/communicationMatches'
 import { createCSVFile } from '../exportToCsv/exportToCsv'
 import { exportPasswordData } from '../exportToCsv/passwordMatches'
@@ -10,8 +8,8 @@ import TopicImportFields from './communicationImport/communicationImport'
 import { passwordImportTreeFields } from './passwordImport/passwordImport'
 import PreferencesImportFields from './preferencesImport/preferencesImport'
 import SchemaImportFields from './schemaImport/schemaImportFields'
-import { extractAndTransformFields } from './utils'
 import { rootOptionsValue } from './rootOptions/rootOptions'
+import { getContext, getLiteRootElementsStructure, getRootElementsStructure, getUID } from './rootOptions/rootLevelFields'
 class ImportAccounts {
   #credentials
   #site
@@ -32,14 +30,19 @@ class ImportAccounts {
 
   async importAccountToConfigTree(selectedValue) {
     const result = []
-    result.push(...(await this.#schemaFields.exportTransformedSchemaData()))
-    result.push(...(await this.#preferences.exportTransformedPreferencesData()))
-    result.push(...(await this.#topic.exportTransformedCommunicationData()))
     if (selectedValue === 'Full') {
-      result.push(...this.getRootElementsStructure())
+      result.push(...getUID())
+      result.push(...(await this.#schemaFields.exportTransformedSchemaData()))
+      result.push(...(await this.#preferences.exportTransformedPreferencesData()))
+      result.push(...(await this.#topic.exportTransformedCommunicationData()))
+      result.push(...passwordImportTreeFields())
+      result.push(...getRootElementsStructure())
     }
     if (selectedValue === 'Lite') {
-      result.push(...this.getLiteRootElementsStructure())
+      result.push(...getLiteRootElementsStructure())
+      result.push(...(await this.#schemaFields.exportLiteSchemaData()))
+      result.push(...(await this.#preferences.exportTransformedPreferencesData()))
+      result.push(...getContext())
     }
     return result
   }
@@ -47,29 +50,26 @@ class ImportAccounts {
   async exportDataToCsv(items) {
     let result = []
     const options = this.getOptionsFromTree(items)
-    const { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions } = this.separateDataAndSubscriptions(items)
-    const cleanSchemaData = await this.#schemaFields.exportSchemaData()
-    const cleanPreferencesData = await this.#preferences.exportPreferencesData()
-    const cleanTopicData = await this.#topic.exportTopicData()
-    if (data) {
-      result.push(...exportSchemaData(data, cleanSchemaData))
+    const { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions } = this.seperateOptionsFromTree(items)
+    if (data.length > 0) {
+      result.push(...exportSchemaData(data))
     }
-    if (preferencesOptions) {
-      result.push(...exportPreferencesData(preferencesOptions, cleanPreferencesData))
+    if (preferencesOptions.length > 0) {
+      const preferencesData = exportPreferencesData(preferencesOptions)
+      result.push(...preferencesData)
     }
-    if (communicationsOptions) {
-      result.push(...exportCommunicationData(communicationsOptions, cleanTopicData))
+    if (communicationsOptions.length > 0) {
+      result.push(...exportCommunicationData(communicationsOptions))
     }
-    if (passwordOptions) {
+    if (passwordOptions.length > 0) {
       result.push(...exportPasswordData(passwordOptions))
     }
-    if (rootOptions) {
+    if (rootOptions.length > 0) {
       result.push(...rootOptionsValue(rootOptions))
     }
-    console.log('result', result)
     createCSVFile(result)
   }
-  separateDataAndSubscriptions(items) {
+  seperateOptionsFromTree(items) {
     const data = []
     const preferencesOptions = []
     const communicationsOptions = []
@@ -79,23 +79,25 @@ class ImportAccounts {
     const preferences = 'preferences'
     const communications = 'communications'
     const password = 'password'
+    const rootElements = this.getRootElements()
+
     items.forEach((item) => {
-      if (schemaFields.some((field) => item.id.startsWith(field))) {
-        data.push(item)
-      } else if (item.id.startsWith(preferences)) {
-        preferencesOptions.push(item)
-      } else if (item.id.startsWith(preferences)) {
-        preferencesOptions.push(item)
-      } else if (item.id.startsWith(communications)) {
-        communicationsOptions.push(item)
-      } else if (item.id.startsWith(password)) {
-        passwordOptions.push(item)
-      } else if (item.id === 'isActive' || item.id === 'isRegistered' || item.id === 'isVerified' || item.id === 'uid' || item.id === 'email') {
+      if (rootElements.some((root) => item.id === root && item.value === true)) {
         rootOptions.push(item)
+      } else if (schemaFields.some((field) => item.id.startsWith(field) && item.value === true)) {
+        data.push(item)
+      } else if (item.id.startsWith(preferences) && item.value === true) {
+        preferencesOptions.push(item)
+      } else if (item.id.startsWith(communications) && item.value === true) {
+        communicationsOptions.push(item)
+      } else if (item.id.startsWith(password) && item.value === true) {
+        passwordOptions.push(item)
       }
     })
-
     return { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions }
+  }
+  getRootElements() {
+    return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']
   }
   getOptionsFromTree(items) {
     let ids = []
@@ -117,46 +119,6 @@ class ImportAccounts {
     })
 
     return { ids, switchIds }
-  }
-  getRootElementsStructure() {
-    const rootElementsStructure = [
-      {
-        id: 'uid',
-        name: 'uid',
-        value: true,
-        branches: [],
-      },
-      {
-        id: 'isActive',
-        name: 'isActive',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'isRegistered',
-        name: 'isRegistered',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'isVerified',
-        name: 'isVerified',
-        value: false,
-        branches: [],
-      },
-    ]
-    return rootElementsStructure
-  }
-  getLiteRootElementsStructure() {
-    const rootElementsStructure = [
-      {
-        id: 'email',
-        name: 'email',
-        value: false,
-        branches: [],
-      },
-    ]
-    return rootElementsStructure
   }
 }
 

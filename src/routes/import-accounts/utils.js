@@ -5,7 +5,7 @@ export const extractIds = (data) => {
     if (Array.isArray(node)) {
       node.forEach(traverse)
     } else {
-      if (node.id) {
+      if (node.id && node.branches.length === 0) {
         ids.add(node.id)
       }
       if (node.branches && node.branches.length > 0) {

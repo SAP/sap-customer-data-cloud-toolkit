@@ -13,17 +13,15 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
   const [suggestions, setSuggestions] = useState([])
 
   const onTargetSchemaInputHandler = (event) => {
-    console.log('configurationsSearch', [configurations])
     const allNames = extractIds([configurations])
-    console.log('allNames', allNames)
     const value = event.target.value
 
     setSchemaInputValue(value)
     if (value !== '') {
       const filteredSuggestions = allNames.filter((name) => name.includes(value))
       setSuggestions(filteredSuggestions)
-      if (filteredSuggestions) {
-        handleTreeNodeClick(filteredSuggestions[0])
+      if (filteredSuggestions.length) {
+        handleTreeNodeClick(filteredSuggestions)
       }
     }
     if (value === '') {
@@ -35,7 +33,7 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
     const inputValue = event.target.value.trim()
     if (event.type === 'change') {
       setSchemaInputValue(inputValue)
-      handleTreeNodeClick(inputValue)
+      handleTreeNodeClick([inputValue])
     }
   }
 

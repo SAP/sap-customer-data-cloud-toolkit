@@ -24,7 +24,7 @@ import {
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-import { getAllParentNodes } from './utils.js'
+
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Accounts'
@@ -42,7 +42,7 @@ const ImportAccountsComponent = ({ t }) => {
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
   const [selectedTreeNodeId, setSelectedTreeNodeId] = useState([])
-
+  console.log('configurations--->', configurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations('Full'))
@@ -61,10 +61,7 @@ const ImportAccountsComponent = ({ t }) => {
   const handleTreeNodeClick = (treeNodeId) => {
     let parentNodes = configurations
     if (treeNodeId) {
-      // parentNodes = getAllParentNodes(configurations, treeNodeId)
       dispatch(setSelectedConfiguration(treeNodeId))
-      console.log('PARENT selectedConfigurations--->', selectedConfigurations)
-      // setSelectedTreeNodeId(parentNodes)
       setTreeNodeInputValue(treeNodeId)
       setExpandableNode(true)
     } else {

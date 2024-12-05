@@ -10,7 +10,5 @@ export const handleSelectChange = (event, treeNodeId, setSwitchOptions, dispatch
 
   dispatch(setSwitchOptions({ checkBoxId: treeNodeId, operation: selectedButton }))
 
-  dispatch(setSwitchOptions({ checkBoxId: treeNodeId, operation: selectedValue }))
-
   setTreeData([...treeData.branches])
 }

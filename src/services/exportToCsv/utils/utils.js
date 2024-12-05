@@ -2,44 +2,90 @@ import { generateSubscriptionStrings } from '../schemaMatches'
 
 export function getOptionsFromTree(items) {
   let ids = []
-  let switchIds = []
 
   items.forEach((item) => {
     if (item.value === true) {
-      if (item.switchId && item.branches.length === 0) {
-        console.log('item', item)
-        switchIds.push(item)
-      } else {
-        ids.push(item)
-      }
-    }
-    if (item.branches && item.branches.length > 0) {
-      const { ids: childIds, switchIds: childSwitchIds } = getOptionsFromTree(item.branches)
-      ids = ids.concat(childIds)
-      switchIds = switchIds.concat(childSwitchIds)
-    }
-  })
-
-  return { ids, switchIds }
-}
-export function getOptionsFromSchemaTree(items) {
-  let ids = []
-  let switchIds = []
-
-  items.forEach((item) => {
-    if (item.switchId && item.value === true) {
-      switchIds.push(traverseStructure(item))
-    } else {
       ids.push(item)
     }
     if (item.branches && item.branches.length > 0) {
-      const { ids: childIds, switchIds: childSwitchIds } = getOptionsFromSchemaTree(item.branches)
+      const { ids: childIds } = getOptionsFromTree(item.branches)
       ids = ids.concat(childIds)
-      switchIds = switchIds.concat(childSwitchIds)
     }
   })
 
-  return { ids, switchIds }
+  return ids
+}
+export function getOptions(configurations, parentFormattedId = '', parentOperation = '') {
+  const result = []
+
+  for (const configuration of configurations) {
+    let currentId = configuration.id
+
+    if (parentFormattedId) {
+      currentId = `${parentFormattedId}.${configuration.name}`
+    }
+
+    if (parentOperation === 'array') {
+      currentId = formatArrayId(currentId)
+    }
+
+    if (configuration.value) {
+      if (configuration.switchId && configuration.switchId.operation === 'array' && configuration.branches.length === 0) {
+        result.push(currentId)
+      } else if (configuration.branches.length === 0) {
+        result.push(currentId)
+      }
+    }
+
+    if (configuration.branches) {
+      const childResult = getOptions(configuration.branches, currentId, configuration.switchId ? configuration.switchId.operation : '')
+      if (childResult) {
+        result.push(...childResult)
+      }
+    }
+  }
+  return result
+}
+
+function formatArrayId(id) {
+  const parts = id.split('.')
+  const lastPart = parts.pop()
+  return `${parts.join('.')}.0.${lastPart}`
+}
+export function getOptionsFromSchemaTree(structure) {
+  const result = []
+
+  const traverse = (node, path = '', parentOperation = '') => {
+    let currentPath = path ? `${path}.${node.name}` : node.name
+
+    if (parentOperation === 'array' && path) {
+      currentPath = `${path}.0.${node.name}`
+    }
+
+    if (node.value === true && node.branches.length === 0) {
+      result.push(currentPath)
+    }
+
+    if (node.value === true && node.branches && node.branches.length > 0) {
+      node.branches.forEach((branch) => {
+        const childOperation = branch.switchId ? branch.switchId : ''
+        const nextParentOperation = node.switchId ? node.switchId : parentOperation
+
+        if (nextParentOperation === 'array' && childOperation === 'object') {
+          traverse(branch, currentPath, nextParentOperation)
+        } else if (nextParentOperation === 'object' && childOperation === 'array') {
+          traverse(branch, `${currentPath}`, nextParentOperation)
+        } else if (nextParentOperation === 'array' && childOperation === 'array') {
+          traverse(branch, `${currentPath}`, nextParentOperation)
+        } else {
+          traverse(branch, currentPath, nextParentOperation)
+        }
+      })
+    }
+  }
+
+  structure.forEach((node) => traverse(node))
+  return result
 }
 export function traverseStructure(items) {
   const result = []
@@ -120,4 +166,34 @@ export function processArray(items, parentKey = '') {
   })
 
   return { resultArray, objectArray }
+}
+export function manipulateIds(items) {
+  return items.map((item) => {
+    const idParts = item.id.split('.')
+    let newIdParts = []
+    let parentIsArray = false
+
+    for (let i = 0; i < idParts.length; i++) {
+      const part = idParts[i]
+      const currentItem = items.find((it) => it.id === idParts.slice(0, i + 1).join('.'))
+
+      if (currentItem && currentItem.switchId.operation === 'array') {
+        if (parentIsArray) {
+          newIdParts.push(part)
+        } else {
+          newIdParts.push('0', part)
+        }
+        parentIsArray = true
+      } else {
+        if (parentIsArray) {
+          newIdParts.push('0', part)
+        } else {
+          newIdParts.push(part)
+        }
+        parentIsArray = false
+      }
+    }
+
+    return newIdParts.join('.')
+  })
 }

@@ -2,30 +2,28 @@ import { passwordObjectStructure } from '../importAccounts/passwordImport/passwo
 import { getOptionsFromTree } from './utils/utils'
 
 export function exportPasswordData(items) {
-  const { ids: options } = getOptionsFromTree(items)
-  console.log('passwordObjectStructure', passwordObjectStructure())
-  const optionsKeys = findMatches(passwordObjectStructure(), options)
+  const options = getOptionsFromTree(items)
+  const optionsKeys = findMatches(items)
 
-  const removeFields = [...new Set([...optionsKeys])]
-
-  return removeFields
+  return optionsKeys
 }
 
-const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
-  const { id, branches } = obj
-  const fullKey = parentKey ? `${parentKey}.${id}` : id
+const findMatches = (obj) => {
+  const results = []
 
-  matchArray.forEach((match) => {
-    if (fullKey.includes(match)) {
-      resultKeys.push(fullKey)
+  const traverse = (node) => {
+    if (node.branches.length === 0) {
+      results.push(`${node.id}`)
+    } else {
+      for (let branch of node.branches) {
+        traverse(branch)
+      }
     }
-  })
-
-  if (branches && branches.length > 0) {
-    branches.forEach((branch) => {
-      findMatches(branch, matchArray, fullKey, resultKeys)
-    })
   }
 
-  return resultKeys
+  for (let key of obj) {
+    traverse(key)
+  }
+
+  return results
 }

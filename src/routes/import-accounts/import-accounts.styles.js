@@ -30,7 +30,7 @@ const styles = {
   outerDivStyle: {
     composes: 'cdc-tools-background',
     maxHeight: '80vh', // Adjust the height as needed
-    overflowY: 'auto',
+    overflow: 'auto',
   },
   headerOuterDivStyle: {
     width: '100%',
@@ -45,6 +45,9 @@ const styles = {
     justifyContent: 'flex-end',
     marginRight: '15px',
     marginTop: '22px',
+  },
+  configurationContainer: {
+    marginTop: '20px',
   },
   searchBarContainer: {
     width: '100%',

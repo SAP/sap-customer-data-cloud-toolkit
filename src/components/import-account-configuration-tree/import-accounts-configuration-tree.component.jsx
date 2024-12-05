@@ -3,12 +3,12 @@
  * License: Apache-2.0
  */
 
-import { useDispatch, useSelector } from 'react-redux'
-import React, { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import React, { useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import { getParentBranchById, setMandatoryStatus, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
+import { setMandatoryStatus, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import { createUseStyles } from 'react-jss'
-import { Tree, TreeItemCustom, CheckBox, FlexBox, Icon, Popover } from '@ui5/webcomponents-react'
+import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
 import './import-accounts-configuration-tree.component.css'
@@ -27,13 +27,11 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
   const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
-
-    mandatoryFields(treeNodeId)
-    console.log('CHECKED STATUS--->', checkBoxId)
-    console.log('CHECKED value--->', value)
+    console.log('CHECKED treeNodeId--->', parentNode)
     console.log('CHECKED branches--->', branches)
-    console.log('treeNodeInputValue treeNodeInputValue--->', treeNodeInputValue)
-    dispatch(setConfigurationStatus({ checkBoxId, value }))
+    // getAllParentNodes
+    mandatoryFields(treeNodeId)
+    dispatch(setConfigurationStatus({ checkBoxId, value, branches }))
     if (treeNodeInputValue) {
       dispatch(setSugestionSchema({ checkBoxId, value }))
     }
@@ -91,7 +89,7 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
   }
 
   const expandTree = (treeNode, isParentLoyalty = false, level = 0) => {
-    const isLoyaltyNode = ['internal', 'data', 'addresses', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
+    const isLoyaltyNode = ['internal', 'data', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -107,7 +105,7 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
             />
 
             {showError(treeNode)}
-            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'addresses' && treeNode.id !== 'profile' && (
+            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'profile' && (
               <ArrayObjectOutputButtons
                 treeNode={treeNode}
                 t={t}
