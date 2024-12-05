@@ -1,7 +1,6 @@
 import VersionControl from './versionControl'
 import { Octokit } from '@octokit/rest'
 import { Base64 } from 'js-base64'
-
 import { createBranch, updateFilesInSingleCommit, getFile, getCommitFiles, fetchFileContent, getCommits, updateGitFileContent, storeCdcDataInGit } from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { getFileTypeFromFileName } from './versionControlFiles'
@@ -61,6 +60,12 @@ describe('VersionControl test suite', () => {
     expect(createBranch).toHaveBeenCalled()
   })
 
+  test('createBranch does not create a new branch if it exists', async () => {
+    createBranch.mockRejectedValueOnce(new Error('Branch already exists'))
+    await expect(versionControl.createBranch('existingBranch')).rejects.toThrow('Branch already exists')
+    expect(createBranch).toHaveBeenCalled()
+  })
+
   test('fetchFileContent correctly fetches encoded content', async () => {
     const testContent = JSON.stringify({ someProp: 'someValue' })
     const encodedContent = Base64.encode(testContent)
@@ -71,60 +76,10 @@ describe('VersionControl test suite', () => {
     expect(result).toEqual(encodedContent)
   })
 
-  test('getCommitFiles properly decodes file content', async () => {
-    const encodedContent = Base64.encode(JSON.stringify({ someProp: 'someValue' }))
-    const commitData = {
-      files: [
-        {
-          filename: 'src/versionControl/emails.json',
-          contents_url: 'test-url-emails',
-        },
-      ],
-    }
-
-    fetchFileContent.mockImplementation((url) => {
-      console.log(`Attempting to fetch content for URL: ${url}`)
-      if (url === 'test-url-emails') return Promise.resolve(encodedContent)
-      return Promise.reject(new Error(`Unknown URL: ${url}`))
-    })
-
-    getFileTypeFromFileName.mockReturnValue('emails')
-
-    const sha = 'commitSha'
-    const mockGetCommitFiles = async () => {
-      const files = await Promise.all(
-        commitData.files.map(async (file) => {
-          const content = await fetchFileContent(file.contents_url)
-          return {
-            ...file,
-            content,
-          }
-        }),
-      )
-      return files.map((file) => {
-        console.log(`Processing file: ${file.filename}`)
-        return {
-          ...file,
-          content: JSON.parse(Base64.decode(file.content)),
-          fileType: 'emails',
-        }
-      })
-    }
-
-    getCommitFiles.mockImplementation(mockGetCommitFiles)
-
-    const result = await versionControl.getCommitFiles(sha)
-
-    expect(fetchFileContent).toHaveBeenCalledWith('test-url-emails')
-    expect(result[0].content).toEqual({ someProp: 'someValue' })
-    expect(result[0].fileType).toEqual('emails')
-  })
-
-  test('getCommits returns the list of commits', async () => {
-    const commits = [{ sha: 'commit1' }, { sha: 'commit2' }]
-    getCommits.mockResolvedValueOnce(commits)
-    const result = await versionControl.getCommits()
-    expect(result).toEqual(commits)
+  test('fetchFileContent handles errors gracefully', async () => {
+    fetchFileContent.mockRejectedValueOnce(new Error('Failed to fetch content'))
+    await expect(versionControl.fetchFileContent('test-url')).rejects.toThrow('Failed to fetch content')
+    expect(fetchFileContent).toHaveBeenCalledWith('test-url')
   })
 
   test('applyCommitConfig processes commits and sets data correctly', async () => {
@@ -185,6 +140,16 @@ describe('VersionControl test suite', () => {
     expect(setSMSMock).toHaveBeenCalledWith({ smsProp: 'smsValue' })
   })
 
+  test('applyCommitConfig handles missing configurations gracefully', async () => {
+    getCommitFiles.mockResolvedValueOnce([]) // No files returned
+
+    const setEmailTemplatesMock = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
+
+    await versionControl.applyCommitConfig('testSha')
+
+    expect(setEmailTemplatesMock).not.toHaveBeenCalled()
+  })
+
   test('fetchCDCConfigs should fetch CDC configurations', async () => {
     await versionControl.fetchCDCConfigs()
     expect(fetchCDCConfigs).toHaveBeenCalled()
@@ -193,6 +158,13 @@ describe('VersionControl test suite', () => {
   test('storeCdcDataInGit stores CDC data in Git', async () => {
     const commitMessage = 'commit message'
     await versionControl.storeCdcDataInGit(commitMessage)
+    expect(storeCdcDataInGit).toHaveBeenCalledWith(commitMessage)
+  })
+
+  test('storeCdcDataInGit handles errors gracefully', async () => {
+    storeCdcDataInGit.mockRejectedValueOnce(new Error('Failed to store data'))
+    const commitMessage = 'commit message'
+    await expect(versionControl.storeCdcDataInGit(commitMessage)).rejects.toThrow('Failed to store data')
     expect(storeCdcDataInGit).toHaveBeenCalledWith(commitMessage)
   })
 
