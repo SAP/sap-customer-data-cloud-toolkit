@@ -3,32 +3,23 @@ import { removeIgnoredFields } from './dataSanitization'
 import { getFileTypeFromFileName } from './versionControlFiles'
 
 export async function getFile(path) {
-  try {
-    const { data: file } = await this.octokit.rest.repos.getContent({
+  const { data: file } = await this.octokit.rest.repos.getContent({
+    owner: this.owner,
+    repo: this.repo,
+    path,
+    ref: this.defaultBranch,
+  })
+
+  if (!file.content || file.size > 100 * 1024) {
+    // Large files
+    const { data: blobData } = await this.octokit.rest.git.getBlob({
       owner: this.owner,
       repo: this.repo,
-      path,
-      ref: this.defaultBranch,
+      file_sha: file.sha,
     })
-
-    if (!file.content || file.size > 100 * 1024) {
-      // Large files
-      const { data: blobData } = await this.octokit.rest.git.getBlob({
-        owner: this.owner,
-        repo: this.repo,
-        file_sha: file.sha,
-      })
-      file.content = blobData.content
-    }
-    return file
-  } catch (err) {
-    if (err.status === 404) {
-      // File not found, handle it by logging the preparation for creation
-      console.log(`File not found: ${path}, preparing to create it.`)
-      return null
-    }
-    throw err
+    file.content = blobData.content
   }
+  return file
 }
 
 export async function getCommitFiles(sha) {
@@ -160,10 +151,14 @@ export async function updateGitFileContent(filePath, cdcFileContent) {
   let getGitFileInfo
 
   try {
+    const branchExists = await this.branchExists(this.defaultBranch)
+    if (!branchExists) {
+      throw new Error('Branch does not exist')
+    }
+
     getGitFileInfo = await this.getFile(filePath)
   } catch (error) {
-    if (error.status === 404) {
-      // Log missing file and prepare creating it
+    if (error.status === 404 || error.message === 'Branch does not exist') {
       console.log(`Creating new file: ${filePath}`)
       return {
         path: filePath,
