@@ -386,4 +386,129 @@ const CopyConfigurationExtended = ({ t }) => {
   )
 }
 
-export default withTranslation()(CopyConfigurationExtended)
+export default withTranslation()(CopyConfigurationExtended)[
+  {
+    id: 'data',
+    name: 'data',
+    value: true,
+    branches: [
+      {
+        id: 'data.loyalty',
+        name: 'loyalty',
+        value: true,
+        branches: [
+          {
+            id: 'data.loyalty.rewardPoints',
+            name: 'rewardPoints',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+          {
+            id: 'data.loyalty.rewardRedemption',
+            name: 'rewardRedemption',
+            value: true,
+            branches: [
+              {
+                id: 'data.loyalty.rewardRedemption.redemptionDate',
+                name: 'redemptionDate',
+                value: true,
+                branches: [],
+                switchId: 'object',
+              },
+              {
+                id: 'data.loyalty.rewardRedemption.redemptionPoint',
+                name: 'redemptionPoint',
+                value: true,
+                branches: [],
+                switchId: 'object',
+              },
+            ],
+            switchId: 'object',
+          },
+          {
+            id: 'data.loyalty.loyaltyStatus',
+            name: 'loyaltyStatus',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+          {
+            id: 'data.loyalty.rewardAmount',
+            name: 'rewardAmount',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+        ],
+        switchId: 'object',
+      },
+      {
+        id: 'data.vehicle',
+        name: 'vehicle',
+        value: true,
+        branches: [
+          {
+            id: 'data.vehicle.model',
+            name: 'model',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+          {
+            id: 'data.vehicle.vin',
+            name: 'vin',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+          {
+            id: 'data.vehicle.registrationDate',
+            name: 'registrationDate',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+        ],
+        switchId: 'object',
+      },
+      {
+        id: 'data.crm',
+        name: 'crm',
+        value: true,
+        branches: [
+          {
+            id: 'data.crm.isProspect',
+            name: 'isProspect',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+          {
+            id: 'data.crm.abcClassification',
+            name: 'abcClassification',
+            value: true,
+            branches: [],
+            switchId: 'object',
+          },
+        ],
+        switchId: 'object',
+      },
+      {
+        id: 'data.subscribe',
+        name: 'subscribe',
+        value: true,
+        branches: [],
+        switchId: 'object',
+      },
+      {
+        id: 'data.terms',
+        name: 'terms',
+        value: true,
+        branches: [],
+        switchId: 'object',
+      },
+    ],
+    switchId: 'object',
+  }
+]
