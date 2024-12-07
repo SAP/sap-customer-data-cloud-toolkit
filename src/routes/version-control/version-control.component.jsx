@@ -33,6 +33,10 @@ const VersionControlComponent = ({ t }) => {
     if (commitList) setCommits(commitList)
   }
 
+  const onCommitRevertClick = async (sha) => {
+    await handleCommitRevertServices(versionControl, sha)
+  }
+
   return (
     <>
       <Bar
@@ -76,7 +80,7 @@ const VersionControlComponent = ({ t }) => {
                   <td>{commit.commit.message}</td>
                   <td>{commit.sha}</td>
                   <td>
-                    <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => handleCommitRevertServices(versionControl, commit.sha)}>
+                    <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => onCommitRevertClick(commit.sha)}>
                       {t('VERSION_CONTROL.RESTORE')}
                     </Button>
                   </td>

@@ -74,9 +74,9 @@ class VersionControl {
         case 'webSdk':
           await this.setWebSDK(filteredResponse)
           break
-        case 'dataflow':
-          await this.setDataflow(filteredResponse)
-          break
+        // case 'dataflow':
+        //   await this.setDataflow(filteredResponse)
+        //   break
         case 'emails':
           await this.setEmailTemplates(filteredResponse)
           break
@@ -89,9 +89,9 @@ class VersionControl {
         case 'rba':
           await this.setRBA(filteredResponse)
           break
-        case 'riskAssessment':
-          await this.setRiskAssessment(filteredResponse)
-          break
+        // case 'riskAssessment':
+        //   await this.setRiskAssessment(filteredResponse)
+        //   break
         case 'schema':
           await this.setSchema(filteredResponse)
           break
@@ -101,9 +101,9 @@ class VersionControl {
         case 'sms':
           await this.setSMS(filteredResponse)
           break
-        case 'channel':
-          await this.setChannel(filteredResponse)
-          break
+        // case 'channel':
+        //   await this.setChannel(filteredResponse)
+        //   break
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }

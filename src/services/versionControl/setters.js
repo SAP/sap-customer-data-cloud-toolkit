@@ -17,7 +17,7 @@ export const setSMS = async function (config) {
 }
 
 export const setExtension = async function (config) {
-  await this.extension.set(this.apiKey, this.dataCenter, config.result[0])
+  if (config.result.length) await this.extension.set(this.apiKey, this.dataCenter, config.result[0])
 }
 
 export const setSchema = async function (config) {

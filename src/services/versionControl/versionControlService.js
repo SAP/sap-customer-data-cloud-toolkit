@@ -13,7 +13,6 @@ export const createVersionControlInstance = (credentials, apiKey, currentSite) =
 export const handleGetServices = async (versionControl, apiKey) => {
   try {
     await versionControl.createBranch(apiKey)
-    debugger
     await versionControl.storeCdcDataInGit('Backup created')
     alert('Backup created successfully!')
     return await handleCommitListRequestServices(versionControl, apiKey)
@@ -41,7 +40,9 @@ export const handleCommitListRequestServices = async (versionControl, apiKey) =>
 export const handleCommitRevertServices = async (versionControl, sha) => {
   try {
     await versionControl.applyCommitConfig(sha)
+    alert('Restore completed successfully!')
   } catch (error) {
     console.error('Error reverting configurations:', error)
+    alert('Failed to restore configurations. Please try again.')
   }
 }
