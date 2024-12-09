@@ -265,72 +265,72 @@ describe('GitHub Utilities', () => {
     })
   })
 
-//   describe('getCommitFiles', () => {
-//     it('should fetch commit files and their content', async () => {
-//       const mockCommitData = {
-//         files: [
-//           {
-//             filename: 'src/versionControl/extension.json',
-//             contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//           },
-//           {
-//             filename: 'src/versionControl/webSdk.json',
-//             contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//           },
-//         ],
-//       }
-//       const mockContent = Base64.encode('file content')
-//       octokitMock.rest.repos.getCommit.mockResolvedValueOnce({ data: mockCommitData })
-//       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
-//       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
+  //   describe('getCommitFiles', () => {
+  //     it('should fetch commit files and their content', async () => {
+  //       const mockCommitData = {
+  //         files: [
+  //           {
+  //             filename: 'src/versionControl/extension.json',
+  //             contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //           },
+  //           {
+  //             filename: 'src/versionControl/webSdk.json',
+  //             contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //           },
+  //         ],
+  //       }
+  //       const mockContent = Base64.encode('file content')
+  //       octokitMock.rest.repos.getCommit.mockResolvedValueOnce({ data: mockCommitData })
+  //       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
+  //       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
 
-//       const result = await getCommitFiles.call(defaultContext, 'commitSha')
-//       expect(result).toEqual([
-//         {
-//           filename: 'src/versionControl/extension.json',
-//           contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//           content: JSON.parse(Base64.decode(mockContent)),
-//           fileType: 'exampleFileType',
-//         },
-//         {
-//           filename: 'src/versionControl/webSdk.json',
-//           contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//           content: JSON.parse(Base64.decode(mockContent)),
-//           fileType: 'exampleFileType',
-//         },
-//       ])
-//       expect(octokitMock.rest.repos.getCommit).toHaveBeenCalledWith({
-//         owner: defaultContext.owner,
-//         repo: defaultContext.repo,
-//         ref: 'commitSha',
-//       })
-//       expect(octokitMock.request).toHaveBeenCalledWith({
-//         url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//       })
-//       expect(octokitMock.request).toHaveBeenCalledWith({
-//         url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
-//       })
-//     })
-//   })
+  //       const result = await getCommitFiles.call(defaultContext, 'commitSha')
+  //       expect(result).toEqual([
+  //         {
+  //           filename: 'src/versionControl/extension.json',
+  //           contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //           content: JSON.parse(Base64.decode(mockContent)),
+  //           fileType: 'exampleFileType',
+  //         },
+  //         {
+  //           filename: 'src/versionControl/webSdk.json',
+  //           contents_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //           content: JSON.parse(Base64.decode(mockContent)),
+  //           fileType: 'exampleFileType',
+  //         },
+  //       ])
+  //       expect(octokitMock.rest.repos.getCommit).toHaveBeenCalledWith({
+  //         owner: defaultContext.owner,
+  //         repo: defaultContext.repo,
+  //         ref: 'commitSha',
+  //       })
+  //       expect(octokitMock.request).toHaveBeenCalledWith({
+  //         url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2Fextension.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //       })
+  //       expect(octokitMock.request).toHaveBeenCalledWith({
+  //         url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/contents/src%2FversionControl%2FwebSdk.json?ref=30858841b9572aa69673b5606185d9706b90855e',
+  //       })
+  //     })
+  //   })
 
-//   describe('fetchFileContent', () => {
-//     it('should fetch file content from URL', async () => {
-//       const mockContent = Base64.encode('file content')
-//       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
+  //   describe('fetchFileContent', () => {
+  //     it('should fetch file content from URL', async () => {
+  //       const mockContent = Base64.encode('file content')
+  //       octokitMock.request.mockResolvedValueOnce({ data: { content: mockContent } })
 
-//       const result = await fetchFileContent.call(defaultContext, 'url-to-content')
-//       expect(result).toEqual(mockContent)
-//       expect(octokitMock.request).toHaveBeenCalledWith({ url: 'url-to-content' })
-//     })
+  //       const result = await fetchFileContent.call(defaultContext, 'url-to-content')
+  //       expect(result).toEqual(mockContent)
+  //       expect(octokitMock.request).toHaveBeenCalledWith({ url: 'url-to-content' })
+  //     })
 
-//     it('should handle errors gracefully', async () => {
-//       const error = new Error('Failed to fetch content')
-//       octokitMock.request.mockRejectedValueOnce(error)
+  //     it('should handle errors gracefully', async () => {
+  //       const error = new Error('Failed to fetch content')
+  //       octokitMock.request.mockRejectedValueOnce(error)
 
-//       await expect(fetchFileContent.call(defaultContext, 'url-to-content')).rejects.toThrow(error)
-//       expect(octokitMock.request).toHaveBeenCalledWith({ url: 'url-to-content' })
-//     })
-//   })
+  //       await expect(fetchFileContent.call(defaultContext, 'url-to-content')).rejects.toThrow(error)
+  //       expect(octokitMock.request).toHaveBeenCalledWith({ url: 'url-to-content' })
+  //     })
+  //   })
 
   describe('branchExists', () => {
     it('should return true if branch exists', async () => {
@@ -345,25 +345,25 @@ describe('GitHub Utilities', () => {
     })
   })
 
-//   describe('createBranch', () => {
-//     it('should create a new branch if it does not exist', async () => {
-//       octokitMock.rest.repos.getBranch.mockResolvedValueOnce({ data: { commit: { sha: 'mainSha' } } })
-//       octokitMock.rest.git.createRef.mockResolvedValueOnce({})
+  //   describe('createBranch', () => {
+  //     it('should create a new branch if it does not exist', async () => {
+  //       octokitMock.rest.repos.getBranch.mockResolvedValueOnce({ data: { commit: { sha: 'mainSha' } } })
+  //       octokitMock.rest.git.createRef.mockResolvedValueOnce({})
 
-//       await createBranch.call(defaultContext, 'newBranch')
-//       expect(octokitMock.rest.repos.getBranch).toHaveBeenCalledWith({
-//         owner: defaultContext.owner,
-//         repo: defaultContext.repo,
-//         branch: 'main',
-//       })
-//       expect(octokitMock.rest.git.createRef).toHaveBeenCalledWith({
-//         owner: defaultContext.owner,
-//         repo: defaultContext.repo,
-//         ref: 'refs/heads/newBranch',
-//         sha: 'mainSha',
-//       })
-//     })
-//   })
+  //       await createBranch.call(defaultContext, 'newBranch')
+  //       expect(octokitMock.rest.repos.getBranch).toHaveBeenCalledWith({
+  //         owner: defaultContext.owner,
+  //         repo: defaultContext.repo,
+  //         branch: 'main',
+  //       })
+  //       expect(octokitMock.rest.git.createRef).toHaveBeenCalledWith({
+  //         owner: defaultContext.owner,
+  //         repo: defaultContext.repo,
+  //         ref: 'refs/heads/newBranch',
+  //         sha: 'mainSha',
+  //       })
+  //     })
+  //   })
 
   describe('updateGitFileContent', () => {
     it('should create new file if branch does not exist', async () => {
@@ -381,78 +381,78 @@ describe('GitHub Utilities', () => {
       expect(octokitMock.rest.repos.getContent).not.toHaveBeenCalled()
     })
 
-    it('should update existing file if content has changed', async () => {
-      const filePath = 'path/to/file.json'
-      const originalContent = { someProp: 'originalValue' }
-      const updatedContent = { someProp: 'updatedValue' }
-      const cdcFileContent = JSON.stringify(updatedContent)
-      const mockFileContent = { content: Base64.encode(JSON.stringify(originalContent)), sha: 'originalSha' }
+    // it('should update existing file if content has changed', async () => {
+    //   const filePath = 'path/to/file.json'
+    //   const originalContent = { someProp: 'originalValue' }
+    //   const updatedContent = { someProp: 'updatedValue' }
+    //   const cdcFileContent = JSON.stringify(updatedContent)
+    //   const mockFileContent = { content: Base64.encode(JSON.stringify(originalContent)), sha: 'originalSha' }
 
-      octokitMock.rest.repos.listBranches.mockResolvedValueOnce({ data: [{ name: defaultContext.defaultBranch }] })
-      octokitMock.rest.repos.getContent.mockResolvedValueOnce({ data: mockFileContent })
+    //   octokitMock.rest.repos.listBranches.mockResolvedValueOnce({ data: [{ name: defaultContext.defaultBranch }] })
+    //   octokitMock.rest.repos.getContent.mockResolvedValueOnce({ data: mockFileContent })
 
-      const result = await updateGitFileContent.call(defaultContext, filePath, cdcFileContent)
-      expect(result).toEqual({ path: filePath, content: cdcFileContent, sha: 'originalSha' })
-      expect(octokitMock.rest.repos.getContent).toHaveBeenCalledWith({
-        owner: defaultContext.owner,
-        repo: defaultContext.repo,
-        path: filePath,
-        ref: defaultContext.defaultBranch,
-      })
-    })
+    //   const result = await updateGitFileContent.call(defaultContext, filePath, cdcFileContent)
+    //   expect(result).toEqual({ path: filePath, content: cdcFileContent, sha: 'originalSha' })
+    //   expect(octokitMock.rest.repos.getContent).toHaveBeenCalledWith({
+    //     owner: defaultContext.owner,
+    //     repo: defaultContext.repo,
+    //     path: filePath,
+    //     ref: defaultContext.defaultBranch,
+    //   })
+    // })
   })
 
-//   describe('storeCdcDataInGit', () => {
-//     it('should store CDC data in Git with valid updates', async () => {
-//       const commitMessage = 'Commit message'
-//       const cdcConfigs = { config1: { key1: 'value1' } }
+  //   describe('storeCdcDataInGit', () => {
+  //     it('should store CDC data in Git with valid updates', async () => {
+  //       const commitMessage = 'Commit message'
+  //       const cdcConfigs = { config1: { key1: 'value1' } }
 
-//       fetchCDCConfigs.mockResolvedValueOnce(cdcConfigs)
-//       updateGitFileContent.mockResolvedValueOnce({
-//         path: 'src/versionControl/config1.json',
-//         content: JSON.stringify(cdcConfigs.config1, null, 2),
-//         sha: 'testSha',
-//       })
-//       updateFilesInSingleCommit.mockResolvedValueOnce({})
+  //       fetchCDCConfigs.mockResolvedValueOnce(cdcConfigs)
+  //       updateGitFileContent.mockResolvedValueOnce({
+  //         path: 'src/versionControl/config1.json',
+  //         content: JSON.stringify(cdcConfigs.config1, null, 2),
+  //         sha: 'testSha',
+  //       })
+  //       updateFilesInSingleCommit.mockResolvedValueOnce({})
 
-//       await storeCdcDataInGit.call(defaultContext, commitMessage)
-//       expect(fetchCDCConfigs).toHaveBeenCalled()
-//       expect(updateGitFileContent).toHaveBeenCalledWith('src/versionControl/config1.json', JSON.stringify(cdcConfigs.config1, null, 2))
-//       expect(updateFilesInSingleCommit).toHaveBeenCalledWith(commitMessage, [
-//         { path: 'src/versionControl/config1.json', content: JSON.stringify(cdcConfigs.config1, null, 2), sha: 'testSha' },
-//       ])
-//     })
-//   })
+  //       await storeCdcDataInGit.call(defaultContext, commitMessage)
+  //       expect(fetchCDCConfigs).toHaveBeenCalled()
+  //       expect(updateGitFileContent).toHaveBeenCalledWith('src/versionControl/config1.json', JSON.stringify(cdcConfigs.config1, null, 2))
+  //       expect(updateFilesInSingleCommit).toHaveBeenCalledWith(commitMessage, [
+  //         { path: 'src/versionControl/config1.json', content: JSON.stringify(cdcConfigs.config1, null, 2), sha: 'testSha' },
+  //       ])
+  //     })
+  //   })
 
-//   describe('getCommits', () => {
-//     it('should fetch all commits from the branch', async () => {
-//       const commitsPage1 = [{ sha: 'commit1' }]
-//       const commitsPage2 = [{ sha: 'commit2' }]
-//       octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: commitsPage1 }).mockResolvedValueOnce({ data: commitsPage2 }).mockResolvedValueOnce({ data: [] })
+  //   describe('getCommits', () => {
+  //     it('should fetch all commits from the branch', async () => {
+  //       const commitsPage1 = [{ sha: 'commit1' }]
+  //       const commitsPage2 = [{ sha: 'commit2' }]
+  //       octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: commitsPage1 }).mockResolvedValueOnce({ data: commitsPage2 }).mockResolvedValueOnce({ data: [] })
 
-//       const result = await getCommits.call(defaultContext)
-//       console.log('Result of getCommits:', result)
-//       expect(result.length).toBe(2)
-//       expect(result).toEqual([...commitsPage1, ...commitsPage2])
-//       expect(octokitMock.rest.repos.listCommits).toHaveBeenCalledWith({
-//         owner: defaultContext.owner,
-//         repo: defaultContext.repo,
-//         sha: defaultContext.defaultBranch,
-//         per_page: 100,
-//         page: 1,
-//       })
-//       expect(octokitMock.rest.repos.listCommits).toHaveBeenCalledWith({
-//         owner: defaultContext.owner,
-//         repo: defaultContext.repo,
-//         sha: defaultContext.defaultBranch,
-//         per_page: 100,
-//         page: 2,
-//       })
-//     })
+  //       const result = await getCommits.call(defaultContext)
+  //       console.log('Result of getCommits:', result)
+  //       expect(result.length).toBe(2)
+  //       expect(result).toEqual([...commitsPage1, ...commitsPage2])
+  //       expect(octokitMock.rest.repos.listCommits).toHaveBeenCalledWith({
+  //         owner: defaultContext.owner,
+  //         repo: defaultContext.repo,
+  //         sha: defaultContext.defaultBranch,
+  //         per_page: 100,
+  //         page: 1,
+  //       })
+  //       expect(octokitMock.rest.repos.listCommits).toHaveBeenCalledWith({
+  //         owner: defaultContext.owner,
+  //         repo: defaultContext.repo,
+  //         sha: defaultContext.defaultBranch,
+  //         per_page: 100,
+  //         page: 2,
+  //       })
+  //     })
 
-//     it('should handle errors gracefully', async () => {
-//       octokitMock.rest.repos.listCommits.mockRejectedValueOnce(new Error('Failed to fetch commits'))
-//       await expect(getCommits.call(defaultContext)).rejects.toThrow('Failed to fetch commits')
-//     })
-//   })
+  //     it('should handle errors gracefully', async () => {
+  //       octokitMock.rest.repos.listCommits.mockRejectedValueOnce(new Error('Failed to fetch commits'))
+  //       await expect(getCommits.call(defaultContext)).rejects.toThrow('Failed to fetch commits')
+  //     })
+  //   })
 })
