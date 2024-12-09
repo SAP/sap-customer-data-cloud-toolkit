@@ -150,35 +150,19 @@ export async function updateFilesInSingleCommit(commitMessage, files) {
 export async function updateGitFileContent(filePath, cdcFileContent) {
   let getGitFileInfo
 
-  try {
-    const branchExists = await this.branchExists(this.defaultBranch)
-    if (!branchExists) {
-      throw new Error('Branch does not exist')
-    }
-
-    getGitFileInfo = await this.getFile(filePath)
-  } catch (error) {
-    if (error.status === 404 || error.message === 'Branch does not exist') {
-      console.log(`Creating new file: ${filePath}`)
-      return {
-        path: filePath,
-        content: cdcFileContent,
-        sha: undefined,
-      }
-    }
-    throw error
+  const branchExists = await this.branchExists(this.defaultBranch)
+  if (!branchExists) {
+    throw new Error('Branch does not exist')
   }
+
+  getGitFileInfo = await this.getFile(filePath)
 
   const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
   let currentGitContent
   const currentGitContentDecoded = Base64.decode(rawGitContent)
   if (currentGitContentDecoded) {
-    try {
-      currentGitContent = JSON.parse(currentGitContentDecoded)
-      currentGitContent = removeIgnoredFields(currentGitContent)
-    } catch {
-      currentGitContent = {}
-    }
+    currentGitContent = JSON.parse(currentGitContentDecoded)
+    currentGitContent = removeIgnoredFields(currentGitContent)
   }
 
   let newContent = JSON.parse(cdcFileContent)
@@ -223,27 +207,22 @@ export async function getCommits() {
   let page = 1
   const per_page = 100
 
-  try {
-    while (true) {
-      const { data } = await this.octokit.rest.repos.listCommits({
-        owner: this.owner,
-        repo: this.repo,
-        sha: this.defaultBranch,
-        per_page,
-        page,
-      })
+  while (true) {
+    const { data } = await this.octokit.rest.repos.listCommits({
+      owner: this.owner,
+      repo: this.repo,
+      sha: this.defaultBranch,
+      per_page,
+      page,
+    })
 
-      if (data.length === 0) break
+    if (data.length === 0) break
 
-      allCommits = allCommits.concat(data)
+    allCommits = allCommits.concat(data)
 
-      if (data.length < per_page) break
+    if (data.length < per_page) break
 
-      page += 1
-    }
-  } catch (error) {
-    console.error(`Failed to fetch commits for branch: ${this.defaultBranch}`, error)
-    throw error
+    page += 1
   }
 
   return allCommits
