@@ -13,12 +13,12 @@ export function extractAndTransformCommunicationFields(communicationData) {
 }
 function transformField(key, value) {
   if (key === 'communications') {
-    return transformCommunications(value)
+    return transformCommunications(value, 'communications')
   }
 
   return null
 }
-function transformCommunications(communications) {
+function transformCommunications(communications, parentKey) {
   const result = {
     id: 'communications',
     name: 'communications',
@@ -39,7 +39,7 @@ function transformCommunications(communications) {
     }
 
     const statusBranch = {
-      id: `${item.topicChannelId}.status`,
+      id: `${parentKey}.${item.topicChannelId}.status`,
       name: 'status',
       value: false,
       branches: [],
@@ -48,7 +48,7 @@ function transformCommunications(communications) {
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties
       const optInBranches = Object.keys(optInProperties).map((key) => ({
-        id: `${item.topicChannelId}.optIn.${key}`,
+        id: `${parentKey}.${item.topicChannelId}.optIn.${key}`,
         name: key,
         value: false,
         branches: [],

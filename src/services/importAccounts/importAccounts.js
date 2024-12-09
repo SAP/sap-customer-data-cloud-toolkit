@@ -44,15 +44,20 @@ class ImportAccounts {
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
       result.push(...getContext())
     }
+
     return result
   }
 
   async exportDataToCsv(items) {
     let result = []
-    const options = this.getOptionsFromTree(items)
     const { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions } = this.seperateOptionsFromTree(items)
+    if (rootOptions.length > 0) {
+      const rootData = rootOptionsValue(rootOptions)
+      result.push(...rootData)
+    }
     if (data.length > 0) {
-      result.push(...exportSchemaData(data))
+      const schemaData = exportSchemaData(data)
+      result.push(...schemaData)
     }
     if (preferencesOptions.length > 0) {
       const preferencesData = exportPreferencesData(preferencesOptions)
@@ -64,9 +69,7 @@ class ImportAccounts {
     if (passwordOptions.length > 0) {
       result.push(...exportPasswordData(passwordOptions))
     }
-    if (rootOptions.length > 0) {
-      result.push(...rootOptionsValue(rootOptions))
-    }
+
     createCSVFile(result)
   }
   seperateOptionsFromTree(items) {

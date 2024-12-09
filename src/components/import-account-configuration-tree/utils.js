@@ -1,4 +1,4 @@
-export const handleSelectChange = (event, treeNodeId, setSwitchOptions, dispatch, treeData, setTreeData) => {
+export const handleSelectChange = (event, treeNodeId, setSwitchOptions, dispatch) => {
   let selectedButton = 'object'
 
   if (event.detail?.selectedOption?.dataset?.id) {
@@ -9,6 +9,4 @@ export const handleSelectChange = (event, treeNodeId, setSwitchOptions, dispatch
   console.log(`Selected value: ${selectedValue}, TreeNode ID: ${treeNodeId}`)
 
   dispatch(setSwitchOptions({ checkBoxId: treeNodeId, operation: selectedButton }))
-
-  setTreeData([...treeData.branches])
 }

@@ -1,10 +1,11 @@
-export const getUID = () => {
+export function getUID() {
   return [
     {
       id: 'uid',
       name: 'uid',
       value: true,
       branches: [],
+      mandatory: true,
     },
   ]
 }

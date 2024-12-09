@@ -15,7 +15,15 @@ export function extractAndTransformSchemaFields(schemaData) {
   return fieldsTransformed
 }
 function transformSchemaField(key, value) {
-  if (value.fields) {
+  if (value.fields && key === 'addressesSchema') {
+    return {
+      id: key.replace('Schema', ''),
+      name: key.replace('Schema', ''),
+      value: false,
+      branches: accumulateKeys(value.fields, key.replace('Schema', '')),
+      switchId: 'object',
+    }
+  } else if (value.fields) {
     return {
       id: key.replace('Schema', ''),
       name: key.replace('Schema', ''),
@@ -25,6 +33,29 @@ function transformSchemaField(key, value) {
     }
   }
 }
+function accumulateKeys(fields, parentKey) {
+  const branches = []
+  for (const [key, value] of Object.entries(fields)) {
+    const id = `${parentKey}.${key}`
+    if (value.type) {
+      branches.push({
+        id: id,
+        name: key,
+        value: false,
+        branches: [],
+      })
+    } else {
+      branches.push({
+        id: id,
+        name: key,
+        value: false,
+        branches: accumulateKeys(value, id),
+      })
+    }
+  }
+  return branches
+}
+
 function transformSchema(fields, parentKey) {
   const transformedSchema = []
   for (let key in fields) {
@@ -44,10 +75,8 @@ function transformSchema(fields, parentKey) {
       }
 
       splitKeys.forEach((part, index) => {
-        let id
         accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
 
-        id = `${parentKey}.${part}`
         let existing = currentLevel.find((item) => item.id === accumulatedKey)
         if (!existing) {
           existing = {

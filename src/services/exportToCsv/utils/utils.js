@@ -1,5 +1,3 @@
-import { generateSubscriptionStrings } from '../schemaMatches'
-
 export function getOptionsFromTree(items) {
   let ids = []
 
@@ -114,30 +112,6 @@ export function traverseStructure(items) {
   return result
 }
 
-const findMatches = (obj, matchArray, parentKey = '', resultKeys = []) => {
-  Object.entries(obj).forEach(([key, value]) => {
-    const fullKey = parentKey ? `${parentKey}.${key}` : key
-    const keySegments = fullKey.split('.')
-    const lastSegment = keySegments[keySegments.length - 1]
-    matchArray.forEach((match) => {
-      const [matchKey, matchParentKey] = match.split('.')
-
-      if (key === 'subscriptionsSchema') {
-        resultKeys.push(...generateSubscriptionStrings(value, match, fullKey))
-      }
-
-      if (lastSegment === matchKey && parentKey.includes(matchParentKey)) {
-        resultKeys.push(fullKey.replace('.fields', '').replace('Schema', ''))
-      }
-    })
-
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      findMatches(value, matchArray, fullKey, resultKeys)
-    }
-  })
-
-  return resultKeys
-}
 export function exportArrayData(inputArray) {
   return inputArray.map((item) => {
     let parts = item.split('.')
@@ -155,8 +129,7 @@ export function processArray(items, parentKey = '') {
   const resultArray = []
   const objectArray = []
   items.forEach((item) => {
-    const { id, switchId, branches } = item
-    const newParentKey = parentKey ? `${parentKey}.${id.split('.').pop()}` : id
+    const { id, switchId } = item
 
     if (switchId.operation === 'array') {
       resultArray.push(id)

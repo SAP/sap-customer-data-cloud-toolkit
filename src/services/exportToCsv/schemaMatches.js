@@ -3,10 +3,7 @@ import { getOptionsFromSchemaTree } from './utils/utils'
 export function exportSchemaData(items) {
   const options = getOptionsFromSchemaTree(items)
 
-  const fields = new Set()
-
-  fields.add([...options])
-  return fields
+  return options
 }
 
 export function generateSubscriptionStrings(schema, str, fullKey) {

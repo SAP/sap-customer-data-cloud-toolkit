@@ -42,6 +42,16 @@ export const getAllConfiguration = (configurations, ids) => {
     }
   })
 
+  // Handle the case where the input is a single element
+  ids.forEach((id) => {
+    if (result.length === 0 || !result.some((config) => config.id === id)) {
+      const config = configurations.find((c) => c.id === id || c.id.endsWith(`.${id}`) || c.id === id)
+      if (config) {
+        result.push(config)
+      }
+    }
+  })
+
   return result
 }
 

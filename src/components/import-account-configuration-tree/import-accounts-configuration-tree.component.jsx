@@ -4,38 +4,45 @@
  */
 
 import { useDispatch } from 'react-redux'
-import React, { useState } from 'react'
+import React from 'react'
 import { withTranslation } from 'react-i18next'
-import { setMandatoryStatus, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
-import { createUseStyles } from 'react-jss'
+import { setMandatoryStatus, setSugestionSchema, setSuggestionTreeMandatoryStatus } from '../../redux/importAccounts/importAccountsSlice.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
 import './import-accounts-configuration-tree.component.css'
-import styles from './import-accounts-configuration-tree.styles.js'
 import '@ui5/webcomponents-icons/dist/message-information.js'
 import ArrayObjectOutputButtons from '../array-object-output-buttons/array-object-output-buttons.component.jsx'
 import { handleSelectChange } from './utils.js'
-const useStyles = createUseStyles(styles, { name: 'ImportAccountConfigurationTree' })
 
-const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tooltip, setConfigurationStatus, setSwitchOptions, expandableNode, treeNodeInputValue, t }) => {
+const ImportAccountConfigurationTree = ({
+  id,
+  name,
+  value,
+  error,
+  branches,
+  tooltip,
+  mandatory,
+  setConfigurationStatus,
+  setSwitchOptions,
+  expandableNode,
+  treeNodeInputValue,
+  t,
+}) => {
   const dispatch = useDispatch()
-  const classes = useStyles()
-
-  const [selectedValues, setSelectedValues] = useState({})
-
   const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
-    console.log('CHECKED treeNodeId--->', parentNode)
-    console.log('CHECKED branches--->', branches)
-    // getAllParentNodes
     mandatoryFields(treeNodeId)
+    setFields(event)
     dispatch(setConfigurationStatus({ checkBoxId, value, branches }))
+    console.log('checkBoxId', checkBoxId)
+
     if (treeNodeInputValue) {
       dispatch(setSugestionSchema({ checkBoxId, value }))
     }
   }
+
   const findBranchAndSiblings = (structure, targetId) => {
     let result = null
 
@@ -59,13 +66,29 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
     for (let branch of siblings) {
       if (branch.id.includes('status')) {
         dispatch(setMandatoryStatus({ checkBoxId: branch.id, value: true }))
-
+        dispatch(setSuggestionTreeMandatoryStatus({ checkBoxId: branch.id, value: true }))
         return true
       }
     }
     return false
   }
 
+  const setFields = (event) => {
+    const findSiblings = findBranchAndSiblings(branches, event.srcElement.id)
+    if (findSiblings) {
+      selectChildrenField(findSiblings)
+    }
+  }
+
+  const selectChildrenField = (siblings) => {
+    for (let branch of siblings) {
+      if (branch.id.includes('isSubscribed')) {
+        dispatch(setConfigurationStatus({ checkBoxId: branch.id, value: true }))
+      } else if (branch.id.includes('isConsentGranted')) {
+        dispatch(setConfigurationStatus({ checkBoxId: branch.id, value: true }))
+      }
+    }
+  }
   const mandatoryFields = (event) => {
     const findSiblings = findBranchAndSiblings(branches, event)
     if (findSiblings) {
@@ -87,9 +110,13 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
     }
     return false
   }
+  const isReadOnly = (treeNode) => {
+    return (treeNode.branches.length === 0 && treeNode.mandatory === true) || mandatory === true
+  }
 
-  const expandTree = (treeNode, isParentLoyalty = false, level = 0) => {
+  const expandTree = (treeNode, isParentLoyalty = false) => {
     const isLoyaltyNode = ['internal', 'data', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
+
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -98,7 +125,7 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
           <FlexBox direction="Row" justifyContent="Start">
             <CheckBox
               id={`${treeNode.id}`}
-              readonly={treeNode.mandatory ? treeNode.mandatory : false}
+              readonly={isReadOnly(treeNode)}
               text={treeNode.formatName === false ? treeNode.name : treeNode.name}
               checked={treeNode.value}
               onChange={(event) => onCheckBoxStateChangeHandler(event, treeNode.id, treeNode)}
@@ -106,16 +133,12 @@ const ImportAccountConfigurationTree = ({ id, name, value, error, branches, tool
 
             {showError(treeNode)}
             {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'profile' && (
-              <ArrayObjectOutputButtons
-                treeNode={treeNode}
-                t={t}
-                handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch, treeNode, setSelectedValues)}
-              />
+              <ArrayObjectOutputButtons treeNode={treeNode} t={t} handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch)} />
             )}
           </FlexBox>
         }
       >
-        {treeNode.branches.length > 0 && treeNode.branches.map((branch) => expandTree(branch, isLoyaltyNode, level + 1))}
+        {treeNode.branches.length > 0 && treeNode.branches.map((branch) => expandTree(branch, isLoyaltyNode))}
       </TreeItemCustom>
     )
   }

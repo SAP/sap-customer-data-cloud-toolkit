@@ -5,10 +5,9 @@ import { Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { extractIds } from '../../routes/import-accounts/utils'
 import styles from './search-schema-input.styles'
-import { setSelectedConfiguration } from '../../redux/importAccounts/importAccountsSlice'
 
 const useStyles = createUseStyles(styles, { name: 'SearchSchemaInput' })
-const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick }) => {
+const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick, dispatchMandatoryStatus }) => {
   const classes = useStyles()
   const [suggestions, setSuggestions] = useState([])
 
@@ -19,8 +18,8 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
     setSchemaInputValue(value)
     if (value !== '') {
       const filteredSuggestions = allNames.filter((name) => name.includes(value))
-      setSuggestions(filteredSuggestions)
       if (filteredSuggestions.length) {
+        setSuggestions(filteredSuggestions)
         handleTreeNodeClick(filteredSuggestions)
       }
     }
@@ -31,9 +30,12 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
 
   const onSchemaInputKeyPressHandler = (event) => {
     const inputValue = event.target.value.trim()
-    if (event.type === 'change') {
-      setSchemaInputValue(inputValue)
-      handleTreeNodeClick([inputValue])
+    setSchemaInputValue(inputValue)
+    console.log('value', inputValue)
+    console.log('suggest', suggestions)
+    handleTreeNodeClick(suggestions)
+    if (inputValue === '') {
+      handleTreeNodeClick('')
     }
   }
 

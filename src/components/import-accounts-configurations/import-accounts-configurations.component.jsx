@@ -3,10 +3,10 @@
  * License: Apache-2.0
  */
 
-import React, { useState } from 'react'
+import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
-import { Card, CardHeader, FlexBox } from '@ui5/webcomponents-react'
+import { CardHeader } from '@ui5/webcomponents-react'
 import ImportAccountsConfigurationTree from '../import-account-configuration-tree/import-accounts-configuration-tree.component.jsx'
 import styles from './import-account-configurations.styles'
 

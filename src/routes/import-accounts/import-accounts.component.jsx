@@ -10,7 +10,7 @@ import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../r
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option } from '@ui5/webcomponents-react'
+import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option } from '@ui5/webcomponents-react'
 import {
   getConfigurations,
   selectConfigurations,
@@ -21,6 +21,7 @@ import {
   setSwitchOptions,
   selectIsLoading,
   clearConfigurations,
+  setMandatoryStatus,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
@@ -41,8 +42,8 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
-  const [selectedTreeNodeId, setSelectedTreeNodeId] = useState([])
-  console.log('configurations--->', configurations)
+  console.log('selectedConfigurations', selectedConfigurations)
+  console.log('treeNodeInputValue', treeNodeInputValue)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations('Full'))
@@ -53,14 +54,23 @@ const ImportAccountsComponent = ({ t }) => {
   }
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
-    console.log('selectedValue', selectedValue)
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations(selectedValue))
   }
-
+  const dispatchMandatoryStatus = (treeNode) => {
+    console.log('item', treeNode)
+    if (treeNode.includes('status')) {
+      dispatch(setMandatoryStatus({ checkBoxId: treeNode, value: true }))
+    }
+  }
+  const setSuggestionConfiguration = (inputValue) => {
+    dispatch(setSuggestionConfiguration({ checkBoxId: inputValue, value: true }))
+    setTreeNodeInputValue(inputValue)
+    setExpandableNode(true)
+  }
   const handleTreeNodeClick = (treeNodeId) => {
-    let parentNodes = configurations
     if (treeNodeId) {
+      console.log('treeNodeId', treeNodeId)
       dispatch(setSelectedConfiguration(treeNodeId))
       setTreeNodeInputValue(treeNodeId)
       setExpandableNode(true)
@@ -69,22 +79,7 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
-  console.log('OUTSIDE selectedConfigurations--->', selectedConfigurations)
 
-  const getObjectById = (data, id) => {
-    for (let item of data) {
-      if (item.id === id) {
-        return item
-      }
-      if (item.branches && item.branches.length > 0) {
-        const result = getObjectById(item.branches, id)
-        if (result) {
-          return result
-        }
-      }
-    }
-    return null
-  }
   const disableSaveButton = () => {
     return !areConfigurationsFilled(configurations) || isLoading
   }
@@ -96,7 +91,6 @@ const ImportAccountsComponent = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setSwitchOptions={setSwitchOptions}
         treeNodeInputValue={treeNodeInputValue}
-        selectedTreeNodeId={selectedTreeNodeId}
       />
     )
   }
@@ -143,11 +137,14 @@ const ImportAccountsComponent = ({ t }) => {
                 <div className={classes.searchBarGridItem} data-layout-span="XL7 L7 M7 S7">
                   <div className={classes.searchBarContainer}>
                     <SearchBar
+                      dispatch={dispatch}
+                      setSuggestionConfiguration={setSuggestionConfiguration}
                       treeNodeInputValue={treeNodeInputValue}
                       configurations={configurations}
                       setSchemaInputValue={setSchemaInputValue}
                       schemaInputValue={schemaInputValue}
                       handleTreeNodeClick={handleTreeNodeClick}
+                      dispatchMandatoryStatus={dispatchMandatoryStatus}
                     />
                   </div>
                 </div>

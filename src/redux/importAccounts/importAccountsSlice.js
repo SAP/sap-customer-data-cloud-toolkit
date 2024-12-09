@@ -22,8 +22,6 @@ export const importAccountsSlice = createSlice({
   },
   reducers: {
     setConfigurationStatus(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-
       setParentsTrue(state.configurations, action.payload.checkBoxId, action.payload.value)
     },
     getConfiguration(state, action) {
@@ -46,8 +44,11 @@ export const importAccountsSlice = createSlice({
       propagateConfigurationSelectBox(configuration, action.payload)
     },
     setSugestionSchema(state, action) {
-      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
       setParentsTrue(state.selectedConfiguration, action.payload.checkBoxId, action.payload.value)
+    },
+    setRootOptions(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.mandatory = true
     },
 
     setMandatoryStatus(state, action) {
@@ -58,8 +59,20 @@ export const importAccountsSlice = createSlice({
         configuration.value = true
       }
     },
+    setSuggestionTreeMandatoryStatus(state, action) {
+      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
+      const parent = getParent(state.selectedConfiguration, 'communications', action.payload.checkBoxId)
+      if (parent) {
+        configuration.mandatory = true
+        configuration.value = true
+      }
+    },
+    setSuggestionConfiguration(state, action) {
+      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
+      state.selectedConfiguration = configuration
+      console.log('configuration', JSON.stringify(state.selectedConfiguration))
+    },
     setSelectedConfiguration(state, action) {
-      console.log('action.payload--->', action.payload)
       const configuration = getAllConfiguration(state.configurations, action.payload)
       state.selectedConfiguration = configuration
     },
@@ -123,8 +136,18 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
     return rejectWithValue(getErrorAsArray(error))
   }
 })
-export const { setMandatoryStatus, setSelectedConfiguration, setConfigurationStatus, clearErrors, setSugestionSchema, setSwitchOptions, clearConfigurations } =
-  importAccountsSlice.actions
+export const {
+  setMandatoryStatus,
+  setSuggestionConfiguration,
+  setSuggestionTreeMandatoryStatus,
+  setRootOptions,
+  setSelectedConfiguration,
+  setConfigurationStatus,
+  clearErrors,
+  setSugestionSchema,
+  setSwitchOptions,
+  clearConfigurations,
+} = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectIsLoading = (state) => state.importAccounts.isLoading
