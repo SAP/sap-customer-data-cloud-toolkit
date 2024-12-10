@@ -6,7 +6,7 @@
 import { useDispatch } from 'react-redux'
 import React from 'react'
 import { withTranslation } from 'react-i18next'
-import { setMandatoryStatus, setSugestionSchema, setSuggestionTreeMandatoryStatus } from '../../redux/importAccounts/importAccountsSlice.js'
+import { setMandatoryFields, setMandatoryStatus, setSugestionSchema, setSuggestionTreeMandatoryStatus } from '../../redux/importAccounts/importAccountsSlice.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
@@ -83,9 +83,9 @@ const ImportAccountConfigurationTree = ({
   const selectChildrenField = (siblings) => {
     for (let branch of siblings) {
       if (branch.id.includes('isSubscribed')) {
-        dispatch(setConfigurationStatus({ checkBoxId: branch.id, value: true }))
+        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true }))
       } else if (branch.id.includes('isConsentGranted')) {
-        dispatch(setConfigurationStatus({ checkBoxId: branch.id, value: true }))
+        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true }))
       }
     }
   }

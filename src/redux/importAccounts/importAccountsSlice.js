@@ -24,6 +24,11 @@ export const importAccountsSlice = createSlice({
     setConfigurationStatus(state, action) {
       setParentsTrue(state.configurations, action.payload.checkBoxId, action.payload.value)
     },
+    setMandatoryFields(state, action) {
+      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
+      configuration.value = action.payload.value
+      configuration.mandatory = action.payload.mandatory
+    },
     getConfiguration(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       state.configurations = [configuration]
@@ -143,6 +148,7 @@ export const {
   setRootOptions,
   setSelectedConfiguration,
   setConfigurationStatus,
+  setMandatoryFields,
   clearErrors,
   setSugestionSchema,
   setSwitchOptions,
