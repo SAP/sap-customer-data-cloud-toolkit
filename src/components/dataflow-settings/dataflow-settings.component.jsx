@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
@@ -32,7 +31,7 @@ const DataflowSettings = ({ dataFlowTreeNode, setDataflowVariableValue, setDataf
       setInitialVariableValues(dataFlowTreeNode.variables)
     }
   }, [openSettingsDialog]) //eslint-disable-line
-
+  console.log('dataFlowTreeNode.variables', dataFlowTreeNode.variables)
   const onDataflowSettingsButtonClickHandler = () => {
     setOpenSettingsDialog(true)
   }

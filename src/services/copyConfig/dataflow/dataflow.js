@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -251,7 +250,10 @@ class Dataflow {
 
   static #replaceVariables(dataflow, variables) {
     let decodedDataflow = Dataflow.decodeDataflow(dataflow)
+    console.log('variables', variables)
     for (const variable of variables) {
+      console.log('variables', variables)
+      console.log('decodedDataflow', decodedDataflow)
       const regex = new RegExp(variable.variable, 'g')
       decodedDataflow = decodedDataflow.replaceAll(regex, variable.value)
     }

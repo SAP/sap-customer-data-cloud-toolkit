@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
 import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Input, Option, Select, Form, FormItem, Label, FormGroup, TextArea } from '@ui5/webcomponents-react'
-import { getConfigurations, selectServerConfigurations } from '../../redux/serverImport/serverImportSlice.js'
+import { getConfigurations, getServerConfiguration, selectServerConfigurations, setDataflow } from '../../redux/serverImport/serverImportSlice.js'
 import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
@@ -30,29 +30,26 @@ const ServerImportComponent = ({ t }) => {
     dispatch(getConfigurations())
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
-  const [formData, setFormData] = useState({
-    accountName: '',
-    accountKey: '',
-    container: '',
-    blob: '',
-    readFile: '',
-  })
+  const [formData, setFormData] = useState([])
+  useEffect(() => {
+    setFormData(serverConfigurations)
+  }) //eslint-disable-line
 
   const handleOptionChange = (event) => {
-    console.log('event.target.value--->', event.target.value)
     setSelectedOption(event.target.value)
+    console.log('selectedOption.target.value--->', selectedOption)
   }
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }))
+  const handleInputChange = (event, id) => {
+    console.log('selectedOption.target.value', selectedOption)
+    console.log('event.target.value--->', event.target.value)
+    console.log('eventid--->', id)
+    dispatch(getServerConfiguration({ selectedOption, id, value: event.target.value }))
   }
 
   const handleSubmit = () => {
     console.log('Form Data:', formData)
+    dispatch(setDataflow(selectedOption))
   }
 
   return (
@@ -78,7 +75,13 @@ const ServerImportComponent = ({ t }) => {
                 {serverConfigurations[selectedOption] &&
                   serverConfigurations[selectedOption].map((field) => (
                     <FormItem key={field.name} label={<Label>{field.name}</Label>}>
-                      <Input type={field.type} name={field.name} placeholder={field.placeholder} value={formData[field.name] || ''} onInput={handleInputChange} />
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        value={formData[field.name] || ''}
+                        onInput={(event) => handleInputChange(event, field.id)}
+                      />
                     </FormItem>
                   ))}
               </FormGroup>
