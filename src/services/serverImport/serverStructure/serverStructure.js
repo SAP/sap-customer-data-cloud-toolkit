@@ -3,7 +3,7 @@ export const serverStructure = {
     { id: '{{accountName}}', name: 'Account Name', type: 'text', placeholder: 'Enter your Account Name' },
     { id: '{{accountKey}}', name: 'Account Key', type: 'text', placeholder: 'Enter your Account Key' },
     { id: '{{container}}', name: 'Container', type: 'text', placeholder: 'Enter your Container' },
-    { id: '{{readFileNameRegex}', name: 'File Name Regex', type: 'text', placeholder: 'Enter your File Name Regex' },
+    { id: '{{readFileNameRegex}}', name: 'File Name Regex', type: 'text', placeholder: 'Enter your File Name Regex' },
     { id: '{{blobPrefix}}', name: 'Blob Prefix', type: 'text', placeholder: 'Enter your Blob Prefix' },
   ],
   amazon: [

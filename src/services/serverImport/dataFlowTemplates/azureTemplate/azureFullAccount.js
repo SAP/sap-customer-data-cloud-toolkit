@@ -1,6 +1,7 @@
 export const importFullAccountAzure = {
   name: 'Prod: Import Full Account - Azure',
   description: 'Import Full Account - Toolkit',
+  status: 'published',
   steps: [
     {
       id: 'Transform to CDC Structure',

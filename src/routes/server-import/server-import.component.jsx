@@ -6,12 +6,32 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, CardHeader, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Input, Option, Select, Form, FormItem, Label, FormGroup, TextArea } from '@ui5/webcomponents-react'
-import { getConfigurations, getServerConfiguration, selectServerConfigurations, setDataflow } from '../../redux/serverImport/serverImportSlice.js'
+import {
+  Card,
+  CardHeader,
+  Bar,
+  Title,
+  Text,
+  TitleLevel,
+  FlexBox,
+  Grid,
+  Button,
+  Input,
+  Option,
+  Select,
+  Form,
+  FormItem,
+  Label,
+  FormGroup,
+  TextArea,
+  ValueState,
+} from '@ui5/webcomponents-react'
+import { getConfigurations, getServerConfiguration, selectServerConfigurations, selectShowSuccessDialog, setDataflow } from '../../redux/serverImport/serverImportSlice.js'
 import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { useDispatch, useSelector } from 'react-redux'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Server Import'
 const ServerImportComponent = ({ t }) => {
@@ -22,13 +42,13 @@ const ServerImportComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState('azure')
-  console.log('serverConfigurations--->', serverConfigurations)
-  console.log('selectedOption--->', serverConfigurations[selectedOption])
-
+  const showSuccessDialog = useSelector(selectShowSuccessDialog)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
+  console.log('selectedOption.target.value--->', selectedOption)
+  console.log('serverConfigurations.target.value--->', serverConfigurations)
 
   const [formData, setFormData] = useState([])
   useEffect(() => {
@@ -51,6 +71,18 @@ const ServerImportComponent = ({ t }) => {
     console.log('Form Data:', formData)
     dispatch(setDataflow(selectedOption))
   }
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText="Success"
+      state={ValueState.Success}
+      closeButtonContent="Close"
+      id="copyConfigSuccessPopup"
+      data-cy="copyConfigSuccessPopup"
+    >
+      <Text>SuccessFull</Text>
+    </DialogMessageInform>
+  )
 
   return (
     <>
@@ -96,6 +128,7 @@ const ServerImportComponent = ({ t }) => {
           </div>
         </div>
       </Card>
+      {showSuccessDialog && showSuccessMessage()}
     </>
   )
 }

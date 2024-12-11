@@ -19,15 +19,39 @@ class ServerImport {
     const structure = serverStructure
     return structure
   }
-  setDataflow(configurations, option) {
+  async setDataflow(configurations, option) {
     console.log('setConfiguration--->', configurations)
     console.log('option--->', option)
     console.log('option--->', configurations[option])
     console.log(' JSON.parse(data)--->', importFullAccountAzure)
     const replacedDataflow = this.replaceVariables(importFullAccountAzure, configurations[option])
     console.log(' JSON.replacedDataflow--->', replacedDataflow)
-    const createDataflow = this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
-    console.log(' JSON.createDataflow--->', createDataflow)
+    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
+    console.log(' JSON.createDataflow--->', createDataflow.id)
+    const schedule = this.scheduleStructure(createDataflow)
+    console.log(' this.scheduleStructure(createDataflow)', this.scheduleStructure(createDataflow))
+    console.log('schedule', schedule.data)
+
+    const createSchedule = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, this.scheduleStructure(createDataflow))
+    console.log('createSchedule', createSchedule)
+    return createSchedule
+  }
+
+  // {
+  //   name:'test_schedule',
+  //   dataflowId:'8e74ee6bed864df6aed05d13d0ba6815',
+  //   frequencyType:'once',
+
+  // }
+  scheduleStructure(response) {
+    const structure = {
+      data: {
+        name: 'test_schedule',
+        dataflowId: response.id,
+        frequencyType: 'once',
+      },
+    }
+    return structure
   }
   replaceVariables(dataflow, variables) {
     let dataflowString = JSON.stringify(dataflow)

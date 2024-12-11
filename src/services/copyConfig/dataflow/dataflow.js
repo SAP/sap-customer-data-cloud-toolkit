@@ -27,6 +27,14 @@ class Dataflow {
     this.#site = site
     this.#dataCenter = dataCenter
   }
+  async setScheduling(site, dataCenter, body) {
+    const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
+    const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {
+      return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
+    })
+    return res.data
+  }
 
   async set(site, dataCenter, body) {
     const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getSetDataflowEndpoint() : Dataflow.#getSetDataflowDraftEndpoint()
@@ -111,11 +119,23 @@ class Dataflow {
     parameters.data = JSON.stringify(body)
     return parameters
   }
+  #setSchedulingDataflowParameters(apiKey, config) {
+    const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
+    console.log('config.name', config.name)
+    console.log('config.dataflowId', config.dataflowId)
+
+    parameters.data = JSON.stringify(config.data)
+
+    return parameters
+  }
 
   static #getSetDataflowEndpoint() {
     return `${Dataflow.#NAMESPACE}.setDataflow`
   }
 
+  static #getSetSchedulingDataflowEndpoint() {
+    return `${Dataflow.#NAMESPACE}.createScheduling`
+  }
   static #getSetDataflowDraftEndpoint() {
     return Dataflow.#getSetDataflowEndpoint() + 'Draft'
   }

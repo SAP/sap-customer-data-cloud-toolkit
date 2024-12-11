@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export const testErrorObject = {
   callId: '1234567890',
   errorCode: 500000,

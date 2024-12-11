@@ -43,6 +43,20 @@ export const serverImportExtendedSlice = createSlice({
       state.isLoading = false
       state.errors = action.payload
     })
+    builder.addCase(setDataflow.pending, (state) => {
+      state.isLoading = true
+      state.errors = []
+      state.showSuccessMessage = false
+    })
+    builder.addCase(setDataflow.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = true
+    })
+    builder.addCase(setDataflow.rejected, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = false
+      state.errors = action.payload
+    })
   },
 })
 
@@ -72,5 +86,6 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
 })
 export const { getServerConfiguration } = serverImportExtendedSlice.actions
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
+export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
 
 export const serverImportExtendedSliceReducer = serverImportExtendedSlice.reducer
