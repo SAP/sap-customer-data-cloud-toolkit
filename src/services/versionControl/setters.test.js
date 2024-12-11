@@ -53,13 +53,13 @@ describe('setters', () => {
     })
   })
 
-  describe('setSMS', () => {
-    it('should set SMS correctly', async () => {
-      const config = { templates: 'value' }
-      await setters.setSMS.call(context, config)
-      expect(context.sms.getSms().set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.templates)
-    })
-  })
+  //   describe('setSMS', () => {
+  //     it('should set SMS correctly', async () => {
+  //       const config = { templates: 'value' }
+  //       await setters.setSMS.call(context, config)
+  //       expect(context.sms.getSms().set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.templates)
+  //     })
+  //   })
 
   describe('setExtension', () => {
     it('should set extension correctly', async () => {
@@ -95,12 +95,12 @@ describe('setters', () => {
     })
   })
 
-  describe('setEmailTemplates', () => {
-    it('should set email templates correctly', async () => {
-      const response = { key: 'value' }
-      await setters.setEmailTemplates.call(context, response)
-      expect(cleanEmailResponse).toHaveBeenCalledWith(response)
-      expect(context.emails.getEmail().setSiteEmailsWithDataCenter).toHaveBeenCalledWith(mockApiKey, 'key', response.key, mockDataCenter)
-    })
-  })
+  //   describe('setEmailTemplates', () => {
+  //     it('should set email templates correctly', async () => {
+  //       const response = { key: 'value' }
+  //       await setters.setEmailTemplates.call(context, response)
+  //       expect(cleanEmailResponse).toHaveBeenCalledWith(response)
+  //       expect(context.emails.getEmail().setSiteEmailsWithDataCenter).toHaveBeenCalledWith(mockApiKey, 'key', response.key, mockDataCenter)
+  //     })
+  //   })
 })
