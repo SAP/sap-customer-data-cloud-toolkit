@@ -111,12 +111,17 @@ const ImportAccountConfigurationTree = ({
     return false
   }
   const isReadOnly = (treeNode) => {
-    return (treeNode.branches.length === 0 && treeNode.mandatory === true) || mandatory === true
+    if ((treeNode.branches.length === 0 && treeNode.mandatory === true) || (mandatory === true && treeNode.mandatory !== false)) {
+      return true
+    }
+    if (treeNode.mandatory === false) {
+      return false
+    }
+    return false
   }
 
   const expandTree = (treeNode, isParentLoyalty = false) => {
     const isLoyaltyNode = ['internal', 'data', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
-
     return (
       <TreeItemCustom
         key={treeNode.id}

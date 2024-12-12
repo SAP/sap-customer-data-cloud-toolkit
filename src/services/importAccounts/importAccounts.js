@@ -44,7 +44,6 @@ class ImportAccounts {
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
       result.push(...getContext())
     }
-
     return result
   }
 

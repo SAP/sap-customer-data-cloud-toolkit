@@ -2,8 +2,29 @@ export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
     configuration.branches.forEach((branch) => {
+      console.log('entererd')
+      if (branch.id.includes('status') || branch.id.includes('isConsentGranted') || branch.id.includes('isSubscribed')) {
+        branch.value = value
+        branch.mandatory = value
+      }
       branch.value = value
       propagateConfigurationState(branch, value)
+    })
+  }
+}
+export const clearConfigurationsState = (configuration, value) => {
+  if (configuration.id === 'email' || configuration.id === 'uid') {
+    return // Skip configurations with id 'email' or 'uid'
+  }
+  configuration.value = value
+
+  if (configuration.branches) {
+    configuration.branches.forEach((branch) => {
+      if (branch.branches.length === 0) {
+        branch.mandatory = false // Ensure mandatory is set to false
+      }
+      branch.value = value
+      clearConfigurationsState(branch, value) // Recursively clear branches
     })
   }
 }
@@ -90,6 +111,30 @@ export const setParentsTrue = (structure, childId, value) => {
 
   traverse(structure, childId, value)
   checkAndSetParents(structure)
+}
+export const getConfigurationPath = (configurations, targetId) => {
+  const path = targetId.split('.')
+
+  const findPath = (nodes, path) => {
+    if (path.length === 0) return null
+
+    const [currentId, ...restPath] = path
+    const node = nodes.find((n) => n.id === currentId || n.id.endsWith(`.${currentId}`))
+
+    if (!node) return null
+
+    if (restPath.length === 0) return node
+
+    const childPath = findPath(node.branches, restPath)
+    if (!childPath) return null
+
+    return {
+      ...node,
+      branches: [childPath],
+    }
+  }
+
+  return findPath(configurations, path)
 }
 export const getParent = (structure, parentId, targetId) => {
   const findParent = (nodes) => {

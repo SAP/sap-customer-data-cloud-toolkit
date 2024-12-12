@@ -12,7 +12,7 @@ import styles from './import-account-configurations.styles'
 
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
-const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptions, setConfigurationStatus, selectedTreeNodeId, treeNodeInputValue, expandableNode, t }) => {
+const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptions, setConfigurationStatus, treeNodeInputValue, expandableNode, t }) => {
   const classes = useStyles()
   return configurations && configurations.length ? (
     <div className={classes.selectConfigurationInnerDivStyle}>
@@ -26,7 +26,6 @@ const SiteConfigurations = ({ configurations, handleSelectChange, setSwitchOptio
             setSwitchOptions={setSwitchOptions}
             expandableNode={expandableNode}
             treeNodeInputValue={treeNodeInputValue}
-            selectedTreeNodeId={selectedTreeNodeId}
           />
         ))}
       </div>

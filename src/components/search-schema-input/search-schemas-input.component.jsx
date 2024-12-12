@@ -7,7 +7,7 @@ import { extractIds } from '../../routes/import-accounts/utils'
 import styles from './search-schema-input.styles'
 
 const useStyles = createUseStyles(styles, { name: 'SearchSchemaInput' })
-const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick, dispatchMandatoryStatus }) => {
+const SearchBar = ({ dispatch, handleSuggestionClick, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick, dispatchMandatoryStatus }) => {
   const classes = useStyles()
   const [suggestions, setSuggestions] = useState([])
 
@@ -33,9 +33,9 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
     setSchemaInputValue(inputValue)
     console.log('value', inputValue)
     console.log('suggest', suggestions)
-    handleTreeNodeClick(suggestions)
+    handleSuggestionClick(inputValue)
     if (inputValue === '') {
-      handleTreeNodeClick('')
+      handleSuggestionClick('')
     }
   }
 

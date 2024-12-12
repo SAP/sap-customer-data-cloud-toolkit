@@ -22,6 +22,7 @@ import {
   selectIsLoading,
   clearConfigurations,
   setMandatoryStatus,
+  setSuggestionClickConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
@@ -43,7 +44,7 @@ const ImportAccountsComponent = ({ t }) => {
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
   console.log('selectedConfigurations', selectedConfigurations)
-  console.log('treeNodeInputValue', treeNodeInputValue)
+  console.log('configurations', configurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations('Full'))
@@ -63,15 +64,17 @@ const ImportAccountsComponent = ({ t }) => {
       dispatch(setMandatoryStatus({ checkBoxId: treeNode, value: true }))
     }
   }
-  const setSuggestionConfiguration = (inputValue) => {
-    dispatch(setSuggestionConfiguration({ checkBoxId: inputValue, value: true }))
-    setTreeNodeInputValue(inputValue)
-    setExpandableNode(true)
-  }
+  // const setSuggestionConfiguration = (inputValue) => {
+  //   if (inputValue) {
+  //     dispatch(setSuggestionConfiguration({ checkBoxId: inputValue, value: true }))
+  //     setTreeNodeInputValue(inputValue)
+  //     setExpandableNode(true)
+  //   }
+  // }
   const handleTreeNodeClick = (treeNodeId) => {
     if (treeNodeId) {
-      console.log('treeNodeId', treeNodeId)
       dispatch(setSelectedConfiguration(treeNodeId))
+
       setTreeNodeInputValue(treeNodeId)
       setExpandableNode(true)
     } else {
@@ -79,7 +82,16 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
-
+  const handleSuggestionClick = (nodeId) => {
+    if (nodeId) {
+      dispatch(setSuggestionClickConfiguration({ checkBoxId: nodeId }))
+      setTreeNodeInputValue(nodeId)
+      setExpandableNode(true)
+    } else {
+      setTreeNodeInputValue()
+      setExpandableNode(false)
+    }
+  }
   const disableSaveButton = () => {
     return !areConfigurationsFilled(configurations) || isLoading
   }
@@ -138,7 +150,7 @@ const ImportAccountsComponent = ({ t }) => {
                   <div className={classes.searchBarContainer}>
                     <SearchBar
                       dispatch={dispatch}
-                      setSuggestionConfiguration={setSuggestionConfiguration}
+                      handleSuggestionClick={handleSuggestionClick}
                       treeNodeInputValue={treeNodeInputValue}
                       configurations={configurations}
                       setSchemaInputValue={setSchemaInputValue}
@@ -150,7 +162,7 @@ const ImportAccountsComponent = ({ t }) => {
                 </div>
               </>
             </Grid>
-            <div className={classes.configurationContainer}>{showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}</div>
+            {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
 
             <div className={classes.selectConfigurationOuterDivStyle}>
               <div className={classes.selectConfigurationInnerDivStyle}>

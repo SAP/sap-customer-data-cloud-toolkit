@@ -1,7 +1,16 @@
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { setParentsTrue, propagateConfigurationState, propagateConfigurationSelectBox, getAllConfiguration, getParent } from './utils'
+import {
+  setParentsTrue,
+  propagateConfigurationState,
+  propagateConfigurationSelectBox,
+  getAllConfiguration,
+  getParent,
+  clearConfigurationsState,
+  getConfigurationPath,
+  getFullConfigurationPath,
+} from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurations`
@@ -41,7 +50,7 @@ export const importAccountsSlice = createSlice({
     },
     clearConfigurations(state) {
       state.configurations.forEach((configuration) => {
-        propagateConfigurationState(configuration, false)
+        clearConfigurationsState(configuration, false)
       })
     },
     setSwitchOptions(state, action) {
@@ -72,10 +81,18 @@ export const importAccountsSlice = createSlice({
         configuration.value = true
       }
     },
+    setSuggestionClickConfiguration(state, action) {
+      console.log('action--', action)
+      console.log('state--', JSON.stringify(state.selectedConfiguration))
+      const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)
+      console.log('config--', JSON.stringify(config))
+      if (config) {
+        state.selectedConfiguration = [config]
+      }
+    },
     setSuggestionConfiguration(state, action) {
       const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
       state.selectedConfiguration = configuration
-      console.log('configuration', JSON.stringify(state.selectedConfiguration))
     },
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)
@@ -119,7 +136,6 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-
   try {
     if (currentDataCenter) {
       return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).importAccountToConfigTree(selectedValue)
@@ -147,6 +163,7 @@ export const {
   setSuggestionTreeMandatoryStatus,
   setRootOptions,
   setSelectedConfiguration,
+  setSuggestionClickConfiguration,
   setConfigurationStatus,
   setMandatoryFields,
   clearErrors,

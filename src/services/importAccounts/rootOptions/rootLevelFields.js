@@ -115,8 +115,9 @@ export const getLiteRootElementsStructure = () => {
     {
       id: 'email',
       name: 'email',
-      value: false,
+      value: true,
       branches: [],
+      mandatory: true,
     },
   ]
   return rootElementsStructure
