@@ -20,13 +20,13 @@ export const getCdcData = function () {
 }
 
 export const fetchCDCConfigs = async function () {
-  const cdcDataArray = this.getCdcData()
+  const cdcDataArray = this.getCdcData.bind(this)()
   if (!Array.isArray(cdcDataArray)) {
     throw new Error('getCdcData must return an array')
   }
   const cdcData = await Promise.all(
     cdcDataArray.map(async ({ name, promise }) => {
-      const data = await promise
+      const data = await promise.catch((err) => console.error(`Error resolving ${name}:`, err))
       return { [name]: data }
     }),
   )

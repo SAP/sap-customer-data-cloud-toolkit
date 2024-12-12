@@ -2,7 +2,9 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { cleanResponse, cleanEmailResponse } from './dataSanitization'
+
 export const setPolicies = async function (config) {
   cleanResponse(config)
   await this.policies.set(this.apiKey, config, this.dataCenter)
@@ -13,6 +15,7 @@ export const setWebSDK = async function (config) {
 }
 
 export const setSMS = async function (config) {
+  console.log('setSMS:', this.sms) // Debug log to check sms existence
   await this.sms.getSms().set(this.apiKey, this.dataCenter, config.templates)
 }
 

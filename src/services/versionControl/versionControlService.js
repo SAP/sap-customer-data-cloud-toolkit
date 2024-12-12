@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import VersionControl from './versionControl'
 
 export const createVersionControlInstance = (credentials, apiKey, currentSite) => {

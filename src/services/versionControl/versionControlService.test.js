@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from './versionControlService'
 import VersionControl from './versionControl'
 
@@ -38,16 +42,16 @@ describe('versionControlService', () => {
     versionControl.applyCommitConfig.mockResolvedValue()
   })
 
-//   test('createVersionControlInstance creates a versionControl instance', () => {
-//     const vControl = createVersionControlInstance(credentials, apiKey, currentSite)
+  //   test('createVersionControlInstance creates a versionControl instance', () => {
+  //     const vControl = createVersionControlInstance(credentials, apiKey, currentSite)
 
-//     console.log('vControl instance created:', vControl)
+  //     console.log('vControl instance created:', vControl)
 
-//     expect(vControl).toBeInstanceOf(VersionControl)
-//     expect(vControl.credentials).toEqual(expect.objectContaining(credentials))
-//     expect(vControl.apiKey).toBe(apiKey)
-//     expect(vControl.siteInfo).toEqual(currentSite)
-//   })
+  //     expect(vControl).toBeInstanceOf(VersionControl)
+  //     expect(vControl.credentials).toEqual(expect.objectContaining(credentials))
+  //     expect(vControl.apiKey).toBe(apiKey)
+  //     expect(vControl.siteInfo).toEqual(currentSite)
+  //   })
 
   test('handleCommitListRequestServices fetches commit list successfully', async () => {
     const commitList = await handleCommitListRequestServices(versionControl, apiKey)

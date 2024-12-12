@@ -1,5 +1,7 @@
-// FILE: setters.test.js
-
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import * as setters from './setters'
 import { cleanResponse, cleanEmailResponse } from './dataSanitization'
 
@@ -34,6 +36,9 @@ describe('setters', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(console, 'log').mockImplementation(() => {})
+
+    context.sms.getSms.mockReturnValue({ set: jest.fn() }) // Ensure mock setup is clear
+    context.emails.getEmail.mockReturnValue({ setSiteEmailsWithDataCenter: jest.fn() }) // Ensure mock setup
   })
 
   describe('setPolicies', () => {
@@ -53,13 +58,13 @@ describe('setters', () => {
     })
   })
 
-  //   describe('setSMS', () => {
-  //     it('should set SMS correctly', async () => {
-  //       const config = { templates: 'value' }
-  //       await setters.setSMS.call(context, config)
-  //       expect(context.sms.getSms().set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.templates)
-  //     })
-  //   })
+  describe('setSMS', () => {
+    it('should set SMS correctly', async () => {
+      const config = { templates: 'value' }
+      await setters.setSMS.call(context, config)
+      expect(context.sms.getSms().set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.templates)
+    })
+  })
 
   describe('setExtension', () => {
     it('should set extension correctly', async () => {
@@ -95,12 +100,12 @@ describe('setters', () => {
     })
   })
 
-  //   describe('setEmailTemplates', () => {
-  //     it('should set email templates correctly', async () => {
-  //       const response = { key: 'value' }
-  //       await setters.setEmailTemplates.call(context, response)
-  //       expect(cleanEmailResponse).toHaveBeenCalledWith(response)
-  //       expect(context.emails.getEmail().setSiteEmailsWithDataCenter).toHaveBeenCalledWith(mockApiKey, 'key', response.key, mockDataCenter)
-  //     })
-  //   })
+  describe('setEmailTemplates', () => {
+    it('should set email templates correctly', async () => {
+      const response = { key: 'value' }
+      await setters.setEmailTemplates.call(context, response)
+      expect(cleanEmailResponse).toHaveBeenCalledWith(response)
+      expect(context.emails.getEmail().setSiteEmailsWithDataCenter).toHaveBeenCalledWith(mockApiKey, 'key', response.key, mockDataCenter)
+    })
+  })
 })
