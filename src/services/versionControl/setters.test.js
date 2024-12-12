@@ -83,11 +83,39 @@ describe('setters', () => {
   })
 
   describe('setSchema', () => {
-    it('should set schema correctly', async () => {
+    it('should set dataSchema correctly', async () => {
       const context = getMockContext()
       const config = { dataSchema: 'value' }
       await setters.setSchema.call(context, config)
       expect(context.schema.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.dataSchema)
+    })
+
+    it('should set addressesSchema correctly', async () => {
+      const context = getMockContext()
+      const config = { addressesSchema: 'value' }
+      await setters.setSchema.call(context, config)
+      expect(context.schema.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.addressesSchema)
+    })
+
+    it('should set internalSchema correctly', async () => {
+      const context = getMockContext()
+      const config = { internalSchema: 'value' }
+      await setters.setSchema.call(context, config)
+      expect(context.schema.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.internalSchema)
+    })
+
+    it('should set profileSchema correctly', async () => {
+      const context = getMockContext()
+      const config = { profileSchema: 'value' }
+      await setters.setSchema.call(context, config)
+      expect(context.schema.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.profileSchema)
+    })
+
+    it('should set subscriptionsSchema correctly', async () => {
+      const context = getMockContext()
+      const config = { subscriptionsSchema: 'value' }
+      await setters.setSchema.call(context, config)
+      expect(context.schema.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config.subscriptionsSchema)
     })
   })
 
@@ -96,6 +124,7 @@ describe('setters', () => {
       const context = getMockContext()
       const config = { screenSets: ['value'] }
       await setters.setScreenSets.call(context, config)
+      expect(context.screenSets.set).toHaveBeenCalledWith(mockApiKey, mockDataCenter, 'value')
     })
   })
 
@@ -117,6 +146,15 @@ describe('setters', () => {
       expect(context.rba.setUnknownLocationNotification).not.toHaveBeenCalled()
       expect(context.rba.setRbaRulesAndSettings).toHaveBeenCalledWith(mockApiKey, mockSiteInfo, response[2])
     })
+
+    it('should not set RBA if all responses are missing', async () => {
+      const context = getMockContext()
+      const response = [null, null, null]
+      await setters.setRBA.call(context, response)
+      expect(context.rba.setAccountTakeoverProtection).not.toHaveBeenCalled()
+      expect(context.rba.setUnknownLocationNotification).not.toHaveBeenCalled()
+      expect(context.rba.setRbaRulesAndSettings).not.toHaveBeenCalled()
+    })
   })
 
   describe('setEmailTemplates', () => {
@@ -133,7 +171,7 @@ describe('setters', () => {
       const response = { errorCode: 'error', key: 'value' }
       await setters.setEmailTemplates.call(context, response)
       expect(cleanEmailResponse).toHaveBeenCalledWith(response)
-      // Correctly verify setSiteEmailsWithDataCenter is not called for 'errorCode'
+      expect(context.emails.getEmail().setSiteEmailsWithDataCenter).toHaveBeenCalledWith(mockApiKey, 'key', response.key, mockDataCenter)
       expect(context.emails.getEmail().setSiteEmailsWithDataCenter).not.toHaveBeenCalledWith(mockApiKey, 'errorCode', 'error', mockDataCenter)
     })
   })

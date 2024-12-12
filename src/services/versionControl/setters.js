@@ -15,7 +15,6 @@ export const setWebSDK = async function (config) {
 }
 
 export const setSMS = async function (config) {
-  console.log('setSMS:', this.sms) // Debug log to check sms existence
   await this.sms.getSms().set(this.apiKey, this.dataCenter, config.templates)
 }
 
@@ -47,7 +46,7 @@ export const setSchema = async function (config) {
 
 export const setScreenSets = async function (config) {
   for (const screenSet of config.screenSets) {
-    console.log('ScreenSet:', screenSet)
+    await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
   }
 }
 
