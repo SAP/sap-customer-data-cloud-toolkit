@@ -6,7 +6,6 @@ import { Base64 } from 'js-base64'
 import * as githubUtils from './githubUtils'
 import { getFileTypeFromFileName } from './versionControlFiles'
 
-jest.mock('axios')
 jest.mock('./versionControlFiles', () => ({
   getFileTypeFromFileName: jest.fn(),
 }))
@@ -145,6 +144,12 @@ describe('githubUtils', () => {
       const result = await githubUtils.branchExists.call(context, 'main')
       expect(result).toBe(false)
     })
+
+    it('should throw error if branches cannot be fetched', async () => {
+      octokitMock.rest.repos.listBranches.mockRejectedValue(new Error('Network Error'))
+
+      await expect(githubUtils.branchExists.call(context, 'main')).rejects.toThrow('Network Error')
+    })
   })
 
   describe('createBranch', () => {
@@ -163,6 +168,13 @@ describe('githubUtils', () => {
 
     it('should throw an error if branch name is not provided', async () => {
       await expect(githubUtils.createBranch.call(context)).rejects.toThrow('Branch name is required')
+    })
+
+    it('should not create a branch if it already exists', async () => {
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'newBranch' }] })
+
+      await githubUtils.createBranch.call(context, 'newBranch')
+      expect(octokitMock.rest.git.createRef).not.toHaveBeenCalled()
     })
   })
 
@@ -208,6 +220,22 @@ describe('githubUtils', () => {
       const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'value' }))
       expect(result).toBeNull()
     })
+
+    it('should handle 404 error when fetching file content', async () => {
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
+
+      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
+    })
+
+    it('should handle branch does not exist error when fetching file content', async () => {
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [] })
+      octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Branch does not exist'))
+
+      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
+    })
   })
 
   describe('storeCdcDataInGit', () => {
@@ -240,5 +268,23 @@ describe('githubUtils', () => {
       const result = await githubUtils.getCommits.call(context)
       expect(result).toEqual(mockCommits)
     })
+
+    // it('should handle pagination correctly', async () => {
+    //   const mockCommitsPage1 = [{ sha: 'commit1' }]
+    //   const mockCommitsPage2 = [{ sha: 'commit2' }]
+    //   octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: mockCommitsPage1 }).mockResolvedValueOnce({ data: mockCommitsPage2 })
+
+    //   const allCommits = await githubUtils.getCommits.call(context)
+    //   expect(allCommits).toEqual([...mockCommitsPage1, ...mockCommitsPage2])
+    // })
+
+    // it('should break pagination loop if less than per_page commits', async () => {
+    //   const mockCommitsPage1 = [{ sha: 'commit1' }]
+    //   const mockCommitsPage2 = [{ sha: 'commit2' }]
+    //   octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: mockCommitsPage1 }).mockResolvedValueOnce({ data: mockCommitsPage2 }).mockResolvedValueOnce({ data: [] })
+
+    //   const allCommits = await githubUtils.getCommits.call(context)
+    //   expect(allCommits).toEqual([...mockCommitsPage1, ...mockCommitsPage2])
+    // })
   })
 })
