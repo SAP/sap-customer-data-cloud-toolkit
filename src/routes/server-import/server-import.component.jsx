@@ -42,6 +42,8 @@ const ServerImportComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState('azure')
+  const [accountOption, setAccountOption] = useState('azure')
+  const [showDialog, setShowSuccessDialog] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
@@ -55,6 +57,10 @@ const ServerImportComponent = ({ t }) => {
     setFormData(serverConfigurations)
   }) //eslint-disable-line
 
+  const handleAccountOptionChange = (event) => {
+    const selectedValue = event.target.value
+    setAccountOption(selectedValue)
+  }
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value)
     console.log('selectedOption.target.value--->', selectedOption)
@@ -68,8 +74,8 @@ const ServerImportComponent = ({ t }) => {
   }
 
   const handleSubmit = () => {
-    console.log('Form Data:', formData)
-    dispatch(setDataflow(selectedOption))
+    dispatch(setDataflow({ option: selectedOption }))
+    setShowSuccessDialog(true)
   }
   const showSuccessMessage = () => (
     <DialogMessageInform
@@ -101,6 +107,10 @@ const ServerImportComponent = ({ t }) => {
                   </Option>
                 ))}
               </Select>
+              <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
+                <Option>Full</Option>
+                <Option>Lite</Option>
+              </Select>
             </div>
             <Form title="Test Form" columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
               <FormGroup>
@@ -128,7 +138,7 @@ const ServerImportComponent = ({ t }) => {
           </div>
         </div>
       </Card>
-      {showSuccessDialog && showSuccessMessage()}
+      {showDialog && showSuccessMessage()}
     </>
   )
 }

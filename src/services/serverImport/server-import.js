@@ -19,12 +19,16 @@ class ServerImport {
     const structure = serverStructure
     return structure
   }
-  async setDataflow(configurations, option) {
+  async setDataflow(configurations, option, accountOption) {
     console.log('setConfiguration--->', configurations)
+    console.log('accountOption--->', accountOption)
     console.log('option--->', option)
-    console.log('option--->', configurations[option])
+    const dataflowConfig = this.getConfigurations(configurations, option.option)
+    console.log('getConfigurations--->', this.getConfigurations(configurations, option.option))
+    console.log('option--data->', configurations[option.option])
+    console.log(`path :./dataFlowTemplates/${option}Template/${option}${accountOption}Account`)
     console.log(' JSON.parse(data)--->', importFullAccountAzure)
-    const replacedDataflow = this.replaceVariables(importFullAccountAzure, configurations[option])
+    const replacedDataflow = this.replaceVariables(importFullAccountAzure, dataflowConfig)
     console.log(' JSON.replacedDataflow--->', replacedDataflow)
     const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
     console.log(' JSON.createDataflow--->', createDataflow.id)
@@ -35,6 +39,11 @@ class ServerImport {
     const createSchedule = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, this.scheduleStructure(createDataflow))
     console.log('createSchedule', createSchedule)
     return createSchedule
+  }
+  getConfigurations(configurations, key) {
+    console.log('configurations--->', configurations)
+    console.log('key--->', key)
+    return configurations[key]
   }
 
   // {
@@ -55,7 +64,7 @@ class ServerImport {
   }
   replaceVariables(dataflow, variables) {
     let dataflowString = JSON.stringify(dataflow)
-
+    console.log('dataflowString', dataflowString)
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
       console.log('variable.id', variable.value)

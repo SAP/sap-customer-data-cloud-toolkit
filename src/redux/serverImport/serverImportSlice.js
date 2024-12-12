@@ -50,6 +50,7 @@ export const serverImportExtendedSlice = createSlice({
     })
     builder.addCase(setDataflow.fulfilled, (state, action) => {
       state.isLoading = false
+      console.log('action.payload--->', action.payload)
       state.showSuccessMessage = true
     })
     builder.addCase(setDataflow.rejected, (state, action) => {
@@ -77,6 +78,7 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
+  console.log('option--->', option)
 
   try {
     return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).setDataflow(state.serverImport.serverConfigurations, option)
