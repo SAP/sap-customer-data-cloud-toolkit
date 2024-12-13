@@ -17,11 +17,13 @@ const styles = {
   },
   createButtonBarStyle: {
     display: 'flex',
+    justifyContent: 'flex-end', // Align items to the right
     width: '100%',
     marginTop: '16px',
   },
+  selectConfigurationOuterDivStyle: {},
   createButtonStyle: {
-    marginRight: 'auto', // Align to the right
+    marginLeft: 'auto', // Push the button to the right
     marginTop: '10px',
   },
   titleContainer: {
@@ -33,6 +35,10 @@ const styles = {
   },
   submitButton: {
     marginTop: '16px',
+  },
+
+  selectConfigurationInnerDivStyle: {
+    ...spacing.sapUiTinyMargin,
   },
 }
 

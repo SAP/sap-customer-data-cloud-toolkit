@@ -2,7 +2,7 @@ import ServerImport from '../../services/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray } from '../utils'
 import { findConfiguration } from '../copyConfigurationExtended/utils'
-import { getConfigurationByKey } from './utils'
+import { addProperty, clearAllValues, getConfigurationByKey, removeValueIfExists } from './utils'
 import { init } from 'i18next'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
@@ -25,7 +25,18 @@ export const serverImportExtendedSlice = createSlice({
       const option = getConfigurationByKey(configuration, action.payload.selectedOption)
       const initOption = option.filter((item) => item.id === action.payload.id)[0]
       initOption.value = action.payload.value
-      console.log('initOptionvalue--->', JSON.stringify(initOption))
+      state.accountType = action.payload.accountType
+    },
+    clearConfigurations(state, action) {
+      const configuration = state.serverConfigurations
+      console.log('cofniguration', JSON.stringify(configuration))
+      clearAllValues(configuration)
+      console.log('removeValueIfExists(option)--\n', JSON.stringify(configuration))
+    },
+    setAccountType(state, action) {
+      const option = getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
+
+      state.accountType = action.payload.accountType
     },
   },
   extraReducers: (builder) => {
@@ -34,12 +45,9 @@ export const serverImportExtendedSlice = createSlice({
     })
     builder.addCase(getConfigurations.fulfilled, (state, action) => {
       state.isLoading = false
-      console.log('action.payload--->', action.payload)
       state.serverConfigurations = action.payload
     })
     builder.addCase(getConfigurations.rejected, (state, action) => {
-      console.log('action.payload--->', action.payload)
-
       state.isLoading = false
       state.errors = action.payload
     })
@@ -50,7 +58,6 @@ export const serverImportExtendedSlice = createSlice({
     })
     builder.addCase(setDataflow.fulfilled, (state, action) => {
       state.isLoading = false
-      console.log('action.payload--->', action.payload)
       state.showSuccessMessage = true
     })
     builder.addCase(setDataflow.rejected, (state, action) => {
@@ -78,16 +85,18 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-  console.log('option--->', option)
+  console.log('state.serverImport.serverConfigurations--->', JSON.stringify(state.serverImport.serverConfigurations))
+  console.log('state.serverImport', JSON.stringify(state.serverImport))
 
   try {
-    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).setDataflow(state.serverImport.serverConfigurations, option)
+    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).setDataflow(state.serverImport.serverConfigurations, option, state.serverImport.accountType)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
 })
-export const { getServerConfiguration } = serverImportExtendedSlice.actions
+export const { getServerConfiguration, setAccountType, clearConfigurations } = serverImportExtendedSlice.actions
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
+export const selectAccountType = (state) => state.serverImport.accountType
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
 
 export const serverImportExtendedSliceReducer = serverImportExtendedSlice.reducer
