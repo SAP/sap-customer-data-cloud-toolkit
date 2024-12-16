@@ -2,30 +2,11 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import {
-  Card,
-  Bar,
-  Title,
-  Text,
-  Button,
-  Input,
-  Option,
-  Select,
-  Form,
-  FormItem,
-  Label,
-  FormGroup,
-  ValueState,
-  Icon,
-  Popover,
-  FlexBoxDirection,
-  FlexBox,
-  FlexBoxJustifyContent,
-  FlexBoxAlignItems,
-} from '@ui5/webcomponents-react'
+import { Card, Bar, Title, Text, Button, Option, Select, Form, FormItem, FormGroup, ValueState } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -54,8 +35,7 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [showDialog, setShowSuccessDialog] = useState(false)
-  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
-  const [tooltipTarget, setTooltipTarget] = useState('')
+
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
@@ -68,6 +48,8 @@ const ServerImportComponent = ({ t }) => {
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
     const setSelectedServerOption = selectedOption
+    console.log('setSelectedServerOption', setSelectedServerOption)
+    console.log('selectedValue', selectedValue)
     dispatch(setAccountType({ accountType: selectedValue, serverType: setSelectedServerOption }))
     setAccountOption(selectedValue)
   }
@@ -75,23 +57,6 @@ const ServerImportComponent = ({ t }) => {
     setSelectedOption(event.target.value)
   }
 
-  const onMouseOverHandler = (event) => {
-    console.log('event-tartet', event.target.shadowRoot.host.id)
-    console.log(`${event.target}TooltipIcon`)
-    if (event.target.shadowRoot) {
-      setTooltipTarget(event.target.shadowRoot.host.id)
-      setIsMouseOverIcon(true)
-    }
-  }
-  const onMouseOutHandler = () => {
-    setIsMouseOverIcon(false)
-  }
-
-  const openPopover = (id) => {
-    console.log('id--->', id)
-    console.log('tooltipTarget--->', tooltipTarget)
-    return isMouseOverIcon && tooltipTarget === `${id}TooltipIcon`
-  }
   const handleInputChange = (event, id) => {
     dispatch(getServerConfiguration({ selectedOption, id, value: event.target.value, accountType: accountOption }))
   }
@@ -121,7 +86,7 @@ const ServerImportComponent = ({ t }) => {
       id="copyConfigSuccessPopup"
       data-cy="copyConfigSuccessPopup"
     >
-      <Text>SuccessFull</Text>
+      <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
     </DialogMessageInform>
   )
   return (
@@ -134,12 +99,12 @@ const ServerImportComponent = ({ t }) => {
 
           <div className={classes.outerDivContainer}>
             <div className={classes.serverDropDown}>
-              <div className={classes.smallTitle}>Select Account Type</div>
+              <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
               <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
-                <Option value="Full">Full Account</Option>
-                <Option value="Lite">Lite Account</Option>
+                <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
               </Select>
-              <div className={classes.smallTitle}>Select your storage server</div>
+              <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
               <Select onChange={handleOptionChange} className={classes.selectBox}>
                 {Object.keys(serverConfigurations).map((key) => (
                   <Option key={key} value={key}>
@@ -148,48 +113,48 @@ const ServerImportComponent = ({ t }) => {
                 ))}
               </Select>
             </div>
-            <Form title="Test Form" columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
+            <Form columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
               <FormGroup>
                 {serverConfigurations[selectedOption] &&
                   serverConfigurations[selectedOption].map((field) => (
-                    <FormItem key={field.name}>
-                      <FormItemWithIcon
-                        field={field}
-                        onMouseOverHandler={onMouseOverHandler}
-                        onMouseOutHandler={onMouseOutHandler}
-                        handleInputChange={handleInputChange}
-                        openPopover={openPopover}
-                      />
+                    <FormItem key={field.name} className={classes.outerDivFormItem}>
+                      <FormItemWithIcon selectedOption={selectedOption} field={field} handleInputChange={handleInputChange} />
                     </FormItem>
                   ))}
               </FormGroup>
             </Form>
           </div>
+
           <div className={classes.selectConfigurationOuterDivStyle}>
-            <Bar design="Footer" className={classes.createButtonBarStyle}>
-              <div>
-                <Button
-                  type="submit"
-                  id="copyConfigExtendedSaveButton"
-                  className="fd-button fd-button--emphasized fd-button--compact"
-                  onClick={handleSubmit}
-                  data-cy="copyConfigExtendedSaveButton"
-                  design="Emphasized"
-                  disabled={disableDeployButton()}
-                >
-                  Import
-                </Button>
-                <Button
-                  type="button"
-                  id="copyConfigExtendedCancelButton"
-                  data-cy="copyConfigExtendedCancelButton"
-                  onClick={onCancelHandler}
-                  className="fd-button fd-button--transparent fd-button--compact"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </Bar>
+            <div className={classes.selectConfigurationInnerDivStyle}>
+              <Bar
+                design="Footer"
+                endContent={
+                  <div>
+                    <Button
+                      type="submit"
+                      id="copyConfigExtendedSaveButton"
+                      className="fd-button fd-button--emphasized fd-button--compact"
+                      onClick={handleSubmit}
+                      data-cy="copyConfigExtendedSaveButton"
+                      design="Emphasized"
+                      disabled={disableDeployButton()}
+                    >
+                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
+                    </Button>
+                    <Button
+                      type="button"
+                      id="copyConfigExtendedCancelButton"
+                      data-cy="copyConfigExtendedCancelButton"
+                      onClick={onCancelHandler}
+                      className="fd-button fd-button--transparent fd-button--compact"
+                    >
+                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON')}
+                    </Button>
+                  </div>
+                }
+              ></Bar>
+            </div>
           </div>
         </div>
       </Card>
@@ -198,4 +163,4 @@ const ServerImportComponent = ({ t }) => {
   )
 }
 
-export default ServerImportComponent
+export default withTranslation()(ServerImportComponent)

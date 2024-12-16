@@ -6,7 +6,7 @@ const CustomLabel = ({ name }) => {
   return (
     <Label>
       {parts[0]}
-      {parts.length > 1 && <span style={{ color: 'red' }}>*</span>}
+      {parts.length > 1 && <span style={{ color: '#ba066c' }}>*</span>}
       {parts[1]}
     </Label>
   )
