@@ -89,7 +89,7 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
-
+  console.log('configurations', configurations)
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
       if (currentSiteApiKey !== getApiKey(window.location.hash)) {

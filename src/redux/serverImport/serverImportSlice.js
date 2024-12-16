@@ -29,9 +29,7 @@ export const serverImportExtendedSlice = createSlice({
     },
     clearConfigurations(state, action) {
       const configuration = state.serverConfigurations
-      console.log('cofniguration', JSON.stringify(configuration))
       clearAllValues(configuration)
-      console.log('removeValueIfExists(option)--\n', JSON.stringify(configuration))
     },
     setAccountType(state, action) {
       const option = getConfigurationByKey(state.serverConfigurations, action.payload.serverType)

@@ -68,6 +68,8 @@ const ConfigurationTree = ({
   }
 
   const openPopover = (id) => {
+    console.log('tooltipTarget', tooltipTarget)
+    console.log(`${id}TooltipIcon`)
     return isMouseOverIcon && tooltipTarget === `${id}TooltipIcon`
   }
 

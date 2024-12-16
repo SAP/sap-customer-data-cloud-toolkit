@@ -16,12 +16,8 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
   },
   createButtonBarStyle: {
-    display: 'flex',
-    justifyContent: 'flex-end', // Align items to the right
-    width: '100%',
     marginTop: '16px',
   },
-  selectConfigurationOuterDivStyle: {},
   createButtonStyle: {
     marginLeft: 'auto', // Push the button to the right
     marginTop: '10px',
@@ -29,8 +25,26 @@ const styles = {
   titleContainer: {
     ...spacing.sapUiMediumMarginBegin,
   },
+  outerDivContainer: {
+    ...spacing.sapUiSmallMargin,
+  },
+  formOuterHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  smallTitle: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    marginBottom: '8px',
+    ...spacing.sapUiSmallMarginTop,
+  },
+  serverDropDown: {
+    display: 'flex',
+    flexDirection: 'column',
+    ...spacing.sapUiSmallMargin,
+  },
   selectBox: {
-    width: 'calc(100% )',
+    width: '40%',
     marginTop: '16px',
   },
   submitButton: {
@@ -39,6 +53,10 @@ const styles = {
 
   selectConfigurationInnerDivStyle: {
     ...spacing.sapUiTinyMargin,
+  },
+  tooltipIconStyle: {
+    alignSelf: 'center',
+    marginLeft: '6px',
   },
 }
 

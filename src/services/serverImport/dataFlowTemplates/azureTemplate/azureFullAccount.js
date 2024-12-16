@@ -1,5 +1,5 @@
 export const importFullAccountAzure = {
-  name: 'Prod: Import Full Account - Azure',
+  name: '{{dataflowName}}',
   description: 'Import Full Account - Toolkit',
   status: 'published',
   steps: [

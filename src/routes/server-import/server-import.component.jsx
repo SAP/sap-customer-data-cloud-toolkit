@@ -5,7 +5,27 @@
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, Bar, Title, Text, Button, Input, Option, Select, Form, FormItem, Label, FormGroup, ValueState } from '@ui5/webcomponents-react'
+import {
+  Card,
+  Bar,
+  Title,
+  Text,
+  Button,
+  Input,
+  Option,
+  Select,
+  Form,
+  FormItem,
+  Label,
+  FormGroup,
+  ValueState,
+  Icon,
+  Popover,
+  FlexBoxDirection,
+  FlexBox,
+  FlexBoxJustifyContent,
+  FlexBoxAlignItems,
+} from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -21,8 +41,9 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { useDispatch, useSelector } from 'react-redux'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import { isInputFilled } from './utils.js'
+import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
-const PAGE_TITLE = 'Server Import'
+const PAGE_TITLE = 'Accounts Import'
 const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -33,6 +54,8 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [showDialog, setShowSuccessDialog] = useState(false)
+  const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
+  const [tooltipTarget, setTooltipTarget] = useState('')
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
@@ -52,6 +75,23 @@ const ServerImportComponent = ({ t }) => {
     setSelectedOption(event.target.value)
   }
 
+  const onMouseOverHandler = (event) => {
+    console.log('event-tartet', event.target.shadowRoot.host.id)
+    console.log(`${event.target}TooltipIcon`)
+    if (event.target.shadowRoot) {
+      setTooltipTarget(event.target.shadowRoot.host.id)
+      setIsMouseOverIcon(true)
+    }
+  }
+  const onMouseOutHandler = () => {
+    setIsMouseOverIcon(false)
+  }
+
+  const openPopover = (id) => {
+    console.log('id--->', id)
+    console.log('tooltipTarget--->', tooltipTarget)
+    return isMouseOverIcon && tooltipTarget === `${id}TooltipIcon`
+  }
   const handleInputChange = (event, id) => {
     dispatch(getServerConfiguration({ selectedOption, id, value: event.target.value, accountType: accountOption }))
   }
@@ -84,7 +124,6 @@ const ServerImportComponent = ({ t }) => {
       <Text>SuccessFull</Text>
     </DialogMessageInform>
   )
-
   return (
     <>
       <Card>
@@ -93,12 +132,14 @@ const ServerImportComponent = ({ t }) => {
             {PAGE_TITLE}
           </Title>
 
-          <div id="container" style={{ maxWidth: '1500px', width: '800px', overflowX: 'auto' }}>
+          <div className={classes.outerDivContainer}>
             <div className={classes.serverDropDown}>
+              <div className={classes.smallTitle}>Select Account Type</div>
               <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
-                <Option>Full</Option>
-                <Option>Lite</Option>
+                <Option value="Full">Full Account</Option>
+                <Option value="Lite">Lite Account</Option>
               </Select>
+              <div className={classes.smallTitle}>Select your storage server</div>
               <Select onChange={handleOptionChange} className={classes.selectBox}>
                 {Object.keys(serverConfigurations).map((key) => (
                   <Option key={key} value={key}>
@@ -111,43 +152,45 @@ const ServerImportComponent = ({ t }) => {
               <FormGroup>
                 {serverConfigurations[selectedOption] &&
                   serverConfigurations[selectedOption].map((field) => (
-                    <FormItem key={field.name} label={<Label>{field.name}</Label>}>
-                      <Input
-                        type={field.type}
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        value={field.value !== undefined ? field.value : ''}
-                        onInput={(event) => handleInputChange(event, field.id)}
+                    <FormItem key={field.name}>
+                      <FormItemWithIcon
+                        field={field}
+                        onMouseOverHandler={onMouseOverHandler}
+                        onMouseOutHandler={onMouseOutHandler}
+                        handleInputChange={handleInputChange}
+                        openPopover={openPopover}
                       />
                     </FormItem>
                   ))}
               </FormGroup>
             </Form>
           </div>
-          <Bar design="Footer" className={classes.createButtonBarStyle}>
-            <div>
-              <Button
-                type="submit"
-                id="copyConfigExtendedSaveButton"
-                className="fd-button fd-button--emphasized fd-button--compact"
-                onClick={handleSubmit}
-                data-cy="copyConfigExtendedSaveButton"
-                design="Emphasized"
-                disabled={disableDeployButton()}
-              >
-                Deploy
-              </Button>
-              <Button
-                type="button"
-                id="copyConfigExtendedCancelButton"
-                data-cy="copyConfigExtendedCancelButton"
-                onClick={onCancelHandler}
-                className="fd-button fd-button--transparent fd-button--compact"
-              >
-                Cancel
-              </Button>
-            </div>
-          </Bar>
+          <div className={classes.selectConfigurationOuterDivStyle}>
+            <Bar design="Footer" className={classes.createButtonBarStyle}>
+              <div>
+                <Button
+                  type="submit"
+                  id="copyConfigExtendedSaveButton"
+                  className="fd-button fd-button--emphasized fd-button--compact"
+                  onClick={handleSubmit}
+                  data-cy="copyConfigExtendedSaveButton"
+                  design="Emphasized"
+                  disabled={disableDeployButton()}
+                >
+                  Import
+                </Button>
+                <Button
+                  type="button"
+                  id="copyConfigExtendedCancelButton"
+                  data-cy="copyConfigExtendedCancelButton"
+                  onClick={onCancelHandler}
+                  className="fd-button fd-button--transparent fd-button--compact"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Bar>
+          </div>
         </div>
       </Card>
       {showDialog && showSuccessMessage()}
