@@ -116,5 +116,8 @@
   "SMS_TEMPLATES_COMPONENT.IMPORT_ERROR_HEADER_MESSAGE": "Error - SMS templates were not imported",
   "SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All SMS templates have been imported successfully.",
   "VERSION_CONTROL.RESTORE": "Restore",
-  "VERSION_CONTROL.BACKUP": "Backup"
+  "VERSION_CONTROL.BACKUP": "Backup",
+  "VERSION_CONTROL.ID": "Id",
+  "VERSION_CONTROL.DATE": "Date",
+  "VERSION_CONTROL.COMMIT_MESSAGE": "Commit message"
 }

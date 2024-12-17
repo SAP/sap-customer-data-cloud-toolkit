@@ -73,9 +73,10 @@ const VersionControlComponent = ({ t }) => {
         <table className={classes.commitTable}>
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Message</th>
-              <th>SHA</th>
+              <th>{t('VERSION_CONTROL.ID')}</th>
+              <th>{t('VERSION_CONTROL.DATE')}</th>
+              <th>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</th>
+
               <th>Toggle</th>
             </tr>
           </thead>
@@ -87,9 +88,10 @@ const VersionControlComponent = ({ t }) => {
             ) : (
               commits.map((commit, index) => (
                 <tr key={index}>
+                  <td>{commit.sha.substring(0, 7)}</td>
                   <td>{new Date(commit.commit.committer.date).toLocaleString()}</td>
                   <td>{commit.commit.message}</td>
-                  <td>{commit.sha}</td>
+
                   <td>
                     <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => onCommitRevertClick(commit.sha)}>
                       {t('VERSION_CONTROL.RESTORE')}
