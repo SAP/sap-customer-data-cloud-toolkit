@@ -1,7 +1,8 @@
 export const importFullAccountAzure = {
   name: '{{dataflowName}}',
-  description: 'Import Full Account - Toolkit',
   status: 'published',
+  description: 'Import Full Account - Toolkit',
+
   steps: [
     {
       id: 'Transform to CDC Structure',
@@ -46,15 +47,15 @@ export const importFullAccountAzure = {
         ECMAScriptVersion: '12',
         notifyLastRecord: false,
       },
-      next: ['Account lookup using UID'],
+      next: ['Account Lookup Logger'],
     },
     {
       id: 'Account lookup using UID',
       type: 'datasource.lookup.gigya.account',
       params: {
-        select: 'UID as _UID',
+        select: 'UID',
         handleFieldConflicts: 'take_lookup',
-        mismatchBehavior: 'process',
+        mismatchBehavior: 'error',
         lookupFields: [
           {
             sourceField: 'uid',
@@ -63,21 +64,22 @@ export const importFullAccountAzure = {
         ],
         lookupFieldsOperator: 'OR',
         matchBehavior: 'process',
-        isCaseSensitive: true,
+        isCaseSensitive: false,
         maxConcurrency: 1,
         from: 'accounts',
         batchSize: 200,
         multiMatchBehavior: 'error',
-        separateMultiMatches: true,
+        separateMultiMatches: false,
       },
-      next: ['record.evaluate - UID'],
+      next: ['Handle UID'],
+      error: ['Lookup Failed'],
     },
     {
-      id: 'record.evaluate - UID',
+      id: 'Handle UID',
       type: 'record.evaluate',
       params: {
         script:
-          'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgbG9nZ2VyLmluZm8oIlJlc3BvbnNlIG9mIEFjY291bnQgbG9va3VwIHVzaW5nIFVJRCIsIHJlY29yZCk7DQoNCiAgICBsZXQgVUlEOw0KICAgIGxldCByZXF1ZXN0ID0ge307DQoNCiAgICBpZiAocmVjb3JkLl9VSUQpIHsNCiAgICAgICAgVUlEID0gcmVjb3JkLl9VSUQ7DQogICAgfSBlbHNlIHsNCiAgICAgICAgVUlEID0gJ3h4eHh4eHh4eHh4eDR4eHh5eHh4eHh4eHh4eHh4eHh4Jy5yZXBsYWNlKC9beHldL2csIGZ1bmN0aW9uKGMpIHsNCiAgICAgICAgICAgIHZhciByID0gTWF0aC5yYW5kb20oKSAqIDE2IHwgMCwNCiAgICAgICAgICAgICAgICB2ID0gYyA9PSAneCcgPyByIDogKHIgJiAweDMgfCAweDgpOw0KICAgICAgICAgICAgcmV0dXJuIHYudG9TdHJpbmcoMTYpOw0KICAgICAgICB9KTsNCiAgICB9DQogICAgcmVjb3JkLnVpZCA9IFVJRDsNCiAgICBkZWxldGUgcmVjb3JkLlVJRDsNCiAgICAvLyByZXF1ZXN0LlVJRCA9IFVJRDsgDQoNCiAgICAvLyByZWNvcmQucmVxdWVzdCA9IHJlcXVlc3Q7DQogIA0KICAgIHJldHVybiByZWNvcmQ7DQp9',
+          'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgbG9nZ2VyLmluZm8oIlJlc3BvbnNlIG9mIEFjY291bnQgbG9va3VwIHVzaW5nIFVJRCIsIHJlY29yZCk7DQoNCiAgICBsZXQgVUlEOw0KICAgIGxldCByZXF1ZXN0ID0ge307DQoNCiAgICBpZiAocmVjb3JkLlVJRCkgew0KICAgICAgICBVSUQgPSByZWNvcmQuVUlEOw0KICAgIH0gZWxzZSB7DQogICAgICAgIFVJRCA9ICd4eHh4eHh4eHh4eHg0eHh4eXh4eHh4eHh4eHh4eHh4eCcucmVwbGFjZSgvW3h5XS9nLCBmdW5jdGlvbihjKSB7DQogICAgICAgICAgICB2YXIgciA9IE1hdGgucmFuZG9tKCkgKiAxNiB8IDAsDQogICAgICAgICAgICAgICAgdiA9IGMgPT0gJ3gnID8gciA6IChyICYgMHgzIHwgMHg4KTsNCiAgICAgICAgICAgIHJldHVybiB2LnRvU3RyaW5nKDE2KTsNCiAgICAgICAgfSk7DQogICAgfQ0KICAgIHJlY29yZC51aWQgPSBVSUQ7DQogICAgZGVsZXRlIHJlY29yZC5VSUQ7DQogICAgLy8gcmVxdWVzdC5VSUQgPSBVSUQ7IA0KDQogICAgLy8gcmVjb3JkLnJlcXVlc3QgPSByZXF1ZXN0Ow0KICANCiAgICByZXR1cm4gcmVjb3JkOw0KfQ==',
         ECMAScriptVersion: '12',
         notifyLastRecord: false,
       },
@@ -258,6 +260,49 @@ export const importFullAccountAzure = {
         notifyLastRecord: false,
       },
       next: ['setAccountInfo'],
+    },
+    {
+      id: 'Lookup Failed',
+      type: 'record.evaluate',
+      params: {
+        script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkxvb2t1cCBmYWlsZWQgcmVzcG9uc2UiLCByZWNvcmQpOw0KICAgIHJldHVybiByZWNvcmQ7DQp9',
+        ECMAScriptVersion: '12',
+        notifyLastRecord: false,
+      },
+      next: ['Error File'],
+      error: [],
+    },
+    {
+      id: 'Account Lookup Logger',
+      type: 'record.evaluate',
+      params: {
+        script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkFjY291bnQgTG9va3VwIFJlcXVlc3QiLCByZWNvcmQpOw0KICAgIHJldHVybiByZWNvcmQ7DQp9',
+        ECMAScriptVersion: '12',
+        notifyLastRecord: false,
+      },
+      next: ['If UID is Present', 'If UID Is Not Present'],
+    },
+    {
+      id: 'If UID is Present',
+      type: 'record.evaluate',
+      params: {
+        script:
+          'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgaWYgKHJlY29yZC51aWQgJiYgcmVjb3JkLnVpZC50cmltKCkgPT09ICcnKSB7DQogICAgICAgIGxvZ2dlci5pbmZvKCJVSUQgaXMgUHJlc2VudC4gR29pbmcgdG8gTG9va3VwIiwgcmVjb3JkLnVpZCk7DQogICAgICAgIHJlY29yZCA9IG51bGw7DQogICAgfSBlbHNlIGlmICghcmVjb3JkLnVpZCkgew0KICAgICAgICBsb2dnZXIuaW5mbygiVUlEIGZpZWxkIGRvZXMgbm90IGV4aXN0LiIscmVjb3JkLnVpZCk7DQogICAgICAgIC8vIHJlY29yZCA9IG51bGw7DQogICAgfQ0KICAgIHJldHVybiByZWNvcmQ7DQp9',
+        ECMAScriptVersion: '12',
+        notifyLastRecord: false,
+      },
+      next: ['Account lookup using UID'],
+    },
+    {
+      id: 'If UID Is Not Present',
+      type: 'record.evaluate',
+      params: {
+        script:
+          'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgaWYgKHJlY29yZC51aWQgJiYgcmVjb3JkLnVpZC50cmltKCkgIT09ICcnKSB7DQogICAgICAgIGxvZ2dlci5pbmZvKCJVSUQgaXMgTm90IFByZXNlbnQuTm90IEdvaW5nIHRvIExvb2t1cCIsIHJlY29yZC51aWQpOw0KICAgICAgICByZWNvcmQgPSBudWxsOw0KICAgIH0gZWxzZSBpZiAoIXJlY29yZC51aWQpIHsNCiAgICAgICAgbG9nZ2VyLmluZm8oIlVJRCBmaWVsZCBkb2VzIG5vdCBleGlzdC4iLHJlY29yZC51aWQpOw0KICAgIH0NCiAgICByZXR1cm4gcmVjb3JkOw0KfQ==',
+        ECMAScriptVersion: '12',
+        notifyLastRecord: false,
+      },
+      next: ['Handle UID'],
     },
   ],
   version: 1,
