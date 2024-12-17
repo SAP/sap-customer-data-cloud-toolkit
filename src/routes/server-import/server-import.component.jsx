@@ -91,73 +91,75 @@ const ServerImportComponent = ({ t }) => {
   )
   return (
     <>
-      <Card>
-        <div className={classes.outerDiv}>
-          <Title className={classes.titleContainer} level="H3">
-            {PAGE_TITLE}
-          </Title>
+      <div className={classes.cardDiv}>
+        <Card>
+          <div className={classes.outerDiv}>
+            <Title className={classes.titleContainer} level="H3">
+              {PAGE_TITLE}
+            </Title>
 
-          <div className={classes.outerDivContainer}>
-            <div className={classes.serverDropDown}>
-              <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
-              <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
-                <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
-                <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
-              </Select>
-              <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
-              <Select onChange={handleOptionChange} className={classes.selectBox}>
-                {Object.keys(serverConfigurations).map((key) => (
-                  <Option key={key} value={key}>
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-            <Form columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
-              <FormGroup>
-                {serverConfigurations[selectedOption] &&
-                  serverConfigurations[selectedOption].map((field) => (
-                    <FormItem key={field.name} className={classes.outerDivFormItem}>
-                      <FormItemWithIcon selectedOption={selectedOption} field={field} handleInputChange={handleInputChange} />
-                    </FormItem>
+            <div className={classes.outerDivContainer}>
+              <div className={classes.serverDropDown}>
+                <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
+                <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
+                  <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                  <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                </Select>
+                <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
+                <Select onChange={handleOptionChange} className={classes.selectBox}>
+                  {Object.keys(serverConfigurations).map((key) => (
+                    <Option key={key} value={key}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </Option>
                   ))}
-              </FormGroup>
-            </Form>
-          </div>
+                </Select>
+              </div>
+              <Form columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
+                <FormGroup>
+                  {serverConfigurations[selectedOption] &&
+                    serverConfigurations[selectedOption].map((field) => (
+                      <FormItem key={field.name} className={classes.outerDivFormItem}>
+                        <FormItemWithIcon selectedOption={selectedOption} field={field} handleInputChange={handleInputChange} />
+                      </FormItem>
+                    ))}
+                </FormGroup>
+              </Form>
+            </div>
 
-          <div className={classes.selectConfigurationOuterDivStyle}>
-            <div className={classes.selectConfigurationInnerDivStyle}>
-              <Bar
-                design="Footer"
-                endContent={
-                  <div>
-                    <Button
-                      type="submit"
-                      id="copyConfigExtendedSaveButton"
-                      className="fd-button fd-button--emphasized fd-button--compact"
-                      onClick={handleSubmit}
-                      data-cy="copyConfigExtendedSaveButton"
-                      design="Emphasized"
-                      disabled={disableDeployButton()}
-                    >
-                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
-                    </Button>
-                    <Button
-                      type="button"
-                      id="copyConfigExtendedCancelButton"
-                      data-cy="copyConfigExtendedCancelButton"
-                      onClick={onCancelHandler}
-                      className="fd-button fd-button--transparent fd-button--compact"
-                    >
-                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON')}
-                    </Button>
-                  </div>
-                }
-              ></Bar>
+            <div className={classes.selectConfigurationOuterDivStyle}>
+              <div className={classes.selectConfigurationInnerDivStyle}>
+                <Bar
+                  design="Footer"
+                  endContent={
+                    <div>
+                      <Button
+                        type="submit"
+                        id="copyConfigExtendedSaveButton"
+                        className="fd-button fd-button--emphasized fd-button--compact"
+                        onClick={handleSubmit}
+                        data-cy="copyConfigExtendedSaveButton"
+                        design="Emphasized"
+                        disabled={disableDeployButton()}
+                      >
+                        {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
+                      </Button>
+                      <Button
+                        type="button"
+                        id="copyConfigExtendedCancelButton"
+                        data-cy="copyConfigExtendedCancelButton"
+                        onClick={onCancelHandler}
+                        className="fd-button fd-button--transparent fd-button--compact"
+                      >
+                        {t('SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON')}
+                      </Button>
+                    </div>
+                  }
+                ></Bar>
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
       {showDialog && showSuccessMessage()}
     </>
   )

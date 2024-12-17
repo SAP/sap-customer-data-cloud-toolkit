@@ -11,6 +11,9 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiMediumMarginBegin,
   },
+  cardDiv: {
+    ...spacing.sapUiSmallMargin,
+  },
   outerDiv: {
     width: '100%',
     ...spacing.sapUiTinyMarginBottom,
