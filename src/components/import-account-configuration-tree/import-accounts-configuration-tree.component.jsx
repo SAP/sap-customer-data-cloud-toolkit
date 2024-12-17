@@ -36,7 +36,6 @@ const ImportAccountConfigurationTree = ({
     mandatoryFields(treeNodeId)
     setFields(event)
     dispatch(setConfigurationStatus({ checkBoxId, value, branches }))
-    console.log('checkBoxId', checkBoxId)
 
     if (treeNodeInputValue) {
       dispatch(setSugestionSchema({ checkBoxId, value }))

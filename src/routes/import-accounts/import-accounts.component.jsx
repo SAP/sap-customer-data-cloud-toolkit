@@ -10,7 +10,7 @@ import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../r
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option } from '@ui5/webcomponents-react'
+import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
 import {
   getConfigurations,
   selectConfigurations,
@@ -59,18 +59,10 @@ const ImportAccountsComponent = ({ t }) => {
     dispatch(getConfigurations(selectedValue))
   }
   const dispatchMandatoryStatus = (treeNode) => {
-    console.log('item', treeNode)
     if (treeNode.includes('status')) {
       dispatch(setMandatoryStatus({ checkBoxId: treeNode, value: true }))
     }
   }
-  // const setSuggestionConfiguration = (inputValue) => {
-  //   if (inputValue) {
-  //     dispatch(setSuggestionConfiguration({ checkBoxId: inputValue, value: true }))
-  //     setTreeNodeInputValue(inputValue)
-  //     setExpandableNode(true)
-  //   }
-  // }
   const handleTreeNodeClick = (treeNodeId) => {
     if (treeNodeId) {
       dispatch(setSelectedConfiguration(treeNodeId))
@@ -114,89 +106,97 @@ const ImportAccountsComponent = ({ t }) => {
 
   return (
     <>
-      <Bar
-        design="Header"
-        startContent={
-          <>
-            <Title id="importAccountsTitle" data-cy="importAccountsTitle" level={TitleLevel.H3} className={classes.titleStyle}>
-              <span className={classes.titleSpanStyle}>{PAGE_TITLE}</span>
-            </Title>
-          </>
-        }
-      ></Bar>
-      <div className={classes.outerDivStyle}>
-        <div className={classes.headerOuterDivStyle}>
-          <FlexBox className={classes.headerTextFlexboxStyle}>
-            <Text id="workBenchHeaderText" data-cy="workBenchHeaderText" className={classes.componentTextStyle}>
-              {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
-            </Text>
-          </FlexBox>
-          <Card className={classes.cardContainer}>
-            <Title id="importAccountsTitle" data-cy="importAccountsTitle" level={TitleLevel.H3} className={classes.cardHeaderStyle}>
-              <span className={classes.titleSpanStyle}>Select Schema Fields</span>
-            </Title>
-            <Grid>
-              <>
-                <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
-                  <Title level="H4" className={classes.currentInfoContainerTitle}>
-                    Select Account Type
-                  </Title>
-                  <Select onChange={handleSelectChange}>
-                    <Option>Full</Option>
-                    <Option>Lite</Option>
-                  </Select>
-                </div>
-                <div className={classes.searchBarGridItem} data-layout-span="XL7 L7 M7 S7">
-                  <div className={classes.searchBarContainer}>
-                    <SearchBar
-                      dispatch={dispatch}
-                      handleSuggestionClick={handleSuggestionClick}
-                      treeNodeInputValue={treeNodeInputValue}
-                      configurations={configurations}
-                      setSchemaInputValue={setSchemaInputValue}
-                      schemaInputValue={schemaInputValue}
-                      handleTreeNodeClick={handleTreeNodeClick}
-                      dispatchMandatoryStatus={dispatchMandatoryStatus}
-                    />
+      <div className={classes.fullContainer}>
+        <Bar
+          design="Header"
+          startContent={
+            <>
+              <Title id="importAccountsTitle" data-cy="importAccountsTitle" level={TitleLevel.H3} className={classes.titleStyle}>
+                <span className={classes.pageTitleSpanStyle}>{PAGE_TITLE}</span>
+              </Title>
+            </>
+          }
+        ></Bar>
+        <div className={classes.outerDivStyle}>
+          <div className={classes.headerOuterDivStyle}>
+            <FlexBox className={classes.headerTextFlexboxStyle}>
+              <Text id="importAccountsHeaderText" data-cy="importAccountsHeaderText" className={classes.componentTextStyle}>
+                {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
+              </Text>
+            </FlexBox>
+            <Card
+              header={
+                <CardHeader
+                  titleText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
+                  className={classes.titleSpanStyle}
+                  subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}
+                ></CardHeader>
+              }
+              className={classes.cardContainer}
+            >
+              <Grid>
+                <>
+                  <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
+                    <Title level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
+                      {t('IMPORT_ACCOUNTS_SELECT_ACCOUNT_TYPE')}
+                    </Title>
+                    <Select onChange={handleSelectChange}>
+                      <Option value={t('GLOBAL.FULL')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                      <Option value={t('GLOBAL.LITE')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                    </Select>
                   </div>
-                </div>
-              </>
-            </Grid>
-            {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
-
-            <div className={classes.selectConfigurationOuterDivStyle}>
-              <div className={classes.selectConfigurationInnerDivStyle}>
-                <Bar
-                  design="Footer"
-                  endContent={
-                    <div>
-                      <Button
-                        type="submit"
-                        id="copyConfigExtendedSaveButton"
-                        className="fd-button fd-button--emphasized fd-button--compact"
-                        onClick={onSaveHandler}
-                        data-cy="copyConfigExtendedSaveButton"
-                        design="Emphasized"
-                        disabled={disableSaveButton()}
-                      >
-                        Download Template
-                      </Button>
-                      <Button
-                        type="button"
-                        id="copyConfigExtendedCancelButton"
-                        data-cy="copyConfigExtendedCancelButton"
-                        className="fd-button fd-button--transparent fd-button--compact"
-                        disabled={isLoading}
-                        onClick={onCancelHandler}
-                      >
-                        {t('GLOBAL.CANCEL')}
-                      </Button>
+                  <div className={classes.searchBarGridItem} data-layout-span="XL7 L7 M7 S7">
+                    <div className={classes.searchBarContainer}>
+                      <SearchBar
+                        dispatch={dispatch}
+                        handleSuggestionClick={handleSuggestionClick}
+                        treeNodeInputValue={treeNodeInputValue}
+                        configurations={configurations}
+                        setSchemaInputValue={setSchemaInputValue}
+                        schemaInputValue={schemaInputValue}
+                        handleTreeNodeClick={handleTreeNodeClick}
+                        dispatchMandatoryStatus={dispatchMandatoryStatus}
+                      />
                     </div>
-                  }
-                ></Bar>
+                  </div>
+                </>
+              </Grid>
+              {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
+
+              <div className={classes.selectConfigurationOuterDivStyle}>
+                <div className={classes.selectConfigurationInnerDivStyle}>
+                  <Bar
+                    design="Footer"
+                    endContent={
+                      <div>
+                        <Button
+                          type="submit"
+                          id="copyConfigExtendedSaveButton"
+                          className="fd-button fd-button--emphasized fd-button--compact"
+                          onClick={onSaveHandler}
+                          data-cy="copyConfigExtendedSaveButton"
+                          design="Emphasized"
+                          disabled={disableSaveButton()}
+                        >
+                          {t('IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON')}
+                        </Button>
+                        <Button
+                          type="button"
+                          id="copyConfigExtendedCancelButton"
+                          data-cy="copyConfigExtendedCancelButton"
+                          className="fd-button fd-button--transparent fd-button--compact"
+                          disabled={isLoading}
+                          onClick={onCancelHandler}
+                        >
+                          {t('GLOBAL.CANCEL')}
+                        </Button>
+                      </div>
+                    }
+                  ></Bar>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
     </>

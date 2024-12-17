@@ -7,44 +7,54 @@ const styles = {
   errorDialogStyle: {
     textAlign: 'left',
   },
-  titleSpanStyle: {
+  titleSpanStyle: {},
+  pageTitleSpanStyle: {
     ...spacing.sapUiTinyMarginBegin,
   },
   titleStyle: {
     ...spacing.sapUiTinyMarginBottom,
     ...spacing.sapUiTinyMarginTop,
-    ...spacing.sapUiSmallMarginBegin,
-    fontSize: '0.875rem', // Adjust the size as needed
+    marginLeft: '10px',
   },
   currentInfoContainerTitle: {
     ...spacing.sapUiSmallMarginBottom,
   },
   currentInfoContainer: {
-    ...spacing.sapUiMediumMarginBegin,
+    marginLeft: '53px',
     ...spacing.sapUiMediumMarginTop,
   },
   cardHeaderStyle: {
-    ...spacing.sapUiSmallMarginTop,
-    ...spacing.sapUiSmallMarginBegin,
+    display: 'flex',
+    ...spacing.sapUiTinyMarginBegin,
+    alignSelf: 'flex-start',
   },
+
   outerDivStyle: {
     composes: 'cdc-tools-background',
-    maxHeight: '80vh', // Adjust the height as needed
-    overflow: 'auto',
+    maxHeight: '80vh',
+    ...spacing.sapUiSmallMargin,
+  },
+  fullContainer: {
+    overflowY: 'auto',
+    width: '100%',
   },
   headerOuterDivStyle: {
     width: '100%',
   },
 
   headerTextFlexboxStyle: {
+    ...spacing.sapUiTinyMarginBegin,
+    ...spacing.sapUiTinyMarginTop,
     ...spacing.sapUiSmallMarginBottom,
+    marginLeft: '15px',
   },
+
   searchBarGridItem: {
     position: 'relative',
     display: 'flex',
     justifyContent: 'flex-end',
     marginRight: '15px',
-    marginTop: '22px',
+    marginTop: '16px',
   },
   configurationContainer: {
     marginTop: '20px',
@@ -59,7 +69,6 @@ const styles = {
   },
   componentTextStyle: {
     color: 'var(--sapNeutralElementColor)',
-    ...spacing.sapUiTinyMarginBegin,
   },
 
   downloadTemplateButton: {
@@ -71,7 +80,6 @@ const styles = {
   buttonContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
-
     margin: '10px',
   },
 }
