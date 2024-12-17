@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 import VersionControl from './versionControl'
-
+import Cookies from 'js-cookie'
 import { Base64 } from 'js-base64'
 import { createBranch, getFile, getCommitFiles, fetchFileContent, updateGitFileContent, storeCdcDataInGit } from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
@@ -30,6 +30,11 @@ jest.mock('@octokit/rest', () => {
   }
 })
 
+jest.mock('js-cookie', () => ({
+  get: jest.fn(),
+  set: jest.fn(),
+}))
+
 jest.mock('./githubUtils')
 jest.mock('./cdcUtils')
 jest.mock('./setters', () => ({
@@ -53,24 +58,37 @@ describe('VersionControl test suite', () => {
   const siteInfo = { dataCenter: 'testDataCenter' }
 
   beforeEach(() => {
-    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     jest.clearAllMocks()
     getFileTypeFromFileName.mockReturnValue('emails')
+    Cookies.get.mockReturnValue('testGitToken')
+  })
+
+  test('should throw an error if gitToken is not available in cookies', () => {
+    Cookies.get.mockReturnValue(undefined)
+    expect(() => new VersionControl(credentials, apiKey, siteInfo)).toThrow('Git token is not available in cookies')
+  })
+
+  test('should create VersionControl instance if gitToken is available in cookies', () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
+    expect(versionControl).toBeInstanceOf(VersionControl)
   })
 
   test('createBranch creates a new branch if it does not exist', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     createBranch.mockResolvedValueOnce()
     await versionControl.createBranch('newBranch')
     expect(createBranch).toHaveBeenCalled()
   })
 
   test('createBranch does not create a new branch if it exists', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     createBranch.mockRejectedValueOnce(new Error('Branch already exists'))
     await expect(versionControl.createBranch('existingBranch')).rejects.toThrow('Branch already exists')
     expect(createBranch).toHaveBeenCalled()
   })
 
   test('fetchFileContent correctly fetches encoded content', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const testContent = JSON.stringify({ someProp: 'someValue' })
     const encodedContent = Base64.encode(testContent)
     fetchFileContent.mockResolvedValueOnce(encodedContent)
@@ -81,12 +99,14 @@ describe('VersionControl test suite', () => {
   })
 
   test('fetchFileContent handles errors gracefully', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     fetchFileContent.mockRejectedValueOnce(new Error('Failed to fetch content'))
     await expect(versionControl.fetchFileContent('test-url')).rejects.toThrow('Failed to fetch content')
     expect(fetchFileContent).toHaveBeenCalledWith('test-url')
   })
 
   test('applyCommitConfig processes commits and sets data correctly', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const commitData = {
       files: [
         {
@@ -118,6 +138,7 @@ describe('VersionControl test suite', () => {
   })
 
   test('applyCommitConfig correctly sets sms configurations', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const commitData = {
       files: [{ filename: 'src/versionControl/sms.json', contents_url: 'test-url-sms' }],
     }
@@ -145,6 +166,7 @@ describe('VersionControl test suite', () => {
   })
 
   test('applyCommitConfig handles missing configurations gracefully', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     getCommitFiles.mockResolvedValueOnce([]) // No files returned
 
     const setEmailTemplatesMock = jest.spyOn(versionControl, 'setEmailTemplates').mockResolvedValue()
@@ -155,17 +177,20 @@ describe('VersionControl test suite', () => {
   })
 
   test('fetchCDCConfigs should fetch CDC configurations', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     await versionControl.fetchCDCConfigs()
     expect(fetchCDCConfigs).toHaveBeenCalled()
   })
 
   test('storeCdcDataInGit stores CDC data in Git', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const commitMessage = 'commit message'
     await versionControl.storeCdcDataInGit(commitMessage)
     expect(storeCdcDataInGit).toHaveBeenCalledWith(commitMessage)
   })
 
   test('storeCdcDataInGit handles errors gracefully', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     storeCdcDataInGit.mockRejectedValueOnce(new Error('Failed to store data'))
     const commitMessage = 'commit message'
     await expect(versionControl.storeCdcDataInGit(commitMessage)).rejects.toThrow('Failed to store data')
@@ -173,12 +198,14 @@ describe('VersionControl test suite', () => {
   })
 
   test('getFile calls getFile', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const path = 'file1.json'
     await versionControl.getFile(path)
     expect(getFile).toHaveBeenCalledWith(path)
   })
 
   test('getCommitFiles calls getCommitFiles', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const sha = 'commitSha'
     const commitData = {
       files: [{ filename: 'src/versionControl/emails.json', contents_url: 'test-url-emails' }],
@@ -222,6 +249,7 @@ describe('VersionControl test suite', () => {
   })
 
   test('updateGitFileContent updates or creates a file on GitHub', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const fakeSha = 'fakeSha'
     const fileContentMock = {
       content: Base64.encode(JSON.stringify({ someProp: 'someValue' })),
@@ -243,6 +271,7 @@ describe('VersionControl test suite', () => {
   })
 
   test('getCdcData fetches and returns CDC data', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const cdcData = [{ id: 'data1' }, { id: 'data2' }]
     getCdcData.mockResolvedValueOnce(cdcData)
     const result = await versionControl.getCdcData()
@@ -250,6 +279,7 @@ describe('VersionControl test suite', () => {
   })
 
   test('handles errors gracefully', async () => {
+    versionControl = new VersionControl(credentials, apiKey, siteInfo)
     const errorMessage = 'Error when fetching file content'
     fetchFileContent.mockRejectedValueOnce(new Error(errorMessage))
 

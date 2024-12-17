@@ -4,6 +4,7 @@
  */
 import { handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from './versionControlService'
 import VersionControl from './versionControl'
+import Cookies from 'js-cookie'
 
 jest.mock('./versionControl', () => {
   const actualModule = jest.requireActual('./versionControl')
@@ -24,6 +25,11 @@ jest.mock('./versionControl', () => {
   }
 })
 
+jest.mock('js-cookie', () => ({
+  get: jest.fn(),
+  set: jest.fn(),
+}))
+
 describe('versionControlService', () => {
   const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' } // Ensure names are correct
   const apiKey = 'testApiKey'
@@ -32,6 +38,7 @@ describe('versionControlService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    Cookies.get.mockReturnValue('testGitToken')
     versionControl = new VersionControl(credentials, apiKey, currentSite)
 
     // Define mocks after instantiation

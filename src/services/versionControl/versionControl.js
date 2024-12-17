@@ -18,10 +18,15 @@ import * as githubUtils from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
 import { getFileTypeFromFileName } from './versionControlFiles'
+import Cookies from 'js-cookie'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo) {
-    this.octokit = new Octokit({ auth: process.env.REACT_APP_GITHUB_ACCESS_TOKEN })
+    const gitToken = Cookies.get('gitToken')
+    if (!gitToken) {
+      throw new Error('Git token is not available in cookies')
+    }
+    this.octokit = new Octokit({ auth: gitToken })
     this.owner = 'iamGaspar'
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey // dynamically set default branch based on apiKey

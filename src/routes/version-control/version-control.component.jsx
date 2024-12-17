@@ -3,6 +3,7 @@ import { withTranslation } from 'react-i18next'
 import { Bar, Input, Button } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
+import Cookies from 'js-cookie'
 import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
@@ -17,24 +18,34 @@ const VersionControlComponent = ({ t }) => {
   const credentials = useSelector(selectCredentials)
   const apiKey = getApiKey(window.location.hash)
 
-  const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
   const [commits, setCommits] = useState([])
-  const [gitToken, setGitToken] = useState('')
+  const [gitToken, setGitToken] = useState(Cookies.get('gitToken') || '')
 
   useEffect(() => {
-    ;(async () => {
-      const commitList = await handleCommitListRequestServices(versionControl, apiKey)
-      setCommits(commitList)
-    })()
-  }, [versionControl, apiKey])
+    if (gitToken) {
+      const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
+      ;(async () => {
+        const commitList = await handleCommitListRequestServices(versionControl, apiKey)
+        setCommits(commitList)
+      })()
+    }
+  }, [gitToken, credentials, apiKey, currentSite])
 
   const onCreateBackupClick = async () => {
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
     const commitList = await handleGetServices(versionControl, apiKey)
     if (commitList) setCommits(commitList)
   }
 
   const onCommitRevertClick = async (sha) => {
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
     await handleCommitRevertServices(versionControl, sha)
+  }
+
+  const handleGitTokenChange = (e) => {
+    const token = e.target.value
+    setGitToken(token)
+    Cookies.set('gitToken', token, { secure: true, sameSite: 'strict' })
   }
 
   return (
@@ -45,13 +56,13 @@ const VersionControlComponent = ({ t }) => {
           <>
             <Input
               value={gitToken}
-              onChange={(e) => setGitToken(e.target.value)}
+              onChange={handleGitTokenChange}
               placeholder="Git Token"
               type="Password"
               valueState="Information"
               valueStateMessage={<div>Insert your Git Token to use this tool</div>}
             />
-            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick}>
+            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken}>
               {t('VERSION_CONTROL.BACKUP')}
             </Button>
           </>
