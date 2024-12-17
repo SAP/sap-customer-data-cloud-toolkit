@@ -3,9 +3,9 @@
  * License: Apache-2.0
  */
 import VersionControl from './versionControl'
-import { Octokit } from '@octokit/rest'
+
 import { Base64 } from 'js-base64'
-import { createBranch, updateFilesInSingleCommit, getFile, getCommitFiles, fetchFileContent, getCommits, updateGitFileContent, storeCdcDataInGit } from './githubUtils'
+import { createBranch, getFile, getCommitFiles, fetchFileContent, updateGitFileContent, storeCdcDataInGit } from './githubUtils'
 import { getCdcData, fetchCDCConfigs } from './cdcUtils'
 import { getFileTypeFromFileName } from './versionControlFiles'
 

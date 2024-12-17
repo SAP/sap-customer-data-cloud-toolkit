@@ -2,9 +2,8 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import axios from 'axios'
-import VersionControl from './versionControl'
 
+import VersionControl from './versionControl'
 jest.mock('axios')
 jest.mock('@octokit/rest')
 
