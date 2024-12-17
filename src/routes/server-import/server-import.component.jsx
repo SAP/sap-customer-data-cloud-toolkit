@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, Bar, Title, Text, Button, Option, Select, Form, FormItem, FormGroup, ValueState } from '@ui5/webcomponents-react'
+import { Card, Bar, Title, Text, Button, Option, Select, Form, FormItem, FormGroup, ValueState, CardHeader, TitleLevel, FlexBox } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -24,7 +24,7 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import { isInputFilled } from './utils.js'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
-const PAGE_TITLE = 'Accounts Import'
+const PAGE_TITLE = 'Deploy and Import'
 const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -71,12 +71,38 @@ const ServerImportComponent = ({ t }) => {
       setShowSuccessDialog(true)
     }
   }
+  // const renderFormItemsInTable = () => {
+  //   const itemsPerRow = 3
+  //   const formItems = serverConfigurations[selectedOption]
+  //   const rows = []
+
+  //   for (let i = 0; i < formItems.length; i += itemsPerRow) {
+  //     const rowItems = formItems.slice(i, i + itemsPerRow)
+  //     rows.push(
+  //       <TableRow key={`row-${i}`} className={classes.tableRow}>
+  //         {rowItems.map((field) => (
+  //           <TableCell key={field.id} className={classes.tableCell}>
+  //             <FormItemWithIcon field={field} handleInputChange={handleInputChange} />
+  //           </TableCell>
+  //         ))}
+  //       </TableRow>,
+  //     )
+  //   }
+
+  //   return rows
+  // }
 
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
     setFormData(serverConfigurations)
   }
-
+  const renderFormItemsInGrid = () => {
+    return serverConfigurations[selectedOption].map((field) => (
+      <div key={field.id} className={classes.gridItem}>
+        <FormItemWithIcon field={field} handleInputChange={handleInputChange} />
+      </div>
+    ))
+  }
   const showSuccessMessage = () => (
     <DialogMessageInform
       open={showSuccessDialog}
@@ -92,12 +118,13 @@ const ServerImportComponent = ({ t }) => {
   return (
     <>
       <div className={classes.cardDiv}>
-        <Card>
+        <FlexBox className={classes.headerTextFlexboxStyle}>
+          <Text id="importAccountsHeaderText" data-cy="importAccountsHeaderText" className={classes.componentTextStyle}>
+            {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}
+          </Text>
+        </FlexBox>
+        <Card header={<CardHeader className={classes.cardHeaderDiv} titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
           <div className={classes.outerDiv}>
-            <Title className={classes.titleContainer} level="H3">
-              {PAGE_TITLE}
-            </Title>
-
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
                 <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
@@ -114,16 +141,7 @@ const ServerImportComponent = ({ t }) => {
                   ))}
                 </Select>
               </div>
-              <Form columnsS={2} columnsM={2} columnsL={2} columnsXL={2} labelSpanS={12} labelSpanM={12} labelSpanL={12} labelSpanXL={12}>
-                <FormGroup>
-                  {serverConfigurations[selectedOption] &&
-                    serverConfigurations[selectedOption].map((field) => (
-                      <FormItem key={field.name} className={classes.outerDivFormItem}>
-                        <FormItemWithIcon selectedOption={selectedOption} field={field} handleInputChange={handleInputChange} />
-                      </FormItem>
-                    ))}
-                </FormGroup>
-              </Form>
+              <div className={classes.gridContainer}>{renderFormItemsInGrid()}</div>
             </div>
 
             <div className={classes.selectConfigurationOuterDivStyle}>

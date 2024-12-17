@@ -28,6 +28,7 @@ const styles = {
   outerDivFormItem: {
     width: '100%',
   },
+  popoverStyle: {},
 }
 
 export default styles

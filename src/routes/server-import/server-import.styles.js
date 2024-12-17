@@ -14,18 +14,40 @@ const styles = {
   cardDiv: {
     ...spacing.sapUiSmallMargin,
   },
+  headerTextFlexboxStyle: {
+    ...spacing.sapUiSmallMargin,
+  },
+  gridContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateRows: 'repeat(3,auto)',
+    marginLeft: '10px',
+  },
+  gridItem: {
+    height: '100px',
+    padding: '10px',
+    width: '95%',
+  },
+  tableCell: {
+    height: '100px',
+    padding: '10px',
+    width: '50%',
+    height: '100px',
+  },
+
   outerDiv: {
     width: '100%',
     ...spacing.sapUiTinyMarginBottom,
     ...spacing.sapUiSmallMarginTop,
   },
+
   createButtonBarStyle: {
     marginTop: '16px',
     display: 'flex',
-    justifyContent: 'flex-end', // Push the buttons to the right
+    justifyContent: 'flex-end',
   },
   createButtonStyle: {
-    marginLeft: '8px', // Add some space between buttons
+    marginLeft: '8px',
   },
   titleContainer: {
     ...spacing.sapUiMediumMarginBegin,

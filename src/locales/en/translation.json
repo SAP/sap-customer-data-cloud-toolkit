@@ -58,6 +58,8 @@
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON": "Import",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON": "Cancel",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The account was imported successfully",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Fill the information below to import a full or lite account from a storage server",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT": "Import a full or lite account from a storage server",
   "GLOBAL.ADD": "Add",
   "GLOBAL.API_KEY": "Api Key",
   "GLOBAL.CANCEL": "Cancel",

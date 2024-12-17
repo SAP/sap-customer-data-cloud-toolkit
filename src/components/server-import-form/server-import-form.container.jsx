@@ -9,8 +9,10 @@ const FormItemWithIcon = ({ field, handleInputChange }) => {
   const classes = useStyles()
   const [isMouseOverIcon, setIsMouseOverIcon] = useState(false)
   const [tooltipTarget, setTooltipTarget] = useState('')
+
   const onMouseOverHandler = (event) => {
-    console.log('event-target', event.target.shadowRoot.host)
+    console.log('event', event)
+    console.log('event-target', event.target.shadowRoot.host.id)
     console.log(`${event.target}TooltipIcon`)
     if (event.target.shadowRoot) {
       setTooltipTarget(event.target.shadowRoot.host.id)
@@ -28,7 +30,7 @@ const FormItemWithIcon = ({ field, handleInputChange }) => {
     <div className={classes.outerDiv}>
       <div className={classes.labelIconContainer}>
         <CustomLabel name={field.name} />
-        {field.tooltip ? (
+        {field.tooltip && (
           <>
             <Icon
               id={`${field.id}TooltipIcon`}
@@ -38,12 +40,10 @@ const FormItemWithIcon = ({ field, handleInputChange }) => {
               onMouseOut={onMouseOutHandler}
               className={classes.tooltipIconStyle}
             />
-            <Popover id={`${field.id}Popover`} opener={`${field.id}TooltipIcon`} open={openPopover(field.id)}>
+            <Popover className={classes.popoverStyle} id={`${field.id}Popover`} opener={`${field.id}TooltipIcon`} open={openPopover(field.id)} placementType="Right">
               {field.tooltip}
             </Popover>
           </>
-        ) : (
-          ''
         )}
       </div>
 
