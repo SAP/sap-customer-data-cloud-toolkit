@@ -222,33 +222,18 @@ export async function storeCdcDataInGit(commitMessage) {
   }
 }
 
-export async function getCommits() {
-  let allCommits = []
-  let page = 1
-  const per_page = 100
-
+export async function getCommits(page = 1, per_page = 10) {
   try {
-    while (true) {
-      const { data } = await this.octokit.rest.repos.listCommits({
-        owner: this.owner,
-        repo: this.repo,
-        sha: this.defaultBranch,
-        per_page,
-        page,
-      })
-
-      if (data.length === 0) break
-
-      allCommits = allCommits.concat(data)
-
-      if (data.length < per_page) break
-
-      page += 1
-    }
+    const { data } = await this.octokit.rest.repos.listCommits({
+      owner: this.owner,
+      repo: this.repo,
+      sha: this.defaultBranch,
+      per_page,
+      page,
+    })
+    return data
   } catch (error) {
     console.error(`Failed to fetch commits for branch: ${this.defaultBranch}`, error)
     throw error
   }
-
-  return allCommits
 }

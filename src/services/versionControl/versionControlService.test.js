@@ -31,7 +31,7 @@ jest.mock('js-cookie', () => ({
 }))
 
 describe('versionControlService', () => {
-  const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' } // Ensure names are correct
+  const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' }
   const apiKey = 'testApiKey'
   const currentSite = { dataCenter: 'testDataCenter' }
   let versionControl
@@ -69,20 +69,32 @@ describe('versionControlService', () => {
     expect(console.error).toHaveBeenCalledWith('Error fetching commits:', error)
   })
 
-  test('handleGetServices creates branch and stores data in Git', async () => {
+  test('handleGetServices creates branch and stores data in Git with custom commit message', async () => {
+    const commits = [{ sha: 'abc', commit: { message: 'test', committer: { date: '2023-01-01T12:34:56' } } }]
+    versionControl.branchExists.mockResolvedValue(true)
+    versionControl.getCommits.mockResolvedValue(commits)
+    global.alert = jest.fn()
+    const commitList = await handleGetServices(versionControl, apiKey, 'Custom commit message')
+    expect(commitList).toEqual(commits)
+    expect(versionControl.storeCdcDataInGit).toHaveBeenCalledWith('Custom commit message')
+    expect(global.alert).toHaveBeenCalledWith('Backup created successfully!')
+  })
+
+  test('handleGetServices creates branch and stores data in Git with default commit message', async () => {
     const commits = [{ sha: 'abc', commit: { message: 'test', committer: { date: '2023-01-01T12:34:56' } } }]
     versionControl.branchExists.mockResolvedValue(true)
     versionControl.getCommits.mockResolvedValue(commits)
     global.alert = jest.fn()
     const commitList = await handleGetServices(versionControl, apiKey)
     expect(commitList).toEqual(commits)
+    expect(versionControl.storeCdcDataInGit).toHaveBeenCalledWith('Backup created')
     expect(global.alert).toHaveBeenCalledWith('Backup created successfully!')
   })
 
   test('handleGetServices handles errors gracefully', async () => {
     versionControl.createBranch.mockRejectedValue(new Error('Creation failed'))
     global.alert = jest.fn()
-    const commitList = await handleGetServices(versionControl, apiKey)
+    const commitList = await handleGetServices(versionControl, apiKey, 'Custom commit message')
     expect(commitList).toBeUndefined()
     expect(global.alert).toHaveBeenCalledWith('Failed to create backup. Please try again.')
   })

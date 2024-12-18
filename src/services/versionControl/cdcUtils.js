@@ -12,7 +12,7 @@ export const getCdcData = function () {
     { name: 'rba', promise: this.rba.get() },
     { name: 'riskAssessment', promise: this.riskAssessment.get() },
     { name: 'schema', promise: this.schema.get() },
-    { name: 'sets', promise: this.screenSets.get() },
+    { name: 'sets', promise: this.screenSets.get() }, //alterar sets para Screensets
     { name: 'sms', promise: this.sms.get() },
     { name: 'channel', promise: this.channel.get() },
   ]

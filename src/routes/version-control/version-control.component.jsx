@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
@@ -20,21 +20,34 @@ const VersionControlComponent = ({ t }) => {
 
   const [commits, setCommits] = useState([])
   const [gitToken, setGitToken] = useState(Cookies.get('gitToken') || '')
+  const [commitMessage, setCommitMessage] = useState('')
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [page, setPage] = useState(1)
+  const [perPage] = useState(10)
 
   useEffect(() => {
     if (gitToken) {
       const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
       ;(async () => {
-        const commitList = await handleCommitListRequestServices(versionControl, apiKey)
+        const commitList = await versionControl.getCommits(page, perPage)
         setCommits(commitList)
       })()
     }
-  }, [gitToken, credentials, apiKey, currentSite])
+  }, [gitToken, credentials, apiKey, currentSite, page, perPage])
 
-  const onCreateBackupClick = async () => {
+  const onCreateBackupClick = () => {
+    setIsDialogOpen(true)
+  }
+
+  const onConfirmBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
-    const commitList = await handleGetServices(versionControl, apiKey)
+    const commitList = await handleGetServices(versionControl, apiKey, commitMessage)
     if (commitList) setCommits(commitList)
+    setIsDialogOpen(false)
+  }
+
+  const onCancelBackupClick = () => {
+    setIsDialogOpen(false)
   }
 
   const onCommitRevertClick = async (sha) => {
@@ -46,6 +59,18 @@ const VersionControlComponent = ({ t }) => {
     const token = e.target.value
     setGitToken(token)
     Cookies.set('gitToken', token, { secure: true, sameSite: 'strict' })
+  }
+
+  const handleCommitMessageChange = (e) => {
+    setCommitMessage(e.target.value)
+  }
+
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1)
+  }
+
+  const handlePreviousPage = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1))
   }
 
   return (
@@ -69,6 +94,19 @@ const VersionControlComponent = ({ t }) => {
         }
       ></Bar>
 
+      <Dialog
+        open={isDialogOpen}
+        headerText="Commit Message"
+        footer={
+          <>
+            <Button onClick={onConfirmBackupClick}>{t('VERSION_CONTROL.CONFIRM')}</Button>
+            <Button onClick={onCancelBackupClick}>{t('VERSION_CONTROL.CANCEL')}</Button>
+          </>
+        }
+      >
+        <TextArea value={commitMessage} onInput={handleCommitMessageChange} placeholder="Write your commit message here" rows={4} />
+      </Dialog>
+
       <div className={classes.commitsContainer}>
         <table className={classes.commitTable}>
           <thead>
@@ -76,7 +114,6 @@ const VersionControlComponent = ({ t }) => {
               <th>{t('VERSION_CONTROL.ID')}</th>
               <th>{t('VERSION_CONTROL.DATE')}</th>
               <th>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</th>
-
               <th>Toggle</th>
             </tr>
           </thead>
@@ -91,7 +128,6 @@ const VersionControlComponent = ({ t }) => {
                   <td>{commit.sha.substring(0, 7)}</td>
                   <td>{new Date(commit.commit.committer.date).toLocaleString()}</td>
                   <td>{commit.commit.message}</td>
-
                   <td>
                     <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => onCommitRevertClick(commit.sha)}>
                       {t('VERSION_CONTROL.RESTORE')}
@@ -102,6 +138,14 @@ const VersionControlComponent = ({ t }) => {
             )}
           </tbody>
         </table>
+        <div className={classes.paginationButtons}>
+          <Button onClick={handlePreviousPage} disabled={page === 1}>
+            Previous
+          </Button>
+          <Button onClick={handleNextPage} disabled={commits.length < perPage}>
+            Next
+          </Button>
+        </div>
       </div>
     </>
   )

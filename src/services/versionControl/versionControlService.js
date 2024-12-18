@@ -14,10 +14,10 @@ export const createVersionControlInstance = (credentials, apiKey, currentSite) =
   return new VersionControl(credentialsUpdated, apiKey, currentSite)
 }
 
-export const handleGetServices = async (versionControl, apiKey) => {
+export const handleGetServices = async (versionControl, apiKey, commitMessage) => {
   try {
     await versionControl.createBranch(apiKey)
-    await versionControl.storeCdcDataInGit('Backup created')
+    await versionControl.storeCdcDataInGit(commitMessage || 'Backup created')
     alert('Backup created successfully!')
     return await handleCommitListRequestServices(versionControl, apiKey)
   } catch (error) {
