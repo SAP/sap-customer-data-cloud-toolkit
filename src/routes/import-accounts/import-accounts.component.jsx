@@ -29,7 +29,7 @@ import SearchBar from '../../components/search-schema-input/search-schemas-input
 
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
-const PAGE_TITLE = 'Import Accounts'
+const PAGE_TITLE = 'Download Template'
 
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
@@ -140,7 +140,7 @@ const ImportAccountsComponent = ({ t }) => {
                     <Title level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
                       {t('IMPORT_ACCOUNTS_SELECT_ACCOUNT_TYPE')}
                     </Title>
-                    <Select onChange={handleSelectChange}>
+                    <Select className={classes.selectAccountDiv} onChange={handleSelectChange}>
                       <Option value={t('GLOBAL.FULL')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
                       <Option value={t('GLOBAL.LITE')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
                     </Select>

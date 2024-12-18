@@ -7,7 +7,7 @@ const styles = {
   errorDialogStyle: {
     textAlign: 'left',
   },
-  titleSpanStyle: {},
+  titleSpanStyle: { fontSize: '24px' },
   pageTitleSpanStyle: {
     ...spacing.sapUiTinyMarginBegin,
   },
@@ -41,7 +41,9 @@ const styles = {
   headerOuterDivStyle: {
     width: '100%',
   },
-
+  selectAccountDiv: {
+    ...spacing.sapUiSmallMarginBottom,
+  },
   headerTextFlexboxStyle: {
     ...spacing.sapUiTinyMarginBegin,
     ...spacing.sapUiTinyMarginTop,
