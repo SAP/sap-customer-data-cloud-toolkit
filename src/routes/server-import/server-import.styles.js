@@ -22,10 +22,11 @@ const styles = {
     gridTemplateColumns: 'repeat(2, 1fr)',
     gridTemplateRows: 'repeat(3,auto)',
     marginLeft: '10px',
+    rowGap: '-10px',
   },
   gridItem: {
     height: '100px',
-    padding: '10px',
+    padding: '5px',
     width: '95%',
   },
   tableCell: {

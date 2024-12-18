@@ -98,11 +98,6 @@ const ServerImportComponent = ({ t }) => {
   return (
     <>
       <div className={classes.cardDiv}>
-        <FlexBox className={classes.headerTextFlexboxStyle}>
-          <Text id="importAccountsHeaderText" data-cy="importAccountsHeaderText" className={classes.componentTextStyle}>
-            {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}
-          </Text>
-        </FlexBox>
         <Card header={<CardHeader titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
