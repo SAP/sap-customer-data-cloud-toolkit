@@ -90,7 +90,7 @@
   "PRETTIFY_SINGLE_SCREEN_INFORMATIONAL_NO_JAVASCRIPT": "There is no Javascript to format on this Screen-Set.",
   "PRETTIFY_ALL_SCREEN-SETS_INFORMATIONAL_NO_JAVASCRIPT": "There is no Javascript to Format on any Screen-Set.",
   "IMPORT_ACCOUNTS_DOWNLOAD_TEMPLATE_BUTTON": "Download Template",
-  "IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS": "Select Schema Fields",
+  "IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS": "Download Template",
   "IMPORT_ACCOUNTS_COMPONENT_TEXT": "Import accounts and generate csv with schema and legal fields",
   "IMPORT_ACCOUNTS_FORM_HEADER_TEXT": "This will export the chosen fields to a CSV file. You can then import this file to create accounts.",
   "IMPORT_ACCOUNTS_SCHEMA_CONFIGURATION": "Select Schema Configuration",

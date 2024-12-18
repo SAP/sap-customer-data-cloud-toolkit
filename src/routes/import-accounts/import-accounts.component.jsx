@@ -29,7 +29,7 @@ import SearchBar from '../../components/search-schema-input/search-schemas-input
 
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
-const PAGE_TITLE = 'Download Template'
+const PAGE_TITLE = 'Import Data'
 
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
