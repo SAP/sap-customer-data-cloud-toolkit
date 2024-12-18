@@ -52,6 +52,9 @@ export const importAccountsSlice = createSlice({
       state.configurations.forEach((configuration) => {
         clearConfigurationsState(configuration, false)
       })
+      state.selectedConfiguration.forEach((configuration) => {
+        clearConfigurationsState(configuration, false)
+      })
     },
     setSwitchOptions(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
