@@ -71,26 +71,6 @@ const ServerImportComponent = ({ t }) => {
       setShowSuccessDialog(true)
     }
   }
-  // const renderFormItemsInTable = () => {
-  //   const itemsPerRow = 3
-  //   const formItems = serverConfigurations[selectedOption]
-  //   const rows = []
-
-  //   for (let i = 0; i < formItems.length; i += itemsPerRow) {
-  //     const rowItems = formItems.slice(i, i + itemsPerRow)
-  //     rows.push(
-  //       <TableRow key={`row-${i}`} className={classes.tableRow}>
-  //         {rowItems.map((field) => (
-  //           <TableCell key={field.id} className={classes.tableCell}>
-  //             <FormItemWithIcon field={field} handleInputChange={handleInputChange} />
-  //           </TableCell>
-  //         ))}
-  //       </TableRow>,
-  //     )
-  //   }
-
-  //   return rows
-  // }
 
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
@@ -123,7 +103,7 @@ const ServerImportComponent = ({ t }) => {
             {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}
           </Text>
         </FlexBox>
-        <Card header={<CardHeader className={classes.cardHeaderDiv} titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
+        <Card header={<CardHeader titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
@@ -141,7 +121,7 @@ const ServerImportComponent = ({ t }) => {
                   ))}
                 </Select>
               </div>
-              <div className={classes.gridContainer}>{renderFormItemsInGrid()}</div>
+              <div className={classes.gridContainer}>{serverConfigurations[selectedOption] && renderFormItemsInGrid()}</div>
             </div>
 
             <div className={classes.selectConfigurationOuterDivStyle}>

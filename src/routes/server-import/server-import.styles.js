@@ -86,6 +86,9 @@ const styles = {
     marginLeft: '6px',
     color: 'black',
   },
+  cardHeaderTitleText: {
+    fontSize: '30px',
+  },
 }
 
 export default styles
