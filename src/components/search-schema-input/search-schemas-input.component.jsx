@@ -17,6 +17,7 @@ const SearchBar = ({ dispatch, handleSuggestionClick, configurations, setSchemaI
 
     setSchemaInputValue(value)
     if (value !== '') {
+      console.log('inputValue', value)
       const filteredSuggestions = allNames.filter((name) => name.includes(value))
       if (filteredSuggestions.length) {
         setSuggestions(filteredSuggestions)

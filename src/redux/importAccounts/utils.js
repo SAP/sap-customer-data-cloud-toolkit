@@ -1,10 +1,14 @@
 export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
+  if (configuration.id.includes('status') || configuration.id.includes('isConsentGranted') || configuration.id.includes('isSubscribed')) {
+    configuration.value = value
+    configuration.mandatory = value
+  }
   if (configuration.branches) {
     configuration.branches.forEach((branch) => {
-      console.log('entererd')
       if (branch.id.includes('status') || branch.id.includes('isConsentGranted') || branch.id.includes('isSubscribed')) {
         branch.value = value
+
         branch.mandatory = value
       }
       branch.value = value
@@ -136,6 +140,7 @@ export const getConfigurationPath = (configurations, targetId) => {
 
   return findPath(configurations, path)
 }
+
 export const getParent = (structure, parentId, targetId) => {
   const findParent = (nodes) => {
     for (const node of nodes) {

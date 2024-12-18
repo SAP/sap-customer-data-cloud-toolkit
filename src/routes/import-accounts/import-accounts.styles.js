@@ -17,27 +17,31 @@ const styles = {
     marginLeft: '10px',
   },
   currentInfoContainerTitle: {
-    ...spacing.sapUiSmallMarginBottom,
+    marginBottom: '4px',
   },
   currentInfoContainer: {
     marginLeft: '53px',
     ...spacing.sapUiMediumMarginTop,
+    display: 'flex',
+    flexDirection: 'column',
   },
   cardHeaderStyle: {
     display: 'flex',
     ...spacing.sapUiTinyMarginBegin,
     alignSelf: 'flex-start',
   },
-
+  fullContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: 'auto',
+    height: '100%', // Ensure it takes full height of its parent
+  },
   outerDivStyle: {
     composes: 'cdc-tools-background',
-    maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
+    overflowY: 'auto', // Ensure it can scroll if needed
   },
-  fullContainer: {
-    overflowY: 'auto',
-    width: '100%',
-  },
+
   headerOuterDivStyle: {
     width: '100%',
   },

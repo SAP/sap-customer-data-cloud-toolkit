@@ -15,6 +15,7 @@ import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyCo
 import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 import targetSitesTooltipIconReducer from './targetSitesTooltipIcon/targetSitesTooltipIconSlice'
 import importAccountsSliceReducer from './importAccounts/importAccountsSlice'
+import { serverImportExtendedSliceReducer } from './serverImport/serverImportSlice'
 
 export default configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export default configureStore({
     siteDeployerCopyConfiguration: siteDeployerCopyConfigurationReducer,
     targetSitesTooltipIcon: targetSitesTooltipIconReducer,
     importAccounts: importAccountsSliceReducer,
+    serverImport: serverImportExtendedSliceReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

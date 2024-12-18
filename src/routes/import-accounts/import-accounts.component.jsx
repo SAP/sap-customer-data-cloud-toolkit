@@ -10,7 +10,7 @@ import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../r
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
+import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader, Label } from '@ui5/webcomponents-react'
 import {
   getConfigurations,
   selectConfigurations,
@@ -65,6 +65,7 @@ const ImportAccountsComponent = ({ t }) => {
   }
   const handleTreeNodeClick = (treeNodeId) => {
     if (treeNodeId) {
+      console.log('treenODE', treeNodeId)
       dispatch(setSelectedConfiguration(treeNodeId))
 
       setTreeNodeInputValue(treeNodeId)
@@ -76,6 +77,7 @@ const ImportAccountsComponent = ({ t }) => {
   }
   const handleSuggestionClick = (nodeId) => {
     if (nodeId) {
+      console.log('nodeId', nodeId)
       dispatch(setSuggestionClickConfiguration({ checkBoxId: nodeId }))
       setTreeNodeInputValue(nodeId)
       setExpandableNode(true)
@@ -137,9 +139,9 @@ const ImportAccountsComponent = ({ t }) => {
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
-                    <Title level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
+                    <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
                       {t('IMPORT_ACCOUNTS_SELECT_ACCOUNT_TYPE')}
-                    </Title>
+                    </Label>
                     <Select className={classes.selectAccountDiv} onChange={handleSelectChange}>
                       <Option value={t('GLOBAL.FULL')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
                       <Option value={t('GLOBAL.LITE')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
