@@ -100,7 +100,7 @@
   "SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE": "Select Storage Server",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON": "Import",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON": "Cancel",
-  "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The account was imported successfully",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The account was imported successfully \n The Dataflow was created with this id: {{dataflowId}} ",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Fill the information below to import a full or lite account from a storage server",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT": "Select the account type and storage provider, then provide the file path to the file you wish to import. By clicking on the 'Import' button, a dataflow will be deployed and a one-time data import will be initiated.",
 

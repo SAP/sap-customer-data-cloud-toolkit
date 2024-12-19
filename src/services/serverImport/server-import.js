@@ -27,7 +27,7 @@ class ServerImport {
       const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
       const schedule = this.scheduleStructure(createDataflow)
       const createSchedule = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
-      return createSchedule
+      return createDataflow.id
     }
   }
   getConfigurations(configurations, key) {
@@ -49,8 +49,12 @@ class ServerImport {
     console.log('variables', variables)
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
-      console.log('variable.id', variable.value)
-      dataflowString = dataflowString.replaceAll(regex, variable.value)
+      if (variable.value) {
+        console.log('variable.id', variable.value)
+        dataflowString = dataflowString.replaceAll(regex, variable.value)
+      } else {
+        dataflowString = dataflowString.replaceAll(regex, '')
+      }
     }
     return JSON.parse(dataflowString)
   }

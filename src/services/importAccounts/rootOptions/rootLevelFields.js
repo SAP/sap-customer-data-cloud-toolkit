@@ -29,14 +29,14 @@ export const getRootElementsStructure = () => {
           branches: [],
         },
         {
-          id: 'loginIds.email',
-          name: 'email',
+          id: 'loginIds.emails',
+          name: 'emails',
           value: false,
           branches: [],
         },
         {
-          id: 'loginIds.unverifiedEmail',
-          name: 'unverifiedEmail',
+          id: 'loginIds.unverifiedEmails',
+          name: 'unverifiedEmails',
           value: false,
           branches: [],
         },
