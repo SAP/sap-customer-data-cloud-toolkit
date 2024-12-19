@@ -39,6 +39,7 @@ const ImportAccountsComponent = ({ t }) => {
   const isLoading = useSelector(selectIsLoading)
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
+  const [accountOption, setAccountOption] = useState('Full')
   const [expandableNode, setExpandableNode] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
@@ -51,10 +52,11 @@ const ImportAccountsComponent = ({ t }) => {
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = () => {
-    dispatch(setConfigurations())
+    dispatch(setConfigurations(accountOption))
   }
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
+    setAccountOption(selectedValue)
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations(selectedValue))
   }

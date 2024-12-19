@@ -148,14 +148,14 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
   }
 })
 
-export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
+export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (accountOption, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
 
   try {
-    return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
+    return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations, accountOption)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
