@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -28,7 +27,14 @@ class Dataflow {
     this.#site = site
     this.#dataCenter = dataCenter
   }
-
+  async setScheduling(site, dataCenter, body) {
+    const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
+    const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {
+      return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
+    })
+    return res.data
+  }
   async set(site, dataCenter, body) {
     const endpoint = body.status === Dataflow.#DATAFLOW_STATUS_PUBLISHED ? Dataflow.#getSetDataflowEndpoint() : Dataflow.#getSetDataflowDraftEndpoint()
     const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
@@ -91,6 +97,9 @@ class Dataflow {
   static #getErrors(responses) {
     return responses.filter((resp) => resp.errorCode !== 0)
   }
+  static #getSetSchedulingDataflowEndpoint() {
+    return `${Dataflow.#NAMESPACE}.createScheduling`
+  }
 
   #authenticationDataflowParameters(apiKey) {
     const parameters = Object.assign({})
@@ -106,7 +115,15 @@ class Dataflow {
     parameters.context = JSON.stringify({ id: `${Dataflow.#CONTEXT_ID}_search`, targetApiKey: apiKey })
     return parameters
   }
+  #setSchedulingDataflowParameters(apiKey, config) {
+    const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
+    console.log('config.name', config.name)
+    console.log('config.dataflowId', config.dataflowId)
 
+    parameters.data = JSON.stringify(config.data)
+
+    return parameters
+  }
   #setDataflowParameters(apiKey, body) {
     const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
     parameters.data = JSON.stringify(body)

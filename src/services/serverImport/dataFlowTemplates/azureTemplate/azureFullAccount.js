@@ -108,6 +108,7 @@ export const importFullAccountAzure = {
         accountName: '{{accountName}}',
         accountKey: '{{accountKey}}',
         container: '{{container}}',
+        blobPrefix: '{{blobPrefix}}',
       },
     },
     {
