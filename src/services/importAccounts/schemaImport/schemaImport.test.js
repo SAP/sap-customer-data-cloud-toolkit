@@ -1,7 +1,15 @@
 import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 import SchemaImportFields from './schemaImportFields'
-import { expectedLiteSchemaResponse, expectedSchemaLiteResponse, expectedSchemaResponse, expectedSchemaResponseCleaned, transformedSchema } from './schemaDatatest'
+import {
+  expectedLiteSchemaResponse,
+  expectedSchemaLiteResponse,
+  expectedSchemaResponse,
+  expectedSchemaResponseCleaned,
+  expectedTransformedLiteCleanedResponsed,
+  expectedTransformedLiteResponse,
+  transformedSchema,
+} from './schemaDatatest'
 import { extractAndTransformSchemaFields } from './transformSchemaFields'
 
 jest.mock('axios')
@@ -43,17 +51,18 @@ describe('Import Account - SchemaImport test suite', () => {
     schemaImport.cleanSchemaData(schemaResponse)
     expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
   })
-  //.-..........above are checked
 
   test('clean lite schema data successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     const cleanedSchema = schemaImport.cleanLiteSchemaData(schemaResponse)
-    expect(cleanedSchema).toEqual(expectedSchemaResponseCleaned)
+    expect(cleanedSchema).toEqual(expectedTransformedLiteResponse)
   })
-
+  // .-..........above are checked
   test('remove field from addresses schema successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     schemaImport.removeFieldFromAddressesSchema(schemaResponse)
+    console.log('cleanedSchema', JSON.stringify(schemaResponse))
+
     expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
   })
 
@@ -70,10 +79,9 @@ describe('Import Account - SchemaImport test suite', () => {
     expect(response).toEqual(errorResponse)
   })
 
-  //   test('export lite schema data successfully', async () => {
-  //     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
-  //     const response = await schemaImport.exportLiteSchemaData()
-  //     const transformedData = extractAndTransformSchemaFields(expectedLiteSchemaResponseCleaned)
-  //     expect(response).toEqual(transformedData)
-  //   })
+  test('export lite schema data successfully', async () => {
+    axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
+    const response = await schemaImport.exportLiteSchemaData()
+    expect(response).toEqual(expectedTransformedLiteCleanedResponsed)
+  })
 })

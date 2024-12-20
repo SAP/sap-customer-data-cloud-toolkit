@@ -16,13 +16,18 @@ class PreferencesImportFields {
     const preferencesResponse = await this.getPreferences()
     if (preferencesResponse.errorCode === 0) {
       this.getPreferencesData(preferencesResponse)
+      console.log('preferencesResponseAfter', preferencesResponse)
+
       return preferencesResponse
     }
   }
   async exportTransformedPreferencesData() {
     const result = []
     const cleanPreferencesResponse = await this.exportPreferencesData()
+    console.log('preferencesResponse', JSON.stringify(cleanPreferencesResponse))
+
     result.push(...extractAndTransformPreferencesFields(cleanPreferencesResponse))
+    console.log('response', JSON.stringify(result))
 
     return result
   }

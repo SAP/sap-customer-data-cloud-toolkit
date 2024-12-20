@@ -36,7 +36,7 @@ class SchemaImportFields {
     const cleanSchemaResponse = this.cleanLiteSchemaData(schemaResponse)
 
     result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
-
+    console.log('result--->', result)
     return result
   }
   async getSchema() {
