@@ -16,7 +16,6 @@ class ServerImport {
   }
 
   getStructure() {
-    console.log('structure--->', serverStructure)
     const structure = serverStructure
     return structure
   }
@@ -26,7 +25,7 @@ class ServerImport {
       const replacedDataflow = this.replaceVariables(accountOption === 'Lite' ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
       const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
       const schedule = this.scheduleStructure(createDataflow)
-      const createSchedule = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+      await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
       return createDataflow.id
     }
   }
@@ -46,12 +45,9 @@ class ServerImport {
   }
   replaceVariables(dataflow, variables) {
     let dataflowString = JSON.stringify(dataflow)
-    console.log('dataflowString', dataflowString)
-    console.log('variables', variables)
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
       if (variable.value) {
-        console.log('variable.id', variable.value)
         dataflowString = dataflowString.replaceAll(regex, variable.value)
       } else {
         dataflowString = dataflowString.replaceAll(regex, '')
