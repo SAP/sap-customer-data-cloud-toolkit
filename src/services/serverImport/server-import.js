@@ -39,6 +39,7 @@ class ServerImport {
         name: 'test_schedule',
         dataflowId: response.id,
         frequencyType: 'once',
+        fullExtract: true,
       },
     }
     return structure
