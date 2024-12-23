@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { withTranslation } from 'react-i18next'
 import { Bar, Input, Button, Dialog, TextArea } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
@@ -25,15 +25,21 @@ const VersionControlComponent = ({ t }) => {
   const [page, setPage] = useState(1)
   const [perPage] = useState(10)
 
-  useEffect(() => {
+  const fetchCommits = useCallback(async () => {
     if (gitToken) {
       const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
-      ;(async () => {
-        const commitList = await versionControl.getCommits(page, perPage)
+      try {
+        const commitList = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
         setCommits(commitList)
-      })()
+      } catch (error) {
+        console.error('Error fetching commits:', error)
+      }
     }
   }, [gitToken, credentials, apiKey, currentSite, page, perPage])
+
+  useEffect(() => {
+    fetchCommits() // Fetch commits on initial render and when dependencies change
+  }, [fetchCommits])
 
   const onCreateBackupClick = () => {
     setIsDialogOpen(true)
@@ -41,9 +47,14 @@ const VersionControlComponent = ({ t }) => {
 
   const onConfirmBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
-    const commitList = await handleGetServices(versionControl, apiKey, commitMessage)
-    if (commitList) setCommits(commitList)
-    setIsDialogOpen(false)
+    try {
+      await handleGetServices(versionControl, apiKey, commitMessage)
+      await fetchCommits() // Refresh the commits list after confirmation
+    } catch (error) {
+      console.error('Error creating backup:', error)
+    } finally {
+      setIsDialogOpen(false) // Close the dialog
+    }
   }
 
   const onCancelBackupClick = () => {
@@ -52,7 +63,12 @@ const VersionControlComponent = ({ t }) => {
 
   const onCommitRevertClick = async (sha) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
-    await handleCommitRevertServices(versionControl, sha)
+    try {
+      await handleCommitRevertServices(versionControl, sha)
+      await fetchCommits() // Refresh the commits list after revert
+    } catch (error) {
+      console.error('Error reverting commit:', error)
+    }
   }
 
   const handleGitTokenChange = (e) => {
@@ -67,10 +83,12 @@ const VersionControlComponent = ({ t }) => {
 
   const handleNextPage = () => {
     setPage((prevPage) => prevPage + 1)
+    fetchCommits()
   }
 
   const handlePreviousPage = () => {
     setPage((prevPage) => Math.max(prevPage - 1, 1))
+    fetchCommits()
   }
 
   return (

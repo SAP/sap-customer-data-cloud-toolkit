@@ -14,11 +14,8 @@ import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Channel from '../copyConfig/communication/channel'
-import * as githubUtils from './githubUtils'
-import { getCdcData, fetchCDCConfigs } from './cdcUtils'
-import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
-import { getFileTypeFromFileName } from './versionControlFiles'
 import Cookies from 'js-cookie'
+import CdcService from './cdcService'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo) {
@@ -29,7 +26,7 @@ class VersionControl {
     this.octokit = new Octokit({ auth: gitToken })
     this.owner = 'iamGaspar'
     this.repo = 'CDCVersionControl'
-    this.defaultBranch = apiKey // dynamically set default branch based on apiKey
+    this.defaultBranch = apiKey
 
     const { dataCenter } = siteInfo
 
@@ -50,73 +47,7 @@ class VersionControl {
     this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
     this.channel = new Channel(credentials, apiKey, dataCenter)
 
-    this.createBranch = githubUtils.createBranch.bind(this)
-    this.updateFilesInSingleCommit = githubUtils.updateFilesInSingleCommit.bind(this)
-    this.getFile = githubUtils.getFile.bind(this)
-    this.getCommitFiles = githubUtils.getCommitFiles.bind(this)
-    this.fetchFileContent = githubUtils.fetchFileContent.bind(this)
-    this.getCommits = githubUtils.getCommits.bind(this)
-    this.branchExists = githubUtils.branchExists.bind(this) // Ensure method is bound here
-    this.getCdcData = getCdcData.bind(this)
-    this.fetchCDCConfigs = fetchCDCConfigs.bind(this)
-    this.updateGitFileContent = githubUtils.updateGitFileContent.bind(this)
-    this.storeCdcDataInGit = githubUtils.storeCdcDataInGit.bind(this)
-    this.applyCommitConfig = this.applyCommitConfig.bind(this)
-    this.setPolicies = setPolicies.bind(this)
-    this.setWebSDK = setWebSDK.bind(this)
-    this.setSMS = setSMS.bind(this)
-    this.setExtension = setExtension.bind(this)
-    this.setSchema = setSchema.bind(this)
-    this.setScreenSets = setScreenSets.bind(this)
-    this.setRBA = setRBA.bind(this)
-    this.setEmailTemplates = setEmailTemplates.bind(this)
-  }
-
-  async applyCommitConfig(commitSha) {
-    const files = await this.getCommitFiles(commitSha)
-    for (const file of files) {
-      const fileType = getFileTypeFromFileName(file.filename) // Determine file type
-
-      let filteredResponse = file.content
-      // Call appropriate setter method based on file type
-      switch (fileType) {
-        case 'webSdk':
-          await this.setWebSDK(filteredResponse)
-          break
-        // case 'dataflow':
-        //   await this.setDataflow(filteredResponse)
-        //   break
-        case 'emails':
-          await this.setEmailTemplates(filteredResponse)
-          break
-        case 'extension':
-          await this.setExtension(filteredResponse)
-          break
-        case 'policies':
-          await this.setPolicies(filteredResponse)
-          break
-        case 'rba':
-          await this.setRBA(filteredResponse)
-          break
-        // case 'riskAssessment':
-        //   await this.setRiskAssessment(filteredResponse)
-        //   break
-        case 'schema':
-          await this.setSchema(filteredResponse)
-          break
-        case 'sets':
-          await this.setScreenSets(filteredResponse)
-          break
-        case 'sms':
-          await this.setSMS(filteredResponse)
-          break
-        // case 'channel':
-        //   await this.setChannel(filteredResponse)
-        //   break
-        default:
-          console.warn(`Unknown file type: ${fileType}`)
-      }
-    }
+    this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }
 }
 

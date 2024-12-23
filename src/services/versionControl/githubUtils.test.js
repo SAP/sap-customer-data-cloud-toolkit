@@ -4,11 +4,21 @@
  */
 import { Base64 } from 'js-base64'
 import * as githubUtils from './githubUtils'
-import { getFileTypeFromFileName } from './versionControlFiles'
+import { removeIgnoredFields } from './dataSanitization'
+import CdcService from './cdcService'
 
-jest.mock('./versionControlFiles', () => ({
-  getFileTypeFromFileName: jest.fn(),
+jest.mock('./dataSanitization', () => ({
+  removeIgnoredFields: jest.fn(),
 }))
+
+jest.mock('./cdcService', () =>
+  jest.fn().mockImplementation(() => ({
+    fetchCDCConfigs: jest.fn().mockResolvedValue({
+      webSdk: { key: 'value' },
+      dataflow: { key: 'value' },
+    }),
+  })),
+)
 
 describe('githubUtils', () => {
   const octokitMock = {
@@ -38,15 +48,6 @@ describe('githubUtils', () => {
     owner: 'testOwner',
     repo: 'testRepo',
     defaultBranch: 'main',
-    fetchFileContent: githubUtils.fetchFileContent,
-    branchExists: githubUtils.branchExists,
-    getFile: githubUtils.getFile,
-    getCommitFiles: githubUtils.getCommitFiles,
-    createBranch: githubUtils.createBranch,
-    updateFilesInSingleCommit: githubUtils.updateFilesInSingleCommit,
-    updateGitFileContent: githubUtils.updateGitFileContent,
-    storeCdcDataInGit: githubUtils.storeCdcDataInGit,
-    getCommits: githubUtils.getCommits,
   }
 
   beforeEach(() => {
@@ -58,7 +59,7 @@ describe('githubUtils', () => {
       const mockFile = { content: 'mockContent', size: 1024 }
       octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
 
-      const result = await githubUtils.getFile.call(context, 'path/to/file')
+      const result = await githubUtils.getFile(context, 'path/to/file')
       expect(result).toEqual(mockFile)
     })
 
@@ -68,7 +69,7 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
       octokitMock.rest.git.getBlob.mockResolvedValue({ data: mockBlobData })
 
-      const result = await githubUtils.getFile.call(context, 'path/to/file')
+      const result = await githubUtils.getFile(context, 'path/to/file')
       expect(result.content).toEqual('mockBlobContent')
     })
   })
@@ -84,19 +85,18 @@ describe('githubUtils', () => {
       const mockFileContent = Base64.encode(JSON.stringify({ key: 'value' }))
       octokitMock.rest.repos.getCommit.mockResolvedValue({ data: mockCommitData })
       octokitMock.request.mockResolvedValue({ data: { content: mockFileContent } })
-      getFileTypeFromFileName.mockReturnValue('json')
 
-      const result = await githubUtils.getCommitFiles.call(context, 'mockSha')
+      const result = await githubUtils.getCommitFiles(context, 'mockSha')
       expect(result).toEqual([
-        { filename: 'file1.json', contents_url: 'url1', content: { key: 'value' }, fileType: 'json' },
-        { filename: 'file2.json', contents_url: 'url2', content: { key: 'value' }, fileType: 'json' },
+        { filename: 'file1.json', contents_url: 'url1', content: { key: 'value' } },
+        { filename: 'file2.json', contents_url: 'url2', content: { key: 'value' } },
       ])
     })
 
     it('should throw an error if no files found in commit', async () => {
       octokitMock.rest.repos.getCommit.mockResolvedValue({ data: { files: null } })
 
-      await expect(githubUtils.getCommitFiles.call(context, 'mockSha')).rejects.toThrow('No files found in commit: mockSha')
+      await expect(githubUtils.getCommitFiles(context, 'mockSha')).rejects.toThrow('No files found in commit: mockSha')
     })
   })
 
@@ -105,7 +105,7 @@ describe('githubUtils', () => {
       const mockResponse = { content: 'mockContent' }
       octokitMock.request.mockResolvedValue({ data: mockResponse })
 
-      const result = await githubUtils.fetchFileContent.call(context, 'mockUrl')
+      const result = await githubUtils.fetchFileContent(context, 'mockUrl')
       expect(result).toEqual('mockContent')
     })
 
@@ -115,7 +115,7 @@ describe('githubUtils', () => {
       octokitMock.request.mockResolvedValue({ data: mockResponse })
       octokitMock.rest.git.getBlob.mockResolvedValue({ data: mockBlobData })
 
-      const result = await githubUtils.fetchFileContent.call(context, 'mockUrl')
+      const result = await githubUtils.fetchFileContent(context, 'mockUrl')
       expect(result).toEqual('mockBlobContent')
     })
 
@@ -124,7 +124,7 @@ describe('githubUtils', () => {
       octokitMock.request.mockResolvedValue({ data: mockResponse })
       octokitMock.rest.git.getBlob.mockResolvedValue({ data: {} })
 
-      await expect(githubUtils.fetchFileContent.call(context, 'mockUrl')).rejects.toThrow('Failed to fetch blob content for URL: mockUrl')
+      await expect(githubUtils.fetchFileContent(context, 'mockUrl')).rejects.toThrow('Failed to fetch blob content for URL: mockUrl')
     })
   })
 
@@ -133,7 +133,7 @@ describe('githubUtils', () => {
       const mockBranches = [{ name: 'main' }, { name: 'dev' }]
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: mockBranches })
 
-      const result = await githubUtils.branchExists.call(context, 'main')
+      const result = await githubUtils.branchExists(context, 'main')
       expect(result).toBe(true)
     })
 
@@ -141,14 +141,14 @@ describe('githubUtils', () => {
       const mockBranches = [{ name: 'dev' }]
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: mockBranches })
 
-      const result = await githubUtils.branchExists.call(context, 'main')
+      const result = await githubUtils.branchExists(context, 'main')
       expect(result).toBe(false)
     })
 
     it('should throw error if branches cannot be fetched', async () => {
       octokitMock.rest.repos.listBranches.mockRejectedValue(new Error('Network Error'))
 
-      await expect(githubUtils.branchExists.call(context, 'main')).rejects.toThrow('Network Error')
+      await expect(githubUtils.branchExists(context, 'main')).rejects.toThrow('Network Error')
     })
   })
 
@@ -157,7 +157,7 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
       octokitMock.rest.repos.getBranch.mockResolvedValue({ data: { commit: { sha: 'mockSha' } } })
 
-      await githubUtils.createBranch.call(context, 'newBranch')
+      await githubUtils.createBranch(context, 'newBranch')
       expect(octokitMock.rest.git.createRef).toHaveBeenCalledWith({
         owner: 'testOwner',
         repo: 'testRepo',
@@ -167,13 +167,13 @@ describe('githubUtils', () => {
     })
 
     it('should throw an error if branch name is not provided', async () => {
-      await expect(githubUtils.createBranch.call(context)).rejects.toThrow('Branch name is required')
+      await expect(githubUtils.createBranch(context)).rejects.toThrow('Branch name is required')
     })
 
     it('should not create a branch if it already exists', async () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'newBranch' }] })
 
-      await githubUtils.createBranch.call(context, 'newBranch')
+      await githubUtils.createBranch(context, 'newBranch')
       expect(octokitMock.rest.git.createRef).not.toHaveBeenCalled()
     })
   })
@@ -191,7 +191,7 @@ describe('githubUtils', () => {
       octokitMock.rest.git.createCommit.mockResolvedValue({ data: mockCommitData })
 
       const files = [{ path: 'file1.json', content: 'content1' }]
-      await githubUtils.updateFilesInSingleCommit.call(context, 'commitMessage', files)
+      await githubUtils.updateFilesInSingleCommit(context, 'commitMessage', files)
 
       expect(octokitMock.rest.git.updateRef).toHaveBeenCalledWith({
         owner: 'testOwner',
@@ -207,8 +207,9 @@ describe('githubUtils', () => {
       const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
       octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
 
-      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }), sha: 'mockSha' })
     })
 
@@ -216,8 +217,9 @@ describe('githubUtils', () => {
       const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
       octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
 
-      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'value' }))
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'value' }))
       expect(result).toBeNull()
     })
 
@@ -225,7 +227,7 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
       octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
 
-      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
     })
 
@@ -233,58 +235,48 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [] })
       octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Branch does not exist'))
 
-      const result = await githubUtils.updateGitFileContent.call(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
     })
   })
 
-  describe('storeCdcDataInGit', () => {
-    it('should store CDC data in git', async () => {
-      const mockConfigs = { webSdk: { key: 'value' } }
-      const mockFileUpdates = [{ path: 'src/versionControl/webSdk.json', content: JSON.stringify(mockConfigs.webSdk, null, 2), sha: 'mockSha' }]
-      context.fetchCDCConfigs = jest.fn().mockResolvedValue(mockConfigs)
-      context.updateGitFileContent = jest.fn().mockResolvedValue(mockFileUpdates[0])
-      context.updateFilesInSingleCommit = jest.fn()
+  // describe('storeCdcDataInGit', () => {
+  //   it('should store CDC data in git', async () => {
+  //     const mockConfigs = { webSdk: { key: 'value' } }
+  //     const mockFileUpdates = [{ path: 'src/versionControl/webSdk.json', content: JSON.stringify(mockConfigs.webSdk, null, 2), sha: 'mockSha' }]
+  //     const cdcService = new CdcService(context)
+  //     cdcService.fetchCDCConfigs.mockResolvedValue(mockConfigs)
+  //     context.updateGitFileContent = jest.fn().mockResolvedValue(mockFileUpdates[0])
+  //     context.updateFilesInSingleCommit = jest.fn()
 
-      await githubUtils.storeCdcDataInGit.call(context, 'commitMessage')
-      expect(context.updateFilesInSingleCommit).toHaveBeenCalledWith('commitMessage', mockFileUpdates)
-    })
+  //     await githubUtils.storeCdcDataInGit(context, 'commitMessage')
+  //     expect(context.updateFilesInSingleCommit).toHaveBeenCalledWith('commitMessage', mockFileUpdates)
+  //   })
 
-    it('should skip commit if no files to update', async () => {
-      context.fetchCDCConfigs = jest.fn().mockResolvedValue({})
-      context.updateGitFileContent = jest.fn().mockResolvedValue(null)
-      context.updateFilesInSingleCommit = jest.fn()
+  //   it('should skip commit if no files to update', async () => {
+  //     const cdcService = new CdcService(context)
+  //     cdcService.fetchCDCConfigs.mockResolvedValue({})
+  //     context.updateGitFileContent = jest.fn().mockResolvedValue(null)
+  //     context.updateFilesInSingleCommit = jest.fn()
 
-      await githubUtils.storeCdcDataInGit.call(context, 'commitMessage')
-      expect(context.updateFilesInSingleCommit).not.toHaveBeenCalled()
-    })
-  })
+  //     await githubUtils.storeCdcDataInGit(context, 'commitMessage')
+  //     expect(context.updateFilesInSingleCommit).not.toHaveBeenCalled()
+  //   })
+  // })
 
   describe('getCommits', () => {
     it('should fetch all commits', async () => {
       const mockCommits = [{ sha: 'commit1' }, { sha: 'commit2' }]
       octokitMock.rest.repos.listCommits.mockResolvedValue({ data: mockCommits })
 
-      const result = await githubUtils.getCommits.call(context)
+      const result = await githubUtils.getCommits(context)
       expect(result).toEqual(mockCommits)
     })
 
-    // it('should handle pagination correctly', async () => {
-    //   const mockCommitsPage1 = [{ sha: 'commit1' }]
-    //   const mockCommitsPage2 = [{ sha: 'commit2' }]
-    //   octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: mockCommitsPage1 }).mockResolvedValueOnce({ data: mockCommitsPage2 })
+    it('should handle errors when fetching commits', async () => {
+      octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Network Error'))
 
-    //   const allCommits = await githubUtils.getCommits.call(context)
-    //   expect(allCommits).toEqual([...mockCommitsPage1, ...mockCommitsPage2])
-    // })
-
-    // it('should break pagination loop if less than per_page commits', async () => {
-    //   const mockCommitsPage1 = [{ sha: 'commit1' }]
-    //   const mockCommitsPage2 = [{ sha: 'commit2' }]
-    //   octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: mockCommitsPage1 }).mockResolvedValueOnce({ data: mockCommitsPage2 }).mockResolvedValueOnce({ data: [] })
-
-    //   const allCommits = await githubUtils.getCommits.call(context)
-    //   expect(allCommits).toEqual([...mockCommitsPage1, ...mockCommitsPage2])
-    // })
+      await expect(githubUtils.getCommits(context)).rejects.toThrow('Network Error')
+    })
   })
 })

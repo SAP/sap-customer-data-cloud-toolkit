@@ -3,6 +3,8 @@
  * License: Apache-2.0
  */
 import VersionControl from './versionControl'
+import * as githubUtils from './githubUtils'
+import CdcService from './cdcService'
 
 export const createVersionControlInstance = (credentials, apiKey, currentSite) => {
   const credentialsUpdated = {
@@ -16,9 +18,11 @@ export const createVersionControlInstance = (credentials, apiKey, currentSite) =
 
 export const handleGetServices = async (versionControl, apiKey, commitMessage) => {
   try {
-    await versionControl.createBranch(apiKey)
-    await versionControl.storeCdcDataInGit(commitMessage || 'Backup created')
-    alert('Backup created successfully!')
+    const cdcService = new CdcService(versionControl)
+
+    await githubUtils.createBranch(versionControl, apiKey)
+    await cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
+    await githubUtils.storeCdcDataInGit(versionControl, commitMessage || 'Backup created')
     return await handleCommitListRequestServices(versionControl, apiKey)
   } catch (error) {
     console.error('Error creating backup:', error)
@@ -26,11 +30,11 @@ export const handleGetServices = async (versionControl, apiKey, commitMessage) =
   }
 }
 
-export const handleCommitListRequestServices = async (versionControl, apiKey) => {
+export const handleCommitListRequestServices = async (versionControl, apiKey, page = 1, per_page = 10) => {
   try {
-    const hasBranch = await versionControl.branchExists(apiKey)
+    const hasBranch = await githubUtils.branchExists(versionControl, apiKey)
     if (hasBranch) {
-      const commitList = await versionControl.getCommits()
+      const commitList = await githubUtils.getCommits(versionControl, page, per_page)
       return commitList.length > 0 ? commitList : []
     } else {
       return []
@@ -43,7 +47,8 @@ export const handleCommitListRequestServices = async (versionControl, apiKey) =>
 
 export const handleCommitRevertServices = async (versionControl, sha) => {
   try {
-    await versionControl.applyCommitConfig(sha)
+    const cdcService = new CdcService(versionControl)
+    await cdcService.applyCommitConfig(sha)
     alert('Restore completed successfully!')
   } catch (error) {
     console.error('Error reverting configurations:', error)

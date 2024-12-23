@@ -4,21 +4,20 @@
  */
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from './dataSanitization'
-import { getFileTypeFromFileName } from './versionControlFiles'
+import CdcService from './cdcService'
 
-export async function getFile(path) {
-  const { data: file } = await this.octokit.rest.repos.getContent({
-    owner: this.owner,
-    repo: this.repo,
+export async function getFile(versionControl, path) {
+  const { data: file } = await versionControl.octokit.rest.repos.getContent({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
     path,
-    ref: this.defaultBranch,
+    ref: versionControl.defaultBranch,
   })
 
   if (!file.content || file.size > 100 * 1024) {
-    // Large files
-    const { data: blobData } = await this.octokit.rest.git.getBlob({
-      owner: this.owner,
-      repo: this.repo,
+    const { data: blobData } = await versionControl.octokit.rest.git.getBlob({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
       file_sha: file.sha,
     })
     file.content = blobData.content
@@ -26,10 +25,10 @@ export async function getFile(path) {
   return file
 }
 
-export async function getCommitFiles(sha) {
-  const { data: commitData } = await this.octokit.rest.repos.getCommit({
-    owner: this.owner,
-    repo: this.repo,
+export async function getCommitFiles(versionControl, sha) {
+  const { data: commitData } = await versionControl.octokit.rest.repos.getCommit({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
     ref: sha,
   })
 
@@ -44,20 +43,19 @@ export async function getCommitFiles(sha) {
 
   return Promise.all(
     files.map(async (file) => {
-      const content = await this.fetchFileContent(file.contents_url)
-      const fileType = getFileTypeFromFileName(file.filename)
-      return { ...file, content: JSON.parse(Base64.decode(content)), fileType }
+      const content = await fetchFileContent(versionControl, file.contents_url)
+      return { ...file, content: JSON.parse(Base64.decode(content)) }
     }),
   )
 }
 
-export async function fetchFileContent(contents_url) {
-  const { data: response } = await this.octokit.request(contents_url)
+export async function fetchFileContent(versionControl, contents_url) {
+  const { data: response } = await versionControl.octokit.request(contents_url)
 
   if (!response || !response.content) {
-    const { data: blobData } = await this.octokit.rest.git.getBlob({
-      owner: this.owner,
-      repo: this.repo,
+    const { data: blobData } = await versionControl.octokit.rest.git.getBlob({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
       file_sha: response.sha,
     })
 
@@ -69,53 +67,53 @@ export async function fetchFileContent(contents_url) {
   return response.content
 }
 
-export async function branchExists(branchName) {
-  const { data: branches } = await this.octokit.rest.repos.listBranches({
-    owner: this.owner,
-    repo: this.repo,
+export async function branchExists(versionControl, branchName) {
+  const { data: branches } = await versionControl.octokit.rest.repos.listBranches({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
   })
 
   return branches.some((branch) => branch.name === branchName)
 }
 
-export async function createBranch(branchName) {
+export async function createBranch(versionControl, branchName) {
   if (!branchName) {
     throw new Error('Branch name is required')
   }
 
-  const exists = await this.branchExists(branchName)
+  const exists = await branchExists(versionControl, branchName)
   const sourceBranch = 'main' // or use predefined default branch
 
   if (!exists) {
-    const { data: mainBranch } = await this.octokit.rest.repos.getBranch({
-      owner: this.owner,
-      repo: this.repo,
+    const { data: mainBranch } = await versionControl.octokit.rest.repos.getBranch({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
       branch: sourceBranch,
     })
 
-    await this.octokit.rest.git.createRef({
-      owner: this.owner,
-      repo: this.repo,
+    await versionControl.octokit.rest.git.createRef({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
       ref: `refs/heads/${branchName}`,
       sha: mainBranch.commit.sha,
     })
   }
 }
 
-export async function updateFilesInSingleCommit(commitMessage, files) {
-  const { data: refData } = await this.octokit.rest.git.getRef({
-    owner: this.owner,
-    repo: this.repo,
-    ref: `heads/${this.defaultBranch}`,
+export async function updateFilesInSingleCommit(versionControl, commitMessage, files) {
+  const { data: refData } = await versionControl.octokit.rest.git.getRef({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
+    ref: `heads/${versionControl.defaultBranch}`,
   })
 
   const baseTreeSha = refData.object.sha
 
   const blobs = await Promise.all(
     files.map(async (file) => {
-      const { data } = await this.octokit.rest.git.createBlob({
-        owner: this.owner,
-        repo: this.repo,
+      const { data } = await versionControl.octokit.rest.git.createBlob({
+        owner: versionControl.owner,
+        repo: versionControl.repo,
         content: file.content,
         encoding: 'utf-8',
       })
@@ -128,42 +126,41 @@ export async function updateFilesInSingleCommit(commitMessage, files) {
     }),
   )
 
-  const { data: newTree } = await this.octokit.rest.git.createTree({
-    owner: this.owner,
-    repo: this.repo,
+  const { data: newTree } = await versionControl.octokit.rest.git.createTree({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
     tree: blobs,
     base_tree: baseTreeSha,
   })
 
-  const { data: newCommit } = await this.octokit.rest.git.createCommit({
-    owner: this.owner,
-    repo: this.repo,
+  const { data: newCommit } = await versionControl.octokit.rest.git.createCommit({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
     message: commitMessage,
     tree: newTree.sha,
     parents: [baseTreeSha],
   })
 
-  await this.octokit.rest.git.updateRef({
-    owner: this.owner,
-    repo: this.repo,
-    ref: `heads/${this.defaultBranch}`,
+  await versionControl.octokit.rest.git.updateRef({
+    owner: versionControl.owner,
+    repo: versionControl.repo,
+    ref: `heads/${versionControl.defaultBranch}`,
     sha: newCommit.sha,
   })
 }
 
-export async function updateGitFileContent(filePath, cdcFileContent) {
+export async function updateGitFileContent(versionControl, filePath, cdcFileContent) {
   let getGitFileInfo
 
   try {
-    const branchExists = await this.branchExists(this.defaultBranch)
-    if (!branchExists) {
+    const branchExistsResult = await branchExists(versionControl, versionControl.defaultBranch)
+    if (!branchExistsResult) {
       throw new Error('Branch does not exist')
     }
 
-    getGitFileInfo = await this.getFile(filePath)
+    getGitFileInfo = await getFile(versionControl, filePath)
   } catch (error) {
     if (error.status === 404 || error.message === 'Branch does not exist') {
-      console.log(`Creating new file: ${filePath}`)
       return {
         path: filePath,
         content: cdcFileContent,
@@ -189,20 +186,20 @@ export async function updateGitFileContent(filePath, cdcFileContent) {
   newContent = removeIgnoredFields(newContent)
 
   if (JSON.stringify(currentGitContent) !== JSON.stringify(newContent)) {
-    console.log(`Differences found, proceeding to update file: ${filePath}`)
     return {
       path: filePath,
       content: cdcFileContent,
       sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
     }
   } else {
-    console.log(`Files ${filePath} are identical. Skipping update.`)
     return null
   }
 }
 
-export async function storeCdcDataInGit(commitMessage) {
-  const configs = await this.fetchCDCConfigs()
+export async function storeCdcDataInGit(versionControl, commitMessage) {
+  const cdcService = new CdcService(versionControl)
+  const configs = await cdcService.fetchCDCConfigs()
+
   const files = Object.keys(configs).map((key) => ({
     path: `src/versionControl/${key}.json`,
     content: JSON.stringify(configs[key], null, 2),
@@ -210,30 +207,31 @@ export async function storeCdcDataInGit(commitMessage) {
 
   const fileUpdates = await Promise.all(
     files.map(async (file) => {
-      return this.updateGitFileContent(file.path, file.content)
+      const result = await updateGitFileContent(versionControl, file.path, file.content)
+      return result
     }),
   )
 
   const validUpdates = fileUpdates.filter((update) => update !== null)
   if (validUpdates.length > 0) {
-    await this.updateFilesInSingleCommit(commitMessage, validUpdates)
+    await updateFilesInSingleCommit(versionControl, commitMessage, validUpdates)
   } else {
     console.log('No files to update. Skipping commit.')
   }
 }
 
-export async function getCommits(page = 1, per_page = 10) {
+export async function getCommits(versionControl, page = 1, per_page = 10) {
   try {
-    const { data } = await this.octokit.rest.repos.listCommits({
-      owner: this.owner,
-      repo: this.repo,
-      sha: this.defaultBranch,
+    const { data } = await versionControl.octokit.rest.repos.listCommits({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
+      sha: versionControl.defaultBranch,
       per_page,
       page,
     })
     return data
   } catch (error) {
-    console.error(`Failed to fetch commits for branch: ${this.defaultBranch}`, error)
+    console.error(`Failed to fetch commits for branch: ${versionControl.defaultBranch}`, error)
     throw error
   }
 }
