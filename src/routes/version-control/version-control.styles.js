@@ -4,6 +4,7 @@ const styles = {
     alignItems: 'center',
     padding: '10px',
     backgroundColor: '#f5f5f5', // Change as needed
+    height: 'auto', // Ensure the height adjusts to the content
     '& input': {
       marginRight: '10px',
     },
@@ -37,6 +38,10 @@ const styles = {
     '& tr:hover': {
       backgroundColor: '#f1f1f1', // Change for row hover effect
     },
+  },
+  inputContainer: {
+    display: 'flex',
+    gap: '1rem',
   },
 }
 

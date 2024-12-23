@@ -20,14 +20,15 @@ const VersionControlComponent = ({ t }) => {
 
   const [commits, setCommits] = useState([])
   const [gitToken, setGitToken] = useState(Cookies.get('gitToken') || '')
+  const [owner, setOwner] = useState(Cookies.get('owner') || '')
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [page, setPage] = useState(1)
   const [perPage] = useState(10)
 
   const fetchCommits = useCallback(async () => {
-    if (gitToken) {
-      const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
+    if (gitToken && owner) {
+      const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
       try {
         const commitList = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
         setCommits(commitList)
@@ -35,7 +36,7 @@ const VersionControlComponent = ({ t }) => {
         console.error('Error fetching commits:', error)
       }
     }
-  }, [gitToken, credentials, apiKey, currentSite, page, perPage])
+  }, [gitToken, owner, credentials, apiKey, currentSite, page, perPage])
 
   useEffect(() => {
     fetchCommits() // Fetch commits on initial render and when dependencies change
@@ -46,7 +47,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onConfirmBackupClick = async () => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       await handleGetServices(versionControl, apiKey, commitMessage)
       await fetchCommits() // Refresh the commits list after confirmation
@@ -62,7 +63,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onCommitRevertClick = async (sha) => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite)
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       await handleCommitRevertServices(versionControl, sha)
       await fetchCommits() // Refresh the commits list after revert
@@ -75,6 +76,12 @@ const VersionControlComponent = ({ t }) => {
     const token = e.target.value
     setGitToken(token)
     Cookies.set('gitToken', token, { secure: true, sameSite: 'strict' })
+  }
+
+  const handleOwnerChange = (e) => {
+    const owner = e.target.value
+    setOwner(owner)
+    Cookies.set('owner', owner, { secure: true, sameSite: 'strict' })
   }
 
   const handleCommitMessageChange = (e) => {
@@ -93,19 +100,38 @@ const VersionControlComponent = ({ t }) => {
 
   return (
     <>
+      <h2>{t('VERSION_CONTROL.TITLE')}</h2>
       <Bar
         className={classes.innerBarStyle}
         endContent={
           <>
-            <Input
-              value={gitToken}
-              onChange={handleGitTokenChange}
-              placeholder="Git Token"
-              type="Password"
-              valueState="Information"
-              valueStateMessage={<div>Insert your Git Token to use this tool</div>}
-            />
-            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken}>
+            <div>
+              <h3>{t('VERSION_CONTROL.CREDENTIALS')}</h3>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div>
+                  <label>{t('VERSION_CONTROL.GIT_TOKEN')}</label>
+                  <Input
+                    value={gitToken}
+                    onChange={handleGitTokenChange}
+                    placeholder="Git Token"
+                    type="Password"
+                    valueState="Information"
+                    valueStateMessage={<div>{t('VERSION_CONTROL.GIT_TOKEN_MESSAGE')}</div>}
+                  />
+                </div>
+                <div>
+                  <label>{t('VERSION_CONTROL.OWNER')}</label>
+                  <Input
+                    value={owner}
+                    onChange={handleOwnerChange}
+                    placeholder="Owner"
+                    valueState="Information"
+                    valueStateMessage={<div>{t('VERSION_CONTROL.OWNER_MESSAGE')}</div>}
+                  />
+                </div>
+              </div>
+            </div>
+            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken || !owner}>
               {t('VERSION_CONTROL.BACKUP')}
             </Button>
           </>
@@ -114,7 +140,7 @@ const VersionControlComponent = ({ t }) => {
 
       <Dialog
         open={isDialogOpen}
-        headerText="Commit Message"
+        headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
         footer={
           <>
             <Button onClick={onConfirmBackupClick}>{t('VERSION_CONTROL.CONFIRM')}</Button>
@@ -122,7 +148,7 @@ const VersionControlComponent = ({ t }) => {
           </>
         }
       >
-        <TextArea value={commitMessage} onInput={handleCommitMessageChange} placeholder="Write your commit message here" rows={4} />
+        <TextArea value={commitMessage} onInput={handleCommitMessageChange} placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')} rows={4} />
       </Dialog>
 
       <div className={classes.commitsContainer}>
@@ -132,13 +158,13 @@ const VersionControlComponent = ({ t }) => {
               <th>{t('VERSION_CONTROL.ID')}</th>
               <th>{t('VERSION_CONTROL.DATE')}</th>
               <th>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</th>
-              <th>Toggle</th>
+              <th>{t('VERSION_CONTROL.ACTION')}</th>
             </tr>
           </thead>
           <tbody>
             {commits.length === 0 ? (
               <tr>
-                <td colSpan="4">No commits available</td>
+                <td colSpan="4">{t('VERSION_CONTROL.NO_COMMITS')}</td>
               </tr>
             ) : (
               commits.map((commit, index) => (
@@ -158,10 +184,10 @@ const VersionControlComponent = ({ t }) => {
         </table>
         <div className={classes.paginationButtons}>
           <Button onClick={handlePreviousPage} disabled={page === 1}>
-            Previous
+            {t('VERSION_CONTROL.PREVIOUS')}
           </Button>
           <Button onClick={handleNextPage} disabled={commits.length < perPage}>
-            Next
+            {t('VERSION_CONTROL.NEXT')}
           </Button>
         </div>
       </div>

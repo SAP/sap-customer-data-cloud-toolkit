@@ -18,13 +18,13 @@ import Cookies from 'js-cookie'
 import CdcService from './cdcService'
 
 class VersionControl {
-  constructor(credentials, apiKey, siteInfo) {
+  constructor(credentials, apiKey, siteInfo, owner) {
     const gitToken = Cookies.get('gitToken')
     if (!gitToken) {
       throw new Error('Git token is not available in cookies')
     }
     this.octokit = new Octokit({ auth: gitToken })
-    this.owner = 'iamGaspar'
+    this.owner = owner || 'defaultOwner' // Use the provided owner or a default value
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
 

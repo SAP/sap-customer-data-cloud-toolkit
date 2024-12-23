@@ -6,14 +6,14 @@ import VersionControl from './versionControl'
 import * as githubUtils from './githubUtils'
 import CdcService from './cdcService'
 
-export const createVersionControlInstance = (credentials, apiKey, currentSite) => {
+export const createVersionControlInstance = (credentials, apiKey, currentSite, owner) => {
   const credentialsUpdated = {
     userKey: credentials.userKey,
     secret: credentials.secretKey,
     gigyaConsole: credentials.gigyaConsole,
   }
 
-  return new VersionControl(credentialsUpdated, apiKey, currentSite)
+  return new VersionControl(credentialsUpdated, apiKey, currentSite, owner)
 }
 
 export const handleGetServices = async (versionControl, apiKey, commitMessage) => {
