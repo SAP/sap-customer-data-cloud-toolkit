@@ -1,8 +1,11 @@
 export function exportPreferencesData(items) {
+  console.log('exportPreferencesData', items)
   const optionKeys = findMatches(items)
   if (optionKeys === undefined) {
     return
   }
+
+  console.log('optionKeys', optionKeys)
 
   return optionKeys
 }

@@ -17,9 +17,8 @@ class PreferencesImportFields {
     if (preferencesResponse.errorCode === 0) {
       this.getPreferencesData(preferencesResponse)
       console.log('preferencesResponseAfter', preferencesResponse)
-
-      return preferencesResponse
     }
+    return preferencesResponse
   }
   async exportTransformedPreferencesData() {
     const result = []

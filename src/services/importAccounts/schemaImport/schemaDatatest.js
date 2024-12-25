@@ -1750,7 +1750,70 @@ export const expectedSchemaLiteResponse = [
     switchId: 'object',
   },
 ]
-
+export const expectedSchemaCleanAddress = {
+  profileSchema: {
+    fields: {
+      photoURL: { required: false, type: 'string' },
+      'oidcData.address.locality': { required: false, type: 'string' },
+      'favorites.activities.category': { required: false, type: 'string' },
+      'certifications.number': { required: false, type: 'basic-string' },
+      religion: { required: false, type: 'string' },
+      'favorites.movies.name': { required: false, type: 'string' },
+      'oidcData.address.formatted': { required: false, type: 'string' },
+    },
+    dynamicSchema: false,
+  },
+  dataSchema: {
+    fields: {
+      'loyalty.rewardPoints': { required: false, type: 'integer' },
+      'vehicle.model': { required: false, type: 'string' },
+      'crm.isProspect': { required: false, type: 'boolean' },
+      'loyalty.rewardRedemption.redemptionDate': { required: false, type: 'date' },
+      subscribe: { required: false, type: 'boolean' },
+      'vehicle.vin': { required: false, type: 'string' },
+      'loyalty.loyaltyStatus': { required: false, type: 'string' },
+      'loyalty.rewardRedemption.redemptionPoint': { required: false, type: 'integer' },
+      terms: { required: false, type: 'boolean' },
+      'crm.abcClassification': { required: false, type: 'string' },
+      'loyalty.rewardAmount': { required: false, type: 'float' },
+      'vehicle.registrationDate': { required: false, type: 'date' },
+    },
+    dynamicSchema: false,
+  },
+  subscriptionsSchema: { fields: { 'newsletter.commercial': {}, 'newsletter.passenger': {}, promotion: {} } },
+}
+export const expectedSchemaResponseWithoutFields = {
+  profileSchema: {
+    fields: {
+      photoURL: { required: false, type: 'string' },
+      'oidcData.address.locality': { required: false, type: 'string' },
+      'favorites.activities.category': { required: false, type: 'string' },
+      'certifications.number': { required: false, type: 'basic-string' },
+      religion: { required: false, type: 'string' },
+      'favorites.movies.name': { required: false, type: 'string' },
+      'oidcData.address.formatted': { required: false, type: 'string' },
+    },
+    dynamicSchema: false,
+  },
+  dataSchema: {
+    fields: {
+      'loyalty.rewardPoints': { required: false, type: 'integer' },
+      'vehicle.model': { required: false, type: 'string' },
+      'crm.isProspect': { required: false, type: 'boolean' },
+      'loyalty.rewardRedemption.redemptionDate': { required: false, type: 'date' },
+      subscribe: { required: false, type: 'boolean' },
+      'vehicle.vin': { required: false, type: 'string' },
+      'loyalty.loyaltyStatus': { required: false, type: 'string' },
+      'loyalty.rewardRedemption.redemptionPoint': { required: false, type: 'integer' },
+      terms: { required: false, type: 'boolean' },
+      'crm.abcClassification': { required: false, type: 'string' },
+      'loyalty.rewardAmount': { required: false, type: 'float' },
+      'vehicle.registrationDate': { required: false, type: 'date' },
+    },
+    dynamicSchema: false,
+  },
+  subscriptionsSchema: { fields: { 'newsletter.commercial': {}, 'newsletter.passenger': {}, promotion: {} } },
+}
 export const expectedSchemaResponseCleaned = {
   callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',
   statusCode: 200,

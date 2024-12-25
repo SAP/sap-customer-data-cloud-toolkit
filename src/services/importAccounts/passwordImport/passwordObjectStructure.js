@@ -35,23 +35,3 @@ export const passwordObjectStructure = () => {
   ]
   return passwordStructure
 }
-
-// [
-//   {
-//     id: 'data',
-//     name: 'data',
-//     value: true,
-//     branches: [
-//       { id: 'data.loyalty', name: 'data.loyalty', switchId : 'object',value: true, branches: [
-//         { id: 'data.loyalty.rewardPoints', name: 'algorithm', value: true, switchId : 'object',branches: [] },
-//         { id: 'data.loyalty.rewardRedemption', name: 'salt', value: true, branches: [        { id: 'data.loyalty.rewardRedemption.redemptionDate',switchId : 'array', name: 'rounds', value: true, branches: [] },
-//         { id: 'data.loyalty.rewardRedemption.redemptionPoint', name: 'rounds',switchId : 'array', value: true, branches: [] },] },]},
-
-//         { id: 'data.loyalty.rewardAmmount', name: 'format', value: true,switchId : 'object', branches: [] },
-//         { id: 'data.loyalty.loyaltyStatus', name: 'rounds', value: true, switchId : 'object',branches: [] },
-//         { id: 'data.loyalty.rewardAmmount', name: 'format', value: true, switchId : 'object',branches: [] },
-
-//       ], },
-//       { id: 'data.vehicle', name: 'data.vehicle', value: false, branches: [] },
-
-//     ],

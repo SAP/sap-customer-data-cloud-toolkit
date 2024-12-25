@@ -1,7 +1,5 @@
 import axios from 'axios'
 import PreferencesImportFields from './preferencesImport'
-import ConsentStatement from '../../copyConfig/consent/consentStatement'
-import { extractAndTransformPreferencesFields } from './transformPreferencesFields'
 import { mockCleanPreferencesResponse, mockPreferencesResponse, mockTransformPreferencesResponse } from './dataTest'
 import { credentials } from '../../servicesDataTest'
 
@@ -18,15 +16,12 @@ describe('PreferencesImportFields test suite', () => {
 
   test('export preferences data successfully', async () => {
     axios.mockResolvedValueOnce({ data: mockPreferencesResponse })
-
     const response = await preferencesImport.exportPreferencesData()
     expect(response).toEqual(mockCleanPreferencesResponse)
   })
 
   test('export transformed preferences data successfully', async () => {
-    axios.mockResolvedValueOnce({ data: mockPreferencesResponse })
-    axios.mockResolvedValueOnce({ data: mockCleanPreferencesResponse })
-
+    axios.mockResolvedValue({ data: mockCleanPreferencesResponse })
     const response = await preferencesImport.exportTransformedPreferencesData()
     expect(response).toEqual(mockTransformPreferencesResponse)
   })

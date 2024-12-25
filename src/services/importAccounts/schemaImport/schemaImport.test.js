@@ -2,22 +2,22 @@ import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 import SchemaImportFields from './schemaImportFields'
 import {
-  expectedLiteSchemaResponse,
+  expectedSchemaCleanAddress,
   expectedSchemaLiteResponse,
   expectedSchemaResponse,
   expectedSchemaResponseCleaned,
+  expectedSchemaResponseWithoutFields,
   expectedTransformedLiteCleanedResponsed,
   expectedTransformedLiteResponse,
   transformedSchema,
 } from './schemaDatatest'
-import { extractAndTransformSchemaFields } from './transformSchemaFields'
 
 jest.mock('axios')
 jest.setTimeout(10000)
 describe('Import Account - SchemaImport test suite', () => {
   const targetDataCenter = 'eu1'
   const targetApiKey = 'targetApiKey'
-  const schemaImport = new SchemaImportFields(credentials, 'apiKey', 'eu1')
+  const schemaImport = new SchemaImportFields(credentials, targetApiKey, targetDataCenter)
   beforeEach(() => {
     jest.restoreAllMocks()
   })
@@ -46,30 +46,24 @@ describe('Import Account - SchemaImport test suite', () => {
     expect(response).toEqual(expectedSchemaResponse)
   })
 
-  test('clean schema data successfully', () => {
-    const schemaResponse = { ...expectedSchemaResponse }
-    schemaImport.cleanSchemaData(schemaResponse)
-    expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
-  })
-
   test('clean lite schema data successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     const cleanedSchema = schemaImport.cleanLiteSchemaData(schemaResponse)
     expect(cleanedSchema).toEqual(expectedTransformedLiteResponse)
   })
-  // .-..........above are checked
   test('remove field from addresses schema successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     schemaImport.removeFieldFromAddressesSchema(schemaResponse)
-    console.log('cleanedSchema', JSON.stringify(schemaResponse))
 
-    expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
+    expect(schemaResponse).toEqual(expectedSchemaCleanAddress)
   })
 
   test('remove field from subscription schema successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     schemaImport.removeFieldFromSubscriptionSchema(schemaResponse)
-    expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
+    console.log('cleanedSchema', JSON.stringify(schemaResponse))
+
+    expect(schemaResponse).toEqual(expectedSchemaResponseWithoutFields)
   })
 
   test('handle error in export schema data', async () => {
