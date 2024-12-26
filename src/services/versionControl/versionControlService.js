@@ -21,9 +21,9 @@ export const handleGetServices = async (versionControl, apiKey, commitMessage) =
     const cdcService = new CdcService(versionControl)
 
     await githubUtils.createBranch(versionControl, apiKey)
-    await cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
-    await githubUtils.storeCdcDataInGit(versionControl, commitMessage || 'Backup created')
-    return await handleCommitListRequestServices(versionControl, apiKey)
+    const result = await cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
+    const messages = await githubUtils.storeCdcDataInGit(versionControl, commitMessage || 'Backup created')
+    return messages
   } catch (error) {
     console.error('Error creating backup:', error)
     alert('Failed to create backup. Please try again.')

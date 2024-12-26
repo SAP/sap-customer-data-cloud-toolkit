@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
@@ -23,6 +23,8 @@ const VersionControlComponent = ({ t }) => {
   const [owner, setOwner] = useState(Cookies.get('owner') || '')
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isResultDialogOpen, setIsResultDialogOpen] = useState(false)
+  const [resultMessages, setResultMessages] = useState([])
   const [page, setPage] = useState(1)
   const [perPage] = useState(10)
 
@@ -49,7 +51,9 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
-      await handleGetServices(versionControl, apiKey, commitMessage)
+      const result = await handleGetServices(versionControl, apiKey, commitMessage)
+      setResultMessages(result)
+      setIsResultDialogOpen(true)
       await fetchCommits() // Refresh the commits list after confirmation
     } catch (error) {
       console.error('Error creating backup:', error)
@@ -98,6 +102,10 @@ const VersionControlComponent = ({ t }) => {
     fetchCommits()
   }
 
+  const handleResultDialogClose = () => {
+    setIsResultDialogOpen(false)
+  }
+
   return (
     <>
       <h2>{t('VERSION_CONTROL.TITLE')}</h2>
@@ -107,27 +115,29 @@ const VersionControlComponent = ({ t }) => {
           <>
             <div>
               <h3>{t('VERSION_CONTROL.CREDENTIALS')}</h3>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <div>
-                  <label>{t('VERSION_CONTROL.GIT_TOKEN')}</label>
-                  <Input
-                    value={gitToken}
-                    onChange={handleGitTokenChange}
-                    placeholder="Git Token"
-                    type="Password"
-                    valueState="Information"
-                    valueStateMessage={<div>{t('VERSION_CONTROL.GIT_TOKEN_MESSAGE')}</div>}
-                  />
-                </div>
-                <div>
-                  <label>{t('VERSION_CONTROL.OWNER')}</label>
-                  <Input
-                    value={owner}
-                    onChange={handleOwnerChange}
-                    placeholder="Owner"
-                    valueState="Information"
-                    valueStateMessage={<div>{t('VERSION_CONTROL.OWNER_MESSAGE')}</div>}
-                  />
+              <div className={classes.inputContainer}>
+                <div className={classes.inputRow}>
+                  <div className={classes.inputField}>
+                    <label className={classes.inputLabel}>{t('VERSION_CONTROL.OWNER')}</label>
+                    <Input
+                      value={owner}
+                      onChange={handleOwnerChange}
+                      placeholder="Owner"
+                      valueState="Information"
+                      valueStateMessage={<div>{t('VERSION_CONTROL.OWNER_MESSAGE')}</div>}
+                    />
+                  </div>
+                  <div className={classes.inputField}>
+                    <label className={classes.inputLabel}>{t('VERSION_CONTROL.GIT_TOKEN')}</label>
+                    <Input
+                      value={gitToken}
+                      onChange={handleGitTokenChange}
+                      placeholder="Git Token"
+                      type="Password"
+                      valueState="Information"
+                      valueStateMessage={<div>{t('VERSION_CONTROL.GIT_TOKEN_MESSAGE')}</div>}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -149,6 +159,22 @@ const VersionControlComponent = ({ t }) => {
         }
       >
         <TextArea value={commitMessage} onInput={handleCommitMessageChange} placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')} rows={4} />
+      </Dialog>
+
+      <Dialog
+        open={isResultDialogOpen}
+        headerText={t('VERSION_CONTROL.RESULT')}
+        footer={
+          <>
+            <Button onClick={handleResultDialogClose}>{t('VERSION_CONTROL.CLOSE')}</Button>
+          </>
+        }
+      >
+        <List>
+          {resultMessages.map((message, index) => (
+            <StandardListItem key={index}>{message.includes('Skipped backup') ? <b>{message}</b> : message}</StandardListItem>
+          ))}
+        </List>
       </Dialog>
 
       <div className={classes.commitsContainer}>
