@@ -1,5 +1,3 @@
-import { FlexBoxJustifyContent } from '@ui5/webcomponents-react'
-
 const styles = {
   innerBarStyle: {
     display: 'contents',
@@ -25,6 +23,7 @@ const styles = {
   commitsContainer: {
     padding: '20px',
     backgroundColor: '#fff', // Ensure the background color matches the table
+    display: 'contents',
   },
   commitTable: {
     width: '100%',
@@ -74,12 +73,12 @@ const styles = {
     margin: '0 5px',
     padding: '5px 10px',
     cursor: 'pointer',
-    backgroundColor: '#0070f3',
-    color: '#fff',
-    border: 'none',
+    backgroundColor: '#fff',
+    color: '#005bb5',
+    border: 'solid',
     borderRadius: '3px',
     '&:hover': {
-      backgroundColor: '#005bb5',
+      backgroundColor: 'none',
     },
   },
   paginationPage: {
@@ -103,6 +102,14 @@ const styles = {
     border: '1px solid #0070f3',
     borderRadius: '3px',
     fontWeight: 'bold',
+  },
+  paginationEllipsis: {
+    margin: '0 5px',
+    padding: '5px 10px',
+    cursor: 'default',
+    backgroundColor: '#fff',
+    color: '#0070f3',
+    border: 'none',
   },
 }
 

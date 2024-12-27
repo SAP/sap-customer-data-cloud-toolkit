@@ -4,7 +4,13 @@ import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem } from '@u
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
-import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
+import {
+  createVersionControlInstance,
+  handleGetServices,
+  handleCommitListRequestServices,
+  handleCommitRevertServices,
+  getPagination,
+} from '../../services/versionControl/versionControlService'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -33,9 +39,12 @@ const VersionControlComponent = ({ t }) => {
     if (gitToken && owner) {
       const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
       try {
-        const commitList = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
+        const { commitList, totalCommits } = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
         setCommits(commitList)
-        setTotalPages(Math.ceil(commitList.length / perPage))
+        setTotalPages(Math.ceil(totalCommits / perPage))
+        console.log('=================totalPages===================')
+        console.log('totalPages: ', totalPages)
+        console.log('====================================')
       } catch (error) {
         console.error('Error fetching commits:', error)
       }
@@ -54,7 +63,7 @@ const VersionControlComponent = ({ t }) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       const result = await handleGetServices(versionControl, apiKey, commitMessage)
-      setResultMessages(result)
+      setResultMessages(result || [])
       setIsResultDialogOpen(true)
       await fetchCommits() // Refresh the commits list after confirmation
     } catch (error) {
@@ -104,36 +113,31 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const renderPagination = () => {
-    const pages = []
-    const maxPagesToShow = 7
-    const startPage = Math.max(1, page - Math.floor(maxPagesToShow / 2))
-    const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1)
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <span key={i} className={i === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(i)}>
-          {i}
-        </span>,
-      )
-    }
-
-    if (endPage < totalPages) {
-      pages.push(<span key="ellipsis">...</span>)
-      pages.push(
-        <span key={totalPages} className={classes.paginationPage} onClick={() => handlePageChange(totalPages)}>
-          {totalPages}
-        </span>,
-      )
-    }
+    const pages = getPagination(page, totalPages)
+    console.log('=================pages===================')
+    console.log('pages: ', pages)
+    console.log('page: ', page)
+    console.log('totalPages: ', totalPages)
+    console.log('====================================')
 
     return (
       <div className={classes.paginationContainer}>
         <button className={classes.paginationButton} onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
-          &lt;
+          &#10216;
         </button>
-        {pages}
+        {pages.map((pageNumber, index) =>
+          pageNumber === '...' ? (
+            <span key={index} className={classes.paginationEllipsis}>
+              {pageNumber}
+            </span>
+          ) : (
+            <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
+              {pageNumber}
+            </span>
+          ),
+        )}
         <button className={classes.paginationButton} onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
-          &gt;
+          &#10217;
         </button>
       </div>
     )
@@ -174,15 +178,9 @@ const VersionControlComponent = ({ t }) => {
                 </div>
               </div>
             </div>
-          </>
-        }
-        endContent={
-          <>
-            <div className={classes.BarButton}>
-              <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken || !owner}>
-                {t('VERSION_CONTROL.BACKUP')}
-              </Button>
-            </div>
+            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken || !owner}>
+              {t('VERSION_CONTROL.BACKUP')}
+            </Button>
           </>
         }
       ></Bar>
@@ -247,8 +245,8 @@ const VersionControlComponent = ({ t }) => {
             )}
           </tbody>
         </table>
-        {renderPagination()}
       </div>
+      <div>{renderPagination()}</div>
     </>
   )
 }

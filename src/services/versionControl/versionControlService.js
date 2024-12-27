@@ -34,14 +34,14 @@ export const handleCommitListRequestServices = async (versionControl, apiKey, pa
   try {
     const hasBranch = await githubUtils.branchExists(versionControl, apiKey)
     if (hasBranch) {
-      const commitList = await githubUtils.getCommits(versionControl, page, per_page)
-      return commitList.length > 0 ? commitList : []
+      const { data: commitList, totalCommits } = await githubUtils.getCommits(versionControl, page, per_page)
+      return { commitList, totalCommits }
     } else {
-      return []
+      return { commitList: [], totalCommits: 0 }
     }
   } catch (error) {
     console.error('Error fetching commits:', error)
-    return []
+    return { commitList: [], totalCommits: 0 }
   }
 }
 
@@ -54,4 +54,32 @@ export const handleCommitRevertServices = async (versionControl, sha) => {
     console.error('Error reverting configurations:', error)
     alert('Failed to restore configurations. Please try again.')
   }
+}
+
+export const getPagination = (currentPage, totalPages) => {
+  const maxPagesToShow = 7
+  const pages = []
+  totalPages = totalPages < currentPage ? currentPage : totalPages
+  let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2))
+  let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1)
+  console.log('====================================')
+  console.log('currentPage: ', currentPage)
+  console.log('totalPages: ', totalPages)
+  console.log('startPage: ', startPage)
+  console.log('endPage: ', endPage)
+  console.log('====================================')
+  if (endPage - startPage + 1 < maxPagesToShow) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1)
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i)
+  }
+
+  if (endPage < totalPages) {
+    pages.push('...')
+    pages.push(totalPages)
+  }
+
+  return pages
 }
