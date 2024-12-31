@@ -71,9 +71,9 @@ describe('versionControlService', () => {
 
   describe('handleCommitListRequestServices', () => {
     it('should fetch commit list if branch exists', async () => {
-      const mockCommitList = [{ sha: 'commit1' }, { sha: 'commit2' }]
+      const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 20 }
       githubUtils.branchExists.mockResolvedValue(true)
-      githubUtils.getCommits.mockResolvedValue(mockCommitList)
+      githubUtils.getCommits.mockResolvedValue({ data: mockCommitList.commitList, totalCommits: mockCommitList.totalCommits })
 
       const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
       expect(result).toEqual(mockCommitList)
@@ -85,7 +85,7 @@ describe('versionControlService', () => {
       githubUtils.branchExists.mockResolvedValue(false)
 
       const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
-      expect(result).toEqual([])
+      expect(result).toEqual({ commitList: [], totalCommits: 0 })
       expect(githubUtils.branchExists).toHaveBeenCalledWith(versionControlInstance, apiKey)
       expect(githubUtils.getCommits).not.toHaveBeenCalled()
     })
@@ -95,7 +95,7 @@ describe('versionControlService', () => {
       githubUtils.branchExists.mockRejectedValue(new Error('Error checking branch existence'))
 
       const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
-      expect(result).toEqual([])
+      expect(result).toEqual({ commitList: [], totalCommits: 0 })
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching commits:', expect.any(Error))
       consoleErrorSpy.mockRestore()
     })
