@@ -258,3 +258,21 @@ export async function getCommits(versionControl, page = 1, per_page = 10) {
     throw error
   }
 }
+
+export async function getTotalCommits(versionControl, page = 1, per_page = 10) {
+  try {
+    const response = await versionControl.octokit.rest.repos.listCommits({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
+      sha: versionControl.defaultBranch,
+    })
+
+    let totalCommits = response.data.length
+
+    debugger
+    return { totalCommits }
+  } catch (error) {
+    console.error(`Failed to fetch commits for branch: ${versionControl.defaultBranch}`, error)
+    throw error
+  }
+}

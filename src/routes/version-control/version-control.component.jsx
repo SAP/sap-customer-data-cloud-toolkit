@@ -4,13 +4,8 @@ import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem } from '@u
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
-import {
-  createVersionControlInstance,
-  handleGetServices,
-  handleCommitListRequestServices,
-  handleCommitRevertServices,
-  getPagination,
-} from '../../services/versionControl/versionControlService'
+import Pagino from 'pagino'
+import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -42,9 +37,6 @@ const VersionControlComponent = ({ t }) => {
         const { commitList, totalCommits } = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
         setCommits(commitList)
         setTotalPages(Math.ceil(totalCommits / perPage))
-        console.log('=================totalPages===================')
-        console.log('totalPages: ', totalPages)
-        console.log('====================================')
       } catch (error) {
         console.error('Error fetching commits:', error)
       }
@@ -113,32 +105,44 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const renderPagination = () => {
-    const pages = getPagination(page, totalPages)
-    console.log('=================pages===================')
-    console.log('pages: ', pages)
-    console.log('page: ', page)
-    console.log('totalPages: ', totalPages)
-    console.log('====================================')
+    const pagino = new Pagino({
+      count: totalPages,
+      page,
+      siblingCount: 1,
+      boundaryCount: 1,
+      onChange: (newPage) => handlePageChange(newPage),
+    })
+
+    const pages = pagino.getPages()
 
     return (
       <div className={classes.paginationContainer}>
-        <button className={classes.paginationButton} onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
-          &#10216;
-        </button>
-        {pages.map((pageNumber, index) =>
-          pageNumber === '...' ? (
-            <span key={index} className={classes.paginationEllipsis}>
-              {pageNumber}
-            </span>
-          ) : (
-            <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
-              {pageNumber}
-            </span>
-          ),
-        )}
-        <button className={classes.paginationButton} onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
-          &#10217;
-        </button>
+        {pages.map((pageNumber, index) => {
+          if (pageNumber === 'first' || pageNumber === 'previous' || pageNumber === 'next' || pageNumber === 'last') {
+            return (
+              <button
+                key={index}
+                className={classes.paginationButton}
+                onClick={() => pagino[pageNumber]()}
+                disabled={(pageNumber === 'first' && page === 1) || (pageNumber === 'last' && page === totalPages)}
+              >
+                {pageNumber === 'first' ? 1 : pageNumber === 'last' ? totalPages : pageNumber === 'previous' ? '<' : '>'}
+              </button>
+            )
+          } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
+            return (
+              <span key={index} className={classes.paginationEllipsis}>
+                ...
+              </span>
+            )
+          } else {
+            return (
+              <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
+                {pageNumber}
+              </span>
+            )
+          }
+        })}
       </div>
     )
   }
