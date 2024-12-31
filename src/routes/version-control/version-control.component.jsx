@@ -117,32 +117,32 @@ const VersionControlComponent = ({ t }) => {
 
     return (
       <div className={classes.paginationContainer}>
-        {pages.map((pageNumber, index) => {
-          if (pageNumber === 'previous' || pageNumber === 'next') {
-            return (
-              <button
-                key={index}
-                className={classes.paginationButton}
-                onClick={() => pagino[pageNumber]()}
-                disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
-              >
-                {pageNumber === 'previous' ? '<' : '>'}
-              </button>
-            )
-          } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
-            return (
-              <span key={index} className={classes.paginationEllipsis}>
-                ...
-              </span>
-            )
-          } else {
-            return (
-              <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
-                {pageNumber}
-              </span>
-            )
-          }
-        })}
+      {pages.map((pageNumber, index) => {
+        if (pageNumber === 'previous' || pageNumber === 'next') {
+        return (
+          <button
+          key={index}
+          className={classes.paginationButton}
+          onClick={() => pagino[pageNumber]()}
+          disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
+          >
+          {pageNumber === 'previous' ? '\u27E8' : '\u27E9'}
+          </button>
+        )
+        } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
+        return (
+          <span key={index} className={classes.paginationEllipsis}>
+          ...
+          </span>
+        )
+        } else {
+        return (
+          <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
+          {pageNumber}
+          </span>
+        )
+        }
+      })}
       </div>
     )
   }
