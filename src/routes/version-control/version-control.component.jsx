@@ -113,20 +113,20 @@ const VersionControlComponent = ({ t }) => {
       onChange: (newPage) => handlePageChange(newPage),
     })
 
-    const pages = pagino.getPages()
+    const pages = pagino.getPages().filter((pageNumber) => pageNumber !== 'first' && pageNumber !== 'last')
 
     return (
       <div className={classes.paginationContainer}>
         {pages.map((pageNumber, index) => {
-          if (pageNumber === 'first' || pageNumber === 'previous' || pageNumber === 'next' || pageNumber === 'last') {
+          if (pageNumber === 'previous' || pageNumber === 'next') {
             return (
               <button
                 key={index}
                 className={classes.paginationButton}
                 onClick={() => pagino[pageNumber]()}
-                disabled={(pageNumber === 'first' && page === 1) || (pageNumber === 'last' && page === totalPages)}
+                disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
               >
-                {pageNumber === 'first' ? 1 : pageNumber === 'last' ? totalPages : pageNumber === 'previous' ? '<' : '>'}
+                {pageNumber === 'previous' ? '<' : '>'}
               </button>
             )
           } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
