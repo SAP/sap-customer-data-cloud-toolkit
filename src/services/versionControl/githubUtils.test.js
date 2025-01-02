@@ -5,7 +5,6 @@
 import { Base64 } from 'js-base64'
 import * as githubUtils from './githubUtils'
 import { removeIgnoredFields } from './dataSanitization'
-import CdcService from './cdcService'
 
 jest.mock('./dataSanitization', () => ({
   removeIgnoredFields: jest.fn(),
@@ -211,7 +210,7 @@ describe('githubUtils', () => {
       removeIgnoredFields.mockImplementation((obj) => obj)
 
       const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }), sha: 'mockSha' })
+      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
     })
 
     it('should return null if files are identical', async () => {
@@ -238,6 +237,29 @@ describe('githubUtils', () => {
 
       const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
+    })
+    it('should throw an error if fetching file content fails', async () => {
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Some error'))
+
+      await expect(githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))).rejects.toThrow('Some error')
+    })
+    it('should handle empty git content', async () => {
+      const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
+      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
+    octokitMock.rest.git.getBlob.mockResolvedValue({ data: { content: '' } })
+    
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
+    })
+    it('should handle undefined git file info', async () => {
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
+
+      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
+      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }), sha: undefined })
     })
   })
 
@@ -294,6 +316,32 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Network Error'))
 
       await expect(githubUtils.getCommits(context)).rejects.toThrow('Network Error')
+    })
+    describe('getCommits', () => {
+      it('should calculate total commits from link header', async () => {
+        const mockCommits = [{ sha: 'commit1' }, { sha: 'commit2' }]
+        const linkHeader = '<https://api.github.com/repositories/123456789/commits?page=2>; rel="next", <https://api.github.com/repositories/123456789/commits?page=30>; rel="last"'
+        octokitMock.rest.repos.listCommits.mockResolvedValue({ data: mockCommits, headers: { link: linkHeader } })
+
+        const result = await githubUtils.getCommits(context)
+        console.log('result:', result)
+        expect(result).toEqual({ data: mockCommits, totalCommits: 2 })
+      })
+    })
+  })
+  describe('getTotalCommits', () => {
+    it('should fetch total commits', async () => {
+      const mockCommits = [{ sha: 'commit1' }, { sha: 'commit2' }]
+      octokitMock.rest.repos.listCommits.mockResolvedValue({ data: mockCommits })
+
+      const result = await githubUtils.getTotalCommits(context)
+      expect(result).toEqual({ totalCommits: mockCommits.length })
+    })
+
+    it('should handle errors when fetching total commits', async () => {
+      octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Network Error'))
+
+      await expect(githubUtils.getTotalCommits(context)).rejects.toThrow('Network Error')
     })
   })
 })

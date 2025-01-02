@@ -173,7 +173,7 @@ export async function updateGitFileContent(versionControl, filePath, cdcFileCont
 
   const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
   let currentGitContent
-  const currentGitContentDecoded = Base64.decode(rawGitContent)
+  const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
   if (currentGitContentDecoded) {
     try {
       currentGitContent = JSON.parse(currentGitContentDecoded)
@@ -184,12 +184,12 @@ export async function updateGitFileContent(versionControl, filePath, cdcFileCont
   }
 
   let newContent = JSON.parse(cdcFileContent)
-  newContent = removeIgnoredFields(newContent)
+  const sanitizedNewContent = removeIgnoredFields(newContent)
 
-  if (JSON.stringify(currentGitContent) !== JSON.stringify(newContent)) {
+  if (JSON.stringify(currentGitContent) !== JSON.stringify(sanitizedNewContent)) {
     return {
       path: filePath,
-      content: cdcFileContent,
+      content: JSON.stringify(newContent, null, 2), // Save the original content
       sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
     }
   } else {
@@ -245,6 +245,7 @@ export async function getCommits(versionControl, page = 1, per_page = 10) {
     let totalCommits = response.data.length
 
     if (linkHeader) {
+      // const lastPageMatch = linkHeader.match(/\?page=(\d+)>; rel="last"/) <--funciona o totalCommits
       const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/)
       if (lastPageMatch) {
         const lastPage = parseInt(lastPageMatch[1], 10)
