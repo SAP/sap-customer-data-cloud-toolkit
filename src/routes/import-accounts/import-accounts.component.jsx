@@ -138,7 +138,7 @@ const ImportAccountsComponent = ({ t }) => {
                     <Title level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
                       {t('IMPORT_ACCOUNTS_SELECT_ACCOUNT_TYPE')}
                     </Title>
-                    <Select className={classes.selectAccountDiv} onChange={handleSelectChange}>
+                    <Select id="importDataSelectAccount" className={classes.selectAccountDiv} onChange={handleSelectChange}>
                       <Option value={t('GLOBAL.FULL')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
                       <Option value={t('GLOBAL.LITE')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
                     </Select>

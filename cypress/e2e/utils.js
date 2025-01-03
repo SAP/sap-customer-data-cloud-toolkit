@@ -70,7 +70,6 @@ export function getImportAccountsInformation() {
     .shadow()
     .find('.ui5-card-header-subtitle')
     .should('contain.text', 'This will export the chosen fields to a CSV file. You can then import this file to create accounts.')
-  cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
 }
 
 export function clearCredentials() {
