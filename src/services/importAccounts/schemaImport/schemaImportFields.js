@@ -15,9 +15,7 @@ class SchemaImportFields {
   async exportSchemaData() {
     const schemaResponse = await this.getSchema()
     if (schemaResponse.errorCode === 0) {
-      console.log('schemaResponse', schemaResponse)
       this.cleanSchemaData(schemaResponse)
-      console.log('cleanSchemaData', schemaResponse)
       return schemaResponse
     }
     return schemaResponse

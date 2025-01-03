@@ -14,7 +14,6 @@ export function extractAndTransformFields(combinedData) {
 function transformField(key, value) {
   if (key === 'communications') {
     const transformedCommunications = transformCommunications(value)
-    console.log(JSON.stringify(transformedCommunications, null, 2))
     return transformedCommunications
   }
 

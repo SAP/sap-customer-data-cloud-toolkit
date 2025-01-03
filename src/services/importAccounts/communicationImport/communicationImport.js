@@ -14,19 +14,14 @@ class TopicImportFields {
   }
   async exportTopicData() {
     const topicResponse = await this.getTopic()
-    console.log('topicResponse', topicResponse)
     if (topicResponse.errorCode === 0) {
-      console.log('asdasdasdas', this.getTopicsData(topicResponse))
       return this.getTopicsData(topicResponse)
     }
   }
   async exportTransformedCommunicationData() {
     const result = []
     const cleanCommunicationResponse = await this.exportTopicData()
-    console.log('cleanCommunicationResponse', cleanCommunicationResponse)
-
     result.push(...extractAndTransformCommunicationFields(cleanCommunicationResponse))
-    console.log('push---->', result)
     return result
   }
   async getTopic() {

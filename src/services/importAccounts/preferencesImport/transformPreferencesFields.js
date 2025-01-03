@@ -11,7 +11,6 @@ export function extractAndTransformPreferencesFields(preferencesData) {
       }
     }
   })
-  console.log('fieldsTransformed', fieldsTransformed)
   return fieldsTransformed
 }
 function transformField(key, value) {
@@ -33,7 +32,6 @@ function transformSchema(fields, parentKey, skipFields = true) {
       const fieldDetail = fields[key]
       const splitKeys = key.split('.')
       let currentLevel = transformedSchema
-      console.log('splitKeys', splitKeys)
       let accumulatedKey = parentKey
       splitKeys.forEach((part, index) => {
         let id = splitKeys.slice(0, index + 1).join('.')

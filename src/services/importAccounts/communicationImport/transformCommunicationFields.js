@@ -8,7 +8,6 @@ export function extractAndTransformCommunicationFields(communicationData) {
       }
     }
   })
-  console.log('fieldsTransformed', fieldsTransformed)
   return fieldsTransformed
 }
 function transformField(key, value) {

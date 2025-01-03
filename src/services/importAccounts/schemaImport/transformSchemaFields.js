@@ -11,7 +11,6 @@ export function extractAndTransformSchemaFields(schemaData) {
       }
     }
   })
-  console.log('fieldsTransformed', fieldsTransformed)
   return fieldsTransformed
 }
 function transformSchemaField(key, value) {
@@ -68,7 +67,6 @@ function transformSchema(fields, parentKey) {
       if (parentKey === 'subscriptions' && splitKeys.length > 0) {
         const existing = transformSubscriptions(splitKeys, currentLevel, accumulatedKey)
         if (isFieldDetailObject(fieldDetail, parentKey) && hasNestedObject(fieldDetail)) {
-          console.log('existing', existing)
           existing.branches = transformSchema(fieldDetail, parentKey)
         }
         continue

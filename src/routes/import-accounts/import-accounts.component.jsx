@@ -43,8 +43,6 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
-  console.log('selectedConfigurations', selectedConfigurations)
-  console.log('configurations', configurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations('Full'))

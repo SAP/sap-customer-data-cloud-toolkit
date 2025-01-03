@@ -31,8 +31,6 @@ const SearchBar = ({ dispatch, handleSuggestionClick, configurations, setSchemaI
   const onSchemaInputKeyPressHandler = (event) => {
     const inputValue = event.target.value.trim()
     setSchemaInputValue(inputValue)
-    console.log('value', inputValue)
-    console.log('suggest', suggestions)
     handleSuggestionClick(inputValue)
     if (inputValue === '') {
       handleSuggestionClick('')

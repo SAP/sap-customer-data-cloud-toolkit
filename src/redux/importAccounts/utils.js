@@ -2,7 +2,6 @@ export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
     configuration.branches.forEach((branch) => {
-      console.log('entererd')
       if (branch.id.includes('status') || branch.id.includes('isConsentGranted') || branch.id.includes('isSubscribed')) {
         branch.value = value
         branch.mandatory = value
@@ -57,13 +56,11 @@ export const getAllConfiguration = (configurations, ids) => {
       }
     })
 
-    // Ensure children are included
     if (parentConfig && parentConfig.branches.length === 0) {
       parentConfig.branches = currentLevel
     }
   })
 
-  // Handle the case where the input is a single element
   ids.forEach((id) => {
     if (result.length === 0 || !result.some((config) => config.id === id)) {
       const config = configurations.find((c) => c.id === id || c.id.endsWith(`.${id}`) || c.id === id)

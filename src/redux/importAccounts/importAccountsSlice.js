@@ -73,10 +73,7 @@ export const importAccountsSlice = createSlice({
       }
     },
     setSuggestionClickConfiguration(state, action) {
-      console.log('action--', action)
-      console.log('state--', JSON.stringify(state.selectedConfiguration))
       const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)
-      console.log('config--', JSON.stringify(config))
       if (config) {
         state.selectedConfiguration = [config]
       }
