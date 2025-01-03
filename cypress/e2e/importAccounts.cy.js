@@ -15,6 +15,7 @@ describe('Import Account - Configuration Tree test suite', () => {
     })
     it('Should export data schema successfully ', () => {
       cy.intercept('POST', 'accounts.setSchema', { body: dataTest.mockedSetSchemaResponse }).as('setSchema')
+      cy.get('[data-cy ="importDataSaveButton"]').should('not.be.disabled')
       cy.get('#data').click().should('have.prop', 'checked')
       cy.get('#importDataSaveButton').click()
     })
