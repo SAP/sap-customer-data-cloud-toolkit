@@ -1,15 +1,12 @@
 export function exportPreferencesData(items) {
-  console.log('exportPreferencesData', items)
-  const optionKeys = findMatches(items)
+  const optionKeys = findMatchesInTree(items)
   if (optionKeys === undefined) {
     return
   }
 
-  console.log('optionKeys', optionKeys)
-
   return optionKeys
 }
-const findMatches = (obj) => {
+export const findMatchesInTree = (obj) => {
   const results = []
 
   const traverse = (node) => {

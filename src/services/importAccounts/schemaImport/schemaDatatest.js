@@ -1958,57 +1958,6 @@ export const expectedSchemaResponseCleaned = {
     },
   },
 }
-const cleanedSchema = {
-  callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',
-  statusCode: 200,
-  statusReason: 'OK',
-  time: '2024-12-05T18:17:23.716Z',
-  profileSchema: {
-    fields: {
-      photoURL: { required: false, type: 'string' },
-      'oidcData.address.locality': { required: false, type: 'string' },
-      'favorites.activities.category': { required: false, type: 'string' },
-      'certifications.number': { required: false, type: 'basic-string' },
-      religion: { required: false, type: 'string' },
-      'favorites.movies.name': { required: false, type: 'string' },
-      'oidcData.address.formatted': { required: false, type: 'string' },
-    },
-    dynamicSchema: false,
-  },
-  dataSchema: {
-    fields: {
-      'loyalty.rewardPoints': { required: false, type: 'integer' },
-      'vehicle.model': { required: false, type: 'string' },
-      'crm.isProspect': { required: false, type: 'boolean' },
-      'loyalty.rewardRedemption.redemptionDate': { required: false, type: 'date' },
-      subscribe: { required: false, type: 'boolean' },
-      'vehicle.vin': { required: false, type: 'string' },
-      'loyalty.loyaltyStatus': { required: false, type: 'string' },
-      'loyalty.rewardRedemption.redemptionPoint': { required: false, type: 'integer' },
-      terms: { required: false, type: 'boolean' },
-      'crm.abcClassification': { required: false, type: 'string' },
-      'loyalty.rewardAmount': { required: false, type: 'float' },
-      'vehicle.registrationDate': { required: false, type: 'date' },
-    },
-    dynamicSchema: false,
-  },
-  subscriptionsSchema: { fields: { 'newsletter.commercial': {}, 'newsletter.passenger': {}, promotion: {} } },
-  internalSchema: {
-    fields: {
-      's4hana.s4Id': { required: false, type: 'string' },
-      'crm.crmGuid': { required: false, type: 'string' },
-      madId: { required: false, type: 'string' },
-      'crm.crmId': { required: false, type: 'string' },
-    },
-    dynamicSchema: false,
-  },
-  addressesSchema: {
-    fields: {
-      soldTo: { entrance: { type: 'string', required: false, writeAccess: 'clientModify', allowNull: true, format: null, encrypt: 'AES' } },
-      shipTo: { apartment: { type: 'string', required: false, writeAccess: 'clientModify', allowNull: true, format: null, encrypt: 'AES' } },
-    },
-  },
-}
 export const transformedSchema = [
   {
     id: 'profile',

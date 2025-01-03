@@ -171,10 +171,10 @@ const ImportAccountsComponent = ({ t }) => {
                       <div>
                         <Button
                           type="submit"
-                          id="copyConfigExtendedSaveButton"
+                          id="importDataSaveButton"
                           className="fd-button fd-button--emphasized fd-button--compact"
                           onClick={onSaveHandler}
-                          data-cy="copyConfigExtendedSaveButton"
+                          data-cy="importDataSaveButton"
                           design="Emphasized"
                           disabled={disableSaveButton()}
                         >
@@ -182,8 +182,8 @@ const ImportAccountsComponent = ({ t }) => {
                         </Button>
                         <Button
                           type="button"
-                          id="copyConfigExtendedCancelButton"
-                          data-cy="copyConfigExtendedCancelButton"
+                          id="importDataCancelButton"
+                          data-cy="importDataCancelButton"
                           className="fd-button fd-button--transparent fd-button--compact"
                           disabled={isLoading}
                           onClick={onCancelHandler}

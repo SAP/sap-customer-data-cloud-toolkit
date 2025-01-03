@@ -1,9 +1,9 @@
 import ConsentStatement from '../copyConfig/consent/consentStatement'
-import { exportCommunicationData } from '../exportToCsv/communicationMatches'
+import { exportCommunicationData } from '../exportToCsv/communication/communicationMatches'
 import { createCSVFile } from '../exportToCsv/exportToCsv'
-import { exportPasswordData } from '../exportToCsv/passwordMatches'
-import { exportPreferencesData } from '../exportToCsv/preferencesMatches'
-import { exportSchemaData } from '../exportToCsv/schemaMatches'
+import { exportPasswordData } from '../exportToCsv/password/passwordMatches'
+import { exportPreferencesData } from '../exportToCsv/preferences/preferencesMatches'
+import { exportSchemaData } from '../exportToCsv/schema/schemaMatches'
 import TopicImportFields from './communicationImport/communicationImport'
 import { passwordImportTreeFields } from './passwordImport/passwordImport'
 import PreferencesImportFields from './preferencesImport/preferencesImport'
@@ -40,7 +40,6 @@ class ImportAccounts {
     }
     if (selectedValue === 'Lite') {
       result.push(...getLiteRootElementsStructure())
-      console.log('this.#schemaFields.exportLiteSchemaData()', await this.#schemaFields.exportLiteSchemaData())
       result.push(...(await this.#schemaFields.exportLiteSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
       result.push(...getContext())
@@ -101,27 +100,6 @@ class ImportAccounts {
   }
   getRootElements() {
     return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']
-  }
-  getOptionsFromTree(items) {
-    let ids = []
-    let switchIds = []
-
-    items.forEach((item) => {
-      if (item.value === true) {
-        if (item.switchId && item.switchId.operation === 'array') {
-          switchIds.push(item)
-        } else {
-          ids.push(item)
-        }
-      }
-      if (item.branches && item.branches.length > 0) {
-        const { ids: childIds, switchIds: childSwitchIds } = this.getOptionsFromTree(item.branches)
-        ids = ids.concat(childIds)
-        switchIds = switchIds.concat(childSwitchIds)
-      }
-    })
-
-    return { ids, switchIds }
   }
 }
 

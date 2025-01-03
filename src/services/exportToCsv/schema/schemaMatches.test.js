@@ -1,4 +1,4 @@
-import { expectedOptions, expectedSchemaResult } from './dataTest/dataTest'
+import { expectedOptions, expectedSchemaResult } from './dataTest'
 import { exportSchemaData } from './schemaMatches'
 
 jest.mock('axios')
@@ -7,7 +7,7 @@ describe('Import Account - SchemaImport test suite', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
   })
-  test('Export schema Data ', () => {
+  test('Export schema Data', () => {
     const schemaData = exportSchemaData(expectedOptions)
     expect(schemaData).toEqual(expectedSchemaResult)
   })

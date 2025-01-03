@@ -1,16 +1,7 @@
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import {
-  setParentsTrue,
-  propagateConfigurationState,
-  propagateConfigurationSelectBox,
-  getAllConfiguration,
-  getParent,
-  clearConfigurationsState,
-  getConfigurationPath,
-  getFullConfigurationPath,
-} from './utils'
+import { setParentsTrue, propagateConfigurationSelectBox, getAllConfiguration, getParent, clearConfigurationsState, getConfigurationPath } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurations`
