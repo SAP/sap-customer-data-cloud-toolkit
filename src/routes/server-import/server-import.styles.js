@@ -31,7 +31,6 @@ const styles = {
     width: '95%',
   },
   tableCell: {
-    height: '100px',
     padding: '10px',
     width: '50%',
     height: '100px',

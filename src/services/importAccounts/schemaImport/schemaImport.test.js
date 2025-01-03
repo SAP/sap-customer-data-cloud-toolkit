@@ -1,15 +1,14 @@
 import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 import SchemaImportFields from './schemaImportFields'
-import { expectedLiteSchemaResponse, expectedSchemaLiteResponse, expectedSchemaResponse, expectedSchemaResponseCleaned, transformedSchema } from './schemaDatatest'
-import { extractAndTransformSchemaFields } from './transformSchemaFields'
+import { expectedSchemaLiteResponse, expectedSchemaResponse, expectedSchemaResponseCleaned, transformedSchema } from './schemaDatatest'
 
 jest.mock('axios')
 jest.setTimeout(10000)
 describe('Import Account - SchemaImport test suite', () => {
   const targetDataCenter = 'eu1'
   const targetApiKey = 'targetApiKey'
-  const schemaImport = new SchemaImportFields(credentials, 'apiKey', 'eu1')
+  const schemaImport = new SchemaImportFields(credentials, targetApiKey, targetDataCenter)
   beforeEach(() => {
     jest.restoreAllMocks()
   })
@@ -43,7 +42,6 @@ describe('Import Account - SchemaImport test suite', () => {
     schemaImport.cleanSchemaData(schemaResponse)
     expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
   })
-  //.-..........above are checked
 
   test('clean lite schema data successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }

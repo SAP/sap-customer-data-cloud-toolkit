@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 export const importFullAccountAzure = {
   name: '{{dataflowName}}',
   status: 'published',

@@ -1,9 +1,7 @@
 import ServerImport from '../../services/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { findConfiguration } from '../copyConfigurationExtended/utils'
-import { addProperty, clearAllValues, getConfigurationByKey, removeValueIfExists } from './utils'
-import { init } from 'i18next'
+import { clearAllValues, getConfigurationByKey } from './utils'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
@@ -32,7 +30,6 @@ export const serverImportExtendedSlice = createSlice({
       clearAllValues(configuration)
     },
     setAccountType(state, action) {
-      const option = getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
       state.accountType = action.payload.accountType
     },
   },

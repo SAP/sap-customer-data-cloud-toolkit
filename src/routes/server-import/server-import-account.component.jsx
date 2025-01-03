@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, Bar, Title, Text, Button, Option, Select, Form, FormItem, FormGroup, ValueState, CardHeader, TitleLevel, FlexBox, Label } from '@ui5/webcomponents-react'
+import { Card, Bar, Text, Button, Option, Select, ValueState, CardHeader, TitleLevel, Label } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -44,16 +44,11 @@ const ServerImportComponent = ({ t }) => {
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
-    setFormData(serverConfigurations)
-  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
-
-  const [formData, setFormData] = useState([])
+  }, [dispatch, apikey, serverConfigurations, credentials, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
     const setSelectedServerOption = selectedOption
-    console.log('setSelectedServerOption', setSelectedServerOption)
-    console.log('selectedValue', selectedValue)
     dispatch(setAccountType({ accountType: selectedValue, serverType: setSelectedServerOption }))
     setAccountOption(selectedValue)
   }
@@ -72,10 +67,8 @@ const ServerImportComponent = ({ t }) => {
   const handleSubmit = async () => {
     if (selectedOption && accountOption) {
       const resultAction = await dispatch(setDataflow({ option: selectedOption }))
-      console.log('resultAction', resultAction)
       if (setDataflow.fulfilled.match(resultAction)) {
         setCreatedDataflowId(resultAction.payload)
-        console.log('dataflow,', resultAction.payload)
       } else {
         console.error('Failed to set dataflow:', resultAction.payload)
       }
@@ -85,7 +78,6 @@ const ServerImportComponent = ({ t }) => {
 
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
-    setFormData(serverConfigurations)
   }
   const renderFormItemsInGrid = () => {
     return serverConfigurations[selectedOption].map((field) => (
