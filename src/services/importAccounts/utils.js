@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 export function hasNestedObject(field) {
   for (let key in field) {
     if (typeof field[key] === 'object' && field[key] !== null) {

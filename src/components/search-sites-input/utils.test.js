@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { filterTargetSites, findStringInAvailableTargetSites, getTargetSiteByTargetApiKey } from './utils'
 import { mockedAvailableTargetApiKeys } from './dataTest'
 

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const targetSiteContainsString = (string, availableTargetSite) => {
   return (
     availableTargetSite.baseDomain.includes(string) ||

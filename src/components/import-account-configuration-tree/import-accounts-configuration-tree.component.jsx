@@ -130,7 +130,7 @@ const ImportAccountConfigurationTree = ({
             <CheckBox
               id={`${treeNode.id}`}
               readonly={isReadOnly(treeNode)}
-              text={treeNode.formatName === false ? treeNode.name : treeNode.name}
+              text={treeNode.name}
               checked={treeNode.value}
               onChange={(event) => onCheckBoxStateChangeHandler(event, treeNode.id, treeNode)}
             />

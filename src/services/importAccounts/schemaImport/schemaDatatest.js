@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 export const expectedSchemaResponse = {
   callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',
   statusCode: 200,

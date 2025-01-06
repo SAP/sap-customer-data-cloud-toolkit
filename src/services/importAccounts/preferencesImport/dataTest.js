@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 export const mockPreferencesResponse = {
   callId: '8294ea97691f4594921df2c4d12009b0',
   context: '{"id":"consent_consentStatement_get","targetApiKey":"4_anUcVDIu7iIQP-uPNKi7aQ"}',
