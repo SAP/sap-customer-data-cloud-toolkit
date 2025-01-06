@@ -122,5 +122,3 @@ export const getLiteRootElementsStructure = () => {
   ]
   return rootElementsStructure
 }
-
-export const standartRootFields = () => {}

@@ -1,6 +1,5 @@
 export function getOptionsFromSchemaTree(structure) {
   const result = []
-  console.log('structure', structure)
   const traverse = (node, path = '', parentOperation = '') => {
     let currentPath = path ? `${path}.${node.name}` : node.name
 
@@ -31,6 +30,5 @@ export function getOptionsFromSchemaTree(structure) {
   }
 
   structure.forEach((node) => traverse(node))
-  console.log('result', result)
   return result
 }

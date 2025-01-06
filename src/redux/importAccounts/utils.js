@@ -23,18 +23,11 @@ export const clearConfigurationsState = (configuration, value) => {
         branch.mandatory = false // Ensure mandatory is set to false
       }
       branch.value = value
-      clearConfigurationsState(branch, value) // Recursively clear branches
+      clearConfigurationsState(branch, value)
     })
   }
 }
-export const propagateSugestionState = (configuration, value) => {
-  configuration.value = value
-  if (configuration.branches) {
-    configuration.branches.forEach((branch) => {
-      propagateConfigurationState(branch, value)
-    })
-  }
-}
+
 export const getAllConfiguration = (configurations, ids) => {
   const result = []
 
@@ -178,22 +171,6 @@ export const propagateConfigurationSelectBox = (configuration, payload) => {
       branch.switchId = payload.operation
     }
   }
-}
-export const getParentIds = (configurations, targetId) => {
-  const parentIds = []
-  let currentId = targetId
-
-  while (currentId) {
-    const parent = findParent(configurations, currentId)
-    if (parent) {
-      parentIds.unshift(parent.id)
-      currentId = parent.id
-    } else {
-      currentId = null
-    }
-  }
-
-  return parentIds
 }
 
 const findParent = (configurations, targetId) => {
