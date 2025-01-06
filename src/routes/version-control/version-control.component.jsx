@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, MessageBox } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
-import Pagino from 'pagino'
 import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
+import * as githubUtils from '../../services/versionControl/githubUtils'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import styles from './version-control.styles'
+import Pagino from 'pagino'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
@@ -29,6 +30,7 @@ const VersionControlComponent = ({ t }) => {
   const [page, setPage] = useState(1)
   const [perPage] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
+  const [filesToUpdate, setFilesToUpdate] = useState([])
 
   const fetchCommits = useCallback(async () => {
     if (gitToken && owner) {
@@ -47,8 +49,15 @@ const VersionControlComponent = ({ t }) => {
     fetchCommits() // Fetch commits on initial render and when dependencies change
   }, [fetchCommits])
 
-  const onCreateBackupClick = () => {
-    setIsDialogOpen(true)
+  const onCreateBackupClick = async () => {
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
+    try {
+      const formattedFiles = await githubUtils.prepareFilesForUpdate(versionControl)
+      setFilesToUpdate(formattedFiles)
+      setIsDialogOpen(true)
+    } catch (error) {
+      console.error('Error preparing backup:', error)
+    }
   }
 
   const onConfirmBackupClick = async () => {
@@ -58,6 +67,7 @@ const VersionControlComponent = ({ t }) => {
       setResultMessages(result || [])
       setIsResultDialogOpen(true)
       await fetchCommits() // Refresh the commits list after confirmation
+      MessageBox.success(t('VERSION_CONTROL.SUCCESS_MESSAGE'))
     } catch (error) {
       console.error('Error creating backup:', error)
     } finally {
@@ -117,32 +127,32 @@ const VersionControlComponent = ({ t }) => {
 
     return (
       <div className={classes.paginationContainer}>
-      {pages.map((pageNumber, index) => {
-        if (pageNumber === 'previous' || pageNumber === 'next') {
-        return (
-          <button
-          key={index}
-          className={classes.paginationButton}
-          onClick={() => pagino[pageNumber]()}
-          disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
-          >
-          {pageNumber === 'previous' ? '\u27E8' : '\u27E9'}
-          </button>
-        )
-        } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
-        return (
-          <span key={index} className={classes.paginationEllipsis}>
-          ...
-          </span>
-        )
-        } else {
-        return (
-          <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
-          {pageNumber}
-          </span>
-        )
-        }
-      })}
+        {pages.map((pageNumber, index) => {
+          if (pageNumber === 'previous' || pageNumber === 'next') {
+            return (
+              <button
+                key={index}
+                className={classes.paginationButton}
+                onClick={() => pagino[pageNumber]()}
+                disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
+              >
+                {pageNumber === 'previous' ? '\u27E8' : '\u27E9'}
+              </button>
+            )
+          } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
+            return (
+              <span key={index} className={classes.paginationEllipsis}>
+                ...
+              </span>
+            )
+          } else {
+            return (
+              <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
+                {pageNumber}
+              </span>
+            )
+          }
+        })}
       </div>
     )
   }
@@ -194,12 +204,26 @@ const VersionControlComponent = ({ t }) => {
         headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
         footer={
           <>
-            <Button onClick={onConfirmBackupClick}>{t('VERSION_CONTROL.CONFIRM')}</Button>
+            <Button onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
+              {t('VERSION_CONTROL.CONFIRM')}
+            </Button>
             <Button onClick={onCancelBackupClick}>{t('VERSION_CONTROL.CANCEL')}</Button>
           </>
         }
       >
-        <TextArea value={commitMessage} onInput={handleCommitMessageChange} placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')} rows={4} />
+        <p>{t('VERSION_CONTROL.UPLOAD_MESSAGE')}</p>
+        <ul>
+          {filesToUpdate.map((file, index) => (
+            <li key={index}>{file}</li>
+          ))}
+        </ul>
+        <TextArea
+          value={commitMessage}
+          onInput={handleCommitMessageChange}
+          placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
+          rows={4}
+          disabled={filesToUpdate.includes('N/A')}
+        />
       </Dialog>
 
       <Dialog

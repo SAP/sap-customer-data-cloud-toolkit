@@ -128,5 +128,7 @@
   "VERSION_CONTROL.GIT_TOKEN": "Git Token",
   "VERSION_CONTROL.OWNER": "Owner",
   "VERSION_CONTROL.CLOSE": "Close",
-  "VERSION_CONTROL.ACTION": "Restore content"
+  "VERSION_CONTROL.ACTION": "Restore content",
+  "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",
+  "VERSION_CONTROL.UPLOAD_MESSAGE": "The following configurations were modified and will be upploaded:"
 }

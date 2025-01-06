@@ -196,7 +196,6 @@ export async function updateGitFileContent(versionControl, filePath, cdcFileCont
     return null
   }
 }
-
 export async function storeCdcDataInGit(versionControl, commitMessage) {
   const cdcService = new CdcService(versionControl)
   const configs = await cdcService.fetchCDCConfigs()
@@ -269,11 +268,30 @@ export async function getTotalCommits(versionControl, page = 1, per_page = 10) {
     })
 
     let totalCommits = response.data.length
-
-    debugger
     return { totalCommits }
   } catch (error) {
     console.error(`Failed to fetch commits for branch: ${versionControl.defaultBranch}`, error)
     throw error
   }
+}
+
+export async function prepareFilesForUpdate(versionControl) {
+  const cdcService = new CdcService(versionControl)
+  const configs = await cdcService.fetchCDCConfigs()
+
+  const files = Object.keys(configs).map((key) => ({
+    path: `src/versionControl/${key}.json`,
+    content: JSON.stringify(configs[key], null, 2),
+  }))
+
+  const fileUpdates = await Promise.all(
+    files.map(async (file) => {
+      const result = await updateGitFileContent(versionControl, file.path, file.content)
+      return result
+    }),
+  )
+
+  const validUpdates = fileUpdates.filter((update) => update !== null)
+  const formattedFiles = validUpdates.length > 0 ? validUpdates.map((file) => file.path.replace('src/versionControl/', '').replace('.json', '')) : ['N/A']
+  return formattedFiles
 }
