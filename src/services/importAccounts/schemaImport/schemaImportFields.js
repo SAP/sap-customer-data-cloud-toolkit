@@ -43,6 +43,7 @@ class SchemaImportFields {
     return this.#schema.get()
   }
   cleanSchemaData(schemaResponse) {
+    console.log('schemaResponse--->', schemaResponse)
     delete schemaResponse.apiVersion
     delete schemaResponse.context
     delete schemaResponse.errorCode

@@ -24,6 +24,11 @@ describe('Import Account - SchemaImport test suite', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
   })
+  test('clean schema data successfully', () => {
+    const schemaResponse = expectedSchemaResponse
+    schemaImport.cleanSchemaData(expectedSchemaResponse)
+    expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
+  })
   test('export schema data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
     const response = await schemaImport.exportSchemaData()
@@ -63,6 +68,13 @@ describe('Import Account - SchemaImport test suite', () => {
     const errorResponse = { errorCode: 1, errorMessage: 'Error' }
     axios.mockResolvedValueOnce({ data: errorResponse })
     const response = await schemaImport.exportSchemaData()
+    expect(response).toEqual(errorResponse)
+  })
+
+  test('get schema data with error', async () => {
+    const errorResponse = { errorCode: 1, errorMessage: 'Error' }
+    axios.mockResolvedValueOnce({ data: errorResponse })
+    const response = await schemaImport.getSchema()
     expect(response).toEqual(errorResponse)
   })
 })
