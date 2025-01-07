@@ -8,8 +8,4 @@ export const expectedCommunicationsResult = [
   'communications.C_mobileApp.status',
   'communications.C_mobileApp.optIn.acceptanceLocation',
   'communications.C_mobileApp.optIn.sourceApplication',
-  'communications.C_whatsApp.status',
-  'communications.T_SMS.status',
-  'communications.C_SMS.status',
-  'communications.C_SMS.optIn.acceptanceLocation',
 ]

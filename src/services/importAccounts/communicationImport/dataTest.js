@@ -49,39 +49,6 @@ export const expectedCommunicationResponse = {
       description: '',
       lastModified: '2024-12-09T07:42:38.326Z',
     },
-    {
-      topicChannelId: 'C_whatsApp',
-      channel: 'whatsApp',
-      topic: 'marketing',
-      description: '',
-      lastModified: '2024-12-09T07:42:39.422Z',
-    },
-    {
-      topicChannelId: 'T_SMS',
-      channel: 'SMS',
-      topic: 'transactional',
-      description: '',
-      lastModified: '2024-11-20T10:46:19.440Z',
-    },
-    {
-      schema: {
-        properties: {
-          optIn: {
-            properties: {
-              acceptanceLocation: {
-                type: 'string',
-              },
-            },
-            required: [],
-          },
-        },
-      },
-      topicChannelId: 'C_SMS',
-      channel: 'SMS',
-      topic: 'marketing',
-      description: '',
-      lastModified: '2024-12-09T07:42:38.858Z',
-    },
   ],
   objectsCount: 6,
   totalCount: 6,

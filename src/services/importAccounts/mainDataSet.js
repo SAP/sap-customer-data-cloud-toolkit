@@ -68,10 +68,6 @@ export const subscriptionsSchemaFields = {
 
 export const internalSchemaFields = {
   fields: {
-    's4hana.s4Id': {
-      required: false,
-      type: 'string',
-    },
     'crm.crmGuid': {
       required: false,
       type: 'string',
@@ -311,21 +307,6 @@ export const subscriptionsBranches = [
 
 export const internalBranches = [
   {
-    id: 'internal.s4hana',
-    name: 's4hana',
-    value: false,
-    branches: [
-      {
-        id: 'internal.s4hana.s4Id',
-        name: 's4Id',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-    ],
-    switchId: 'object',
-  },
-  {
     id: 'internal.crm',
     name: 'crm',
     value: false,
@@ -430,27 +411,6 @@ export const communicationsBranches = [
       { id: 'communications.C_mobileApp.status', name: 'status', value: false, branches: [] },
       { id: 'communications.C_mobileApp.optIn.acceptanceLocation', name: 'acceptanceLocation', value: false, branches: [] },
       { id: 'communications.C_mobileApp.optIn.sourceApplication', name: 'sourceApplication', value: false, branches: [] },
-    ],
-  },
-  {
-    id: 'C_whatsApp',
-    name: 'C_whatsApp',
-    value: false,
-    branches: [{ id: 'communications.C_whatsApp.status', name: 'status', value: false, branches: [] }],
-  },
-  {
-    id: 'T_SMS',
-    name: 'T_SMS',
-    value: false,
-    branches: [{ id: 'communications.T_SMS.status', name: 'status', value: false, branches: [] }],
-  },
-  {
-    id: 'C_SMS',
-    name: 'C_SMS',
-    value: false,
-    branches: [
-      { id: 'communications.C_SMS.status', name: 'status', value: false, branches: [] },
-      { id: 'communications.C_SMS.optIn.acceptanceLocation', name: 'acceptanceLocation', value: false, branches: [] },
     ],
   },
 ]
