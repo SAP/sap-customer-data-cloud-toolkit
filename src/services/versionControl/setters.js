@@ -80,9 +80,29 @@ export const setEmailTemplates = async function (response) {
   }
 }
 
-// set CommunicationTopics (used for Channels and topics)
-// export const setCommunicationTopics = async function (config) {
-//   for (const topic of config.topics) {
-//     await this.communication.set(this.apiKey, this.dataCenter, topic)
-//   }
-// }
+// set CommunicationTopics
+export const setChannel = async function (config) {
+  debugger
+  for (const topic of config.Channels) {
+    await this.communication.set(this.apiKey, this.dataCenter, topic)
+  }
+}
+
+// set CommunicationTopics
+export const setCommunicationTopics = async function (config) {
+  // for (const topic of config.Channels) {
+  //   await this.communication.copyFromGit(this.apiKey, this.dataCenter, topic)
+  // }
+  debugger
+  if (config.Channels) {
+    await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.Channels, 'channel')
+  }
+  if (config.results) {
+    await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.results, 'topic')
+  }
+}
+//setDataFlow
+//setRiskAssessment
+//setTopic
+//setSocial
+//setWebhook

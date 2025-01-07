@@ -13,9 +13,10 @@ import RiskAssessment from '../copyConfig/rba/riskAssessment'
 import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
-import Channel from '../copyConfig/communication/channel'
 import Cookies from 'js-cookie'
 import CdcService from './cdcService'
+import Communication from '../copyConfig/communication/communication'
+import Topic from '../copyConfig/communication/topic'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo, owner) {
@@ -45,7 +46,8 @@ class VersionControl {
     this.schema = new Schema(credentials, apiKey, dataCenter)
     this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
     this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
-    this.channel = new Channel(credentials, apiKey, dataCenter)
+    this.communication = new Communication(credentials, apiKey, dataCenter)
+    this.topic = new Topic(credentials, apiKey, dataCenter)
 
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }

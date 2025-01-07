@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 import { getCommitFiles } from './githubUtils'
-import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates } from './setters'
+import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates, setCommunicationTopics } from './setters'
 
 class CdcService {
   constructor(versionControl) {
@@ -22,7 +22,8 @@ class CdcService {
       { name: 'schema', promise: this.versionControl.schema.get() },
       { name: 'screenSets', promise: this.versionControl.screenSets.get() }, // Updated name here
       { name: 'sms', promise: this.versionControl.sms.get() },
-      { name: 'channel', promise: this.versionControl.channel.get() },
+      { name: 'channel', promise: this.versionControl.communication.get() },
+      { name: 'topic', promise: this.versionControl.topic.searchTopics() },
     ]
     return responses
   }
@@ -73,6 +74,13 @@ class CdcService {
         case 'sms':
           await setSMS.call(this.versionControl, filteredResponse)
           break
+        case 'channel':
+          await setCommunicationTopics.call(this.versionControl, filteredResponse)
+          break
+        case 'topic':
+          await setCommunicationTopics.call(this.versionControl, filteredResponse)
+          break
+
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }

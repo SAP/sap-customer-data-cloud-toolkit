@@ -39,6 +39,27 @@ class Communication {
     return responses
   }
 
+  async copyFromGit(destinationSite, dataCenter, content, fileType) {
+    let responses = []
+    switch (fileType) {
+      case 'channel':
+        const channelsPayload = Communication.#splitChannels(content)
+        for (const channel of channelsPayload) {
+          responses.push(this.#channel.set(destinationSite, dataCenter, channel))
+        }
+        break
+      case 'topic':
+        for (const topic of content) {
+          responses.push(this.#topic.set(destinationSite, dataCenter, topic))
+        }
+        break
+      default:
+        console.warn(`Unknown file type: ${content}`)
+    }
+
+    return await Promise.all(responses)
+  }
+
   #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }
