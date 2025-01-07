@@ -6,8 +6,8 @@ import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 import SchemaImportFields from './schemaImportFields'
 import {
+  expectedLiteSchemaResponse,
   expectedSchemaCleanAddress,
-  expectedSchemaLiteResponse,
   expectedSchemaResponse,
   expectedSchemaResponseCleaned,
   expectedSchemaResponseWithoutFields,
@@ -51,7 +51,7 @@ describe('Import Account - SchemaImport test suite', () => {
   test('export lite schema data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
     const response = await schemaImport.exportLiteSchemaData()
-    expect(response).toEqual(expectedSchemaLiteResponse)
+    expect(response).toEqual(expectedLiteSchemaResponse)
   })
   test('get schema data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })

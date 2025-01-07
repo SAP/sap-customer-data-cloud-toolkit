@@ -47,6 +47,7 @@ class ImportAccounts {
       result.push(...(await this.#schemaFields.exportLiteSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
       result.push(...getContext())
+      console.log('result----', result)
     }
     return result
   }

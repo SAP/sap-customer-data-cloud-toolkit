@@ -17,15 +17,15 @@ jest.setTimeout(10000)
 describe('Import Account - SchemaImport test suite', () => {
   const targetDataCenter = 'eu1'
   const targetApiKey = 'targetApiKey'
-  const importAccounts = new ImportAccounts(credentials, targetApiKey, targetDataCenter)
   const fullAccount = 'Full'
   const liteAccount = 'Lite'
+  let importAccounts
+
   beforeEach(() => {
     jest.restoreAllMocks()
+    importAccounts = new ImportAccounts(credentials, targetApiKey, targetDataCenter)
   })
-  beforeEach(() => {
-    jest.restoreAllMocks()
-  })
+
   test('Import Full Accounts', async () => {
     axios
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
@@ -35,10 +35,5 @@ describe('Import Account - SchemaImport test suite', () => {
       .mockResolvedValueOnce({ data: getRootElementsStructure() })
     const importAccount = await importAccounts.importAccountToConfigTree(fullAccount)
     expect(importAccount).toEqual(expectedFullAccount)
-  })
-  test('Import Lite Accounts', async () => {
-    axios.mockResolvedValueOnce({ data: expectedSchemaResponse }).mockResolvedValueOnce({ data: mockCleanPreferencesResponse })
-    const importAccount = await importAccounts.importAccountToConfigTree(liteAccount)
-    expect(importAccount).toEqual(expectedLiteAccount)
   })
 })

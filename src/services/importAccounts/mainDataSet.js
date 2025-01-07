@@ -555,3 +555,135 @@ export const addressesBranches = [
     ],
   },
 ]
+
+export const preferencesBranches = [
+  {
+    id: 'preferences.terms',
+    name: 'terms',
+    value: false,
+    branches: [
+      {
+        id: 'preferences.terms.sap',
+        name: 'sap',
+        value: false,
+        branches: [
+          { id: 'preferences.terms.sap.isConsentGranted', name: 'isConsentGranted', value: false, branches: [] },
+          { id: 'preferences.terms.sap.actionTimestamp', name: 'actionTimestamp', value: false, branches: [] },
+          { id: 'preferences.terms.sap.lastConsentModified', name: 'lastConsentModified', value: false, branches: [] },
+          { id: 'preferences.terms.sap.docVersion', name: 'docVersion', value: false, branches: [] },
+          { id: 'preferences.terms.sap.docDate', name: 'docDate', value: false, branches: [] },
+          { id: 'preferences.terms.sap.tags', name: 'tags', value: false, branches: [] },
+          { id: 'preferences.terms.sap.entitlements', name: 'entitlements', value: false, branches: [] },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'preferences.privacy',
+    name: 'privacy',
+    value: false,
+    branches: [
+      {
+        id: 'preferences.privacy.sap',
+        name: 'sap',
+        value: false,
+        branches: [
+          { id: 'preferences.privacy.sap.isConsentGranted', name: 'isConsentGranted', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.actionTimestamp', name: 'actionTimestamp', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.lastConsentModified', name: 'lastConsentModified', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.docVersion', name: 'docVersion', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.docDate', name: 'docDate', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.tags', name: 'tags', value: false, branches: [] },
+          { id: 'preferences.privacy.sap.entitlements', name: 'entitlements', value: false, branches: [] },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'preferences.cookie',
+    name: 'cookie',
+    value: false,
+    branches: [
+      { id: 'preferences.cookie.isConsentGranted', name: 'isConsentGranted', value: false, branches: [] },
+      { id: 'preferences.cookie.actionTimestamp', name: 'actionTimestamp', value: false, branches: [] },
+      { id: 'preferences.cookie.lastConsentModified', name: 'lastConsentModified', value: false, branches: [] },
+      { id: 'preferences.cookie.docVersion', name: 'docVersion', value: false, branches: [] },
+      { id: 'preferences.cookie.docDate', name: 'docDate', value: false, branches: [] },
+      { id: 'preferences.cookie.tags', name: 'tags', value: false, branches: [] },
+      { id: 'preferences.cookie.entitlements', name: 'entitlements', value: false, branches: [] },
+    ],
+  },
+]
+
+export const communicationsBranches = [
+  {
+    id: 'C_Email',
+    name: 'C_Email',
+    value: false,
+    branches: [{ id: 'communications.C_Email.status', name: 'status', value: false, branches: [] }],
+  },
+  {
+    id: 'T_Email',
+    name: 'T_Email',
+    value: false,
+    branches: [{ id: 'communications.T_Email.status', name: 'status', value: false, branches: [] }],
+  },
+  {
+    id: 'C_mobileApp',
+    name: 'C_mobileApp',
+    value: false,
+    branches: [
+      { id: 'communications.C_mobileApp.status', name: 'status', value: false, branches: [] },
+      { id: 'communications.C_mobileApp.optIn.acceptanceLocation', name: 'acceptanceLocation', value: false, branches: [] },
+      { id: 'communications.C_mobileApp.optIn.sourceApplication', name: 'sourceApplication', value: false, branches: [] },
+    ],
+  },
+  {
+    id: 'C_whatsApp',
+    name: 'C_whatsApp',
+    value: false,
+    branches: [{ id: 'communications.C_whatsApp.status', name: 'status', value: false, branches: [] }],
+  },
+  {
+    id: 'T_SMS',
+    name: 'T_SMS',
+    value: false,
+    branches: [{ id: 'communications.T_SMS.status', name: 'status', value: false, branches: [] }],
+  },
+  {
+    id: 'C_SMS',
+    name: 'C_SMS',
+    value: false,
+    branches: [
+      { id: 'communications.C_SMS.status', name: 'status', value: false, branches: [] },
+      { id: 'communications.C_SMS.optIn.acceptanceLocation', name: 'acceptanceLocation', value: false, branches: [] },
+    ],
+  },
+]
+
+export const passwordBranches = [
+  { id: 'password.compoundHashedPassword', name: 'compoundHashedPassword', value: false, branches: [] },
+  { id: 'password.hashedPassword', name: 'hashedPassword', value: false, branches: [] },
+  {
+    id: 'password.hashSettings',
+    name: 'hashSettings',
+    value: false,
+    branches: [
+      { id: 'password.hashSettings.algorithm', name: 'algorithm', value: false, branches: [] },
+      { id: 'password.hashSettings.salt', name: 'salt', value: false, branches: [] },
+      { id: 'password.hashSettings.rounds', name: 'rounds', value: false, branches: [] },
+      { id: 'password.hashSettings.format', name: 'format', value: false, branches: [] },
+      { id: 'password.hashSettings.binaryFormat', name: 'binaryFormat', value: false, branches: [] },
+      { id: 'password.hashSettings.URL', name: 'URL', value: false, branches: [] },
+    ],
+  },
+  {
+    id: 'password.secretQuestionAndAnswer',
+    name: 'secretQuestionAndAnswer',
+    value: false,
+    branches: [
+      { id: 'password.secretQuestionAndAnswer.secretQuestion', name: 'secretQuestion', value: false, branches: [] },
+      { id: 'password.secretQuestionAndAnswer.secretAnswer', name: 'secretAnswer', value: false, branches: [] },
+    ],
+  },
+]
