@@ -10,6 +10,7 @@ export const propagateConfigurationState = (configuration, value) => {
       propagateConfigurationState(branch, value)
     })
   }
+  return configuration
 }
 export const clearConfigurationsState = (configuration, value) => {
   if (configuration.id === 'email' || configuration.id === 'uid') {
