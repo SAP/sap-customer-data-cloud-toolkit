@@ -84,6 +84,7 @@ class ImportAccounts {
     const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
     const preferences = 'preferences'
     const communications = 'communications'
+    // 'password' is not a credential, it's just a string used for comparison
     const password = 'password'
     const rootElements = this.getRootElements()
 

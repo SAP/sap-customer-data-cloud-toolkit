@@ -29,6 +29,7 @@ class SchemaImportFields {
     const cleanSchemaResponse = await this.exportSchemaData()
 
     result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
+    console.log('result--->', result)
     return result
   }
   async exportLiteSchemaData() {
@@ -101,6 +102,7 @@ class SchemaImportFields {
     return schemaResponse
   }
   removeFieldFromAddressesSchema(schemaResponse) {
+    console.log('schemaResponse--->', schemaResponse)
     const traverseAndRemoveEmail = (obj) => {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {

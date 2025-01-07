@@ -24,9 +24,18 @@ describe('Import Account - SchemaImport test suite', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
   })
+  test('remove field from addresses schema successfully', () => {
+    const schemaResponse = { ...expectedSchemaResponse }
+    delete schemaResponse.statusCode
+    delete schemaResponse.statusReason
+    delete schemaResponse.time
+    delete schemaResponse.callId
+    schemaImport.removeFieldFromAddressesSchema(schemaResponse)
+    expect(schemaResponse).toEqual(expectedSchemaCleanAddress)
+  })
   test('clean schema data successfully', () => {
     const schemaResponse = expectedSchemaResponse
-    schemaImport.cleanSchemaData(expectedSchemaResponse)
+    schemaImport.cleanSchemaData(schemaResponse)
     expect(schemaResponse).toEqual(expectedSchemaResponseCleaned)
   })
   test('export schema data successfully', async () => {
@@ -54,11 +63,7 @@ describe('Import Account - SchemaImport test suite', () => {
     const cleanedSchema = schemaImport.cleanLiteSchemaData(schemaResponse)
     expect(cleanedSchema).toEqual(expectedTransformedLiteResponse)
   })
-  test('remove field from addresses schema successfully', () => {
-    const schemaResponse = { ...expectedSchemaResponse }
-    schemaImport.removeFieldFromAddressesSchema(schemaResponse)
-    expect(schemaResponse).toEqual(expectedSchemaCleanAddress)
-  })
+
   test('remove field from subscription schema successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     schemaImport.removeFieldFromSubscriptionSchema(schemaResponse)
