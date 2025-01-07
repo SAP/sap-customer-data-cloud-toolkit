@@ -10,7 +10,7 @@ import { mockCleanPreferencesResponse } from './preferencesImport/dataTest'
 import { expectedCommunicationResponse } from './communicationImport/dataTest'
 import { expectedPasswordResponse } from './passwordImport/dataTest'
 import { getRootElementsStructure } from './rootOptions/rootLevelFields'
-import { expectedFullAccount, expectedLiteAccount } from './importAccountsDatatest'
+import { expectedFullAccount } from './importAccountsDatatest'
 
 jest.mock('axios')
 jest.setTimeout(10000)
