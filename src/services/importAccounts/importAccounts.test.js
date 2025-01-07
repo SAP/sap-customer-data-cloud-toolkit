@@ -18,7 +18,6 @@ describe('Import Account - SchemaImport test suite', () => {
   const targetDataCenter = 'eu1'
   const targetApiKey = 'targetApiKey'
   const fullAccount = 'Full'
-  const liteAccount = 'Lite'
   let importAccounts
 
   beforeEach(() => {

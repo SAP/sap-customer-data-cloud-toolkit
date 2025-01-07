@@ -40,25 +40,9 @@ export const dataSchemaFields = {
       required: false,
       type: 'integer',
     },
-    'vehicle.model': {
-      required: false,
-      type: 'string',
-    },
-    'crm.isProspect': {
-      required: false,
-      type: 'boolean',
-    },
     'loyalty.rewardRedemption.redemptionDate': {
       required: false,
       type: 'date',
-    },
-    subscribe: {
-      required: false,
-      type: 'boolean',
-    },
-    'vehicle.vin': {
-      required: false,
-      type: 'string',
     },
     'loyalty.loyaltyStatus': {
       required: false,
@@ -68,21 +52,9 @@ export const dataSchemaFields = {
       required: false,
       type: 'integer',
     },
-    terms: {
-      required: false,
-      type: 'boolean',
-    },
-    'crm.abcClassification': {
-      required: false,
-      type: 'string',
-    },
     'loyalty.rewardAmount': {
       required: false,
       type: 'float',
-    },
-    'vehicle.registrationDate': {
-      required: false,
-      type: 'date',
     },
   },
   dynamicSchema: false,
@@ -91,8 +63,6 @@ export const dataSchemaFields = {
 export const subscriptionsSchemaFields = {
   fields: {
     'newsletter.commercial': {},
-    'newsletter.passenger': {},
-    promotion: {},
   },
 }
 
@@ -295,71 +265,6 @@ export const dataBranches = [
     ],
     switchId: 'object',
   },
-  {
-    id: 'data.vehicle',
-    name: 'vehicle',
-    value: false,
-    branches: [
-      {
-        id: 'data.vehicle.model',
-        name: 'model',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-      {
-        id: 'data.vehicle.vin',
-        name: 'vin',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-      {
-        id: 'data.vehicle.registrationDate',
-        name: 'registrationDate',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-    ],
-    switchId: 'object',
-  },
-  {
-    id: 'data.crm',
-    name: 'crm',
-    value: false,
-    branches: [
-      {
-        id: 'data.crm.isProspect',
-        name: 'isProspect',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-      {
-        id: 'data.crm.abcClassification',
-        name: 'abcClassification',
-        value: false,
-        branches: [],
-        switchId: 'object',
-      },
-    ],
-    switchId: 'object',
-  },
-  {
-    id: 'data.subscribe',
-    name: 'subscribe',
-    value: false,
-    branches: [],
-    switchId: 'object',
-  },
-  {
-    id: 'data.terms',
-    name: 'terms',
-    value: false,
-    branches: [],
-    switchId: 'object',
-  },
 ]
 
 export const subscriptionsBranches = [
@@ -393,84 +298,6 @@ export const subscriptionsBranches = [
         branches: [
           {
             id: 'subscriptions.newsletter.commercial.doubleOptIn.isExternallyVerified',
-            name: 'isExternallyVerified',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-    ],
-    switchId: 'object',
-  },
-  {
-    id: 'subscriptions.newsletter.passenger',
-    name: 'newsletter.passenger',
-    value: false,
-    branches: [
-      {
-        id: 'subscriptions.newsletter.passenger.isSubscribed',
-        name: 'isSubscribed',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.newsletter.passenger.tags',
-        name: 'tags',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.newsletter.passenger.lastUpdatedSubscriptionState',
-        name: 'lastUpdatedSubscriptionState',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.newsletter.passenger.doubleOptIn',
-        name: 'doubleOptIn',
-        value: false,
-        branches: [
-          {
-            id: 'subscriptions.newsletter.passenger.doubleOptIn.isExternallyVerified',
-            name: 'isExternallyVerified',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-    ],
-    switchId: 'object',
-  },
-  {
-    id: 'subscriptions.promotion',
-    name: 'promotion',
-    value: false,
-    branches: [
-      {
-        id: 'subscriptions.promotion.isSubscribed',
-        name: 'isSubscribed',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.promotion.tags',
-        name: 'tags',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.promotion.lastUpdatedSubscriptionState',
-        name: 'lastUpdatedSubscriptionState',
-        value: false,
-        branches: [],
-      },
-      {
-        id: 'subscriptions.promotion.doubleOptIn',
-        name: 'doubleOptIn',
-        value: false,
-        branches: [
-          {
-            id: 'subscriptions.promotion.doubleOptIn.isExternallyVerified',
             name: 'isExternallyVerified',
             value: false,
             branches: [],
@@ -578,41 +405,6 @@ export const preferencesBranches = [
           { id: 'preferences.terms.sap.entitlements', name: 'entitlements', value: false, branches: [] },
         ],
       },
-    ],
-  },
-  {
-    id: 'preferences.privacy',
-    name: 'privacy',
-    value: false,
-    branches: [
-      {
-        id: 'preferences.privacy.sap',
-        name: 'sap',
-        value: false,
-        branches: [
-          { id: 'preferences.privacy.sap.isConsentGranted', name: 'isConsentGranted', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.actionTimestamp', name: 'actionTimestamp', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.lastConsentModified', name: 'lastConsentModified', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.docVersion', name: 'docVersion', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.docDate', name: 'docDate', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.tags', name: 'tags', value: false, branches: [] },
-          { id: 'preferences.privacy.sap.entitlements', name: 'entitlements', value: false, branches: [] },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'preferences.cookie',
-    name: 'cookie',
-    value: false,
-    branches: [
-      { id: 'preferences.cookie.isConsentGranted', name: 'isConsentGranted', value: false, branches: [] },
-      { id: 'preferences.cookie.actionTimestamp', name: 'actionTimestamp', value: false, branches: [] },
-      { id: 'preferences.cookie.lastConsentModified', name: 'lastConsentModified', value: false, branches: [] },
-      { id: 'preferences.cookie.docVersion', name: 'docVersion', value: false, branches: [] },
-      { id: 'preferences.cookie.docDate', name: 'docDate', value: false, branches: [] },
-      { id: 'preferences.cookie.tags', name: 'tags', value: false, branches: [] },
-      { id: 'preferences.cookie.entitlements', name: 'entitlements', value: false, branches: [] },
     ],
   },
 ]

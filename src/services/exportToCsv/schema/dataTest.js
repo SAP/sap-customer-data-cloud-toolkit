@@ -13,11 +13,4 @@ export const expectedSchemaResult = [
   'data.loyalty.rewardRedemption.redemptionPoint',
   'data.loyalty.loyaltyStatus',
   'data.loyalty.rewardAmount',
-  'data.vehicle.model',
-  'data.vehicle.vin',
-  'data.vehicle.registrationDate',
-  'data.crm.isProspect',
-  'data.crm.abcClassification',
-  'data.subscribe',
-  'data.terms',
 ]

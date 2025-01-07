@@ -11,13 +11,6 @@ export const expectedNormalResult = [
   'data.loyalty.rewardRedemption.redemptionPoint',
   'data.loyalty.loyaltyStatus',
   'data.loyalty.rewardAmount',
-  'data.vehicle.model',
-  'data.vehicle.vin',
-  'data.vehicle.registrationDate',
-  'data.crm.isProspect',
-  'data.crm.abcClassification',
-  'data.subscribe',
-  'data.terms',
 ]
 
 export const expectedParentArrayChildObjectResult = [
@@ -26,13 +19,6 @@ export const expectedParentArrayChildObjectResult = [
   'data.loyalty.0.rewardRedemption.redemptionPoint',
   'data.loyalty.0.loyaltyStatus',
   'data.loyalty.0.rewardAmount',
-  'data.vehicle.model',
-  'data.vehicle.vin',
-  'data.vehicle.registrationDate',
-  'data.crm.isProspect',
-  'data.crm.abcClassification',
-  'data.subscribe',
-  'data.terms',
 ]
 
 export const expectedParentChildArrayResult = [
@@ -41,13 +27,6 @@ export const expectedParentChildArrayResult = [
   'data.loyalty.0.rewardRedemption.0.redemptionPoint',
   'data.loyalty.0.loyaltyStatus',
   'data.loyalty.0.rewardAmount',
-  'data.vehicle.model',
-  'data.vehicle.vin',
-  'data.vehicle.registrationDate',
-  'data.crm.isProspect',
-  'data.crm.abcClassification',
-  'data.subscribe',
-  'data.terms',
 ]
 
 export const expectedParentObjectChildArrayResult = [
@@ -56,11 +35,4 @@ export const expectedParentObjectChildArrayResult = [
   'data.loyalty.rewardRedemption.0.redemptionPoint',
   'data.loyalty.loyaltyStatus',
   'data.loyalty.rewardAmount',
-  'data.vehicle.model',
-  'data.vehicle.vin',
-  'data.vehicle.registrationDate',
-  'data.crm.isProspect',
-  'data.crm.abcClassification',
-  'data.subscribe',
-  'data.terms',
 ]
