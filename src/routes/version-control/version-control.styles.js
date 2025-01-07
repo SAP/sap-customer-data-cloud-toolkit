@@ -69,47 +69,15 @@ const styles = {
     justifyContent: 'center',
     marginTop: '20px',
   },
-  paginationButton: {
-    margin: '0 5px',
-    padding: '5px 10px',
-    cursor: 'pointer',
-    backgroundColor: '#fff',
-    color: '#005bb5',
-    border: 'solid',
-    borderRadius: '3px',
-    '&:hover': {
-      backgroundColor: 'none',
-    },
+  fullHeightContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    overflow: 'hidden',
   },
-  paginationPage: {
-    margin: '0 5px',
-    padding: '5px 10px',
-    cursor: 'pointer',
-    backgroundColor: '#fff',
-    color: '#0070f3',
-    border: '1px solid #0070f3',
-    borderRadius: '3px',
-    '&:hover': {
-      backgroundColor: '#f1f1f1',
-    },
-  },
-  paginationCurrentPage: {
-    margin: '0 5px',
-    padding: '5px 10px',
-    cursor: 'default',
-    backgroundColor: '#fff',
-    color: '#0070f3',
-    border: '1px solid #0070f3',
-    borderRadius: '3px',
-    fontWeight: 'bold',
-  },
-  paginationEllipsis: {
-    margin: '0 5px',
-    padding: '5px 10px',
-    cursor: 'default',
-    backgroundColor: '#fff',
-    color: '#0070f3',
-    border: 'none',
+  tableContainer: {
+    flexGrow: 1,
+    overflow: 'auto',
   },
 }
 

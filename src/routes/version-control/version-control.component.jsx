@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, MessageBox } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, MessageBox, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
@@ -10,7 +10,6 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import styles from './version-control.styles'
-import Pagino from 'pagino'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
@@ -27,23 +26,22 @@ const VersionControlComponent = ({ t }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isResultDialogOpen, setIsResultDialogOpen] = useState(false)
   const [resultMessages, setResultMessages] = useState([])
-  const [page, setPage] = useState(1)
-  const [perPage] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
   const [filesToUpdate, setFilesToUpdate] = useState([])
+  const [loadedCommits, setLoadedCommits] = useState(new Set())
 
   const fetchCommits = useCallback(async () => {
     if (gitToken && owner) {
       const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
       try {
-        const { commitList, totalCommits } = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
-        setCommits(commitList)
-        setTotalPages(Math.ceil(totalCommits / perPage))
+        const { commitList } = await handleCommitListRequestServices(versionControl, apiKey, commits.length / 10 + 1, 10)
+        const uniqueCommits = commitList.filter((commit) => !loadedCommits.has(commit.sha))
+        setCommits((prevCommits) => [...prevCommits, ...uniqueCommits])
+        setLoadedCommits((prevLoadedCommits) => new Set([...prevLoadedCommits, ...uniqueCommits.map((commit) => commit.sha)]))
       } catch (error) {
         console.error('Error fetching commits:', error)
       }
     }
-  }, [gitToken, owner, credentials, apiKey, currentSite, page, perPage])
+  }, [gitToken, owner, credentials, apiKey, currentSite, commits.length, loadedCommits])
 
   useEffect(() => {
     fetchCommits() // Fetch commits on initial render and when dependencies change
@@ -66,6 +64,8 @@ const VersionControlComponent = ({ t }) => {
       const result = await handleGetServices(versionControl, apiKey, commitMessage)
       setResultMessages(result || [])
       setIsResultDialogOpen(true)
+      setCommits([]) // Clear commits before fetching new ones
+      setLoadedCommits(new Set()) // Clear loaded commits
       await fetchCommits() // Refresh the commits list after confirmation
       MessageBox.success(t('VERSION_CONTROL.SUCCESS_MESSAGE'))
     } catch (error) {
@@ -83,6 +83,8 @@ const VersionControlComponent = ({ t }) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       await handleCommitRevertServices(versionControl, sha)
+      setCommits([]) // Clear commits before fetching new ones
+      setLoadedCommits(new Set()) // Clear loaded commits
       await fetchCommits() // Refresh the commits list after revert
     } catch (error) {
       console.error('Error reverting commit:', error)
@@ -105,56 +107,12 @@ const VersionControlComponent = ({ t }) => {
     setCommitMessage(e.target.value)
   }
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage)
+  const onLoadMore = () => {
     fetchCommits()
   }
 
   const handleResultDialogClose = () => {
     setIsResultDialogOpen(false)
-  }
-
-  const renderPagination = () => {
-    const pagino = new Pagino({
-      count: totalPages,
-      page,
-      siblingCount: 1,
-      boundaryCount: 1,
-      onChange: (newPage) => handlePageChange(newPage),
-    })
-
-    const pages = pagino.getPages().filter((pageNumber) => pageNumber !== 'first' && pageNumber !== 'last')
-
-    return (
-      <div className={classes.paginationContainer}>
-        {pages.map((pageNumber, index) => {
-          if (pageNumber === 'previous' || pageNumber === 'next') {
-            return (
-              <button
-                key={index}
-                className={classes.paginationButton}
-                onClick={() => pagino[pageNumber]()}
-                disabled={(pageNumber === 'previous' && page === 1) || (pageNumber === 'next' && page === totalPages)}
-              >
-                {pageNumber === 'previous' ? '\u27E8' : '\u27E9'}
-              </button>
-            )
-          } else if (pageNumber === 'start-ellipsis' || pageNumber === 'end-ellipsis') {
-            return (
-              <span key={index} className={classes.paginationEllipsis}>
-                ...
-              </span>
-            )
-          } else {
-            return (
-              <span key={index} className={pageNumber === page ? classes.paginationCurrentPage : classes.paginationPage} onClick={() => handlePageChange(pageNumber)}>
-                {pageNumber}
-              </span>
-            )
-          }
-        })}
-      </div>
-    )
   }
 
   return (
@@ -242,39 +200,41 @@ const VersionControlComponent = ({ t }) => {
         </List>
       </Dialog>
 
-      <div className={classes.commitsContainer}>
-        <table className={classes.commitTable}>
-          <thead>
-            <tr>
-              <th>{t('VERSION_CONTROL.ID')}</th>
-              <th>{t('VERSION_CONTROL.DATE')}</th>
-              <th>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</th>
-              <th>{t('VERSION_CONTROL.ACTION')}</th>
-            </tr>
-          </thead>
-          <tbody>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+          <Table
+            growing={TableGrowingMode.Scroll}
+            onLoadMore={onLoadMore}
+            columns={
+              <>
+                <TableColumn style={{ width: '150px' }}>{t('VERSION_CONTROL.ID')}</TableColumn>
+                <TableColumn style={{ width: '200px' }}>{t('VERSION_CONTROL.DATE')}</TableColumn>
+                <TableColumn style={{ width: '400px' }}>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</TableColumn>
+                <TableColumn style={{ width: '150px' }}>{t('VERSION_CONTROL.ACTION')}</TableColumn>
+              </>
+            }
+          >
             {commits.length === 0 ? (
-              <tr>
-                <td colSpan="4">{t('VERSION_CONTROL.NO_COMMITS')}</td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan="4">{t('VERSION_CONTROL.NO_COMMITS')}</TableCell>
+              </TableRow>
             ) : (
               commits.map((commit, index) => (
-                <tr key={index}>
-                  <td>{commit.sha.substring(0, 7)}</td>
-                  <td>{new Date(commit.commit.committer.date).toLocaleString()}</td>
-                  <td>{commit.commit.message}</td>
-                  <td>
+                <TableRow key={index}>
+                  <TableCell>{commit.sha.substring(0, 7)}</TableCell>
+                  <TableCell>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
+                  <TableCell>{commit.commit.message}</TableCell>
+                  <TableCell>
                     <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => onCommitRevertClick(commit.sha)}>
                       {t('VERSION_CONTROL.RESTORE')}
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
+          </Table>
+        </div>
       </div>
-      <div>{renderPagination()}</div>
     </>
   )
 }
