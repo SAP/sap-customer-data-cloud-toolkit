@@ -2,16 +2,8 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import {
-  profileBranches,
-  dataBranches,
-  subscriptionsBranches,
-  internalBranches,
-  addressesBranches,
-  preferencesBranches,
-  communicationsBranches,
-  passwordBranches,
-} from './mainDataSet'
+import { profileBranches, dataBranches, subscriptionsBranches, internalBranches, addressesBranches, preferencesBranches, communicationsBranches } from './mainDataSet'
+import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
 export const expectedFullAccount = [
   { id: 'uid', name: 'uid', value: true, branches: [], mandatory: true },
   { id: 'profile', name: 'profile', value: false, branches: profileBranches, switchId: 'object' },
@@ -21,7 +13,7 @@ export const expectedFullAccount = [
   { id: 'addresses', name: 'addresses', value: false, branches: addressesBranches, switchId: 'object' },
   { id: 'preferences', name: 'preferences', value: false, branches: preferencesBranches },
   { id: 'communications', name: 'communications', value: false, branches: communicationsBranches },
-  { id: 'password', name: 'password', value: false, branches: passwordBranches },
+  passwordObjectStructure()[0],
   { id: 'phoneNumber', name: 'phoneNumber', value: false, branches: [] },
   {
     id: 'loginIds',

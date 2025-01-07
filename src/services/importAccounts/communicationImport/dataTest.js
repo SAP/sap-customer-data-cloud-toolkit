@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { communicationsBranches } from '../mainDataSet'
 export const expectedCommunicationResponse = {
   callId: 'e2190759063c429087f674bff0087ea5',
   context: '{}',
@@ -159,111 +160,7 @@ export const expectedCleanCommunicationResponse = {
   },
 }
 
-export const expectedTransformedCommunicationData = [
-  {
-    id: 'communications',
-    name: 'communications',
-    value: false,
-    branches: [
-      {
-        id: 'C_Email',
-        name: 'C_Email',
-        value: false,
-        branches: [
-          {
-            id: 'communications.C_Email.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-      {
-        id: 'T_Email',
-        name: 'T_Email',
-        value: false,
-        branches: [
-          {
-            id: 'communications.T_Email.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-      {
-        id: 'C_mobileApp',
-        name: 'C_mobileApp',
-        value: false,
-        branches: [
-          {
-            id: 'communications.C_mobileApp.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-          {
-            id: 'communications.C_mobileApp.optIn.acceptanceLocation',
-            name: 'acceptanceLocation',
-            value: false,
-            branches: [],
-          },
-          {
-            id: 'communications.C_mobileApp.optIn.sourceApplication',
-            name: 'sourceApplication',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-      {
-        id: 'C_whatsApp',
-        name: 'C_whatsApp',
-        value: false,
-        branches: [
-          {
-            id: 'communications.C_whatsApp.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-      {
-        id: 'T_SMS',
-        name: 'T_SMS',
-        value: false,
-        branches: [
-          {
-            id: 'communications.T_SMS.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-      {
-        id: 'C_SMS',
-        name: 'C_SMS',
-        value: false,
-        branches: [
-          {
-            id: 'communications.C_SMS.status',
-            name: 'status',
-            value: false,
-            branches: [],
-          },
-          {
-            id: 'communications.C_SMS.optIn.acceptanceLocation',
-            name: 'acceptanceLocation',
-            value: false,
-            branches: [],
-          },
-        ],
-      },
-    ],
-  },
-]
+export const expectedTransformedCommunicationData = [{ id: 'communications', name: 'communications', value: false, branches: communicationsBranches }]
 
 export const expectedGetCommunicationsData = {
   communications: {

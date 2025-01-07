@@ -8,9 +8,9 @@ import { expectedSchemaResponse } from './schemaImport/schemaDatatest'
 import axios from 'axios'
 import { mockCleanPreferencesResponse } from './preferencesImport/dataTest'
 import { expectedCommunicationResponse } from './communicationImport/dataTest'
-import { expectedPasswordResponse } from './passwordImport/dataTest'
 import { getRootElementsStructure } from './rootOptions/rootLevelFields'
 import { expectedFullAccount } from './importAccountsDatatest'
+import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
 
 jest.mock('axios')
 jest.setTimeout(10000)
@@ -31,7 +31,7 @@ describe('Import Account - SchemaImport test suite', () => {
       .mockResolvedValueOnce({ data: expectedSchemaResponse })
       .mockResolvedValueOnce({ data: mockCleanPreferencesResponse })
       .mockResolvedValueOnce({ data: expectedCommunicationResponse })
-      .mockResolvedValueOnce({ data: expectedPasswordResponse })
+      .mockResolvedValueOnce({ data: passwordObjectStructure() })
       .mockResolvedValueOnce({ data: getRootElementsStructure() })
     const importAccount = await importAccounts.importAccountToConfigTree(fullAccount)
     expect(importAccount).toEqual(expectedFullAccount)
