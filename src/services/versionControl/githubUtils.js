@@ -230,45 +230,14 @@ export async function storeCdcDataInGit(versionControl, commitMessage) {
   return messages
 }
 
-export async function getCommits(versionControl, page = 1, per_page = 10) {
-  try {
-    const response = await versionControl.octokit.rest.repos.listCommits({
-      owner: versionControl.owner,
-      repo: versionControl.repo,
-      sha: versionControl.defaultBranch,
-      per_page,
-      page,
-    })
-
-    const linkHeader = response.headers.link
-    let totalCommits = response.data.length
-
-    if (linkHeader) {
-      // const lastPageMatch = linkHeader.match(/\?page=(\d+)>; rel="last"/) <--funciona o totalCommits
-      const lastPageMatch = linkHeader.match(/&page=(\d+)>; rel="last"/)
-      if (lastPageMatch) {
-        const lastPage = parseInt(lastPageMatch[1], 10)
-        totalCommits = lastPage * per_page
-      }
-    }
-
-    return { data: response.data, totalCommits }
-  } catch (error) {
-    console.error(`Failed to fetch commits for branch: ${versionControl.defaultBranch}`, error)
-    throw error
-  }
-}
-
-export async function getTotalCommits(versionControl, page = 1, per_page = 10) {
+export async function getCommits(versionControl) {
   try {
     const response = await versionControl.octokit.rest.repos.listCommits({
       owner: versionControl.owner,
       repo: versionControl.repo,
       sha: versionControl.defaultBranch,
     })
-
-    let totalCommits = response.data.length
-    return { totalCommits }
+    return { data: response.data }
   } catch (error) {
     console.error(`Failed to fetch commits for branch: ${versionControl.defaultBranch}`, error)
     throw error
