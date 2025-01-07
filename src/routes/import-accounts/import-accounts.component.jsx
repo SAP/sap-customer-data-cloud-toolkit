@@ -12,7 +12,7 @@ import { getApiKey } from '../../redux/utils.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
 import {
-  getConfigurations,
+  getConfigurationTree,
   selectConfigurations,
   selectSugestionConfigurations,
   setConfigurationStatus,
@@ -45,7 +45,7 @@ const ImportAccountsComponent = ({ t }) => {
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurations('Full'))
+    dispatch(getConfigurationTree('Full'))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = () => {
@@ -54,7 +54,7 @@ const ImportAccountsComponent = ({ t }) => {
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurations(selectedValue))
+    dispatch(getConfigurationTree(selectedValue))
   }
   const dispatchMandatoryStatus = (treeNode) => {
     if (treeNode.includes('status')) {

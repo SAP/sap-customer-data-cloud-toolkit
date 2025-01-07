@@ -4,7 +4,7 @@ import { getApiKey, getErrorAsArray } from '../utils'
 import { setParentsTrue, propagateConfigurationSelectBox, getAllConfiguration, getParent, clearConfigurationsState, getConfigurationPath } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
-const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurations`
+const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurationTree`
 const SET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/setConfigurations`
 
 export const importAccountsSlice = createSlice({
@@ -88,16 +88,16 @@ export const importAccountsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getConfigurations.pending, (state) => {
+    builder.addCase(getConfigurationTree.pending, (state) => {
       state.isLoading = true
       state.errors = []
       state.configurations = []
     })
-    builder.addCase(getConfigurations.fulfilled, (state, action) => {
+    builder.addCase(getConfigurationTree.fulfilled, (state, action) => {
       state.isLoading = false
       state.configurations = action.payload
     })
-    builder.addCase(getConfigurations.rejected, (state, action) => {
+    builder.addCase(getConfigurationTree.rejected, (state, action) => {
       state.isLoading = false
       state.errors = action.payload
     })
@@ -119,7 +119,7 @@ export const importAccountsSlice = createSlice({
   },
 })
 
-export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (selectedValue, { getState, rejectWithValue }) => {
+export const getConfigurationTree = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (selectedValue, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
