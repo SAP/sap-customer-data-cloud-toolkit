@@ -4,7 +4,7 @@
  */
 
 import TopicImportFields from './communicationImport'
-import { expectedCleanCommunicationResponse, expectedCommunicationResponse, expectedGetCommunicationsData, expectedTransformedCommunicationData } from './dataTest'
+import { expectedCommunicationResponse, expectedGetCommunicationsData, expectedTransformedCommunicationData } from './dataTest'
 import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 jest.mock('axios')
@@ -18,8 +18,9 @@ describe('Import Account - communicationImport test suite', () => {
   })
   test('Get clean communication data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedCommunicationResponse })
+    const configuration = getData(expectedCommunicationResponse)
     const response = await communicationImport.exportTopicData()
-    expect(response).toEqual(expectedCleanCommunicationResponse)
+    expect(response).toEqual(configuration)
   })
   test('Export transformed communication data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedCommunicationResponse })
@@ -27,7 +28,15 @@ describe('Import Account - communicationImport test suite', () => {
     expect(response).toEqual(expectedTransformedCommunicationData)
   })
   test('Get communication data successfully', async () => {
+    const configuration = getData(expectedCommunicationResponse)
     const response = communicationImport.getTopicsData(expectedCommunicationResponse)
-    expect(response).toEqual(expectedGetCommunicationsData)
+    expect(response).toEqual(configuration)
   })
 })
+const getData = (topicsResponse) => {
+  const communications = {}
+  topicsResponse.results.forEach((obj, index) => {
+    communications[index] = obj
+  })
+  return { communications }
+}
