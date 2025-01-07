@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { propagateConfigurationState } from '../../../redux/importAccounts/utils'
 import { exportCommunicationData } from './communicationMatches'
 import { mockCommunicationStructure, expectedCommunicationsResult } from './dataTest'
 
@@ -14,7 +15,8 @@ describe('Import Account - CommunicationImport test suite', () => {
   })
 
   test('Export communication Data', () => {
-    const communicationData = exportCommunicationData(mockCommunicationStructure)
+    const configuration = propagateConfigurationState(mockCommunicationStructure, true)
+    const communicationData = exportCommunicationData([configuration])
     expect(communicationData).toEqual(expectedCommunicationsResult)
   })
 })

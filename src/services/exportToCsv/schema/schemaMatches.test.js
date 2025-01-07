@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { propagateConfigurationState } from '../../../redux/importAccounts/utils'
 import { expectedOptions, expectedSchemaResult } from './dataTest'
 import { exportSchemaData } from './schemaMatches'
 
@@ -12,7 +13,8 @@ describe('Import Account - SchemaImport test suite', () => {
     jest.restoreAllMocks()
   })
   test('Export schema Data', () => {
-    const schemaData = exportSchemaData(expectedOptions)
+    const configuration = propagateConfigurationState(expectedOptions, true)
+    const schemaData = exportSchemaData([configuration])
     expect(schemaData).toEqual(expectedSchemaResult)
   })
 })

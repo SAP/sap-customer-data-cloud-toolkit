@@ -2,16 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import {
-  profileBranches,
-  dataBranches,
-  subscriptionsBranches,
-  internalBranches,
-  addressesBranches,
-  preferencesBranches,
-  communicationsBranches,
-  passwordBranches,
-} from '../../importAccounts/mainDataSet'
+import { dataBranches } from '../../importAccounts/mainDataSet'
 export const expectedSchemaStucture = { id: 'data', name: 'data', value: false, branches: dataBranches, switchId: 'object' }
 
 export const expectedNormalResult = [
