@@ -200,8 +200,8 @@ const VersionControlComponent = ({ t }) => {
         </List>
       </Dialog>
 
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-        <div style={{ flexGrow: 1, overflow: 'auto' }}>
+      <div className={classes.fullHeightContainer}>
+        <div className={classes.tableContainer}>
           <Table
             growing={TableGrowingMode.Scroll}
             onLoadMore={onLoadMore}

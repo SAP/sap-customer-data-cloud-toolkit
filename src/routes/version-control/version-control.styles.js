@@ -4,43 +4,42 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'flex-start',
     padding: '10px',
-    backgroundColor: '#fff', // Set background color to white
-    height: 'auto', // Ensure the height adjusts to the content
+    backgroundColor: '#fff',
+    height: 'auto',
     justifyContent: 'flex-start !important',
-  },
-  BarButton: {
-    alignSelf: 'end !important', // Align the button to the right
   },
   singlePrettifyButton: {
     marginTop: '10px',
-    alignSelf: 'flex-end', // Align the button to the right
-    backgroundColor: '#0070f3', // Change as needed for styling
+    alignSelf: 'flex-end',
+    backgroundColor: '#0070f3',
     color: '#fff',
     '&:hover': {
-      backgroundColor: '#005bb5', // Change as needed for a hover effect
+      backgroundColor: '#005bb5',
     },
   },
-  commitsContainer: {
-    padding: '20px',
-    backgroundColor: '#fff', // Ensure the background color matches the table
-    display: 'contents',
+  tableContainer: {
+    flexGrow: 1,
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    maxHeight: 'calc(100vh - 280px)',
   },
   commitTable: {
     width: '100%',
     borderCollapse: 'collapse',
     '& th, & td': {
-      border: '1px solid #ddd', // Change border color as needed
+      border: '1px solid #ddd',
       padding: '8px',
       textAlign: 'left',
     },
     '& th': {
-      backgroundColor: '#f2f2f2', // Change for table header background
+      backgroundColor: '#f2f2f2',
     },
     '& tr:nth-child(even)': {
-      backgroundColor: '#f9f9f9', // Change for alternate row background
+      backgroundColor: '#f9f9f9',
     },
     '& tr:hover': {
-      backgroundColor: '#f1f1f1', // Change for row hover effect
+      backgroundColor: '#f1f1f1',
     },
   },
   inputContainer: {
@@ -63,21 +62,11 @@ const styles = {
   inputLabel: {
     marginBottom: '0.5rem',
   },
-  paginationContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: '20px',
-  },
   fullHeightContainer: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
     overflow: 'hidden',
-  },
-  tableContainer: {
-    flexGrow: 1,
-    overflow: 'auto',
   },
 }
 
