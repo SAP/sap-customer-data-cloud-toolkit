@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 export function getOptionsFromSchemaTree(structure) {
-  console.log('structure--->', structure)
   const result = []
   const traverse = (node, path = '', parentOperation = '') => {
     let currentPath = path ? `${path}.${node.name}` : node.name
@@ -35,6 +34,5 @@ export function getOptionsFromSchemaTree(structure) {
   }
 
   structure.forEach((node) => traverse(node))
-  console.log('result--->', result)
   return result
 }

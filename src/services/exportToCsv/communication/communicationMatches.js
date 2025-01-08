@@ -3,9 +3,7 @@
  * License: Apache-2.0
  */
 export function exportCommunicationData(items) {
-  console.log('items--->', items)
   const optionKeys = findMatches(items)
-  console.log('optionKeys--->', optionKeys)
   return optionKeys
 }
 const findMatches = (obj) => {

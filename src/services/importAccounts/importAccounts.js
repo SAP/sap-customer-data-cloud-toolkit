@@ -47,14 +47,13 @@ class ImportAccounts {
       result.push(...(await this.#schemaFields.exportLiteSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
       result.push(...getContext())
-      console.log('result----', result)
     }
     return result
   }
 
   async exportDataToCsv(items) {
     let result = []
-    const { data, preferencesOptions, communicationsOptions, passOptions, rootOptions } = this.seperateOptionsFromTree(items)
+    const { data, preferencesOptions, communicationsOptions, passRootOptions, rootOptions } = this.seperateOptionsFromTree(items)
     if (rootOptions.length > 0) {
       const rootData = rootOptionsValue(rootOptions)
       result.push(...rootData)
@@ -70,8 +69,8 @@ class ImportAccounts {
     if (communicationsOptions.length > 0) {
       result.push(...exportCommunicationData(communicationsOptions))
     }
-    if (passOptions.length > 0) {
-      result.push(...exportPasswordData(passOptions))
+    if (passRootOptions.length > 0) {
+      result.push(...exportPasswordData(passRootOptions))
     }
 
     createCSVFile(result)
@@ -80,7 +79,7 @@ class ImportAccounts {
     const data = []
     const preferencesOptions = []
     const communicationsOptions = []
-    const passOptions = []
+    const passRootOptions = []
     const rootOptions = []
     const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
     const preferences = 'preferences'
@@ -98,10 +97,10 @@ class ImportAccounts {
       } else if (item.id.startsWith(communications) && item.value === true) {
         communicationsOptions.push(item)
       } else if (item.id.startsWith(pass) && item.value === true) {
-        passOptions.push(item)
+        passRootOptions.push(item)
       }
     })
-    return { data, preferencesOptions, communicationsOptions, passOptions, rootOptions }
+    return { data, preferencesOptions, communicationsOptions, passRootOptions, rootOptions }
   }
   getRootElements() {
     return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']

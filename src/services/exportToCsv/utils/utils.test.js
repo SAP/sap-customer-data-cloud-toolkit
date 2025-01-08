@@ -55,6 +55,5 @@ const changeSwitchId = (configuration, targetId, newSwitchId) => {
       changeSwitchId(branch, targetId, newSwitchId)
     })
   }
-  console.log('configuration', configuration)
   return configuration
 }
