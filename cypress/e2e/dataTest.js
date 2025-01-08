@@ -1792,7 +1792,6 @@ const getRiskProvidersResponse = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
@@ -1836,7 +1835,6 @@ const setRiskProvidersMock = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
