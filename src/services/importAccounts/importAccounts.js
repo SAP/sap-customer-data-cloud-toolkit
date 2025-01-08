@@ -79,7 +79,7 @@ class ImportAccounts {
     const data = []
     const preferencesOptions = []
     const communicationsOptions = []
-    const passRootOptions = []
+    const informationOption = []
     const rootOptions = []
     const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
     const preferences = 'preferences'
@@ -97,10 +97,10 @@ class ImportAccounts {
       } else if (item.id.startsWith(communications) && item.value === true) {
         communicationsOptions.push(item)
       } else if (item.id.startsWith(pass) && item.value === true) {
-        passRootOptions.push(item)
+        informationOption.push(item)
       }
     })
-    return { data, preferencesOptions, communicationsOptions, passRootOptions, rootOptions }
+    return { data, preferencesOptions, communicationsOptions, informationOption, rootOptions }
   }
   getRootElements() {
     return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']
