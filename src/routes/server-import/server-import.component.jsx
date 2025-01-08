@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, Bar, Title, Text, Button, Option, Select, Form, FormItem, FormGroup, ValueState, CardHeader, TitleLevel, FlexBox } from '@ui5/webcomponents-react'
+import { Card, Bar, Text, Button, Option, Select, ValueState, CardHeader } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import { isInputFilled } from './utils.js'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
+
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'
 const ServerImportComponent = ({ t }) => {
@@ -40,10 +41,7 @@ const ServerImportComponent = ({ t }) => {
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
-    setFormData(serverConfigurations)
-  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
-
-  const [formData, setFormData] = useState([])
+  }, [dispatch, apikey, serverConfigurations, credentials, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
@@ -74,7 +72,6 @@ const ServerImportComponent = ({ t }) => {
 
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
-    setFormData(serverConfigurations)
   }
   const renderFormItemsInGrid = () => {
     return serverConfigurations[selectedOption].map((field) => (

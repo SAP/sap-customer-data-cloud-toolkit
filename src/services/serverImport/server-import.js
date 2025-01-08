@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import Dataflow from '../copyConfig/dataflow/dataflow'
 import { importFullAccountAzure } from './dataFlowTemplates/azureTemplate/azureFullAccount'
 import { importLiteAccountAzure } from './dataFlowTemplates/azureTemplate/azureLiteAccount'
@@ -16,9 +20,7 @@ class ServerImport {
   }
 
   getStructure() {
-    console.log('serverStructure--->', serverStructure)
-    const structure = serverStructure
-    return structure
+    return serverStructure
   }
   async setDataflow(configurations, option, accountOption) {
     if (option.option === 'azure') {
@@ -36,20 +38,20 @@ class ServerImport {
   scheduleStructure(response) {
     const structure = {
       data: {
-        name: 'test_schedule',
+        name: 'server_import_scheduler',
         dataflowId: response.id,
         frequencyType: 'once',
+        fullExtract: true,
       },
     }
     return structure
   }
+
   replaceVariables(dataflow, variables) {
     let dataflowString = JSON.stringify(dataflow)
-    console.log('dataflowString', dataflowString)
-    console.log('variables', variables)
+
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
-      console.log('variable.id', variable.value)
       dataflowString = dataflowString.replaceAll(regex, variable.value)
     }
     return JSON.parse(dataflowString)
