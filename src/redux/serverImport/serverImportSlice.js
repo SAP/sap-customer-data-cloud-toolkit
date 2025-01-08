@@ -25,7 +25,7 @@ export const serverImportExtendedSlice = createSlice({
       initOption.value = action.payload.value
       state.accountType = action.payload.accountType
     },
-    clearConfigurations(state, action) {
+    clearConfigurations(state) {
       const configuration = state.serverConfigurations
       clearAllValues(configuration)
     },
@@ -80,8 +80,6 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-  console.log('state.serverImport.serverConfigurations--->', JSON.stringify(state.serverImport.serverConfigurations))
-  console.log('state.serverImport', JSON.stringify(state.serverImport))
 
   try {
     return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).setDataflow(state.serverImport.serverConfigurations, option, state.serverImport.accountType)

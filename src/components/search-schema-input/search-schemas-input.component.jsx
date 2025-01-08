@@ -13,9 +13,7 @@ const SearchBar = ({ dispatch, configurations, setSchemaInputValue, schemaInputV
   const [suggestions, setSuggestions] = useState([])
 
   const onTargetSchemaInputHandler = (event) => {
-    console.log('configurationsSearch', [configurations])
     const allNames = extractIds([configurations])
-    console.log('allNames', allNames)
     const value = event.target.value
 
     setSchemaInputValue(value)

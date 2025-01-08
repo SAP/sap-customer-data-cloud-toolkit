@@ -33,6 +33,7 @@ class Dataflow {
     const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
     })
+    console.log('res-data', res.data)
     return res.data
   }
 
@@ -121,8 +122,6 @@ class Dataflow {
   }
   #setSchedulingDataflowParameters(apiKey, config) {
     const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
-    console.log('config.name', config.name)
-    console.log('config.dataflowId', config.dataflowId)
 
     parameters.data = JSON.stringify(config.data)
 
@@ -270,10 +269,7 @@ class Dataflow {
 
   static #replaceVariables(dataflow, variables) {
     let decodedDataflow = Dataflow.decodeDataflow(dataflow)
-    console.log('variables', variables)
     for (const variable of variables) {
-      console.log('variables', variables)
-      console.log('decodedDataflow', decodedDataflow)
       const regex = new RegExp(variable.variable, 'g')
       decodedDataflow = decodedDataflow.replaceAll(regex, variable.value)
     }

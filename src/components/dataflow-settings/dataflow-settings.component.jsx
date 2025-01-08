@@ -31,7 +31,6 @@ const DataflowSettings = ({ dataFlowTreeNode, setDataflowVariableValue, setDataf
       setInitialVariableValues(dataFlowTreeNode.variables)
     }
   }, [openSettingsDialog]) //eslint-disable-line
-  console.log('dataFlowTreeNode.variables', dataFlowTreeNode.variables)
   const onDataflowSettingsButtonClickHandler = () => {
     setOpenSettingsDialog(true)
   }

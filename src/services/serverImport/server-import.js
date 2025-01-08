@@ -24,7 +24,9 @@ class ServerImport {
   }
   async setDataflow(configurations, option, accountOption) {
     if (option.option === 'azure') {
+      console.log('configurations', configurations)
       const dataflowConfig = this.getConfigurations(configurations, option.option)
+      console.log('dataflowConfig', dataflowConfig)
       const replacedDataflow = this.replaceVariables(accountOption === 'Lite' ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
       const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
       const schedule = this.scheduleStructure(createDataflow)
@@ -49,7 +51,8 @@ class ServerImport {
 
   replaceVariables(dataflow, variables) {
     let dataflowString = JSON.stringify(dataflow)
-
+    console.log('dataflowString', dataflowString)
+    console.log('variable', variables)
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
       dataflowString = dataflowString.replaceAll(regex, variable.value)

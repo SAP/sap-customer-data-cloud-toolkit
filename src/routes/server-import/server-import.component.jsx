@@ -36,12 +36,11 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [showDialog, setShowSuccessDialog] = useState(false)
-
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
-  }, [dispatch, apikey, serverConfigurations, credentials, currentSiteInfo.dataCenter])
+  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
@@ -127,7 +126,7 @@ const ServerImportComponent = ({ t }) => {
                         onClick={handleSubmit}
                         data-cy="copyConfigExtendedSaveButton"
                         design="Emphasized"
-                        disabled={disableDeployButton}
+                        disabled={disableDeployButton()}
                       >
                         {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
                       </Button>

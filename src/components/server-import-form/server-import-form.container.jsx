@@ -11,9 +11,6 @@ const FormItemWithIcon = ({ field, handleInputChange }) => {
   const [tooltipTarget, setTooltipTarget] = useState('')
 
   const onMouseOverHandler = (event) => {
-    console.log('event', event)
-    console.log('event-target', event.target.shadowRoot.host.id)
-    console.log(`${event.target}TooltipIcon`)
     if (event.target.shadowRoot) {
       setTooltipTarget(event.target.shadowRoot.host.id)
       setIsMouseOverIcon(true)
