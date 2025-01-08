@@ -80,8 +80,7 @@ class ImportAccounts {
     const data = []
     const preferencesOptions = []
     const communicationsOptions = []
-    // 'password' is not a credential, it's just a string
-    const passwordOptions = []
+    const passOptions = []
     const rootOptions = []
     const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
     const preferences = 'preferences'
@@ -99,10 +98,10 @@ class ImportAccounts {
       } else if (item.id.startsWith(communications) && item.value === true) {
         communicationsOptions.push(item)
       } else if (item.id.startsWith(password) && item.value === true) {
-        passwordOptions.push(item)
+        passOptions.push(item)
       }
     })
-    return { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions }
+    return { data, preferencesOptions, communicationsOptions, passOptions, rootOptions }
   }
   getRootElements() {
     return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']
