@@ -117,7 +117,14 @@ const VersionControlComponent = ({ t }) => {
 
   return (
     <>
-      <h2>{t('VERSION_CONTROL.TITLE')}</h2>
+      <Bar
+        startContent={
+          <>
+            <h2>{t('VERSION_CONTROL.TITLE')}</h2>
+          </>
+        }
+      ></Bar>
+
       <Bar
         className={classes.innerBarStyle}
         startContent={
