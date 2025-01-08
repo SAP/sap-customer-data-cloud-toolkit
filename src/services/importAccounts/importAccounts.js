@@ -54,7 +54,7 @@ class ImportAccounts {
 
   async exportDataToCsv(items) {
     let result = []
-    const { data, preferencesOptions, communicationsOptions, passwordOptions, rootOptions } = this.seperateOptionsFromTree(items)
+    const { data, preferencesOptions, communicationsOptions, passOptions, rootOptions } = this.seperateOptionsFromTree(items)
     if (rootOptions.length > 0) {
       const rootData = rootOptionsValue(rootOptions)
       result.push(...rootData)
@@ -70,8 +70,8 @@ class ImportAccounts {
     if (communicationsOptions.length > 0) {
       result.push(...exportCommunicationData(communicationsOptions))
     }
-    if (passwordOptions.length > 0) {
-      result.push(...exportPasswordData(passwordOptions))
+    if (passOptions.length > 0) {
+      result.push(...exportPasswordData(passOptions))
     }
 
     createCSVFile(result)
@@ -85,7 +85,7 @@ class ImportAccounts {
     const schemaFields = ['data', 'subscriptions', 'internal', 'addresses', 'profile']
     const preferences = 'preferences'
     const communications = 'communications'
-    const password = 'password'
+    const pass = 'pass'
     const rootElements = this.getRootElements()
 
     items.forEach((item) => {
@@ -97,7 +97,7 @@ class ImportAccounts {
         preferencesOptions.push(item)
       } else if (item.id.startsWith(communications) && item.value === true) {
         communicationsOptions.push(item)
-      } else if (item.id.startsWith(password) && item.value === true) {
+      } else if (item.id.startsWith(pass) && item.value === true) {
         passOptions.push(item)
       }
     })
