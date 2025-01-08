@@ -15,6 +15,7 @@ jest.mock('./setters', () => ({
   setScreenSets: jest.fn(),
   setRBA: jest.fn(),
   setEmailTemplates: jest.fn(),
+  setCommunicationTopics: jest.fn(),
 }))
 
 describe('CdcService', () => {
@@ -23,17 +24,18 @@ describe('CdcService', () => {
 
   beforeEach(() => {
     versionControl = {
-      webSdk: { get: jest.fn() },
-      dataflow: { search: jest.fn() },
-      emails: { get: jest.fn() },
-      extension: { get: jest.fn() },
-      policies: { get: jest.fn() },
-      rba: { get: jest.fn() },
-      riskAssessment: { get: jest.fn() },
-      schema: { get: jest.fn() },
-      screenSets: { get: jest.fn() },
-      sms: { get: jest.fn() },
-      channel: { get: jest.fn() },
+      webSdk: { get: jest.fn().mockResolvedValue({}) },
+      dataflow: { search: jest.fn().mockResolvedValue({}) },
+      emails: { get: jest.fn().mockResolvedValue({}) },
+      extension: { get: jest.fn().mockResolvedValue({}) },
+      policies: { get: jest.fn().mockResolvedValue({}) },
+      rba: { get: jest.fn().mockResolvedValue({}) },
+      riskAssessment: { get: jest.fn().mockResolvedValue({}) },
+      schema: { get: jest.fn().mockResolvedValue({}) },
+      screenSets: { get: jest.fn().mockResolvedValue({}) },
+      sms: { get: jest.fn().mockResolvedValue({}) },
+      communication: { get: jest.fn().mockResolvedValue({}) }, // Ensure this line is included
+      topic: { searchTopics: jest.fn().mockResolvedValue({}) },
     }
     cdcService = new CdcService(versionControl)
   })
@@ -42,7 +44,7 @@ describe('CdcService', () => {
     it('should return an array of promises', () => {
       const responses = cdcService.getCdcData()
       expect(Array.isArray(responses)).toBe(true)
-      expect(responses.length).toBe(11)
+      expect(responses.length).toBe(12) // Update to 12
       responses.forEach((response) => {
         expect(response).toHaveProperty('name')
         expect(response).toHaveProperty('promise')
@@ -63,7 +65,8 @@ describe('CdcService', () => {
       versionControl.schema.get.mockResolvedValue(mockData)
       versionControl.screenSets.get.mockResolvedValue(mockData)
       versionControl.sms.get.mockResolvedValue(mockData)
-      versionControl.channel.get.mockResolvedValue(mockData)
+      versionControl.communication.get.mockResolvedValue(mockData) // Ensure this line is included
+      versionControl.topic.searchTopics.mockResolvedValue(mockData)
 
       const configs = await cdcService.fetchCDCConfigs()
       expect(configs).toEqual({
@@ -77,7 +80,8 @@ describe('CdcService', () => {
         schema: mockData,
         screenSets: mockData,
         sms: mockData,
-        channel: mockData,
+        channel: mockData, // Update to channel
+        topic: mockData,
       })
     })
 
@@ -94,7 +98,8 @@ describe('CdcService', () => {
       versionControl.schema.get.mockRejectedValue(new Error('Error fetching schema'))
       versionControl.screenSets.get.mockRejectedValue(new Error('Error fetching screenSets'))
       versionControl.sms.get.mockRejectedValue(new Error('Error fetching sms'))
-      versionControl.channel.get.mockRejectedValue(new Error('Error fetching channel'))
+      versionControl.communication.get.mockRejectedValue(new Error('Error fetching communication')) // Ensure this line is included
+      versionControl.topic.searchTopics.mockRejectedValue(new Error('Error fetching topic'))
 
       const configs = await cdcService.fetchCDCConfigs()
       expect(configs).toEqual({
@@ -108,7 +113,8 @@ describe('CdcService', () => {
         schema: undefined,
         screenSets: undefined,
         sms: undefined,
-        channel: undefined,
+        channel: undefined, // Update to channel
+        topic: undefined,
       })
 
       consoleErrorSpy.mockRestore()

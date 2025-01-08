@@ -1,7 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import { getCommitFiles } from './githubUtils'
 import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates, setCommunicationTopics } from './setters'
 
@@ -20,7 +16,7 @@ class CdcService {
       { name: 'rba', promise: this.versionControl.rba.get() },
       { name: 'riskAssessment', promise: this.versionControl.riskAssessment.get() },
       { name: 'schema', promise: this.versionControl.schema.get() },
-      { name: 'screenSets', promise: this.versionControl.screenSets.get() }, // Updated name here
+      { name: 'screenSets', promise: this.versionControl.screenSets.get() },
       { name: 'sms', promise: this.versionControl.sms.get() },
       { name: 'channel', promise: this.versionControl.communication.get() },
       { name: 'topic', promise: this.versionControl.topic.searchTopics() },

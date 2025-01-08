@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, MessageBox, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector } from 'react-redux'
 import Cookies from 'js-cookie'
@@ -24,8 +24,6 @@ const VersionControlComponent = ({ t }) => {
   const [owner, setOwner] = useState(Cookies.get('owner') || '')
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isResultDialogOpen, setIsResultDialogOpen] = useState(false)
-  const [resultMessages, setResultMessages] = useState([])
   const [filesToUpdate, setFilesToUpdate] = useState([])
   const [loadedCommits, setLoadedCommits] = useState(new Set())
 
@@ -61,13 +59,10 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
-      const result = await handleGetServices(versionControl, apiKey, commitMessage)
-      setResultMessages(result || [])
-      setIsResultDialogOpen(true)
-      setCommits([]) // Clear commits before fetching new ones
-      setLoadedCommits(new Set()) // Clear loaded commits
-      await fetchCommits() // Refresh the commits list after confirmation
-      MessageBox.success(t('VERSION_CONTROL.SUCCESS_MESSAGE'))
+      await handleGetServices(versionControl, apiKey, commitMessage)
+      setCommits([])
+      setLoadedCommits(new Set())
+      await fetchCommits()
     } catch (error) {
       console.error('Error creating backup:', error)
     } finally {
@@ -109,10 +104,6 @@ const VersionControlComponent = ({ t }) => {
 
   const onLoadMore = () => {
     fetchCommits()
-  }
-
-  const handleResultDialogClose = () => {
-    setIsResultDialogOpen(false)
   }
 
   return (
@@ -189,22 +180,6 @@ const VersionControlComponent = ({ t }) => {
           rows={4}
           disabled={filesToUpdate.includes('N/A')}
         />
-      </Dialog>
-
-      <Dialog
-        open={isResultDialogOpen}
-        headerText={t('VERSION_CONTROL.RESULT')}
-        footer={
-          <>
-            <Button onClick={handleResultDialogClose}>{t('VERSION_CONTROL.CLOSE')}</Button>
-          </>
-        }
-      >
-        <List>
-          {resultMessages.map((message, index) => (
-            <StandardListItem key={index}>{message.includes('Skipped backup') ? <b>{message}</b> : message}</StandardListItem>
-          ))}
-        </List>
       </Dialog>
 
       <div className={classes.fullHeightContainer}>
