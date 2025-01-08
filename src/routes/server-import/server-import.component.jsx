@@ -46,8 +46,6 @@ const ServerImportComponent = ({ t }) => {
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
     const setSelectedServerOption = selectedOption
-    console.log('setSelectedServerOption', setSelectedServerOption)
-    console.log('selectedValue', selectedValue)
     dispatch(setAccountType({ accountType: selectedValue, serverType: setSelectedServerOption }))
     setAccountOption(selectedValue)
   }
@@ -129,7 +127,7 @@ const ServerImportComponent = ({ t }) => {
                         onClick={handleSubmit}
                         data-cy="copyConfigExtendedSaveButton"
                         design="Emphasized"
-                        disabled={disableDeployButton()}
+                        disabled={disableDeployButton}
                       >
                         {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
                       </Button>

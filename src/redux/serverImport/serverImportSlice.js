@@ -1,7 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import ServerImport from '../../services/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray } from '../utils'
@@ -34,6 +30,7 @@ export const serverImportExtendedSlice = createSlice({
       clearAllValues(configuration)
     },
     setAccountType(state, action) {
+      getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
       state.accountType = action.payload.accountType
     },
   },
