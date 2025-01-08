@@ -133,13 +133,3 @@ class SchemaImportFields {
   }
 }
 export default SchemaImportFields
-// [
-//   { id: 'data', name: 'data', value: true, branches: [] },
-//   { id: 'data.loyalty', name: 'loyalty', value: true, branches: [],switchId },
-//   { id: 'data.loyalty.rewardAmount', name: 'data.loyalty.rewardAmount', value: true, branches: [] },
-//   { id: 'data.loyalty.loyaltyStatus', name: 'newsletter.commercial', value: true, branches: [] },
-//   { id: 'internal', name: 'internal', value: true, branches: [] },
-//   { id: 'addresses', name: 'addresses', value: true, branches: [] },
-//   { id: 'profile', name: 'profile', value: true, branches: [] },
-//   { id: 'other', name: 'other', value: true, branches: [] },
-// ];

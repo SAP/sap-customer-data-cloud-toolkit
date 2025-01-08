@@ -49,6 +49,10 @@ import {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -62,14 +66,10 @@ export function startUp(pageName) {
   cy.reload()
 }
 export function getImportAccountsInformation() {
-  cy.get('#importAccountsTitle').should('contain.text', 'Import Data')
-  cy.get('#importAccountsHeaderText').should('contain.text', 'Import accounts and generate csv with schema and legal fields')
-  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-first-line').should('contain.text', 'Download Template')
-  cy.get('ui5-card-header')
-    .eq(3)
-    .shadow()
-    .find('.ui5-card-header-subtitle')
-    .should('contain.text', 'This will export the chosen fields to a CSV file. You can then import this file to create accounts.')
+  cy.get('#importAccountsTitle').should('contain.text', importData)
+  cy.get('#importAccountsHeaderText').should('contain.text', importAccountsDescription)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-first-line').should('contain.text', importAccountDownloadButton)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-subtitle').should('contain.text', importAccountsSubtitle)
 }
 
 export function clearCredentials() {

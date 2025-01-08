@@ -23,10 +23,10 @@ const ArrayObjectOutputButtons = ({ handleSelectChange, t, setSwitchOptions, tre
           valueState="None"
         >
           <Option data-id="object" selected={treeNode.switchId?.operation === 'object'}>
-            Object
+            {t('IMPORT_ACCOUNTS_DROPDOWN_OBJECT')}
           </Option>
           <Option data-id="array" selected={treeNode.switchId?.operation === 'array'}>
-            Array
+            {t('IMPORT_ACCOUNTS_DROPDOWN_ARRAY')}
           </Option>
         </Select>
       </span>
