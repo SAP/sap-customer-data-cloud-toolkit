@@ -10,8 +10,8 @@ import { useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 import styles from './schema-property-type.styles'
 
-const useStyles = createUseStyles(styles, { name: 'ArrayObjectOutputButtons' })
-const ArrayObjectOutputButtons = ({ handleSelectChange, t, setSwitchOptions, treeNode, setTreeData, treeData }) => {
+const useStyles = createUseStyles(styles, { name: 'SchemaPropertyType' })
+const SchemaPropertyType = ({ handleSelectChange, t, setSwitchOptions, treeNode, setTreeData, treeData }) => {
   const dispatch = useDispatch()
   const classes = useStyles()
   return (
@@ -34,4 +34,4 @@ const ArrayObjectOutputButtons = ({ handleSelectChange, t, setSwitchOptions, tre
   )
 }
 
-export default withTranslation()(ArrayObjectOutputButtons)
+export default withTranslation()(SchemaPropertyType)

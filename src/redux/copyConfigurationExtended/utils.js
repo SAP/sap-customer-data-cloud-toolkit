@@ -35,36 +35,6 @@ export const propagateConfigurationState = (configuration, value) => {
   }
 }
 
-export const findParent = (configuration, targetId) => {
-  if (configuration.branches) {
-    for (let branch of configuration.branches) {
-      if (branch.id === targetId) {
-        return configuration
-      }
-      const parent = findParent(branch, targetId)
-      if (parent) {
-        return parent
-      }
-    }
-  }
-  return null
-}
-export const getParentIds = (configuration, targetId) => {
-  const parentIds = []
-  let currentId = targetId
-
-  while (currentId) {
-    const parent = findParent(configuration, currentId)
-    if (parent) {
-      parentIds.unshift(parent.id)
-      currentId = parent.id
-    } else {
-      currentId = null
-    }
-  }
-
-  return parentIds
-}
 const clearConfigurationErrors = (configuration) => {
   configuration.error = undefined
   if (configuration.branches) {

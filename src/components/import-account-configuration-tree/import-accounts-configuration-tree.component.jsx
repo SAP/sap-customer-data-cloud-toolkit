@@ -11,7 +11,7 @@ import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-reac
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
 import '@ui5/webcomponents-icons/dist/message-information.js'
-import ArrayObjectOutputButtons from '../schema-property-type/schema-property-type.component.jsx'
+import SchemaPropertyType from '../schema-property-type/schema-property-type.component.jsx'
 import { handleSelectChange } from './utils.js'
 
 const ImportAccountConfigurationTree = ({
@@ -136,7 +136,7 @@ const ImportAccountConfigurationTree = ({
 
             {showError(treeNode)}
             {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'profile' && (
-              <ArrayObjectOutputButtons treeNode={treeNode} t={t} handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch)} />
+              <SchemaPropertyType treeNode={treeNode} t={t} handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch)} />
             )}
           </FlexBox>
         }
