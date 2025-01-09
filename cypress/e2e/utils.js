@@ -123,8 +123,8 @@ export function getBaseDomain(baseDomain, timeout) {
 export function getDataCenters(chosenDataCenter) {
   cy.wait(1000)
   cy.get('[data-cy ="cdctools-dataCenter"]').shadow().find('ui5-icon').realClick()
-  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(2).shadow().find('li > ui5-checkbox').click()
   return cy
     .get('[data-cy ="cdctools-dataCenter"]')
     .shadow()
@@ -139,7 +139,7 @@ export function getSiteStructure(optionNumber, timeout) {
   cy.get('[data-cy ="cdctools-siteStructure"]').should('be.visible')
   cy.get('[data-cy ="cdctools-siteStructure"]', { timeout: timeout }).click()
   cy.wait(1000)
-  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
 export function deleteChildSite(length) {
   cy.get('ui5-table-row').eq(length).find('ui5-table-cell').eq(4).find('ui5-button').shadow().find('button').click()
@@ -279,10 +279,9 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.wait(1000)
   cy.get('[data-cy ="dataCenterSelect"]').click()
-  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').eq(5).find('ui5-li').eq(dataCenterOption).realClick()
   cy.wait(500)
 }
-
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
   cy.get('[data-cy ="childBaseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
   cy.get('[data-cy ="childDescriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)
