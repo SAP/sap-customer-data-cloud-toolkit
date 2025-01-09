@@ -3,6 +3,7 @@
  * License: Apache-2.0
  */
 /* eslint-disable no-template-curly-in-string */
+import { commonSteps } from './commonData'
 export const importFullAccountAzure = {
   name: '{{dataflowName}}',
   status: 'published',
@@ -20,29 +21,7 @@ export const importFullAccountAzure = {
       },
       next: ['loginIds'],
     },
-    {
-      id: 'azure.blob',
-      type: 'datasource.read.azure.blob',
-      params: {
-        accountName: '{{accountName}}',
-        accountKey: '{{accountKey}}',
-        container: '{{container}}',
-        fileNameRegex: '{{readFileNameRegex}}',
-        blobPrefix: '{{blobPrefix}}',
-      },
-      next: ['file.parse.dsv'],
-    },
-    {
-      id: 'file.parse.dsv',
-      type: 'file.parse.dsv',
-      params: {
-        columnSeparator: ',',
-        fileCharset: 'UTF-8',
-        inferTypes: false,
-        addFilename: false,
-      },
-      next: ['Transform to CDC Structure'],
-    },
+    ...commonSteps,
     {
       id: 'Subscriptions',
       type: 'record.evaluate',
