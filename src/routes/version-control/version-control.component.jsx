@@ -26,20 +26,22 @@ const VersionControlComponent = ({ t }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [filesToUpdate, setFilesToUpdate] = useState([])
   const [loadedCommits, setLoadedCommits] = useState(new Set())
+  const [page, setPage] = useState(1)
+  const [perPage] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
 
   const fetchCommits = useCallback(async () => {
     if (gitToken && owner) {
       const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
       try {
-        const { commitList } = await handleCommitListRequestServices(versionControl, apiKey, commits.length / 10 + 1, 10)
-        const uniqueCommits = commitList.filter((commit) => !loadedCommits.has(commit.sha))
-        setCommits((prevCommits) => [...prevCommits, ...uniqueCommits])
-        setLoadedCommits((prevLoadedCommits) => new Set([...prevLoadedCommits, ...uniqueCommits.map((commit) => commit.sha)]))
+        const { commitList, totalCommits } = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
+        setCommits(commitList)
+        setTotalPages(Math.ceil(totalCommits / perPage))
       } catch (error) {
         console.error('Error fetching commits:', error)
       }
     }
-  }, [gitToken, owner, credentials, apiKey, currentSite, commits.length, loadedCommits])
+  }, [gitToken, owner, credentials, apiKey, currentSite, commits.length, loadedCommits, page, perPage])
 
   useEffect(() => {
     fetchCommits() // Fetch commits on initial render and when dependencies change
