@@ -37,6 +37,7 @@ const ServerImportComponent = ({ t }) => {
   const [accountOption, setAccountOption] = useState('Full')
   const [showDialog, setShowSuccessDialog] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const [createdDataflowId, setCreatedDataflowId] = useState('')
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -60,9 +61,14 @@ const ServerImportComponent = ({ t }) => {
       return !isInputFilled(serverConfigurations[selectedOption])
     }
   }
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedOption && accountOption) {
-      dispatch(setDataflow({ option: selectedOption }))
+      const resultAction = await dispatch(setDataflow({ option: selectedOption }))
+      if (setDataflow.fulfilled.match(resultAction)) {
+        setCreatedDataflowId(resultAction.payload)
+      } else {
+        console.error('Failed to set dataflow:', resultAction.payload)
+      }
       setShowSuccessDialog(true)
     }
   }
@@ -83,10 +89,10 @@ const ServerImportComponent = ({ t }) => {
       headerText="Success"
       state={ValueState.Success}
       closeButtonContent="Close"
-      id="copyConfigSuccessPopup"
-      data-cy="copyConfigSuccessPopup"
+      id="serverImportSuccessPopup"
+      data-cy="serverImportSuccessPopup"
     >
-      <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY')}</Text>
+      <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { dataflowId: createdDataflowId })}</Text>{' '}
     </DialogMessageInform>
   )
   return (

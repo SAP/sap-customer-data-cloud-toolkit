@@ -12,7 +12,11 @@ describe('Server Import test suite', () => {
       utils.startUp(dataTest.importAccounts)
       utils.checkServerImportState('Full')
     })
-    it('Import Full account', () => {
+    it('Import account', () => {
+      cy.intercept('POST', 'idx.createDataflow', {
+        body: dataTest.mockedSetSchedulerResponse,
+      }).as('setSchedule')
+
       cy.get('#serverImportSaveButton').should('have.attr', 'disabled', 'disabled')
       cy.get('#\\{\\{dataflowName\\}\\}').shadow().find('.ui5-input-inner').type('dataflowName')
       cy.get('#\\{\\{accountName\\}\\}').shadow().find('.ui5-input-inner').type('accountName')
@@ -20,7 +24,8 @@ describe('Server Import test suite', () => {
       cy.get('#\\{\\{container\\}\\}').shadow().find('.ui5-input-inner').type('container')
       cy.get('#\\{\\{readFileNameRegex\\}\\}').shadow().find('.ui5-input-inner').should('have.value', '')
       cy.get('#\\{\\{blobPrefix\\}\\}').shadow().find('.ui5-input-inner').should('have.value', '')
-      cy.get('#serverImportSaveButton').should('not.be.disabled')
+      cy.get('#serverImportSaveButton').should('not.be.disabled').click()
+      cy.get('#serverImportSuccessPopup').find('span').should('have.text', dataTest.serverImportSuccessMessage)
     })
   })
 })

@@ -30,8 +30,8 @@ class ServerImport {
       const replacedDataflow = this.replaceVariables(accountOption === 'Lite' ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
       const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
       const schedule = this.scheduleStructure(createDataflow)
-      const createSchedule = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
-      return createSchedule
+      await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+      return createDataflow.id
     }
   }
   getConfigurations(configurations, key) {
