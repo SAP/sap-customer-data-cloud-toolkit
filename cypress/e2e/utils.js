@@ -46,6 +46,7 @@ import {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  serverImportHeader,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -59,6 +60,11 @@ export function startUp(pageName) {
   cy.reload()
 }
 
+export function checkServerImportState(accountType) {
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header').should('contain.text', serverImportHeader)
+  cy.get('#selectAccountType').should('contain.text', `${accountType} Account`)
+  cy.get('#selectStorageServer').should('contain.text', 'Azure')
+}
 export function clearCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')

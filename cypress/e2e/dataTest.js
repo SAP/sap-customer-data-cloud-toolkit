@@ -65,6 +65,8 @@ const prettifySingleNoJavascript = 'CloseThere is no Javascript on this Screen-S
 const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
 const prettifySingleError = 'CloseError formatting Screen-Set ID'
 const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Format on any Screen-Set.'
+const importAccounts = 'Import Accounts'
+const serverImportHeader = 'Deploy and ImportImport a full or lite account from a storage server'
 const mockedPrettierGetScreenSetResponse = {
   callId: '5a4395b432794df383c2a35740ae90b0',
   errorCode: 0,
@@ -1960,4 +1962,6 @@ export {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  importAccounts,
+  serverImportHeader,
 }

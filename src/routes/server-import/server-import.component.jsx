@@ -97,12 +97,12 @@ const ServerImportComponent = ({ t }) => {
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
                 <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
-                <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
+                <Select id="selectAccountType" onChange={handleAccountOptionChange} className={classes.selectBox}>
                   <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
                   <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
                 </Select>
                 <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
-                <Select onChange={handleOptionChange} className={classes.selectBox}>
+                <Select id="selectStorageServer" onChange={handleOptionChange} className={classes.selectBox}>
                   {Object.keys(serverConfigurations).map((key) => (
                     <Option key={key} value={key}>
                       {key.charAt(0).toUpperCase() + key.slice(1)}

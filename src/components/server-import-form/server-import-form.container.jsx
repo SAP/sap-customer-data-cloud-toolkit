@@ -45,6 +45,7 @@ const FormItemWithIcon = ({ field, handleInputChange }) => {
       </div>
 
       <Input
+        id={field.id}
         type={field.type}
         name={field.name}
         placeholder={field.placeholder}
