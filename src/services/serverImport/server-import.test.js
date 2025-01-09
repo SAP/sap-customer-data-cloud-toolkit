@@ -51,9 +51,9 @@ describe('ServerImport Test Suite', () => {
   })
 
   test('should set dataflow for azure option', async () => {
-    axios.mockResolvedValueOnce({ data: commonConfigurations }).mockResolvedValueOnce({ data: scheduleResponse })
+    axios.mockResolvedValueOnce({ data: scheduleResponse }).mockResolvedValueOnce({ data: '56b5d528ed824da59bd325e848f04986' })
     const result = await serverImport.setDataflow(commonConfigurations, commonOption, commonAccountOption)
-    expect(result).toEqual(scheduleResponse)
+    expect(result).toEqual(scheduleResponse.id)
   })
 
   test('should get configurations', () => {

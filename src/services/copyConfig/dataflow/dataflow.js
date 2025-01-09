@@ -33,7 +33,6 @@ class Dataflow {
     const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
     })
-    console.log('res-data', res.data)
     return res.data
   }
 
