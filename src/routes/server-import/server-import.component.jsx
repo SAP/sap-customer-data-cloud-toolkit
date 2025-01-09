@@ -121,10 +121,10 @@ const ServerImportComponent = ({ t }) => {
                     <div>
                       <Button
                         type="submit"
-                        id="copyConfigExtendedSaveButton"
+                        id="serverImportSaveButton"
                         className="fd-button fd-button--emphasized fd-button--compact"
                         onClick={handleSubmit}
-                        data-cy="copyConfigExtendedSaveButton"
+                        data-cy="serverImportSaveButton"
                         design="Emphasized"
                         disabled={disableDeployButton()}
                       >
@@ -132,8 +132,8 @@ const ServerImportComponent = ({ t }) => {
                       </Button>
                       <Button
                         type="button"
-                        id="copyConfigExtendedCancelButton"
-                        data-cy="copyConfigExtendedCancelButton"
+                        id="serverImportCancelButton"
+                        data-cy="serverImportCancelButton"
                         onClick={onCancelHandler}
                         className="fd-button fd-button--transparent fd-button--compact"
                       >
