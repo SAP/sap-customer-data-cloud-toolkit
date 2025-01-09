@@ -4,7 +4,7 @@
  */
 
 import TopicImportFields from './communicationImport'
-import { expectedCommunicationResponse, expectedGetCommunicationsData, expectedTransformedCommunicationData } from './dataTest'
+import { expectedCommunicationResponse, expectedTransformedCommunicationData } from './dataTest'
 import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
 jest.mock('axios')

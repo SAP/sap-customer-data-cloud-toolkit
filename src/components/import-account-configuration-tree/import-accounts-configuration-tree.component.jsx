@@ -10,9 +10,8 @@ import { setMandatoryFields, setMandatoryStatus, setSugestionSchema, setSuggesti
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
-import './import-accounts-configuration-tree.component.css'
 import '@ui5/webcomponents-icons/dist/message-information.js'
-import ArrayObjectOutputButtons from '../array-object-output-buttons/array-object-output-buttons.component.jsx'
+import ArrayObjectOutputButtons from '../schema-property-type/schema-property-type.component.jsx'
 import { handleSelectChange } from './utils.js'
 
 const ImportAccountConfigurationTree = ({

@@ -177,20 +177,3 @@ export const propagateConfigurationSelectBox = (configuration, payload) => {
     }
   }
 }
-
-const findParent = (configurations, targetId) => {
-  for (const configuration of configurations) {
-    if (configuration.branches) {
-      for (const branch of configuration.branches) {
-        if (branch.id === targetId) {
-          return configuration
-        }
-        const parent = findParent(branch.branches, targetId)
-        if (parent) {
-          return parent
-        }
-      }
-    }
-  }
-  return null
-}

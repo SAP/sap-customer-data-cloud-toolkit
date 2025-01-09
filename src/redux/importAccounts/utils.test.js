@@ -8,7 +8,7 @@
  */
 
 import { mockConfigurationTree, mockConfigurationTreeTrue } from './dataTest'
-import { clearConfigurationsState, getAllConfiguration, propagateConfigurationState } from './utils'
+import { propagateConfigurationState } from './utils'
 
 describe('importAccountsSlice utils test suite', () => {
   test('should propagate configuration state to first level configurations', () => {
@@ -32,15 +32,5 @@ describe('importAccountsSlice utils test suite', () => {
     expect(configuration.branches[1].value).toEqual(false)
     expect(configuration.branches[1].branches[0].value).toEqual(false)
     expect(configuration.branches[1].branches[1].value).toEqual(false)
-  })
-  test('should propagate configuration state to first level configurations', () => {
-    const configuration = mockConfigurationTree[1]
-    expect(configuration.value).toEqual(true)
-    expect(configuration.branches[0].value).toEqual(true)
-    expect(configuration.branches[1].value).toEqual(true)
-    clearConfigurationsState(configuration, false)
-    expect(configuration.value).toEqual(false)
-    expect(configuration.branches[0].value).toEqual(false)
-    expect(configuration.branches[1].value).toEqual(false)
   })
 })

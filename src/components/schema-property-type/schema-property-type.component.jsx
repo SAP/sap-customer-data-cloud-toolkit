@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next'
 import { Option, Select } from '@ui5/webcomponents-react'
 import { useDispatch } from 'react-redux'
 import { createUseStyles } from 'react-jss'
-import styles from './array-object-output-buttons.style'
+import styles from './schema-property-type.styles'
 
 const useStyles = createUseStyles(styles, { name: 'ArrayObjectOutputButtons' })
 const ArrayObjectOutputButtons = ({ handleSelectChange, t, setSwitchOptions, treeNode, setTreeData, treeData }) => {

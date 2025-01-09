@@ -4,7 +4,7 @@
  */
 import { propagateConfigurationState } from '../../../redux/importAccounts/utils'
 import { passwordObjectStructure } from '../../importAccounts/passwordImport/passwordObjectStructure'
-import { expectedPasswordObject, expectedPasswordResponse } from './dataTest'
+import { expectedPasswordResponse } from './dataTest'
 import { exportPasswordData } from './passwordMatches'
 
 jest.mock('axios')
