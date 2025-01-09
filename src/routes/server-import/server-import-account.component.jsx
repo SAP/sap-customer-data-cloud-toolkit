@@ -44,7 +44,7 @@ const ServerImportComponent = ({ t }) => {
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
-  }, [dispatch, apikey, serverConfigurations, credentials, currentSiteInfo.dataCenter])
+  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
