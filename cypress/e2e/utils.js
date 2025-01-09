@@ -141,7 +141,6 @@ export function getSiteStructure(optionNumber, timeout) {
   cy.wait(1000)
   return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
-
 export function deleteChildSite(length) {
   cy.get('ui5-table-row').eq(length).find('ui5-table-cell').eq(4).find('ui5-button').shadow().find('button').click()
   cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).shadow().find('button').realClick()
