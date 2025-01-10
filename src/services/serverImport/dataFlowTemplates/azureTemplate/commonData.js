@@ -84,3 +84,28 @@ export const commonTransformCDCStructure = (step) => [
     next: [step],
   },
 ]
+export const commonImportAccountRequestLogger = (step) => [
+  {
+    id: 'Import Account Request Logger',
+    type: 'record.evaluate',
+    params: {
+      script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlcXVlc3QiLCByZWNvcmQpOw0KICAgIHJldHVybiByZWNvcmQ7DQp9',
+      ECMAScriptVersion: '12',
+      notifyLastRecord: false,
+    },
+    next: [step],
+  },
+]
+
+export const commonImportAccountSuccessResponse = (script, step) => [
+  {
+    id: 'Import Account Success Response',
+    type: 'record.evaluate',
+    params: {
+      script: script,
+      ECMAScriptVersion: '12',
+      notifyLastRecord: false,
+    },
+    next: [step],
+  },
+]

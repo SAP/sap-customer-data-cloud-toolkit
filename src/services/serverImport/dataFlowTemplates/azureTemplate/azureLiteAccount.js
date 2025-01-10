@@ -3,13 +3,12 @@
  * License: Apache-2.0
  */
 /* eslint-disable no-template-curly-in-string */
-import { commonError, commonErrorResponse, commonSteps, commonTransformCDCStructure } from './commonData'
+import { commonError, commonErrorResponse, commonImportAccountRequestLogger, commonImportAccountSuccessResponse, commonSteps, commonTransformCDCStructure } from './commonData'
 
 export const importLiteAccountAzure = {
   name: '{{dataflowName}}',
   status: 'published',
   description: 'Import Lite Account - Toolkit',
-
   steps: [
     ...commonTransformCDCStructure('Transform Subscriptions'),
     ...commonSteps,
@@ -63,27 +62,12 @@ export const importLiteAccountAzure = {
       next: ['Import Account Success Response'],
       error: ['Import Account Error Response'],
     },
-    {
-      id: 'Import Account Success Response',
-      type: 'record.evaluate',
-      params: {
-        script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlc3BvbnNlIiwgcmVjb3JkKTsNCiAgcmV0dXJuIHJlY29yZDsNCn0=',
-        ECMAScriptVersion: '12',
-        notifyLastRecord: false,
-      },
-      next: ['Success File'],
-    },
+    ...commonImportAccountSuccessResponse(
+      'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlc3BvbnNlIiwgcmVjb3JkKTsNCiAgcmV0dXJuIHJlY29yZDsNCn0=',
+      'Success File',
+    ),
     ...commonErrorResponse,
-    {
-      id: 'Import Account Request Logger',
-      type: 'record.evaluate',
-      params: {
-        script: 'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlcXVlc3QiLCByZWNvcmQpOw0KICAgIHJldHVybiByZWNvcmQ7DQp9',
-        ECMAScriptVersion: '12',
-        notifyLastRecord: false,
-      },
-      next: ['gigya.generic - ImportLiteAccount'],
-    },
+    ...commonImportAccountRequestLogger('gigya.generic - ImportLiteAccount'),
     {
       id: 'Success File',
       type: 'file.format.dsv',
