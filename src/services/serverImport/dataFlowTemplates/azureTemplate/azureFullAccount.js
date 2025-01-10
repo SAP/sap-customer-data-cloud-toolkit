@@ -11,6 +11,7 @@ import {
   commonSteps,
   commonTransformCDCStructure,
   createGigyaGenericStep,
+  dinamicStep,
 } from './commonData'
 export const importFullAccountAzure = {
   name: '{{dataflowName}}',
@@ -55,17 +56,11 @@ export const importFullAccountAzure = {
       next: ['Handle UID'],
       error: ['Lookup Failed'],
     },
-    {
-      id: 'Handle UID',
-      type: 'record.evaluate',
-      params: {
-        script:
-          'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgICBsZXQgVUlEOw0KICAgIGxldCByZXF1ZXN0ID0ge307DQoNCiAgICBpZiAocmVjb3JkLlVJRCkgew0KICAgICAgICBVSUQgPSByZWNvcmQuVUlEOw0KICAgIH0gZWxzZSB7DQogICAgICAgIFVJRCA9ICd4eHh4eHh4eHh4eHg0eHh4eXh4eHh4eHh4eHh4eHh4eCcucmVwbGFjZSgvW3h5XS9nLCBmdW5jdGlvbihjKSB7DQogICAgICAgICAgICB2YXIgciA9IE1hdGgucmFuZG9tKCkgKiAxNiB8IDAsDQogICAgICAgICAgICAgICAgdiA9IGMgPT0gJ3gnID8gciA6IChyICYgMHgzIHwgMHg4KTsNCiAgICAgICAgICAgIHJldHVybiB2LnRvU3RyaW5nKDE2KTsNCiAgICAgICAgfSk7DQogICAgfQ0KICAgIHJlY29yZC51aWQgPSBVSUQ7DQogICAgZGVsZXRlIHJlY29yZC5VSUQ7DQoNCiAgICByZXR1cm4gcmVjb3JkOw0KfQ==',
-        ECMAScriptVersion: '12',
-        notifyLastRecord: false,
-      },
-      next: ['Handle unsupported schema'],
-    },
+    ...dinamicStep(
+      'Handle UID',
+      'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgICBsZXQgVUlEOw0KICAgIGxldCByZXF1ZXN0ID0ge307DQoNCiAgICBpZiAocmVjb3JkLlVJRCkgew0KICAgICAgICBVSUQgPSByZWNvcmQuVUlEOw0KICAgIH0gZWxzZSB7DQogICAgICAgIFVJRCA9ICd4eHh4eHh4eHh4eHg0eHh4eXh4eHh4eHh4eHh4eHh4eCcucmVwbGFjZSgvW3h5XS9nLCBmdW5jdGlvbihjKSB7DQogICAgICAgICAgICB2YXIgciA9IE1hdGgucmFuZG9tKCkgKiAxNiB8IDAsDQogICAgICAgICAgICAgICAgdiA9IGMgPT0gJ3gnID8gciA6IChyICYgMHgzIHwgMHg4KTsNCiAgICAgICAgICAgIHJldHVybiB2LnRvU3RyaW5nKDE2KTsNCiAgICAgICAgfSk7DQogICAgfQ0KICAgIHJlY29yZC51aWQgPSBVSUQ7DQogICAgZGVsZXRlIHJlY29yZC5VSUQ7DQoNCiAgICByZXR1cm4gcmVjb3JkOw0KfQ==',
+      'Handle unsupported schema',
+    ),
     ...commonError,
     createGigyaGenericStep(
       'setAccountInfo',

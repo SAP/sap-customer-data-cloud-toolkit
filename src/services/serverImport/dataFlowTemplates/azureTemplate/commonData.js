@@ -123,3 +123,30 @@ export const createGigyaGenericStep = (id, apiMethod, apiParams, nextStep, error
   next: [nextStep],
   error: [errorStep],
 })
+
+export const createGigyaLiteAccount = createGigyaGenericStep(
+  'gigya.generic - ImportLiteAccount',
+  'accounts.importLiteAccount',
+  [
+    { sourceField: 'email', paramName: 'email', value: '' },
+    { sourceField: 'request.context', paramName: 'context', value: '' },
+    { sourceField: 'request.profile', paramName: 'profile', value: '' },
+    { sourceField: 'request.data', paramName: 'data', value: '' },
+    { sourceField: 'request.subscriptions', paramName: 'subscriptions', value: '' },
+  ],
+  'Import Account Success Response',
+  'Import Account Error Response',
+)
+
+export const dinamicStep = (id, script, step) => [
+  {
+    id: id,
+    type: 'record.evaluate',
+    params: {
+      script: script,
+      ECMAScriptVersion: '12',
+      notifyLastRecord: false,
+    },
+    next: [step],
+  },
+]
