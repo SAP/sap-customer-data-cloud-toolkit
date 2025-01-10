@@ -4,6 +4,7 @@
  */
 
 import { cleanResponse, cleanEmailResponse } from './dataSanitization'
+import Options from '../copyConfig/options'
 
 // set Policies
 export const setPolicies = async function (config) {
@@ -101,7 +102,26 @@ export const setCommunicationTopics = async function (config) {
     await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.results, 'topic')
   }
 }
-//setDataFlow
+// set Dataflow
+export const setDataflow = async function (config) {
+  const options = {
+    options: {
+      id: 'dataflows',
+      name: 'dataflows',
+      value: false,
+      formatName: true,
+      branches: config.result.map((dataflow) => ({
+        id: dataflow.name,
+        name: dataflow.name,
+        value: true,
+        formatName: false,
+      })),
+    },
+  }
+  const optionsObj = new Options(options.options)
+  await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, optionsObj)
+}
+
 //setRiskAssessment
 //setTopic
 //setSocial

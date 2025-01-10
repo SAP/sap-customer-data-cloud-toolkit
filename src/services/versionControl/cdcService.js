@@ -1,5 +1,5 @@
 import { getCommitFiles } from './githubUtils'
-import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates, setCommunicationTopics } from './setters'
+import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates, setCommunicationTopics, setDataflow } from './setters'
 
 class CdcService {
   constructor(versionControl) {
@@ -20,6 +20,12 @@ class CdcService {
       { name: 'sms', promise: this.versionControl.sms.get() },
       { name: 'channel', promise: this.versionControl.communication.get() },
       { name: 'topic', promise: this.versionControl.topic.searchTopics() },
+      //consents
+      //info
+      //recaptcha
+      //social
+      //webook
+      //topic
     ]
     return responses
   }
@@ -64,7 +70,7 @@ class CdcService {
         case 'schema':
           await setSchema.call(this.versionControl, filteredResponse)
           break
-        case 'screenSets': // Matching the updated name here
+        case 'screenSets':
           await setScreenSets.call(this.versionControl, filteredResponse)
           break
         case 'sms':
@@ -76,7 +82,14 @@ class CdcService {
         case 'topic':
           await setCommunicationTopics.call(this.versionControl, filteredResponse)
           break
-
+        case 'dataflow':
+          await setDataflow.call(this.versionControl, filteredResponse)
+          break
+        //setDataFlow
+        //setRiskAssessment
+        //setTopic
+        //setSocial
+        //setWebhook
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }
