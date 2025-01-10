@@ -30,12 +30,12 @@ export const handleGetServices = async (versionControl, apiKey, commitMessage) =
   }
 }
 
-export const handleCommitListRequestServices = async (versionControl, apiKey, page = 1, per_page = 10) => {
+export const handleCommitListRequestServices = async (versionControl, apiKey) => {
   try {
     const hasBranch = await githubUtils.branchExists(versionControl, apiKey)
     if (hasBranch) {
-      const { data: commitList, totalCommits } = await githubUtils.getCommits(versionControl, page, per_page)
-      return { commitList, totalCommits: totalCommits < per_page && page > 1 ? per_page * page : totalCommits }
+      const { data: commitList } = await githubUtils.getCommits(versionControl)
+      return { commitList, totalCommits: commitList.length }
     } else {
       return { commitList: [], totalCommits: 0 }
     }

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea, List, StandardListItem, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
+import { Bar, Input, Button, Dialog, TextArea, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
-import { useSelector } from 'react-redux'
-import Cookies from 'js-cookie'
-import { createVersionControlInstance, handleGetServices, handleCommitListRequestServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchCommits, setGitToken, setOwner, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from '../../redux/versionControl/versionControlSlice'
+import { createVersionControlInstance, handleGetServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
 import * as githubUtils from '../../services/versionControl/githubUtils'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
@@ -15,37 +15,24 @@ const useStyles = createUseStyles(styles, { name: 'Prettier' })
 
 const VersionControlComponent = ({ t }) => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   const currentSite = useSelector(selectCurrentSiteInformation)
   const credentials = useSelector(selectCredentials)
   const apiKey = getApiKey(window.location.hash)
 
-  const [commits, setCommits] = useState([])
-  const [gitToken, setGitToken] = useState(Cookies.get('gitToken') || '')
-  const [owner, setOwner] = useState(Cookies.get('owner') || '')
+  const commits = useSelector(selectCommits)
+  const isFetching = useSelector(selectIsFetching)
+  const gitToken = useSelector(selectGitToken)
+  const owner = useSelector(selectOwner)
+  const error = useSelector(selectError)
+
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [filesToUpdate, setFilesToUpdate] = useState([])
-  const [loadedCommits, setLoadedCommits] = useState(new Set())
-  const [page, setPage] = useState(1)
-  const [perPage] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
-
-  const fetchCommits = useCallback(async () => {
-    if (gitToken && owner) {
-      const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
-      try {
-        const { commitList, totalCommits } = await handleCommitListRequestServices(versionControl, apiKey, page, perPage)
-        setCommits(commitList)
-        setTotalPages(Math.ceil(totalCommits / perPage))
-      } catch (error) {
-        console.error('Error fetching commits:', error)
-      }
-    }
-  }, [gitToken, owner, credentials, apiKey, currentSite, commits.length, loadedCommits, page, perPage])
 
   useEffect(() => {
-    fetchCommits() // Fetch commits on initial render and when dependencies change
-  }, [fetchCommits])
+    dispatch(fetchCommits())
+  }, [dispatch, gitToken, owner])
 
   const onCreateBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
@@ -62,9 +49,7 @@ const VersionControlComponent = ({ t }) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       await handleGetServices(versionControl, apiKey, commitMessage)
-      setCommits([])
-      setLoadedCommits(new Set())
-      await fetchCommits()
+      dispatch(fetchCommits())
     } catch (error) {
       console.error('Error creating backup:', error)
     } finally {
@@ -80,24 +65,18 @@ const VersionControlComponent = ({ t }) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
     try {
       await handleCommitRevertServices(versionControl, sha)
-      setCommits([]) // Clear commits before fetching new ones
-      setLoadedCommits(new Set()) // Clear loaded commits
-      await fetchCommits() // Refresh the commits list after revert
+      dispatch(fetchCommits())
     } catch (error) {
       console.error('Error reverting commit:', error)
     }
   }
 
   const handleGitTokenChange = (e) => {
-    const token = e.target.value
-    setGitToken(token)
-    Cookies.set('gitToken', token, { secure: true, sameSite: 'strict' })
+    dispatch(setGitToken(e.target.value))
   }
 
   const handleOwnerChange = (e) => {
-    const owner = e.target.value
-    setOwner(owner)
-    Cookies.set('owner', owner, { secure: true, sameSite: 'strict' })
+    dispatch(setOwner(e.target.value))
   }
 
   const handleCommitMessageChange = (e) => {
@@ -105,7 +84,9 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onLoadMore = () => {
-    fetchCommits()
+    if (!isFetching) {
+      dispatch(fetchCommits())
+    }
   }
 
   return (
