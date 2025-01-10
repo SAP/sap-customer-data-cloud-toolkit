@@ -156,6 +156,8 @@ class Dataflow {
     if (destinationSiteDataflows.errorCode !== 0) {
       return [destinationSiteDataflows]
     }
+    console.log('options--->', options)
+    console.log('options.getOptions()--->', options.getOptions())
     for (const dataflow of options.getOptions().branches) {
       if (dataflow.value) {
         promises.push(this.#copyDataflow(destinationSite, destinationSiteConfiguration.dataCenter, dataflow.name, response, destinationSiteDataflows, dataflow.variables))

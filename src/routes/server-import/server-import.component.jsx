@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import { isInputFilled } from './utils.js'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
+import { trackUsage } from '../../lib/tracker.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'
@@ -51,6 +52,9 @@ const ServerImportComponent = ({ t }) => {
   }
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value)
+  }
+  const onSuccessDialogAfterCloseHandler = async () => {
+    await trackUsage({ featureName: PAGE_TITLE })
   }
 
   const handleInputChange = (event, id) => {
@@ -89,6 +93,7 @@ const ServerImportComponent = ({ t }) => {
       headerText="Success"
       state={ValueState.Success}
       closeButtonContent="Close"
+      onAfterClose={onSuccessDialogAfterCloseHandler}
       id="serverImportSuccessPopup"
       data-cy="serverImportSuccessPopup"
     >
