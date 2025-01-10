@@ -109,3 +109,17 @@ export const commonImportAccountSuccessResponse = (script, step) => [
     next: [step],
   },
 ]
+
+// commonFunctions.js
+export const createGigyaGenericStep = (id, apiMethod, apiParams, nextStep, errorStep) => ({
+  id,
+  type: 'datasource.write.gigya.generic',
+  params: {
+    apiMethod,
+    maxConnections: 10,
+    addResponse: true,
+    apiParams,
+  },
+  next: [nextStep],
+  error: [errorStep],
+})

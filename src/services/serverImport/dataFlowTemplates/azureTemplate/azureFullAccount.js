@@ -3,7 +3,15 @@
  * License: Apache-2.0
  */
 /* eslint-disable no-template-curly-in-string */
-import { commonError, commonErrorResponse, commonImportAccountRequestLogger, commonImportAccountSuccessResponse, commonSteps, commonTransformCDCStructure } from './commonData'
+import {
+  commonError,
+  commonErrorResponse,
+  commonImportAccountRequestLogger,
+  commonImportAccountSuccessResponse,
+  commonSteps,
+  commonTransformCDCStructure,
+  createGigyaGenericStep,
+} from './commonData'
 export const importFullAccountAzure = {
   name: '{{dataflowName}}',
   status: 'published',
@@ -59,44 +67,19 @@ export const importFullAccountAzure = {
       next: ['Handle unsupported schema'],
     },
     ...commonError,
-    {
-      id: 'setAccountInfo',
-      type: 'datasource.write.gigya.generic',
-      params: {
-        apiMethod: 'accounts.setAccountInfo',
-        maxConnections: 10,
-        addResponse: true,
-        apiParams: [
-          {
-            sourceField: '_response.UID',
-            paramName: 'uid',
-            value: '',
-          },
-          {
-            sourceField: 'context',
-            paramName: 'context',
-            value: '',
-          },
-          {
-            sourceField: 'addresses',
-            paramName: 'addresses',
-            value: '',
-          },
-          {
-            sourceField: 'internal',
-            paramName: 'internal',
-            value: '',
-          },
-          {
-            sourceField: 'customIdentifiers',
-            paramName: 'customIdentifiers',
-            value: '',
-          },
-        ],
-      },
-      next: ['Set Account Response'],
-      error: ['Set Account Error Response'],
-    },
+    createGigyaGenericStep(
+      'setAccountInfo',
+      'accounts.setAccountInfo',
+      [
+        { sourceField: '_response.UID', paramName: 'uid', value: '' },
+        { sourceField: 'context', paramName: 'context', value: '' },
+        { sourceField: 'addresses', paramName: 'addresses', value: '' },
+        { sourceField: 'internal', paramName: 'internal', value: '' },
+        { sourceField: 'customIdentifiers', paramName: 'customIdentifiers', value: '' },
+      ],
+      'Set Account Response',
+      'Set Account Error Response',
+    ),
     {
       id: 'gigya.importaccount',
       type: 'datasource.write.gigya.importaccount',
@@ -112,6 +95,7 @@ export const importFullAccountAzure = {
       'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlc3BvbnNlIiwgcmVjb3JkKTsNCiAgICByZXR1cm4gcmVjb3JkOw0KfQ==',
       'Restore unsupported schemas',
     ),
+
     ...commonErrorResponse,
     ...commonImportAccountRequestLogger('gigya.importaccount'),
     {

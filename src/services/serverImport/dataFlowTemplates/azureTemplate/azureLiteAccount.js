@@ -3,7 +3,15 @@
  * License: Apache-2.0
  */
 /* eslint-disable no-template-curly-in-string */
-import { commonError, commonErrorResponse, commonImportAccountRequestLogger, commonImportAccountSuccessResponse, commonSteps, commonTransformCDCStructure } from './commonData'
+import {
+  commonError,
+  commonErrorResponse,
+  commonImportAccountRequestLogger,
+  commonImportAccountSuccessResponse,
+  commonSteps,
+  commonTransformCDCStructure,
+  createGigyaGenericStep,
+} from './commonData'
 
 export const importLiteAccountAzure = {
   name: '{{dataflowName}}',
@@ -24,44 +32,19 @@ export const importLiteAccountAzure = {
       next: ['Build Payload'],
     },
     ...commonError,
-    {
-      id: 'gigya.generic - ImportLiteAccount',
-      type: 'datasource.write.gigya.generic',
-      params: {
-        apiMethod: 'accounts.importLiteAccount',
-        maxConnections: 10,
-        addResponse: true,
-        apiParams: [
-          {
-            sourceField: 'email',
-            paramName: 'email',
-            value: '',
-          },
-          {
-            sourceField: 'request.context',
-            paramName: 'context',
-            value: '',
-          },
-          {
-            sourceField: 'request.profile',
-            paramName: 'profile',
-            value: '',
-          },
-          {
-            sourceField: 'request.data',
-            paramName: 'data',
-            value: '',
-          },
-          {
-            sourceField: 'request.subscriptions',
-            paramName: 'subscriptions',
-            value: '',
-          },
-        ],
-      },
-      next: ['Import Account Success Response'],
-      error: ['Import Account Error Response'],
-    },
+    createGigyaGenericStep(
+      'gigya.generic - ImportLiteAccount',
+      'accounts.importLiteAccount',
+      [
+        { sourceField: 'email', paramName: 'email', value: '' },
+        { sourceField: 'request.context', paramName: 'context', value: '' },
+        { sourceField: 'request.profile', paramName: 'profile', value: '' },
+        { sourceField: 'request.data', paramName: 'data', value: '' },
+        { sourceField: 'request.subscriptions', paramName: 'subscriptions', value: '' },
+      ],
+      'Import Account Success Response',
+      'Import Account Error Response',
+    ),
     ...commonImportAccountSuccessResponse(
       'ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQoNCiAgbG9nZ2VyLmluZm8oIkltcG9ydCBBY2NvdW50IFJlc3BvbnNlIiwgcmVjb3JkKTsNCiAgcmV0dXJuIHJlY29yZDsNCn0=',
       'Success File',
