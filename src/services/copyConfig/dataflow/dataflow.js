@@ -167,7 +167,7 @@ class Dataflow {
   }
 
   async #getSiteDataflows(destinationSite, dataCenter) {
-    return new Dataflow(this.#credentials, destinationSite, dataCenter).search()
+    return await new Dataflow(this.#credentials, destinationSite, dataCenter).search()
   }
 
   async #copyDataflow(destinationSite, dataCenter, name, sourceSiteDataflows, destinationSiteDataflows, dataflowVariables) {
