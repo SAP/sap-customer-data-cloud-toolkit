@@ -8,7 +8,7 @@
  */
 
 import { mockConfigurationTree, mockConfigurationTreeTrue } from './dataTest'
-import { propagateConfigurationState } from './utils'
+import { getParent, propagateConfigurationState } from './utils'
 
 describe('importAccountsSlice utils test suite', () => {
   test('should propagate configuration state to first level configurations', () => {

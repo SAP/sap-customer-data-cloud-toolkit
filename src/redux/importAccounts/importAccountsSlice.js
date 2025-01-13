@@ -1,7 +1,7 @@
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { setParentsTrue, propagateConfigurationSelectBox, getAllConfiguration, getParent, clearConfigurationsState, getConfigurationPath } from './utils'
+import { setParentsTrue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, getConfigurationPath } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurationTree`
@@ -61,37 +61,14 @@ export const importAccountsSlice = createSlice({
     setSugestionSchema(state, action) {
       setParentsTrue(state.selectedConfiguration, action.payload.checkBoxId, action.payload.value)
     },
-    setRootOptions(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      configuration.mandatory = true
-    },
 
-    setMandatoryStatus(state, action) {
-      const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
-      const parent = getParent(state.configurations, 'communications', action.payload.checkBoxId)
-      if (parent) {
-        configuration.mandatory = true
-        configuration.value = true
-      }
-    },
-    setSuggestionTreeMandatoryStatus(state, action) {
-      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
-      const parent = getParent(state.selectedConfiguration, 'communications', action.payload.checkBoxId)
-      if (parent) {
-        configuration.mandatory = true
-        configuration.value = true
-      }
-    },
     setSuggestionClickConfiguration(state, action) {
       const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)
       if (config) {
         state.selectedConfiguration = [config]
       }
     },
-    setSuggestionConfiguration(state, action) {
-      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
-      state.selectedConfiguration = configuration
-    },
+
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)
       state.selectedConfiguration = configuration
@@ -156,10 +133,6 @@ export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, asy
   }
 })
 export const {
-  setMandatoryStatus,
-  setSuggestionConfiguration,
-  setSuggestionTreeMandatoryStatus,
-  setRootOptions,
   setSelectedConfiguration,
   setSuggestionClickConfiguration,
   setConfigurationStatus,

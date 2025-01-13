@@ -21,7 +21,6 @@ import {
   setSwitchOptions,
   selectIsLoading,
   clearConfigurations,
-  setMandatoryStatus,
   setSuggestionClickConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
@@ -56,11 +55,7 @@ const ImportAccountsComponent = ({ t }) => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree(selectedValue))
   }
-  const dispatchMandatoryStatus = (treeNode) => {
-    if (treeNode.includes('status')) {
-      dispatch(setMandatoryStatus({ checkBoxId: treeNode, value: true }))
-    }
-  }
+
   const handleTreeNodeClick = (treeNodeId) => {
     if (treeNodeId) {
       dispatch(setSelectedConfiguration(treeNodeId))
@@ -153,7 +148,6 @@ const ImportAccountsComponent = ({ t }) => {
                         setSchemaInputValue={setSchemaInputValue}
                         schemaInputValue={schemaInputValue}
                         handleTreeNodeClick={handleTreeNodeClick}
-                        dispatchMandatoryStatus={dispatchMandatoryStatus}
                       />
                     </div>
                   </div>

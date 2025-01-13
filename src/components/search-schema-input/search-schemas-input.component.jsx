@@ -11,7 +11,7 @@ import { extractIds } from '../../routes/import-accounts/utils'
 import styles from './search-schema-input.styles'
 
 const useStyles = createUseStyles(styles, { name: 'SearchSchemaInput' })
-const SearchBar = ({ dispatch, handleSuggestionClick, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick, dispatchMandatoryStatus }) => {
+const SearchBar = ({ handleSuggestionClick, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick }) => {
   const classes = useStyles()
   const [suggestions, setSuggestions] = useState([])
 
