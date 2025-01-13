@@ -21,6 +21,7 @@ class CdcService {
       { name: 'channel', promise: this.versionControl.communication.get() },
       { name: 'topic', promise: this.versionControl.topic.searchTopics() },
       { name: 'webhook', promise: this.versionControl.webhook.get() },
+      { name: 'consent', promise: this.versionControl.consent.get() },
       //consents
       //recaptcha
       //social
