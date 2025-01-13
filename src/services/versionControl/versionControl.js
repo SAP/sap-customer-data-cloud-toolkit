@@ -17,6 +17,7 @@ import Cookies from 'js-cookie'
 import CdcService from './cdcService'
 import Communication from '../copyConfig/communication/communication'
 import Topic from '../copyConfig/communication/topic'
+import Webhook from '../copyConfig/webhook/webhook'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo, owner) {
@@ -48,6 +49,7 @@ class VersionControl {
     this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
     this.communication = new Communication(credentials, apiKey, dataCenter)
     this.topic = new Topic(credentials, apiKey, dataCenter)
+    this.webhook = new Webhook(credentials, apiKey, dataCenter)
 
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }

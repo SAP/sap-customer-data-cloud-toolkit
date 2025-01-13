@@ -102,27 +102,81 @@ export const setCommunicationTopics = async function (config) {
     await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.results, 'topic')
   }
 }
-// set Dataflow
-export const setDataflow = async function (config) {
-  const options = {
-    options: {
-      id: 'dataflows',
-      name: 'dataflows',
-      value: false,
-      formatName: true,
-      branches: config.result.map((dataflow) => ({
-        id: dataflow.name,
-        name: dataflow.name,
-        value: true,
-        formatName: false,
-      })),
-    },
+
+// Helper function to create Options object
+const createOptions = (type, items, formatName = true) => {
+  const optionsData = {
+    id: type,
+    name: type,
+    value: false,
+    formatName,
+    branches: items.map((item) => ({
+      id: item.name,
+      name: item.name,
+      value: true,
+      formatName: false,
+    })),
   }
-  const optionsObj = new Options(options.options)
-  await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, optionsObj)
+
+  return new Options(optionsData)
 }
 
+// set Dataflow
+export const setDataflow = async function (config) {
+  const options = createOptions('dataflows', config.result)
+  console.log('Dataflow Options created:', options.getOptions())
+  await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, options)
+}
+
+// set Webhook
+export const setWebhook = async function (config) {
+  const options = createOptions('webhooks', config.webhooks)
+  console.log('Webhook Options created:', options.getOptions())
+  await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, config, options)
+}
+
+// set Dataflow
+// export const setDataflow = async function (config) {
+//   const options = {
+//     options: {
+//       id: 'dataflows',
+//       name: 'dataflows',
+//       value: false,
+//       formatName: true,
+//       branches: config.result.map((dataflow) => ({
+//         id: dataflow.name,
+//         name: dataflow.name,
+//         value: true,
+//         formatName: false,
+//       })),
+//     },
+//   }
+//   const optionsObj = new Options(options.options)
+//   await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, optionsObj)
+// }
+
+// export const setWebhook = async function (config) {
+//   const optionsData = {
+//     id: 'webhooks',
+//     name: 'webhooks',
+//     value: false,
+//     formatName: true,
+//     branches: config.webhooks.map((webhook) => ({
+//       id: webhook.name,
+//       name: webhook.name,
+//       value: true,
+//       formatName: false,
+//     })),
+//   }
+
+//   const options = new Options(optionsData)
+//   console.log('Webhook Options created:', options.getOptions())
+//   debugger
+//   await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, config, options)
+// }
+
+
+//setConsents
+//setRecaptcha
 //setRiskAssessment
-//setTopic
 //setSocial
-//setWebhook
