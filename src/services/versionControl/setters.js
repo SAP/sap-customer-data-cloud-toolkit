@@ -155,6 +155,8 @@ export const setSocial = async function (config) {
   await this.social.copyFromGit(this.apiKey, this.dataCenter, config)
 }
 
-//setRecaptcha
-//setRiskAssessment
-//setSocial
+export const setRecaptcha = async function (config) {
+  await this.recaptcha.copyFromGit(this.apiKey, this.dataCenter, config)
+}
+
+

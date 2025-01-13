@@ -20,6 +20,7 @@ import Topic from '../copyConfig/communication/topic'
 import Webhook from '../copyConfig/webhook/webhook'
 import ConsentConfiguration from '../copyConfig/consent/consentConfiguration'
 import Social from '../copyConfig/social/social'
+import RecaptchaConfiguration from '../copyConfig/recaptcha/recaptchaConfiguration'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo, owner) {
@@ -54,6 +55,7 @@ class VersionControl {
     this.webhook = new Webhook(credentials, apiKey, dataCenter)
     this.consent = new ConsentConfiguration(credentials, apiKey, dataCenter)
     this.social = new Social(credentials, apiKey, dataCenter)
+    this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
 
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }
