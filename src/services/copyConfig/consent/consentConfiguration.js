@@ -49,6 +49,19 @@ class ConsentConfiguration {
     return responses
   }
 
+  async copyFromGit(destinationSite, dataCenter, content, options) {
+    let responses = []
+    if (options && options.value === false) {
+      return responses
+    }
+    const consentsPayload = ConsentConfiguration.#splitConsents(content.preferences)
+    responses.push(...(await this.copyConsentStatements(destinationSite, dataCenter, consentsPayload)))
+    responses = responses.flat()
+    stringToJson(responses, 'context')
+    responses = ConsentConfiguration.#addSeverityToResponses(responses)
+    return responses
+  }
+
   static #splitConsents(consents) {
     const consentsList = []
     for (const consent of Object.keys(consents)) {

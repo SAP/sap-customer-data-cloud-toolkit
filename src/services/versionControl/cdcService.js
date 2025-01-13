@@ -1,5 +1,18 @@
 import { getCommitFiles } from './githubUtils'
-import { setPolicies, setWebSDK, setSMS, setExtension, setSchema, setScreenSets, setRBA, setEmailTemplates, setCommunicationTopics, setDataflow, setWebhook } from './setters'
+import {
+  setPolicies,
+  setWebSDK,
+  setSMS,
+  setExtension,
+  setSchema,
+  setScreenSets,
+  setRBA,
+  setEmailTemplates,
+  setCommunicationTopics,
+  setDataflow,
+  setWebhook,
+  setConsent,
+} from './setters'
 
 class CdcService {
   constructor(versionControl) {
@@ -86,6 +99,9 @@ class CdcService {
           break
         case 'webhook':
           await setWebhook.call(this.versionControl, filteredResponse)
+          break
+        case 'consent':
+          await setConsent.call(this.versionControl, filteredResponse)
           break
         //setConsents
         //setDataFlow TODO testar

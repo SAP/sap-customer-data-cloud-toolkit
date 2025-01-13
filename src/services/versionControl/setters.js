@@ -105,6 +105,14 @@ export const setCommunicationTopics = async function (config) {
 
 // Helper function to create Options object
 const createOptions = (type, items, formatName = true) => {
+  if (!Array.isArray(items)) {
+    if (typeof items === 'object' && items !== null) {
+      items = Object.values(items)
+    } else {
+      throw new TypeError(`Expected an array or object for items, but got ${typeof items}`)
+    }
+  }
+
   const optionsData = {
     id: type,
     name: type,
@@ -133,6 +141,13 @@ export const setWebhook = async function (config) {
   const options = createOptions('webhooks', config.webhooks)
   console.log('Webhook Options created:', options.getOptions())
   await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, config, options)
+}
+
+// set Consent
+export const setConsent = async function (config) {
+  const options = createOptions('consents', config.preferences)
+  console.log('Consent Options created:', options.getOptions())
+  await this.consent.copyFromGit(this.apiKey, this.dataCenter, config, options)
 }
 
 // set Dataflow
