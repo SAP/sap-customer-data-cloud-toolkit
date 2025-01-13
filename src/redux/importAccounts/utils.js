@@ -79,22 +79,20 @@ const findOrCreateConfig = (configs, config) => {
   }
   return existingConfig
 }
-
-export const setParentsTrue = (structure, childId, value) => {
-  function traverse(branches, childId, setParent) {
-    for (let branch of branches) {
-      if (branch.id === childId) {
-        propagateConfigurationState(branch, value)
-        return value
-      }
-      if (traverse(branch.branches, childId, setParent)) {
-        branch.value = setParent
-        return value
-      }
+const traverseWholeTree = (branches, childId, setParent) => {
+  for (let branch of branches) {
+    if (branch.id === childId) {
+      propagateConfigurationState(branch, setParent)
+      return setParent
     }
-    return false
+    if (traverseWholeTree(branch.branches, childId, setParent)) {
+      branch.value = setParent
+      return setParent
+    }
   }
-
+  return false
+}
+export const setParentsTrue = (structure, childId, value) => {
   function checkAndSetParents(branches) {
     for (let branch of branches) {
       if (branch.branches && branch.branches.length > 0) {
@@ -104,7 +102,7 @@ export const setParentsTrue = (structure, childId, value) => {
     }
   }
 
-  traverse(structure, childId, value)
+  traverseWholeTree(structure, childId, value)
   checkAndSetParents(structure)
 }
 export const getConfigurationPath = (configurations, targetId) => {
@@ -131,43 +129,14 @@ export const getConfigurationPath = (configurations, targetId) => {
 
   return findPath(configurations, path)
 }
-export const getParent = (structure, parentId, targetId) => {
-  const findParent = (nodes) => {
-    for (const node of nodes) {
-      if (node.id === parentId) {
-        return node
-      }
-      if (node.branches && node.branches.length > 0) {
-        const result = findParent(node.branches)
-        if (result) {
-          return result
-        }
-      }
-    }
-    return null
-  }
 
-  const parent = findParent(structure)
+export const getParent = (structure, parentId, targetId) => {
+  const parent = findParent(structure, parentId)
   if (!parent) {
     return false
   }
 
-  const traverse = (nodes) => {
-    for (const node of nodes) {
-      if (node.id === targetId) {
-        return true
-      }
-      if (node.branches && node.branches.length > 0) {
-        const result = traverse(node.branches)
-        if (result) {
-          return true
-        }
-      }
-    }
-    return false
-  }
-
-  return traverse(parent.branches)
+  return traverse(parent.branches, targetId)
 }
 const findParent = (nodes, parentId) => {
   for (const node of nodes) {

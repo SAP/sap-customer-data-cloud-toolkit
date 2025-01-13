@@ -1,15 +1,32 @@
 class TreeSearch {
-  static getCheckedOptionsFromTree(obj) {
-    const results = []
-
-    for (let key of obj) {
-      TreeSearch.getCheckedOptions(key, results)
+  static removeFalseValuesFromTree(node) {
+    if (!node.value) {
+      return null
     }
 
+    const filteredBranches = node.branches.map(TreeSearch.removeFalseValuesFromTree).filter((branch) => branch !== null)
+
+    return {
+      ...node,
+      branches: filteredBranches,
+    }
+  }
+  static filterTree(tree) {
+    return tree.map(TreeSearch.removeFalseValuesFromTree).filter((node) => node !== null)
+  }
+  static getCheckedOptionsFromTree(obj, hasProperty) {
+    const results = []
+    const config = TreeSearch.filterTree(obj)
+    for (let key of config) {
+      if (hasProperty === true) {
+        TreeSearch.getSchemaOptionsFromTree(key, results)
+      } else {
+        TreeSearch.getCheckedOptions(key, results)
+      }
+    }
     return results
   }
-  static getSchemaOptionsFromTree(structure) {
-    const result = []
+  static getSchemaOptionsFromTree(structure, result) {
     const traverseSchemaOptions = (node, path = '', parentOperation = '') => {
       let currentPath = path ? `${path}.${node.name}` : node.name
 
@@ -17,11 +34,11 @@ class TreeSearch {
         currentPath = `${path}.0.${node.name}`
       }
 
-      if (node.value === true && node.branches.length === 0) {
+      if (node.branches.length === 0) {
         result.push(currentPath)
       }
 
-      if (node.value === true && node.branches && node.branches.length > 0) {
+      if (node.branches && node.branches.length > 0) {
         node.branches.forEach((branch) => {
           const childOperation = branch.switchId ? branch.switchId : ''
           const nextParentOperation = node.switchId ? node.switchId : parentOperation
@@ -39,11 +56,11 @@ class TreeSearch {
       }
     }
 
-    structure.forEach((node) => traverseSchemaOptions(node))
+    traverseSchemaOptions(structure)
     return result
   }
   static getCheckedOptions(node, results) {
-    if (node.branches.length === 0 && node.value === true) {
+    if (node.branches.length === 0) {
       results.push(`${node.id}`)
     } else {
       for (let branch of node.branches) {

@@ -51,23 +51,23 @@ class ImportAccounts {
     let result = []
     const { data, preferencesOptions, communicationsOptions, informationOption, rootOptions } = this.seperateOptionsFromTree(items)
     if (rootOptions.length > 0) {
-      const rootData = TreeSearch.getCheckedOptionsFromTree(rootOptions)
+      const rootData = TreeSearch.getCheckedOptionsFromTree(rootOptions, false)
       result.push(...rootData)
     }
     if (data.length > 0) {
-      const schemaData = TreeSearch.getSchemaOptionsFromTree(data)
+      const schemaData = TreeSearch.getCheckedOptionsFromTree(data, true)
       result.push(...schemaData)
     }
     if (preferencesOptions.length > 0) {
-      const preferencesData = TreeSearch.getCheckedOptionsFromTree(preferencesOptions)
+      const preferencesData = TreeSearch.getCheckedOptionsFromTree(preferencesOptions, false)
       result.push(...preferencesData)
     }
     if (communicationsOptions.length > 0) {
-      const communicationData = TreeSearch.getCheckedOptionsFromTree(communicationsOptions)
+      const communicationData = TreeSearch.getCheckedOptionsFromTree(communicationsOptions, false)
       result.push(...communicationData)
     }
     if (informationOption.length > 0) {
-      const informationData = TreeSearch.getCheckedOptionsFromTree(informationOption)
+      const informationData = TreeSearch.getCheckedOptionsFromTree(informationOption, false)
       result.push(...informationData)
     }
 

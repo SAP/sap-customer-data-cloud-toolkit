@@ -6,7 +6,7 @@
 import { useDispatch } from 'react-redux'
 import React from 'react'
 import { withTranslation } from 'react-i18next'
-import { setMandatoryFields, setMandatoryStatus, setSugestionSchema, setSuggestionTreeMandatoryStatus } from '../../redux/importAccounts/importAccountsSlice.js'
+import { setMandatoryFields, setSugestionMandatoryFields, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
@@ -32,7 +32,6 @@ const ImportAccountConfigurationTree = ({
   const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
-    mandatoryFields(treeNodeId)
     setFields(event)
     dispatch(setConfigurationStatus({ checkBoxId, value, branches }))
 
@@ -60,16 +59,6 @@ const ImportAccountConfigurationTree = ({
     traverse(structure)
     return result
   }
-  const returnMandatoryField = (siblings) => {
-    for (let branch of siblings) {
-      if (branch.id.includes('status')) {
-        dispatch(setMandatoryStatus({ checkBoxId: branch.id, value: true }))
-        dispatch(setSuggestionTreeMandatoryStatus({ checkBoxId: branch.id, value: true }))
-        return true
-      }
-    }
-    return false
-  }
 
   const setFields = (event) => {
     const findSiblings = findBranchAndSiblings(branches, event.srcElement.id)
@@ -80,20 +69,13 @@ const ImportAccountConfigurationTree = ({
 
   const selectChildrenField = (siblings) => {
     for (let branch of siblings) {
-      if (branch.id.includes('isSubscribed')) {
-        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true }))
-      } else if (branch.id.includes('isConsentGranted')) {
-        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true }))
+      if (branch.id.includes('isSubscribed') || branch.id.includes('isConsentGranted') || branch.id.includes('status')) {
+        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
+        dispatch(setSugestionMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
       }
     }
   }
-  const mandatoryFields = (event) => {
-    const findSiblings = findBranchAndSiblings(branches, event)
-    if (findSiblings) {
-      const isMandatory = returnMandatoryField(findSiblings)
-      return isMandatory
-    }
-  }
+
   const showError = (treeNode) => {
     return treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''
   }

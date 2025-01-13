@@ -1,7 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
@@ -33,6 +29,13 @@ export const importAccountsSlice = createSlice({
       configuration.value = action.payload.value
       configuration.mandatory = action.payload.mandatory
     },
+    setSugestionMandatoryFields(state, action) {
+      const configuration = findConfiguration(state.selectedConfiguration, action.payload.checkBoxId)
+      if (configuration) {
+        configuration.value = action.payload.value
+        configuration.mandatory = action.payload.mandatory
+      }
+    },
     getConfiguration(state, action) {
       const configuration = findConfiguration(state.configurations, action.payload.checkBoxId)
       state.configurations = [configuration]
@@ -45,6 +48,9 @@ export const importAccountsSlice = createSlice({
     },
     clearConfigurations(state) {
       state.configurations.forEach((configuration) => {
+        clearConfigurationsState(configuration, false)
+      })
+      state.selectedConfiguration.forEach((configuration) => {
         clearConfigurationsState(configuration, false)
       })
     },
@@ -137,14 +143,14 @@ export const getConfigurationTree = createAsyncThunk(GET_CONFIGURATIONS_ACTION, 
   }
 })
 
-export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
+export const setConfigurations = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (accountOption, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
 
   try {
-    return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations)
+    return await new ImportAccounts(credentials, currentSiteApiKey, currentDataCenter).exportDataToCsv(state.importAccounts.configurations, accountOption)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -158,6 +164,7 @@ export const {
   setSuggestionClickConfiguration,
   setConfigurationStatus,
   setMandatoryFields,
+  setSugestionMandatoryFields,
   clearErrors,
   setSugestionSchema,
   setSwitchOptions,
