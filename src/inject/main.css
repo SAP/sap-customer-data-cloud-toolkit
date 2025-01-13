@@ -3,13 +3,13 @@
  * License: Apache-2.0
  */
 
-
 .cdc-tools-app {
   position: absolute;
   top: 72px;
   right: 0px;
   height: 0;
   width: calc(100% - 241px);
+  display: none;
 }
 
 .cdc-tools-app-loading {
@@ -33,17 +33,13 @@
   right: 0px;
   height: auto;
   width: 100%;
-}
-
-.cdc-tools-app {
   display: none;
 }
+
 .cdc-tools-app.show-cdc-tools {
   display: block;
 }
-.cdc-tools-app-container {
-  display: none;
-}
+
 .cdc-tools-app-container.show-cdc-tools-app-container {
   display: block;
 }

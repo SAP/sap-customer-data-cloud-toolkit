@@ -169,6 +169,43 @@ export const getParent = (structure, parentId, targetId) => {
 
   return traverse(parent.branches)
 }
+const findParent = (nodes, parentId) => {
+  for (const node of nodes) {
+    if (node.id === parentId) {
+      return node
+    }
+    if (node.branches && node.branches.length > 0) {
+      const result = findParent(node.branches, parentId)
+      if (result) {
+        return result
+      }
+    }
+  }
+  return null
+}
+
+const traverse = (nodes, targetId) => {
+  for (const node of nodes) {
+    if (node.id === targetId) {
+      return true
+    }
+    if (node.branches && node.branches.length > 0) {
+      const result = traverse(node.branches, targetId)
+      if (result) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+export const findTargetInParentBranches = (structure, parentId, targetId) => {
+  const parent = findParent(structure, parentId)
+  if (!parent) {
+    return false
+  }
+  return traverse(parent.branches, targetId)
+}
 export const propagateConfigurationSelectBox = (configuration, payload) => {
   configuration.switchId = payload.operation
   for (let branch of configuration.branches) {
