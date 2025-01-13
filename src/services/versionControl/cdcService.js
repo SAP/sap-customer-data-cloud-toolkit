@@ -12,6 +12,7 @@ import {
   setDataflow,
   setWebhook,
   setConsent,
+  setSocial,
 } from './setters'
 
 class CdcService {
@@ -35,7 +36,8 @@ class CdcService {
       { name: 'topic', promise: this.versionControl.topic.searchTopics() },
       { name: 'webhook', promise: this.versionControl.webhook.get() },
       { name: 'consent', promise: this.versionControl.consent.get() },
-      //consents
+      { name: 'social', promise: this.versionControl.social.get() },
+
       //recaptcha
       //social
     ]
@@ -103,11 +105,13 @@ class CdcService {
         case 'consent':
           await setConsent.call(this.versionControl, filteredResponse)
           break
-        //setConsents
+        case 'social':
+          await setSocial.call(this.versionControl, filteredResponse)
+          break
         //setDataFlow TODO testar
         //setRiskAssessment
         //setRecaptcha
-        //setSocial
+
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }

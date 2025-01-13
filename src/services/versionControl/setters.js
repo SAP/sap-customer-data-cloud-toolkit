@@ -150,48 +150,11 @@ export const setConsent = async function (config) {
   await this.consent.copyFromGit(this.apiKey, this.dataCenter, config, options)
 }
 
-// set Dataflow
-// export const setDataflow = async function (config) {
-//   const options = {
-//     options: {
-//       id: 'dataflows',
-//       name: 'dataflows',
-//       value: false,
-//       formatName: true,
-//       branches: config.result.map((dataflow) => ({
-//         id: dataflow.name,
-//         name: dataflow.name,
-//         value: true,
-//         formatName: false,
-//       })),
-//     },
-//   }
-//   const optionsObj = new Options(options.options)
-//   await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, optionsObj)
-// }
+// setSocial
+export const setSocial = async function (config) {
+  await this.social.copyFromGit(this.apiKey, this.dataCenter, config)
+}
 
-// export const setWebhook = async function (config) {
-//   const optionsData = {
-//     id: 'webhooks',
-//     name: 'webhooks',
-//     value: false,
-//     formatName: true,
-//     branches: config.webhooks.map((webhook) => ({
-//       id: webhook.name,
-//       name: webhook.name,
-//       value: true,
-//       formatName: false,
-//     })),
-//   }
-
-//   const options = new Options(optionsData)
-//   console.log('Webhook Options created:', options.getOptions())
-//   debugger
-//   await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, config, options)
-// }
-
-
-//setConsents
 //setRecaptcha
 //setRiskAssessment
 //setSocial
