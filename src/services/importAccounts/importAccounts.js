@@ -3,17 +3,13 @@
  * License: Apache-2.0
  */
 import ConsentStatement from '../copyConfig/consent/consentStatement'
-import { exportCommunicationData } from '../exportToCsv/communication/communicationMatches'
 import { createCSVFile } from '../exportToCsv/exportToCsv'
-import { exportPasswordData } from '../exportToCsv/password/passwordMatches'
-import { exportPreferencesData } from '../exportToCsv/preferences/preferencesMatches'
-import { exportSchemaData } from '../exportToCsv/schema/schemaMatches'
 import TopicImportFields from './communicationImport/communicationImport'
 import { passwordImportTreeFields } from './passwordImport/passwordImport'
 import PreferencesImportFields from './preferencesImport/preferencesImport'
 import SchemaImportFields from './schemaImport/schemaImportFields'
-import { rootOptionsValue } from './rootOptions/rootOptions'
 import { getContext, getLiteRootElementsStructure, getRootElementsStructure, getUID } from './rootOptions/rootLevelFields'
+import TreeSearch from '../treeSearch/treeSearch'
 class ImportAccounts {
   #credentials
   #site
@@ -55,22 +51,24 @@ class ImportAccounts {
     let result = []
     const { data, preferencesOptions, communicationsOptions, informationOption, rootOptions } = this.seperateOptionsFromTree(items)
     if (rootOptions.length > 0) {
-      const rootData = rootOptionsValue(rootOptions)
+      const rootData = TreeSearch.getCheckedOptionsFromTree(rootOptions)
       result.push(...rootData)
     }
     if (data.length > 0) {
-      const schemaData = exportSchemaData(data)
+      const schemaData = TreeSearch.getSchemaOptionsFromTree(data)
       result.push(...schemaData)
     }
     if (preferencesOptions.length > 0) {
-      const preferencesData = exportPreferencesData(preferencesOptions)
+      const preferencesData = TreeSearch.getCheckedOptionsFromTree(preferencesOptions)
       result.push(...preferencesData)
     }
     if (communicationsOptions.length > 0) {
-      result.push(...exportCommunicationData(communicationsOptions))
+      const communicationData = TreeSearch.getCheckedOptionsFromTree(communicationsOptions)
+      result.push(...communicationData)
     }
     if (informationOption.length > 0) {
-      result.push(...exportPasswordData(informationOption))
+      const informationData = TreeSearch.getCheckedOptionsFromTree(informationOption)
+      result.push(...informationData)
     }
 
     createCSVFile(result)
