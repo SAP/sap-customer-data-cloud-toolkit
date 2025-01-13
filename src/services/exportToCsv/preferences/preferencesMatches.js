@@ -4,9 +4,6 @@
  */
 export function exportPreferencesData(items) {
   const optionKeys = findMatchesInTree(items)
-  if (optionKeys === undefined) {
-    return
-  }
 
   return optionKeys
 }

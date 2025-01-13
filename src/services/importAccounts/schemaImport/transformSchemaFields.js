@@ -18,20 +18,21 @@ export function extractAndTransformSchemaFields(schemaData) {
   return fieldsTransformed
 }
 function transformSchemaField(key, value) {
+  const removeSchemaWord = key.replace('Schema', '')
   if (value.fields && key === 'addressesSchema') {
     return {
-      id: key.replace('Schema', ''),
-      name: key.replace('Schema', ''),
+      id: removeSchemaWord,
+      name: removeSchemaWord,
       value: false,
-      branches: accumulateKeys(value.fields, key.replace('Schema', '')),
+      branches: accumulateKeys(value.fields, removeSchemaWord),
       switchId: 'object',
     }
   } else if (value.fields) {
     return {
-      id: key.replace('Schema', ''),
-      name: key.replace('Schema', ''),
+      id: removeSchemaWord,
+      name: removeSchemaWord,
       value: false,
-      branches: transformSchema(value.fields, key.replace('Schema', '')),
+      branches: transformSchema(value.fields, removeSchemaWord),
       switchId: 'object',
     }
   }

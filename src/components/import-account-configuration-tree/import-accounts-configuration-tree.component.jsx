@@ -112,9 +112,7 @@ const ImportAccountConfigurationTree = ({
     if ((treeNode.branches.length === 0 && treeNode.mandatory === true) || (mandatory === true && treeNode.mandatory !== false)) {
       return true
     }
-    if (treeNode.mandatory === false) {
-      return false
-    }
+
     return false
   }
 

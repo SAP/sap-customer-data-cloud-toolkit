@@ -20,7 +20,7 @@ describe('PreferencesImportFields test suite', () => {
 
   test('export preferences data successfully', async () => {
     axios.mockResolvedValueOnce({ data: mockPreferencesResponse })
-    const response = await preferencesImport.exportPreferencesData()
+    const response = await preferencesImport.getPreferencesData()
     expect(response).toEqual(mockCleanPreferencesResponse)
   })
 
@@ -37,7 +37,7 @@ describe('PreferencesImportFields test suite', () => {
   })
 
   test('get preferences data without metadata', () => {
-    const cleanedData = preferencesImport.getPreferencesData(mockPreferencesResponse)
+    const cleanedData = preferencesImport.cleanPreferencesResponse(mockPreferencesResponse)
     expect(cleanedData).toEqual(mockCleanPreferencesResponse)
   })
 })

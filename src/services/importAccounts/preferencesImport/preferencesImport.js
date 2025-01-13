@@ -16,16 +16,16 @@ class PreferencesImportFields {
     this.#dataCenter = dataCenter
     this.#preferences = new ConsentStatement(credentials, site, dataCenter)
   }
-  async exportPreferencesData() {
+  async getPreferencesData() {
     const preferencesResponse = await this.getPreferences()
     if (preferencesResponse.errorCode === 0) {
-      this.getPreferencesData(preferencesResponse)
+      this.cleanPreferencesResponse(preferencesResponse)
     }
     return preferencesResponse
   }
   async exportTransformedPreferencesData() {
     const result = []
-    const cleanPreferencesResponse = await this.exportPreferencesData()
+    const cleanPreferencesResponse = await this.getPreferencesData()
     result.push(...extractAndTransformPreferencesFields(cleanPreferencesResponse))
 
     return result
@@ -33,7 +33,7 @@ class PreferencesImportFields {
   async getPreferences() {
     return this.#preferences.get()
   }
-  getPreferencesData(preferencesResponse) {
+  cleanPreferencesResponse(preferencesResponse) {
     delete preferencesResponse.apiVersion
     delete preferencesResponse.context
     delete preferencesResponse.errorCode
