@@ -77,34 +77,38 @@ function transformSchema(fields, parentKey) {
         continue
       }
 
-      splitKeys.forEach((part, index) => {
-        accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
-
-        let existing = currentLevel.find((item) => item.id === accumulatedKey)
-        if (!existing) {
-          existing = {
-            id: accumulatedKey,
-            name: part,
-            value: false,
-            branches: [],
-            switchId: 'object',
-          }
-          currentLevel.push(existing)
-        }
-
-        if (index === splitKeys.length - 1) {
-          if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
-            existing.branches = transformSchema(fieldDetail, parentKey)
-          }
-        } else {
-          currentLevel = existing.branches
-        }
-      })
+      createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey)
     }
   }
   return transformedSchema
 }
 
+export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey) {
+  splitKeys.forEach((part, index) => {
+    accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
+
+    let existing = currentLevel.find((item) => item.id === accumulatedKey)
+    if (!existing) {
+      existing = {
+        id: accumulatedKey,
+        name: part,
+        value: false,
+        branches: [],
+        switchId: 'object',
+      }
+      currentLevel.push(existing)
+    }
+
+    if (index === splitKeys.length - 1) {
+      if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
+        existing.branches = transformSchema(fieldDetail, parentKey)
+      }
+    } else {
+      currentLevel = existing.branches
+    }
+  })
+  return currentLevel
+}
 function transformSubscriptions(splitKeys, currentLevel, accumulatedKey) {
   const id = splitKeys.join('.')
   accumulatedKey = accumulatedKey ? `${accumulatedKey}.${id}` : id

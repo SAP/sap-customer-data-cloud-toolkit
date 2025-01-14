@@ -30,23 +30,22 @@ function transformField(key, value) {
   return null
 }
 function transformPreferences(fields, parentKey, skipFields = true) {
-  const transformedSchema = []
+  const transformPreferences = []
   for (let key in fields) {
     if (fields.hasOwnProperty(key)) {
       const fieldDetail = fields[key]
       const splitKeys = key.split('.')
-      let currentLevel = transformedSchema
+      let currentLevel = transformPreferences
       let accumulatedKey = parentKey
       createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel, accumulatedKey)
     }
   }
-  return transformedSchema
+  return transformPreferences
 }
-function createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel, accumulatedKey) {
+export function createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel, accumulatedKey) {
   splitKeys.forEach((part, index) => {
-    let id = splitKeys.slice(0, index + 1).join('.')
-    let existing = currentLevel.find((item) => item.id === id)
     accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part
+    let existing = currentLevel.find((item) => item.id === accumulatedKey)
     if (!existing) {
       existing = {
         id: accumulatedKey,
@@ -56,18 +55,19 @@ function createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel,
       }
       currentLevel.push(existing)
     }
-
     if (index === splitKeys.length - 1) {
-      if (isFieldDetailObject(fieldDetail, skipFields) && hasNestedObject(fieldDetail)) {
-        existing.branches = transformPreferences(fieldDetail, parentKey, skipFields)
-      }
-      if (parentKey === 'preferences') {
-        addPreferencesBranches(existing.branches, existing.id)
-      }
+      checkTreeBranch(fieldDetail, skipFields, currentLevel, existing, parentKey)
     } else {
       currentLevel = existing.branches
     }
   })
-  console.log('currentLevel END ', currentLevel)
   return currentLevel
+}
+function checkTreeBranch(fieldDetail, skipFields, currentLevel, existing, parentKey) {
+  if (parentKey === 'preferences') {
+    if (isFieldDetailObject(fieldDetail, skipFields) && hasNestedObject(fieldDetail)) {
+      existing.branches = transformPreferences(fieldDetail, parentKey, skipFields)
+    }
+    addPreferencesBranches(existing.branches, existing.id)
+  }
 }
