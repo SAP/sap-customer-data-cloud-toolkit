@@ -91,11 +91,7 @@ const ImportAccountConfigurationTree = ({
     return false
   }
   const isReadOnly = (treeNode) => {
-    if ((treeNode.branches.length === 0 && treeNode.mandatory === true) || (mandatory === true && treeNode.mandatory !== false)) {
-      return true
-    }
-
-    return false
+    return (treeNode.branches.length === 0 && treeNode.mandatory === true) || (mandatory === true && treeNode.mandatory !== false)
   }
 
   const expandTree = (treeNode, isParentLoyalty = false) => {

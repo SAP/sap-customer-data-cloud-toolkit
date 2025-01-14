@@ -23,13 +23,13 @@ function transformField(key, value) {
       id: key,
       name: 'preferences',
       value: false,
-      branches: transformSchema(value, key),
+      branches: transformPreferences(value, key),
     }
   }
 
   return null
 }
-function transformSchema(fields, parentKey, skipFields = true) {
+function transformPreferences(fields, parentKey, skipFields = true) {
   const transformedSchema = []
   for (let key in fields) {
     if (fields.hasOwnProperty(key)) {
@@ -37,32 +37,37 @@ function transformSchema(fields, parentKey, skipFields = true) {
       const splitKeys = key.split('.')
       let currentLevel = transformedSchema
       let accumulatedKey = parentKey
-      splitKeys.forEach((part, index) => {
-        let id = splitKeys.slice(0, index + 1).join('.')
-        let existing = currentLevel.find((item) => item.id === id)
-        accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part
-        if (!existing) {
-          existing = {
-            id: accumulatedKey,
-            name: part,
-            value: false,
-            branches: [],
-          }
-          currentLevel.push(existing)
-        }
-
-        if (index === splitKeys.length - 1) {
-          if (isFieldDetailObject(fieldDetail, skipFields) && hasNestedObject(fieldDetail)) {
-            existing.branches = transformSchema(fieldDetail, parentKey, skipFields)
-          }
-          if (parentKey === 'preferences') {
-            addPreferencesBranches(existing.branches, existing.id)
-          }
-        } else {
-          currentLevel = existing.branches
-        }
-      })
+      createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel, accumulatedKey)
     }
   }
   return transformedSchema
+}
+function createNode(splitKeys, fieldDetail, parentKey, skipFields, currentLevel, accumulatedKey) {
+  splitKeys.forEach((part, index) => {
+    let id = splitKeys.slice(0, index + 1).join('.')
+    let existing = currentLevel.find((item) => item.id === id)
+    accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part
+    if (!existing) {
+      existing = {
+        id: accumulatedKey,
+        name: part,
+        value: false,
+        branches: [],
+      }
+      currentLevel.push(existing)
+    }
+
+    if (index === splitKeys.length - 1) {
+      if (isFieldDetailObject(fieldDetail, skipFields) && hasNestedObject(fieldDetail)) {
+        existing.branches = transformPreferences(fieldDetail, parentKey, skipFields)
+      }
+      if (parentKey === 'preferences') {
+        addPreferencesBranches(existing.branches, existing.id)
+      }
+    } else {
+      currentLevel = existing.branches
+    }
+  })
+  console.log('currentLevel END ', currentLevel)
+  return currentLevel
 }
