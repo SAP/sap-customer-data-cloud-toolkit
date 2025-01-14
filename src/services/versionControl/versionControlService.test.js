@@ -71,14 +71,14 @@ describe('versionControlService', () => {
 
   describe('handleCommitListRequestServices', () => {
     it('should fetch commit list if branch exists', async () => {
-      const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 20 }
+      const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 2 }
       githubUtils.branchExists.mockResolvedValue(true)
-      githubUtils.getCommits.mockResolvedValue({ data: mockCommitList.commitList, totalCommits: mockCommitList.totalCommits })
+      githubUtils.getCommits.mockResolvedValue({ data: mockCommitList.commitList })
 
       const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
       expect(result).toEqual(mockCommitList)
       expect(githubUtils.branchExists).toHaveBeenCalledWith(versionControlInstance, apiKey)
-      expect(githubUtils.getCommits).toHaveBeenCalledWith(versionControlInstance, 1, 10)
+      expect(githubUtils.getCommits).toHaveBeenCalledWith(versionControlInstance)
     })
 
     it('should return an empty array if branch does not exist', async () => {

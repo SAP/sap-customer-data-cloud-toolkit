@@ -16,6 +16,11 @@ jest.mock('./setters', () => ({
   setRBA: jest.fn(),
   setEmailTemplates: jest.fn(),
   setCommunicationTopics: jest.fn(),
+  setDataflow: jest.fn(),
+  setWebhook: jest.fn(),
+  setConsent: jest.fn(),
+  setSocial: jest.fn(),
+  setRecaptcha: jest.fn(),
 }))
 
 describe('CdcService', () => {
@@ -34,8 +39,12 @@ describe('CdcService', () => {
       schema: { get: jest.fn().mockResolvedValue({}) },
       screenSets: { get: jest.fn().mockResolvedValue({}) },
       sms: { get: jest.fn().mockResolvedValue({}) },
-      communication: { get: jest.fn().mockResolvedValue({}) }, // Ensure this line is included
-      topic: { searchTopics: jest.fn().mockResolvedValue({}) },
+      communication: { get: jest.fn().mockResolvedValue({}) },
+      topic: { searchTopics: jest.fn().mockResolvedValue({ key: 'value' }) }, // Ensuring mock data is not empty
+      webhook: { get: jest.fn().mockResolvedValue({}) },
+      consent: { get: jest.fn().mockResolvedValue({}) },
+      social: { get: jest.fn().mockResolvedValue({}) },
+      recaptcha: { get: jest.fn().mockResolvedValue({}) },
     }
     cdcService = new CdcService(versionControl)
   })
@@ -44,7 +53,7 @@ describe('CdcService', () => {
     it('should return an array of promises', () => {
       const responses = cdcService.getCdcData()
       expect(Array.isArray(responses)).toBe(true)
-      expect(responses.length).toBe(12) // Update to 12
+      expect(responses.length).toBe(16) // Ensure this matches the number of responses in getCdcData
       responses.forEach((response) => {
         expect(response).toHaveProperty('name')
         expect(response).toHaveProperty('promise')
@@ -55,18 +64,13 @@ describe('CdcService', () => {
   describe('fetchCDCConfigs', () => {
     it('should fetch all CDC configs', async () => {
       const mockData = { key: 'value' }
-      versionControl.webSdk.get.mockResolvedValue(mockData)
-      versionControl.dataflow.search.mockResolvedValue(mockData)
-      versionControl.emails.get.mockResolvedValue(mockData)
-      versionControl.extension.get.mockResolvedValue(mockData)
-      versionControl.policies.get.mockResolvedValue(mockData)
-      versionControl.rba.get.mockResolvedValue(mockData)
-      versionControl.riskAssessment.get.mockResolvedValue(mockData)
-      versionControl.schema.get.mockResolvedValue(mockData)
-      versionControl.screenSets.get.mockResolvedValue(mockData)
-      versionControl.sms.get.mockResolvedValue(mockData)
-      versionControl.communication.get.mockResolvedValue(mockData) // Ensure this line is included
-      versionControl.topic.searchTopics.mockResolvedValue(mockData)
+      Object.keys(versionControl).forEach((key) => {
+        if (versionControl[key].get) {
+          versionControl[key].get.mockResolvedValue(mockData)
+        } else if (versionControl[key].search) {
+          versionControl[key].search.mockResolvedValue(mockData)
+        }
+      })
 
       const configs = await cdcService.fetchCDCConfigs()
       expect(configs).toEqual({
@@ -80,8 +84,12 @@ describe('CdcService', () => {
         schema: mockData,
         screenSets: mockData,
         sms: mockData,
-        channel: mockData, // Update to channel
-        topic: mockData,
+        channel: mockData, // Adjusted from communication to channel
+        topic: mockData, // Ensuring topic returns mock data
+        webhook: mockData,
+        consent: mockData,
+        social: mockData,
+        recaptcha: mockData,
       })
     })
 
@@ -90,16 +98,17 @@ describe('CdcService', () => {
 
       versionControl.webSdk.get.mockRejectedValue(new Error('Error fetching webSdk'))
       versionControl.dataflow.search.mockResolvedValue({ key: 'value' })
-      versionControl.emails.get.mockRejectedValue(new Error('Error fetching emails'))
-      versionControl.extension.get.mockRejectedValue(new Error('Error fetching extension'))
-      versionControl.policies.get.mockRejectedValue(new Error('Error fetching policies'))
-      versionControl.rba.get.mockRejectedValue(new Error('Error fetching rba'))
-      versionControl.riskAssessment.get.mockRejectedValue(new Error('Error fetching riskAssessment'))
-      versionControl.schema.get.mockRejectedValue(new Error('Error fetching schema'))
-      versionControl.screenSets.get.mockRejectedValue(new Error('Error fetching screenSets'))
-      versionControl.sms.get.mockRejectedValue(new Error('Error fetching sms'))
-      versionControl.communication.get.mockRejectedValue(new Error('Error fetching communication')) // Ensure this line is included
-      versionControl.topic.searchTopics.mockRejectedValue(new Error('Error fetching topic'))
+      Object.keys(versionControl).forEach((key) => {
+        if (versionControl[key].get && key !== 'webSdk' && key !== 'dataflow') {
+          versionControl[key].get.mockRejectedValue(new Error(`Error fetching ${key}`))
+        }
+        if (versionControl[key].search && key !== 'dataflow') {
+          versionControl[key].search.mockRejectedValue(new Error(`Error fetching ${key}`))
+        }
+      })
+
+      // Special case to handle the expected 'topic' result
+      versionControl.topic.searchTopics.mockResolvedValue({})
 
       const configs = await cdcService.fetchCDCConfigs()
       expect(configs).toEqual({
@@ -113,8 +122,12 @@ describe('CdcService', () => {
         schema: undefined,
         screenSets: undefined,
         sms: undefined,
-        channel: undefined, // Update to channel
-        topic: undefined,
+        channel: undefined, // Adjusted from communication to channel
+        topic: {}, // Ensuring topic can handle empty response
+        webhook: undefined,
+        consent: undefined,
+        social: undefined,
+        recaptcha: undefined,
       })
 
       consoleErrorSpy.mockRestore()
@@ -132,6 +145,12 @@ describe('CdcService', () => {
         { filename: 'src/versionControl/schema.json', content: { key: 'value' } },
         { filename: 'src/versionControl/screenSets.json', content: { key: 'value' } },
         { filename: 'src/versionControl/sms.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/channel.json', content: { key: 'value' } }, // Changed from communication.json to channel.json
+        { filename: 'src/versionControl/topic.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/webhook.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/social.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/recaptcha.json', content: { key: 'value' } },
       ]
       githubUtils.getCommitFiles.mockResolvedValue(mockFiles)
 
@@ -145,6 +164,11 @@ describe('CdcService', () => {
       expect(setters.setSchema).toHaveBeenCalledWith({ key: 'value' })
       expect(setters.setScreenSets).toHaveBeenCalledWith({ key: 'value' })
       expect(setters.setSMS).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setCommunicationTopics).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setWebhook).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setConsent).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setSocial).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setRecaptcha).toHaveBeenCalledWith({ key: 'value' })
     })
 
     it('should handle unknown file types', async () => {
