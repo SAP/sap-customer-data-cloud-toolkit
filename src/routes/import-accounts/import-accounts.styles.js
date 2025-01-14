@@ -16,6 +16,18 @@ const styles = {
     ...spacing.sapUiTinyMarginTop,
     marginLeft: '10px',
   },
+  cardContainer: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  panelContainer: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
   currentInfoContainerTitle: {
     marginBottom: '4px',
   },
