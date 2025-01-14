@@ -27,6 +27,7 @@ import ImportAccountsConfigurations from '../../components/import-accounts-confi
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
 
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
+import { trackUsage } from '../../lib/tracker.js'
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
 
@@ -47,8 +48,9 @@ const ImportAccountsComponent = ({ t }) => {
     dispatch(getConfigurationTree('Full'))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
-  const onSaveHandler = () => {
+  const onSaveHandler = async () => {
     dispatch(setConfigurations())
+    await trackUsage({ featureName: PAGE_TITLE })
   }
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
