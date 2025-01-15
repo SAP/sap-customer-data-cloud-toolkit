@@ -90,6 +90,7 @@ const ImportAccountsComponent = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setSwitchOptions={setSwitchOptions}
         treeNodeInputValue={treeNodeInputValue}
+        dispatch={dispatch}
       />
     )
   }

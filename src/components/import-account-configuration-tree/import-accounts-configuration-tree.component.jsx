@@ -5,13 +5,12 @@
 
 import '@ui5/webcomponents-icons/dist/message-information.js'
 import React from 'react'
-import { useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import { setMandatoryFields, setSugestionMandatoryFields, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
-import { getHighestSeverity } from '../configuration-tree/utils.js'
 import SchemaPropertyType from '../schema-property-type/schema-property-type.component.jsx'
+import { getHighestSeverity } from '../configuration-tree/utils.js'
 import { handleSelectChange } from './utils.js'
 
 const ImportAccountConfigurationTree = ({
@@ -26,9 +25,9 @@ const ImportAccountConfigurationTree = ({
   setSwitchOptions,
   expandableNode,
   treeNodeInputValue,
+  dispatch,
   t,
 }) => {
-  const dispatch = useDispatch()
   const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
