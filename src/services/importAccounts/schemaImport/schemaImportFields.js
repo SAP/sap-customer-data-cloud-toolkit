@@ -20,7 +20,6 @@ class SchemaImportFields {
     const schemaResponse = await this.getSchema()
     if (schemaResponse.errorCode === 0) {
       this.cleanSchemaData(schemaResponse)
-      return schemaResponse
     }
     return schemaResponse
   }
