@@ -10,6 +10,8 @@ class SchemaImportFields {
   #site
   #dataCenter
   #schema
+  static METADATA = 'metadata'
+  static EMAIL = 'email'
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
     this.#site = site
@@ -102,7 +104,7 @@ class SchemaImportFields {
     const traverseAndRemoveEmail = (obj) => {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (key === 'metadata') {
+          if (key === SchemaImportFields.METADATA) {
             delete obj[key]
           } else if (typeof obj[key] === 'object' && obj[key] !== null) {
             traverseAndRemoveEmail(obj[key])
@@ -118,7 +120,7 @@ class SchemaImportFields {
     const traverseAndRemoveEmail = (obj) => {
       for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
-          if (key === 'email') {
+          if (key === SchemaImportFields.EMAIL) {
             delete obj[key]
           } else if (typeof obj[key] === 'object' && obj[key] !== null) {
             traverseAndRemoveEmail(obj[key])

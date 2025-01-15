@@ -1,18 +1,11 @@
+import { extractAndTransformFields } from '../utils'
+
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
 export function extractAndTransformCommunicationFields(communicationData) {
-  const fieldsTransformed = []
-  Object.entries(communicationData).forEach(([key, value]) => {
-    if (value && typeof value === 'object') {
-      const transformed = transformField(key, value)
-      if (transformed) {
-        fieldsTransformed.push(transformed)
-      }
-    }
-  })
-  return fieldsTransformed
+  return extractAndTransformFields(communicationData, transformField)
 }
 function transformField(key, value) {
   if (key === 'communications') {

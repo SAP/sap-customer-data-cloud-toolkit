@@ -3,14 +3,14 @@
  * License: Apache-2.0
  */
 
-import { useDispatch } from 'react-redux'
+import '@ui5/webcomponents-icons/dist/message-information.js'
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { setMandatoryFields, setSugestionMandatoryFields, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
+import { setMandatoryFields, setSugestionMandatoryFields, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
-import '@ui5/webcomponents-icons/dist/message-information.js'
 import SchemaPropertyType from '../schema-property-type/schema-property-type.component.jsx'
 import { handleSelectChange } from './utils.js'
 
@@ -61,9 +61,9 @@ const ImportAccountConfigurationTree = ({
   }
 
   const setFields = (event) => {
-    const findSiblings = findBranchAndSiblings(branches, event.srcElement.id)
-    if (findSiblings) {
-      selectChildrenField(findSiblings)
+    const foundSiblings = findBranchAndSiblings(branches, event.srcElement.id)
+    if (foundSiblings) {
+      selectChildrenField(foundSiblings)
     }
   }
 

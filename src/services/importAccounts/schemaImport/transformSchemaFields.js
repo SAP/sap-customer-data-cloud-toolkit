@@ -2,24 +2,17 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import { hasNestedObject, isFieldDetailObject } from '../utils'
+import { createNode, extractAndTransformFields, hasNestedObject, isFieldDetailObject } from '../utils'
 import { subscriptionObjectStructure } from './subscriptionFields/subscriptionFields'
-
+const SCHEMA = 'Schema'
+const ADDRESSESSCHEMA = 'addressesSchema'
 export function extractAndTransformSchemaFields(schemaData) {
-  const fieldsTransformed = []
-  Object.entries(schemaData).forEach(([key, value]) => {
-    if (value && typeof value === 'object') {
-      const transformed = transformSchemaField(key, value)
-      if (transformed) {
-        fieldsTransformed.push(transformed)
-      }
-    }
-  })
-  return fieldsTransformed
+  return extractAndTransformFields(schemaData, transformSchemaField)
 }
+
 function transformSchemaField(key, value) {
-  const removeSchemaWord = key.replace('Schema', '')
-  if (value.fields && key === 'addressesSchema') {
+  const removeSchemaWord = key.replace(SCHEMA, '')
+  if (value.fields && key === ADDRESSESSCHEMA) {
     return {
       id: removeSchemaWord,
       name: removeSchemaWord,
@@ -77,38 +70,18 @@ function transformSchema(fields, parentKey) {
         continue
       }
 
-      createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey)
+      createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey, false, {
+        transformCallback: (existing, fieldDetail, parentKey) => {
+          if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
+            existing.branches = transformSchema(fieldDetail, parentKey)
+          }
+        },
+      })
     }
   }
   return transformedSchema
 }
 
-export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey) {
-  splitKeys.forEach((part, index) => {
-    accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
-
-    let existing = currentLevel.find((item) => item.id === accumulatedKey)
-    if (!existing) {
-      existing = {
-        id: accumulatedKey,
-        name: part,
-        value: false,
-        branches: [],
-        switchId: 'object',
-      }
-      currentLevel.push(existing)
-    }
-
-    if (index === splitKeys.length - 1) {
-      if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
-        existing.branches = transformSchema(fieldDetail, parentKey)
-      }
-    } else {
-      currentLevel = existing.branches
-    }
-  })
-  return currentLevel
-}
 function transformSubscriptions(splitKeys, currentLevel, accumulatedKey) {
   const id = splitKeys.join('.')
   accumulatedKey = accumulatedKey ? `${accumulatedKey}.${id}` : id

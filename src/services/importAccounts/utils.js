@@ -18,3 +18,53 @@ export function isFieldDetailObject(fieldDetail, skipFields = true) {
   }
   return false
 }
+export function extractAndTransformFields(data, callBackFunction) {
+  const fieldsTransformed = []
+  Object.entries(data).forEach(([key, value]) => {
+    if (value && typeof value === 'object') {
+      const transformed = callBackFunction(key, value)
+      if (transformed) {
+        fieldsTransformed.push(transformed)
+      }
+    }
+  })
+  return fieldsTransformed
+}
+export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey, skipSwitch, options = {}) {
+  const { skipFields = true, transformCallback, checkTreeBranchCallback } = options
+
+  splitKeys.forEach((part, index) => {
+    accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part
+    let existing = currentLevel.find((item) => item.id === accumulatedKey)
+    if (!existing) {
+      if (skipSwitch) {
+        existing = {
+          id: accumulatedKey,
+          name: part,
+          value: false,
+          branches: [],
+        }
+      } else {
+        existing = {
+          id: accumulatedKey,
+          name: part,
+          value: false,
+          branches: [],
+          switchId: 'object',
+        }
+      }
+      currentLevel.push(existing)
+    }
+    if (index === splitKeys.length - 1) {
+      if (transformCallback) {
+        transformCallback(existing, fieldDetail, parentKey, skipFields)
+      }
+      if (checkTreeBranchCallback) {
+        checkTreeBranchCallback(fieldDetail, skipFields, currentLevel, existing, parentKey)
+      }
+    } else {
+      currentLevel = existing.branches
+    }
+  })
+  return currentLevel
+}
