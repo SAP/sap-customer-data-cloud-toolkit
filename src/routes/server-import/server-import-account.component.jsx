@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Panel } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Card, CardHeader } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -35,7 +35,6 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [createdDataflowId, setCreatedDataflowId] = useState('')
-  const [isCardExpanded, setIsCardExpanded] = useState(true)
 
   const [showDialog, setShowSuccessDialog] = useState(false)
 
@@ -98,78 +97,71 @@ const ServerImportComponent = ({ t }) => {
     </DialogMessageInform>
   )
 
-  const handleToggleCard = () => {
-    setIsCardExpanded(!isCardExpanded)
-  }
   return (
     <>
       <div className={classes.cardDiv}>
-        <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard}>
-          <Label> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')}</Label>
-          <Label> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT_DESCRIPTION')}</Label>
-          {isCardExpanded && (
-            <div className={classes.outerDiv}>
-              <div className={classes.outerDivContainer}>
-                <div className={classes.serverDropDown}>
-                  <div className={classes.smallTitle}>
-                    <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
-                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}
-                    </Label>
-                  </div>
-                  <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
-                    <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
-                    <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
-                  </Select>
-                  <div className={classes.smallTitle}>
-                    <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
-                      {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}
-                    </Label>
-                  </div>
-                  <Select onChange={handleOptionChange} className={classes.selectBox}>
-                    {Object.keys(serverConfigurations).map((key) => (
-                      <Option key={key} value={key}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </Option>
-                    ))}
-                  </Select>
+        <Card header={<CardHeader titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
+          <div className={classes.outerDiv}>
+            <div className={classes.outerDivContainer}>
+              <div className={classes.serverDropDown}>
+                <div className={classes.smallTitle}>
+                  <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
+                    {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}
+                  </Label>
                 </div>
-                <div className={classes.gridContainer}>{serverConfigurations[selectedOption] && renderFormItemsInGrid()}</div>
+                <Select onChange={handleAccountOptionChange} className={classes.selectBox}>
+                  <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                  <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                </Select>
+                <div className={classes.smallTitle}>
+                  <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
+                    {t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}
+                  </Label>
+                </div>
+                <Select onChange={handleOptionChange} className={classes.selectBox}>
+                  {Object.keys(serverConfigurations).map((key) => (
+                    <Option key={key} value={key}>
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </Option>
+                  ))}
+                </Select>
               </div>
+              <div className={classes.gridContainer}>{serverConfigurations[selectedOption] && renderFormItemsInGrid()}</div>
+            </div>
 
-              <div className={classes.selectConfigurationOuterDivStyle}>
-                <div className={classes.selectConfigurationInnerDivStyle}>
-                  <Bar
-                    design="Footer"
-                    endContent={
-                      <div>
-                        <Button
-                          type="submit"
-                          id="copyConfigExtendedSaveButton"
-                          className="fd-button fd-button--emphasized fd-button--compact"
-                          onClick={handleSubmit}
-                          data-cy="copyConfigExtendedSaveButton"
-                          design="Emphasized"
-                          disabled={disableDeployButton()}
-                        >
-                          {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
-                        </Button>
-                        <Button
-                          type="button"
-                          id="copyConfigExtendedCancelButton"
-                          data-cy="copyConfigExtendedCancelButton"
-                          onClick={onCancelHandler}
-                          className="fd-button fd-button--transparent fd-button--compact"
-                        >
-                          {t('SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON')}
-                        </Button>
-                      </div>
-                    }
-                  ></Bar>
-                </div>
+            <div className={classes.selectConfigurationOuterDivStyle}>
+              <div className={classes.selectConfigurationInnerDivStyle}>
+                <Bar
+                  design="Footer"
+                  endContent={
+                    <div>
+                      <Button
+                        type="submit"
+                        id="copyConfigExtendedSaveButton"
+                        className="fd-button fd-button--emphasized fd-button--compact"
+                        onClick={handleSubmit}
+                        data-cy="copyConfigExtendedSaveButton"
+                        design="Emphasized"
+                        disabled={disableDeployButton()}
+                      >
+                        {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON')}
+                      </Button>
+                      <Button
+                        type="button"
+                        id="copyConfigExtendedCancelButton"
+                        data-cy="copyConfigExtendedCancelButton"
+                        onClick={onCancelHandler}
+                        className="fd-button fd-button--transparent fd-button--compact"
+                      >
+                        {t('SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON')}
+                      </Button>
+                    </div>
+                  }
+                ></Bar>
               </div>
             </div>
-          )}
-        </Panel>
+          </div>
+        </Card>{' '}
       </div>
       {showDialog && showSuccessMessage()}
     </>
