@@ -102,8 +102,8 @@
   "SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON": "Cancel",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The dataflow was deployed successfully (ID: {{dataflowId}}). \n Check status of imported accounts in: Dataflows > Job Status.",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Fill the information below to import a full or lite account from a storage server",
-  "SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT": "Select the account type and storage provider, then provide the file path to the file you wish to import. By clicking on the 'Import' button, a dataflow will be deployed and a one-time data import will be initiated.",
-
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT": "Select the account type and storage provider, then provide the file path to the file you wish to import.",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT_DESCRIPTION": "By clicking on the 'Import' button, a dataflow will be deployed and a one-time data import will be initiated.",
   "MANUAL_REMOVAL_POPUP.ERROR_MESSAGE": "The command was executed with errors, but some sites were created and could not be deleted.",
   "MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT": "I understand that manual action is required to avoid data duplication.",
   "MANUAL_REMOVAL_POPUP.TOAST_TEXT": "Site list was copied to the clipboard",
