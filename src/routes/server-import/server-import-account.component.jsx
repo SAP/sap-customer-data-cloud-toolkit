@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Card, Bar, Text, Button, Option, Select, ValueState, CardHeader, TitleLevel, Label, Panel } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Panel } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,

@@ -77,24 +77,24 @@ function transformSchema(fields, parentKey) {
       splitKeys.forEach((part, index) => {
         accumulatedKey = accumulatedKey ? `${accumulatedKey}.${part}` : part // Incrementally build the id
 
-        let existing = currentLevel.find((item) => item.id === accumulatedKey)
-        if (!existing) {
-          existing = {
+        let existsBranch = currentLevel.find((item) => item.id === accumulatedKey)
+        if (!existsBranch) {
+          existsBranch = {
             id: accumulatedKey,
             name: part,
             value: false,
             branches: [],
             switchId: 'object',
           }
-          currentLevel.push(existing)
+          currentLevel.push(existsBranch)
         }
 
         if (index === splitKeys.length - 1) {
           if (isFieldDetailObject(fieldDetail) && hasNestedObject(fieldDetail)) {
-            existing.branches = transformSchema(fieldDetail, parentKey)
+            existsBranch.branches = transformSchema(fieldDetail, parentKey)
           }
         } else {
-          currentLevel = existing.branches
+          currentLevel = existsBranch.branches
         }
       })
     }
