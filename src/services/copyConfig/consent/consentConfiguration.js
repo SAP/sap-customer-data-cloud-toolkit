@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import ConsentStatement from './consentStatement.js'
 import LegalStatement from './legalStatement.js'
 import { stringToJson } from '../objectHelper.js'
@@ -49,7 +48,7 @@ class ConsentConfiguration {
     return responses
   }
 
-  async copyFromGit(destinationSite, dataCenter, content, options) {
+  async setFromFiles(destinationSite, dataCenter, content, options) {
     let responses = []
     if (options && options.value === false) {
       return responses

@@ -92,14 +92,13 @@ export const setChannel = async function (config) {
 // set CommunicationTopics
 export const setCommunicationTopics = async function (config) {
   // for (const topic of config.Channels) {
-  //   await this.communication.copyFromGit(this.apiKey, this.dataCenter, topic)
   // }
   debugger
   if (config.Channels) {
-    await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.Channels, 'channel')
+    await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.Channels, 'channel')
   }
   if (config.results) {
-    await this.communication.copyFromGit(this.apiKey, this.dataCenter, config.results, 'topic')
+    await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.results, 'topic')
   }
 }
 
@@ -147,16 +146,14 @@ export const setWebhook = async function (config) {
 export const setConsent = async function (config) {
   const options = createOptions('consents', config.preferences)
   console.log('Consent Options created:', options.getOptions())
-  await this.consent.copyFromGit(this.apiKey, this.dataCenter, config, options)
+  await this.consent.setFromFiles(this.apiKey, this.dataCenter, config, options)
 }
 
 // setSocial
 export const setSocial = async function (config) {
-  await this.social.copyFromGit(this.apiKey, this.dataCenter, config)
+  await this.social.setFromFiles(this.apiKey, this.dataCenter, config)
 }
 
 export const setRecaptcha = async function (config) {
-  await this.recaptcha.copyFromGit(this.apiKey, this.dataCenter, config)
+  await this.recaptcha.setFromFiles(this.apiKey, this.dataCenter, config)
 }
-
-

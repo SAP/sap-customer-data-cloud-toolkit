@@ -39,7 +39,7 @@ class Communication {
     return responses
   }
 
-  async copyFromGit(destinationSite, dataCenter, content, fileType) {
+  async setFromFiles(destinationSite, dataCenter, content, fileType) {
     let responses = []
     switch (fileType) {
       case 'channel':

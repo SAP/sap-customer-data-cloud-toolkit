@@ -121,7 +121,7 @@ class RecaptchaConfiguration {
     return config
   }
 
-  async copyFromGit(apiKey, dataCenter, config) {
+  async setFromFiles(apiKey, dataCenter, config) {
     try {
       if (config.recaptchaConfig) {
         await this.setRecaptchaConfig(apiKey, dataCenter, config.recaptchaConfig)

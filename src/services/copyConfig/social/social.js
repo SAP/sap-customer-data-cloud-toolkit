@@ -53,7 +53,7 @@ class Social {
     return response
   }
 
-  async copyFromGit(apiKey, dataCenter, config) {
+  async setFromFiles(apiKey, dataCenter, config) {
     const response = await this.set(apiKey, config, dataCenter)
     console.log('Social config set from Git:', response)
     if (response.context) {
