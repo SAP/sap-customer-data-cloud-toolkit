@@ -7,6 +7,7 @@ import TopicImportFields from './communicationImport'
 import { expectedCommunicationResponse, expectedTransformedCommunicationData } from './dataTest'
 import axios from 'axios'
 import { credentials } from '../../servicesDataTest'
+
 jest.mock('axios')
 jest.setTimeout(10000)
 describe('Import Account - communicationImport test suite', () => {

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { CardHeader } from '@ui5/webcomponents-react'

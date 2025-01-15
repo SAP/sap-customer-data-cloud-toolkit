@@ -7,11 +7,12 @@ import '@ui5/webcomponents-icons/dist/message-information.js'
 import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
-import { setMandatoryFields, setSugestionMandatoryFields, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import SchemaPropertyType from '../schema-property-type/schema-property-type.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
-import { handleSelectChange } from './utils.js'
+import { setMandatoryField, setSugestionMandatoryField, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
+import { findBranchAndSiblings, handleSelectChange, shouldRenderSelect } from './utils.js'
+import { isMandatoryFields } from '../../redux/importAccounts/utils.js'
 
 const ImportAccountConfigurationTree = ({
   id,
@@ -28,7 +29,8 @@ const ImportAccountConfigurationTree = ({
   dispatch,
   t,
 }) => {
-  const onCheckBoxStateChangeHandler = (event, treeNodeId, parentNode) => {
+  const schemaNodeIds = ['internal', 'data', 'profile']
+  const onCheckBoxStateChangeHandler = (event) => {
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
     setFields(event)
@@ -38,25 +40,13 @@ const ImportAccountConfigurationTree = ({
       dispatch(setSugestionSchema({ checkBoxId, value }))
     }
   }
-
-  const findBranchAndSiblings = (structure, targetId) => {
-    let result = null
-
-    const traverse = (branches) => {
-      for (let branch of branches) {
-        if (branch.id === targetId) {
-          result = branches
-          return
-        }
-        if (branch.branches.length > 0) {
-          traverse(branch.branches)
-          if (result) return
-        }
+  const selectChildrenField = (siblings) => {
+    for (let branch of siblings) {
+      if (isMandatoryFields(branch.id)) {
+        dispatch(setMandatoryField({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
+        dispatch(setSugestionMandatoryField({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
       }
     }
-
-    traverse(structure)
-    return result
   }
 
   const setFields = (event) => {
@@ -66,35 +56,16 @@ const ImportAccountConfigurationTree = ({
     }
   }
 
-  const selectChildrenField = (siblings) => {
-    for (let branch of siblings) {
-      if (branch.id.includes('isSubscribed') || branch.id.includes('isConsentGranted') || branch.id.includes('status')) {
-        dispatch(setMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
-        dispatch(setSugestionMandatoryFields({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
-      }
-    }
-  }
-
   const showError = (treeNode) => {
     return treeNode.error ? <MessagePopoverButton message={treeNode.error} type={getHighestSeverity(treeNode.error)} /> : ''
   }
-  const shouldRenderSelect = (node) => {
-    for (const branch of node.branches) {
-      if (branch.branches.length === 0) {
-        return true
-      }
-      if (shouldRenderSelect(branch)) {
-        return true
-      }
-    }
-    return false
-  }
+
   const isReadOnly = (treeNode) => {
     return (treeNode.branches.length === 0 && treeNode.mandatory === true) || (mandatory === true && treeNode.mandatory !== false)
   }
 
   const expandTree = (treeNode, isParentLoyalty = false) => {
-    const isLoyaltyNode = ['internal', 'data', 'profile'].includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
+    const isLoyaltyNode = schemaNodeIds.includes(treeNode.id) ? shouldRenderSelect(treeNode) : isParentLoyalty
     return (
       <TreeItemCustom
         key={treeNode.id}
@@ -110,7 +81,7 @@ const ImportAccountConfigurationTree = ({
             />
 
             {showError(treeNode)}
-            {isLoyaltyNode && treeNode.branches.length > 0 && treeNode.id !== 'data' && treeNode.id !== 'internal' && treeNode.id !== 'profile' && (
+            {isLoyaltyNode && treeNode.branches.length > 0 && !schemaNodeIds.includes(treeNode.id) && (
               <SchemaPropertyType treeNode={treeNode} t={t} handleSelectChange={(event) => handleSelectChange(event, treeNode.id, setSwitchOptions, dispatch)} />
             )}
           </FlexBox>

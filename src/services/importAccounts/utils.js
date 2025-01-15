@@ -18,13 +18,13 @@ export function isFieldDetailObject(fieldDetail, skipFields = true) {
   }
   return false
 }
-export function extractAndTransformFields(data, callBackFunction) {
+export function extractAndTransformFields(data, transformsFields) {
   const fieldsTransformed = []
   Object.entries(data).forEach(([key, value]) => {
-    if (value && typeof value === 'object') {
-      const transformed = callBackFunction(key, value)
-      if (transformed) {
-        fieldsTransformed.push(transformed)
+    if (typeof value === 'object') {
+      const transformedField = transformsFields(key, value)
+      if (transformedField) {
+        fieldsTransformed.push(transformedField)
       }
     }
   })

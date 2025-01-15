@@ -2,15 +2,16 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import React, { useState } from 'react'
 import '@ui5/webcomponents/dist/Input.js'
 import '@ui5/webcomponents/dist/SuggestionItem.js'
-import { Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
+import React, { useState } from 'react'
 import { createUseStyles } from 'react-jss'
+import { Input, InputType, SuggestionItem } from '@ui5/webcomponents-react'
 import { extractIds } from '../../routes/import-accounts/utils'
 import styles from './search-schema-input.styles'
 
 const useStyles = createUseStyles(styles, { name: 'SearchSchemaInput' })
+
 const SearchBar = ({ handleSuggestionClick, configurations, setSchemaInputValue, schemaInputValue, handleTreeNodeClick }) => {
   const classes = useStyles()
   const [suggestions, setSuggestions] = useState([])

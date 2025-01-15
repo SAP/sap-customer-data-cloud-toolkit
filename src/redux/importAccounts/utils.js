@@ -6,7 +6,7 @@ export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
     configuration.branches.forEach((branch) => {
-      if (branch.id.includes('status') || branch.id.includes('isConsentGranted') || branch.id.includes('isSubscribed')) {
+      if (isMandatoryFields(branch.id)) {
         branch.value = value
         branch.mandatory = value
       }
@@ -25,7 +25,7 @@ export const clearConfigurationsState = (configuration, value) => {
   if (configuration.branches) {
     configuration.branches.forEach((branch) => {
       if (branch.branches.length === 0) {
-        branch.mandatory = false // Ensure mandatory is set to false
+        branch.mandatory = false
       }
       branch.value = value
       clearConfigurationsState(branch, value)
@@ -43,7 +43,7 @@ export const getAllConfiguration = (configurations, ids) => {
 
     path.forEach((part, index) => {
       const configId = path.slice(0, index + 1).join('.')
-      const config = currentLevel.find((c) => c.id === configId || c.id.endsWith(`.${part}`) || c.id === part)
+      const config = currentLevel.find((branch) => branch.id === configId || branch.id.endsWith(`.${part}`) || branch.id === part)
       if (config) {
         if (!parentConfig) {
           parentConfig = findOrCreateConfig(result, config)
@@ -61,7 +61,7 @@ export const getAllConfiguration = (configurations, ids) => {
 
   ids.forEach((id) => {
     if (result.length === 0 || !result.some((config) => config.id === id)) {
-      const config = configurations.find((c) => c.id === id || c.id.endsWith(`.${id}`) || c.id === id)
+      const config = configurations.find((branch) => branch.id === id || branch.id.endsWith(`.${id}`) || branch.id === id)
       if (config) {
         result.push(config)
       }
@@ -92,7 +92,7 @@ const traverseWholeTree = (branches, childId, setParent) => {
   }
   return false
 }
-export const setParentsTrue = (structure, childId, value) => {
+export const setParentsValue = (structure, childId, value) => {
   function checkAndSetParents(branches) {
     for (let branch of branches) {
       if (branch.branches && branch.branches.length > 0) {
@@ -112,7 +112,7 @@ export const getConfigurationPath = (configurations, targetId) => {
     if (path.length === 0) return null
 
     const [currentId, ...restPath] = path
-    const node = nodes.find((n) => n.id === currentId || n.id.endsWith(`.${currentId}`))
+    const node = nodes.find((node) => node.id === currentId || node.id.endsWith(`.${currentId}`))
 
     if (!node) return null
 
@@ -137,4 +137,7 @@ export const propagateConfigurationSelectBox = (configuration, payload) => {
       branch.switchId = payload.operation
     }
   }
+}
+export const isMandatoryFields = (branchId) => {
+  return branchId.includes('isSubscribed') || branchId.includes('isConsentGranted') || branchId.includes('status')
 }

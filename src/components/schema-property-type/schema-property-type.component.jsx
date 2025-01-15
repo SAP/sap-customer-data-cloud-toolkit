@@ -11,6 +11,7 @@ import { createUseStyles } from 'react-jss'
 import styles from './schema-property-type.styles'
 
 const useStyles = createUseStyles(styles, { name: 'SchemaPropertyType' })
+
 const SchemaPropertyType = ({ handleSelectChange, t, setSwitchOptions, treeNode, setTreeData, treeData }) => {
   const dispatch = useDispatch()
   const classes = useStyles()

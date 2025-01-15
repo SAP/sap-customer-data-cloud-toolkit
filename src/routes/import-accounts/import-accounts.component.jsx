@@ -4,13 +4,12 @@
  */
 import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
+import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-import { getApiKey } from '../../redux/utils.js'
-import { useDispatch, useSelector } from 'react-redux'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
 import {
   getConfigurationTree,
   selectConfigurations,
@@ -25,9 +24,10 @@ import {
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-
+import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
+
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
 
@@ -40,6 +40,7 @@ const ImportAccountsComponent = ({ t }) => {
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
+  const [accountOption, setAccountOption] = useState('Full')
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
@@ -49,13 +50,14 @@ const ImportAccountsComponent = ({ t }) => {
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = async () => {
-    dispatch(setConfigurations())
+    dispatch(setConfigurations(accountOption))
     await trackUsage({ featureName: PAGE_TITLE })
   }
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree(selectedValue))
+    setAccountOption(selectedValue)
   }
 
   const handleTreeNodeClick = (treeNodeId) => {

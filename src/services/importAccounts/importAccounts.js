@@ -47,7 +47,7 @@ class ImportAccounts {
     return result
   }
 
-  async exportDataToCsv(items) {
+  async exportDataToCsv(items, accountOption) {
     let result = []
     const { data, preferencesOptions, communicationsOptions, informationOption, rootOptions } = this.seperateOptionsFromTree(items)
     if (rootOptions.length > 0) {
@@ -70,8 +70,8 @@ class ImportAccounts {
       const informationData = TreeSearch.getCheckedOptionsFromTree(informationOption, false)
       result.push(...informationData)
     }
-
-    createCSVFile(result)
+    console.log('accountOption', accountOption)
+    createCSVFile(result, accountOption)
   }
   seperateOptionsFromTree(items) {
     const data = []
