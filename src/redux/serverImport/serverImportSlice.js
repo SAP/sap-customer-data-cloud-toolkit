@@ -87,9 +87,9 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
     return rejectWithValue(getErrorAsArray(error))
   }
 })
+
 export const { getServerConfiguration, setAccountType, clearConfigurations } = serverImportExtendedSlice.actions
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
 export const selectAccountType = (state) => state.serverImport.accountType
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
-
 export const serverImportExtendedSliceReducer = serverImportExtendedSlice.reducer

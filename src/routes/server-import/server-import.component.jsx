@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
@@ -27,6 +28,7 @@ import { trackUsage } from '../../lib/tracker.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'
+
 const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -70,8 +72,6 @@ const ServerImportComponent = ({ t }) => {
       const resultAction = await dispatch(setDataflow({ option: selectedOption }))
       if (setDataflow.fulfilled.match(resultAction)) {
         setCreatedDataflowId(resultAction.payload)
-      } else {
-        console.error('Failed to set dataflow:', resultAction.payload)
       }
       setShowSuccessDialog(true)
     }

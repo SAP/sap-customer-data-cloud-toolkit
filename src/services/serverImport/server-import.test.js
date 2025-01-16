@@ -1,5 +1,5 @@
 import ServerImport from './server-import.js'
-import { credentials, expectedGigyaResponseOk } from '../servicesDataTest.js'
+import { credentials } from '../servicesDataTest.js'
 import axios from 'axios'
 import { commonConfigurations, commonOption, expectedScheduleStructure, scheduleResponse } from './dataTest.js'
 jest.mock('axios')
@@ -8,7 +8,6 @@ describe('ServerImport Test Suite', () => {
   const site = 'testSite'
   const dataCenter = 'us1'
   const serverImport = new ServerImport(credentials, site, dataCenter)
-
   const commonAccountOption = 'Lite'
 
   test('should get structure', () => {
@@ -64,7 +63,6 @@ describe('ServerImport Test Suite', () => {
 
   test('should create schedule structure', () => {
     const response = { id: 'dataflowId' }
-
     const result = serverImport.scheduleStructure(response)
     expect(result).toEqual(expectedScheduleStructure)
   })
