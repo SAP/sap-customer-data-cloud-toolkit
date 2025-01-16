@@ -1,10 +1,9 @@
 import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
-import { createVersionControlInstance, handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
+import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 import Cookies from 'js-cookie'
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 
-// Mock libraries and services
 jest.mock('js-cookie')
 jest.mock('../../services/versionControl/versionControlService')
 

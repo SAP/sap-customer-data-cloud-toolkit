@@ -263,42 +263,30 @@ describe('githubUtils', () => {
     })
   })
 
-  describe('prepareFilesForUpdate', () => {
-    it('should prepare files for update', async () => {
-      const context = {
-        owner: 'testOwner',
-        repo: 'testRepo',
-        defaultBranch: 'main',
-        octokit: {
-          rest: {
-            git: {
-              createBlob: jest.fn().mockResolvedValue({ data: { sha: 'mockSha' } }),
-              createTree: jest.fn().mockResolvedValue({ data: { sha: 'mockTreeSha' } }),
-              createCommit: jest.fn().mockResolvedValue({ data: { sha: 'mockCommitSha' } }),
-              updateRef: jest.fn().mockResolvedValue({}),
-              getRef: jest.fn().mockResolvedValue({ data: { object: { sha: 'mockRefSha' } } }), // Ensure getRef is mocked here
-            },
-            repos: {
-              getBranch: jest.fn().mockResolvedValue({ data: { commit: { sha: 'mockBranchSha' } } }),
-              listBranches: jest.fn().mockResolvedValue({ data: [{ name: 'main' }] }),
-              getContent: jest.fn().mockResolvedValue({ data: { content: 'mockContent' } }), // Ensure getContent is mocked here
-            },
-          },
-        },
-      }
+  describe('listAllCommits', () => {
+    it('should list all commits', async () => {
+      const commits = [{ sha: 'commit1' }, { sha: 'commit2' }]
+      octokitMock.rest.repos.listCommits.mockResolvedValue({ data: commits })
 
-      // Mock the cdcService function calls to return expected mock data
-      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
-        webSdk: { key: 'value' },
-        dataflow: { key: 'value' },
-      })
+      const result = await githubUtils.getCommits(context)
+      expect(result).toEqual({ data: commits })
+    })
 
-      CdcService.mockImplementation(() => ({
-        fetchCDCConfigs: mockFetchCDCConfigs,
-      }))
+    it('should handle pagination correctly', async () => {
+      const commitsPage1 = Array(100)
+        .fill()
+        .map((_, i) => ({ sha: `commit${i + 1}` }))
+      const commitsPage2 = [{ sha: 'commit101' }]
+      octokitMock.rest.repos.listCommits.mockResolvedValueOnce({ data: commitsPage1 }).mockResolvedValueOnce({ data: commitsPage2 })
 
-      const result = await githubUtils.prepareFilesForUpdate(context)
-      expect(result).toEqual(['webSdk', 'dataflow'])
+      const result = await githubUtils.getCommits(context)
+      expect(result).toEqual({ data: [...commitsPage1, ...commitsPage2] })
+    })
+
+    it('should throw an error if fetching commits fails', async () => {
+      octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Some error'))
+
+      await expect(githubUtils.getCommits(context)).rejects.toThrow('Some error')
     })
   })
 })
