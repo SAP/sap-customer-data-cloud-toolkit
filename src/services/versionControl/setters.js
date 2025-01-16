@@ -101,7 +101,7 @@ export const setCommunicationTopics = async function (config) {
 }
 
 // Helper function to create Options object
-const createOptions = (type, items, formatName = true) => {
+export const createOptions = (type, items, formatName = true) => {
   if (!Array.isArray(items)) {
     if (typeof items === 'object' && items !== null) {
       items = Object.values(items)
