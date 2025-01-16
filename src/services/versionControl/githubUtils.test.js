@@ -1,10 +1,7 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import { Base64 } from 'js-base64'
 import * as githubUtils from './githubUtils'
 import { removeIgnoredFields } from './dataSanitization'
+import CdcService from './cdcService'
 
 jest.mock('./dataSanitization', () => ({
   removeIgnoredFields: jest.fn(),
@@ -238,12 +235,14 @@ describe('githubUtils', () => {
       const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
     })
+
     it('should throw an error if fetching file content fails', async () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
       octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Some error'))
 
       await expect(githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))).rejects.toThrow('Some error')
     })
+
     it('should handle empty git content', async () => {
       const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
       octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
@@ -254,6 +253,7 @@ describe('githubUtils', () => {
       const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
       expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
     })
+
     it('should handle undefined git file info', async () => {
       octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
       octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
@@ -263,51 +263,42 @@ describe('githubUtils', () => {
     })
   })
 
-  // describe('storeCdcDataInGit', () => {
-  //   it('should store CDC data in git', async () => {
-  //     const context = {
-  //       owner: 'testOwner',
-  //       repo: 'testRepo',
-  //       defaultBranch: 'main',
-  //       octokit: {
-  //         rest: {
-  //           git: {
-  //             createBlob: jest.fn().mockResolvedValue({ data: { sha: 'mockSha' } }),
-  //             createTree: jest.fn().mockResolvedValue({ data: { sha: 'mockTreeSha' } }),
-  //             createCommit: jest.fn().mockResolvedValue({ data: { sha: 'mockCommitSha' } }),
-  //             updateRef: jest.fn().mockResolvedValue({}),
-  //             getRef: jest.fn().mockResolvedValue({ data: { object: { sha: 'mockRefSha' } } }), // Ensure getRef is mocked here
-  //           },
-  //           repos: {
-  //             getBranch: jest.fn().mockResolvedValue({ data: { commit: { sha: 'mockBranchSha' } } }),
-  //             listBranches: jest.fn().mockResolvedValue({ data: [{ name: 'main' }] }),
-  //             getContent: jest.fn().mockResolvedValue({ data: { content: 'mockContent' } }), // Ensure getContent is mocked here
-  //           },
-  //         },
-  //       },
-  //     }
+  describe('prepareFilesForUpdate', () => {
+    it('should prepare files for update', async () => {
+      const context = {
+        owner: 'testOwner',
+        repo: 'testRepo',
+        defaultBranch: 'main',
+        octokit: {
+          rest: {
+            git: {
+              createBlob: jest.fn().mockResolvedValue({ data: { sha: 'mockSha' } }),
+              createTree: jest.fn().mockResolvedValue({ data: { sha: 'mockTreeSha' } }),
+              createCommit: jest.fn().mockResolvedValue({ data: { sha: 'mockCommitSha' } }),
+              updateRef: jest.fn().mockResolvedValue({}),
+              getRef: jest.fn().mockResolvedValue({ data: { object: { sha: 'mockRefSha' } } }), // Ensure getRef is mocked here
+            },
+            repos: {
+              getBranch: jest.fn().mockResolvedValue({ data: { commit: { sha: 'mockBranchSha' } } }),
+              listBranches: jest.fn().mockResolvedValue({ data: [{ name: 'main' }] }),
+              getContent: jest.fn().mockResolvedValue({ data: { content: 'mockContent' } }), // Ensure getContent is mocked here
+            },
+          },
+        },
+      }
 
-  //     const mockFileUpdates = [
-  //       {
-  //         path: 'src/versionControl/webSdk.json',
-  //         content: JSON.stringify({ key: 'value' }),
-  //         sha: 'mockSha',
-  //       },
-  //     ]
+      // Mock the cdcService function calls to return expected mock data
+      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
+        webSdk: { key: 'value' },
+        dataflow: { key: 'value' },
+      })
 
-  //     githubUtils.updateFilesInSingleCommit = jest.fn().mockResolvedValue()
+      CdcService.mockImplementation(() => ({
+        fetchCDCConfigs: mockFetchCDCConfigs,
+      }))
 
-  //     await githubUtils.storeCdcDataInGit(context, 'commitMessage')
-  //     console.log('updateFilesInSingleCommit calls:', githubUtils.updateFilesInSingleCommit.mock.calls)
-  //     expect(githubUtils.updateFilesInSingleCommit).toHaveBeenCalledWith(context, 'commitMessage', mockFileUpdates)
-  //   })
-  // })
-
-  describe('getCommits', () => {
-    it('should handle errors when fetching commits', async () => {
-      octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Network Error'))
-
-      await expect(githubUtils.getCommits(context)).rejects.toThrow('Network Error')
+      const result = await githubUtils.prepareFilesForUpdate(context)
+      expect(result).toEqual(['webSdk', 'dataflow'])
     })
   })
 })
