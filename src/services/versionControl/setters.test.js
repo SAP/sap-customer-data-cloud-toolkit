@@ -57,6 +57,22 @@ describe('setters', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    Options.mockImplementation(function (optionsData) {
+      this.getOptions = jest.fn().mockReturnValue({
+        id: optionsData.id,
+        name: optionsData.name,
+        value: false,
+        formatName: true,
+        branches: optionsData.branches
+          ? optionsData.branches.map((branch) => ({
+              id: branch.name,
+              name: branch.name,
+              value: true,
+              formatName: false,
+            }))
+          : [],
+      })
+    })
   })
 
   describe('setPolicies', () => {

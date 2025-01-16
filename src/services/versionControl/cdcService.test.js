@@ -132,6 +132,11 @@ describe('CdcService', () => {
 
       consoleErrorSpy.mockRestore()
     })
+
+    it('should throw an error if getCdcData does not return an array', async () => {
+      jest.spyOn(cdcService, 'getCdcData').mockReturnValueOnce(null)
+      await expect(cdcService.fetchCDCConfigs()).rejects.toThrow('getCdcData must return an array')
+    })
   })
 
   describe('applyCommitConfig', () => {
@@ -151,6 +156,7 @@ describe('CdcService', () => {
         { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
         { filename: 'src/versionControl/social.json', content: { key: 'value' } },
         { filename: 'src/versionControl/recaptcha.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/dataflow.json', content: { key: 'value' } },
       ]
       githubUtils.getCommitFiles.mockResolvedValue(mockFiles)
 
@@ -169,6 +175,7 @@ describe('CdcService', () => {
       expect(setters.setConsent).toHaveBeenCalledWith({ key: 'value' })
       expect(setters.setSocial).toHaveBeenCalledWith({ key: 'value' })
       expect(setters.setRecaptcha).toHaveBeenCalledWith({ key: 'value' })
+      expect(setters.setDataflow).toHaveBeenCalledWith({ key: 'value' })
     })
 
     it('should handle unknown file types', async () => {
