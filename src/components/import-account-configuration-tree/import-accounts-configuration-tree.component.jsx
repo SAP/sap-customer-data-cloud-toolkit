@@ -3,9 +3,8 @@
  * License: Apache-2.0
  */
 
-import '@ui5/webcomponents-icons/dist/message-information.js'
-import React from 'react'
 import { withTranslation } from 'react-i18next'
+import '@ui5/webcomponents-icons/dist/message-information.js'
 import { Tree, TreeItemCustom, CheckBox, FlexBox } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import SchemaPropertyType from '../schema-property-type/schema-property-type.component.jsx'

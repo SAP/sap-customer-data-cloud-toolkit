@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+const mandatoryFields = ['isSubscribed', 'isConsentGranted', 'status']
 export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
@@ -16,6 +17,7 @@ export const propagateConfigurationState = (configuration, value) => {
   }
   return configuration
 }
+
 export const clearConfigurationsState = (configuration, value) => {
   if (configuration.id === 'email' || configuration.id === 'uid') {
     return // Skip configurations with id 'email' or 'uid'
@@ -79,6 +81,7 @@ const findOrCreateConfig = (configs, config) => {
   }
   return existingConfig
 }
+
 const traverseWholeTree = (branches, childId, setParent) => {
   for (let branch of branches) {
     if (branch.id === childId) {
@@ -92,6 +95,7 @@ const traverseWholeTree = (branches, childId, setParent) => {
   }
   return false
 }
+
 export const setParentsValue = (structure, childId, value) => {
   function checkAndSetParents(branches) {
     for (let branch of branches) {
@@ -105,6 +109,7 @@ export const setParentsValue = (structure, childId, value) => {
   traverseWholeTree(structure, childId, value)
   checkAndSetParents(structure)
 }
+
 export const getConfigurationPath = (configurations, targetId) => {
   const path = targetId.split('.')
 
@@ -138,6 +143,7 @@ export const propagateConfigurationSelectBox = (configuration, payload) => {
     }
   }
 }
+
 export const isMandatoryFields = (branchId) => {
-  return branchId.includes('isSubscribed') || branchId.includes('isConsentGranted') || branchId.includes('status')
+  return mandatoryFields.some((keyword) => branchId.includes(keyword))
 }
