@@ -61,7 +61,6 @@ class CdcService {
     const files = await getCommitFiles(this.versionControl, commitSha)
     for (const file of files) {
       // Strip the 'src/versionControl/' prefix and '.json' suffix, match file type correctly
-      // const fileType = file.filename.replace('src/versionControl/', '').replace(/\.json$/, '')
       const fileType = file.filename.split('/').pop().split('.').shift()
 
       let filteredResponse = file.content

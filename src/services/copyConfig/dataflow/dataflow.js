@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -192,6 +191,9 @@ class Dataflow {
       if (response.length === 0) {
         response.push(resp)
       } else if (resp.result) {
+        if (!response[0].result) {
+          response[0].result = []
+        }
         response[0].result.push(...resp.result)
         response[0].resultCount += resp.resultCount
         response[0].totalCount += resp.totalCount

@@ -213,24 +213,13 @@ export async function storeCdcDataInGit(versionControl, commitMessage) {
   )
 
   const validUpdates = fileUpdates.filter((update) => update !== null)
-  const messages = files.map((file, index) => {
-    if (validUpdates.includes(fileUpdates[index])) {
-      return file.path.split('/').pop().replace('.json', '')
-    } else {
-      return `Skipped backup: no changes detected on ${file.path.split('/').pop().replace('.json', '')}`
-    }
-  })
-
   if (validUpdates.length > 0) {
     await updateFilesInSingleCommit(versionControl, commitMessage, validUpdates)
   } else {
+    //failsafe
     console.log('No files to update. Skipping commit.')
   }
-
-  return messages
 }
-
-
 
 export async function getCommits(versionControl) {
   let allCommits = []
