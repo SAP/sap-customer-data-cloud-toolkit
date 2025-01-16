@@ -83,7 +83,6 @@ export const setEmailTemplates = async function (response) {
 
 // set CommunicationTopics
 export const setChannel = async function (config) {
-  debugger
   for (const topic of config.Channels) {
     await this.communication.set(this.apiKey, this.dataCenter, topic)
   }
@@ -93,7 +92,6 @@ export const setChannel = async function (config) {
 export const setCommunicationTopics = async function (config) {
   // for (const topic of config.Channels) {
   // }
-  debugger
   if (config.Channels) {
     await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.Channels, 'channel')
   }
