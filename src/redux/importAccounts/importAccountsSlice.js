@@ -17,7 +17,6 @@ export const importAccountsSlice = createSlice({
     isLoading: false,
     showSuccessMessage: false,
     currentSiteInformation: {},
-    switchId: {},
     selectedConfiguration: [],
   },
   reducers: {
@@ -143,6 +142,5 @@ export const selectConfigurations = (state) => state.importAccounts.configuratio
 export const selectIsLoading = (state) => state.importAccounts.isLoading
 export const selectSugestionConfigurations = (state) => state.importAccounts.selectedConfiguration
 export const selectParentNode = (state) => state.importAccounts.parentNode
-export const selectSwitchId = (state) => state.switchId
 
 export default importAccountsSlice.reducer

@@ -53,7 +53,6 @@ export const initialState = {
   parentNode: [],
   selectedConfiguration: [],
   showSuccessMessage: false,
-  switchId: {},
 }
 
 export const initialStateWithConfigurations = {
@@ -65,7 +64,6 @@ export const initialStateWithConfigurations = {
   parentNode: [],
   selectedConfiguration: [],
   showSuccessMessage: false,
-  switchId: {},
 }
 
 export const mockConfigurationTreeTrue = [
