@@ -70,7 +70,6 @@ class ImportAccounts {
       const informationData = TreeSearch.getCheckedOptionsFromTree(informationOption, false)
       result.push(...informationData)
     }
-    console.log('accountOption', accountOption)
     createCSVFile(result, accountOption)
   }
   seperateOptionsFromTree(items) {
