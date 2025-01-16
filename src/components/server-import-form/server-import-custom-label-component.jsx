@@ -1,4 +1,3 @@
-import React from 'react'
 import { Label } from '@ui5/webcomponents-react'
 
 const CustomLabel = ({ name }) => {

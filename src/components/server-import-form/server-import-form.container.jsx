@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Icon, Input, Popover } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import-component.styles.js'

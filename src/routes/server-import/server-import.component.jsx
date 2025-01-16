@@ -3,11 +3,14 @@
  * License: Apache-2.0
  */
 
+import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './server-import.styles.js'
 import { Card, Bar, Text, Button, Option, Select, ValueState, CardHeader } from '@ui5/webcomponents-react'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
+import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import {
   clearConfigurations,
   getConfigurations,
@@ -20,10 +23,7 @@ import {
 import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { getApiKey } from '../../redux/utils.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-import { useDispatch, useSelector } from 'react-redux'
-import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import { isInputFilled } from './utils.js'
-import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import { trackUsage } from '../../lib/tracker.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
@@ -52,9 +52,11 @@ const ServerImportComponent = ({ t }) => {
     dispatch(setAccountType({ accountType: selectedValue, serverType: setSelectedServerOption }))
     setAccountOption(selectedValue)
   }
+
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value)
   }
+
   const onSuccessDialogAfterCloseHandler = async () => {
     await trackUsage({ featureName: PAGE_TITLE })
   }
@@ -62,11 +64,13 @@ const ServerImportComponent = ({ t }) => {
   const handleInputChange = (event, id) => {
     dispatch(getServerConfiguration({ selectedOption, id, value: event.target.value, accountType: accountOption }))
   }
+
   const disableDeployButton = () => {
     if (serverConfigurations[selectedOption]) {
       return !isInputFilled(serverConfigurations[selectedOption])
     }
   }
+
   const handleSubmit = async () => {
     if (selectedOption && accountOption) {
       const resultAction = await dispatch(setDataflow({ option: selectedOption }))
@@ -80,6 +84,7 @@ const ServerImportComponent = ({ t }) => {
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
   }
+
   const renderFormItemsInGrid = () => {
     return serverConfigurations[selectedOption].map((field) => (
       <div key={field.id} className={classes.gridItem}>
@@ -87,6 +92,7 @@ const ServerImportComponent = ({ t }) => {
       </div>
     ))
   }
+
   const showSuccessMessage = () => (
     <DialogMessageInform
       open={showSuccessDialog}
@@ -100,6 +106,7 @@ const ServerImportComponent = ({ t }) => {
       <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { dataflowId: createdDataflowId })}</Text>{' '}
     </DialogMessageInform>
   )
+
   return (
     <>
       <div className={classes.cardDiv}>

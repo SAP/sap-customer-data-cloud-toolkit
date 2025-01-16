@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import ServerImport from './server-import.js'
 import { credentials } from '../servicesDataTest.js'
 import axios from 'axios'
