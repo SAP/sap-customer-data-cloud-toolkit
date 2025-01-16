@@ -17,7 +17,6 @@ export const propagateConfigurationState = (configuration, value) => {
       propagateConfigurationState(branch, value)
     })
   }
-  console.log('configuration', configuration)
   return configuration
 }
 

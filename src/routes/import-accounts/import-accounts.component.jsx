@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
+import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
@@ -44,6 +44,8 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
+  const [isCardExpanded, setExpanded] = useState(false)
+
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree('Full'))
@@ -53,6 +55,7 @@ const ImportAccountsComponent = ({ t }) => {
     dispatch(setConfigurations(accountOption))
     await trackUsage({ featureName: PAGE_TITLE })
   }
+
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
     dispatch(getCurrentSiteInformation())
@@ -71,6 +74,7 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const handleSuggestionClick = (nodeId) => {
     if (nodeId) {
       dispatch(setSuggestionClickConfiguration({ checkBoxId: nodeId }))
@@ -81,9 +85,11 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const disableSaveButton = () => {
     return !areConfigurationsFilled(configurations) || isLoading
   }
+
   const showConfigurations = (config) => {
     return (
       <ImportAccountsConfigurations
@@ -96,10 +102,15 @@ const ImportAccountsComponent = ({ t }) => {
       />
     )
   }
+
   const onCancelHandler = () => {
     if (!isLoading) {
       dispatch(clearConfigurations())
     }
+  }
+
+  const handleToggleCard = () => {
+    setExpanded(isCardExpanded)
   }
 
   return (
@@ -122,16 +133,7 @@ const ImportAccountsComponent = ({ t }) => {
                 {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
               </Text>
             </FlexBox>
-            <Card
-              header={
-                <CardHeader
-                  titleText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
-                  className={classes.titleSpanStyle}
-                  subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}
-                ></CardHeader>
-              }
-              className={classes.cardContainer}
-            >
+            <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard} noAnimation={true}>
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
@@ -159,7 +161,6 @@ const ImportAccountsComponent = ({ t }) => {
                 </>
               </Grid>
               {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
-
               <div className={classes.selectConfigurationOuterDivStyle}>
                 <div className={classes.selectConfigurationInnerDivStyle}>
                   <Bar
@@ -192,7 +193,7 @@ const ImportAccountsComponent = ({ t }) => {
                   ></Bar>
                 </div>
               </div>
-            </Card>
+            </Panel>
           </div>
         </div>
       </div>
