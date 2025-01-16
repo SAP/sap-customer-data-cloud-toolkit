@@ -27,7 +27,7 @@ import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 import { requestConsentConfirmation } from './lib/tracker'
 import PrettifyAllScreens from './routes/prettify-code/prettify-all-screens-javascript.component'
 import PrettifySingleScreenComponent from './routes/prettify-code/prettify-single-screen.component'
-import ImportAccountsComponent from './routes/import-accounts/importAccounts.component'
+import ImportAccountsComponent from './routes/import-accounts/import-accounts.component'
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
   requestConsentConfirmation()

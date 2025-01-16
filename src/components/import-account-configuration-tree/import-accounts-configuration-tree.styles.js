@@ -4,8 +4,9 @@
  */
 
 const styles = {
-  targetInfoContainerInput: {
-    width: '100%',
+  tooltipIconStyle: {
+    alignSelf: 'center',
+    marginLeft: '6px',
   },
 }
 

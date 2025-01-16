@@ -5,7 +5,8 @@
 
 const styles = {
   targetInfoContainerInput: {
-    width: '100%',
+    float: 'right',
+    width: '50%',
   },
 }
 
