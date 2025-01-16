@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import crypto from 'crypto-js'
 import i18n from '../../i18n'
 import { getApiKey } from '../utils'

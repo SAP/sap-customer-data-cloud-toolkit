@@ -6,6 +6,9 @@
 /* eslint-disable no-undef */
 
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
+import { expectedCommunicationResponse } from '../../src/services/importAccounts/communicationImport/dataTest'
+import { mockPreferencesResponse } from '../../src/services/importAccounts/preferencesImport/dataTest'
+import { expectedSchemaResponse } from '../../src/services/importAccounts/schemaImport/schemaDatatest'
 import {
   dummyApiKey,
   mockedCreateDataflowResponse,
@@ -47,6 +50,10 @@ import {
   setPoliciesMock,
   setRiskProvidersMock,
   serverImportHeader,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -58,6 +65,12 @@ export function startUp(pageName) {
 
   cy.contains(pageName).realClick()
   cy.reload()
+}
+export function getImportAccountsInformation() {
+  cy.get('#importAccountsTitle').should('contain.text', importData)
+  cy.get('#importAccountsHeaderText').should('contain.text', importAccountsDescription)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-first-line').should('contain.text', importAccountDownloadButton)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-subtitle').should('contain.text', importAccountsSubtitle)
 }
 
 export function checkServerImportState(accountType) {
@@ -192,6 +205,12 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'admin.captcha.getConfig', { body: getRecaptchaExpectedResponse }).as('captcha.getConfig')
   cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('accounts.getPolicies')
   cy.intercept('POST', 'admin.riskProviders.getConfig', { body: getRiskProvidersResponse }).as('riskProviders.getConfig')
+}
+export function mockConfigurationTreeFullAccount() {
+  cy.intercept('POST', 'accounts.getSchema', { body: expectedSchemaResponse }).as('getSchema')
+  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockPreferencesResponse }).as('getPreferences')
+  cy.intercept('POST', 'accounts.communications.settings.search', { body: expectedCommunicationResponse }).as('getCommunication')
+  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
 }
 
 export function mockSetConfigurationRequests() {

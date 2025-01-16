@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {

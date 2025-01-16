@@ -68,6 +68,10 @@ const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Form
 const importAccounts = 'Import Accounts'
 const serverImportHeader = 'Deploy and ImportImport a full or lite account from a storage server'
 const serverImportSuccessMessage = 'The dataflow was deployed successfully (ID: a25eed98877d42faaee2a8c0c4ab7d78). \n Check status of imported accounts in: Dataflows > Job Status.'
+const importData = 'Import Data'
+const importAccountsDescription = 'Import accounts and generate csv with schema and legal fields'
+const importAccountDownloadButton = 'Download Template'
+const importAccountsSubtitle = 'This will export the chosen fields to a CSV file. You can then import this file to create accounts.'
 const mockedPrettierGetScreenSetResponse = {
   callId: '5a4395b432794df383c2a35740ae90b0',
   errorCode: 0,
@@ -1804,7 +1808,6 @@ const getRiskProvidersResponse = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
@@ -1848,7 +1851,6 @@ const setRiskProvidersMock = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
@@ -1976,4 +1978,8 @@ export {
   serverImportHeader,
   mockedSetSchedulerResponse,
   serverImportSuccessMessage,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
 }

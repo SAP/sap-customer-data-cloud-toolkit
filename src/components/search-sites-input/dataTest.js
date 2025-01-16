@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 export const mockedAvailableTargetApiKeys = [
   {
     apiKey: '111111',

@@ -23,7 +23,6 @@ class Sms {
   async get(site, dataCenter) {
     const url = UrlBuilder.buildUrl(Sms.#NAMESPACE, dataCenter, Sms.getGetSmsTemplatesEndpoint(), this.gigyaConsole)
     const res = await client.post(url, this.#getSmsTemplatesParameters(site)).catch(function (error) {
-      //console.log(`error=${error}`)
       return generateErrorResponse(error, Sms.#ERROR_MSG_GET_CONFIG)
     })
 

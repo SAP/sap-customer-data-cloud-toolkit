@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './server-import.styles.js'
-import { Card, Bar, Text, Button, Option, Select, ValueState, CardHeader } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, Panel } from '@ui5/webcomponents-react'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import {
@@ -25,7 +25,7 @@ import { getApiKey } from '../../redux/utils.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
-
+import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'
 
@@ -39,6 +39,7 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [showDialog, setShowSuccessDialog] = useState(false)
+  const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   useEffect(() => {
@@ -107,10 +108,14 @@ const ServerImportComponent = ({ t }) => {
     </DialogMessageInform>
   )
 
+  const handleToggleCard = () => {
+    setServerImportExpanded(isServerImportExpanded)
+  }
+
   return (
     <>
       <div className={classes.cardDiv}>
-        <Card header={<CardHeader titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
+        <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isServerImportExpanded} onToggle={handleToggleCard} noAnimation={true}>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
@@ -163,7 +168,7 @@ const ServerImportComponent = ({ t }) => {
               </div>
             </div>
           </div>
-        </Card>
+        </Panel>
       </div>
       {showDialog && showSuccessMessage()}
     </>

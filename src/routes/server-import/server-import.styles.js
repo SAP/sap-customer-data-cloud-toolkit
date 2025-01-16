@@ -17,7 +17,8 @@ const styles = {
     ...spacing.sapUiMediumMarginBegin,
   },
   cardDiv: {
-    ...spacing.sapUiSmallMargin,
+    ...spacing.sapUiSmallMarginTop,
+    width: '100%',
   },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMargin,
