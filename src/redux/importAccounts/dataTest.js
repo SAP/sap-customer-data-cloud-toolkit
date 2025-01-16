@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 export const mockConfigurationTree = [
   {
     id: 'data.loyalty',
@@ -29,19 +30,43 @@ export const mockConfigurationTree = [
     name: 'newsletter.commercial',
     value: true,
     branches: [
-      { id: 'subscriptions.newsletter.commercial.isSubscribed', name: 'isSubscribed', value: true, branches: [], mandatory: true },
-      { id: 'subscriptions.newsletter.commercial.tags', name: 'tags', value: true, branches: [], mandatory: true },
-      { id: 'subscriptions.newsletter.commercial.lastUpdatedSubscriptionState', name: 'lastUpdatedSubscriptionState', value: true, branches: [], mandatory: true },
+      { id: 'subscriptions.newsletter.commercial.isSubscribed', name: 'isSubscribed', value: true, branches: [], mandatory: false },
+      { id: 'subscriptions.newsletter.commercial.tags', name: 'tags', value: true, branches: [] },
+      { id: 'subscriptions.newsletter.commercial.lastUpdatedSubscriptionState', name: 'lastUpdatedSubscriptionState', value: true, branches: [] },
       {
         id: 'subscriptions.newsletter.commercial.doubleOptIn',
         name: 'doubleOptIn',
         value: true,
-        branches: [{ id: 'subscriptions.newsletter.commercial.doubleOptIn.isExternallyVerified', name: 'isExternallyVerified', value: true, branches: [], mandatory: true }],
+        branches: [{ id: 'subscriptions.newsletter.commercial.doubleOptIn.isExternallyVerified', name: 'isExternallyVerified', value: true, branches: [] }],
       },
     ],
     switchId: 'object',
   },
 ]
+
+export const initialState = {
+  configurations: [],
+  currentSiteApiKey: '',
+  currentSiteInformation: {},
+  errors: [],
+  isLoading: false,
+  parentNode: [],
+  selectedConfiguration: [],
+  showSuccessMessage: false,
+  switchId: {},
+}
+
+export const initialStateWithConfigurations = {
+  configurations: mockConfigurationTree,
+  currentSiteApiKey: '',
+  currentSiteInformation: {},
+  errors: [],
+  isLoading: false,
+  parentNode: [],
+  selectedConfiguration: [],
+  showSuccessMessage: false,
+  switchId: {},
+}
 
 export const mockConfigurationTreeTrue = [
   {

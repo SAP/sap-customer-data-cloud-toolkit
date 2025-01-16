@@ -14,7 +14,6 @@ describe('Import Account - Tree Search test suite', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
     data = dataBranches
-    console.log('dataInitial', JSON.stringify(data))
   })
 
   test('Should remove the objects that have value false from tree', () => {

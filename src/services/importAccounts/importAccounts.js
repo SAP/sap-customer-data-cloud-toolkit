@@ -10,6 +10,7 @@ import PreferencesImportFields from './preferencesImport/preferencesImport'
 import SchemaImportFields from './schemaImport/schemaImportFields'
 import { getContext, getLiteRootElementsStructure, getRootElementsStructure, getUID } from './rootOptions/rootLevelFields'
 import TreeSearch from '../treeSearch/treeSearch'
+import { fullAccountType, getRootElements, liteAccountType } from './utils'
 class ImportAccounts {
   #credentials
   #site
@@ -30,7 +31,7 @@ class ImportAccounts {
 
   async importAccountToConfigTree(selectedValue) {
     const result = []
-    if (selectedValue === 'Full') {
+    if (selectedValue === fullAccountType) {
       result.push(...getUID())
       result.push(...(await this.#schemaFields.exportTransformedSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
@@ -38,7 +39,7 @@ class ImportAccounts {
       result.push(...passwordImportTreeFields())
       result.push(...getRootElementsStructure())
     }
-    if (selectedValue === 'Lite') {
+    if (selectedValue === liteAccountType) {
       result.push(...getLiteRootElementsStructure())
       result.push(...(await this.#schemaFields.exportLiteSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
@@ -82,7 +83,7 @@ class ImportAccounts {
     const preferences = 'preferences'
     const communications = 'communications'
     const pass = 'pass'
-    const rootElements = this.getRootElements()
+    const rootElements = getRootElements
 
     items.forEach((item) => {
       if (rootElements.some((root) => item.id === root && item.value === true)) {
@@ -98,9 +99,6 @@ class ImportAccounts {
       }
     })
     return { data, preferencesOptions, communicationsOptions, informationOption, rootOptions }
-  }
-  getRootElements() {
-    return ['uid', 'dataCenter', 'phoneNumber', 'loginIds', 'isActive', 'isRegistered', 'isVerified', 'verified', 'email', 'regSource', 'registered', 'context', 'lang']
   }
 }
 

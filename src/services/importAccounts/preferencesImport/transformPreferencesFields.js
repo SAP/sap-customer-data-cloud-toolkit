@@ -2,17 +2,17 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import { createNode, extractAndTransformFields, hasNestedObject, isFieldDetailObject } from '../utils'
+import { createNode, extractAndTransformFields, hasNestedObject, isFieldDetailObject, preferencesFieldId } from '../utils'
 import { addPreferencesBranches } from './aditionalStructure/preferencesAditionalBranches'
 
 export function extractAndTransformPreferencesFields(preferencesData) {
   return extractAndTransformFields(preferencesData, transformField)
 }
 function transformField(key, value) {
-  if (key === 'preferences') {
+  if (key === preferencesFieldId) {
     return {
       id: key,
-      name: 'preferences',
+      name: preferencesFieldId,
       value: false,
       branches: transformPreferences(value, key),
     }

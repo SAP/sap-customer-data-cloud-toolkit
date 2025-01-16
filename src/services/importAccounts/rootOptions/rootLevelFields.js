@@ -2,16 +2,20 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-export function getUID() {
+
+function createMandatoryBranch(branchId) {
   return [
     {
-      id: 'uid',
-      name: 'uid',
+      id: branchId,
+      name: branchId,
       value: true,
       branches: [],
       mandatory: true,
     },
   ]
+}
+export function getUID() {
+  return createMandatoryBranch('uid')
 }
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
@@ -115,14 +119,5 @@ export const getContext = () => {
   ]
 }
 export const getLiteRootElementsStructure = () => {
-  const rootElementsStructure = [
-    {
-      id: 'email',
-      name: 'email',
-      value: true,
-      branches: [],
-      mandatory: true,
-    },
-  ]
-  return rootElementsStructure
+  return createMandatoryBranch('email')
 }

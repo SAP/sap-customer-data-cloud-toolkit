@@ -12,6 +12,7 @@ class SchemaImportFields {
   #schema
   static METADATA = 'metadata'
   static EMAIL = 'email'
+  static PROPERTYTYPE = 'object'
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
     this.#site = site
@@ -106,7 +107,7 @@ class SchemaImportFields {
         if (obj.hasOwnProperty(key)) {
           if (key === SchemaImportFields.METADATA) {
             delete obj[key]
-          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          } else if (typeof obj[key] === SchemaImportFields.PROPERTYTYPE && obj[key] !== null) {
             traverseAndRemoveEmail(obj[key])
           }
         }
@@ -122,7 +123,7 @@ class SchemaImportFields {
         if (obj.hasOwnProperty(key)) {
           if (key === SchemaImportFields.EMAIL) {
             delete obj[key]
-          } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          } else if (typeof obj[key] === SchemaImportFields.PROPERTYTYPE && obj[key] !== null) {
             traverseAndRemoveEmail(obj[key])
           }
         }

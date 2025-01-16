@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-import React from 'react'
 import { withTranslation } from 'react-i18next'
 import { Option, Select } from '@ui5/webcomponents-react'
 import { useDispatch } from 'react-redux'

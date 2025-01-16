@@ -3,6 +3,8 @@
  * License: Apache-2.0
  */
 const mandatoryFields = ['isSubscribed', 'isConsentGranted', 'status']
+const emailFieldId = 'email'
+const uidFieldId = 'uid'
 export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
@@ -15,11 +17,12 @@ export const propagateConfigurationState = (configuration, value) => {
       propagateConfigurationState(branch, value)
     })
   }
+  console.log('configuration', configuration)
   return configuration
 }
 
 export const clearConfigurationsState = (configuration, value) => {
-  if (configuration.id === 'email' || configuration.id === 'uid') {
+  if (configuration.id === emailFieldId || configuration.id === uidFieldId) {
     return // Skip configurations with id 'email' or 'uid'
   }
   configuration.value = value
@@ -108,6 +111,7 @@ export const setParentsValue = (structure, childId, value) => {
 
   traverseWholeTree(structure, childId, value)
   checkAndSetParents(structure)
+  return structure
 }
 
 export const getConfigurationPath = (configurations, targetId) => {

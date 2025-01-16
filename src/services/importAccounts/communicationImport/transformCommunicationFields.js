@@ -1,23 +1,24 @@
-import { extractAndTransformFields } from '../utils'
-
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
+import { communicationFieldId, communicationMandatoryFieldId, extractAndTransformFields } from '../utils'
+
 export function extractAndTransformCommunicationFields(communicationData) {
   return extractAndTransformFields(communicationData, transformField)
 }
 function transformField(key, value) {
-  if (key === 'communications') {
-    return transformCommunications(value, 'communications')
+  if (key === communicationFieldId) {
+    return transformCommunications(value, communicationFieldId)
   }
 
   return null
 }
 function transformCommunications(communications, parentKey) {
   const result = {
-    id: 'communications',
-    name: 'communications',
+    id: communicationFieldId,
+    name: communicationFieldId,
     value: false,
     branches: [],
   }
@@ -35,8 +36,8 @@ function transformCommunications(communications, parentKey) {
     }
 
     const statusBranch = {
-      id: `${parentKey}.${item.topicChannelId}.status`,
-      name: 'status',
+      id: `${parentKey}.${item.topicChannelId}.${communicationMandatoryFieldId}`,
+      name: communicationMandatoryFieldId,
       value: false,
       branches: [],
     }
