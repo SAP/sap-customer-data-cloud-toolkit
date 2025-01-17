@@ -14,7 +14,7 @@ import credentialsReducer from './credentials/credentialsSlice'
 import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
 import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 import targetSitesTooltipIconReducer from './targetSitesTooltipIcon/targetSitesTooltipIconSlice'
-import { serverImportExtendedSliceReducer } from './serverImport/serverImportSlice'
+import serverImportExtendedSliceReducer from './serverImport/serverImportSlice'
 import importAccountsSliceReducer from './importAccounts/importAccountsSlice'
 
 export default configureStore({

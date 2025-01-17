@@ -24,15 +24,13 @@ export const serverImportExtendedSlice = createSlice({
   },
   reducers: {
     getServerConfiguration(state, action) {
-      const configuration = state.serverConfigurations
-      const option = getConfigurationByKey(configuration, action.payload.selectedOption)
+      const option = getConfigurationByKey(state.serverConfigurations, action.payload.selectedOption)
       const initOption = option.filter((item) => item.id === action.payload.id)[0]
       initOption.value = action.payload.value
       state.accountType = action.payload.accountType
     },
     clearConfigurations(state) {
-      const configuration = state.serverConfigurations
-      clearAllValues(configuration)
+      clearAllValues(state.serverConfigurations)
     },
     setAccountType(state, action) {
       getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
@@ -80,6 +78,7 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
     return rejectWithValue(getErrorAsArray(error))
   }
 })
+
 export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (option, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
@@ -97,4 +96,4 @@ export const { getServerConfiguration, setAccountType, clearConfigurations } = s
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
 export const selectAccountType = (state) => state.serverImport.accountType
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
-export const serverImportExtendedSliceReducer = serverImportExtendedSlice.reducer
+export default serverImportExtendedSlice.reducer

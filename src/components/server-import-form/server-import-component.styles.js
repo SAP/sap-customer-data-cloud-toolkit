@@ -28,7 +28,7 @@ const styles = {
   outerDivFormItem: {
     width: '100%',
   },
-  popoverStyle: {},
+  MandatoryFieldIcon: { color: '#ba066c' },
 }
 
 export default styles
