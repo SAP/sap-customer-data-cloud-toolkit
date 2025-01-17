@@ -11,9 +11,11 @@ class TreeSearch {
       branches: filteredBranches,
     }
   }
+
   static filterTree(tree) {
     return tree.map(TreeSearch.removeFalseValuesFromTree).filter((node) => node !== null)
   }
+
   static getCheckedOptionsFromTree(obj, hasProperty) {
     const results = []
     const config = TreeSearch.filterTree(obj)
@@ -26,6 +28,7 @@ class TreeSearch {
     }
     return results
   }
+
   static getSchemaOptionsFromTree(structure, result) {
     const traverseSchemaOptions = (node, path = '', parentOperation = '') => {
       let currentPath = path ? `${path}.${node.name}` : node.name
@@ -59,6 +62,7 @@ class TreeSearch {
     traverseSchemaOptions(structure)
     return result
   }
+
   static getCheckedOptions(node, results) {
     if (node.branches.length === 0) {
       results.push(`${node.id}`)
@@ -68,6 +72,6 @@ class TreeSearch {
       }
     }
   }
-  static getSchema
 }
+
 export default TreeSearch
