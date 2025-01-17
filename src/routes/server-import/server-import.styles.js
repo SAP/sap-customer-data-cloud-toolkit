@@ -13,7 +13,6 @@ const styles = {
   },
   cardDiv: {
     ...spacing.sapUiSmallMarginTop,
-    overflowY: 'auto',
     width: '100%',
   },
   headerTextFlexboxStyle: {

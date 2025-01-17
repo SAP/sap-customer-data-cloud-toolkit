@@ -47,6 +47,7 @@ const styles = {
     flexDirection: 'column',
     overflowY: 'auto',
     height: '90vh',
+    composes: 'cdc-tools-background',
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',

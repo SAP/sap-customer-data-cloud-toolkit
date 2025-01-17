@@ -3,9 +3,10 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
+import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
 import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Panel } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
@@ -106,6 +107,9 @@ const ServerImportComponent = ({ t }) => {
     <>
       <div className={classes.cardDiv}>
         <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard} noAnimation={true}>
+          <Label>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}</Label>
+          <Label>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')}</Label>
+          <Label>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT_DESCRIPTION')}</Label>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
