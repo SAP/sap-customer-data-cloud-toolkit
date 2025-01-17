@@ -10,6 +10,7 @@ describe('Server Import test suite', () => {
   context('Import Full for Azure local storage', () => {
     beforeEach(() => {
       utils.startUp(dataTest.importAccounts)
+      cy.get('#serverImportPanel').click()
       utils.checkServerImportState('Full')
     })
     it('Import account', () => {

@@ -69,12 +69,12 @@ export function startUp(pageName) {
 export function getImportAccountsInformation() {
   cy.get('#importAccountsTitle').should('contain.text', importData)
   cy.get('#importAccountsHeaderText').should('contain.text', importAccountsDescription)
-  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-first-line').should('contain.text', importAccountDownloadButton)
-  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-subtitle').should('contain.text', importAccountsSubtitle)
+  cy.get('#importAccountsPanel').shadow().find('.ui5-panel-header-title').should('contain.text', importAccountDownloadButton)
+  cy.get('#importAccountsPanel').find('ui5-label').should('contain.text', importAccountsSubtitle)
 }
 
 export function checkServerImportState(accountType) {
-  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header').should('contain.text', serverImportHeader)
+  cy.get('#serverImportPanel').shadow().find('.ui5-panel-header-title').should('contain.text', serverImportHeader)
   cy.get('#selectAccountType').should('contain.text', `${accountType} Account`)
   cy.get('#selectStorageServer').should('contain.text', 'Azure')
 }
@@ -304,7 +304,7 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.wait(1000)
   cy.get('[data-cy ="dataCenterSelect"]').click()
-  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').eq(5).find('ui5-li').eq(dataCenterOption).realClick()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').eq(7).find('ui5-li').eq(dataCenterOption).realClick()
   cy.wait(500)
 }
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {

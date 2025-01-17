@@ -120,7 +120,7 @@ const ServerImportComponent = ({ t }) => {
   return (
     <>
       <div className={classes.cardDiv}>
-        <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isServerImportExpanded} onToggle={handleToggleCard} noAnimation={true}>
+        <Panel id="serverImportPanel" className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isServerImportExpanded} onToggle={handleToggleCard} noAnimation={true}>
           <Label>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}</Label>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>

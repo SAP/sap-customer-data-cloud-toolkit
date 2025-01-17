@@ -136,6 +136,7 @@ const ImportAccountsComponent = ({ t }) => {
               </Text>
             </FlexBox>
             <Panel
+              id="importAccountsPanel"
               className={classes.panelContainer}
               headerText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
               collapsed={!isCardExpanded}

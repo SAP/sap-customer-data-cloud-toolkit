@@ -6,6 +6,7 @@ describe('Import Account - Configuration Tree test suite', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
@@ -52,6 +53,7 @@ describe('Import Account - Configuration Tree test suite', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
