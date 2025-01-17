@@ -35,8 +35,10 @@ const styles = {
     ...spacing.sapUiSmallMargin,
   },
   fullContainer: {
+    display: 'flex',
+    flexDirection: 'column',
     overflowY: 'auto',
-    width: '100%',
+    height: '90vh',
     composes: 'cdc-tools-background',
   },
   headerOuterDivStyle: {

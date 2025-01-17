@@ -14,6 +14,9 @@ class ServerImport {
   #dataCenter
   #dataFlow
   static #SERVER_IMPORT_SCHEDULER = 'server_import_scheduler'
+  static #SERVER_TYPE = 'azure'
+  static #ACCOUNT_TYPE_LITE = 'Lite'
+
   constructor(credentials, site, dataCenter) {
     this.#credentials = credentials
     this.#site = site
@@ -24,19 +27,22 @@ class ServerImport {
   getStructure() {
     return serverStructure
   }
+
   async setDataflow(configurations, option, accountOption) {
-    if (option.option === 'azure') {
+    if (option.option === ServerImport.#SERVER_TYPE) {
       const dataflowConfig = this.getConfigurations(configurations, option.option)
-      const replacedDataflow = this.replaceVariables(accountOption === 'Lite' ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
+      const replacedDataflow = this.replaceVariables(accountOption === ServerImport.#ACCOUNT_TYPE_LITE ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
       const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
       const schedule = this.scheduleStructure(createDataflow)
       await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
       return createDataflow.id
     }
   }
+
   getConfigurations(configurations, key) {
     return configurations[key]
   }
+
   scheduleStructure(response) {
     const structure = {
       data: {

@@ -8,7 +8,7 @@ import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './server-import.styles.js'
-import { Bar, Text, Button, Option, Select, ValueState, Panel } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, Panel, Label } from '@ui5/webcomponents-react'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import {
@@ -26,8 +26,12 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
+
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'
+const ACCOUNT_TYPE_FULL = 'Full'
+const ACCOUNT_TYPE_LITE = 'Lite'
+const SERVER_TYPE = 'azure'
 
 const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
@@ -36,12 +40,13 @@ const ServerImportComponent = ({ t }) => {
   const apikey = getApiKey(window.location.hash)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
-  const [selectedOption, setSelectedOption] = useState('azure')
-  const [accountOption, setAccountOption] = useState('Full')
+  const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
+  const [accountOption, setAccountOption] = useState(ACCOUNT_TYPE_FULL)
   const [showDialog, setShowSuccessDialog] = useState(false)
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
+
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -104,7 +109,7 @@ const ServerImportComponent = ({ t }) => {
       id="serverImportSuccessPopup"
       data-cy="serverImportSuccessPopup"
     >
-      <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { dataflowId: createdDataflowId })}</Text>{' '}
+      <Text>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { dataflowId: createdDataflowId })}</Text>
     </DialogMessageInform>
   )
 
@@ -116,13 +121,14 @@ const ServerImportComponent = ({ t }) => {
     <>
       <div className={classes.cardDiv}>
         <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isServerImportExpanded} onToggle={handleToggleCard} noAnimation={true}>
+          <Label>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION')}</Label>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
                 <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
                 <Select id="selectAccountType" onChange={handleAccountOptionChange} className={classes.selectBox}>
-                  <Option value="Full"> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
-                  <Option value="Lite">{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                  <Option value={ACCOUNT_TYPE_FULL}> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                  <Option value={ACCOUNT_TYPE_LITE}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
                 </Select>
                 <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
                 <Select id="selectStorageServer" onChange={handleOptionChange} className={classes.selectBox}>

@@ -2,11 +2,12 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { withTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
-import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel } from '@ui5/webcomponents-react'
+import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel, Label } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
@@ -134,7 +135,14 @@ const ImportAccountsComponent = ({ t }) => {
                 {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
               </Text>
             </FlexBox>
-            <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard} noAnimation={true}>
+            <Panel
+              className={classes.panelContainer}
+              headerText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
+              collapsed={!isCardExpanded}
+              onToggle={handleToggleCard}
+              noAnimation={true}
+            >
+              <Label>{t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}</Label>
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
@@ -162,7 +170,6 @@ const ImportAccountsComponent = ({ t }) => {
                 </>
               </Grid>
               {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
-
               <div className={classes.selectConfigurationOuterDivStyle}>
                 <div className={classes.selectConfigurationInnerDivStyle}>
                   <Bar
