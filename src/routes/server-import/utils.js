@@ -4,8 +4,8 @@
  */
 
 export const isInputFilled = (configurations) => {
-  for (let i = 0; i < configurations.length; i++) {
-    if (configurations[i].name.includes('*') && (configurations[i].value === undefined || configurations[i].value === '')) {
+  for (const configuration of configurations) {
+    if (configuration.name.includes('*') && (configuration.value === undefined || configuration.value === '')) {
       return false
     }
   }

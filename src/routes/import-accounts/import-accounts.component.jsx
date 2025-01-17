@@ -112,7 +112,7 @@ const ImportAccountsComponent = ({ t }) => {
   }
 
   const handleToggleCard = () => {
-    setExpanded(isCardExpanded)
+    setExpanded(true)
   }
 
   return (

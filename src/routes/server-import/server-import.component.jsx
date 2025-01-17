@@ -114,7 +114,7 @@ const ServerImportComponent = ({ t }) => {
   )
 
   const handleToggleCard = () => {
-    setServerImportExpanded(isServerImportExpanded)
+    setServerImportExpanded(!isServerImportExpanded)
   }
 
   return (
