@@ -91,10 +91,10 @@ export const setChannel = async function (config) {
 // set CommunicationTopics
 export const setCommunicationTopics = async function (config) {
   if (config.Channels) {
-    await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.Channels, 'channel')
+    await this.communication.setFromFiles(this.apiKey, this.siteInfo, config.Channels, 'channel')
   }
   if (config.results) {
-    await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.results, 'topic')
+    await this.communication.setFromFiles(this.apiKey, this.siteInfo, config.results, 'topic')
   }
 }
 
@@ -142,7 +142,7 @@ export const setWebhook = async function (config) {
 export const setConsent = async function (config) {
   const options = createOptions('consents', config.preferences)
   console.log('Consent Options created:', options.getOptions())
-  await this.consent.setFromFiles(this.apiKey, this.dataCenter, config, options)
+  await this.consent.setFromFiles(this.apiKey, this.siteInfo, config, options)
 }
 
 // setSocial

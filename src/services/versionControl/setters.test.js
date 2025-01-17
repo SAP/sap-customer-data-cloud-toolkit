@@ -245,8 +245,8 @@ describe('setters', () => {
       const context = getMockContext()
       const config = { Channels: ['channel1', 'channel2'], results: ['topic1', 'topic2'] }
       await setters.setCommunicationTopics.call(context, config)
-      expect(context.communication.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockDataCenter, ['channel1', 'channel2'], 'channel')
-      expect(context.communication.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockDataCenter, ['topic1', 'topic2'], 'topic')
+      expect(context.communication.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockSiteInfo, ['channel1', 'channel2'], 'channel')
+      expect(context.communication.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockSiteInfo, ['topic1', 'topic2'], 'topic')
     })
   })
 
@@ -311,7 +311,7 @@ describe('setters', () => {
       const context = getMockContext()
       const config = { preferences: ['consent1', 'consent2'] }
       await setters.setConsent.call(context, config)
-      expect(context.consent.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockDataCenter, config, expect.any(Options))
+      expect(context.consent.setFromFiles).toHaveBeenCalledWith(mockApiKey, mockSiteInfo, config, expect.any(Options))
     })
   })
 

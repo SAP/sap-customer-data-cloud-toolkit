@@ -39,18 +39,18 @@ class Communication {
     return responses
   }
 
-  async setFromFiles(destinationSite, dataCenter, content, fileType) {
+  async setFromFiles(destinationSite, destinationSiteConfiguration, content, fileType) {
     let responses = []
     switch (fileType) {
       case 'channel':
         const channelsPayload = Communication.#splitChannels(content)
         for (const channel of channelsPayload) {
-          responses.push(this.#channel.set(destinationSite, dataCenter, channel))
+          responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
         }
         break
       case 'topic':
         for (const topic of content) {
-          responses.push(this.#topic.set(destinationSite, dataCenter, topic))
+          responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration, topic))
         }
         break
       default:
