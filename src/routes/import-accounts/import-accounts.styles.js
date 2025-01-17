@@ -46,7 +46,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
-    height: '100%', // Ensure it takes full height of its parent
+    height: '90vh',
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',

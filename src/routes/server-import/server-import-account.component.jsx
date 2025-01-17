@@ -6,7 +6,7 @@ import { withTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import { createUseStyles } from 'react-jss'
 import styles from './server-import.styles.js'
-import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Card, CardHeader } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, TitleLevel, Label, Panel } from '@ui5/webcomponents-react'
 import {
   clearConfigurations,
   getConfigurations,
@@ -35,6 +35,7 @@ const ServerImportComponent = ({ t }) => {
   const [selectedOption, setSelectedOption] = useState('azure')
   const [accountOption, setAccountOption] = useState('Full')
   const [createdDataflowId, setCreatedDataflowId] = useState('')
+  const [isCardExpanded, setExpanded] = useState(false)
 
   const [showDialog, setShowSuccessDialog] = useState(false)
 
@@ -97,10 +98,14 @@ const ServerImportComponent = ({ t }) => {
     </DialogMessageInform>
   )
 
+  const handleToggleCard = () => {
+    setExpanded(isCardExpanded)
+  }
+
   return (
     <>
       <div className={classes.cardDiv}>
-        <Card header={<CardHeader titleText={PAGE_TITLE} subtitleText={t('SERVER_IMPORT_COMPONENT.TEMPLATES_SUBTITLE_TEXT')} />}>
+        <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard} noAnimation={true}>
           <div className={classes.outerDiv}>
             <div className={classes.outerDivContainer}>
               <div className={classes.serverDropDown}>
@@ -161,7 +166,7 @@ const ServerImportComponent = ({ t }) => {
               </div>
             </div>
           </div>
-        </Card>{' '}
+        </Panel>
       </div>
       {showDialog && showSuccessMessage()}
     </>

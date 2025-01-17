@@ -12,8 +12,9 @@ const styles = {
     ...spacing.sapUiMediumMarginBegin,
   },
   cardDiv: {
-    ...spacing.sapUiSmallMargin,
-    overflowY: 'auto', // Ensure it can scroll if needed
+    ...spacing.sapUiSmallMarginTop,
+    overflowY: 'auto',
+    width: '100%',
   },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMargin,
