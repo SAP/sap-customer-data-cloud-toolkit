@@ -27,7 +27,7 @@ import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 import { requestConsentConfirmation } from './lib/tracker'
 import PrettifyAllScreens from './routes/prettify-code/prettify-all-screens-javascript.component'
 import PrettifySingleScreenComponent from './routes/prettify-code/prettify-single-screen.component'
-import DataImportComponent from './routes/data-import/data-import-component'
+import ImportAccountsComponent from './routes/import-accounts/import-accounts.component'
 
 function App() {
   useThemeChange(() => setTheme(getCurrentConsoleTheme()))
@@ -55,7 +55,7 @@ function App() {
           <PrettifyAllScreens />
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_IMPORT_ACCOUNTS}>
-          <DataImportComponent />
+          <ImportAccountsComponent />
         </div>
       </div>
     </ThemeProvider>

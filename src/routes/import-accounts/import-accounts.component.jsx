@@ -3,16 +3,15 @@
  * License: Apache-2.0
  */
 import { withTranslation } from 'react-i18next'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
+import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-import { getApiKey } from '../../redux/utils.js'
-import { useDispatch, useSelector } from 'react-redux'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader, Label } from '@ui5/webcomponents-react'
 import {
-  getConfigurations,
+  getConfigurationTree,
   selectConfigurations,
   selectSugestionConfigurations,
   setConfigurationStatus,
@@ -21,13 +20,15 @@ import {
   setSwitchOptions,
   selectIsLoading,
   clearConfigurations,
-  setMandatoryStatus,
   setSuggestionClickConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-
+import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
+import { trackUsage } from '../../lib/tracker.js'
+import ServerImportAccountComponent from '../server-import/server-import-account.component.jsx'
+
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
 
@@ -39,33 +40,30 @@ const ImportAccountsComponent = ({ t }) => {
   const isLoading = useSelector(selectIsLoading)
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
-  const [accountOption, setAccountOption] = useState('Full')
   const [expandableNode, setExpandableNode] = useState(false)
+  const [accountOption, setAccountOption] = useState('Full')
+  const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
 
-  console.log('selectedConfigurations', selectedConfigurations)
-  console.log('configurations', configurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurations('Full'))
+    dispatch(getConfigurationTree('Full'))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
-  const onSaveHandler = () => {
+  const onSaveHandler = async () => {
     dispatch(setConfigurations(accountOption))
+    await trackUsage({ featureName: PAGE_TITLE })
   }
+
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
-    setAccountOption(selectedValue)
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurations(selectedValue))
+    dispatch(getConfigurationTree(selectedValue))
+    setAccountOption(selectedValue)
   }
-  const dispatchMandatoryStatus = (treeNode) => {
-    if (treeNode.includes('status')) {
-      dispatch(setMandatoryStatus({ checkBoxId: treeNode, value: true }))
-    }
-  }
+
   const handleTreeNodeClick = (treeNodeId) => {
     if (treeNodeId) {
       dispatch(setSelectedConfiguration(treeNodeId))
@@ -77,9 +75,9 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const handleSuggestionClick = (nodeId) => {
     if (nodeId) {
-      console.log('nodeId', nodeId)
       dispatch(setSuggestionClickConfiguration({ checkBoxId: nodeId }))
       setTreeNodeInputValue(nodeId)
       setExpandableNode(true)
@@ -88,9 +86,11 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const disableSaveButton = () => {
     return !areConfigurationsFilled(configurations) || isLoading
   }
+
   const showConfigurations = (config) => {
     return (
       <ImportAccountsConfigurations
@@ -99,13 +99,19 @@ const ImportAccountsComponent = ({ t }) => {
         setConfigurationStatus={setConfigurationStatus}
         setSwitchOptions={setSwitchOptions}
         treeNodeInputValue={treeNodeInputValue}
+        dispatch={dispatch}
       />
     )
   }
+
   const onCancelHandler = () => {
     if (!isLoading) {
       dispatch(clearConfigurations())
     }
+  }
+
+  const handleToggleCard = () => {
+    setExpanded(isCardExpanded)
   }
 
   return (
@@ -128,23 +134,14 @@ const ImportAccountsComponent = ({ t }) => {
                 {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
               </Text>
             </FlexBox>
-            <Card
-              header={
-                <CardHeader
-                  titleText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
-                  className={classes.titleSpanStyle}
-                  subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}
-                ></CardHeader>
-              }
-              className={classes.cardContainer}
-            >
+            <Panel className={classes.panelContainer} headerText={PAGE_TITLE} collapsed={!isCardExpanded} onToggle={handleToggleCard} noAnimation={true}>
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
-                    <Label level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
+                    <Title level={TitleLevel.H6} className={classes.currentInfoContainerTitle}>
                       {t('IMPORT_ACCOUNTS_SELECT_ACCOUNT_TYPE')}
-                    </Label>
-                    <Select className={classes.selectAccountDiv} onChange={handleSelectChange}>
+                    </Title>
+                    <Select id="importDataSelectAccount" className={classes.selectAccountDiv} onChange={handleSelectChange}>
                       <Option value={t('GLOBAL.FULL')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
                       <Option value={t('GLOBAL.LITE')}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
                     </Select>
@@ -159,7 +156,6 @@ const ImportAccountsComponent = ({ t }) => {
                         setSchemaInputValue={setSchemaInputValue}
                         schemaInputValue={schemaInputValue}
                         handleTreeNodeClick={handleTreeNodeClick}
-                        dispatchMandatoryStatus={dispatchMandatoryStatus}
                       />
                     </div>
                   </div>
@@ -175,10 +171,10 @@ const ImportAccountsComponent = ({ t }) => {
                       <div>
                         <Button
                           type="submit"
-                          id="copyConfigExtendedSaveButton"
+                          id="importDataSaveButton"
                           className="fd-button fd-button--emphasized fd-button--compact"
                           onClick={onSaveHandler}
-                          data-cy="copyConfigExtendedSaveButton"
+                          data-cy="importDataSaveButton"
                           design="Emphasized"
                           disabled={disableSaveButton()}
                         >
@@ -186,8 +182,8 @@ const ImportAccountsComponent = ({ t }) => {
                         </Button>
                         <Button
                           type="button"
-                          id="copyConfigExtendedCancelButton"
-                          data-cy="copyConfigExtendedCancelButton"
+                          id="importDataCancelButton"
+                          data-cy="importDataCancelButton"
                           className="fd-button fd-button--transparent fd-button--compact"
                           disabled={isLoading}
                           onClick={onCancelHandler}
@@ -199,8 +195,9 @@ const ImportAccountsComponent = ({ t }) => {
                   ></Bar>
                 </div>
               </div>
-            </Card>
+            </Panel>
           </div>
+          <ServerImportAccountComponent />
         </div>
       </div>
     </>
