@@ -36,8 +36,11 @@ const styles = {
   },
   fullContainer: {
     overflowY: 'auto',
+    height: '90vh',
     width: '100%',
     composes: 'cdc-tools-background',
+    display: 'flex',
+    flexDirection: 'column',
   },
   headerOuterDivStyle: {
     width: '100%',
