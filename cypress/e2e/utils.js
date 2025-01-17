@@ -6,6 +6,9 @@
 /* eslint-disable no-undef */
 
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
+import { expectedCommunicationResponse } from '../../src/services/importAccounts/communicationImport/dataTest'
+import { mockPreferencesResponse } from '../../src/services/importAccounts/preferencesImport/dataTest'
+import { expectedSchemaResponse } from '../../src/services/importAccounts/schemaImport/schemaDatatest'
 import {
   dummyApiKey,
   mockedCreateDataflowResponse,
@@ -46,6 +49,10 @@ import {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -57,6 +64,12 @@ export function startUp(pageName) {
 
   cy.contains(pageName).realClick()
   cy.reload()
+}
+export function getImportAccountsInformation() {
+  cy.get('#importAccountsTitle').should('contain.text', importData)
+  cy.get('#importAccountsHeaderText').should('contain.text', importAccountsDescription)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-first-line').should('contain.text', importAccountDownloadButton)
+  cy.get('ui5-card-header').eq(3).shadow().find('.ui5-card-header-subtitle').should('contain.text', importAccountsSubtitle)
 }
 
 export function clearCredentials() {
@@ -188,6 +201,12 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('accounts.getPolicies')
   cy.intercept('POST', 'admin.riskProviders.getConfig', { body: getRiskProvidersResponse }).as('riskProviders.getConfig')
 }
+export function mockConfigurationTreeFullAccount() {
+  cy.intercept('POST', 'accounts.getSchema', { body: expectedSchemaResponse }).as('getSchema')
+  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockPreferencesResponse }).as('getPreferences')
+  cy.intercept('POST', 'accounts.communications.settings.search', { body: expectedCommunicationResponse }).as('getCommunication')
+  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
+}
 
 export function mockSetConfigurationRequests() {
   mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
@@ -280,7 +299,7 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.wait(1000)
   cy.get('[data-cy ="dataCenterSelect"]').click()
-  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').eq(5).find('ui5-li').eq(dataCenterOption).realClick()
   cy.wait(500)
 }
 

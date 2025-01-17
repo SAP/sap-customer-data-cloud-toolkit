@@ -9,6 +9,7 @@
   right: 0px;
   height: 0;
   width: calc(100% - 241px);
+  display: none;
 }
 
 .cdc-tools-app-loading {
@@ -32,6 +33,7 @@
   right: 0px;
   height: auto;
   width: 100%;
+  display: none;
 }
 
 .cdc-tools-app.show-cdc-tools {
