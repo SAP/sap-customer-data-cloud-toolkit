@@ -90,8 +90,6 @@ export const setChannel = async function (config) {
 
 // set CommunicationTopics
 export const setCommunicationTopics = async function (config) {
-  // for (const topic of config.Channels) {
-  // }
   if (config.Channels) {
     await this.communication.setFromFiles(this.apiKey, this.dataCenter, config.Channels, 'channel')
   }

@@ -24,7 +24,6 @@ const VersionControlComponent = ({ t }) => {
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
-  const error = useSelector(selectError)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)

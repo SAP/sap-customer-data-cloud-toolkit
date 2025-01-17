@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 .cdc-tools-app {
   position: absolute;
   top: 72px;
@@ -35,15 +34,10 @@
   width: 100%;
 }
 
-.cdc-tools-app {
-  display: none;
-}
 .cdc-tools-app.show-cdc-tools {
   display: block;
 }
-.cdc-tools-app-container {
-  display: none;
-}
+
 .cdc-tools-app-container.show-cdc-tools-app-container {
   display: block;
 }

@@ -47,12 +47,12 @@ describe('setters', () => {
       setRbaRulesAndSettings: jest.fn(),
     },
     emails: { getEmail: jest.fn().mockReturnValue({ setSiteEmailsWithDataCenter: jest.fn() }) },
-    communication: { set: jest.fn(), setFromFiles: jest.fn(), copyFromGit: jest.fn() },
+    communication: { set: jest.fn(), setFromFiles: jest.fn() },
     dataflow: { copyDataflows: jest.fn() },
     webhook: { copyWebhooks: jest.fn() },
-    consent: { copyFromGit: jest.fn(), setFromFiles: jest.fn() },
-    social: { copyFromGit: jest.fn(), setFromFiles: jest.fn() },
-    recaptcha: { copyFromGit: jest.fn(), setFromFiles: jest.fn() },
+    consent: { setFromFiles: jest.fn() },
+    social: { setFromFiles: jest.fn() },
+    recaptcha: { setFromFiles: jest.fn() },
   })
 
   beforeEach(() => {
