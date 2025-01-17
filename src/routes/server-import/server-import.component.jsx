@@ -7,10 +7,12 @@ import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
-import styles from './server-import.styles.js'
+import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
+
 import { Bar, Text, Button, Option, Select, ValueState, Panel, Label } from '@ui5/webcomponents-react'
-import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
+
 import {
   clearConfigurations,
   getConfigurations,
@@ -20,12 +22,13 @@ import {
   setAccountType,
   setDataflow,
 } from '../../redux/serverImport/serverImportSlice.js'
+import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
+
 import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { getApiKey } from '../../redux/utils.js'
-import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
-import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
+import styles from './server-import.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 const PAGE_TITLE = 'Deploy and Import'

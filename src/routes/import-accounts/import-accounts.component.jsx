@@ -3,12 +3,15 @@
  * License: Apache-2.0
  */
 
-import { withTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
+import { withTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
 import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel, Label } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
+import ServerImportComponent from '../server-import/server-import.component.jsx'
+import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
+import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
 import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import {
@@ -23,12 +26,9 @@ import {
   clearConfigurations,
   setSuggestionClickConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
-import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
-import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
 import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
-import ServerImportComponent from '../server-import/server-import.component.jsx'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'

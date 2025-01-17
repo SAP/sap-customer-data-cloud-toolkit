@@ -27,6 +27,7 @@ class Dataflow {
     this.#site = site
     this.#dataCenter = dataCenter
   }
+
   async setScheduling(site, dataCenter, body) {
     const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
     const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
