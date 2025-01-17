@@ -25,6 +25,7 @@ export const serverImportExtendedSlice = createSlice({
   reducers: {
     getServerConfiguration(state, action) {
       const option = getConfigurationByKey(state.serverConfigurations, action.payload.selectedOption)
+      console.log('option', option)
       const initOption = option.filter((item) => item.id === action.payload.id)[0]
       initOption.value = action.payload.value
       state.accountType = action.payload.accountType
@@ -93,7 +94,11 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
 })
 
 export const { getServerConfiguration, setAccountType, clearConfigurations } = serverImportExtendedSlice.actions
+
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
+
 export const selectAccountType = (state) => state.serverImport.accountType
+
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
+
 export default serverImportExtendedSlice.reducer

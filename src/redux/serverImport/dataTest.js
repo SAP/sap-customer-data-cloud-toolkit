@@ -1,0 +1,12 @@
+import { serverStructure } from '../../services/serverImport/serverStructure/serverStructure'
+
+export const initialState = { currentSiteApiKey: '', currentSiteInformation: {}, errors: [], isLoading: false, serverConfigurations: [], showSuccessMessage: false }
+
+export const initialStateWithServerConfigurations = {
+  currentSiteApiKey: '',
+  currentSiteInformation: {},
+  errors: [],
+  isLoading: false,
+  serverConfigurations: serverStructure,
+  showSuccessMessage: false,
+}

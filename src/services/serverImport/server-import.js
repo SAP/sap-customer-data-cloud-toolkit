@@ -13,8 +13,11 @@ class ServerImport {
   #site
   #dataCenter
   #dataFlow
+
   static #SERVER_IMPORT_SCHEDULER = 'server_import_scheduler'
+
   static #SERVER_TYPE = 'azure'
+
   static #ACCOUNT_TYPE_LITE = 'Lite'
 
   constructor(credentials, site, dataCenter) {
