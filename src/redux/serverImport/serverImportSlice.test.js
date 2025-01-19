@@ -8,7 +8,7 @@
  */
 
 import { initialState, initialStateWithServerConfigurations } from './dataTest'
-import { clearConfigurations, getServerConfiguration, setAccountType } from './serverImportSlice'
+import { clearConfigurations, getServerConfiguration } from './serverImportSlice'
 import serverImportReducer from './serverImportSlice'
 describe('serverImportSlice test suite', () => {
   const SERVER_TYPE = 'azure'

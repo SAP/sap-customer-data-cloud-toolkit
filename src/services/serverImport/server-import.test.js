@@ -6,7 +6,8 @@
 import ServerImport from './server-import.js'
 import { credentials } from '../servicesDataTest.js'
 import axios from 'axios'
-import { commonConfigurations, commonOption, expectedScheduleStructure, scheduleResponse } from './dataTest.js'
+import { commonConfigurations, commonOption, expectedScheduleStructure } from './dataTest.js'
+import { getExpectedCreateDataflowResponse } from '../copyConfig/dataflow/dataTest.js'
 jest.mock('axios')
 
 describe('ServerImport Test Suite', () => {
@@ -55,9 +56,10 @@ describe('ServerImport Test Suite', () => {
   })
 
   test('should set dataflow for azure option', async () => {
-    axios.mockResolvedValueOnce({ data: scheduleResponse }).mockResolvedValueOnce({ data: '56b5d528ed824da59bd325e848f04986' })
+    const createDataflowResponse = getExpectedCreateDataflowResponse(0)
+    axios.mockResolvedValueOnce({ data: createDataflowResponse }).mockResolvedValueOnce({ data: '56b5d528ed824da59bd325e848f04986' })
     const result = await serverImport.setDataflow(commonConfigurations, commonOption, commonAccountOption)
-    expect(result).toEqual(scheduleResponse.id)
+    expect(result.id).toEqual(createDataflowResponse.id.id)
   })
 
   test('should get configurations', () => {

@@ -15,7 +15,7 @@ describe('Server Import test suite', () => {
     })
     it('Import account', () => {
       cy.intercept('POST', 'idx.createDataflow', {
-        body: dataTest.mockedSetSchedulerResponse,
+        body: dataTest.mockedGigyaResponseOk,
       }).as('setSchedule')
 
       cy.get('#serverImportSaveButton').should('have.attr', 'disabled', 'disabled')

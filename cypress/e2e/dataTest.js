@@ -1604,7 +1604,7 @@ const mockedSetExtensionResponse = {
   context: `{"targetApiKey":"${dummyApiKey}","id":"extensions_"}`,
 }
 
-const mockedGigyaResponseOk = {
+export const mockedGigyaResponseOk = {
   statusCode: 200,
   errorCode: 0,
   statusReason: 'OK',

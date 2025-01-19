@@ -25,7 +25,6 @@ export const serverImportExtendedSlice = createSlice({
   reducers: {
     getServerConfiguration(state, action) {
       const option = getConfigurationByKey(state.serverConfigurations, action.payload.selectedOption)
-      console.log('option', option)
       const initOption = option.filter((item) => item.id === action.payload.id)[0]
       initOption.value = action.payload.value
       state.accountType = action.payload.accountType
