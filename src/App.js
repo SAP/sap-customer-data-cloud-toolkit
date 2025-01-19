@@ -18,6 +18,7 @@ import {
   ROUTE_PRETTIER,
   ROUTE_PRETTIFY_ALL_SCREENS,
   ROUTE_VERSION_CONTROL,
+  ROUTE_IMPORT_ACCOUNTS,
 } from './inject/constants'
 import CopyConfigurationExtended from './routes/copy-configuration-extended/copy-configuration-extended.component'
 import EmailTemplates from './routes/email-templates/email-templates.component'
@@ -57,6 +58,9 @@ function App() {
         </div>
         <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_PRETTIFY_ALL_SCREENS}>
           <PrettifyAllScreens />
+        </div>
+        <div className={ROUTE_CONTAINER_CLASS} route={ROUTE_IMPORT_ACCOUNTS}>
+          <ImportAccountsComponent />
         </div>
       </div>
     </ThemeProvider>
