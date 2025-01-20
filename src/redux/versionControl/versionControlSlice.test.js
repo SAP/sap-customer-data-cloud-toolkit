@@ -61,7 +61,7 @@ describe('versionControlSlice', () => {
       const refreshToken = 'testRefreshToken'
       const action = setRefreshToken(refreshToken)
       reducer(initialState, action)
-      expect(Cookies.set).toHaveBeenCalledWith('refreshToken', refreshToken, { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenCalledWith('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' })
     })
   })
 

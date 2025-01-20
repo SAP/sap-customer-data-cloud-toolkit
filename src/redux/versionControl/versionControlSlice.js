@@ -50,7 +50,7 @@ const versionControlSlice = createSlice({
     setRefreshToken(state, action) {
       // Set secure flag for production environment based on HTTPS usage
       const secureFlag = process.env.NODE_ENV === 'production'
-      Cookies.set('refreshToken', action.payload, { secure: secureFlag, sameSite: 'strict' })
+      Cookies.set('refreshToken', action.payload, { httpOnly: true, secure: secureFlag, sameSite: 'strict' })
     },
   },
   extraReducers: (builder) => {
