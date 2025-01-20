@@ -5,7 +5,6 @@ import Cookies from 'js-cookie'
 
 const FETCH_COMMITS_ACTION = 'versionControl/fetchCommits'
 
-// Async thunk to fetch commits
 export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = state.credentials.credentials
@@ -28,29 +27,23 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   }
 })
 
-// Redux slice
 const versionControlSlice = createSlice({
   name: 'versionControl',
   initialState: {
     commits: [],
-    gitToken: '',
-    owner: '',
+    gitToken: Cookies.get('gitToken') || '',
+    owner: Cookies.get('owner') || '',
     isFetching: false,
     error: null,
   },
   reducers: {
     setGitToken(state, action) {
       state.gitToken = action.payload
-      // Store access token in memory (Redux state)
+      Cookies.set('gitToken', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
     },
     setOwner(state, action) {
       state.owner = action.payload
-      // Store owner in memory (Redux state)
-    },
-    setRefreshToken(state, action) {
-      // Set secure flag for production environment based on HTTPS usage
-      const secureFlag = process.env.NODE_ENV === 'production'
-      Cookies.set('refreshToken', action.payload, { httpOnly: true, secure: secureFlag, sameSite: 'strict' })
+      Cookies.set('owner', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
     },
   },
   extraReducers: (builder) => {
@@ -69,7 +62,7 @@ const versionControlSlice = createSlice({
   },
 })
 
-export const { setGitToken, setOwner, setRefreshToken } = versionControlSlice.actions
+export const { setGitToken, setOwner } = versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
 export const selectIsFetching = (state) => state.versionControl.isFetching

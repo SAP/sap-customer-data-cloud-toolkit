@@ -1,4 +1,4 @@
-import reducer, { setGitToken, setOwner, setRefreshToken, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
+import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
 import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 import Cookies from 'js-cookie'
 import configureMockStore from 'redux-mock-store'
@@ -12,7 +12,6 @@ const mockStore = configureMockStore(middlewares)
 
 describe('versionControlSlice', () => {
   const originalWindow = { ...global.window }
-  const originalEnv = process.env.NODE_ENV
 
   beforeAll(() => {
     if (typeof global.window === 'undefined') {
@@ -21,12 +20,10 @@ describe('versionControlSlice', () => {
     global.window.location = {
       hash: '',
     }
-    process.env.NODE_ENV = 'production' // Mock NODE_ENV to production
   })
 
   afterAll(() => {
     global.window = originalWindow
-    process.env.NODE_ENV = originalEnv // Restore original NODE_ENV
   })
 
   // Reducers
@@ -48,6 +45,7 @@ describe('versionControlSlice', () => {
       const action = setGitToken(token)
       const state = reducer(initialState, action)
       expect(state.gitToken).toEqual(token)
+      expect(Cookies.set).toHaveBeenCalledWith('gitToken', token, { httpOnly: true, secure: true, sameSite: 'strict' })
     })
 
     it('should handle setOwner', () => {
@@ -55,13 +53,7 @@ describe('versionControlSlice', () => {
       const action = setOwner(owner)
       const state = reducer(initialState, action)
       expect(state.owner).toEqual(owner)
-    })
-
-    it('should handle setRefreshToken', () => {
-      const refreshToken = 'testRefreshToken'
-      const action = setRefreshToken(refreshToken)
-      reducer(initialState, action)
-      expect(Cookies.set).toHaveBeenCalledWith('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenCalledWith('owner', owner, { httpOnly: true, secure: true, sameSite: 'strict' })
     })
   })
 
