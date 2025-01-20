@@ -39,11 +39,11 @@ const versionControlSlice = createSlice({
   reducers: {
     setGitToken(state, action) {
       state.gitToken = action.payload
-      Cookies.set('gitToken', action.payload, { secure: true, sameSite: 'strict' })
+      Cookies.set('gitToken', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
     },
     setOwner(state, action) {
       state.owner = action.payload
-      Cookies.set('owner', action.payload, { secure: true, sameSite: 'strict' })
+      Cookies.set('owner', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
     },
   },
   extraReducers: (builder) => {

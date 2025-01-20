@@ -45,7 +45,7 @@ describe('versionControlSlice', () => {
       const action = setGitToken(token)
       const state = reducer(initialState, action)
       expect(state.gitToken).toEqual(token)
-      expect(Cookies.set).toHaveBeenCalledWith('gitToken', token, { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenCalledWith('gitToken', token, { httpOnly: true, secure: true, sameSite: 'strict' })
     })
 
     it('should handle setOwner', () => {
@@ -53,7 +53,7 @@ describe('versionControlSlice', () => {
       const action = setOwner(owner)
       const state = reducer(initialState, action)
       expect(state.owner).toEqual(owner)
-      expect(Cookies.set).toHaveBeenCalledWith('owner', owner, { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenCalledWith('owner', owner, { httpOnly: true, secure: true, sameSite: 'strict' })
     })
   })
 
