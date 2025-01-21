@@ -28,14 +28,10 @@ describe('versionControlSlice', () => {
     global.window = originalWindow
   })
 
-  // Mocking crypto.AES.encrypt to produce consistent encrypted string for tests
-  jest.spyOn(crypto.AES, 'encrypt').mockImplementation((dataToEncrypt, key) => {
-    return crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(dataToEncrypt))
-  })
-
   const encryptData = (dataToEncrypt, key) => {
     try {
       const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
+      console.log(`Encrypted data for ${dataToEncrypt}: ${encryptedJsonString}`)
       return encryptedJsonString
     } catch (error) {
       console.error('Error encrypting data:', error)
@@ -43,8 +39,25 @@ describe('versionControlSlice', () => {
     }
   }
 
+  const decryptData = (encryptedData, key) => {
+    try {
+      const bytes = crypto.AES.decrypt(encryptedData, key)
+      const decrypted = bytes.toString(crypto.enc.Utf8)
+      return JSON.parse(decrypted)
+    } catch (error) {
+      console.error('Error decrypting data:', error)
+      return undefined
+    }
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.spyOn(crypto.AES, 'encrypt').mockImplementation((dataToEncrypt, key) => {
+      return crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(dataToEncrypt))
+    })
+    jest.spyOn(crypto.AES, 'decrypt').mockImplementation((encryptedData, key) => {
+      return crypto.enc.Utf8.parse(crypto.enc.Base64.parse(encryptedData)).toString(crypto.enc.Utf8)
+    })
   })
 
   // Reducers
@@ -66,6 +79,7 @@ describe('versionControlSlice', () => {
       const encryptedToken = encryptData(token, encryptionKey)
       const action = setGitToken(token)
       const state = reducer(initialState, action)
+      console.log(`Expected token: ${state.gitToken}, Encrypted token expected in cookies: ${encryptedToken}`)
       expect(state.gitToken).toEqual(token)
       expect(Cookies.set).toHaveBeenCalledTimes(1)
       expect(Cookies.set).toHaveBeenCalledWith('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
@@ -76,6 +90,7 @@ describe('versionControlSlice', () => {
       const encryptedOwner = encryptData(owner, encryptionKey)
       const action = setOwner(owner)
       const state = reducer(initialState, action)
+      console.log(`Expected owner: ${state.owner}, Encrypted owner expected in cookies: ${encryptedOwner}`)
       expect(state.owner).toEqual(owner)
       expect(Cookies.set).toHaveBeenCalledTimes(1)
       expect(Cookies.set).toHaveBeenCalledWith('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
