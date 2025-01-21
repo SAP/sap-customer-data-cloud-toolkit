@@ -1,7 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
 import { Octokit } from '@octokit/rest'
 import WebSdk from '../copyConfig/websdk/websdk'
 import Dataflow from '../copyConfig/dataflow/dataflow'
@@ -21,6 +17,7 @@ import Webhook from '../copyConfig/webhook/webhook'
 import ConsentConfiguration from '../copyConfig/consent/consentConfiguration'
 import Social from '../copyConfig/social/social'
 import RecaptchaConfiguration from '../copyConfig/recaptcha/recaptchaConfiguration'
+import crypto from 'crypto-js'
 
 class VersionControl {
   constructor(credentials, apiKey, siteInfo, owner) {
@@ -28,8 +25,18 @@ class VersionControl {
     if (!gitToken) {
       throw new Error('Git token is not available in cookies')
     }
-    this.octokit = new Octokit({ auth: gitToken })
-    this.owner = owner || 'defaultOwner' // Use the provided owner or a default value
+    const decryptedToken = this.decryptToken(gitToken)
+    console.log('Decrypted gitToken:', decryptedToken)
+
+    const encryptedOwner = Cookies.get('owner')
+    if (!encryptedOwner) {
+      throw new Error('Owner is not available in cookies')
+    }
+    const decryptedOwner = this.decryptToken(encryptedOwner)
+    console.log('Decrypted owner:', decryptedOwner)
+
+    this.octokit = new Octokit({ auth: decryptedToken })
+    this.owner = decryptedOwner || 'defaultOwner' // Use the provided owner or a default value
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
 
@@ -58,6 +65,17 @@ class VersionControl {
     this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
 
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
+  }
+
+  decryptToken(encryptedToken) {
+    try {
+      const bytes = crypto.AES.decrypt(encryptedToken, process.env.ENCRYPTION_KEY || 'some-random-encryption-key');
+      const decrypted = bytes.toString(crypto.enc.Utf8);
+      return JSON.parse(decrypted);
+    } catch (error) {
+      console.error('Error decrypting token:', error);
+      return undefined;
+    }
   }
 }
 

@@ -2,16 +2,47 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { createVersionControlInstance, handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 import { getApiKey } from '../utils'
 import Cookies from 'js-cookie'
+import crypto from 'crypto-js'
 
 const FETCH_COMMITS_ACTION = 'versionControl/fetchCommits'
+
+const encryptionKey = process.env.ENCRYPTION_KEY || 'some-random-encryption-key'
+
+const encryptData = (dataToEncrypt, key) => {
+  try {
+    const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
+    return encryptedJsonString
+  } catch (error) {
+    console.error('Error encrypting data:', error)
+    return undefined
+  }
+}
+
+const getGitToken = () => {
+  const encryptedToken = Cookies.get('gitToken')
+  if (!encryptedToken) {
+    console.error('No gitToken found in cookies')
+    return undefined
+  }
+  return encryptedToken
+}
+
+const getOwner = () => {
+  const encryptedOwner = Cookies.get('owner')
+  if (!encryptedOwner) {
+    console.error('No owner found in cookies')
+    return undefined
+  }
+  return encryptedOwner
+}
 
 export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = state.credentials.credentials
   const apiKey = getApiKey(window.location.hash)
   const currentSite = state.copyConfigurationExtended.currentSiteInformation
-  const gitToken = state.versionControl.gitToken
-  const owner = state.versionControl.owner
+  const gitToken = getGitToken() // Retrieve the encrypted token
+  const owner = getOwner() // Retrieve the encrypted owner
 
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
@@ -39,11 +70,17 @@ const versionControlSlice = createSlice({
   reducers: {
     setGitToken(state, action) {
       state.gitToken = action.payload
-      Cookies.set('gitToken', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
+      const encryptedToken = encryptData(action.payload, encryptionKey)
+      if (encryptedToken) {
+        Cookies.set('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
+      }
     },
     setOwner(state, action) {
       state.owner = action.payload
-      Cookies.set('owner', action.payload, { secure: true, httpOnly: true, sameSite: 'strict' })
+      const encryptedOwner = encryptData(action.payload, encryptionKey)
+      if (encryptedOwner) {
+        Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
+      }
     },
   },
   extraReducers: (builder) => {
