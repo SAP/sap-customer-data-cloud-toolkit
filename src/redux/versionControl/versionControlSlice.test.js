@@ -39,17 +39,6 @@ describe('versionControlSlice', () => {
     }
   }
 
-  const decryptData = (encryptedData, key) => {
-    try {
-      const bytes = crypto.AES.decrypt(encryptedData, key)
-      const decrypted = bytes.toString(crypto.enc.Utf8)
-      return JSON.parse(decrypted)
-    } catch (error) {
-      console.error('Error decrypting data:', error)
-      return undefined
-    }
-  }
-
   beforeEach(() => {
     jest.clearAllMocks()
     jest.spyOn(crypto.AES, 'encrypt').mockImplementation((dataToEncrypt, key) => {
@@ -97,7 +86,6 @@ describe('versionControlSlice', () => {
     })
   })
 
-  // Selectors
   describe('selectors', () => {
     const state = {
       versionControl: {
