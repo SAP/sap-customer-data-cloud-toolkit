@@ -48,6 +48,33 @@ describe('githubUtils', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+
+    CdcService.mockImplementation(() => {
+      return {
+        fetchCDCConfigs: jest.fn().mockResolvedValue({
+          webSdk: { key: 'value' },
+          dataflow: { key: 'value' },
+        }),
+      }
+    })
+
+    octokitMock.rest.git.getRef.mockResolvedValue({
+      data: { object: { sha: 'mockSha' } },
+    })
+
+    octokitMock.rest.git.createBlob.mockResolvedValue({
+      data: { sha: 'mockBlobSha' },
+    })
+
+    octokitMock.rest.git.createTree.mockResolvedValue({
+      data: { sha: 'mockTreeSha' },
+    })
+
+    octokitMock.rest.git.createCommit.mockResolvedValue({
+      data: { sha: 'mockCommitSha' },
+    })
+
+    octokitMock.rest.git.updateRef.mockResolvedValue({})
   })
 
   describe('getFile', () => {
@@ -287,6 +314,127 @@ describe('githubUtils', () => {
       octokitMock.rest.repos.listCommits.mockRejectedValue(new Error('Some error'))
 
       await expect(githubUtils.getCommits(context)).rejects.toThrow('Some error')
+    })
+  })
+
+  describe('prepareFilesForUpdate', () => {
+    it('should prepare files for update', async () => {
+      const mockFileContent = JSON.stringify({ key: 'value' })
+      const mockFile = { content: Base64.encode(mockFileContent), sha: 'mockSha' }
+      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
+
+      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
+        webSdk: { key: 'newValue' },
+        dataflow: { key: 'newValue' },
+      })
+      CdcService.mockImplementation(() => ({
+        fetchCDCConfigs: mockFetchCDCConfigs,
+      }))
+
+      const mockUpdateGitFileContent = jest
+        .spyOn(githubUtils, 'updateGitFileContent')
+        .mockResolvedValueOnce({
+          path: 'src/versionControl/webSdk.json',
+          content: JSON.stringify({ key: 'newValue' }, null, 2),
+          sha: 'mockSha',
+        })
+        .mockResolvedValueOnce({
+          path: 'src/versionControl/dataflow.json',
+          content: JSON.stringify({ key: 'newValue' }, null, 2),
+          sha: 'mockSha',
+        })
+
+      const result = await githubUtils.prepareFilesForUpdate(context)
+      expect(result).toEqual(['webSdk', 'dataflow'])
+      mockUpdateGitFileContent.mockRestore()
+    })
+
+    it('should return N/A if no files to update', async () => {
+      const mockFileContent = JSON.stringify({ key: 'value' })
+      const mockFile = { content: Base64.encode(mockFileContent), sha: 'mockSha' }
+      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
+
+      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
+        webSdk: { key: 'value' },
+        dataflow: { key: 'value' },
+      })
+      CdcService.mockImplementation(() => ({
+        fetchCDCConfigs: mockFetchCDCConfigs,
+      }))
+
+      const mockUpdateGitFileContent = jest.spyOn(githubUtils, 'updateGitFileContent').mockResolvedValue(null)
+
+      const result = await githubUtils.prepareFilesForUpdate(context)
+      expect(result).toEqual(['N/A'])
+      mockUpdateGitFileContent.mockRestore()
+    })
+
+    it('should handle errors during file preparation', async () => {
+      octokitMock.rest.repos.listBranches.mockRejectedValue(new Error('Network Error'))
+
+      await expect(githubUtils.prepareFilesForUpdate(context)).rejects.toThrow('Network Error')
+    })
+  })
+
+  describe('storeCdcDataInGit', () => {
+    it('should store CDC data in Git', async () => {
+      const mockFileContent = JSON.stringify({ key: 'value' })
+      const mockFile = { content: Base64.encode(mockFileContent), sha: 'mockSha' }
+      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
+
+      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
+        webSdk: { key: 'newValue' },
+        dataflow: { key: 'newValue' },
+      })
+      CdcService.mockImplementation(() => ({
+        fetchCDCConfigs: mockFetchCDCConfigs,
+      }))
+
+      const mockUpdateGitFileContent = jest.spyOn(githubUtils, 'updateGitFileContent').mockResolvedValue({
+        path: 'src/versionControl/webSdk.json',
+        content: JSON.stringify({ key: 'newValue' }, null, 2),
+        sha: 'mockSha',
+      })
+
+      await githubUtils.storeCdcDataInGit(context, 'commitMessage')
+      expect(octokitMock.rest.git.updateRef).toHaveBeenCalled()
+      mockUpdateGitFileContent.mockRestore()
+    })
+
+    it('should skip commit if no files to update', async () => {
+      const mockFileContent = JSON.stringify({ key: 'value' })
+      const mockFile = { content: Base64.encode(mockFileContent), sha: 'mockSha' }
+      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+      removeIgnoredFields.mockImplementation((obj) => obj)
+
+      const mockFetchCDCConfigs = jest.fn().mockResolvedValue({
+        webSdk: { key: 'value' },
+        dataflow: { key: 'value' },
+      })
+      CdcService.mockImplementation(() => ({
+        fetchCDCConfigs: mockFetchCDCConfigs,
+      }))
+
+      const mockUpdateGitFileContent = jest.spyOn(githubUtils, 'updateGitFileContent').mockResolvedValue(null)
+
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
+      await githubUtils.storeCdcDataInGit(context, 'commitMessage')
+      expect(consoleSpy).toHaveBeenCalledWith('No files to update. Skipping commit.')
+      consoleSpy.mockRestore()
+      mockUpdateGitFileContent.mockRestore()
+    })
+
+    it('should handle errors during storing CDC data', async () => {
+      octokitMock.rest.repos.listBranches.mockRejectedValue(new Error('Network Error'))
+
+      await expect(githubUtils.storeCdcDataInGit(context, 'commitMessage')).rejects.toThrow('Network Error')
     })
   })
 })
