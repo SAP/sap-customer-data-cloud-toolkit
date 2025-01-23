@@ -1,7 +1,12 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, getConfigurationPath, setSugestionItemParent } from './utils'
+import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, setSugestionItemParent } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurationTree`
@@ -60,10 +65,8 @@ export const importAccountsSlice = createSlice({
       setSugestionItemParent(state.selectedConfiguration, newConfiguration, action.payload.checkBoxId, action.payload.value)
     },
     setSuggestionClickConfiguration(state, action) {
-      const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)
-      if (config) {
-        state.selectedConfiguration = [config]
-      }
+      const configuration = getAllConfiguration(state.configurations, [action.payload.checkBoxId])
+      state.selectedConfiguration = configuration
     },
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)

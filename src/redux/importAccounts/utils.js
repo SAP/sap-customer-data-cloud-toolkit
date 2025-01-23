@@ -112,12 +112,9 @@ const updateMandatoryFields = (structure, value) => {
 }
 
 const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, value) => {
-  if ((parentId.length = 3)) {
+  if (parentId.length <= 3) {
     parentNode = parentId.slice(0, -1).join('.')
-  } else if (parentId.length < 3) {
-    parentNode = parentId.slice(0, -1).join('.')
-  }
-  if (parentNode.endsWith('optIn')) {
+  } else if (parentId.length > 3) {
     parentNode = parentId.slice(0, -2).join('.')
   }
   if (parentNode) {
@@ -150,19 +147,6 @@ function checkAndSetParents(branches) {
       branch.value = branch.branches.some((child) => child.value)
     }
   }
-}
-
-const findNodeById = (branches, id) => {
-  for (let branch of branches) {
-    if (branch.id === id) {
-      return branch
-    }
-    const found = findNodeById(branch.branches, id)
-    if (found) {
-      return found
-    }
-  }
-  return null
 }
 
 export const getConfigurationPath = (configurations, targetId) => {
