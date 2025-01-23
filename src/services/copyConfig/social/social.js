@@ -40,10 +40,8 @@ class Social {
 
   async copy(targetApi, targetSiteConfiguration, options = []) {
     let response = await this.get(this.originApiKey)
-    console.log('response--->', response)
     if (response.errorCode === 0) {
       response = await this.set(targetApi, response, targetSiteConfiguration.dataCenter)
-      console.log('responseset--->', response)
     }
 
     if (response.context) {

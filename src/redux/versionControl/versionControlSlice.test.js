@@ -5,7 +5,13 @@ import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import crypto from 'crypto-js'
 
-jest.mock('js-cookie')
+// Mocking js-cookie
+jest.mock('js-cookie', () => ({
+  set: jest.fn(),
+  get: jest.fn(),
+}))
+
+// Mocking versionControlService
 jest.mock('../../services/versionControl/versionControlService')
 
 const middlewares = [thunk]
@@ -14,7 +20,7 @@ const mockStore = configureMockStore(middlewares)
 describe('versionControlSlice', () => {
   const originalWindow = { ...global.window }
   const encryptionKey = process.env.ENCRYPTION_KEY || 'some-random-encryption-key'
-  const signingKey = process.env.SIGNING_KEY || 'some-random-signing-key'
+  const signingKey = 'some-random-signing-key'
 
   beforeAll(() => {
     if (typeof global.window === 'undefined') {
@@ -32,6 +38,7 @@ describe('versionControlSlice', () => {
   const encryptData = (dataToEncrypt, key) => {
     try {
       const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
+      console.log(`Encrypted data for ${dataToEncrypt}: ${encryptedJsonString}`)
       return encryptedJsonString
     } catch (error) {
       console.error('Error encrypting data:', error)
@@ -39,17 +46,30 @@ describe('versionControlSlice', () => {
     }
   }
 
-  const signData = (data, key) => {
+  const decryptData = (encryptedData, key) => {
     try {
-      return crypto.HmacSHA256(data, key).toString()
+      const bytes = crypto.AES.decrypt(encryptedData, key)
+      const decrypted = bytes.toString(crypto.enc.Utf8)
+      return JSON.parse(decrypted)
     } catch (error) {
-      console.error('Error signing data:', error)
+      console.error('Error decrypting data:', error)
       return undefined
     }
   }
 
+  const signData = (data) => {
+    return crypto.HmacSHA256(data, signingKey).toString()
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.spyOn(crypto.AES, 'encrypt').mockImplementation((dataToEncrypt, key) => {
+      return crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(dataToEncrypt))
+    })
+    jest.spyOn(crypto.AES, 'decrypt').mockImplementation((encryptedData, key) => {
+      return crypto.enc.Utf8.parse(crypto.enc.Base64.parse(encryptedData)).toString(crypto.enc.Utf8)
+    })
+    jest.spyOn(crypto.HmacSHA256, 'toString').mockReturnValue('mockSignatureValue')
   })
 
   // Reducers
@@ -66,29 +86,31 @@ describe('versionControlSlice', () => {
       expect(reducer(undefined, {})).toEqual(initialState)
     })
 
-    // it('should handle setGitToken', () => {
-    //   const token = 'testToken'
-    //   const encryptedToken = encryptData(token, encryptionKey)
-    //   const signature = signData(encryptedToken, signingKey)
-    //   const action = setGitToken(token)
-    //   const state = reducer(initialState, action)
-    //   expect(state.gitToken).toEqual(token)
-    //   expect(Cookies.set).toHaveBeenCalledTimes(2)
-    //   expect(Cookies.set).toHaveBeenCalledWith('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
-    //   expect(Cookies.set).toHaveBeenCalledWith('gitToken_sig', signature, { secure: true, sameSite: 'strict' })
-    // })
+    it('should handle setGitToken', () => {
+      const token = 'testToken'
+      const encryptedToken = encryptData(token, encryptionKey)
+      const signature = signData(encryptedToken)
+      const action = setGitToken(token)
+      const state = reducer(initialState, action)
+      console.log(`Expected token: ${state.gitToken}, Encrypted token expected in cookies: ${encryptedToken}`)
+      expect(state.gitToken).toEqual(token)
+      expect(Cookies.set).toHaveBeenCalledTimes(2)
+      expect(Cookies.set).toHaveBeenNthCalledWith(1, 'gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenNthCalledWith(2, 'gitToken_sig', signature, { secure: true, sameSite: 'strict' })
+    })
 
-    // it('should handle setOwner', () => {
-    //   const owner = 'testOwner'
-    //   const encryptedOwner = encryptData(owner, encryptionKey)
-    //   const signature = signData(encryptedOwner, signingKey)
-    //   const action = setOwner(owner)
-    //   const state = reducer(initialState, action)
-    //   expect(state.owner).toEqual(owner)
-    //   expect(Cookies.set).toHaveBeenCalledTimes(2)
-    //   expect(Cookies.set).toHaveBeenCalledWith('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
-    //   expect(Cookies.set).toHaveBeenCalledWith('owner_sig', signature, { secure: true, sameSite: 'strict' })
-    // })
+    it('should handle setOwner', () => {
+      const owner = 'testOwner'
+      const encryptedOwner = encryptData(owner, encryptionKey)
+      const signature = signData(encryptedOwner)
+      const action = setOwner(owner)
+      const state = reducer(initialState, action)
+      console.log(`Expected owner: ${state.owner}, Encrypted owner expected in cookies: ${encryptedOwner}`)
+      expect(state.owner).toEqual(owner)
+      expect(Cookies.set).toHaveBeenCalledTimes(2)
+      expect(Cookies.set).toHaveBeenNthCalledWith(1, 'owner', encryptedOwner, { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenNthCalledWith(2, 'owner_sig', signature, { secure: true, sameSite: 'strict' })
+    })
   })
 
   // Selectors
@@ -138,15 +160,22 @@ describe('versionControlSlice', () => {
       handleCommitListRequestServices.mockResolvedValue({ commitList })
 
       const encryptedToken = encryptData('testToken', encryptionKey)
-      const signatureToken = signData(encryptedToken, signingKey)
+      const signatureToken = signData(encryptedToken)
       const encryptedOwner = encryptData('testOwner', encryptionKey)
-      const signatureOwner = signData(encryptedOwner, signingKey)
+      const signatureOwner = signData(encryptedOwner)
       Cookies.get.mockImplementation((name) => {
-        if (name === 'gitToken') return encryptedToken
-        if (name === 'gitToken_sig') return signatureToken
-        if (name === 'owner') return encryptedOwner
-        if (name === 'owner_sig') return signatureOwner
-        return undefined
+        switch (name) {
+          case 'gitToken':
+            return encryptedToken
+          case 'gitToken_sig':
+            return signatureToken
+          case 'owner':
+            return encryptedOwner
+          case 'owner_sig':
+            return signatureOwner
+          default:
+            return undefined
+        }
       })
 
       await store.dispatch(fetchCommits())
@@ -163,15 +192,22 @@ describe('versionControlSlice', () => {
       handleCommitListRequestServices.mockRejectedValue(new Error(errorMessage))
 
       const encryptedToken = encryptData('testToken', encryptionKey)
-      const signatureToken = signData(encryptedToken, signingKey)
+      const signatureToken = signData(encryptedToken)
       const encryptedOwner = encryptData('testOwner', encryptionKey)
-      const signatureOwner = signData(encryptedOwner, signingKey)
+      const signatureOwner = signData(encryptedOwner)
       Cookies.get.mockImplementation((name) => {
-        if (name === 'gitToken') return encryptedToken
-        if (name === 'gitToken_sig') return signatureToken
-        if (name === 'owner') return encryptedOwner
-        if (name === 'owner_sig') return signatureOwner
-        return undefined
+        switch (name) {
+          case 'gitToken':
+            return encryptedToken
+          case 'gitToken_sig':
+            return signatureToken
+          case 'owner':
+            return encryptedOwner
+          case 'owner_sig':
+            return signatureOwner
+          default:
+            return undefined
+        }
       })
 
       await store.dispatch(fetchCommits())

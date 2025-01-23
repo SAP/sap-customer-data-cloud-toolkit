@@ -76,7 +76,6 @@ export const setEmailTemplates = async function (response) {
   for (let key in response) {
     if (key !== 'errorCode') {
       const result = await this.emails.getEmail().setSiteEmailsWithDataCenter(this.apiKey, key, response[key], this.dataCenter)
-      console.log('resultEmails', result)
     }
   }
 }
@@ -127,21 +126,18 @@ export const createOptions = (type, items, formatName = true) => {
 // set Dataflow
 export const setDataflow = async function (config) {
   const options = createOptions('dataflows', config.result)
-  console.log('Dataflow Options created:', options.getOptions())
   await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, config, options)
 }
 
 // set Webhook
 export const setWebhook = async function (config) {
   const options = createOptions('webhooks', config.webhooks)
-  console.log('Webhook Options created:', options.getOptions())
   await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, config, options)
 }
 
 // set Consent
 export const setConsent = async function (config) {
   const options = createOptions('consents', config.preferences)
-  console.log('Consent Options created:', options.getOptions())
   await this.consent.setFromFiles(this.apiKey, this.siteInfo, config, options)
 }
 
