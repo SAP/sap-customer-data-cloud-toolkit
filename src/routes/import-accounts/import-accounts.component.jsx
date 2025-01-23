@@ -32,6 +32,7 @@ import { trackUsage } from '../../lib/tracker.js'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
+const FullAccount = 'Full'
 
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
@@ -42,7 +43,7 @@ const ImportAccountsComponent = ({ t }) => {
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
-  const [accountOption, setAccountOption] = useState('Full')
+  const [accountOption, setAccountOption] = useState(FullAccount)
   const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
@@ -50,7 +51,7 @@ const ImportAccountsComponent = ({ t }) => {
 
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurationTree('Full'))
+    dispatch(getConfigurationTree(FullAccount))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = async () => {

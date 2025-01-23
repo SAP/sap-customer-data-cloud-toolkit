@@ -4,13 +4,12 @@ const styles = {
     flexDirection: 'column',
     width: '100%',
     margin: '0 auto',
-    padding: '20px',
+    padding: '10px',
     borderRadius: '4px',
   },
   outerDiv: {
+    marginLeft: '10px',
     width: '100%',
-    marginBottom: '8px',
-    marginTop: '8px',
   },
   labelIconContainer: {
     display: 'flex',
@@ -23,7 +22,7 @@ const styles = {
     color: '#1d2d3e',
   },
   inputStyle: {
-    width: '100%',
+    width: '98%',
   },
   outerDivFormItem: {
     width: '100%',

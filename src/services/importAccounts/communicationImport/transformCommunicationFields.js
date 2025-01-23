@@ -28,7 +28,7 @@ function transformCommunications(communications, parentKey) {
   Object.values(communications).forEach((item) => {
     if (!channels[item.topicChannelId]) {
       channels[item.topicChannelId] = {
-        id: item.topicChannelId,
+        id: `${parentKey}.${item.topicChannelId}`,
         name: item.topicChannelId,
         value: false,
         branches: [],
@@ -41,6 +41,7 @@ function transformCommunications(communications, parentKey) {
       value: false,
       branches: [],
     }
+
     channels[item.topicChannelId].branches.push(statusBranch)
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties
@@ -53,7 +54,6 @@ function transformCommunications(communications, parentKey) {
       channels[item.topicChannelId].branches.push(...optInBranches)
     }
   })
-
   result.branches = Object.values(channels)
   return result
 }

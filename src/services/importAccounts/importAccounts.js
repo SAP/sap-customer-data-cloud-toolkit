@@ -73,6 +73,7 @@ class ImportAccounts {
     }
     createCSVFile(result, accountOption)
   }
+
   seperateOptionsFromTree(items) {
     const data = []
     const preferencesOptions = []

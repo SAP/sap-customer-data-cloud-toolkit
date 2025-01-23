@@ -3,6 +3,7 @@
  * License: Apache-2.0
  */
 import { spacing } from '@ui5/webcomponents-react-base'
+
 const styles = {
   errorDialogStyle: {
     textAlign: 'left',
@@ -34,6 +35,9 @@ const styles = {
     maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
   },
+  panelContainer: {
+    width: '100%',
+  },
   fullContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -43,6 +47,7 @@ const styles = {
     composes: 'cdc-tools-background',
   },
   headerOuterDivStyle: {
+    ...spacing.sapUiSmallMarginBottom,
     width: '100%',
   },
   selectAccountDiv: {

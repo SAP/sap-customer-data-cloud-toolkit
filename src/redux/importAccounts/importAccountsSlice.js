@@ -1,7 +1,7 @@
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, getConfigurationPath } from './utils'
+import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, getConfigurationPath, setSugestionItemParent } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurationTree`
@@ -55,7 +55,9 @@ export const importAccountsSlice = createSlice({
       propagateConfigurationSelectBox(configuration, action.payload)
     },
     setSugestionSchema(state, action) {
-      setParentsValue(state.selectedConfiguration, action.payload.checkBoxId, action.payload.value)
+      let newConfiguration = state.selectedConfiguration
+      newConfiguration = state.configurations
+      setSugestionItemParent(state.selectedConfiguration, newConfiguration, action.payload.checkBoxId, action.payload.value)
     },
     setSuggestionClickConfiguration(state, action) {
       const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)

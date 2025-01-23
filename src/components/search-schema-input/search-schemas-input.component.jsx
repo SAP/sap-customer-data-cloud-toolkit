@@ -19,13 +19,14 @@ const SearchBar = ({ handleSuggestionClick, configurations, setSchemaInputValue,
   const onTargetSchemaInputHandler = (event) => {
     const allNames = extractIds([configurations])
     const value = event.target.value
-
     setSchemaInputValue(value)
+    const filteredSuggestions = allNames.filter((name) => name.includes(value))
     if (value !== '') {
-      const filteredSuggestions = allNames.filter((name) => name.includes(value))
-      if (filteredSuggestions.length) {
+      if (filteredSuggestions.length > 0) {
         setSuggestions(filteredSuggestions)
         handleTreeNodeClick(filteredSuggestions)
+      } else {
+        setSuggestions([])
       }
     }
     if (value === '') {

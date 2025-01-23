@@ -23,6 +23,7 @@ export const getRootElements = [
   'context',
   'lang',
 ]
+
 export function hasNestedObject(field) {
   for (let key in field) {
     if (typeof field[key] === 'object' && field[key] !== null) {
@@ -39,6 +40,7 @@ export function isFieldDetailObject(fieldDetail, skipFields = true) {
   }
   return false
 }
+
 export function extractAndTransformFields(data, transformsFields) {
   const fieldsTransformed = []
   Object.entries(data).forEach(([key, value]) => {
@@ -51,6 +53,7 @@ export function extractAndTransformFields(data, transformsFields) {
   })
   return fieldsTransformed
 }
+
 export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accumulatedKey, skipSwitch, options = {}) {
   const { skipFields = true, transformCallback, checkTreeBranchCallback } = options
 

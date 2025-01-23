@@ -2,6 +2,8 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
+import { findConfiguration } from '../copyConfigurationExtended/utils'
 const mandatoryFields = ['isSubscribed', 'isConsentGranted', 'status']
 const emailFieldId = 'email'
 const uidFieldId = 'uid'
@@ -98,19 +100,69 @@ const traverseWholeTree = (branches, childId, setParent) => {
   return false
 }
 
-export const setParentsValue = (structure, childId, value) => {
-  function checkAndSetParents(branches) {
-    for (let branch of branches) {
-      if (branch.branches && branch.branches.length > 0) {
-        checkAndSetParents(branch.branches)
-        branch.value = branch.branches.some((child) => child.value)
-      }
+const updateMandatoryFields = (structure, value) => {
+  if (isMandatoryFields(structure.id)) {
+    structure.value = value
+    structure.mandatory = value
+  }
+  if (structure.branches && structure.branches.length > 0) {
+    structure.branches.forEach((branch) => updateMandatoryFields(branch, value))
+  }
+  return structure
+}
+
+const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, value) => {
+  if ((parentId.length = 3)) {
+    parentNode = parentId.slice(0, -1).join('.')
+  } else if (parentId.length < 3) {
+    parentNode = parentId.slice(0, -1).join('.')
+  }
+  if (parentNode.endsWith('optIn')) {
+    parentNode = parentId.slice(0, -2).join('.')
+  }
+  if (parentNode) {
+    const parent = findConfiguration(structure, parentNode)
+    if (parent) {
+      updateMandatoryFields(parent, value)
     }
   }
+}
 
+export const setSugestionItemParent = (sugestedStructure, structure, childId, value) => {
+  let parentId = childId.split('.')
+  let parentNode
+  hasMandatoryFieldInSugestion(structure, parentId, parentNode, value)
+
+  checkAndSetParents(sugestedStructure)
+  traverseWholeTree(sugestedStructure, childId, value)
+  return sugestedStructure
+}
+
+export const setParentsValue = (structure, childId, value) => {
   traverseWholeTree(structure, childId, value)
   checkAndSetParents(structure)
-  return structure
+}
+
+function checkAndSetParents(branches) {
+  for (let branch of branches) {
+    if (branch.branches && branch.branches.length > 0) {
+      checkAndSetParents(branch.branches)
+      branch.value = branch.branches.some((child) => child.value)
+    }
+  }
+}
+
+const findNodeById = (branches, id) => {
+  for (let branch of branches) {
+    if (branch.id === id) {
+      return branch
+    }
+    const found = findNodeById(branch.branches, id)
+    if (found) {
+      return found
+    }
+  }
+  return null
 }
 
 export const getConfigurationPath = (configurations, targetId) => {
@@ -118,7 +170,6 @@ export const getConfigurationPath = (configurations, targetId) => {
 
   const findPath = (nodes, path) => {
     if (path.length === 0) return null
-
     const [currentId, ...restPath] = path
     const node = nodes.find((node) => node.id === currentId || node.id.endsWith(`.${currentId}`))
 
@@ -134,7 +185,6 @@ export const getConfigurationPath = (configurations, targetId) => {
       branches: [childPath],
     }
   }
-
   return findPath(configurations, path)
 }
 

@@ -16,35 +16,27 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiMediumMarginBegin,
   },
-  cardDiv: {
-    ...spacing.sapUiSmallMarginTop,
-    width: '100%',
-  },
   headerTextFlexboxStyle: {
     ...spacing.sapUiSmallMargin,
   },
   gridContainer: {
     display: 'grid',
     gridTemplateColumns: 'repeat(2, 1fr)',
-    gridTemplateRows: 'repeat(3,auto)',
-    marginLeft: '10px',
-    rowGap: '-10px',
+    marginLeft: '6px',
   },
   gridItem: {
-    height: '100px',
-    padding: '5px',
-    width: '95%',
-  },
-  tableCell: {
-    height: '100px',
-    padding: '10px',
-    width: '50%',
+    height: '70px',
+    padding: '1px',
+    width: '98%',
   },
 
   outerDiv: {
     width: '100%',
     ...spacing.sapUiTinyMarginBottom,
     ...spacing.sapUiSmallMarginTop,
+  },
+  cardDiv: {
+    width: '100%',
   },
 
   createButtonBarStyle: {
@@ -94,6 +86,26 @@ const styles = {
   },
   cardHeaderTitleText: {
     fontSize: '30px',
+  },
+  successMessage: {
+    ...spacing.sapUiSmallMarginBegin,
+    ...spacing.sapUiTinyMarginBottom,
+  },
+  warningMessage: {
+    display: 'flex',
+    alignItems: 'center',
+    ...spacing.sapUiSmallMarginTop,
+    marginLeft: '10px',
+  },
+  warningIcon: {
+    ...spacing.sapUiTinyMarginEnd,
+    marginBottom: '5px',
+  },
+  panelContainer: {
+    width: '100%',
+  },
+  barStyle: {
+    width: '100%',
   },
 }
 
