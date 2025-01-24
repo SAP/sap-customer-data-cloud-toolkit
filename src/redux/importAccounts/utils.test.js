@@ -7,8 +7,9 @@
  * @jest-environment jsdom
  */
 
+import { preferencesBranches } from '../../services/importAccounts/mainDataSet'
 import { mockConfigurationTree, mockConfigurationTreeTrue } from './dataTest'
-import { getAllConfiguration, propagateConfigurationState } from './utils'
+import { getAllConfiguration, hasMandatoryFieldInSugestion, propagateConfigurationState, setSugestionItemParent, updateMandatoryFields } from './utils'
 
 describe('importAccountsSlice utils test suite', () => {
   test('should propagate configuration state to first level configurations', () => {
@@ -40,5 +41,12 @@ describe('importAccountsSlice utils test suite', () => {
     expect(configPath[0].branches.length).toEqual(1)
     expect(configPath[0].id).toEqual('data.loyalty')
     expect(configPath[0].branches[0].id).toEqual('data.loyalty.rewardPoints')
+  })
+
+  test('should update the mandatory fields if they exist', () => {
+    const configuration = mockConfigurationTree[1]
+    expect(configuration.branches[0].mandatory).toEqual(false)
+    updateMandatoryFields(configuration, true)
+    expect(configuration.branches[0].mandatory).toEqual(true)
   })
 })

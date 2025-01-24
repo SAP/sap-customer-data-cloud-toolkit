@@ -100,7 +100,7 @@ const traverseWholeTree = (branches, childId, setParent) => {
   return false
 }
 
-const updateMandatoryFields = (structure, value) => {
+export const updateMandatoryFields = (structure, value) => {
   if (isMandatoryFields(structure.id)) {
     structure.value = value
     structure.mandatory = value
@@ -111,7 +111,7 @@ const updateMandatoryFields = (structure, value) => {
   return structure
 }
 
-const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, value) => {
+export const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, value) => {
   if (parentId.length <= 3) {
     parentNode = parentId.slice(0, -1).join('.')
   } else if (parentId.length > 3) {
