@@ -60,8 +60,7 @@ export const importAccountsSlice = createSlice({
       propagateConfigurationSelectBox(configuration, action.payload)
     },
     setSugestionSchema(state, action) {
-      newConfiguration = state.configurations
-      setSugestionItemParent(state.selectedConfiguration, newConfiguration, action.payload.checkBoxId, action.payload.value)
+      setSugestionItemParent(state.selectedConfiguration, state.configurations, action.payload.checkBoxId, action.payload.value)
     },
     setSuggestionClickConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, [action.payload.checkBoxId])
