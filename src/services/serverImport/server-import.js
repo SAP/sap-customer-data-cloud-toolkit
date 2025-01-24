@@ -62,7 +62,11 @@ class ServerImport {
     let dataflowString = JSON.stringify(dataflow)
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
-      dataflowString = dataflowString.replaceAll(regex, variable.value)
+      if (variable.value) {
+        dataflowString = dataflowString.replaceAll(regex, variable.value)
+      } else {
+        dataflowString = dataflowString.replaceAll(regex, '')
+      }
     }
     return JSON.parse(dataflowString)
   }

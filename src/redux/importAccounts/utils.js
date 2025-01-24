@@ -149,29 +149,6 @@ function checkAndSetParents(branches) {
   }
 }
 
-export const getConfigurationPath = (configurations, targetId) => {
-  const path = targetId.split('.')
-
-  const findPath = (nodes, path) => {
-    if (path.length === 0) return null
-    const [currentId, ...restPath] = path
-    const node = nodes.find((node) => node.id === currentId || node.id.endsWith(`.${currentId}`))
-
-    if (!node) return null
-
-    if (restPath.length === 0) return node
-
-    const childPath = findPath(node.branches, restPath)
-    if (!childPath) return null
-
-    return {
-      ...node,
-      branches: [childPath],
-    }
-  }
-  return findPath(configurations, path)
-}
-
 export const propagateConfigurationSelectBox = (configuration, payload) => {
   configuration.switchId = payload.operation
   for (let branch of configuration.branches) {

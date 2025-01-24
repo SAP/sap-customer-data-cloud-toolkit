@@ -9,7 +9,7 @@ import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
 import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
 import '@ui5/webcomponents/dist/MessageStrip.js'
-import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStrip } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStrip, Link } from '@ui5/webcomponents-react'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 
@@ -49,7 +49,6 @@ const ServerImportComponent = ({ t }) => {
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
-
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -115,7 +114,9 @@ const ServerImportComponent = ({ t }) => {
       <Text className={classes.successMessage}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY', { dataflowId: createdDataflowId })}</Text>
       <div className={classes.warningMessage}>
         <MessageStrip hide-close-button design="Warning">
-          {t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING')}
+          <div className={classes.warningDataflow}>
+            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING') }} />
+          </div>
         </MessageStrip>
       </div>
     </DialogMessageInform>

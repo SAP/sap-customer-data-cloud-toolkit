@@ -97,9 +97,9 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     marginLeft: '10px',
   },
-  warningIcon: {
-    ...spacing.sapUiTinyMarginEnd,
-    marginBottom: '5px',
+
+  warningDataflow: {
+    marginTop: '4px',
   },
   panelContainer: {
     width: '100%',
