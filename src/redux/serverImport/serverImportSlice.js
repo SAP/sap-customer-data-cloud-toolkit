@@ -5,7 +5,7 @@
 
 import ServerImport from '../../services/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { getApiKey, getErrorAsArray } from '../utils'
+import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
@@ -16,6 +16,7 @@ export const serverImportExtendedSlice = createSlice({
   name: SERVER_IMPORT_STATE_NAME,
   initialState: {
     currentSiteApiKey: getApiKey(window.location.hash),
+    currentSitePartner: getPartner(window.location.hash),
     serverConfigurations: [],
     errors: [],
     isLoading: false,
@@ -99,5 +100,5 @@ export const selectServerConfigurations = (state) => state.serverImport.serverCo
 export const selectAccountType = (state) => state.serverImport.accountType
 
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
-
+export const selectCurrentPartner = (state) => state.serverImport.currentSitePartner
 export default serverImportExtendedSlice.reducer

@@ -37,6 +37,8 @@ const styles = {
   },
   cardDiv: {
     width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
   },
 
   createButtonBarStyle: {

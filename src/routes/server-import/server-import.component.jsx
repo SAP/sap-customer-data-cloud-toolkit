@@ -17,6 +17,7 @@ import {
   clearConfigurations,
   getConfigurations,
   getServerConfiguration,
+  selectCurrentPartner,
   selectServerConfigurations,
   selectShowSuccessDialog,
   setAccountType,
@@ -24,8 +25,7 @@ import {
 } from '../../redux/serverImport/serverImportSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 
-import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import { getApiKey, getPartner } from '../../redux/utils.js'
+import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { buildDataflowURL, isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
@@ -40,8 +40,8 @@ const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
-  const apikey = getApiKey(window.location.hash)
-  const partner = getPartner(window.location.hash)
+  const apikey = useSelector(selectCurrentSiteApiKey)
+  const partner = useSelector(selectCurrentPartner)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
