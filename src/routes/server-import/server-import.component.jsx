@@ -9,7 +9,7 @@ import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
 import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
 import '@ui5/webcomponents/dist/MessageStrip.js'
-import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStrip, Link } from '@ui5/webcomponents-react'
+import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStrip } from '@ui5/webcomponents-react'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 
@@ -25,8 +25,8 @@ import {
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 
 import { getCurrentSiteInformation, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import { getApiKey } from '../../redux/utils.js'
-import { isInputFilled } from './utils.js'
+import { getApiKey, getPartner } from '../../redux/utils.js'
+import { buildDataflowURL, isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
 
@@ -41,6 +41,7 @@ const ServerImportComponent = ({ t }) => {
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
   const apikey = getApiKey(window.location.hash)
+  const partner = getPartner(window.location.hash)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
@@ -49,6 +50,7 @@ const ServerImportComponent = ({ t }) => {
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
+  console.log('partner', partner)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
@@ -115,7 +117,7 @@ const ServerImportComponent = ({ t }) => {
       <div className={classes.warningMessage}>
         <MessageStrip hide-close-button design="Warning">
           <div className={classes.warningDataflow}>
-            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING') }} />
+            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING', { dataFlowURL: buildDataflowURL(partner, apikey) }) }} />
           </div>
         </MessageStrip>
       </div>
