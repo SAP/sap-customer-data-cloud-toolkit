@@ -50,7 +50,6 @@ const ServerImportComponent = ({ t }) => {
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
-  console.log('partner', partner)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
