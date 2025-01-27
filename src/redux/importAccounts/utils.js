@@ -5,6 +5,7 @@
 
 import { findConfiguration } from '../copyConfigurationExtended/utils'
 const mandatoryFields = ['isSubscribed', 'isConsentGranted', 'status']
+const mandatoryParentFields = ['communications', 'subscriptions', 'preferences']
 const emailFieldId = 'email'
 const uidFieldId = 'uid'
 export const propagateConfigurationState = (configuration, value) => {
@@ -99,7 +100,7 @@ const traverseWholeTree = (branches, childId, setParent) => {
   }
   return false
 }
-
+const isParentMandatoryFields = (id) => mandatoryParentFields.includes(id)
 export const updateMandatoryFields = (structure, value) => {
   if (isMandatoryFields(structure.id)) {
     structure.value = value
@@ -117,7 +118,7 @@ export const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, va
   } else if (parentId.length > 3) {
     parentNode = parentId.slice(0, -2).join('.')
   }
-  if (parentNode) {
+  if (parentNode && isParentMandatoryFields(parentId[0])) {
     const parent = findConfiguration(structure, parentNode)
     if (parent) {
       updateMandatoryFields(parent, value)

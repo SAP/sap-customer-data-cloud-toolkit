@@ -63,7 +63,8 @@ class ServerImport {
     for (const variable of variables) {
       const regex = new RegExp(variable.id, 'g')
       if (variable.value) {
-        dataflowString = dataflowString.replaceAll(regex, variable.value)
+        const escapedValue = variable.value.replace(/\\/g, '\\\\')
+        dataflowString = dataflowString.replaceAll(regex, escapedValue)
       } else {
         dataflowString = dataflowString.replaceAll(regex, '')
       }

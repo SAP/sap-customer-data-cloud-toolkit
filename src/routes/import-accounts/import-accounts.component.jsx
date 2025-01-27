@@ -48,7 +48,6 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
-
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree(FullAccount))
@@ -109,6 +108,9 @@ const ImportAccountsComponent = ({ t }) => {
   const onCancelHandler = () => {
     if (!isLoading) {
       dispatch(clearConfigurations())
+      setSchemaInputValue('')
+      setTreeNodeInputValue()
+      setExpandableNode(false)
     }
   }
 

@@ -64,7 +64,9 @@ export const importAccountsSlice = createSlice({
     },
     setSuggestionClickConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, [action.payload.checkBoxId])
-      state.selectedConfiguration = configuration
+      if (configuration.length > 0) {
+        state.selectedConfiguration = configuration
+      }
     },
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)
