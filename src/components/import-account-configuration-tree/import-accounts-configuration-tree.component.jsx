@@ -11,7 +11,7 @@ import SchemaPropertyType from '../schema-property-type/schema-property-type.com
 import { getHighestSeverity } from '../configuration-tree/utils.js'
 import { setMandatoryField, setSugestionMandatoryField, setSugestionSchema } from '../../redux/importAccounts/importAccountsSlice.js'
 import { findBranchAndSiblings, handleSelectChange, shouldRenderSelect } from './utils.js'
-import { isMandatoryFields } from '../../redux/importAccounts/utils.js'
+import { isMandatoryFields, isParentMandatoryFields } from '../../redux/importAccounts/utils.js'
 
 const ImportAccountConfigurationTree = ({
   id,
@@ -41,7 +41,8 @@ const ImportAccountConfigurationTree = ({
   }
   const selectChildrenField = (siblings) => {
     for (let branch of siblings) {
-      if (isMandatoryFields(branch.id)) {
+      const parentId = branch.id.split('.')
+      if (isMandatoryFields(branch.id) && isParentMandatoryFields(parentId[0])) {
         dispatch(setMandatoryField({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
         dispatch(setSugestionMandatoryField({ checkBoxId: branch.id, value: true, mandatory: true, config: true }))
       }

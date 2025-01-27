@@ -11,8 +11,9 @@ const uidFieldId = 'uid'
 export const propagateConfigurationState = (configuration, value) => {
   configuration.value = value
   if (configuration.branches) {
+    const parentId = configuration.id.split('.')
     configuration.branches.forEach((branch) => {
-      if (isMandatoryFields(branch.id)) {
+      if (isMandatoryFields(branch.id) && isParentMandatoryFields(parentId[0])) {
         branch.value = value
         branch.mandatory = value
       }
@@ -100,7 +101,7 @@ const traverseWholeTree = (branches, childId, setParent) => {
   }
   return false
 }
-const isParentMandatoryFields = (id) => mandatoryParentFields.includes(id)
+export const isParentMandatoryFields = (id) => mandatoryParentFields.includes(id)
 export const updateMandatoryFields = (structure, value) => {
   if (isMandatoryFields(structure.id)) {
     structure.value = value
