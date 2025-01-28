@@ -226,69 +226,154 @@ describe('githubUtils', () => {
     })
   })
 
-  describe('updateGitFileContent', () => {
-    it('should update git file content if there are differences', async () => {
-      const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
-      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      removeIgnoredFields.mockImplementation((obj) => obj)
+describe('updateGitFileContent', () => {
+  it('should update git file content if there are differences', async () => {
+    const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
 
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
-    })
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
+  })
 
-    it('should return null if files are identical', async () => {
-      const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
-      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      removeIgnoredFields.mockImplementation((obj) => obj)
+  it('should return null if files are identical', async () => {
+    const mockFile = { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
 
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'value' }))
-      expect(result).toBeNull()
-    })
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'value' }, null, 2))
+    expect(result).toBeNull()
+  })
 
-    it('should handle 404 error when fetching file content', async () => {
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
+  it('should handle 404 error when fetching file content', async () => {
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
 
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
-    })
-
-    it('should handle branch does not exist error when fetching file content', async () => {
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [] })
-      octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Branch does not exist'))
-
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }) })
-    })
-
-    it('should throw an error if fetching file content fails', async () => {
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Some error'))
-
-      await expect(githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))).rejects.toThrow('Some error')
-    })
-
-    it('should handle empty git content', async () => {
-      const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
-      octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      removeIgnoredFields.mockImplementation((obj) => obj)
-      octokitMock.rest.git.getBlob.mockResolvedValue({ data: { content: '' } })
-
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }, null, 2), sha: 'mockSha' })
-    })
-
-    it('should handle undefined git file info', async () => {
-      octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
-      octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
-
-      const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }))
-      expect(result).toEqual({ path: 'path/to/file', content: JSON.stringify({ key: 'newValue' }), sha: undefined })
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: undefined,
     })
   })
+
+  it('should handle branch does not exist error when fetching file content', async () => {
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [] })
+    octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Branch does not exist'))
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: undefined,
+    })
+  })
+
+  it('should throw an error if fetching file content fails', async () => {
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Some error'))
+
+    await expect(githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))).rejects.toThrow('Some error')
+  })
+
+  it('should handle empty git content', async () => {
+    const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
+    octokitMock.rest.git.getBlob.mockResolvedValue({ data: { content: '' } })
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: 'mockSha',
+    })
+  })
+
+  it('should handle undefined git file info', async () => {
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    octokitMock.rest.repos.getContent.mockRejectedValue({ status: 404 })
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: undefined,
+    })
+  })
+
+  it('should handle rawGitContent initialization properly', async () => {
+    const mockFile = { content: '', size: 0 }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: undefined,
+    })
+  })
+
+  it('should handle empty string content in rawGitContent', async () => {
+    const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: 'mockSha',
+    })
+  })
+
+  it('should handle defined currentGitContentDecoded', async () => {
+    const mockFile = { content: Base64.encode('{}'), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: 'mockSha',
+    })
+  })
+
+  it('should catch errors in JSON.parse for currentGitContentDecoded', async () => {
+    const mockFile = { content: Base64.encode('invalidJson'), sha: 'mockSha' }
+    octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    removeIgnoredFields.mockImplementation((obj) => obj)
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: 'mockSha',
+    })
+  })
+
+  it('should handle undefined sha if getGitFileInfo is undefined or 404', async () => {
+    octokitMock.rest.repos.listBranches.mockResolvedValue({ data: [{ name: 'main' }] })
+    octokitMock.rest.repos.getContent.mockRejectedValue(new Error('Branch does not exist'))
+
+    const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
+    expect(result).toEqual({
+      path: 'path/to/file',
+      content: JSON.stringify({ key: 'newValue' }, null, 2),
+      sha: undefined,
+    })
+  })
+})
+
 
   describe('listAllCommits', () => {
     it('should list all commits', async () => {

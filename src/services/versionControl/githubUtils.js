@@ -196,30 +196,6 @@ export async function updateGitFileContent(versionControl, filePath, cdcFileCont
     return null
   }
 }
-export async function storeCdcDataInGit(versionControl, commitMessage) {
-  const cdcService = new CdcService(versionControl)
-  const configs = await cdcService.fetchCDCConfigs()
-
-  const files = Object.keys(configs).map((key) => ({
-    path: `src/versionControl/${key}.json`,
-    content: JSON.stringify(configs[key], null, 2),
-  }))
-
-  const fileUpdates = await Promise.all(
-    files.map(async (file) => {
-      const result = await updateGitFileContent(versionControl, file.path, file.content)
-      return result
-    }),
-  )
-
-  const validUpdates = fileUpdates.filter((update) => update !== null)
-  if (validUpdates.length > 0) {
-    await updateFilesInSingleCommit(versionControl, commitMessage, validUpdates)
-  } else {
-    //failsafe
-    console.log('No files to update. Skipping commit.')
-  }
-}
 
 export async function getCommits(versionControl) {
   let allCommits = []
@@ -252,7 +228,7 @@ export async function getCommits(versionControl) {
   return { data: allCommits }
 }
 
-export async function prepareFilesForUpdate(versionControl) {
+export async function fetchAndPrepareFiles(versionControl) {
   const cdcService = new CdcService(versionControl)
   const configs = await cdcService.fetchCDCConfigs()
 
@@ -268,7 +244,20 @@ export async function prepareFilesForUpdate(versionControl) {
     }),
   )
 
-  const validUpdates = fileUpdates.filter((update) => update !== null)
+  return fileUpdates.filter((update) => update !== null)
+}
+
+export async function prepareFilesForUpdate(versionControl) {
+  const validUpdates = await fetchAndPrepareFiles(versionControl)
   const formattedFiles = validUpdates.length > 0 ? validUpdates.map((file) => file.path.replace('src/versionControl/', '').replace('.json', '')) : ['N/A']
   return formattedFiles
+}
+
+export async function storeCdcDataInGit(versionControl, commitMessage) {
+  const validUpdates = await fetchAndPrepareFiles(versionControl)
+  if (validUpdates.length > 0) {
+    await updateFilesInSingleCommit(versionControl, commitMessage, validUpdates)
+  } else {
+    console.log('No files to update. Skipping commit.')
+  }
 }
