@@ -26,7 +26,7 @@ describe('Server Import test suite', () => {
       cy.get('#\\{\\{readFileNameRegex\\}\\}').shadow().find('.ui5-input-inner').should('have.value', '')
       cy.get('#\\{\\{blobPrefix\\}\\}').shadow().find('.ui5-input-inner').should('have.value', '')
       cy.get('#serverImportSaveButton').should('not.be.disabled').click()
-      cy.get('#serverImportSuccessPopup').find('span').should('have.text', dataTest.serverImportSuccessMessage)
+      cy.get('#serverImportSuccessPopup').find('span').eq(0).should('have.text', dataTest.serverImportSuccessMessage)
     })
   })
 })
