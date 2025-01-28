@@ -12,6 +12,7 @@ export const getApiKey = (hash) => {
   }
   return apiKey !== undefined ? apiKey : ''
 }
+
 export const getScreenSet = (hash) => {
   if (hash.href.includes('screenSetId')) {
     const match = hash.href.split('?')[1]

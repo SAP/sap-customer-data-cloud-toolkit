@@ -103,7 +103,7 @@
   "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Fill the information below to import a full or lite account from a storage server",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON": "Import",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The dataflow was deployed successfully (ID: {{dataflowId}}).",
-  "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING": "Check status of imported accounts in: <a href=\"{{dataFlowURL}}\" >Dataflow</a> > Job Status.",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING": "Check status of imported accounts in: <a href={{dataFlowURL}}> Dataflow </a> Job Status.",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT": "Full Account",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT": "Lite Account",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE": "Select Account Type",

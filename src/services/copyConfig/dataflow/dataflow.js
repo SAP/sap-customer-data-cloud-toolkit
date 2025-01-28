@@ -27,6 +27,9 @@ class Dataflow {
     this.#site = site
     this.#dataCenter = dataCenter
   }
+  buildRedirectDataflowURL(site, partner, endpoint) {
+    return UrlBuilder.buildGigyaUrl(this.#credentials.gigyaConsole, site, partner, endpoint)
+  }
 
   async setScheduling(site, dataCenter, body) {
     const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()

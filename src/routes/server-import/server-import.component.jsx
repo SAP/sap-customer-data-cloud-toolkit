@@ -16,8 +16,8 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import {
   clearConfigurations,
   getConfigurations,
+  getDataflowRedirection,
   getServerConfiguration,
-  selectCurrentPartner,
   selectServerConfigurations,
   selectShowSuccessDialog,
   setAccountType,
@@ -26,7 +26,7 @@ import {
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
-import { buildDataflowURL, isInputFilled } from './utils.js'
+import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
 
@@ -41,7 +41,6 @@ const ServerImportComponent = ({ t }) => {
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
   const apikey = useSelector(selectCurrentSiteApiKey)
-  const partner = useSelector(selectCurrentPartner)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
@@ -50,10 +49,18 @@ const ServerImportComponent = ({ t }) => {
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
+  const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
   useEffect(() => {
+    const fetchDataflowURL = async () => {
+      const url = await dispatch(getDataflowRedirection())
+      if (getDataflowRedirection.fulfilled.match(url)) {
+        setRedirectionDataflowURL(url.payload)
+      }
+    }
+    fetchDataflowURL()
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
-  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
+  }, [dispatch, apikey, credentials, redirectionDataflowURL, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
@@ -67,6 +74,7 @@ const ServerImportComponent = ({ t }) => {
   }
 
   const onSuccessDialogAfterCloseHandler = async () => {
+    setShowSuccessDialog(false)
     await trackUsage({ featureName: PAGE_TITLE })
   }
 
@@ -116,7 +124,7 @@ const ServerImportComponent = ({ t }) => {
       <div className={classes.warningMessage}>
         <MessageStrip hide-close-button design="Warning">
           <div className={classes.warningDataflow}>
-            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING', { dataFlowURL: buildDataflowURL(partner, apikey) }) }} />
+            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING', { dataFlowURL: redirectionDataflowURL }) }} />
           </div>
         </MessageStrip>
       </div>

@@ -7,9 +7,11 @@ import ServerImport from '../../services/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
+import Dataflow from '../../services/copyConfig/dataflow/dataflow'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
+const GET_REDIRECTION_URL_ACTION = `${SERVER_IMPORT_STATE_NAME}/getRedirectionURL`
 const SET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/setConfigurations`
 
 export const serverImportExtendedSlice = createSlice({
@@ -64,6 +66,20 @@ export const serverImportExtendedSlice = createSlice({
       state.showSuccessMessage = false
       state.errors = action.payload
     })
+    builder.addCase(getDataflowRedirection.pending, (state) => {
+      state.isLoading = true
+      state.errors = []
+      state.showSuccessMessage = false
+    })
+    builder.addCase(getDataflowRedirection.fulfilled, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = true
+    })
+    builder.addCase(getDataflowRedirection.rejected, (state, action) => {
+      state.isLoading = false
+      state.showSuccessMessage = false
+      state.errors = action.payload
+    })
   },
 })
 
@@ -75,6 +91,21 @@ export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, asy
 
   try {
     return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).getStructure()
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error))
+  }
+})
+
+export const getDataflowRedirection = createAsyncThunk(GET_REDIRECTION_URL_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
+  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
+  const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
+  const partnerId = state.serverImport.currentSitePartner
+  const endpoint = 'orchestrate/etl-app'
+
+  try {
+    return new Dataflow(credentials, currentSiteApiKey, currentDataCenter).buildRedirectDataflowURL(currentSiteApiKey, partnerId, endpoint)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
