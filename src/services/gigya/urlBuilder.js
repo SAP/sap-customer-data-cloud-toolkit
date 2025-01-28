@@ -14,7 +14,7 @@ class UrlBuilder {
     return `${protocol}://${namespace}.${dc}.${domain}/${endpoint}`
   }
 
-  static buildGigyaUrl(gigyaConsole, apiKey, partner, endpoint) {
+  static buildGigyaPageUrl(gigyaConsole, apiKey, partner, endpoint) {
     const console = this.#getConsole(gigyaConsole)
     const protocol = 'https'
     return `${protocol}://${console}/#/${partner}/${apiKey}/${endpoint}`
