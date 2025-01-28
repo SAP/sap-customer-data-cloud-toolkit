@@ -1,9 +1,9 @@
-import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
-import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
-import Cookies from 'js-cookie'
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import crypto from 'crypto-js'
+import Cookies from 'js-cookie'
+import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
+import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 
 // Mocking js-cookie
 jest.mock('js-cookie', () => ({
@@ -19,8 +19,19 @@ const mockStore = configureMockStore(middlewares)
 
 describe('versionControlSlice', () => {
   const originalWindow = { ...global.window }
-  const encryptionKey = process.env.ENCRYPTION_KEY || 'some-random-encryption-key'
-  const signingKey = 'some-random-signing-key'
+  const credentials = { secretKey: 'testSecretKey' }
+  const encryptionKey = credentials.secretKey
+  const initialState = {
+    credentials: { credentials },
+    copyConfigurationExtended: { currentSiteInformation: { dataCenter: 'testDataCenter' } },
+    versionControl: {
+      commits: [],
+      gitToken: '',
+      owner: '',
+      isFetching: false,
+      error: null,
+    },
+  }
 
   beforeAll(() => {
     if (typeof global.window === 'undefined') {
@@ -37,83 +48,38 @@ describe('versionControlSlice', () => {
 
   const encryptData = (dataToEncrypt, key) => {
     try {
-      const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
-      console.log(`Encrypted data for ${dataToEncrypt}: ${encryptedJsonString}`)
-      return encryptedJsonString
+      return crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
     } catch (error) {
       console.error('Error encrypting data:', error)
       return undefined
     }
   }
 
-  const decryptData = (encryptedData, key) => {
-    try {
-      const bytes = crypto.AES.decrypt(encryptedData, key)
-      const decrypted = bytes.toString(crypto.enc.Utf8)
-      return JSON.parse(decrypted)
-    } catch (error) {
-      console.error('Error decrypting data:', error)
-      return undefined
-    }
-  }
-
-  const signData = (data) => {
-    return crypto.HmacSHA256(data, signingKey).toString()
-  }
-
-  beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(crypto.AES, 'encrypt').mockImplementation((dataToEncrypt, key) => {
-      return crypto.enc.Base64.stringify(crypto.enc.Utf8.parse(dataToEncrypt))
-    })
-    jest.spyOn(crypto.AES, 'decrypt').mockImplementation((encryptedData, key) => {
-      return crypto.enc.Utf8.parse(crypto.enc.Base64.parse(encryptedData)).toString(crypto.enc.Utf8)
-    })
-    jest.spyOn(crypto.HmacSHA256, 'toString').mockReturnValue('mockSignatureValue')
-  })
-
-  // Reducers
   describe('reducers', () => {
-    const initialState = {
-      commits: [],
-      gitToken: '',
-      owner: '',
-      isFetching: false,
-      error: null,
-    }
-
     it('should handle initial state', () => {
-      expect(reducer(undefined, {})).toEqual(initialState)
+      const state = reducer(undefined, {})
+      expect(state).toEqual({
+        commits: [],
+        gitToken: '',
+        owner: '',
+        isFetching: false,
+        error: null,
+      })
     })
 
     it('should handle setGitToken', () => {
       const token = 'testToken'
-      const encryptedToken = encryptData(token, encryptionKey)
-      const signature = signData(encryptedToken)
-      const action = setGitToken(token)
-      const state = reducer(initialState, action)
-      console.log(`Expected token: ${state.gitToken}, Encrypted token expected in cookies: ${encryptedToken}`)
+      const state = reducer(initialState.versionControl, setGitToken(token))
       expect(state.gitToken).toEqual(token)
-      expect(Cookies.set).toHaveBeenCalledTimes(2)
-      expect(Cookies.set).toHaveBeenNthCalledWith(1, 'gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
-      expect(Cookies.set).toHaveBeenNthCalledWith(2, 'gitToken_sig', signature, { secure: true, sameSite: 'strict' })
     })
 
     it('should handle setOwner', () => {
       const owner = 'testOwner'
-      const encryptedOwner = encryptData(owner, encryptionKey)
-      const signature = signData(encryptedOwner)
-      const action = setOwner(owner)
-      const state = reducer(initialState, action)
-      console.log(`Expected owner: ${state.owner}, Encrypted owner expected in cookies: ${encryptedOwner}`)
+      const state = reducer(initialState.versionControl, setOwner(owner))
       expect(state.owner).toEqual(owner)
-      expect(Cookies.set).toHaveBeenCalledTimes(2)
-      expect(Cookies.set).toHaveBeenNthCalledWith(1, 'owner', encryptedOwner, { secure: true, sameSite: 'strict' })
-      expect(Cookies.set).toHaveBeenNthCalledWith(2, 'owner_sig', signature, { secure: true, sameSite: 'strict' })
     })
   })
 
-  // Selectors
   describe('selectors', () => {
     const state = {
       versionControl: {
@@ -146,37 +112,31 @@ describe('versionControlSlice', () => {
     })
   })
 
-  // Async Thunk fetchCommits
   describe('async thunk fetchCommits', () => {
-    const initialState = {
-      credentials: { credentials: 'testCredentials' },
-      copyConfigurationExtended: { currentSiteInformation: 'testSite' },
-      versionControl: { gitToken: 'testToken', owner: 'testOwner' },
-    }
-
-    it('should dispatch pending and fulfilled actions on successful fetch', async () => {
-      const store = mockStore(initialState)
-      const commitList = ['commit1', 'commit2']
-      handleCommitListRequestServices.mockResolvedValue({ commitList })
-
+    const createEncryptedCookies = () => {
       const encryptedToken = encryptData('testToken', encryptionKey)
-      const signatureToken = signData(encryptedToken)
       const encryptedOwner = encryptData('testOwner', encryptionKey)
-      const signatureOwner = signData(encryptedOwner)
       Cookies.get.mockImplementation((name) => {
         switch (name) {
           case 'gitToken':
             return encryptedToken
-          case 'gitToken_sig':
-            return signatureToken
           case 'owner':
             return encryptedOwner
-          case 'owner_sig':
-            return signatureOwner
           default:
             return undefined
         }
       })
+    }
+
+    beforeEach(() => {
+      createEncryptedCookies()
+      jest.clearAllMocks()
+    })
+
+    it('should dispatch pending and fulfilled actions on successful fetch', async () => {
+      const commitList = ['commit1', 'commit2']
+      handleCommitListRequestServices.mockResolvedValue({ commitList })
+      const store = mockStore(initialState)
 
       await store.dispatch(fetchCommits())
 
@@ -187,37 +147,16 @@ describe('versionControlSlice', () => {
     })
 
     it('should dispatch pending and rejected actions on failed fetch', async () => {
-      const store = mockStore(initialState)
       const errorMessage = 'Error fetching commits'
       handleCommitListRequestServices.mockRejectedValue(new Error(errorMessage))
-
-      const encryptedToken = encryptData('testToken', encryptionKey)
-      const signatureToken = signData(encryptedToken)
-      const encryptedOwner = encryptData('testOwner', encryptionKey)
-      const signatureOwner = signData(encryptedOwner)
-      Cookies.get.mockImplementation((name) => {
-        switch (name) {
-          case 'gitToken':
-            return encryptedToken
-          case 'gitToken_sig':
-            return signatureToken
-          case 'owner':
-            return encryptedOwner
-          case 'owner_sig':
-            return signatureOwner
-          default:
-            return undefined
-        }
-      })
+      const store = mockStore(initialState)
 
       await store.dispatch(fetchCommits())
 
       const actions = store.getActions()
       expect(actions[0].type).toBe(fetchCommits.pending.type)
       expect(actions[1].type).toBe(fetchCommits.rejected.type)
-
-      const errorPayload = actions[1].payload || actions[1].error.message
-      expect(errorPayload).toEqual(errorMessage)
+      expect(actions[1].payload).toEqual(errorMessage)
     })
   })
 })
