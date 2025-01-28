@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { Octokit } from '@octokit/rest'
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from './dataSanitization'
 import CdcService from './cdcService'
@@ -72,7 +73,6 @@ export async function branchExists(versionControl, branchName) {
     owner: versionControl.owner,
     repo: versionControl.repo,
   })
-
   return branches.some((branch) => branch.name === branchName)
 }
 

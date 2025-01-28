@@ -2,45 +2,31 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { createVersionControlInstance, handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 import { getApiKey } from '../utils'
 import Cookies from 'js-cookie'
-import crypto from 'crypto-js'
+import { encryptData, decryptData } from '../encryptionUtils'
 
 const FETCH_COMMITS_ACTION = 'versionControl/fetchCommits'
 
-const encryptionKey = process.env.ENCRYPTION_KEY || 'some-random-encryption-key'
-const signingKey = process.env.SIGNING_KEY || 'some-random-signing-key'
-
-const encryptData = (dataToEncrypt, key) => {
-  try {
-    const encryptedJsonString = crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
-    return encryptedJsonString
-  } catch (error) {
-    console.error('Error encrypting data:', error)
-    return undefined
-  }
-}
-
-const signData = (data, key) => {
-  try {
-    return crypto.HmacSHA256(data, key).toString()
-  } catch (error) {
-    console.error('Error signing data:', error)
-    return undefined
-  }
-}
-
-const getSignedCookie = (name) => {
+const getEncryptedCookie = (name, secretKey) => {
   const encryptedValue = Cookies.get(name)
-  const signature = Cookies.get(`${name}_sig`)
-  if (!encryptedValue || !signature) {
-    console.error(`No ${name} found in cookies or signature is missing`)
+  if (!encryptedValue) {
+    console.error(`No ${name} found in cookies`)
     return undefined
   }
-  const expectedSignature = signData(encryptedValue, signingKey)
-  if (signature !== expectedSignature) {
-    console.error(`Invalid signature for ${name}`)
-    return undefined
+  const decryptedValue = decryptData(encryptedValue, secretKey)
+  // console.log(`Decrypted value for ${name}: ${decryptedValue}`)
+  return decryptedValue
+}
+
+const setCookies = (state) => {
+  const credentials = state.credentials
+  if (state.gitToken && state.owner && credentials?.secretKey) {
+    const encryptedToken = encryptData(state.gitToken, credentials.secretKey)
+    const encryptedOwner = encryptData(state.owner, credentials.secretKey)
+    if (encryptedToken && encryptedOwner) {
+      Cookies.set('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
+      Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
+    }
   }
-  return encryptedValue
 }
 
 export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
@@ -48,14 +34,14 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const credentials = state.credentials.credentials
   const apiKey = getApiKey(window.location.hash)
   const currentSite = state.copyConfigurationExtended.currentSiteInformation
-  const gitToken = getSignedCookie('gitToken') // Retrieve the signed and encrypted token
-  const owner = getSignedCookie('owner') // Retrieve the signed and encrypted owner
+  const gitToken = getEncryptedCookie('gitToken', credentials.secretKey) // Retrieve the encrypted token
+  const owner = getEncryptedCookie('owner', credentials.secretKey) // Retrieve the encrypted owner
 
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
 
-  const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
+  const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
 
   try {
     const { commitList } = await handleCommitListRequestServices(versionControl, apiKey)
@@ -69,29 +55,22 @@ const versionControlSlice = createSlice({
   name: 'versionControl',
   initialState: {
     commits: [],
-    gitToken: getSignedCookie('gitToken') || '',
-    owner: getSignedCookie('owner') || '',
+    gitToken: '',
+    owner: '',
     isFetching: false,
     error: null,
   },
   reducers: {
     setGitToken(state, action) {
       state.gitToken = action.payload
-      const encryptedToken = encryptData(action.payload, encryptionKey)
-      const signature = signData(encryptedToken, signingKey)
-      if (encryptedToken && signature) {
-        Cookies.set('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
-        Cookies.set('gitToken_sig', signature, { secure: true, sameSite: 'strict' })
-      }
+      setCookies(state)
     },
     setOwner(state, action) {
       state.owner = action.payload
-      const encryptedOwner = encryptData(action.payload, encryptionKey)
-      const signature = signData(encryptedOwner, signingKey)
-      if (encryptedOwner && signature) {
-        Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
-        Cookies.set('owner_sig', signature, { secure: true, sameSite: 'strict' })
-      }
+      setCookies(state)
+    },
+    setCredentials(state, action) {
+      state.credentials = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -110,7 +89,7 @@ const versionControlSlice = createSlice({
   },
 })
 
-export const { setGitToken, setOwner } = versionControlSlice.actions
+export const { setGitToken, setOwner, setCredentials } = versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
 export const selectIsFetching = (state) => state.versionControl.isFetching

@@ -17,31 +17,16 @@ import Webhook from '../copyConfig/webhook/webhook'
 import ConsentConfiguration from '../copyConfig/consent/consentConfiguration'
 import Social from '../copyConfig/social/social'
 import RecaptchaConfiguration from '../copyConfig/recaptcha/recaptchaConfiguration'
-import crypto from 'crypto-js'
-
+import { decryptData } from '../../redux/encryptionUtils'
 class VersionControl {
-  constructor(credentials, apiKey, siteInfo, owner) {
-    const gitToken = Cookies.get('gitToken')
-    if (!gitToken) {
-      throw new Error('Git token is not available in cookies')
-    }
-    const decryptedToken = this.decryptToken(gitToken)
-    console.log('Decrypted gitToken:', decryptedToken)
+  constructor(credentials, apiKey, siteInfo, gitToken, owner) {
 
-    const encryptedOwner = Cookies.get('owner')
-    if (!encryptedOwner) {
-      throw new Error('Owner is not available in cookies')
-    }
-    const decryptedOwner = this.decryptToken(encryptedOwner)
-    console.log('Decrypted owner:', decryptedOwner)
-
-    this.octokit = new Octokit({ auth: decryptedToken })
-    this.owner = decryptedOwner || 'defaultOwner' // Use the provided owner or a default value
+    this.octokit = new Octokit({ auth: gitToken })
+    this.gitToken = gitToken
+    this.owner = owner || 'defaultOwner'
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
-
     const { dataCenter } = siteInfo
-
     this.credentials = credentials
     this.apiKey = apiKey
     this.dataCenter = dataCenter
@@ -66,15 +51,12 @@ class VersionControl {
 
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }
-
   decryptToken(encryptedToken) {
     try {
-      const bytes = crypto.AES.decrypt(encryptedToken, process.env.ENCRYPTION_KEY || 'some-random-encryption-key');
-      const decrypted = bytes.toString(crypto.enc.Utf8);
-      return JSON.parse(decrypted);
+      const decryptedToken = decryptData(encryptedToken, this.secretKey)
+      return decryptedToken
     } catch (error) {
-      console.error('Error decrypting token:', error);
-      return undefined;
+      return undefined
     }
   }
 }

@@ -3,12 +3,14 @@ import { withTranslation } from 'react-i18next'
 import { Bar, Input, Button, Dialog, TextArea, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchCommits, setGitToken, setOwner, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from '../../redux/versionControl/versionControlSlice'
+import { fetchCommits, setGitToken, setOwner, setCredentials, selectCommits, selectIsFetching, selectGitToken, selectOwner } from '../../redux/versionControl/versionControlSlice'
 import { createVersionControlInstance, handleGetServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
 import * as githubUtils from '../../services/versionControl/githubUtils'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
+import Cookies from 'js-cookie'
+import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
 
 const useStyles = createUseStyles(styles, { name: 'Prettier' })
@@ -30,11 +32,35 @@ const VersionControlComponent = ({ t }) => {
   const [filesToUpdate, setFilesToUpdate] = useState([])
 
   useEffect(() => {
-    dispatch(fetchCommits())
+    if (credentials) {
+      dispatch(setCredentials(credentials))
+    }
+  }, [dispatch, credentials])
+
+  useEffect(() => {
+    if (gitToken && owner) {
+      dispatch(fetchCommits())
+    }
   }, [dispatch, gitToken, owner])
 
+  useEffect(() => {
+    const secretKey = credentials?.secretKey
+    if (secretKey) {
+      const encryptedGitToken = Cookies.get('gitToken')
+      const encryptedOwner = Cookies.get('owner')
+      if (encryptedGitToken) {
+        const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
+        dispatch(setGitToken(decryptedGitToken))
+      }
+      if (encryptedOwner) {
+        const decryptedOwner = decryptData(encryptedOwner, secretKey)
+        dispatch(setOwner(decryptedOwner))
+      }
+    }
+  }, [credentials, dispatch])
+
   const onCreateBackupClick = async () => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       const formattedFiles = await githubUtils.prepareFilesForUpdate(versionControl)
       setFilesToUpdate(formattedFiles)
@@ -45,7 +71,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onConfirmBackupClick = async () => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       await handleGetServices(versionControl, apiKey, commitMessage)
       dispatch(fetchCommits())
@@ -61,7 +87,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onCommitRevertClick = async (sha) => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, owner)
+    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       await handleCommitRevertServices(versionControl, sha)
       dispatch(fetchCommits())
