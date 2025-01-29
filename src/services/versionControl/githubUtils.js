@@ -8,20 +8,22 @@ import { removeIgnoredFields } from './dataSanitization'
 import CdcService from './cdcService'
 
 export async function getFile(versionControl, path) {
-  const { data: file } = await versionControl.octokit.rest.repos.getContent({
-    owner: versionControl.owner,
-    repo: versionControl.repo,
-    path,
-    ref: versionControl.defaultBranch,
-  })
-
-  if (!file.content || file.size > 100 * 1024) {
-    const { data: blobData } = await versionControl.octokit.rest.git.getBlob({
+  const { data: file } =
+    (await versionControl.octokit.rest.repos.getContent({
       owner: versionControl.owner,
       repo: versionControl.repo,
-      file_sha: file.sha,
-    })
-    file.content = blobData.content
+      path,
+      ref: versionControl.defaultBranch,
+    })) || {}
+
+  if (!file || !file.content || file.size > 100 * 1024) {
+    const { data: blobData } =
+      (await versionControl.octokit.rest.git.getBlob({
+        owner: versionControl.owner,
+        repo: versionControl.repo,
+        file_sha: file && file.sha,
+      })) || {}
+    file.content = blobData ? blobData.content : null
   }
   return file
 }
@@ -69,11 +71,13 @@ export async function fetchFileContent(versionControl, contents_url) {
 }
 
 export async function branchExists(versionControl, branchName) {
-  const { data: branches } = await versionControl.octokit.rest.repos.listBranches({
-    owner: versionControl.owner,
-    repo: versionControl.repo,
-  })
-  return branches.some((branch) => branch.name === branchName)
+  const { data: branches } =
+    (await versionControl.octokit.rest.repos.listBranches({
+      owner: versionControl.owner,
+      repo: versionControl.repo,
+    })) || {}
+
+  return branches ? branches.some((branch) => branch.name === branchName) : false
 }
 
 export async function createBranch(versionControl, branchName) {
@@ -172,13 +176,13 @@ export async function updateGitFileContent(versionControl, filePath, cdcFileCont
   }
 
   const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
-  let currentGitContent
+  let currentGitContent = {}
   const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
   if (currentGitContentDecoded) {
     try {
       currentGitContent = JSON.parse(currentGitContentDecoded)
       currentGitContent = removeIgnoredFields(currentGitContent)
-    } catch {
+    } catch (error) {
       currentGitContent = {}
     }
   }

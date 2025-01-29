@@ -6,7 +6,7 @@ import { encryptData, decryptData } from '../encryptionUtils'
 
 const FETCH_COMMITS_ACTION = 'versionControl/fetchCommits'
 
-const getEncryptedCookie = (name, secretKey) => {
+export const getEncryptedCookie = (name, secretKey) => {
   const encryptedValue = Cookies.get(name)
   if (!encryptedValue) {
     console.error(`No ${name} found in cookies`)

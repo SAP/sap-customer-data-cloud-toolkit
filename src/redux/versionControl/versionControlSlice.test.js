@@ -1,17 +1,16 @@
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
-import crypto from 'crypto-js'
 import Cookies from 'js-cookie'
-import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError } from './versionControlSlice'
+import crypto from 'crypto-js'
+import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError, getEncryptedCookie } from './versionControlSlice'
 import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
+import { encryptData } from '../encryptionUtils'
 
-// Mocking js-cookie
 jest.mock('js-cookie', () => ({
   set: jest.fn(),
   get: jest.fn(),
 }))
 
-// Mocking versionControlService
 jest.mock('../../services/versionControl/versionControlService')
 
 const middlewares = [thunk]
@@ -78,6 +77,30 @@ describe('versionControlSlice', () => {
       const state = reducer(initialState.versionControl, setOwner(owner))
       expect(state.owner).toEqual(owner)
     })
+
+    it('should update state to fetching when fetching commits', async () => {
+      const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
+      await store.dispatch(fetchCommits())
+
+      const actions = store.getActions()
+      expect(actions[0].type).toBe(fetchCommits.pending.type)
+
+      const expectedState = { ...initialState.versionControl, isFetching: true, error: null }
+      const state = reducer(initialState.versionControl, actions[0])
+      expect(state).toEqual(expectedState)
+    })
+
+    it('should update state with commits on fetchCommits fulfilled', () => {
+      const action = { type: fetchCommits.fulfilled.type, payload: ['commit1'] }
+      const state = reducer({ ...initialState.versionControl, isFetching: true }, action)
+      expect(state).toEqual({ ...initialState.versionControl, isFetching: false, commits: action.payload })
+    })
+
+    it('should handle error state when rejected', () => {
+      const action = { type: fetchCommits.rejected.type, payload: 'Some error' }
+      const state = reducer(initialState.versionControl, action)
+      expect(state).toEqual({ ...initialState.versionControl, isFetching: false, error: action.payload })
+    })
   })
 
   describe('selectors', () => {
@@ -113,24 +136,15 @@ describe('versionControlSlice', () => {
   })
 
   describe('async thunk fetchCommits', () => {
-    const createEncryptedCookies = () => {
-      const encryptedToken = encryptData('testToken', encryptionKey)
-      const encryptedOwner = encryptData('testOwner', encryptionKey)
-      Cookies.get.mockImplementation((name) => {
-        switch (name) {
-          case 'gitToken':
-            return encryptedToken
-          case 'owner':
-            return encryptedOwner
-          default:
-            return undefined
-        }
-      })
-    }
-
+    const credentials = { secretKey: 'testSecretKey' }
+    const apiKey = 'testApiKey'
+    const currentSite = { dataCenter: 'testDataCenter' }
     beforeEach(() => {
-      createEncryptedCookies()
-      jest.clearAllMocks()
+      Cookies.get.mockImplementation((name) => {
+        if (name === 'gitToken') return encryptData('testToken', encryptionKey)
+        if (name === 'owner') return encryptData('testOwner', encryptionKey)
+        return undefined
+      })
     })
 
     it('should dispatch pending and fulfilled actions on successful fetch', async () => {
@@ -157,6 +171,41 @@ describe('versionControlSlice', () => {
       expect(actions[0].type).toBe(fetchCommits.pending.type)
       expect(actions[1].type).toBe(fetchCommits.rejected.type)
       expect(actions[1].payload).toEqual(errorMessage)
+    })
+  })
+
+  describe('setCookiesForGitData', () => {
+    it('should set encrypted cookies for gitToken and owner', () => {
+      const state = {
+        gitToken: 'testToken',
+        owner: 'testOwner',
+        credentials: { secretKey: 'testSecretKey' },
+      }
+
+      // const encryptedToken = crypto.AES.encrypt(JSON.stringify(state.gitToken), state.credentials.secretKey).toString()
+      // const encryptedOwner = crypto.AES.encrypt(JSON.stringify(state.owner), state.credentials.secretKey).toString()
+
+      reducer(state, setGitToken(state.gitToken))
+      reducer(state, setOwner(state.owner))
+
+      expect(Cookies.set).toHaveBeenCalledWith('gitToken', expect.any(String), { secure: true, sameSite: 'strict' })
+      expect(Cookies.set).toHaveBeenCalledWith('owner', expect.any(String), { secure: true, sameSite: 'strict' })
+    })
+  })
+
+  describe('errorHandlingForCookies', () => {
+    it('should log an error and return undefined for missing cookies', () => {
+      console.error = jest.fn()
+
+      const name = 'missingCookie'
+      const encryptedValue = undefined // Simulate missing cookie
+
+      // Add this mock before invoking the function
+      Cookies.get.mockReturnValueOnce(encryptedValue)
+
+      const result = getEncryptedCookie(name, 'testSecretKey')
+      expect(console.error).toHaveBeenCalledWith(`No ${name} found in cookies`)
+      expect(result).toBeUndefined()
     })
   })
 })
