@@ -31,8 +31,6 @@ const styles = {
   },
 
   outerDivStyle: {
-    composes: 'cdc-tools-background',
-    maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
   },
   panelContainer: {

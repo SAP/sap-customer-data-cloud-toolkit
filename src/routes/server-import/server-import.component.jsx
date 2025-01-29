@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { withTranslation } from 'react-i18next'
+import { Trans, withTranslation } from 'react-i18next'
 import { createUseStyles } from 'react-jss'
 import { useDispatch, useSelector } from 'react-redux'
 import '@ui5/webcomponents/dist/features/InputElementsFormSupport.js'
@@ -12,7 +12,6 @@ import '@ui5/webcomponents/dist/MessageStrip.js'
 import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStrip } from '@ui5/webcomponents-react'
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
-
 import {
   clearConfigurations,
   getConfigurations,
@@ -24,13 +23,13 @@ import {
   setDataflow,
 } from '../../redux/serverImport/serverImportSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
-
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
+
 const PAGE_TITLE = 'Deploy and Import'
 const ACCOUNT_TYPE_FULL = 'Full'
 const ACCOUNT_TYPE_LITE = 'Lite'
@@ -50,6 +49,7 @@ const ServerImportComponent = ({ t }) => {
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
+
   useEffect(() => {
     const fetchDataflowURL = async () => {
       const url = await dispatch(getDataflowRedirection())
@@ -101,6 +101,10 @@ const ServerImportComponent = ({ t }) => {
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
   }
+  const handleLinkClick = async () => {
+    setShowSuccessDialog(false)
+    await trackUsage({ featureName: PAGE_TITLE })
+  }
 
   const renderFormItemsInGrid = () => {
     return serverConfigurations[selectedOption].map((field) => (
@@ -124,7 +128,11 @@ const ServerImportComponent = ({ t }) => {
       <div className={classes.warningMessage}>
         <MessageStrip hide-close-button design="Warning">
           <div className={classes.warningDataflow}>
-            <span dangerouslySetInnerHTML={{ __html: t('SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING', { dataFlowURL: redirectionDataflowURL }) }} />
+            <Trans i18nKey="SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_WARNING">
+              <a href={redirectionDataflowURL} onClick={handleLinkClick}>
+                {t('SERVER_IMPORT_COMPONENT.TEMPLATES_DATAFLOW_LINK')}
+              </a>
+            </Trans>
           </div>
         </MessageStrip>
       </div>
