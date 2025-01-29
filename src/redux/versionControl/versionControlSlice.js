@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { createVersionControlInstance, handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
 import { getApiKey } from '../utils'

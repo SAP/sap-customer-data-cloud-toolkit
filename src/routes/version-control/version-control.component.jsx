@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
 import { Bar, Input, Button, Dialog, TextArea, Table, TableGrowingMode, TableColumn, TableRow, TableCell } from '@ui5/webcomponents-react'
@@ -119,7 +123,7 @@ const VersionControlComponent = ({ t }) => {
       <Bar
         startContent={
           <>
-            <h2>{t('VERSION_CONTROL.TITLE')}</h2>
+            <h2 id="versionControlTitle">{t('VERSION_CONTROL.TITLE')}</h2>
           </>
         }
       ></Bar>
@@ -135,6 +139,8 @@ const VersionControlComponent = ({ t }) => {
                   <div className={classes.inputField}>
                     <label className={classes.inputLabel}>{t('VERSION_CONTROL.OWNER')}</label>
                     <Input
+                      id="ownerInput"
+                      data-cy="ownerInput"
                       value={owner}
                       onChange={handleOwnerChange}
                       placeholder="Owner"
@@ -145,6 +151,8 @@ const VersionControlComponent = ({ t }) => {
                   <div className={classes.inputField}>
                     <label className={classes.inputLabel}>{t('VERSION_CONTROL.GIT_TOKEN')}</label>
                     <Input
+                      id="gitTokenInput"
+                      data-cy="gitTokenInput"
                       value={gitToken}
                       onChange={handleGitTokenChange}
                       placeholder="Git Token"
@@ -164,14 +172,17 @@ const VersionControlComponent = ({ t }) => {
       ></Bar>
 
       <Dialog
+        data-cy="backupDialog"
         open={isDialogOpen}
         headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
         footer={
           <>
-            <Button onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
+            <Button data-cy="confirmBackupButton" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
               {t('VERSION_CONTROL.CONFIRM')}
             </Button>
-            <Button onClick={onCancelBackupClick}>{t('VERSION_CONTROL.CANCEL')}</Button>
+            <Button data-cy="cancelBackupButton" onClick={onCancelBackupClick}>
+              {t('VERSION_CONTROL.CANCEL')}
+            </Button>
           </>
         }
       >
@@ -182,6 +193,7 @@ const VersionControlComponent = ({ t }) => {
           ))}
         </ul>
         <TextArea
+          data-cy="commitMessageInput"
           value={commitMessage}
           onInput={handleCommitMessageChange}
           placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
@@ -215,7 +227,12 @@ const VersionControlComponent = ({ t }) => {
                   <TableCell>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
                   <TableCell>{commit.commit.message}</TableCell>
                   <TableCell>
-                    <Button id={`commitRevertButton-${index}`} className={classes.singlePrettifyButton} onClick={() => onCommitRevertClick(commit.sha)}>
+                    <Button
+                      id={`commitRevertButton-${index}`}
+                      data-cy="revertCommitButton"
+                      className={classes.singlePrettifyButton}
+                      onClick={() => onCommitRevertClick(commit.sha)}
+                    >
                       {t('VERSION_CONTROL.RESTORE')}
                     </Button>
                   </TableCell>

@@ -1,3 +1,7 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 import { Base64 } from 'js-base64'
 import * as githubUtils from './githubUtils'
 import { removeIgnoredFields } from './dataSanitization'
@@ -352,40 +356,6 @@ describe('githubUtils', () => {
         sha: undefined,
       })
     })
-
-    // it('should handle rawGitContent initialization properly', async () => {
-    //   const mockFile = { content: null, size: 200 * 1024, sha: 'mockSha' }
-    //   octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
-    //   octokitMock.rest.git.getBlob.mockResolvedValue({ data: { content: '' } }) // Empty blob content
-
-    //   octokitMock.rest.repos.listBranches.mockResolvedValue({
-    //     data: [{ name: 'main' }],
-    //   }) // Ensure this is defined
-
-    //   const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
-    //   expect(result).toEqual({
-    //     path: 'path/to/file',
-    //     content: JSON.stringify({ key: 'newValue' }, null, 2),
-    //     sha: 'mockSha',
-    //   })
-    // })
-
-    // it('should handle empty string content in rawGitContent', async () => {
-    //   const mockFile = { content: Base64.encode(''), sha: 'mockSha' }
-    //   octokitMock.rest.repos.getContent.mockResolvedValue({ data: mockFile })
-    //   octokitMock.rest.git.getBlob.mockResolvedValue({ data: { content: '' } }) // Ensure `data` is defined
-
-    //   octokitMock.rest.repos.listBranches.mockResolvedValue({
-    //     data: [{ name: 'main' }],
-    //   }) // Ensure this is defined
-
-    //   const result = await githubUtils.updateGitFileContent(context, 'path/to/file', JSON.stringify({ key: 'newValue' }, null, 2))
-    //   expect(result).toEqual({
-    //     path: 'path/to/file',
-    //     content: JSON.stringify({ key: 'newValue' }, null, 2),
-    //     sha: 'mockSha',
-    //   })
-    // })
 
     it('should handle defined currentGitContentDecoded', async () => {
       const mockFile = { content: Base64.encode('{}'), sha: 'mockSha' }
