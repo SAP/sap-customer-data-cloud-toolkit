@@ -14,13 +14,17 @@ describe('Version Control Test Suite', () => {
   })
 
   it.only('should display the version control page', () => {
-    cy.intercept('GET', 'https://api.github.com/repos/iamGaspar/CDCVersionControl/branches', { body: dataTest.mockedVersionControlGetResponse }).as('getBranches')
-    cy.intercept('GET', 'https://api.github.com/repos/iamGaspar/CDCVersionControl/commits?sha=4_3zsvwuLLkw5lIWpNyFDvug&per_page=100&page=1', {
+    utils.mockGetConfigurationRequests()
+    cy.intercept('GET', 'https://api.github.com/repos/testOwner/CDCVersionControl/branches', { body: dataTest.mockedVersionControlGetResponse }).as('getBranches')
+    cy.intercept('GET', 'https://api.github.com/repos/testOwner/CDCVersionControl/commits?sha=4_3zsvwuLLkw5lIWpNyFDvug&per_page=100&page=1', {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
+    cy.intercept('POST', 'https://api.github.com/user', { statusCode: 200, body: { login: 'testUser' } }).as('authenticate')
     cy.get('#versionControlTitle').should('have.text', 'Version Control')
     cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
     cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
+    cy.get('#backupButton').should('be.not.disabled')
+    cy.get('#backupButton').click()
   })
 
   it('should display credentials input fields', () => {

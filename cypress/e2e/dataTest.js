@@ -1837,105 +1837,24 @@ const setPoliciesMock = {
 
 const mockedVersionControlGetResponse = [
   {
-    name: 'BranchApikey',
+    name: 'main',
     commit: {
-      sha: 'asdasdasdadasdaasdasasd',
-      url: 'https://api.github.com/repos/testOwner/testRepo/commits/asdasdasdadasdaasdasasd',
+      sha: 'abc123',
+      url: 'https://api.github.com/repos/iamgaspar/CDCVersionControl/commits/abc123',
     },
-    protected: false,
-  },
-  {
-    name: '4_HgwE90Jy_09MaMcqOjgLvA',
-    commit: {
-      sha: '1234randomSha1234',
-      url: 'https://api.github.com/repos/testOwner/testRepo/commits/1234randomSha1234',
-    },
-    protected: false,
   },
 ]
 
 const mockedVersionControlGetCommitsResponse = [
   {
-    sha: 'a1e0b6136bed84a2fb857701a5139e52e7c3c292',
-    node_id: 'C_kwDONOvK_toAKGExZTBiNjEzNmJlZDg0YTJmYjg1NzcwMWE1MTM5ZTUyZTdjM2MyOTI',
+    sha: 'abc123',
     commit: {
+      message: 'Initial commit',
       author: {
-        name: 'iamGaspar',
-        email: '48961605+iamGaspar@users.noreply.github.com',
-        date: '2025-01-29T14:10:28Z',
-      },
-      committer: {
-        name: 'iamGaspar',
-        email: '48961605+iamGaspar@users.noreply.github.com',
-        date: '2025-01-29T14:10:28Z',
-      },
-      message: '3',
-      tree: {
-        sha: '52e5afdeea1825d3a7abeb3f320cc3db309f90de',
-        url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/git/trees/52e5afdeea1825d3a7abeb3f320cc3db309f90de',
-      },
-      url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/git/commits/a1e0b6136bed84a2fb857701a5139e52e7c3c292',
-      comment_count: 0,
-      verification: {
-        verified: false,
-        reason: 'unsigned',
-        signature: null,
-        payload: null,
-        verified_at: null,
+        name: 'John Doe',
+        date: '2021-01-01T00:00:00Z',
       },
     },
-    url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/commits/a1e0b6136bed84a2fb857701a5139e52e7c3c292',
-    html_url: 'https://github.com/iamGaspar/CDCVersionControl/commit/a1e0b6136bed84a2fb857701a5139e52e7c3c292',
-    comments_url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/commits/a1e0b6136bed84a2fb857701a5139e52e7c3c292/comments',
-    author: {
-      login: 'iamGaspar',
-      id: 48961605,
-      node_id: 'MDQ6VXNlcjQ4OTYxNjA1',
-      avatar_url: 'https://avatars.githubusercontent.com/u/48961605?v=4',
-      gravatar_id: '',
-      url: 'https://api.github.com/users/iamGaspar',
-      html_url: 'https://github.com/iamGaspar',
-      followers_url: 'https://api.github.com/users/iamGaspar/followers',
-      following_url: 'https://api.github.com/users/iamGaspar/following{/other_user}',
-      gists_url: 'https://api.github.com/users/iamGaspar/gists{/gist_id}',
-      starred_url: 'https://api.github.com/users/iamGaspar/starred{/owner}{/repo}',
-      subscriptions_url: 'https://api.github.com/users/iamGaspar/subscriptions',
-      organizations_url: 'https://api.github.com/users/iamGaspar/orgs',
-      repos_url: 'https://api.github.com/users/iamGaspar/repos',
-      events_url: 'https://api.github.com/users/iamGaspar/events{/privacy}',
-      received_events_url: 'https://api.github.com/users/iamGaspar/received_events',
-      type: 'User',
-      user_view_type: 'public',
-      site_admin: false,
-    },
-    committer: {
-      login: 'iamGaspar',
-      id: 48961605,
-      node_id: 'MDQ6VXNlcjQ4OTYxNjA1',
-      avatar_url: 'https://avatars.githubusercontent.com/u/48961605?v=4',
-      gravatar_id: '',
-      url: 'https://api.github.com/users/iamGaspar',
-      html_url: 'https://github.com/iamGaspar',
-      followers_url: 'https://api.github.com/users/iamGaspar/followers',
-      following_url: 'https://api.github.com/users/iamGaspar/following{/other_user}',
-      gists_url: 'https://api.github.com/users/iamGaspar/gists{/gist_id}',
-      starred_url: 'https://api.github.com/users/iamGaspar/starred{/owner}{/repo}',
-      subscriptions_url: 'https://api.github.com/users/iamGaspar/subscriptions',
-      organizations_url: 'https://api.github.com/users/iamGaspar/orgs',
-      repos_url: 'https://api.github.com/users/iamGaspar/repos',
-      events_url: 'https://api.github.com/users/iamGaspar/events{/privacy}',
-      received_events_url: 'https://api.github.com/users/iamGaspar/received_events',
-      type: 'User',
-      user_view_type: 'public',
-      site_admin: false,
-    },
-    parents: [
-      {
-        sha: '4bb3dab82736daa3e89ae6f0e2711750db726a1b',
-        url: 'https://api.github.com/repos/iamGaspar/CDCVersionControl/commits/4bb3dab82736daa3e89ae6f0e2711750db726a1b',
-        html_url: 'https://github.com/iamGaspar/CDCVersionControl/commit/4bb3dab82736daa3e89ae6f0e2711750db726a1b',
-      },
-    ],
   },
 ]
 
