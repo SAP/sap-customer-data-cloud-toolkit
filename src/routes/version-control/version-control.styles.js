@@ -5,14 +5,16 @@ const styles = {
     alignItems: 'flex-start',
     padding: '10px',
     backgroundColor: '#fff',
-    height: 'auto',
     justifyContent: 'flex-start !important',
+    marginBottom: '100px',
+    height: '170px',
   },
   singlePrettifyButton: {
     marginTop: '10px',
     alignSelf: 'flex-end',
     backgroundColor: '#0070f3',
     color: '#fff',
+    minWidth: 'fit-content',
     '&:hover': {
       backgroundColor: '#005bb5',
     },
@@ -44,7 +46,7 @@ const styles = {
   },
   inputContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     gap: '1rem',
     width: '100%',
   },

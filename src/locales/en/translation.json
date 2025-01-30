@@ -142,5 +142,6 @@
   "VERSION_CONTROL.CLOSE": "Close",
   "VERSION_CONTROL.ACTION": "Restore content",
   "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",
-  "VERSION_CONTROL.UPLOAD_MESSAGE": "The following configurations were modified and will be upploaded:"
+  "VERSION_CONTROL.UPLOAD_MESSAGE": "The following configurations were modified and will be upploaded:",
+  "VERSION_CONTROL.NO_COMMITS": "There are no commits for this Apikey"
 }
