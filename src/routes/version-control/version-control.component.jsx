@@ -162,11 +162,11 @@ const VersionControlComponent = ({ t }) => {
                     />
                   </div>
                 </div>
+                <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken || !owner}>
+                  {t('VERSION_CONTROL.BACKUP')}
+                </Button>
               </div>
             </div>
-            <Button id="backupButton" data-cy="backupButton" className={classes.singlePrettifyButton} onClick={onCreateBackupClick} disabled={!gitToken || !owner}>
-              {t('VERSION_CONTROL.BACKUP')}
-            </Button>
           </>
         }
       ></Bar>
