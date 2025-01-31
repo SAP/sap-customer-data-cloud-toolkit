@@ -8,9 +8,13 @@
  */
 
 import { mockConfigurationTree, mockConfigurationTreeTrue } from './dataTest'
-import { getAllConfiguration, propagateConfigurationState, updateMandatoryFields } from './utils'
+import { getAllConfiguration, hasMandatoryFieldInSugestion, isParentMandatoryFields, propagateConfigurationState, updateMandatoryFields } from './utils'
 
 describe('importAccountsSlice utils test suite', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks()
+  })
+
   test('should propagate configuration state to first level configurations', () => {
     const configuration = mockConfigurationTree[0]
     expect(configuration.value).toEqual(false)
@@ -47,5 +51,18 @@ describe('importAccountsSlice utils test suite', () => {
     expect(configuration.branches[0].mandatory).toEqual(false)
     updateMandatoryFields(configuration, true)
     expect(configuration.branches[0].mandatory).toEqual(true)
+  })
+  test('should update the mandatory fields if they exist', () => {
+    const configuration = mockConfigurationTree[1]
+    let parentNode
+    const parentId = ['subscriptions, newsletter ,commercial, tags']
+    hasMandatoryFieldInSugestion(configuration, parentId, parentNode, true)
+    expect(configuration.branches[0].mandatory).toEqual(true)
+  })
+  test('should return true check if parent has mandatory field', () => {
+    expect(isParentMandatoryFields('subscriptions')).toEqual(true)
+  })
+  test('should return false if parent has no mandatory field', () => {
+    expect(isParentMandatoryFields('data')).toEqual(false)
   })
 })

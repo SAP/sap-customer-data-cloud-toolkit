@@ -12,7 +12,19 @@ export const commonConfigurations = {
   azure: [
     {
       id: '{{dataflowName}}',
-      name: 'Dataflow Name *',
+      accountName: '{{accountName}}',
+      type: 'text',
+      placeholder: 'Enter your Dataflow Name',
+      tooltip: 'The name of the dataflow.',
+      value: 'asd',
+    },
+  ],
+}
+export const expectedResultReplaceVariables = {
+  azure: [
+    {
+      id: 'Test Id',
+      accountName: 'Test Account',
       type: 'text',
       placeholder: 'Enter your Dataflow Name',
       tooltip: 'The name of the dataflow.',

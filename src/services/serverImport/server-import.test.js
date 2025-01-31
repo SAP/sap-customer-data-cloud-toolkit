@@ -6,7 +6,7 @@
 import ServerImport from './server-import.js'
 import { credentials } from '../servicesDataTest.js'
 import axios from 'axios'
-import { commonConfigurations, commonOption, expectedScheduleStructure } from './dataTest.js'
+import { commonConfigurations, commonOption, expectedResultReplaceVariables, expectedScheduleStructure } from './dataTest.js'
 import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest.js'
 import { setConfigSuccessResponse } from '../../redux/copyConfigurationExtended/dataTest.js'
 import { getResponseWithContext } from '../copyConfig/dataTest.js'
@@ -17,6 +17,10 @@ describe('ServerImport Test Suite', () => {
   const dataCenter = 'us1'
   const serverImport = new ServerImport(credentials, site, dataCenter)
   const commonAccountOption = 'Lite'
+
+  beforeEach(() => {
+    jest.restoreAllMocks()
+  })
 
   test('should get structure', () => {
     const structure = serverImport.getStructure()
@@ -84,5 +88,14 @@ describe('ServerImport Test Suite', () => {
     const responseId = 'dataflowId'
     const result = serverImport.scheduleStructure(responseId)
     expect(result).toEqual(expectedScheduleStructure)
+  })
+
+  test('should replace variables ', () => {
+    const variables = [
+      { id: '{{dataflowName}}', value: 'Test Id' },
+      { id: '{{accountName}}', value: 'Test Account' },
+    ]
+    const result = serverImport.replaceVariables(commonConfigurations, variables)
+    expect(result).toEqual(expectedResultReplaceVariables)
   })
 })
