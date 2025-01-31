@@ -16,7 +16,10 @@ describe('Server Import test suite', () => {
     it('Import account', () => {
       cy.intercept('POST', 'idx.createDataflow', {
         body: dataTest.mockedGigyaResponseOk,
-      }).as('setSchedule')
+      })
+      cy.intercept('POST', 'idx.search', {
+        body: dataTest.mockedSearchDataflowsResponse,
+      })
 
       cy.get('#serverImportSaveButton').should('have.attr', 'disabled', 'disabled')
       cy.get('#\\{\\{dataflowName\\}\\}').shadow().find('.ui5-input-inner').type('dataflowName')
