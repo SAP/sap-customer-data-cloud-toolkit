@@ -34,23 +34,49 @@ class ServerImport {
   async setDataflow(configurations, option, accountOption) {
     if (option.option === ServerImport.#SERVER_TYPE) {
       const dataflowConfig = this.getConfigurations(configurations, option.option)
-      const replacedDataflow = this.replaceVariables(accountOption === ServerImport.#ACCOUNT_TYPE_LITE ? importLiteAccountAzure : importFullAccountAzure, dataflowConfig)
-      const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, replacedDataflow)
-      const schedule = this.scheduleStructure(createDataflow)
-      await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+      const createdDataflowId = await this.#createAndCheckDataflow(accountOption, dataflowConfig)
+      return createdDataflowId
+    }
+  }
+
+  async #scheduleReplacedDataflow(createDataflowId) {
+    const schedule = this.scheduleStructure(createDataflowId)
+    await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+  }
+
+  async #createAndCheckDataflow(accountOption, dataflowConfig) {
+    const dataflowBody = accountOption === ServerImport.#ACCOUNT_TYPE_LITE ? importLiteAccountAzure : importFullAccountAzure
+    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, dataflowBody)
+    if (createDataflow.errorCode === 0) {
+      await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowBody, dataflowConfig)
       return createDataflow.id
     }
   }
 
+  async #searchDataflowOnApiKey(apiKey, dataflowId, dataflowBody, dataflowConfig) {
+    const searchDataflow = await this.#dataFlow.search()
+    for (const dataflow of searchDataflow.result) {
+      if (dataflow.id === dataflowId && dataflow.apiKey === apiKey) {
+        await this.#replaceAndSetDataflow(dataflow, dataflowBody, dataflowConfig)
+      }
+    }
+  }
+
+  async #replaceAndSetDataflow(dataflow, dataflowBody, dataflowConfig) {
+    dataflowBody.id = dataflow.id
+    const replacedBody = this.replaceVariables(dataflowBody, dataflowConfig)
+    await this.#dataFlow.set(this.#site, this.#dataCenter, replacedBody)
+    await this.#scheduleReplacedDataflow(dataflow.id)
+  }
   getConfigurations(configurations, key) {
     return configurations[key]
   }
 
-  scheduleStructure(response) {
+  scheduleStructure(id) {
     const structure = {
       data: {
         name: ServerImport.#SERVER_IMPORT_SCHEDULER,
-        dataflowId: response.id,
+        dataflowId: id,
         frequencyType: 'once',
         fullExtract: true,
       },

@@ -27,6 +27,7 @@ class Dataflow {
     this.#site = site
     this.#dataCenter = dataCenter
   }
+
   buildRedirectDataflowURL(site, partner, endpoint) {
     return UrlBuilder.buildGigyaPageUrl(this.#credentials.gigyaConsole, site, partner, endpoint)
   }
@@ -138,6 +139,7 @@ class Dataflow {
   static #getSetSchedulingDataflowEndpoint() {
     return `${Dataflow.#NAMESPACE}.createScheduling`
   }
+
   static #getSetDataflowDraftEndpoint() {
     return Dataflow.#getSetDataflowEndpoint() + 'Draft'
   }

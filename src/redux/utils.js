@@ -23,7 +23,12 @@ export const getScreenSet = (hash) => {
 }
 
 export const getPartner = (hash) => {
-  const partner = hash.split('/')[1]
+  let partner
+  if (hash.includes('login?returnUrl=')) {
+    partner = hash.split('/')[2]
+  } else {
+    partner = hash.split('/')[1]
+  }
   return partner !== undefined ? partner : ''
 }
 export const getErrorAsArray = (error) => {
