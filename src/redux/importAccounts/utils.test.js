@@ -8,7 +8,7 @@
  */
 
 import { mockConfigurationTree, mockConfigurationTreeTrue } from './dataTest'
-import { getAllConfiguration, hasMandatoryFieldInSugestion, isParentMandatoryFields, propagateConfigurationState, updateMandatoryFields } from './utils'
+import { getAllConfiguration, hasMandatoryFieldInSugestion, isParentMandatoryFields, propagateConfigurationState, setSugestionItemParent, updateMandatoryFields } from './utils'
 
 describe('importAccountsSlice utils test suite', () => {
   beforeEach(() => {
@@ -54,10 +54,20 @@ describe('importAccountsSlice utils test suite', () => {
   })
   test('should update the mandatory fields if they exist', () => {
     const configuration = mockConfigurationTree[1]
+    configuration.branches[0].mandatory = false
     let parentNode
-    const parentId = ['subscriptions, newsletter ,commercial, tags']
-    hasMandatoryFieldInSugestion(configuration, parentId, parentNode, true)
+    const parentId = ['subscriptions', 'newsletter.commercial', 'tags']
+    expect(configuration.branches[0].mandatory).toEqual(false)
+    hasMandatoryFieldInSugestion(mockConfigurationTree, parentId, parentNode, true)
     expect(configuration.branches[0].mandatory).toEqual(true)
+  })
+  test('should set sugestion item parent', () => {
+    const sugestionConfiguration = mockConfigurationTree[1]
+    const configuration = mockConfigurationTree
+    const childId = 'data.loyalty.rewardPoints'
+    setSugestionItemParent(configuration, sugestionConfiguration, childId, true)
+    expect(configuration[0].value).toEqual(true)
+    expect(configuration[0].branches[0].value).toEqual(true)
   })
   test('should return true check if parent has mandatory field', () => {
     expect(isParentMandatoryFields('subscriptions')).toEqual(true)

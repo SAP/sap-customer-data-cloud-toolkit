@@ -20,6 +20,15 @@ export const commonConfigurations = {
     },
   ],
 }
+export const mockedCreateDataflowResponseOk = {
+  statusCode: 200,
+  errorCode: 0,
+  statusReason: 'OK',
+  callId: 'callId',
+  apiVersion: 2,
+  time: Date.now(),
+  id: 'df1',
+}
 export const expectedResultReplaceVariables = {
   azure: [
     {

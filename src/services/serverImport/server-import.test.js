@@ -6,14 +6,14 @@
 import ServerImport from './server-import.js'
 import { credentials } from '../servicesDataTest.js'
 import axios from 'axios'
-import { commonConfigurations, commonOption, expectedResultReplaceVariables, expectedScheduleStructure } from './dataTest.js'
+import { commonConfigurations, commonOption, expectedResultReplaceVariables, expectedScheduleStructure, mockedCreateDataflowResponseOk } from './dataTest.js'
 import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest.js'
 import { setConfigSuccessResponse } from '../../redux/copyConfigurationExtended/dataTest.js'
 import { getResponseWithContext } from '../copyConfig/dataTest.js'
 jest.mock('axios')
 
 describe('ServerImport Test Suite', () => {
-  const site = 'testSite'
+  const site = 'apiKey'
   const dataCenter = 'us1'
   const serverImport = new ServerImport(credentials, site, dataCenter)
   const commonAccountOption = 'Lite'
@@ -63,19 +63,18 @@ describe('ServerImport Test Suite', () => {
 
   test('should set dataflow for azure option', async () => {
     const createDataflowResponse = getExpectedCreateDataflowResponse(0)
-    const dataflowId = '56b5d528ed824da59bd325e848f04986'
     axios
-      .mockResolvedValueOnce({ data: createDataflowResponse })
+      .mockResolvedValueOnce({ data: mockedCreateDataflowResponseOk })
       .mockResolvedValueOnce({
         data: getResponseWithContext(getSearchDataflowsExpectedResponse, `${createDataflowResponse.id.id}_search`, createDataflowResponse.id.apiKey),
       })
       .mockResolvedValueOnce({
-        data: getResponseWithContext(getSearchDataflowsExpectedResponse, `${createDataflowResponse.id.id}_search`, createDataflowResponse.id.apiKey),
+        data: getResponseWithContext(setConfigSuccessResponse, `${createDataflowResponse.id.id}_search`, createDataflowResponse.id.apiKey),
       })
-      .mockResolvedValueOnce({ data: dataflowId })
+      .mockResolvedValueOnce({ data: createDataflowResponse.id.id })
       .mockResolvedValueOnce({ data: setConfigSuccessResponse })
     const result = await serverImport.setDataflow(commonConfigurations, commonOption, commonAccountOption)
-    expect(result.id).toEqual(createDataflowResponse.id.id)
+    expect(result).toEqual(createDataflowResponse.id.id)
   })
 
   test('should get configurations', () => {
