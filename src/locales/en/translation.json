@@ -144,5 +144,7 @@
   "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",
   "VERSION_CONTROL.UPLOAD_MESSAGE": "The following configurations were modified and will be upploaded:",
   "VERSION_CONTROL.NO_COMMITS": "There are no commits for this Apikey",
-  "VERSION_CONTROL.DESCRIPTION.TEXT": "Manage and track changes to configurations, ensuring version history and easy rollbacks"
+  "VERSION_CONTROL.DESCRIPTION.TEXT": "Manage and track changes to configurations, ensuring version history and easy rollbacks",
+  "VERSION_CONTROL.REVERT.SUCCESS.MESSAGE": "Restore completed successfully!",
+  "VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE": "Backup completed successfully!"
 }

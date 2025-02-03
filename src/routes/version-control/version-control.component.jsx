@@ -16,6 +16,7 @@ import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExten
 import Cookies from 'js-cookie'
 import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
+import SuccessDialog from './successDialog'
 
 const useStyles = createUseStyles(styles, { name: 'VersionControl' })
 
@@ -34,6 +35,8 @@ const VersionControlComponent = ({ t }) => {
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [filesToUpdate, setFilesToUpdate] = useState([])
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
     if (credentials) {
@@ -77,8 +80,10 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
-      await handleGetServices(versionControl, apiKey, commitMessage)
+      const message = await handleGetServices(versionControl, apiKey, commitMessage, t)
       dispatch(fetchCommits())
+      setSuccessMessage(message)
+      setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error creating backup:', error)
     } finally {
@@ -93,8 +98,10 @@ const VersionControlComponent = ({ t }) => {
   const onCommitRevertClick = async (sha) => {
     const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
-      await handleCommitRevertServices(versionControl, sha)
+      const message = await handleCommitRevertServices(versionControl, sha, t)
       dispatch(fetchCommits())
+      setSuccessMessage(message)
+      setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error reverting commit:', error)
     }
@@ -116,6 +123,10 @@ const VersionControlComponent = ({ t }) => {
     if (!isFetching) {
       dispatch(fetchCommits())
     }
+  }
+
+  const onSuccessDialogAfterClose = () => {
+    setShowSuccessDialog(false)
   }
 
   return (
@@ -291,6 +302,7 @@ const VersionControlComponent = ({ t }) => {
           </div>
         </div>
       </div>
+      <SuccessDialog open={showSuccessDialog} onAfterClose={onSuccessDialogAfterClose} headerText={t('GLOBAL.SUCCESS')} message={successMessage} />
     </>
   )
 }

@@ -16,17 +16,17 @@ export const createVersionControlInstance = (credentials, apiKey, currentSite, g
   return new VersionControl(credentialsUpdated, apiKey, currentSite, gitToken, owner)
 }
 
-export const handleGetServices = async (versionControl, apiKey, commitMessage) => {
+export const handleGetServices = async (versionControl, apiKey, commitMessage, t) => {
   try {
     const cdcService = new CdcService(versionControl)
 
     await githubUtils.createBranch(versionControl, apiKey)
     const result = await cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
     const messages = await githubUtils.storeCdcDataInGit(versionControl, commitMessage || 'Backup created')
-    return messages
+    return t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE')
   } catch (error) {
     console.error('Error creating backup:', error)
-    alert('Failed to create backup. Please try again.')
+    throw new Error(t('VERSION_CONTROL.BACKUP.FAILURE.MESSAGE'))
   }
 }
 
@@ -45,13 +45,13 @@ export const handleCommitListRequestServices = async (versionControl, apiKey) =>
   }
 }
 
-export const handleCommitRevertServices = async (versionControl, sha) => {
+export const handleCommitRevertServices = async (versionControl, sha, t) => {
   try {
     const cdcService = new CdcService(versionControl)
     await cdcService.applyCommitConfig(sha)
-    alert('Restore completed successfully!')
+    return t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE')
   } catch (error) {
     console.error('Error reverting configurations:', error)
-    alert('Failed to restore configurations. Please try again.')
+    throw new Error(t('VERSION_CONTROL.REVERT.FAILURE.MESSAGE'))
   }
 }
