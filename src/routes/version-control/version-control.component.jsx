@@ -4,7 +4,23 @@
  */
 import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
-import { Bar, Input, Button, Dialog, TextArea, Table, TableGrowingMode, TableColumn, TableRow, TableCell, Title, TitleLevel, FlexBox, Text } from '@ui5/webcomponents-react'
+import {
+  Bar,
+  Input,
+  Button,
+  Dialog,
+  TextArea,
+  Table,
+  TableGrowingMode,
+  TableColumn,
+  TableRow,
+  TableCell,
+  Title,
+  TitleLevel,
+  FlexBox,
+  Text,
+  ValueState,
+} from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchCommits, setGitToken, setOwner, setCredentials, selectCommits, selectIsFetching, selectGitToken, selectOwner } from '../../redux/versionControl/versionControlSlice'
@@ -16,7 +32,7 @@ import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExten
 import Cookies from 'js-cookie'
 import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
-import SuccessDialog from './successDialog'
+import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 
 const useStyles = createUseStyles(styles, { name: 'VersionControl' })
 
@@ -137,6 +153,20 @@ const VersionControlComponent = ({ t }) => {
     }
     return null
   }
+
+  const showSuccessMessage = () => (
+    <DialogMessageInform
+      open={showSuccessDialog}
+      headerText={t('GLOBAL.SUCCESS')}
+      state={ValueState.Success}
+      closeButtonContent={t('GLOBAL.OK')}
+      onAfterClose={onSuccessDialogAfterClose}
+      id="copyConfigSuccessPopup"
+      data-cy="copyConfigSuccessPopup"
+    >
+      <Text>{successMessage}</Text>
+    </DialogMessageInform>
+  )
 
   return (
     <>
@@ -307,7 +337,7 @@ const VersionControlComponent = ({ t }) => {
           </div>
         </div>
       </div>
-      <SuccessDialog open={showSuccessDialog} onAfterClose={onSuccessDialogAfterClose} headerText={t('GLOBAL.SUCCESS')} message={successMessage} />
+      {showSuccessMessage()}
     </>
   )
 }

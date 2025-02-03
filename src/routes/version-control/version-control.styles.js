@@ -28,14 +28,6 @@ const styles = {
   },
   singlePrettifyRestoreButton: {
     height: '23px',
-    backgroundColor: '#fff',
-    color: '#0070f3',
-    minWidth: '-webkit-fit-content', // for Safari
-    minWidth: 'fit-content', // Added min-width property
-    '&:hover': {
-      backgroundColor: '#005bb5',
-      color: '#fff',
-    },
   },
   tableContainer: {
     flexGrow: 1,
