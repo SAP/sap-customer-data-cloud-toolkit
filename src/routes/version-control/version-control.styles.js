@@ -2,7 +2,6 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
-import { TextAlign } from '@ui5/webcomponents-react'
 import { spacing } from '@ui5/webcomponents-react-base'
 
 const styles = {
@@ -151,6 +150,14 @@ const styles = {
     overflow: 'hidden',
     maxHeight: '3.6em',
     lineHeight: '1.8em',
+  },
+  noCommitsBar: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50px',
+    backgroundColor: '#f2f2f2',
+    borderRadius: '4px',
+    marginTop: '10px',
   },
 }
 
