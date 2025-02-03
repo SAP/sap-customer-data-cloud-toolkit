@@ -129,6 +129,15 @@ const VersionControlComponent = ({ t }) => {
     setShowSuccessDialog(false)
   }
 
+  const renderStatusMessage = () => {
+    if (!gitToken || !owner) {
+      return <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.INSERT_CREDENTIALS')}</Text>} />
+    } else if (commits.length === 0) {
+      return <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
+    }
+    return null
+  }
+
   return (
     <>
       <div className={classes.fullContainer}>
@@ -257,9 +266,7 @@ const VersionControlComponent = ({ t }) => {
             </Dialog>
 
             <div>
-              {commits.length === 0 ? (
-                <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
-              ) : (
+              {renderStatusMessage() ?? (
                 <div className={classes.tableContainer}>
                   <Table
                     stickyColumnHeader={true}
