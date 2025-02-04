@@ -116,7 +116,7 @@ export const updateMandatoryFields = (structure, value) => {
 export const hasMandatoryFieldInSugestion = (structure, parentId, parentNode, value) => {
   if (parentId.length <= 3) {
     parentNode = parentId.slice(0, -1).join('.')
-  } else if (parentId.length > 3) {
+  } else {
     parentNode = parentId.slice(0, -2).join('.')
   }
   if (parentNode && isParentMandatoryFields(parentId[0])) {

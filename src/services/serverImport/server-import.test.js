@@ -89,7 +89,7 @@ describe('ServerImport Test Suite', () => {
     expect(result).toEqual(expectedScheduleStructure)
   })
 
-  test('should replace variables ', () => {
+  test('should replace variables', () => {
     const variables = [
       { id: '{{dataflowName}}', value: 'Test Id' },
       { id: '{{accountName}}', value: 'Test Account' },

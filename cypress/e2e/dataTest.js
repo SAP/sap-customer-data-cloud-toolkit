@@ -747,15 +747,6 @@ const mockedGetSmsConfigsResponse = {
   },
 }
 
-const mockedSetSchedulerResponse = {
-  callId: 'b61ad31db138476ab908ae8d602f3422',
-  errorCode: 0,
-  apiVersion: 2,
-  statusCode: 200,
-  statusReason: 'OK',
-  time: '2025-01-09T15:17:08.545Z',
-  id: 'a25eed98877d42faaee2a8c0c4ab7d78',
-}
 const mockedSetSchemaResponse = {
   callId: '0b4d8c50fdc0431491d6ed355228c787',
   errorCode: 0,
@@ -1976,7 +1967,6 @@ export {
   setRiskProvidersMock,
   importAccounts,
   serverImportHeader,
-  mockedSetSchedulerResponse,
   serverImportSuccessMessage,
   importData,
   importAccountsDescription,

@@ -3,7 +3,8 @@
  * License: Apache-2.0
  */
 /* eslint-disable no-template-curly-in-string */
-export const commonSteps = [
+
+export const readAzureStep = [
   {
     id: 'azure.blob',
     type: 'datasource.read.azure.blob',
@@ -16,6 +17,9 @@ export const commonSteps = [
     },
     next: ['file.parse.dsv'],
   },
+]
+
+export const writeFile = [
   {
     id: 'file.parse.dsv',
     type: 'file.parse.dsv',
@@ -29,7 +33,7 @@ export const commonSteps = [
   },
 ]
 
-export const commonError = [
+export const errorFile = [
   {
     id: 'Error File',
     type: 'file.format.dsv',
@@ -46,6 +50,9 @@ export const commonError = [
     },
     next: ['Write to Azure Blobs'],
   },
+]
+
+export const writeAzure = [
   {
     id: 'Write to Azure Blobs',
     type: 'datasource.write.azure.blob',
@@ -84,6 +91,7 @@ export const commonTransformCDCStructure = (step) => [
     next: [step],
   },
 ]
+
 export const commonImportAccountRequestLogger = (step) => [
   {
     id: 'Import Account Request Logger',
@@ -110,7 +118,6 @@ export const commonImportAccountSuccessResponse = (script, step) => [
   },
 ]
 
-// commonFunctions.js
 export const createGigyaGenericStep = (id, apiMethod, apiParams, nextStep, errorStep) => ({
   id,
   type: 'datasource.write.gigya.generic',

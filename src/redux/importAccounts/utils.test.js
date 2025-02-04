@@ -46,7 +46,7 @@ describe('importAccountsSlice utils test suite', () => {
     expect(configPath[0].branches[0].id).toEqual('data.loyalty.rewardPoints')
   })
 
-  test('should update the mandatory fields if they exist', () => {
+  test('should update the mandatory', () => {
     const configuration = mockConfigurationTree[1]
     expect(configuration.branches[0].mandatory).toEqual(false)
     updateMandatoryFields(configuration, true)
