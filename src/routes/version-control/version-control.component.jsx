@@ -383,30 +383,6 @@ const VersionControlComponent = ({ t }) => {
                 )}
               </div>
             </Card>
-            {/* <Bar
-              className={classes.backupButtonBar}
-              startContent={
-                <>
-                  <h3 className="h3Title" id="versionList">
-                    Version List
-                  </h3>
-                </>
-              }
-              endContent={
-                <>
-                  <Button
-                    id="backupButton"
-                    data-cy="backupButton"
-                    className={`${classes.singlePrettifyButton} ${classes.backupButton}`}
-                    onClick={onCreateBackupClick}
-                    disabled={!gitToken || !owner}
-                  >
-                    {t('VERSION_CONTROL.BACKUP')}
-                  </Button>
-                </>
-              }
-            /> */}
-
             <Dialog
               open={isDialogOpen}
               className="ui-dialog"
@@ -448,47 +424,6 @@ const VersionControlComponent = ({ t }) => {
                 </div>
               }
             />
-
-            <div>
-              {renderStatusMessage() ?? (
-                <div className={classes.tableContainer}>
-                  <Table
-                    // stickyColumnHeader={true}
-                    growing={TableGrowingMode.Scroll}
-                    onLoadMore={onLoadMore}
-                    columns={
-                      <>
-                        <TableColumn style={{ minWidth: '70px', width: '70px' }}>{t('VERSION_CONTROL.DATE')}</TableColumn>
-                        <TableColumn style={{ minWidth: '85px', width: '85px' }}>{t('VERSION_CONTROL.ID')}</TableColumn>
-                        <TableColumn>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</TableColumn>
-                        <TableColumn className={classes.restoreRowTitle} style={{ width: '45px' }}>
-                          {t('VERSION_CONTROL.ACTION')}
-                        </TableColumn>
-                      </>
-                    }
-                  >
-                    {commits.map((commit, index) => (
-                      <TableRow key={index}>
-                        <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
-                        <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
-                        <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
-                        <TableCell className={classes.restoreButton}>
-                          <Button
-                            design="Default"
-                            id={`commitRevertButton-${index}`}
-                            data-cy="revertCommitButton"
-                            // className={classes.singlePrettifyRestoreButton}
-                            onClick={() => onCommitRevertClick(commit.sha)}
-                          >
-                            {t('VERSION_CONTROL.RESTORE')}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </Table>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
