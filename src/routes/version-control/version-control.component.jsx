@@ -20,6 +20,9 @@ import {
   FlexBox,
   Text,
   ValueState,
+  Card,
+  CardHeader,
+  Grid,
 } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
@@ -184,12 +187,50 @@ const VersionControlComponent = ({ t }) => {
         <div className={classes.outerDivStyle}>
           <div className={classes.headerOuterDivStyle}>
             <FlexBox className={classes.headerTextFlexboxStyle}>
-              <Text id="importAccountsHeaderText" data-cy="importAccountsHeaderText" className={classes.componentTextStyle}>
+              <Text id="versionControl" data-cy="versionControl" className={classes.componentTextStyle}>
                 {t('VERSION_CONTROL.DESCRIPTION.TEXT')}
               </Text>
             </FlexBox>
 
-            <Bar
+            <Card header={<CardHeader titleText={t('VERSION_CONTROL.CREDENTIALS')} />}>
+              <Grid>
+                <>
+                  <div style={{ display: 'inline-flex' }} className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
+                    <div className={classes.inputField}>
+                      <Title level="H5" className={classes.currentInfoContainerTitle}>
+                        {t('VERSION_CONTROL.OWNER')}*
+                      </Title>
+                      <Input
+                        id="ownerInput"
+                        data-cy="ownerInput"
+                        value={owner}
+                        onChange={handleOwnerChange}
+                        placeholder="Owner"
+                        valueState="Information"
+                        valueStateMessage={<div>{t('VERSION_CONTROL.OWNER_MESSAGE')}</div>}
+                      />
+                    </div>
+
+                    <div className={classes.inputField}>
+                      <Title level="H5" className={classes.currentInfoContainerTitle}>
+                        {t('VERSION_CONTROL.GIT_TOKEN')}*
+                      </Title>
+                      <Input
+                        id="gitTokenInput"
+                        data-cy="gitTokenInput"
+                        value={gitToken}
+                        onChange={handleGitTokenChange}
+                        placeholder="Git Token"
+                        type="Password"
+                        valueState="Information"
+                        valueStateMessage={<div>{t('VERSION_CONTROL.GIT_TOKEN_MESSAGE')}</div>}
+                      />
+                    </div>
+                  </div>
+                </>
+              </Grid>
+            </Card>
+            {/* <Bar
               className={classes.credentialsBlock}
               startContent={
                 <>
@@ -198,9 +239,9 @@ const VersionControlComponent = ({ t }) => {
                   </div>
                 </>
               }
-            />
+            /> */}
 
-            <Bar
+            {/* <Bar
               className={classes.innerBarStyle}
               startContent={
                 <>
@@ -237,15 +278,117 @@ const VersionControlComponent = ({ t }) => {
                   </div>
                 </>
               }
-            />
+            /> */}
 
-            <Bar
+            <Card className={classes.versionListTable}>
+              <>
+                <div className={classes.tableTitle}>
+                  <span id="versionList">
+                    <Text className={classes.versionListText}>{t('VERSION_CONTROL.VERSION_LIST')}</Text>
+                  </span>
+                  <span className={classes.flexButton}>
+                    <Button
+                      id="backupButton"
+                      data-cy="backupButton"
+                      design="Emphasized"
+                      className={`${classes.singlePrettifyButton} ${classes.backupButton}`}
+                      onClick={onCreateBackupClick}
+                      disabled={!gitToken || !owner}
+                    >
+                      {t('VERSION_CONTROL.BACKUP')}
+                    </Button>
+                  </span>
+                </div>
+              </>
+              <Dialog
+                open={isDialogOpen}
+                className="ui-dialog"
+                headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
+                state={ValueState.Information}
+                onAfterClose={onCancelBackupClick}
+                id="backupDialog"
+                data-cy="backupDialog"
+                header={
+                  <div id="header" className={classes.headerOuterDivStyle2}>
+                    {t('VERSION_CONTROL.UPLOAD_MESSAGE')}
+                  </div>
+                }
+                children={
+                  <div className={classes.specifyFileLableStyle}>
+                    <ul>
+                      {filesToUpdate.map((file, index) => (
+                        <li key={index}>{file}</li>
+                      ))}
+                    </ul>
+                    <TextArea
+                      data-cy="commitMessageInput"
+                      value={commitMessage}
+                      onInput={handleCommitMessageChange}
+                      placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
+                      rows={4}
+                      disabled={filesToUpdate.includes('N/A')}
+                    />
+                  </div>
+                }
+                footer={
+                  <div className={classes.footerOuterDivStyle}>
+                    <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
+                      {t('VERSION_CONTROL.CONFIRM')}
+                    </Button>
+                    <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
+                      {t('VERSION_CONTROL.CANCEL')}
+                    </Button>
+                  </div>
+                }
+              />
+
+              <div>
+                {renderStatusMessage() ?? (
+                  <div className={classes.tableContainer}>
+                    <Table
+                      stickyColumnHeader={true}
+                      growing={TableGrowingMode.Scroll}
+                      onLoadMore={onLoadMore}
+                      columns={
+                        <>
+                          <TableColumn style={{ minWidth: '70px', width: '70px' }}>{t('VERSION_CONTROL.DATE')}</TableColumn>
+                          <TableColumn style={{ minWidth: '85px', width: '85px' }}>{t('VERSION_CONTROL.ID')}</TableColumn>
+                          <TableColumn>{t('VERSION_CONTROL.COMMIT_MESSAGE')}</TableColumn>
+                          <TableColumn className={classes.restoreRowTitle} style={{ width: '45px' }}>
+                            {t('VERSION_CONTROL.ACTION')}
+                          </TableColumn>
+                        </>
+                      }
+                    >
+                      {commits.map((commit, index) => (
+                        <TableRow key={index}>
+                          <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
+                          <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
+                          <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
+                          <TableCell className={classes.restoreButton}>
+                            <Button
+                              design="Default"
+                              id={`commitRevertButton-${index}`}
+                              data-cy="revertCommitButton"
+                              // className={classes.singlePrettifyRestoreButton}
+                              onClick={() => onCommitRevertClick(commit.sha)}
+                            >
+                              {t('VERSION_CONTROL.RESTORE')}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </Table>
+                  </div>
+                )}
+              </div>
+            </Card>
+            {/* <Bar
               className={classes.backupButtonBar}
               startContent={
                 <>
                   <h3 className="h3Title" id="versionList">
-                    {' '}
-                    Version List{' '}
+                    Version List
                   </h3>
                 </>
               }
@@ -262,44 +405,55 @@ const VersionControlComponent = ({ t }) => {
                   </Button>
                 </>
               }
-            />
+            /> */}
 
             <Dialog
-              data-cy="backupDialog"
               open={isDialogOpen}
+              className="ui-dialog"
               headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
+              state={ValueState.Information}
+              onAfterClose={onCancelBackupClick}
+              id="backupDialog"
+              data-cy="backupDialog"
+              header={
+                <div id="header" className={classes.headerOuterDivStyle2}>
+                  {t('VERSION_CONTROL.UPLOAD_MESSAGE')}
+                </div>
+              }
+              children={
+                <div className={classes.specifyFileLableStyle}>
+                  <ul>
+                    {filesToUpdate.map((file, index) => (
+                      <li key={index}>{file}</li>
+                    ))}
+                  </ul>
+                  <TextArea
+                    data-cy="commitMessageInput"
+                    value={commitMessage}
+                    onInput={handleCommitMessageChange}
+                    placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
+                    rows={4}
+                    disabled={filesToUpdate.includes('N/A')}
+                  />
+                </div>
+              }
               footer={
-                <>
-                  <Button data-cy="confirmBackupButton" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
+                <div className={classes.footerOuterDivStyle}>
+                  <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
                     {t('VERSION_CONTROL.CONFIRM')}
                   </Button>
-                  <Button data-cy="cancelBackupButton" onClick={onCancelBackupClick}>
+                  <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
                     {t('VERSION_CONTROL.CANCEL')}
                   </Button>
-                </>
+                </div>
               }
-            >
-              <p>{t('VERSION_CONTROL.UPLOAD_MESSAGE')}</p>
-              <ul>
-                {filesToUpdate.map((file, index) => (
-                  <li key={index}>{file}</li>
-                ))}
-              </ul>
-              <TextArea
-                data-cy="commitMessageInput"
-                value={commitMessage}
-                onInput={handleCommitMessageChange}
-                placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
-                rows={4}
-                disabled={filesToUpdate.includes('N/A')}
-              />
-            </Dialog>
+            />
 
             <div>
               {renderStatusMessage() ?? (
                 <div className={classes.tableContainer}>
                   <Table
-                    stickyColumnHeader={true}
+                    // stickyColumnHeader={true}
                     growing={TableGrowingMode.Scroll}
                     onLoadMore={onLoadMore}
                     columns={
@@ -320,9 +474,10 @@ const VersionControlComponent = ({ t }) => {
                         <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
                         <TableCell className={classes.restoreButton}>
                           <Button
+                            design="Default"
                             id={`commitRevertButton-${index}`}
                             data-cy="revertCommitButton"
-                            className={classes.singlePrettifyRestoreButton}
+                            // className={classes.singlePrettifyRestoreButton}
                             onClick={() => onCommitRevertClick(commit.sha)}
                           >
                             {t('VERSION_CONTROL.RESTORE')}

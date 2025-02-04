@@ -147,5 +147,6 @@
   "VERSION_CONTROL.DESCRIPTION.TEXT": "Manage and track changes to configurations, ensuring version history and easy rollbacks",
   "VERSION_CONTROL.REVERT.SUCCESS.MESSAGE": "Restore completed successfully!",
   "VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE": "Backup completed successfully!",
-  "VERSION_CONTROL.INSERT_CREDENTIALS": "Please insert the correct credentials."
+  "VERSION_CONTROL.INSERT_CREDENTIALS": "Please insert the correct credentials.",
+  "VERSION_CONTROL.VERSION_LIST": "Version List"
 }

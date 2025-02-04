@@ -3,6 +3,7 @@
  * License: Apache-2.0
  */
 import { spacing } from '@ui5/webcomponents-react-base'
+import { sapUiLargeMarginTop, sapUiMediumMarginTop, sapUiSmallMarginTop } from '@ui5/webcomponents-react-base/dist/styling/spacing.js'
 
 const styles = {
   innerBarStyle: {
@@ -34,6 +35,9 @@ const styles = {
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',
+    ...sapUiSmallMarginTop,
+    width: '100%',
+    container: 'size', // or container: 'size'
   },
   commitTable: {
     width: '100%',
@@ -98,7 +102,7 @@ const styles = {
     paddingRight: '40px',
   },
   backupButton: {
-    marginRight: '30px',
+    marginRight: '38px',
   },
   credentialsBlock: {
     borderRadius: '10px 10px 2px 2px',
@@ -150,6 +154,39 @@ const styles = {
     backgroundColor: '#f2f2f2',
     borderRadius: '4px',
     marginTop: '10px',
+  },
+
+  specifyFileLableStyle: {
+    paddingBottom: '12px',
+  },
+  footerOuterDivStyle: {
+    paddingTop: '12px',
+    position: 'relative',
+    left: 175,
+  },
+  headerOuterDivStyle2: {
+    height: '35px',
+    marginTop: '23px',
+    fontSize: '15px',
+  },
+  currentInfoContainer: {
+    display: 'inline-flex',
+    ...spacing.sapUiSmallMarginBegin,
+    ...spacing.sapUiMediumMarginBottom,
+    ...spacing.sapUiLargeMarginTop,
+  },
+  tableTitle: {
+    ...spacing.sapUiMediumMarginTop,
+    ...spacing.sapUiSmallMarginBegin,
+    width: '-webkit-fill-available',
+    ...spacing.sapUiSmallMarginBottom,
+  },
+  flexButton: {
+    textAlign: 'end',
+    float: 'inline-end',
+  },
+  versionListText: {
+    fontWeight: 'bold !important',
   },
 }
 
