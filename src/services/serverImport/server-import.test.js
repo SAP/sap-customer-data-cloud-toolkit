@@ -11,13 +11,15 @@ import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse }
 import { setConfigSuccessResponse } from '../../redux/copyConfigurationExtended/dataTest.js'
 import { getResponseWithContext } from '../copyConfig/dataTest.js'
 import AzureStorageProvider from '../storageProvider/azureStorageProvider.js'
+import FullAccount from '../accountManager/fullAccountManager.js'
 jest.mock('axios')
 
 describe('ServerImport Test Suite', () => {
   const site = 'apiKey'
   const dataCenter = 'us1'
   const storageProvider = new AzureStorageProvider()
-  const serverImport = new ServerImport(credentials, site, dataCenter, storageProvider)
+  const accountManager = new FullAccount(storageProvider)
+  const serverImport = new ServerImport(credentials, site, dataCenter, accountManager)
   const commonAccountOption = 'Lite'
 
   beforeEach(() => {
@@ -27,40 +29,6 @@ describe('ServerImport Test Suite', () => {
   test('should get structure', () => {
     const structure = serverImport.getStructure()
     expect(structure).toBeDefined()
-  })
-
-  test('should replace variables in dataflow', () => {
-    const dataflow = {
-      name: '{{dataflowName}}',
-      steps: [
-        {
-          id: 'step1',
-          params: {
-            accountName: '{{accountName}}',
-          },
-        },
-      ],
-    }
-
-    const variables = [
-      { id: '{{dataflowName}}', value: 'Test Dataflow' },
-      { id: '{{accountName}}', value: 'Test Account' },
-    ]
-
-    const expectedDataflow = {
-      name: 'Test Dataflow',
-      steps: [
-        {
-          id: 'step1',
-          params: {
-            accountName: 'Test Account',
-          },
-        },
-      ],
-    }
-
-    const result = serverImport.replaceVariables(dataflow, variables)
-    expect(result).toEqual(expectedDataflow)
   })
 
   test('should set dataflow for azure option', async () => {
@@ -89,14 +57,5 @@ describe('ServerImport Test Suite', () => {
     const responseId = 'dataflowId'
     const result = serverImport.scheduleStructure(responseId)
     expect(result).toEqual(expectedScheduleStructure)
-  })
-
-  test('should replace variables', () => {
-    const variables = [
-      { id: '{{dataflowName}}', value: 'Test Id' },
-      { id: '{{accountName}}', value: 'Test Account' },
-    ]
-    const result = serverImport.replaceVariables(commonConfigurations, variables)
-    expect(result).toEqual(expectedResultReplaceVariables)
   })
 })

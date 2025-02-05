@@ -9,6 +9,7 @@ import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
 import Dataflow from '../../services/copyConfig/dataflow/dataflow'
 import StorageProviderFactory from '../../services/storageProvider/storageProviderFactory'
+import AccountManagerFactory from '../../services/accountManager/accountManagerFactory'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
@@ -118,12 +119,9 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
   const storageProvider = StorageProviderFactory.getStorageProvider(option.option)
+  const accountManager = AccountManagerFactory.getAccountManager(state.serverImport.accountType, storageProvider)
   try {
-    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter, storageProvider).setDataflow(
-      state.serverImport.serverConfigurations,
-      option,
-      state.serverImport.accountType,
-    )
+    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter, accountManager).setDataflow(state.serverImport.serverConfigurations, option)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }

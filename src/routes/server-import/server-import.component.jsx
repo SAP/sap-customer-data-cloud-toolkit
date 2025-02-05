@@ -90,7 +90,7 @@ const ServerImportComponent = ({ t }) => {
 
   const handleSubmit = async () => {
     if (selectedOption && accountOption) {
-      const resultAction = await dispatch(setDataflow({ option: selectedOption }))
+      const resultAction = await dispatch(setDataflow({ option: selectedOption, accountType: accountOption }))
       if (setDataflow.fulfilled.match(resultAction)) {
         setCreatedDataflowId(resultAction.payload)
       }
@@ -101,6 +101,7 @@ const ServerImportComponent = ({ t }) => {
   const onCancelHandler = () => {
     dispatch(clearConfigurations({ option: selectedOption }))
   }
+
   const handleLinkClick = async () => {
     setShowSuccessDialog(false)
     await trackUsage({ featureName: PAGE_TITLE })

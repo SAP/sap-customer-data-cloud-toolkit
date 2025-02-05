@@ -4,21 +4,6 @@
  */
 /* eslint-disable no-template-curly-in-string */
 
-export const readAzureStep = [
-  {
-    id: 'azure.blob',
-    type: 'datasource.read.azure.blob',
-    params: {
-      accountName: '{{accountName}}',
-      accountKey: '{{accountKey}}',
-      container: '{{container}}',
-      fileNameRegex: '{{readFileNameRegex}}',
-      blobPrefix: '{{blobPrefix}}',
-    },
-    next: ['file.parse.dsv'],
-  },
-]
-
 export const writeFile = [
   {
     id: 'file.parse.dsv',
@@ -33,7 +18,7 @@ export const writeFile = [
   },
 ]
 
-export const errorFile = [
+export const errorFile = (nextStep) => [
   {
     id: 'Error File',
     type: 'file.format.dsv',
@@ -48,19 +33,7 @@ export const errorFile = [
       quoteFields: false,
       createEmptyFile: false,
     },
-    next: ['Write to Azure Blobs'],
-  },
-]
-
-export const writeAzure = [
-  {
-    id: 'Write to Azure Blobs',
-    type: 'datasource.write.azure.blob',
-    params: {
-      accountName: '{{accountName}}',
-      accountKey: '{{accountKey}}',
-      container: '{{container}}',
-    },
+    next: [nextStep],
   },
 ]
 

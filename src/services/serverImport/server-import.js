@@ -4,7 +4,6 @@
  */
 
 import Dataflow from '../copyConfig/dataflow/dataflow'
-import { genericFullAccountDataflow, genericLiteAccountDataflow } from '../storageProvider/dataflow/fullAccountSteps'
 import { serverStructure } from './serverStructure/serverStructure'
 
 class ServerImport {
@@ -12,33 +11,26 @@ class ServerImport {
   #site
   #dataCenter
   #dataFlow
+  #accountManager
 
   static #SERVER_IMPORT_SCHEDULER = 'server_import_scheduler'
 
-  static #ERROR_FINDING_DATAFLOW = 'Error finding dataflow'
-
-  static #SERVER_TYPE = 'azure'
-
-  static #ACCOUNT_TYPE_LITE = 'Lite'
-
-  constructor(credentials, site, dataCenter, storageProvider) {
+  constructor(credentials, site, dataCenter, accountManager) {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
     this.#dataFlow = new Dataflow(credentials, site, dataCenter)
-    this.storageProvider = storageProvider
+    this.#accountManager = accountManager
   }
 
   getStructure() {
     return serverStructure
   }
 
-  async setDataflow(configurations, option, accountOption) {
-    if (option.option === ServerImport.#SERVER_TYPE) {
-      const dataflowConfig = this.getConfigurations(configurations, option.option)
-      const createdDataflowId = await this.#createAndCheckDataflow(accountOption, dataflowConfig)
-      return createdDataflowId
-    }
+  async setDataflow(configurations, option) {
+    const dataflowConfig = this.getConfigurations(configurations, option.option)
+    const createdDataflowId = await this.#createAndCheckDataflow(dataflowConfig)
+    return createdDataflowId
   }
 
   async #scheduleReplacedDataflow(createDataflowId) {
@@ -46,19 +38,18 @@ class ServerImport {
     await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
   }
 
-  async #createAndCheckDataflow(accountOption, dataflowConfig) {
-    const dataflowBody = accountOption === ServerImport.#ACCOUNT_TYPE_LITE ? this.#liteAccountAddReaderWriter() : this.#fullAccountAddReaderWriter()
-    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, dataflowBody)
+  async #createAndCheckDataflow(dataflowConfig) {
+    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, this.#accountManager.getDataflow())
     if (createDataflow.errorCode === 0) {
-      await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowBody, dataflowConfig)
+      await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowConfig)
     }
     return createDataflow.id
   }
 
-  async #searchDataflowOnApiKey(apiKey, dataflowId, dataflowBody, dataflowConfig) {
+  async #searchDataflowOnApiKey(apiKey, dataflowId, dataflowConfig) {
     const searchDataflow = await this.searchDataflowIdOnApiKey(apiKey, dataflowId)
     if (searchDataflow) {
-      await this.#replaceAndSetDataflow(dataflowId, dataflowBody, dataflowConfig)
+      await this.#replaceAndSetDataflow(dataflowId, dataflowConfig)
     }
   }
 
@@ -67,7 +58,6 @@ class ServerImport {
     let dataflowFound = false
     for (const dataflow of searchDataflow.result) {
       if (dataflow.id === dataflowId && dataflow.apiKey === apiKey) {
-        dataflowFound = true
         return true
       }
     }
@@ -80,28 +70,12 @@ class ServerImport {
     }
   }
 
-  async #replaceAndSetDataflow(dataflowId, dataflowBody, dataflowConfig) {
-    dataflowBody.id = dataflowId
-    const replacedBody = this.replaceVariables(dataflowBody, dataflowConfig)
-    const setResponse = await this.#dataFlow.set(this.#site, this.#dataCenter, replacedBody)
+  async #replaceAndSetDataflow(dataflowId, dataflowConfig) {
+    const setResponse = await this.#dataFlow.set(this.#site, this.#dataCenter, this.#accountManager.replaceVariables(dataflowId, dataflowConfig))
     if (setResponse.errorCode === 0) {
       await this.#scheduleReplacedDataflow(dataflowId)
     }
     return setResponse
-  }
-
-  #fullAccountAddReaderWriter() {
-    const dataflow = genericFullAccountDataflow('Write to Azure Blobs')
-    dataflow.steps.splice(1, 0, this.storageProvider.getReader())
-    dataflow.steps.splice(7, 0, this.storageProvider.getWriter())
-    return dataflow
-  }
-
-  #liteAccountAddReaderWriter() {
-    const dataflow = genericLiteAccountDataflow('Write to Azure Blobs')
-    dataflow.steps.splice(1, 0, this.storageProvider.getReader())
-    dataflow.steps.splice(4, 0, this.storageProvider.getWriter())
-    return dataflow
   }
 
   getConfigurations(configurations, key) {
@@ -118,20 +92,6 @@ class ServerImport {
       },
     }
     return structure
-  }
-
-  replaceVariables(dataflow, variables) {
-    let dataflowString = JSON.stringify(dataflow)
-    for (const variable of variables) {
-      const regex = new RegExp(variable.id, 'g')
-      if (variable.value) {
-        const escapedValue = variable.value.replace(/\\/g, '\\\\')
-        dataflowString = dataflowString.replaceAll(regex, escapedValue)
-      } else {
-        dataflowString = dataflowString.replaceAll(regex, '')
-      }
-    }
-    return JSON.parse(dataflowString)
   }
 }
 
