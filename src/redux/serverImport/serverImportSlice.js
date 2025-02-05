@@ -8,6 +8,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
 import Dataflow from '../../services/copyConfig/dataflow/dataflow'
+import StorageProviderFactory from '../../services/storageProvider/storageProviderFactory'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
@@ -116,9 +117,13 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-
+  const storageProvider = StorageProviderFactory.getStorageProvider(option.option)
   try {
-    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).setDataflow(state.serverImport.serverConfigurations, option, state.serverImport.accountType)
+    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter, storageProvider).setDataflow(
+      state.serverImport.serverConfigurations,
+      option,
+      state.serverImport.accountType,
+    )
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }

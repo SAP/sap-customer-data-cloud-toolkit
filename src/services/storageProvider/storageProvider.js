@@ -1,9 +1,9 @@
 class StorageProvider {
-  getFullAccountTemplate() {
+  getReader() {
     throw new Error('Error Getting Full Account Template')
   }
 
-  getLiteAccountTemplate() {
+  getWriter() {
     throw new Error('Error Getting Lite Account Template')
   }
 }
