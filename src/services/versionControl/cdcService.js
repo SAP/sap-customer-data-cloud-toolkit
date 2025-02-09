@@ -2,6 +2,22 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import Communication from '../copyConfig/communication/communication'
+import Topic from '../copyConfig/communication/topic'
+import ConsentConfiguration from '../copyConfig/consent/consentConfiguration'
+import Dataflow from '../copyConfig/dataflow/dataflow'
+import EmailConfiguration from '../copyConfig/emails/emailConfiguration'
+import Extension from '../copyConfig/extension/extension'
+import Policy from '../copyConfig/policies/policies'
+import Rba from '../copyConfig/rba/rba'
+import RiskAssessment from '../copyConfig/rba/riskAssessment'
+import RecaptchaConfiguration from '../copyConfig/recaptcha/recaptchaConfiguration'
+import Schema from '../copyConfig/schema/schema'
+import ScreenSet from '../copyConfig/screenset/screenset'
+import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
+import Social from '../copyConfig/social/social'
+import Webhook from '../copyConfig/webhook/webhook'
+import WebSdk from '../copyConfig/websdk/websdk'
 import { getCommitFiles } from './githubUtils'
 import {
   setPolicies,
@@ -21,28 +37,46 @@ import {
 } from './setters'
 
 class CdcService {
-  constructor(versionControl) {
-    this.versionControl = versionControl
+  constructor(credentials, apiKey, dataCenter) {
+    this.credentials = credentials
+    this.apiKey = apiKey
+    this.dataCenter = dataCenter
+    this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
+    this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
+    this.emails = new EmailConfiguration(credentials, apiKey, dataCenter)
+    this.extension = new Extension(credentials, apiKey, dataCenter)
+    this.policies = new Policy(credentials, apiKey, dataCenter)
+    this.rba = new Rba(credentials, apiKey, dataCenter)
+    this.riskAssessment = new RiskAssessment(credentials, apiKey, dataCenter)
+    this.schema = new Schema(credentials, apiKey, dataCenter)
+    this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
+    this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
+    this.communication = new Communication(credentials, apiKey, dataCenter)
+    this.topic = new Topic(credentials, apiKey, dataCenter)
+    this.webhook = new Webhook(credentials, apiKey, dataCenter)
+    this.consent = new ConsentConfiguration(credentials, apiKey, dataCenter)
+    this.social = new Social(credentials, apiKey, dataCenter)
+    this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
   }
 
   getCdcData = () => {
     const responses = [
-      { name: 'webSdk', promise: this.versionControl.webSdk.get() },
-      { name: 'dataflow', promise: this.versionControl.dataflow.search() },
-      { name: 'emails', promise: this.versionControl.emails.get() },
-      { name: 'extension', promise: this.versionControl.extension.get() },
-      { name: 'policies', promise: this.versionControl.policies.get() },
-      { name: 'rba', promise: this.versionControl.rba.get() },
-      { name: 'riskAssessment', promise: this.versionControl.riskAssessment.get() },
-      { name: 'schema', promise: this.versionControl.schema.get() },
-      { name: 'screenSets', promise: this.versionControl.screenSets.get() },
-      { name: 'sms', promise: this.versionControl.sms.get() },
-      { name: 'channel', promise: this.versionControl.communication.get() },
-      { name: 'topic', promise: this.versionControl.topic.searchTopics() },
-      { name: 'webhook', promise: this.versionControl.webhook.get() },
-      { name: 'consent', promise: this.versionControl.consent.get() },
-      { name: 'social', promise: this.versionControl.social.get() },
-      { name: 'recaptcha', promise: this.versionControl.recaptcha.get() },
+      { name: 'webSdk', promise: this.webSdk.get() },
+      { name: 'dataflow', promise: this.dataflow.search() },
+      { name: 'emails', promise: this.emails.get() },
+      { name: 'extension', promise: this.extension.get() },
+      { name: 'policies', promise: this.policies.get() },
+      { name: 'rba', promise: this.rba.get() },
+      { name: 'riskAssessment', promise: this.riskAssessment.get() },
+      { name: 'schema', promise: this.schema.get() },
+      { name: 'screenSets', promise: this.screenSets.get() },
+      { name: 'sms', promise: this.sms.get() },
+      { name: 'channel', promise: this.communication.get() },
+      { name: 'topic', promise: this.topic.searchTopics() },
+      { name: 'webhook', promise: this.webhook.get() },
+      { name: 'consent', promise: this.consent.get() },
+      { name: 'social', promise: this.social.get() },
+      { name: 'recaptcha', promise: this.recaptcha.get() },
     ]
     return responses
   }

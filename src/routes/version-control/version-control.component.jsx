@@ -26,7 +26,17 @@ import {
 } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
-import { fetchCommits, setGitToken, setOwner, setCredentials, selectCommits, selectIsFetching, selectGitToken, selectOwner } from '../../redux/versionControl/versionControlSlice'
+import {
+  fetchCommits,
+  setGitToken,
+  setOwner,
+  setCredentials,
+  selectCommits,
+  selectIsFetching,
+  selectGitToken,
+  selectOwner,
+  getServices,
+} from '../../redux/versionControl/versionControlSlice'
 import { createVersionControlInstance, handleGetServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
 import * as githubUtils from '../../services/versionControl/githubUtils'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -97,11 +107,10 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onConfirmBackupClick = async () => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
-      const message = await handleGetServices(versionControl, apiKey, commitMessage, t)
+      dispatch(getServices(commitMessage))
       dispatch(fetchCommits())
-      setSuccessMessage(message)
+      setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error creating backup:', error)

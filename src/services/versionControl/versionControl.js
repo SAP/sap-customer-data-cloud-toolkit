@@ -34,23 +34,22 @@ class VersionControl {
     this.dataCenter = dataCenter
     this.siteInfo = siteInfo
 
-    this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
-    this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
-    this.emails = new EmailConfiguration(credentials, apiKey, dataCenter)
-    this.extension = new Extension(credentials, apiKey, dataCenter)
-    this.policies = new Policy(credentials, apiKey, dataCenter)
-    this.rba = new Rba(credentials, apiKey, dataCenter)
-    this.riskAssessment = new RiskAssessment(credentials, apiKey, dataCenter)
-    this.schema = new Schema(credentials, apiKey, dataCenter)
-    this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
-    this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
-    this.communication = new Communication(credentials, apiKey, dataCenter)
-    this.topic = new Topic(credentials, apiKey, dataCenter)
-    this.webhook = new Webhook(credentials, apiKey, dataCenter)
-    this.consent = new ConsentConfiguration(credentials, apiKey, dataCenter)
-    this.social = new Social(credentials, apiKey, dataCenter)
-    this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
-
+    // this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
+    // this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
+    // this.emails = new EmailConfiguration(credentials, apiKey, dataCenter)
+    // this.extension = new Extension(credentials, apiKey, dataCenter)
+    // this.policies = new Policy(credentials, apiKey, dataCenter)
+    // this.rba = new Rba(credentials, apiKey, dataCenter)
+    // this.riskAssessment = new RiskAssessment(credentials, apiKey, dataCenter)
+    // this.schema = new Schema(credentials, apiKey, dataCenter)
+    // this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
+    // this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
+    // this.communication = new Communication(credentials, apiKey, dataCenter)
+    // this.topic = new Topic(credentials, apiKey, dataCenter)
+    // this.webhook = new Webhook(credentials, apiKey, dataCenter)
+    // this.consent = new ConsentConfiguration(credentials, apiKey, dataCenter)
+    // this.social = new Social(credentials, apiKey, dataCenter)
+    // this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
     this.cdcService = new CdcService(this) // Initialize CdcService with this instance
   }
   decryptToken(encryptedToken) {

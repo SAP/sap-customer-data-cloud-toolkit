@@ -34,27 +34,6 @@ describe('versionControlService', () => {
   })
 
   describe('handleGetServices', () => {
-    // it('should create a backup and return commit list', async () => {
-    //   const mockCommitList = [{ sha: 'commit1' }, { sha: 'commit2' }]
-    //   const mockCdcService = new CdcService(versionControlInstance)
-    //   mockCdcService.fetchCDCConfigs = jest.fn().mockResolvedValue()
-    //   githubUtils.createBranch.mockResolvedValue()
-    //   githubUtils.storeCdcDataInGit.mockResolvedValue()
-    //   githubUtils.getCommits.mockResolvedValue(mockCommitList)
-    //   CdcService.mockImplementation(() => mockCdcService)
-
-    //   const result = await versionControlService.handleGetServices(versionControlInstance, apiKey, 'commitMessage')
-    //   console.log('Result:', result)
-    //   console.log('Expected:', mockCommitList)
-    //   console.log('createBranch calls:', githubUtils.createBranch.mock.calls)
-    //   console.log('storeCdcDataInGit calls:', githubUtils.storeCdcDataInGit.mock.calls)
-    //   console.log('getCommits calls:', githubUtils.getCommits.mock.calls)
-    //   expect(result).toEqual(mockCommitList)
-    //   expect(githubUtils.createBranch).toHaveBeenCalledWith(versionControlInstance, apiKey)
-    //   expect(githubUtils.storeCdcDataInGit).toHaveBeenCalledWith(versionControlInstance, 'commitMessage')
-    //   expect(githubUtils.getCommits).toHaveBeenCalledWith(versionControlInstance, 1, 10)
-    // })
-
     it('should handle errors when creating a backup', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const alertSpy = jest.fn()
