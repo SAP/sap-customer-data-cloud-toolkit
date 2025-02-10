@@ -3,13 +3,13 @@
  * License: Apache-2.0
  */
 
-import ServerImport from '../../services/serverImport/server-import'
+import ServerImport from '../../services/importAccounts/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
 import Dataflow from '../../services/copyConfig/dataflow/dataflow'
-import StorageProviderFactory from '../../services/storageProvider/storageProviderFactory'
-import AccountManagerFactory from '../../services/accountManager/accountManagerFactory'
+import StorageProviderFactory from '../../services/importAccounts/storageProvider/storageProviderFactory'
+import AccountManagerFactory from '../../services/importAccounts/accountManager/accountManagerFactory'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`

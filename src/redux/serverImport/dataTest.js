@@ -1,9 +1,9 @@
-import { serverStructure } from '../../services/serverImport/serverStructure/serverStructure'
+import { serverStructure } from '../../services/importAccounts/serverImport/serverStructure/serverStructure'
 
 export const initialState = {
   currentSiteApiKey: '',
   currentSiteInformation: {},
-  currentSitePartner: '',
+  currentSitePartner: undefined,
   errors: [],
   isLoading: false,
   serverConfigurations: [],

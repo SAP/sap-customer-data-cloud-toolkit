@@ -4,8 +4,8 @@
  */
 
 import TreeSearch from './treeSearch'
-import { dataBranches, subscriptionsBranches } from '../importAccounts/mainDataSet'
-import { propagateConfigurationState } from '../../redux/importAccounts/utils'
+import { dataBranches, subscriptionsBranches } from '../mainDataSet'
+import { propagateConfigurationState } from '../../../redux/importAccounts/utils'
 
 jest.mock('axios')
 jest.setTimeout(10000)

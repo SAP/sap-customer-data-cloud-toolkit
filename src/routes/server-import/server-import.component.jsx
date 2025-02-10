@@ -27,12 +27,11 @@ import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteIn
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
+import { AccountType } from '../../services/importAccounts/accountManager/accountType.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 
 const PAGE_TITLE = 'Deploy and Import'
-const ACCOUNT_TYPE_FULL = 'Full'
-const ACCOUNT_TYPE_LITE = 'Lite'
 const SERVER_TYPE = 'azure'
 
 const ServerImportComponent = ({ t }) => {
@@ -43,7 +42,7 @@ const ServerImportComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
   const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
-  const [accountOption, setAccountOption] = useState(ACCOUNT_TYPE_FULL)
+  const [accountOption, setAccountOption] = useState(AccountType.Full)
   const [showDialog, setShowSuccessDialog] = useState(false)
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
@@ -153,8 +152,8 @@ const ServerImportComponent = ({ t }) => {
             <div className={classes.serverDropDown}>
               <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
               <Select id="selectAccountType" onChange={handleAccountOptionChange} className={classes.selectBox}>
-                <Option value={ACCOUNT_TYPE_FULL}> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
-                <Option value={ACCOUNT_TYPE_LITE}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                <Option value={AccountType.Full}> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
+                <Option value={AccountType.Lite}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
               </Select>
               <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
               <Select id="selectStorageServer" onChange={handleOptionChange} className={classes.selectBox}>

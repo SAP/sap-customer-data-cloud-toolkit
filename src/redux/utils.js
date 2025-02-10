@@ -29,7 +29,7 @@ export const getPartner = (hash) => {
   } else {
     partner = hash.split('/')[1]
   }
-  return partner !== undefined ? partner : ''
+  return partner
 }
 export const getErrorAsArray = (error) => {
   return Array.isArray(error) ? error : [error]

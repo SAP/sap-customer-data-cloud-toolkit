@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-import Dataflow from '../copyConfig/dataflow/dataflow'
+import Dataflow from '../../copyConfig/dataflow/dataflow'
 import { serverStructure } from './serverStructure/serverStructure'
 
 class ServerImport {

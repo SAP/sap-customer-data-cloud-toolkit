@@ -9,8 +9,9 @@ import { passwordImportTreeFields } from './passwordImport/passwordImport'
 import PreferencesImportFields from './preferencesImport/preferencesImport'
 import SchemaImportFields from './schemaImport/schemaImportFields'
 import { getContext, getLiteRootElementsStructure, getRootElementsStructure, getUID } from './rootOptions/rootLevelFields'
-import TreeSearch from '../treeSearch/treeSearch'
-import { fullAccountType, getRootElements, liteAccountType } from './utils'
+import TreeSearch from './treeSearch/treeSearch'
+import { getRootElements } from './utils'
+import { AccountType } from './accountManager/accountType'
 class ImportAccounts {
   #credentials
   #site
@@ -31,7 +32,7 @@ class ImportAccounts {
 
   async importAccountToConfigTree(selectedValue) {
     const result = []
-    if (selectedValue === fullAccountType) {
+    if (selectedValue === AccountType.Full) {
       result.push(...getUID())
       result.push(...(await this.#schemaFields.exportTransformedSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))
@@ -39,7 +40,7 @@ class ImportAccounts {
       result.push(...passwordImportTreeFields())
       result.push(...getRootElementsStructure())
     }
-    if (selectedValue === liteAccountType) {
+    if (selectedValue === AccountType.Lite) {
       result.push(...getLiteRootElementsStructure())
       result.push(...(await this.#schemaFields.exportLiteSchemaData()))
       result.push(...(await this.#preferences.exportTransformedPreferencesData()))

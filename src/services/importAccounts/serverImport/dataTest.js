@@ -1,12 +1,7 @@
-export const scheduleResponse = {
-  callId: '17d68ed0c00d4acf91004c0da188adf6',
-  errorCode: 0,
-  apiVersion: 2,
-  statusCode: 200,
-  statusReason: 'OK',
-  time: '2025-01-08T17:15:19.344Z',
-  id: '56b5d528ed824da59bd325e848f04986',
-}
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 
 export const commonConfigurations = {
   azure: [

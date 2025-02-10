@@ -1,12 +1,13 @@
+import { AccountType } from './accountType'
 import FullAccount from './fullAccountManager'
 import LiteAccount from './liteAccountManager'
 
 class AccountManagerFactory {
   static getAccountManager(accountType, storageProvider) {
     switch (accountType) {
-      case 'Full':
+      case AccountType.Full:
         return new FullAccount(storageProvider)
-      case 'Lite':
+      case AccountType.Lite:
         return new LiteAccount(storageProvider)
       default:
         throw new Error(`Unknown account type: ${accountType}`)

@@ -4,12 +4,12 @@
  */
 
 import ServerImport from './server-import.js'
-import { credentials } from '../servicesDataTest.js'
+import { credentials } from '../../servicesDataTest.js'
 import axios from 'axios'
-import { commonConfigurations, commonOption, expectedResultReplaceVariables, expectedScheduleStructure, mockedCreateDataflowResponseOk } from './dataTest.js'
-import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest.js'
-import { setConfigSuccessResponse } from '../../redux/copyConfigurationExtended/dataTest.js'
-import { getResponseWithContext } from '../copyConfig/dataTest.js'
+import { commonConfigurations, commonOption, expectedScheduleStructure, mockedCreateDataflowResponseOk } from './dataTest.js'
+import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../../copyConfig/dataflow/dataTest.js'
+import { setConfigSuccessResponse } from '../../../redux/copyConfigurationExtended/dataTest.js'
+import { getResponseWithContext } from '../../copyConfig/dataTest.js'
 import AzureStorageProvider from '../storageProvider/azureStorageProvider.js'
 import FullAccount from '../accountManager/fullAccountManager.js'
 jest.mock('axios')

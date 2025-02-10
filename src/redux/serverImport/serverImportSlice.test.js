@@ -7,12 +7,12 @@
  * @jest-environment jsdom
  */
 
+import { AccountType } from '../../services/importAccounts/accountManager/accountType'
 import { initialState, initialStateWithServerConfigurations } from './dataTest'
 import { clearConfigurations, getServerConfiguration } from './serverImportSlice'
 import serverImportReducer from './serverImportSlice'
 describe('serverImportSlice test suite', () => {
   const SERVER_TYPE = 'azure'
-  const ACCOUNT_TYPE = 'Full'
 
   test('should return initial state', () => {
     expect(serverImportReducer(undefined, { type: undefined })).toEqual(initialState)
@@ -21,7 +21,7 @@ describe('serverImportSlice test suite', () => {
     expect(initialStateWithServerConfigurations.serverConfigurations.azure[0].value).toBe(undefined)
     const newState = serverImportReducer(
       initialStateWithServerConfigurations,
-      getServerConfiguration({ selectedOption: SERVER_TYPE, id: '{{dataflowName}}', value: 'test', accountType: ACCOUNT_TYPE }),
+      getServerConfiguration({ selectedOption: SERVER_TYPE, id: '{{dataflowName}}', value: 'test', accountType: AccountType.Full }),
     )
     expect(newState.serverConfigurations.azure[0].value).toBe('test')
   })

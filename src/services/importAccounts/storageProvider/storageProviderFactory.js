@@ -1,12 +1,12 @@
 import AzureStorageProvider from './azureStorageProvider'
 
 class StorageProviderFactory {
-  static getStorageProvider(option) {
-    switch (option) {
+  static getStorageProvider(storageProviderName) {
+    switch (storageProviderName) {
       case 'azure':
         return new AzureStorageProvider()
       default:
-        throw new Error(`Unknown storage provider: ${option}`)
+        throw new Error(`Unknown storage provider: ${storageProviderName}`)
     }
   }
 }

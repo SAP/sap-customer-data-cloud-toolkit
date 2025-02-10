@@ -29,10 +29,10 @@ import {
 import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
+import { AccountType } from '../../services/importAccounts/accountManager/accountType.js'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
-const FullAccount = 'Full'
 
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
@@ -43,14 +43,14 @@ const ImportAccountsComponent = ({ t }) => {
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
-  const [accountOption, setAccountOption] = useState(FullAccount)
+  const [accountOption, setAccountOption] = useState(AccountType.Full)
   const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurationTree(FullAccount))
+    dispatch(getConfigurationTree(AccountType.Full))
   }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
 
   const onSaveHandler = async () => {
