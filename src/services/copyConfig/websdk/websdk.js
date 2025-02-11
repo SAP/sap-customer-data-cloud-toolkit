@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
@@ -24,6 +23,7 @@ class WebSdk {
   }
 
   async get() {
+    console.log('credentials', this.#credentials)
     const response = await this.siteConfigurator.getSiteConfig(this.originApiKey, this.originDataCenter)
     response.context = JSON.stringify({ id: 'webSdk', targetApiKey: this.originApiKey })
     return response

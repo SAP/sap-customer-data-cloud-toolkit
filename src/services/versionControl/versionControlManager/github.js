@@ -1,32 +1,227 @@
 import VersionControlManager from './versionControlManager'
+import { Base64 } from 'js-base64'
+import { removeIgnoredFields } from '../dataSanitization'
+import CdcService from '../cdcService'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
-  constructor(versionControl, owner, repo) {
-    super(versionControl, owner, repo)
-  }
 
   async createBranch(apiKey) {
     if (!apiKey) {
       throw new Error('API key is missing')
     }
-    const branchExists = await this.#listBranches()
+    const branchExists = await this.listBranches(apiKey)
     if (!branchExists) {
-      this.#getBranchAndCreateRef()
+      this.#getBranchAndCreateRef(apiKey)
     }
   }
 
-  async #getBranchAndCreateRef() {
+  async getCommitFiles(sha) {
+    const { data: commitData } = await this.versionControl.rest.repos.getCommit({
+      owner: this.owner,
+      repo: this.repo,
+      ref: sha,
+    })
+
+    if (!commitData.files) {
+      throw new Error(`No files found in commit: ${sha}`)
+    }
+
+    const files = commitData.files.map((file) => ({
+      filename: file.filename,
+      contents_url: file.contents_url,
+    }))
+
+    return Promise.all(
+      files.map(async (file) => {
+        const content = await this.#fetchFileContent(file.contents_url)
+        return { ...file, content: JSON.parse(Base64.decode(content)) }
+      }),
+    )
+  }
+
+  async listBranches(branchName) {
+    const { data: branches } = await this.versionControl.rest.repos.listBranches({
+      owner: this.owner,
+      repo: this.repo,
+    })
+
+    return branches ? branches.some((branch) => branch.name === branchName) : false
+  }
+
+  async updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
+    console.log('defaultBranch', defaultBranch)
+    console.log('this.owner', this.owner)
+    console.log('this.repo', this.repo)
+    const { data: refData } = await this.versionControl.rest.git.getRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${defaultBranch}`,
+    })
+
+    const baseTreeSha = refData.object.sha
+
+    const blobs = await Promise.all(
+      files.map(async (file) => {
+        const { data } = await this.versionControl.rest.git.createBlob({
+          owner: this.owner,
+          repo: this.repo,
+          content: file.content,
+          encoding: 'utf-8',
+        })
+        return {
+          path: file.path,
+          mode: '100644',
+          type: 'blob',
+          sha: data.sha,
+        }
+      }),
+    )
+
+    const { data: newTree } = await this.versionControl.rest.git.createTree({
+      owner: this.owner,
+      repo: this.repo,
+      tree: blobs,
+      base_tree: baseTreeSha,
+    })
+    console.log('newTree', newTree)
+
+    const { data: newCommit } = await this.versionControl.rest.git.createCommit({
+      owner: this.owner,
+      repo: this.repo,
+      message: commitMessage,
+      tree: newTree.sha,
+      parents: [baseTreeSha],
+    })
+    console.log('newCommit', newCommit)
+    const updateRef = await this.versionControl.rest.git.updateRef({
+      owner: this.owner,
+      repo: this.repo,
+      ref: `heads/${defaultBranch}`,
+      sha: newCommit.sha,
+      force: true, // Force update to handle non-fast-forward updates
+    })
+    console.log('updateRef', updateRef)
+  }
+  async getCommits(apiKey) {
+    let allCommits = []
+    let page = 1
+    const per_page = 100 // Maximum allowed per page
+
+    while (true) {
+      try {
+        const response = await this.versionControl.rest.repos.listCommits({
+          owner: this.owner,
+          repo: this.repo,
+          sha: apiKey,
+          per_page,
+          page,
+        })
+
+        allCommits = allCommits.concat(response.data)
+
+        if (response.data.length < per_page) {
+          break // No more pages to fetch
+        }
+
+        page += 1
+      } catch (error) {
+        console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
+        throw error
+      }
+    }
+
+    return { data: allCommits }
+  }
+
+  async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
+    console.log('entered apiKey', apiKey)
+    const validUpdates = await this.fetchAndPrepareFiles(configs)
+    if (validUpdates.length > 0) {
+      await this.updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
+    } else {
+      console.log('No files to update. Skipping commit.')
+    }
+  }
+
+  async fetchAndPrepareFiles(configs) {
+    const files = Object.keys(configs).map((key) => ({
+      path: `src/versionControl/${key}.json`,
+      content: JSON.stringify(configs[key], null, 2),
+    }))
+    console.log('files', files)
+
+    const fileUpdates = await Promise.all(
+      files.map(async (file) => {
+        const result = await this.#updateGitFileContent(file.path, file.content)
+        return result
+      }),
+    )
+    console.log('fileUpdates', fileUpdates)
+
+    return fileUpdates.filter((update) => update !== null)
+  }
+
+  async #updateGitFileContent(filePath, cdcFileContent) {
+    let getGitFileInfo
+
+    try {
+      const branchExistsResult = await this.listBranches(this.defaultBranch)
+      if (!branchExistsResult) {
+        throw new Error('Branch does not exist')
+      }
+
+      getGitFileInfo = await this.#getFile(filePath)
+    } catch (error) {
+      if (error.status === 404 || error.message === 'Branch does not exist') {
+        return {
+          path: filePath,
+          content: cdcFileContent,
+          sha: undefined,
+        }
+      }
+      throw error
+    }
+
+    const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
+    let currentGitContent = {}
+    const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
+    if (currentGitContentDecoded) {
+      try {
+        currentGitContent = JSON.parse(currentGitContentDecoded)
+        currentGitContent = removeIgnoredFields(currentGitContent)
+      } catch (error) {
+        currentGitContent = {}
+      }
+    }
+
+    let newContent = JSON.parse(cdcFileContent)
+    const sanitizedNewContent = removeIgnoredFields(newContent)
+
+    if (JSON.stringify(currentGitContent) !== JSON.stringify(sanitizedNewContent)) {
+      return {
+        path: filePath,
+        content: JSON.stringify(newContent, null, 2), // Save the original content
+        sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
+      }
+    } else {
+      return null
+    }
+  }
+
+  async #getBranchAndCreateRef(branch) {
     try {
       const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
         owner: this.owner,
         repo: this.repo,
         branch: GitHub.#SOURCE_BRANCH,
       })
+      console.log('this.defaultBranch', branch)
+      console.log('this.mainBranch', mainBranch)
       await this.versionControl.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
-        ref: `refs/heads/${this.defaultBranch}`,
+        ref: `refs/heads/${branch}`,
         sha: mainBranch.commit.sha,
       })
     } catch (error) {
@@ -34,7 +229,7 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async getFile() {
+  async #getFile(path) {
     const { data: file } = await this.versionControl.rest.repos.getContent({
       owner: this.owner,
       repo: this.repo,
@@ -44,9 +239,9 @@ class GitHub extends VersionControlManager {
 
     if (!file || !file.content || file.size > 100 * 1024) {
       const { data: blobData } =
-        (await versionControl.octokit.rest.git.getBlob({
-          owner: versionControl.owner,
-          repo: versionControl.repo,
+        (await this.versionControl.rest.git.getBlob({
+          owner: this.owner,
+          repo: this.repo,
           file_sha: file && file.sha,
         })) || {}
       file.content = blobData ? blobData.content : null
@@ -54,13 +249,22 @@ class GitHub extends VersionControlManager {
     return file
   }
 
-  async #listBranches() {
-    const { data: branches } = await this.versionControl.rest.repos.listBranches({
-      owner: versionControl.owner,
-      repo: versionControl.repo,
-    })
+  async #fetchFileContent(contents_url) {
+    const { data: response } = await this.versionControl.request(contents_url)
 
-    return branches ? branches.some((branch) => branch.name === branchName) : false
+    if (!response || !response.content) {
+      const { data: blobData } = await await this.versionControl.rest.git.getBlob({
+        owner: this.owner,
+        repo: this.repo,
+        file_sha: response.sha,
+      })
+
+      if (!blobData.content) {
+        throw new Error(`Failed to fetch blob content for URL: ${contents_url}`)
+      }
+      return blobData.content
+    }
+    return response.content
   }
 }
 

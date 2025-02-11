@@ -8,16 +8,36 @@ class VersionControlManager {
     this.owner = owner
     this.repo = repo
   }
-  getFile() {
+
+  getCommitFiles(sha) {
     throw new Error('Method not implemented.')
   }
-  getBlob() {
+
+  listBranches(branchName) {
     throw new Error('Method not implemented.')
   }
-  getCommit() {
+
+  createBranch(apiKey) {
     throw new Error('Method not implemented.')
   }
-  createBranch() {
+
+  updateFilesInSingleCommit(commitMessage, files) {
+    throw new Error('Method not implemented.')
+  }
+
+  updateGitFileContent(filePath, cdcFileContent) {
+    throw new Error('Method not implemented.')
+  }
+
+  getCommits(apiKey) {
+    throw new Error('Method not implemented.')
+  }
+
+  prepareFilesForUpdate() {
+    throw new Error('Method not implemented.')
+  }
+
+  storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
     throw new Error('Method not implemented.')
   }
 }

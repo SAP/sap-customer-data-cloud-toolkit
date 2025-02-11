@@ -1,7 +1,7 @@
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
- */ 
+ */
 
 import client from '../gigya/client.js'
 import UrlBuilder from '../gigya/urlBuilder.js'
@@ -21,7 +21,7 @@ class Recaptcha {
   }
 
   async get(site, dataCenter) {
-    const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)    
+    const url = UrlBuilder.buildUrl(Recaptcha.#NAMESPACE, dataCenter, Recaptcha.getGetRecaptchaEndpoint(), this.gigyaConsole)
     try {
       const res = await client.post(url, this.#getRecaptchaParameters(site))
       return res.data
@@ -53,6 +53,9 @@ class Recaptcha {
   }
 
   #getRecaptchaParameters(apiKey) {
+    console.log('apiKey', apiKey)
+    console.log('user', this.userKey)
+    console.log('secret', this.secret)
     return {
       apiKey,
       userKey: this.userKey,

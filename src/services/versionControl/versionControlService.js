@@ -3,10 +3,9 @@
  * License: Apache-2.0
  */
 
-import * as githubUtils from './githubUtils'
 import CdcService from './cdcService'
 
-class VersionControl {
+class VersionControlService {
   #credentials
   #apiKey
   #currentSite
@@ -14,26 +13,28 @@ class VersionControl {
   #owner
   #repo
   #versionControl
-  constructor(credentials, apiKey, currentSite, gitToken, owner, versionControl) {
+  constructor(credentials, apiKey, gitToken, owner, versionControl, dataCenter, siteInfo) {
     this.credentials = credentials
     this.apiKey = apiKey
-    this.currentSite = currentSite
     this.gitToken = gitToken
     this.owner = owner || 'defaultOwner'
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
-    this.cdcService = new CdcService(this)
+    this.dataCenter = dataCenter
+    this.siteInfo = siteInfo
+    this.cdcService = new CdcService(credentials, apiKey, dataCenter, siteInfo)
     this.#versionControl = versionControl
   }
 
   handleGetServices = async (credentials, apiKey, dataCenter, commitMessage) => {
     try {
-      const cdcService = new CdcService(credentials, apiKey, dataCenter)
       //replace this functions with the versionControl interface funtion
-      await githubUtils.createBranch(versionControl, apiKey)
-      await cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
-      await githubUtils.storeCdcDataInGit(versionControl, commitMessage || 'Backup created')
-      return t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE')
+      console.log('apiKey', apiKey)
+      console.log('this.defaultBranch', this.defaultBranch)
+      await this.#versionControl.createBranch(apiKey)
+      const configs = await this.cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
+      await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch)
+      return 'success'
     } catch (error) {
       throw new Error(error)
     }
@@ -41,9 +42,9 @@ class VersionControl {
 
   handleCommitListRequestServices = async (versionControl, apiKey) => {
     try {
-      const hasBranch = await githubUtils.branchExists(versionControl, apiKey)
+      const hasBranch = await this.#versionControl.listBranches(this.defaultBranch)
       if (hasBranch) {
-        const { data: commitList } = await githubUtils.getCommits(versionControl)
+        const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
         return { commitList, totalCommits: commitList.length }
       } else {
         return { commitList: [], totalCommits: 0 }
@@ -54,16 +55,27 @@ class VersionControl {
     }
   }
 
-  handleCommitRevertServices = async (versionControl, sha, t) => {
+  handleCommitRevertServices = async (sha) => {
     try {
-      const cdcService = new CdcService(versionControl)
-      await cdcService.applyCommitConfig(sha)
-      return t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE')
+      const files = await this.#versionControl.getCommitFiles(sha)
+      console.log('files commits', files)
+
+      const commits = await this.cdcService.applyCommitConfig(files)
+      console.log('apply commits', commits)
+      return 'success'
     } catch (error) {
       console.error('Error reverting configurations:', error)
-      throw new Error(t('VERSION_CONTROL.REVERT.FAILURE.MESSAGE'))
+      throw new Error('Failed to revert configurations')
     }
+  }
+
+  async prepareFilesForUpdate() {
+    const configs = await this.cdcService.fetchCDCConfigs()
+    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs)
+    const formattedFiles = validUpdates.length > 0 ? validUpdates.map((file) => file.path.replace('src/versionControl/', '').replace('.json', '')) : ['N/A']
+    console.log('formattedFiles', formattedFiles)
+    return formattedFiles
   }
 }
 
-export default VersionControl
+export default VersionControlService

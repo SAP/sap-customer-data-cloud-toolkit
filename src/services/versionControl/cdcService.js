@@ -18,7 +18,7 @@ import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Social from '../copyConfig/social/social'
 import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
-import { getCommitFiles } from './githubUtils'
+import { cleanEmailResponse, cleanResponse } from './dataSanitization'
 import {
   setPolicies,
   setWebSDK,
@@ -35,28 +35,32 @@ import {
   setSocial,
   setRecaptcha,
 } from './setters'
+import { createOptions } from './utils'
 
 class CdcService {
-  constructor(credentials, apiKey, dataCenter) {
+  constructor(credentials, apiKey, dataCenter, siteInfo) {
+    console.log('credentials--------->', credentials)
+
     this.credentials = credentials
     this.apiKey = apiKey
     this.dataCenter = dataCenter
-    this.webSdk = new WebSdk(credentials, apiKey, dataCenter)
-    this.dataflow = new Dataflow(credentials, apiKey, dataCenter)
-    this.emails = new EmailConfiguration(credentials, apiKey, dataCenter)
-    this.extension = new Extension(credentials, apiKey, dataCenter)
-    this.policies = new Policy(credentials, apiKey, dataCenter)
-    this.rba = new Rba(credentials, apiKey, dataCenter)
-    this.riskAssessment = new RiskAssessment(credentials, apiKey, dataCenter)
-    this.schema = new Schema(credentials, apiKey, dataCenter)
-    this.screenSets = new ScreenSet(credentials, apiKey, dataCenter)
-    this.sms = new SmsConfiguration(credentials, apiKey, dataCenter)
-    this.communication = new Communication(credentials, apiKey, dataCenter)
-    this.topic = new Topic(credentials, apiKey, dataCenter)
-    this.webhook = new Webhook(credentials, apiKey, dataCenter)
-    this.consent = new ConsentConfiguration(credentials, apiKey, dataCenter)
-    this.social = new Social(credentials, apiKey, dataCenter)
-    this.recaptcha = new RecaptchaConfiguration(credentials, apiKey, dataCenter)
+    this.siteInfo = siteInfo
+    this.webSdk = new WebSdk(this.credentials, apiKey, dataCenter)
+    this.dataflow = new Dataflow(this.credentials, apiKey, dataCenter)
+    this.emails = new EmailConfiguration(this.credentials, apiKey, dataCenter)
+    this.extension = new Extension(this.credentials, apiKey, dataCenter)
+    this.policies = new Policy(this.credentials, apiKey, dataCenter)
+    this.rba = new Rba(this.credentials, apiKey, dataCenter)
+    this.riskAssessment = new RiskAssessment(this.credentials, apiKey, dataCenter)
+    this.schema = new Schema(this.credentials, apiKey, dataCenter)
+    this.screenSets = new ScreenSet(this.credentials, apiKey, dataCenter)
+    this.sms = new SmsConfiguration(this.credentials, apiKey, dataCenter)
+    this.communication = new Communication(this.credentials, apiKey, dataCenter)
+    this.topic = new Topic(this.credentials, apiKey, dataCenter)
+    this.webhook = new Webhook(this.credentials, apiKey, dataCenter)
+    this.consent = new ConsentConfiguration(this.credentials, apiKey, dataCenter)
+    this.social = new Social(this.credentials, apiKey, dataCenter)
+    this.recaptcha = new RecaptchaConfiguration(this.credentials, apiKey, dataCenter)
   }
 
   getCdcData = () => {
@@ -82,12 +86,14 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const cdcDataArray = this.getCdcData()
+    const cdcDataArray = await this.getCdcData()
+    console.log('cdcDataArray:', cdcDataArray)
     if (!Array.isArray(cdcDataArray)) {
       throw new Error('getCdcData must return an array')
     }
     const cdcData = await Promise.all(
       cdcDataArray.map(async ({ name, promise }) => {
+        console.log('promise:', await promise)
         const data = await promise.catch((err) => console.error(`Error resolving ${name}:`, err))
         return { [name]: data }
       }),
@@ -95,58 +101,101 @@ class CdcService {
     return Object.assign({}, ...cdcData)
   }
 
-  applyCommitConfig = async (commitSha) => {
-    const files = await getCommitFiles(this.versionControl, commitSha)
+  applyCommitConfig = async (files) => {
     for (const file of files) {
       // Strip the 'src/versionControl/' prefix and '.json' suffix, match file type correctly
       const fileType = file.filename.split('/').pop().split('.').shift()
 
       let filteredResponse = file.content
+      let options
+      console.log('filteredResponse:', filteredResponse)
       switch (fileType) {
         case 'webSdk':
-          await setWebSDK.call(this.versionControl, filteredResponse)
+          await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
           break
         case 'emails':
-          await setEmailTemplates.call(this.versionControl, filteredResponse)
+          cleanEmailResponse(filteredResponse)
+          for (let key in filteredResponse) {
+            if (key !== 'errorCode') {
+              await this.emails.getEmail().setSiteEmailsWithDataCenter(this.apiKey, key, filteredResponse[key], this.dataCenter)
+            }
+          }
           break
         case 'extension':
-          await setExtension.call(this.versionControl, filteredResponse)
+          if (filteredResponse.result.length > 0) {
+            await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
+          }
           break
         case 'policies':
-          await setPolicies.call(this.versionControl, filteredResponse)
+          cleanResponse(filteredResponse)
+          await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
           break
         case 'rba':
-          await setRBA.call(this.versionControl, filteredResponse)
+          if (filteredResponse[0]) {
+            await this.rba.setAccountTakeoverProtection(this.apiKey, filteredResponse[0])
+          }
+          if (filteredResponse[1]) {
+            await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, filteredResponse[1])
+          }
+          if (filteredResponse[2]) {
+            await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, filteredResponse[2])
+          }
           break
         case 'schema':
-          await setSchema.call(this.versionControl, filteredResponse)
+          for (let key in filteredResponse) {
+            if (filteredResponse.hasOwnProperty(key)) {
+              if (key === 'dataSchema') {
+                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.dataSchema)
+              }
+              if (key === 'addressesSchema') {
+                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.addressesSchema)
+              }
+              if (key === 'internalSchema') {
+                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.internalSchema)
+              }
+              if (key === 'profileSchema') {
+                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.profileSchema)
+              }
+              if (key === 'subscriptionsSchema') {
+                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.subscriptionsSchema)
+              }
+            }
+          }
           break
         case 'screenSets':
-          await setScreenSets.call(this.versionControl, filteredResponse)
+          for (const screenSet of filteredResponse.screenSets) {
+            await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
+          }
           break
         case 'sms':
-          await setSMS.call(this.versionControl, filteredResponse)
+          this.sms.getSms().set(this.apiKey, this.dataCenter, filteredResponse.templates)
           break
         case 'channel':
-          await setCommunicationTopics.call(this.versionControl, filteredResponse)
-          break
         case 'topic':
-          await setCommunicationTopics.call(this.versionControl, filteredResponse)
+          if (filteredResponse.Channels) {
+            await this.communication.setFromFiles(this.apiKey, this.siteInfo, filteredResponse.Channels, 'channel')
+          }
+          if (filteredResponse.results) {
+            await this.communication.setFromFiles(this.apiKey, this.siteInfo, filteredResponse.results, 'topic')
+          }
           break
         case 'dataflow':
-          await setDataflow.call(this.versionControl, filteredResponse)
+          options = createOptions('dataflows', filteredResponse.result)
+          await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
           break
         case 'webhook':
-          await setWebhook.call(this.versionControl, filteredResponse)
+          options = createOptions('webhooks', filteredResponse.webhooks)
+          await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
           break
         case 'consent':
-          await setConsent.call(this.versionControl, filteredResponse)
+          options = createOptions('consents', filteredResponse.preferences)
+          await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse, options)
           break
         case 'social':
-          await setSocial.call(this.versionControl, filteredResponse)
+          await this.social.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
           break
         case 'recaptcha':
-          await setRecaptcha.call(this.versionControl, filteredResponse)
+          await this.recaptcha.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
           break
         default:
           console.warn(`Unknown file type: ${fileType}`)

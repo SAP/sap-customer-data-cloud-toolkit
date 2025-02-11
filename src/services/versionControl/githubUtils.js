@@ -8,7 +8,7 @@ import CdcService from './cdcService'
 
 export async function getFile(versionControl, path) {
   const { data: file } =
-    (await versionControl.octokit.rest.repos.getContent({
+    (await versionControl.rest.repos.getContent({
       owner: versionControl.owner,
       repo: versionControl.repo,
       path,
@@ -17,7 +17,7 @@ export async function getFile(versionControl, path) {
 
   if (!file || !file.content || file.size > 100 * 1024) {
     const { data: blobData } =
-      (await versionControl.octokit.rest.git.getBlob({
+      (await versionControl.rest.git.getBlob({
         owner: versionControl.owner,
         repo: versionControl.repo,
         file_sha: file && file.sha,
@@ -28,7 +28,7 @@ export async function getFile(versionControl, path) {
 }
 
 export async function getCommitFiles(versionControl, sha) {
-  const { data: commitData } = await versionControl.octokit.rest.repos.getCommit({
+  const { data: commitData } = await versionControl.rest.repos.getCommit({
     owner: versionControl.owner,
     repo: versionControl.repo,
     ref: sha,
@@ -52,10 +52,10 @@ export async function getCommitFiles(versionControl, sha) {
 }
 
 export async function fetchFileContent(versionControl, contents_url) {
-  const { data: response } = await versionControl.octokit.request(contents_url)
+  const { data: response } = await versionControl.request(contents_url)
 
   if (!response || !response.content) {
-    const { data: blobData } = await versionControl.octokit.rest.git.getBlob({
+    const { data: blobData } = await versionControl.rest.git.getBlob({
       owner: versionControl.owner,
       repo: versionControl.repo,
       file_sha: response.sha,
@@ -71,7 +71,7 @@ export async function fetchFileContent(versionControl, contents_url) {
 
 export async function branchExists(versionControl, branchName) {
   const { data: branches } =
-    (await versionControl.octokit.rest.repos.listBranches({
+    (await versionControl.rest.repos.listBranches({
       owner: versionControl.owner,
       repo: versionControl.repo,
     })) || {}
@@ -88,13 +88,13 @@ export async function createBranch(versionControl, branchName) {
   const sourceBranch = 'main' // or use predefined default branch
 
   if (!exists) {
-    const { data: mainBranch } = await versionControl.octokit.rest.repos.getBranch({
+    const { data: mainBranch } = await versionControl.rest.repos.getBranch({
       owner: versionControl.owner,
       repo: versionControl.repo,
       branch: sourceBranch,
     })
 
-    await versionControl.octokit.rest.git.createRef({
+    await versionControl.rest.git.createRef({
       owner: versionControl.owner,
       repo: versionControl.repo,
       ref: `refs/heads/${branchName}`,
@@ -104,7 +104,7 @@ export async function createBranch(versionControl, branchName) {
 }
 
 export async function updateFilesInSingleCommit(versionControl, commitMessage, files) {
-  const { data: refData } = await versionControl.octokit.rest.git.getRef({
+  const { data: refData } = await versionControl.rest.git.getRef({
     owner: versionControl.owner,
     repo: versionControl.repo,
     ref: `heads/${versionControl.defaultBranch}`,
@@ -114,7 +114,7 @@ export async function updateFilesInSingleCommit(versionControl, commitMessage, f
 
   const blobs = await Promise.all(
     files.map(async (file) => {
-      const { data } = await versionControl.octokit.rest.git.createBlob({
+      const { data } = await versionControl.rest.git.createBlob({
         owner: versionControl.owner,
         repo: versionControl.repo,
         content: file.content,
@@ -129,14 +129,14 @@ export async function updateFilesInSingleCommit(versionControl, commitMessage, f
     }),
   )
 
-  const { data: newTree } = await versionControl.octokit.rest.git.createTree({
+  const { data: newTree } = await versionControl.rest.git.createTree({
     owner: versionControl.owner,
     repo: versionControl.repo,
     tree: blobs,
     base_tree: baseTreeSha,
   })
 
-  const { data: newCommit } = await versionControl.octokit.rest.git.createCommit({
+  const { data: newCommit } = await versionControl.rest.git.createCommit({
     owner: versionControl.owner,
     repo: versionControl.repo,
     message: commitMessage,
@@ -144,7 +144,7 @@ export async function updateFilesInSingleCommit(versionControl, commitMessage, f
     parents: [baseTreeSha],
   })
 
-  await versionControl.octokit.rest.git.updateRef({
+  await versionControl.rest.git.updateRef({
     owner: versionControl.owner,
     repo: versionControl.repo,
     ref: `heads/${versionControl.defaultBranch}`,
@@ -207,7 +207,7 @@ export async function getCommits(versionControl) {
 
   while (true) {
     try {
-      const response = await versionControl.octokit.rest.repos.listCommits({
+      const response = await versionControl.rest.repos.listCommits({
         owner: versionControl.owner,
         repo: versionControl.repo,
         sha: versionControl.defaultBranch,

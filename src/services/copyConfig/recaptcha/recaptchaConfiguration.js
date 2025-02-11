@@ -16,6 +16,7 @@ class RecaptchaConfiguration {
   #riskProviders
 
   constructor(credentials, site, dataCenter) {
+    console.log('credentials', credentials)
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
@@ -40,7 +41,6 @@ class RecaptchaConfiguration {
       if (riskProvidersResponse.errorCode !== 0) {
         throw new Error(`Error fetching Risk Providers configuration: ${riskProvidersResponse.errorMessage}`)
       }
-
       return {
         errorCode: recaptchaResponse.errorCode,
         recaptchaConfig: recaptchaResponse.Config,

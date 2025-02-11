@@ -7,9 +7,9 @@ import { cleanResponse, cleanEmailResponse } from './dataSanitization'
 import Options from '../copyConfig/options'
 
 // set Policies
-export const setPolicies = async function (config) {
+export const setPolicies = async function (apiKey, config, dataCenter) {
   cleanResponse(config)
-  await this.policies.set(this.apiKey, config, this.dataCenter)
+  await this.policies.set(apiKey, config, dataCenter)
 }
 
 // set WebSDK

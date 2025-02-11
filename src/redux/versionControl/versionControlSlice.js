@@ -4,16 +4,18 @@
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createVersionControlInstance, handleCommitListRequestServices, handleGetServices } from '../../services/versionControl/versionControlService'
+import VersionControlService, { createVersionControlInstance, handleCommitListRequestServices, handleGetServices } from '../../services/versionControl/versionControlService'
 import { getApiKey, getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
 import GitHub from '../../services/versionControl/versionControlManager/github'
 import { Octokit } from '@octokit/rest'
-import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
+
 const VERSION_CONTROL_STATE_NAME = 'versionControl'
 const FETCH_COMMITS_ACTION = `${VERSION_CONTROL_STATE_NAME}/fetchCommits`
 const GET_SERVICES_ACTION = `${VERSION_CONTROL_STATE_NAME}/getServices`
+const PREPARE_FILES_FOR_UPDATE_ACTION = `${VERSION_CONTROL_STATE_NAME}/prepareFilesForUpdate`
+const GET_REVERT_CHANGES = `${VERSION_CONTROL_STATE_NAME}/revertChanges`
 const versionControlSlice = createSlice({
   name: 'versionControl',
   initialState: {
@@ -43,36 +45,55 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(fetchCommits.fulfilled, (state, action) => {
       state.isFetching = false
+      console.log('action.payloadfetchCommits', action.payload)
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
       state.isFetching = false
       state.error = action.payload
     })
-    builder.addCase(getServices.pending, (state) => {
-      state.isFetching = true
-      state.error = null
-    })
-    builder.addCase(getServices.fulfilled, (state, action) => {
-      state.isFetching = false
-      state.commits = action.payload
-    })
-    builder.addCase(getServices.rejected, (state, action) => {
-      state.isFetching = false
-      state.error = action.payload
-    })
   },
 })
 
+export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha, { getState, rejectWithValue }) => {
+  const state = getState()
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
+  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
+  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
+  const currentDataCenter = currentSiteInfo.dataCenter
+  const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
+  const currentOwner = getEncryptedCookie('owner', credentials.secret)
+  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+  try {
+    return await new VersionControlService(
+      credentials,
+      currentSiteApiKey,
+      currentGitToken,
+      currentOwner,
+      versionControl,
+      currentDataCenter,
+      currentSiteInfo,
+    ).handleCommitRevertServices(sha)
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error))
+  }
+})
 export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMessage, { getState, rejectWithValue }) => {
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
-  const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-  const getService = VersionControlFactory('github')
-  const versionControl = new GitHub(getService, currentSiteApiKey, currentDataCenter)
+  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
+  const currentDataCenter = currentSiteInfo.dataCenter
+  const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
+  const currentOwner = getEncryptedCookie('owner', credentials.secret)
+  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
   try {
-    await handleGetServices(credentials, currentSiteApiKey, currentDataCenter, commitMessage)
+    return await new VersionControlService(credentials, currentSiteApiKey, currentGitToken, currentOwner, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(
+      credentials,
+      currentSiteApiKey,
+      currentDataCenter,
+      commitMessage,
+    )
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -90,26 +111,55 @@ export const getEncryptedCookie = (name, secretKey) => {
 
 export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = state.credentials.credentials
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const apiKey = getApiKey(window.location.hash)
-  const currentSite = state.copyConfigurationExtended.currentSiteInformation
-  const gitToken = getEncryptedCookie('gitToken', credentials.secretKey) // Retrieve the encrypted token
-  const owner = getEncryptedCookie('owner', credentials.secretKey) // Retrieve the encrypted owner
-
+  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
+  const currentDataCenter = currentSiteInfo.dataCenter
+  const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
+  const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
+  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
+  console.log('gitToken', gitToken)
+  console.log('owner', owner)
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
-
-  const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
-
   try {
-    const { commitList } = await handleCommitListRequestServices(versionControl, apiKey)
+    const { commitList } = await new VersionControlService(
+      credentials,
+      apiKey,
+      gitToken,
+      owner,
+      versionControl,
+      currentDataCenter,
+      currentSiteInfo,
+    ).handleCommitListRequestServices(versionControl, apiKey)
     return commitList
   } catch (error) {
     return rejectWithValue(error.message)
   }
 })
 
+export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const apiKey = getApiKey(window.location.hash)
+  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
+  const currentDataCenter = currentSiteInfo.dataCenter
+  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
+  const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
+  const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
+  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
+  console.log('currentDataCenter', currentDataCenter)
+
+  if (!gitToken || !owner) {
+    return rejectWithValue('Git token or owner is missing')
+  }
+
+  try {
+    return await new VersionControlService(credentials, apiKey, gitToken, owner, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+  } catch (error) {
+    return rejectWithValue(error.message)
+  }
+})
 const setCookies = (state) => {
   const credentials = state.credentials
   if (state.gitToken && state.owner && credentials?.secretKey) {

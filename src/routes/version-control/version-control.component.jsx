@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
 import {
@@ -27,7 +28,6 @@ import {
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  fetchCommits,
   setGitToken,
   setOwner,
   setCredentials,
@@ -36,9 +36,10 @@ import {
   selectGitToken,
   selectOwner,
   getServices,
+  fetchCommits,
+  prepareFilesForUpdate,
+  getRevertChanges,
 } from '../../redux/versionControl/versionControlSlice'
-import { createVersionControlInstance, handleGetServices, handleCommitRevertServices } from '../../services/versionControl/versionControlService'
-import * as githubUtils from '../../services/versionControl/githubUtils'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getApiKey } from '../../redux/utils'
 import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -46,6 +47,7 @@ import Cookies from 'js-cookie'
 import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
+import { unwrapResult } from '@reduxjs/toolkit'
 
 const useStyles = createUseStyles(styles, { name: 'VersionControl' })
 
@@ -60,6 +62,7 @@ const VersionControlComponent = ({ t }) => {
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
+  console.log('selectCommits--->', commits)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -82,6 +85,7 @@ const VersionControlComponent = ({ t }) => {
   useEffect(() => {
     const secretKey = credentials?.secretKey
     if (secretKey) {
+      console.log('entered')
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
       if (encryptedGitToken) {
@@ -96,9 +100,11 @@ const VersionControlComponent = ({ t }) => {
   }, [credentials, dispatch])
 
   const onCreateBackupClick = async () => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
+    // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
-      const formattedFiles = await githubUtils.prepareFilesForUpdate(versionControl)
+      const resultAction = await dispatch(prepareFilesForUpdate())
+      const formattedFiles = unwrapResult(resultAction)
+      console.log('formattedFiles--->', formattedFiles)
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
@@ -122,13 +128,14 @@ const VersionControlComponent = ({ t }) => {
   const onCancelBackupClick = () => {
     setIsDialogOpen(false)
   }
+  console.log('commits--_>', commits)
 
   const onCommitRevertClick = async (sha) => {
-    const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
+    // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
-      const message = await handleCommitRevertServices(versionControl, sha, t)
+      dispatch(getRevertChanges(sha))
       dispatch(fetchCommits())
-      setSuccessMessage(message)
+      setSuccessMessage('success')
       setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error reverting commit:', error)
@@ -369,24 +376,29 @@ const VersionControlComponent = ({ t }) => {
                         </>
                       }
                     >
-                      {commits.map((commit, index) => (
-                        <TableRow key={index}>
-                          <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
-                          <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
-                          <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
-                          <TableCell className={classes.restoreButton}>
-                            <Button
-                              design="Default"
-                              id={`commitRevertButton-${index}`}
-                              data-cy="revertCommitButton"
-                              // className={classes.singlePrettifyRestoreButton}
-                              onClick={() => onCommitRevertClick(commit.sha)}
-                            >
-                              {t('VERSION_CONTROL.RESTORE')}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {commits.map(
+                        (commit, index) => (
+                          console.log('commit--->', commit),
+                          (
+                            <TableRow key={index}>
+                              <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
+                              <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
+                              <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
+                              <TableCell className={classes.restoreButton}>
+                                <Button
+                                  design="Default"
+                                  id={`commitRevertButton-${index}`}
+                                  data-cy="revertCommitButton"
+                                  // className={classes.singlePrettifyRestoreButton}
+                                  onClick={() => onCommitRevertClick(commit.sha)}
+                                >
+                                  {t('VERSION_CONTROL.RESTORE')}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        ),
+                      )}
                     </Table>
                   </div>
                 )}
