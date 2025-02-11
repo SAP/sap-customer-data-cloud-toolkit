@@ -1,10 +1,18 @@
 import VersionControlManager from './versionControlManager'
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from '../dataSanitization'
-import CdcService from '../cdcService'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
+
+  async validateCredentials() {
+    try {
+      await this.versionControl.rest.repos.listForAuthenticatedUser()
+      return true
+    } catch (error) {
+      return false
+    }
+  }
 
   async createBranch(apiKey) {
     if (!apiKey) {
@@ -41,6 +49,11 @@ class GitHub extends VersionControlManager {
   }
 
   async listBranches(branchName) {
+    const credentialsValid = await this.validateCredentials()
+    if (!credentialsValid) {
+      console.log('error')
+      return false
+    }
     const { data: branches } = await this.versionControl.rest.repos.listBranches({
       owner: this.owner,
       repo: this.repo,
@@ -50,9 +63,6 @@ class GitHub extends VersionControlManager {
   }
 
   async updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
-    console.log('defaultBranch', defaultBranch)
-    console.log('this.owner', this.owner)
-    console.log('this.repo', this.repo)
     const { data: refData } = await this.versionControl.rest.git.getRef({
       owner: this.owner,
       repo: this.repo,
@@ -84,7 +94,6 @@ class GitHub extends VersionControlManager {
       tree: blobs,
       base_tree: baseTreeSha,
     })
-    console.log('newTree', newTree)
 
     const { data: newCommit } = await this.versionControl.rest.git.createCommit({
       owner: this.owner,
@@ -93,15 +102,13 @@ class GitHub extends VersionControlManager {
       tree: newTree.sha,
       parents: [baseTreeSha],
     })
-    console.log('newCommit', newCommit)
-    const updateRef = await this.versionControl.rest.git.updateRef({
+    await this.versionControl.rest.git.updateRef({
       owner: this.owner,
       repo: this.repo,
       ref: `heads/${defaultBranch}`,
       sha: newCommit.sha,
       force: true, // Force update to handle non-fast-forward updates
     })
-    console.log('updateRef', updateRef)
   }
   async getCommits(apiKey) {
     let allCommits = []
@@ -135,12 +142,9 @@ class GitHub extends VersionControlManager {
   }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
-    console.log('entered apiKey', apiKey)
     const validUpdates = await this.fetchAndPrepareFiles(configs)
     if (validUpdates.length > 0) {
       await this.updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
-    } else {
-      console.log('No files to update. Skipping commit.')
     }
   }
 
@@ -149,7 +153,6 @@ class GitHub extends VersionControlManager {
       path: `src/versionControl/${key}.json`,
       content: JSON.stringify(configs[key], null, 2),
     }))
-    console.log('files', files)
 
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
@@ -157,7 +160,6 @@ class GitHub extends VersionControlManager {
         return result
       }),
     )
-    console.log('fileUpdates', fileUpdates)
 
     return fileUpdates.filter((update) => update !== null)
   }
@@ -216,8 +218,6 @@ class GitHub extends VersionControlManager {
         repo: this.repo,
         branch: GitHub.#SOURCE_BRANCH,
       })
-      console.log('this.defaultBranch', branch)
-      console.log('this.mainBranch', mainBranch)
       await this.versionControl.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,

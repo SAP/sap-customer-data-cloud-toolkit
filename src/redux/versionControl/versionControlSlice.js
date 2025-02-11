@@ -4,7 +4,7 @@
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import VersionControlService, { createVersionControlInstance, handleCommitListRequestServices, handleGetServices } from '../../services/versionControl/versionControlService'
+import VersionControlService from '../../services/versionControl/versionControlService'
 import { getApiKey, getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'

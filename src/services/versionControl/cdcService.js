@@ -19,28 +19,10 @@ import Social from '../copyConfig/social/social'
 import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
 import { cleanEmailResponse, cleanResponse } from './dataSanitization'
-import {
-  setPolicies,
-  setWebSDK,
-  setSMS,
-  setExtension,
-  setSchema,
-  setScreenSets,
-  setRBA,
-  setEmailTemplates,
-  setCommunicationTopics,
-  setDataflow,
-  setWebhook,
-  setConsent,
-  setSocial,
-  setRecaptcha,
-} from './setters'
 import { createOptions } from './utils'
 
 class CdcService {
   constructor(credentials, apiKey, dataCenter, siteInfo) {
-    console.log('credentials--------->', credentials)
-
     this.credentials = credentials
     this.apiKey = apiKey
     this.dataCenter = dataCenter
@@ -87,13 +69,11 @@ class CdcService {
 
   fetchCDCConfigs = async () => {
     const cdcDataArray = await this.getCdcData()
-    console.log('cdcDataArray:', cdcDataArray)
     if (!Array.isArray(cdcDataArray)) {
       throw new Error('getCdcData must return an array')
     }
     const cdcData = await Promise.all(
       cdcDataArray.map(async ({ name, promise }) => {
-        console.log('promise:', await promise)
         const data = await promise.catch((err) => console.error(`Error resolving ${name}:`, err))
         return { [name]: data }
       }),
@@ -103,12 +83,9 @@ class CdcService {
 
   applyCommitConfig = async (files) => {
     for (const file of files) {
-      // Strip the 'src/versionControl/' prefix and '.json' suffix, match file type correctly
       const fileType = file.filename.split('/').pop().split('.').shift()
-
       let filteredResponse = file.content
       let options
-      console.log('filteredResponse:', filteredResponse)
       switch (fileType) {
         case 'webSdk':
           await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
@@ -131,6 +108,7 @@ class CdcService {
           await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
           break
         case 'rba':
+        case 'riskAssessment':
           if (filteredResponse[0]) {
             await this.rba.setAccountTakeoverProtection(this.apiKey, filteredResponse[0])
           }
@@ -180,16 +158,25 @@ class CdcService {
           }
           break
         case 'dataflow':
-          options = createOptions('dataflows', filteredResponse.result)
-          await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
+          if (filteredResponse.result) {
+            options = createOptions('dataflows', filteredResponse.result)
+            await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
+            break
+          }
           break
         case 'webhook':
-          options = createOptions('webhooks', filteredResponse.webhooks)
-          await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
+          if (filteredResponse.webhooks) {
+            options = createOptions('webhooks', filteredResponse.webhooks)
+            await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
+            break
+          }
           break
         case 'consent':
-          options = createOptions('consents', filteredResponse.preferences)
-          await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse, options)
+          if (filteredResponse.preferences) {
+            options = createOptions('consents', filteredResponse.preferences)
+            await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse, options)
+            break
+          }
           break
         case 'social':
           await this.social.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)

@@ -41,8 +41,6 @@ import {
   getRevertChanges,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
-import { getApiKey } from '../../redux/utils'
-import { selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import Cookies from 'js-cookie'
 import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
@@ -54,15 +52,12 @@ const useStyles = createUseStyles(styles, { name: 'VersionControl' })
 const VersionControlComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const currentSite = useSelector(selectCurrentSiteInformation)
   const credentials = useSelector(selectCredentials)
-  const apiKey = getApiKey(window.location.hash)
 
   const commits = useSelector(selectCommits)
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
-  console.log('selectCommits--->', commits)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -376,29 +371,24 @@ const VersionControlComponent = ({ t }) => {
                         </>
                       }
                     >
-                      {commits.map(
-                        (commit, index) => (
-                          console.log('commit--->', commit),
-                          (
-                            <TableRow key={index}>
-                              <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
-                              <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
-                              <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
-                              <TableCell className={classes.restoreButton}>
-                                <Button
-                                  design="Default"
-                                  id={`commitRevertButton-${index}`}
-                                  data-cy="revertCommitButton"
-                                  // className={classes.singlePrettifyRestoreButton}
-                                  onClick={() => onCommitRevertClick(commit.sha)}
-                                >
-                                  {t('VERSION_CONTROL.RESTORE')}
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        ),
-                      )}
+                      {commits.map((commit, index) => (
+                        <TableRow key={index}>
+                          <TableCell className={classes.dateCollumnStyle}>{new Date(commit.commit.committer.date).toLocaleString()}</TableCell>
+                          <TableCell className={classes.idCollumnStyle}>{commit.sha.substring(0, 7)}</TableCell>
+                          <TableCell className={classes.messageCollumnStyle}>{commit.commit.message}</TableCell>
+                          <TableCell className={classes.restoreButton}>
+                            <Button
+                              design="Default"
+                              id={`commitRevertButton-${index}`}
+                              data-cy="revertCommitButton"
+                              // className={classes.singlePrettifyRestoreButton}
+                              onClick={() => onCommitRevertClick(commit.sha)}
+                            >
+                              {t('VERSION_CONTROL.RESTORE')}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                     </Table>
                   </div>
                 )}

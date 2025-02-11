@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 import { spacing } from '@ui5/webcomponents-react-base'
-import { sapUiLargeMarginTop, sapUiMediumMarginTop, sapUiSmallMarginTop } from '@ui5/webcomponents-react-base/dist/styling/spacing.js'
+import { sapUiSmallMarginTop } from '@ui5/webcomponents-react-base/dist/styling/spacing.js'
 
 const styles = {
   innerBarStyle: {
@@ -21,7 +21,6 @@ const styles = {
     height: '30px',
     backgroundColor: '#0070f3',
     color: '#fff',
-    minWidth: '-webkit-fit-content', // for Safari
     minWidth: 'fit-content', // Added min-width property
     '&:hover': {
       backgroundColor: '#005bb5',

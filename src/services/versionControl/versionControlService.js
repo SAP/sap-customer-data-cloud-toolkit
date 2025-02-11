@@ -28,29 +28,21 @@ class VersionControlService {
 
   handleGetServices = async (credentials, apiKey, dataCenter, commitMessage) => {
     try {
-      //replace this functions with the versionControl interface funtion
-      console.log('apiKey', apiKey)
-      console.log('this.defaultBranch', this.defaultBranch)
       await this.#versionControl.createBranch(apiKey)
-      const configs = await this.cdcService.fetchCDCConfigs() // Ensures configurations are fetched, even if not directly used.
+      const configs = await this.cdcService.fetchCDCConfigs()
       await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch)
-      return 'success'
+      return true
     } catch (error) {
       throw new Error(error)
     }
   }
 
-  handleCommitListRequestServices = async (versionControl, apiKey) => {
-    try {
-      const hasBranch = await this.#versionControl.listBranches(this.defaultBranch)
-      if (hasBranch) {
-        const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
-        return { commitList, totalCommits: commitList.length }
-      } else {
-        return { commitList: [], totalCommits: 0 }
-      }
-    } catch (error) {
-      console.error('Error fetching commits:', error)
+  handleCommitListRequestServices = async () => {
+    const hasBranch = await this.#versionControl.listBranches(this.defaultBranch)
+    if (hasBranch) {
+      const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
+      return { commitList, totalCommits: commitList.length }
+    } else {
       return { commitList: [], totalCommits: 0 }
     }
   }
@@ -58,13 +50,9 @@ class VersionControlService {
   handleCommitRevertServices = async (sha) => {
     try {
       const files = await this.#versionControl.getCommitFiles(sha)
-      console.log('files commits', files)
-
-      const commits = await this.cdcService.applyCommitConfig(files)
-      console.log('apply commits', commits)
-      return 'success'
+      await this.cdcService.applyCommitConfig(files)
+      return true
     } catch (error) {
-      console.error('Error reverting configurations:', error)
       throw new Error('Failed to revert configurations')
     }
   }
@@ -73,7 +61,6 @@ class VersionControlService {
     const configs = await this.cdcService.fetchCDCConfigs()
     const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs)
     const formattedFiles = validUpdates.length > 0 ? validUpdates.map((file) => file.path.replace('src/versionControl/', '').replace('.json', '')) : ['N/A']
-    console.log('formattedFiles', formattedFiles)
     return formattedFiles
   }
 }
