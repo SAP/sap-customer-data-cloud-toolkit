@@ -60,7 +60,13 @@ class VersionControlService {
   async prepareFilesForUpdate() {
     const configs = await this.cdcService.fetchCDCConfigs()
     const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs)
-    const formattedFiles = validUpdates.length > 0 ? validUpdates.map((file) => file.path.replace('src/versionControl/', '').replace('.json', '')) : ['N/A']
+    const formattedFiles =
+      validUpdates.length > 0
+        ? validUpdates.map((file) => {
+            const fileName = file.path.replace('src/versionControl/', '').replace('.json', '')
+            return fileName.charAt(0).toUpperCase() + fileName.slice(1)
+          })
+        : ['N/A']
     return formattedFiles
   }
 }

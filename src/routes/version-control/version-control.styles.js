@@ -94,8 +94,8 @@ const styles = {
   },
   restoreRowTitle: {
     marginRight: '3px',
-    textAlign: 'rigth !important',
   },
+
   restoreButton: {
     textAlign: 'right',
     paddingRight: '40px',
@@ -114,8 +114,9 @@ const styles = {
   pageTitleSpanStyle: {
     ...spacing.sapUiTinyMarginBegin,
   },
-  headerOuterDivStyle: {
+  headerOuterDivStyle3: {
     width: '100%',
+    height: '50px',
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',
@@ -137,14 +138,11 @@ const styles = {
     width: 'fit-content',
   },
   messageCollumnStyle: {
+    maxWidth: '300px',
+    whiteSpace: 'nowrap',
     width: 'fit-content',
-
-    display: 'block' /* or inline-block */,
     textOverflow: 'ellipsis',
-    wordWrap: 'break-word',
     overflow: 'hidden',
-    maxHeight: '3.6em',
-    lineHeight: '1.8em',
   },
   noCommitsBar: {
     justifyContent: 'center',
@@ -172,13 +170,16 @@ const styles = {
     display: 'inline-flex',
     ...spacing.sapUiSmallMarginBegin,
     ...spacing.sapUiMediumMarginBottom,
-    ...spacing.sapUiLargeMarginTop,
+    ...spacing.sapUiSmallMarginTop,
   },
-  tableTitle: {
-    ...spacing.sapUiMediumMarginTop,
+  cardTitle: {
+    ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiSmallMarginBegin,
     width: '-webkit-fill-available',
     ...spacing.sapUiSmallMarginBottom,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   flexButton: {
     textAlign: 'end',
@@ -186,6 +187,24 @@ const styles = {
   },
   versionListText: {
     fontWeight: 'bold !important',
+  },
+  commitMessagePopup: {
+    borderRadius: 'var(--_ui5-v1-24-4_popup_border_radius)',
+  },
+  headerInnerDivStyle: {
+    position: 'absolute',
+    top: '30%',
+  },
+  credentialsCard: {
+    marginBottom: '24px',
+  },
+  warningMessage: {
+    marginTop: '32px',
+    width: 'max-content',
+    color: 'var( --sapErrorColor)',
+  },
+  filesToUpdate: {
+    paddingBottom: '7px',
   },
 }
 
