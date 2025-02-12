@@ -12,15 +12,9 @@ export const createOptions = (type, items, formatName = true) => {
   }
 
   const optionsData = {
-    id: type,
-    name: type,
-    value: false,
-    formatName,
     branches: items.map((item) => ({
-      id: item.name,
       name: item.name,
       value: true,
-      formatName: false,
     })),
   }
 

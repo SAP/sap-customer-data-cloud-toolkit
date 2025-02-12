@@ -39,25 +39,19 @@ class Communication {
     return responses
   }
 
-  async setFromFiles(destinationSite, destinationSiteConfiguration, content, fileType) {
-    let responses = []
-    switch (fileType) {
-      case 'channel':
-        const channelsPayload = Communication.#splitChannels(content)
-        for (const channel of channelsPayload) {
-          responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
-        }
-        break
-      case 'topic':
-        for (const topic of content) {
-          responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration, topic))
-        }
-        break
-      default:
-        console.warn(`Unknown file type: ${content}`)
+  async setChannels(destinationSite, destinationSiteConfiguration, content, fileType) {
+    const responses = []
+    const channelsPayload = Communication.#splitChannels(content)
+    for (const channel of channelsPayload) {
+      responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
     }
+  }
+  async setTopics(destinationSite, destinationSiteConfiguration, content, fileType) {
+    const responses = []
 
-    return await Promise.all(responses)
+    for (const topic of content) {
+      responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration, topic))
+    }
   }
 
   #isChildSite(siteInfo, siteApiKey) {

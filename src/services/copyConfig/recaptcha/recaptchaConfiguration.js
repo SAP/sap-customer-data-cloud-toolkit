@@ -55,20 +55,15 @@ class RecaptchaConfiguration {
   }
 
   async setRecaptchaConfig(site, dataCenter, recaptchaConfig) {
-    try {
-      const response = await this.getRecaptcha().set(site, dataCenter, recaptchaConfig)
-      if (response.errorCode === 0) {
-        return response
-      } else {
-        throw new Error(`Error setting reCAPTCHA configuration: ${response.errorMessage}`)
-      }
-    } catch (error) {
-      console.error('Error in setRecaptchaConfig:', error.message || error)
-      throw error
+    const response = await this.getRecaptcha().set(site, dataCenter, recaptchaConfig)
+    if (response.errorCode === 0) {
+      return response
+    } else {
+      throw new Error(`Error setting reCAPTCHA configuration: ${response.errorMessage}`)
     }
   }
 
-  async setPolicies(targetSite, securityPolicies, registrationPolicies) {
+  async setPolicies(targetSite, targetDataCenter, securityPolicies, registrationPolicies) {
     try {
       const newSecurityConfig = {
         riskAssessmentWithReCaptchaV3: securityPolicies.riskAssessmentWithReCaptchaV3,
@@ -85,7 +80,7 @@ class RecaptchaConfiguration {
         },
       }
 
-      const response = await this.#policy.set(targetSite, newConfig, this.#dataCenter)
+      const response = await this.#policy.set(targetSite, newConfig, targetDataCenter)
       if (response.errorCode === 0) {
         return response
       } else {
@@ -112,33 +107,28 @@ class RecaptchaConfiguration {
   }
 
   async copy(targetSite, targetDataCenter) {
-    try {
-      const config = await this.get()
-      const dataCenter = targetDataCenter.dataCenter || targetDataCenter
+    const config = await this.get()
+    const dataCenter = targetDataCenter.dataCenter
 
-      if (config.recaptchaConfig) {
-        await this.setRecaptchaConfig(targetSite, dataCenter, config.recaptchaConfig)
-      } else {
-        throw new Error('Recaptcha config is invalid or undefined.')
-      }
-
-      if (config.securityPolicies && config.registrationPolicies) {
-        await this.setPolicies(targetSite, config.securityPolicies, config.registrationPolicies)
-      } else {
-        throw new Error('Policies are invalid or undefined.')
-      }
-
-      if (config.riskProvidersConfig) {
-        await this.setRiskProvidersConfig(targetSite, dataCenter, config.riskProvidersConfig)
-      } else {
-        console.warn('Risk Providers config is invalid or undefined, skipping.')
-      }
-
-      return config
-    } catch (error) {
-      console.error('Error during copyAllConfigs:', error.message || error)
-      throw error
+    if (config.recaptchaConfig) {
+      await this.setRecaptchaConfig(targetSite, dataCenter, config.recaptchaConfig)
+    } else {
+      throw new Error('Recaptcha config is invalid or undefined.')
     }
+
+    if (config.securityPolicies && config.registrationPolicies) {
+      await this.setPolicies(targetSite, dataCenter, config.securityPolicies, config.registrationPolicies)
+    } else {
+      throw new Error('Policies are invalid or undefined.')
+    }
+
+    if (config.riskProvidersConfig) {
+      await this.setRiskProvidersConfig(targetSite, dataCenter, config.riskProvidersConfig)
+    } else {
+      throw new Error('Risk Providers config is invalid or undefined, skipping.')
+    }
+
+    return config
   }
   async setFromFiles(apiKey, dataCenter, config) {
     try {

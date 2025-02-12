@@ -34,6 +34,7 @@ class Dataflow {
     const res = await client.post(url, this.#setDataflowParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
     })
+    console.log('res dataflow', res)
     return res.data
   }
 
@@ -190,10 +191,10 @@ class Dataflow {
     for (const resp of dataflows) {
       if (response.length === 0) {
         response.push(resp)
-      } else if (resp.result) {
         if (!response[0].result) {
           response[0].result = []
         }
+      } else if (resp.result) {
         response[0].result.push(...resp.result)
         response[0].resultCount += resp.resultCount
         response[0].totalCount += resp.totalCount

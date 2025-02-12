@@ -45,7 +45,7 @@ class CdcService {
     this.recaptcha = new RecaptchaConfiguration(this.credentials, apiKey, dataCenter)
   }
 
-  getCdcData = () => {
+  #getCdcData = () => {
     const responses = [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
@@ -68,7 +68,7 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const cdcDataArray = await this.getCdcData()
+    const cdcDataArray = await this.#getCdcData()
     if (!Array.isArray(cdcDataArray)) {
       throw new Error('getCdcData must return an array')
     }
@@ -151,10 +151,10 @@ class CdcService {
         case 'channel':
         case 'topic':
           if (filteredResponse.Channels) {
-            await this.communication.setFromFiles(this.apiKey, this.siteInfo, filteredResponse.Channels, 'channel')
+            await this.communication.setChannels(this.apiKey, this.siteInfo, filteredResponse.Channels, 'channel')
           }
           if (filteredResponse.results) {
-            await this.communication.setFromFiles(this.apiKey, this.siteInfo, filteredResponse.results, 'topic')
+            await this.communication.setTopics(this.apiKey, this.siteInfo, filteredResponse.results, 'topic')
           }
           break
         case 'dataflow':
@@ -173,8 +173,7 @@ class CdcService {
           break
         case 'consent':
           if (filteredResponse.preferences) {
-            options = createOptions('consents', filteredResponse.preferences)
-            await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse, options)
+            await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse)
             break
           }
           break

@@ -12,20 +12,11 @@ class VersionControlManager {
   getCommitFiles(sha) {
     throw new Error('Method not implemented.')
   }
-
-  listBranches(branchName) {
+  listBranches(defaultBranch) {
     throw new Error('Method not implemented.')
   }
 
   createBranch(apiKey) {
-    throw new Error('Method not implemented.')
-  }
-
-  updateFilesInSingleCommit(commitMessage, files) {
-    throw new Error('Method not implemented.')
-  }
-
-  updateGitFileContent(filePath, cdcFileContent) {
     throw new Error('Method not implemented.')
   }
 

@@ -5,15 +5,6 @@ import { removeIgnoredFields } from '../dataSanitization'
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
 
-  async validateCredentials() {
-    try {
-      await this.versionControl.rest.repos.listForAuthenticatedUser()
-      return true
-    } catch (error) {
-      return false
-    }
-  }
-
   async createBranch(apiKey) {
     if (!apiKey) {
       throw new Error('API key is missing')
@@ -23,7 +14,18 @@ class GitHub extends VersionControlManager {
       this.#getBranchAndCreateRef(apiKey)
     }
   }
+  async listBranches(branchName) {
+    const credentialsValid = await this.#validateCredentials()
+    if (!credentialsValid) {
+      return false
+    }
+    const { data: branches } = await this.versionControl.rest.repos.listBranches({
+      owner: this.owner,
+      repo: this.repo,
+    })
 
+    return branches ? branches.some((branch) => branch.name === branchName) : false
+  }
   async getCommitFiles(sha) {
     const { data: commitData } = await this.versionControl.rest.repos.getCommit({
       owner: this.owner,
@@ -48,21 +50,61 @@ class GitHub extends VersionControlManager {
     )
   }
 
-  async listBranches(branchName) {
-    const credentialsValid = await this.validateCredentials()
-    if (!credentialsValid) {
-      console.log('error')
-      return false
-    }
-    const { data: branches } = await this.versionControl.rest.repos.listBranches({
-      owner: this.owner,
-      repo: this.repo,
-    })
+  async getCommits(apiKey) {
+    let allCommits = []
+    let page = 1
+    const per_page = 100 // Maximum allowed per page
 
-    return branches ? branches.some((branch) => branch.name === branchName) : false
+    while (true) {
+      try {
+        const response = await this.versionControl.rest.repos.listCommits({
+          owner: this.owner,
+          repo: this.repo,
+          sha: apiKey,
+          per_page,
+          page,
+        })
+
+        allCommits = allCommits.concat(response.data)
+
+        if (response.data.length < per_page) {
+          break // No more pages to fetch
+        }
+
+        page += 1
+      } catch (error) {
+        console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
+        throw error
+      }
+    }
+
+    return { data: allCommits }
   }
 
-  async updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
+  async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
+    const validUpdates = await this.fetchAndPrepareFiles(configs)
+    if (validUpdates.length > 0) {
+      await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
+    }
+  }
+
+  async fetchAndPrepareFiles(configs) {
+    const files = Object.keys(configs).map((key) => ({
+      path: `src/versionControl/${key}.json`,
+      content: JSON.stringify(configs[key], null, 2),
+    }))
+
+    const fileUpdates = await Promise.all(
+      files.map(async (file) => {
+        const result = await this.#updateGitFileContent(file.path, file.content)
+        return result
+      }),
+    )
+
+    return fileUpdates.filter((update) => update !== null)
+  }
+
+  async #updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
     const { data: refData } = await this.versionControl.rest.git.getRef({
       owner: this.owner,
       repo: this.repo,
@@ -109,59 +151,6 @@ class GitHub extends VersionControlManager {
       sha: newCommit.sha,
       force: true, // Force update to handle non-fast-forward updates
     })
-  }
-  async getCommits(apiKey) {
-    let allCommits = []
-    let page = 1
-    const per_page = 100 // Maximum allowed per page
-
-    while (true) {
-      try {
-        const response = await this.versionControl.rest.repos.listCommits({
-          owner: this.owner,
-          repo: this.repo,
-          sha: apiKey,
-          per_page,
-          page,
-        })
-
-        allCommits = allCommits.concat(response.data)
-
-        if (response.data.length < per_page) {
-          break // No more pages to fetch
-        }
-
-        page += 1
-      } catch (error) {
-        console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
-        throw error
-      }
-    }
-
-    return { data: allCommits }
-  }
-
-  async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
-    const validUpdates = await this.fetchAndPrepareFiles(configs)
-    if (validUpdates.length > 0) {
-      await this.updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
-    }
-  }
-
-  async fetchAndPrepareFiles(configs) {
-    const files = Object.keys(configs).map((key) => ({
-      path: `src/versionControl/${key}.json`,
-      content: JSON.stringify(configs[key], null, 2),
-    }))
-
-    const fileUpdates = await Promise.all(
-      files.map(async (file) => {
-        const result = await this.#updateGitFileContent(file.path, file.content)
-        return result
-      }),
-    )
-
-    return fileUpdates.filter((update) => update !== null)
   }
 
   async #updateGitFileContent(filePath, cdcFileContent) {
@@ -247,6 +236,15 @@ class GitHub extends VersionControlManager {
       file.content = blobData ? blobData.content : null
     }
     return file
+  }
+
+  async #validateCredentials() {
+    try {
+      await this.versionControl.rest.repos.listForAuthenticatedUser()
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   async #fetchFileContent(contents_url) {
