@@ -100,6 +100,9 @@ class CdcService {
           break
         case 'extension':
           if (filteredResponse.result.length > 0) {
+            console.log('Extension response:', filteredResponse.result[0])
+            console.log('this.dataCenter', this.dataCenter)
+            console.log('this.apiKey', this.apiKey)
             await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
           }
           break
@@ -166,6 +169,7 @@ class CdcService {
           break
         case 'webhook':
           if (filteredResponse.webhooks) {
+            console.log('filteredResponse.webhooks', filteredResponse.webhooks)
             options = createOptions('webhooks', filteredResponse.webhooks)
             await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
             break

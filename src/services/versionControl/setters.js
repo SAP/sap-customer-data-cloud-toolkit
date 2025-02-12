@@ -28,7 +28,7 @@
 //     }
 //     const consentsPayload = ConsentConfiguration.#splitConsents(content.preferences)
 //     responses.push(...(await this.copyConsentStatements(destinationSite, dataCenter, consentsPayload)))
-//     // responses = responses.flat()
+//     responses = responses.flat()
 //     stringToJson(responses, 'context')
 //     responses = ConsentConfiguration.#addSeverityToResponses(responses)
 //     return responses

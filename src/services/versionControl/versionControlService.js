@@ -26,9 +26,8 @@ class VersionControlService {
     this.#versionControl = versionControl
   }
 
-  handleGetServices = async (credentials, apiKey, dataCenter, commitMessage) => {
+  handleGetServices = async (commitMessage) => {
     try {
-      await this.#versionControl.createBranch(apiKey)
       const configs = await this.cdcService.fetchCDCConfigs()
       await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch)
       return true
@@ -59,7 +58,7 @@ class VersionControlService {
 
   async prepareFilesForUpdate() {
     const configs = await this.cdcService.fetchCDCConfigs()
-    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs)
+    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey)
     const formattedFiles =
       validUpdates.length > 0
         ? validUpdates.map((file) => {

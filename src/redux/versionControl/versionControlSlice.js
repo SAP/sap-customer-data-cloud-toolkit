@@ -89,9 +89,6 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, currentGitToken, currentOwner, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(
-      credentials,
-      currentSiteApiKey,
-      currentDataCenter,
       commitMessage,
     )
   } catch (error) {

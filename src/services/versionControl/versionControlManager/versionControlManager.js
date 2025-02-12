@@ -12,6 +12,7 @@ class VersionControlManager {
   getCommitFiles(sha) {
     throw new Error('Method not implemented.')
   }
+
   listBranches(defaultBranch) {
     throw new Error('Method not implemented.')
   }
@@ -21,10 +22,6 @@ class VersionControlManager {
   }
 
   getCommits(apiKey) {
-    throw new Error('Method not implemented.')
-  }
-
-  prepareFilesForUpdate() {
     throw new Error('Method not implemented.')
   }
 

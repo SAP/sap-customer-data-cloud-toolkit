@@ -14,8 +14,10 @@ class GitHub extends VersionControlManager {
       this.#getBranchAndCreateRef(apiKey)
     }
   }
+
   async listBranches(branchName) {
     const credentialsValid = await this.#validateCredentials()
+    console.log('credentials', credentialsValid)
     if (!credentialsValid) {
       return false
     }
@@ -26,6 +28,7 @@ class GitHub extends VersionControlManager {
 
     return branches ? branches.some((branch) => branch.name === branchName) : false
   }
+
   async getCommitFiles(sha) {
     const { data: commitData } = await this.versionControl.rest.repos.getCommit({
       owner: this.owner,
@@ -82,13 +85,15 @@ class GitHub extends VersionControlManager {
   }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
-    const validUpdates = await this.fetchAndPrepareFiles(configs)
+    await this.createBranch(apiKey)
+    console.log('configs---->', configs)
+    const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
     }
   }
 
-  async fetchAndPrepareFiles(configs) {
+  async fetchAndPrepareFiles(configs, apiKey) {
     const files = Object.keys(configs).map((key) => ({
       path: `src/versionControl/${key}.json`,
       content: JSON.stringify(configs[key], null, 2),
@@ -96,7 +101,7 @@ class GitHub extends VersionControlManager {
 
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
-        const result = await this.#updateGitFileContent(file.path, file.content)
+        const result = await this.#updateGitFileContent(file.path, file.content, apiKey)
         return result
       }),
     )
@@ -153,16 +158,16 @@ class GitHub extends VersionControlManager {
     })
   }
 
-  async #updateGitFileContent(filePath, cdcFileContent) {
+  async #updateGitFileContent(filePath, cdcFileContent, defaultBranch) {
     let getGitFileInfo
 
     try {
-      const branchExistsResult = await this.listBranches(this.defaultBranch)
+      const branchExistsResult = await this.listBranches(defaultBranch)
       if (!branchExistsResult) {
         throw new Error('Branch does not exist')
       }
 
-      getGitFileInfo = await this.#getFile(filePath)
+      getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     } catch (error) {
       if (error.status === 404 || error.message === 'Branch does not exist') {
         return {
@@ -180,6 +185,7 @@ class GitHub extends VersionControlManager {
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
+        console.log('currentGitContent---->', currentGitContent)
         currentGitContent = removeIgnoredFields(currentGitContent)
       } catch (error) {
         currentGitContent = {}
@@ -218,12 +224,12 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getFile(path) {
+  async #getFile(path, defaultBranch) {
     const { data: file } = await this.versionControl.rest.repos.getContent({
       owner: this.owner,
       repo: this.repo,
       path,
-      ref: this.defaultBranch,
+      ref: defaultBranch,
     })
 
     if (!file || !file.content || file.size > 100 * 1024) {
@@ -240,7 +246,10 @@ class GitHub extends VersionControlManager {
 
   async #validateCredentials() {
     try {
-      await this.versionControl.rest.repos.listForAuthenticatedUser()
+      const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
+      if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
+        return false
+      }
       return true
     } catch (error) {
       return false
