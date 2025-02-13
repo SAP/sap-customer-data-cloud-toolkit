@@ -130,6 +130,7 @@ class RecaptchaConfiguration {
 
     return config
   }
+
   async setFromFiles(apiKey, dataCenter, config) {
     try {
       if (config.recaptchaConfig) {
@@ -157,6 +158,7 @@ class RecaptchaConfiguration {
       throw error
     }
   }
+
   getRecaptcha() {
     return this.#recaptcha
   }

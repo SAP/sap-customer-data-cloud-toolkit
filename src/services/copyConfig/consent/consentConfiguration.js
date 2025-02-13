@@ -104,6 +104,16 @@ class ConsentConfiguration {
     return responses
   }
 
+  async setFromFiles(destinationSite, dataCenter, content) {
+    let responses = []
+
+    const consentsPayload = ConsentConfiguration.#splitConsents(content.preferences)
+    responses.push(...(await this.copyConsentStatements(destinationSite, dataCenter, consentsPayload)))
+    responses = responses.flat()
+    stringToJson(responses, 'context')
+    responses = ConsentConfiguration.#addSeverityToResponses(responses)
+    return responses
+  }
   static #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }

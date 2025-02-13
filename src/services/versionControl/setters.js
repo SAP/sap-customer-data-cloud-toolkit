@@ -34,30 +34,30 @@
 //     return responses
 //   }
 
-//   async setFromFiles(apiKey, dataCenter, config) {
-//     try {
-//       if (config.recaptchaConfig) {
-//         await this.setRecaptchaConfig(apiKey, dataCenter, config.recaptchaConfig)
-//       } else {
-//         throw new Error('Recaptcha config is invalid or undefined.')
-//       }
-
-//       if (config.securityPolicies && config.registrationPolicies) {
-//         await this.setPolicies(apiKey, dataCenter, config.securityPolicies, config.registrationPolicies)
-//       } else {
-//         throw new Error('Policies are invalid or undefined.')
-//       }
-
-//       if (config.riskProvidersConfig) {
-//         await this.setRiskProvidersConfig(apiKey, dataCenter, config.riskProvidersConfig)
-//       } else {
-//         console.warn('Risk Providers config is invalid or undefined, skipping.')
-//       }
-
-//       console.log('Recaptcha config set from Git:', config)
-//       return config
-//     } catch (error) {
-//       console.error('Error setting recaptcha config from Git:', error)
-//       throw error
+// async function setRecaptchaFromFiles(apiKey, dataCenter, config) {
+//   try {
+//     if (config.recaptchaConfig) {
+//       await this.setRecaptchaConfig(apiKey, dataCenter, config.recaptchaConfig)
+//     } else {
+//       throw new Error('Recaptcha config is invalid or undefined.')
 //     }
+
+//     if (config.securityPolicies && config.registrationPolicies) {
+//       await this.setPolicies(apiKey, dataCenter, config.securityPolicies, config.registrationPolicies)
+//     } else {
+//       throw new Error('Policies are invalid or undefined.')
+//     }
+
+//     if (config.riskProvidersConfig) {
+//       await this.setRiskProvidersConfig(apiKey, dataCenter, config.riskProvidersConfig)
+//     } else {
+//       console.warn('Risk Providers config is invalid or undefined, skipping.')
+//     }
+
+//     console.log('Recaptcha config set from Git:', config)
+//     return config
+//   } catch (error) {
+//     console.error('Error setting recaptcha config from Git:', error)
+//     throw error
 //   }
+// }
