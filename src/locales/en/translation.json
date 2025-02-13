@@ -146,6 +146,8 @@
   "VERSION_CONTROL.NO_COMMITS": "There are no commits for this Apikey",
   "VERSION_CONTROL.OWNER": "Username",
   "VERSION_CONTROL.OWNER_MESSAGE": "Please insert the Username.",
+  "VERSION_CONTROL.REPOSITORY": "Repository",
+  "VERSION_CONTROL.REPOSITORY_MESSAGE": "Please insert the Repository.",
   "VERSION_CONTROL.RESTORE": "Revert",
   "VERSION_CONTROL.REVERT.SUCCESS.MESSAGE": "Restore completed successfully!",
   "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",

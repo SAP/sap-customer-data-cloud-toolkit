@@ -24,21 +24,25 @@ import {
   Card,
   Grid,
   Label,
+  CardHeader,
 } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   setGitToken,
   setOwner,
+  setRepo,
   setCredentials,
   selectCommits,
   selectIsFetching,
   selectGitToken,
   selectOwner,
+  selectRepo,
   getServices,
   fetchCommits,
   prepareFilesForUpdate,
   getRevertChanges,
+  clearCommits,
   selectError,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -60,6 +64,7 @@ const VersionControlComponent = ({ t }) => {
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
   const errors = useSelector(selectError)
+  const repo = useSelector(selectRepo)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -74,17 +79,18 @@ const VersionControlComponent = ({ t }) => {
   }, [dispatch, credentials])
 
   useEffect(() => {
-    if (gitToken && owner) {
+    if (gitToken && owner && repo) {
       dispatch(fetchCommits())
     }
-  }, [dispatch, gitToken, owner])
+  }, [dispatch, gitToken, owner, repo])
 
   useEffect(() => {
     const secretKey = credentials?.secretKey
     if (secretKey) {
-      console.log('entered')
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
+      const repo = Cookies.get('repo')
+
       if (encryptedGitToken) {
         const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
         dispatch(setGitToken(decryptedGitToken))
@@ -93,6 +99,9 @@ const VersionControlComponent = ({ t }) => {
         const decryptedOwner = decryptData(encryptedOwner, secretKey)
         dispatch(setOwner(decryptedOwner))
       }
+      if (repo) {
+        dispatch(setRepo(repo))
+      }
     }
   }, [credentials, dispatch])
 
@@ -100,7 +109,6 @@ const VersionControlComponent = ({ t }) => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       const formattedFiles = unwrapResult(resultAction)
-      console.log('formattedFiles--->', formattedFiles)
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
@@ -124,7 +132,6 @@ const VersionControlComponent = ({ t }) => {
   const onCancelBackupClick = () => {
     setIsDialogOpen(false)
   }
-  console.log('commits--_>', commits)
 
   const onCommitRevertClick = async (sha) => {
     // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
@@ -140,10 +147,17 @@ const VersionControlComponent = ({ t }) => {
 
   const handleGitTokenChange = (e) => {
     dispatch(setGitToken(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
   }
 
   const handleOwnerChange = (e) => {
     dispatch(setOwner(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
+  }
+
+  const handleRepoChange = (e) => {
+    dispatch(setRepo(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
   }
 
   const handleCommitMessageChange = (e) => {
@@ -161,7 +175,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const renderStatusMessage = () => {
-    if (!gitToken || !owner) {
+    if (!gitToken || !owner || !repo || errors) {
       return <div></div>
     } else if (commits.length === 0) {
       return <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
@@ -204,6 +218,11 @@ const VersionControlComponent = ({ t }) => {
               </Text>
             </FlexBox>
 
+            {/* <Card
+              header={
+                <CardHeader className={classes.cardTitle} level="H4" titleText={t('VERSION_CONTROL.CREDENTIALS')} subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}></CardHeader>
+              }
+            > */}
             <Card className={classes.credentialsCard}>
               <Title className={classes.cardTitle} level="H4">
                 {t('VERSION_CONTROL.CREDENTIALS')}
@@ -226,7 +245,6 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-
                     <div className={classes.inputField}>
                       <Title level="H5" className={classes.currentInfoContainerTitle}>
                         {t('VERSION_CONTROL.GIT_TOKEN')}*
@@ -240,6 +258,21 @@ const VersionControlComponent = ({ t }) => {
                         type="Password"
                         valueState="Information"
                         valueStateMessage={<div>{t('VERSION_CONTROL.GIT_TOKEN_MESSAGE')}</div>}
+                        required
+                      />
+                    </div>
+                    <div className={classes.inputField}>
+                      <Title level="H5" className={classes.currentInfoContainerTitle}>
+                        {t('VERSION_CONTROL.REPOSITORY')}*
+                      </Title>
+                      <Input
+                        id="repoInput"
+                        data-cy="repoInput"
+                        value={repo}
+                        onChange={handleRepoChange}
+                        placeholder="Repository"
+                        valueState="Information"
+                        valueStateMessage={<div>{t('VERSION_CONTROL.REPOSITORY_MESSAGE')}</div>}
                         required
                       />
                     </div>
@@ -262,7 +295,7 @@ const VersionControlComponent = ({ t }) => {
                     design="Emphasized"
                     className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                     onClick={onCreateBackupClick}
-                    disabled={!gitToken || !owner}
+                    disabled={!gitToken || !owner || !repo}
                   >
                     {t('VERSION_CONTROL.BACKUP')}
                   </Button>

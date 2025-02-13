@@ -22,6 +22,7 @@ const versionControlSlice = createSlice({
     commits: [],
     gitToken: '',
     owner: '',
+    repo: '',
     isFetching: false,
     error: null,
   },
@@ -34,8 +35,15 @@ const versionControlSlice = createSlice({
       state.owner = action.payload
       setCookies(state)
     },
+    setRepo(state, action) {
+      state.repo = action.payload
+      setCookies(state)
+    },
     setCredentials(state, action) {
       state.credentials = action.payload
+    },
+    clearCommits(state) {
+      state.commits = []
     },
   },
   extraReducers: (builder) => {
@@ -62,7 +70,8 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const currentDataCenter = currentSiteInfo.dataCenter
   const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
   const currentOwner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+  const repo = Cookies.get('repo')
+  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, repo)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
@@ -77,7 +86,8 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const currentDataCenter = currentSiteInfo.dataCenter
   const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
   const currentOwner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+  const repo = Cookies.get('repo')
+  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, repo)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
@@ -101,11 +111,14 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const apiKey = getApiKey(window.location.hash)
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
-  const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
+  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
+  const owner = getEncryptedCookie('owner', credentials.secret)
+  const repo = Cookies.get('repo')
+  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, repo)
+
   console.log('gitToken', gitToken)
   console.log('owner', owner)
+
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
@@ -125,7 +138,8 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
+  const repo = Cookies.get('repo')
+  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, repo)
   console.log('currentDataCenter', currentDataCenter)
 
   if (!gitToken || !owner) {
@@ -140,7 +154,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
 })
 const setCookies = (state) => {
   const credentials = state.credentials
-  if (state.gitToken && state.owner && credentials?.secretKey) {
+  if (state.gitToken && state.owner && state.repo && credentials?.secretKey) {
     const encryptedToken = encryptData(state.gitToken, credentials.secretKey)
     const encryptedOwner = encryptData(state.owner, credentials.secretKey)
     if (encryptedToken && encryptedOwner) {
@@ -148,14 +162,16 @@ const setCookies = (state) => {
       Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
     }
   }
+  Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' }) // Set repo cookie without encryption
 }
 
-export const { setGitToken, setOwner, setCredentials } = versionControlSlice.actions
+export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits } = versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
 export const selectIsFetching = (state) => state.versionControl.isFetching
 export const selectGitToken = (state) => state.versionControl.gitToken
 export const selectOwner = (state) => state.versionControl.owner
+export const selectRepo = (state) => state.versionControl.repo
 export const selectError = (state) => state.versionControl.error
 
 export default versionControlSlice.reducer

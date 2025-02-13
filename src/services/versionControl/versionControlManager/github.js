@@ -257,7 +257,7 @@ class GitHub extends VersionControlManager {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
-        return false
+        throw new Error('Invalid owner')
       }
       return true
     } catch (error) {
