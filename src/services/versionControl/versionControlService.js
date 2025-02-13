@@ -13,11 +13,9 @@ class VersionControlService {
   #owner
   #repo
   #versionControl
-  constructor(credentials, apiKey, gitToken, owner, versionControl, dataCenter, siteInfo) {
+  constructor(credentials, apiKey, versionControl, dataCenter, siteInfo) {
     this.credentials = credentials
     this.apiKey = apiKey
-    this.gitToken = gitToken
-    this.owner = owner || 'defaultOwner'
     this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
     this.dataCenter = dataCenter
@@ -37,13 +35,8 @@ class VersionControlService {
   }
 
   handleCommitListRequestServices = async () => {
-    const hasBranch = await this.#versionControl.listBranches(this.defaultBranch)
-    if (hasBranch) {
-      const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
-      return { commitList, totalCommits: commitList.length }
-    } else {
-      return { commitList: [], totalCommits: 0 }
-    }
+    const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
+    return { commitList, totalCommits: commitList.length }
   }
 
   handleCommitRevertServices = async (sha) => {
@@ -56,7 +49,7 @@ class VersionControlService {
     }
   }
 
-  async prepareFilesForUpdate() {
+  prepareFilesForUpdate = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
     const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey)
     const formattedFiles =

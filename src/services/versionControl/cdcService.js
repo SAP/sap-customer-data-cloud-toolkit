@@ -100,9 +100,6 @@ class CdcService {
           break
         case 'extension':
           if (filteredResponse.result.length > 0) {
-            console.log('Extension response:', filteredResponse.result[0])
-            console.log('this.dataCenter', this.dataCenter)
-            console.log('this.apiKey', this.apiKey)
             await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
           }
           break

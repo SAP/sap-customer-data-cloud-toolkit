@@ -16,17 +16,20 @@ class GitHub extends VersionControlManager {
   }
 
   async listBranches(branchName) {
-    const credentialsValid = await this.#validateCredentials()
-    console.log('credentials', credentialsValid)
-    if (!credentialsValid) {
-      return false
-    }
-    const { data: branches } = await this.versionControl.rest.repos.listBranches({
-      owner: this.owner,
-      repo: this.repo,
-    })
+    try {
+      const credentialsValid = await this.#validateCredentials()
+      if (!credentialsValid) {
+        return false
+      }
+      const { data: branches } = await this.versionControl.rest.repos.listBranches({
+        owner: this.owner,
+        repo: this.repo,
+      })
 
-    return branches ? branches.some((branch) => branch.name === branchName) : false
+      return branches ? branches.some((branch) => branch.name === branchName) : false
+    } catch (error) {
+      throw new Error(error)
+    }
   }
 
   async getCommitFiles(sha) {
@@ -54,34 +57,40 @@ class GitHub extends VersionControlManager {
   }
 
   async getCommits(apiKey) {
-    let allCommits = []
-    let page = 1
-    const per_page = 100 // Maximum allowed per page
+    try {
+      let allCommits = []
+      let page = 1
+      const per_page = 100 // Maximum allowed per page
+      const hasBranch = await this.listBranches(apiKey)
+      if (hasBranch) {
+        while (true) {
+          try {
+            const response = await this.versionControl.rest.repos.listCommits({
+              owner: this.owner,
+              repo: this.repo,
+              sha: apiKey,
+              per_page,
+              page,
+            })
 
-    while (true) {
-      try {
-        const response = await this.versionControl.rest.repos.listCommits({
-          owner: this.owner,
-          repo: this.repo,
-          sha: apiKey,
-          per_page,
-          page,
-        })
+            allCommits = allCommits.concat(response.data)
 
-        allCommits = allCommits.concat(response.data)
+            if (response.data.length < per_page) {
+              break // No more pages to fetch
+            }
 
-        if (response.data.length < per_page) {
-          break // No more pages to fetch
+            page += 1
+          } catch (error) {
+            console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
+            throw error
+          }
         }
-
-        page += 1
-      } catch (error) {
-        console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
-        throw error
+        return { data: allCommits }
       }
+      return { data: [] }
+    } catch (error) {
+      throw new Error(error)
     }
-
-    return { data: allCommits }
   }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
@@ -252,7 +261,7 @@ class GitHub extends VersionControlManager {
       }
       return true
     } catch (error) {
-      return false
+      throw new Error(error)
     }
   }
 

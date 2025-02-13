@@ -33,11 +33,9 @@ class Extension {
 
   async set(site, dataCenter, body) {
     const url = UrlBuilder.buildUrl(Extension.#NAMESPACE, dataCenter, Extension.#getSetExtensionEndpoint(), this.#credentials.gigyaConsole)
-    console.log('url', url)
     const res = await client.post(url, this.#setExtensionParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Extension.#ERROR_MSG_SET_CONFIG)
     })
-    console.log('res', res.data)
     return res.data
   }
 

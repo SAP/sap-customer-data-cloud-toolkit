@@ -13,19 +13,15 @@ class VersionControlManager {
     throw new Error('Method not implemented.')
   }
 
-  listBranches(defaultBranch) {
-    throw new Error('Method not implemented.')
-  }
-
-  createBranch(apiKey) {
-    throw new Error('Method not implemented.')
-  }
-
   getCommits(apiKey) {
     throw new Error('Method not implemented.')
   }
 
   storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
+    throw new Error('Method not implemented.')
+  }
+
+  fetchAndPrepareFiles(configs, apiKey) {
     throw new Error('Method not implemented.')
   }
 }

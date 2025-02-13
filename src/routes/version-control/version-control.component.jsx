@@ -22,7 +22,6 @@ import {
   Text,
   ValueState,
   Card,
-
   Grid,
   Label,
 } from '@ui5/webcomponents-react'
@@ -40,6 +39,7 @@ import {
   fetchCommits,
   prepareFilesForUpdate,
   getRevertChanges,
+  selectError,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import Cookies from 'js-cookie'
@@ -59,6 +59,7 @@ const VersionControlComponent = ({ t }) => {
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
+  const errors = useSelector(selectError)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -96,7 +97,6 @@ const VersionControlComponent = ({ t }) => {
   }, [credentials, dispatch])
 
   const onCreateBackupClick = async () => {
-    // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       const formattedFiles = unwrapResult(resultAction)
@@ -243,7 +243,7 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-                    {(!gitToken || !owner) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CREDENTIALS')}</div>}
+                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CREDENTIALS')}</div>}
                   </div>
                 </>
               </Grid>

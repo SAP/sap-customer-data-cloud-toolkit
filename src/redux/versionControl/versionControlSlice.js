@@ -45,7 +45,6 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(fetchCommits.fulfilled, (state, action) => {
       state.isFetching = false
-      console.log('action.payloadfetchCommits', action.payload)
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
@@ -65,15 +64,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const currentOwner = getEncryptedCookie('owner', credentials.secret)
   const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
   try {
-    return await new VersionControlService(
-      credentials,
-      currentSiteApiKey,
-      currentGitToken,
-      currentOwner,
-      versionControl,
-      currentDataCenter,
-      currentSiteInfo,
-    ).handleCommitRevertServices(sha)
+    return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -88,9 +79,7 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const currentOwner = getEncryptedCookie('owner', credentials.secret)
   const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
   try {
-    return await new VersionControlService(credentials, currentSiteApiKey, currentGitToken, currentOwner, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(
-      commitMessage,
-    )
+    return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -121,15 +110,7 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
     return rejectWithValue('Git token or owner is missing')
   }
   try {
-    const { commitList } = await new VersionControlService(
-      credentials,
-      apiKey,
-      gitToken,
-      owner,
-      versionControl,
-      currentDataCenter,
-      currentSiteInfo,
-    ).handleCommitListRequestServices(versionControl, apiKey)
+    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
     return commitList
   } catch (error) {
     return rejectWithValue(error.message)
@@ -152,7 +133,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   }
 
   try {
-    return await new VersionControlService(credentials, apiKey, gitToken, owner, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
   } catch (error) {
     return rejectWithValue(error.message)
   }
