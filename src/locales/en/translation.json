@@ -100,7 +100,7 @@
   "MANUAL_REMOVAL_POPUP.CHECKBOX_TEXT": "I understand that manual action is required to avoid data duplication.",
   "MANUAL_REMOVAL_POPUP.TOAST_TEXT": "Site list was copied to the clipboard",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_CANCEL_BUTTON": "Cancel",
-  "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Fill the information below to import a full or lite account from a storage server",
+  "SERVER_IMPORT_COMPONENT.TEMPLATES_FEATURE_DESCRIPTION": "Please fill in the information below to import a full or lite account from a storage server",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORT_BUTTON": "Import",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_DATAFLOW_LINK": "Dataflow",
   "SERVER_IMPORT_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "The dataflow was deployed successfully (ID: {{dataflowId}}).",
