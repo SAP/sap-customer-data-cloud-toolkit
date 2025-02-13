@@ -8,8 +8,7 @@ import VersionControlService from '../../services/versionControl/versionControlS
 import { getApiKey, getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
-import GitHub from '../../services/versionControl/versionControlManager/github'
-import { Octokit } from '@octokit/rest'
+import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
 
 const VERSION_CONTROL_STATE_NAME = 'versionControl'
 const FETCH_COMMITS_ACTION = `${VERSION_CONTROL_STATE_NAME}/fetchCommits`
@@ -60,9 +59,9 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
-  const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const currentOwner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
+  const owner = getEncryptedCookie('owner', credentials.secret)
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
@@ -75,9 +74,9 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
-  const currentGitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const currentOwner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
+  const owner = getEncryptedCookie('owner', credentials.secret)
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
@@ -103,9 +102,7 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const currentDataCenter = currentSiteInfo.dataCenter
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
-  console.log('gitToken', gitToken)
-  console.log('owner', owner)
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
@@ -125,9 +122,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = new GitHub(new Octokit({ auth: gitToken }), owner, 'CDCVersionControl')
-  console.log('currentDataCenter', currentDataCenter)
-
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }

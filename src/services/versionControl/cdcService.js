@@ -159,14 +159,14 @@ class CdcService {
           break
         case 'dataflow':
           if (filteredResponse.result) {
-            options = createOptions('dataflows', filteredResponse.result)
+            options = createOptions(filteredResponse.result)
             await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
             break
           }
           break
         case 'webhook':
           if (filteredResponse.webhooks) {
-            options = createOptions('webhooks', filteredResponse.webhooks)
+            options = createOptions(filteredResponse.webhooks)
             await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
             break
           }
