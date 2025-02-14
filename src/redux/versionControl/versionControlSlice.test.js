@@ -22,7 +22,6 @@ const mockStore = configureMockStore(middlewares)
 describe('versionControlSlice', () => {
   const originalWindow = { ...global.window }
   const credentials = { secretKey: 'testSecretKey' }
-  const encryptionKey = credentials.secretKey
   const initialState = {
     credentials: { credentials },
     copyConfigurationExtended: { currentSiteInformation: { dataCenter: 'testDataCenter' } },
@@ -32,6 +31,7 @@ describe('versionControlSlice', () => {
       owner: '',
       isFetching: false,
       error: null,
+      repo: '',
     },
   }
 
@@ -48,15 +48,6 @@ describe('versionControlSlice', () => {
     global.window = originalWindow
   })
 
-  const encryptData = (dataToEncrypt, key) => {
-    try {
-      return crypto.AES.encrypt(JSON.stringify(dataToEncrypt), key).toString()
-    } catch (error) {
-      console.error('Error encrypting data:', error)
-      return undefined
-    }
-  }
-
   describe('reducers', () => {
     it('should handle initial state', () => {
       const state = reducer(undefined, {})
@@ -66,6 +57,7 @@ describe('versionControlSlice', () => {
         owner: '',
         isFetching: false,
         error: null,
+        repo: '',
       })
     })
 
@@ -144,6 +136,7 @@ describe('versionControlSlice', () => {
         gitToken: 'testToken',
         owner: 'testOwner',
         credentials: { secretKey: 'testSecretKey' },
+        repo: 'testRepo',
       }
       reducer(state, setGitToken(state.gitToken))
       reducer(state, setOwner(state.owner))

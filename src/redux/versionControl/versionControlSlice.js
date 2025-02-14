@@ -21,6 +21,7 @@ const versionControlSlice = createSlice({
     commits: [],
     gitToken: '',
     owner: '',
+    repo: '',
     isFetching: false,
     error: null,
   },
@@ -33,8 +34,15 @@ const versionControlSlice = createSlice({
       state.owner = action.payload
       setCookies(state)
     },
+    setRepo(state, action) {
+      state.repo = action.payload
+      setCookies(state)
+    },
     setCredentials(state, action) {
       state.credentials = action.payload
+    },
+    clearCommits(state) {
+      state.commits = []
     },
   },
   extraReducers: (builder) => {
@@ -135,7 +143,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
 })
 const setCookies = (state) => {
   const credentials = state.credentials
-  if (state.gitToken && state.owner && credentials?.secretKey) {
+  if (state.gitToken && state.owner && state.repo && credentials?.secretKey) {
     const encryptedToken = encryptData(state.gitToken, credentials.secretKey)
     const encryptedOwner = encryptData(state.owner, credentials.secretKey)
     if (encryptedToken && encryptedOwner) {
@@ -143,14 +151,16 @@ const setCookies = (state) => {
       Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
     }
   }
+  Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' }) // Set repo cookie without encryption
 }
 
-export const { setGitToken, setOwner, setCredentials } = versionControlSlice.actions
+export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits } = versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
 export const selectIsFetching = (state) => state.versionControl.isFetching
 export const selectGitToken = (state) => state.versionControl.gitToken
 export const selectOwner = (state) => state.versionControl.owner
+export const selectRepo = (state) => state.versionControl.repo
 export const selectError = (state) => state.versionControl.error
 
 export default versionControlSlice.reducer

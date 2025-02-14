@@ -30,15 +30,18 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
   setGitToken,
   setOwner,
+  setRepo,
   setCredentials,
   selectCommits,
   selectIsFetching,
   selectGitToken,
   selectOwner,
+  selectRepo,
   getServices,
   fetchCommits,
   prepareFilesForUpdate,
   getRevertChanges,
+  clearCommits,
   selectError,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
@@ -60,6 +63,7 @@ const VersionControlComponent = ({ t }) => {
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
   const errors = useSelector(selectError)
+  const repo = useSelector(selectRepo)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -74,16 +78,18 @@ const VersionControlComponent = ({ t }) => {
   }, [dispatch, credentials])
 
   useEffect(() => {
-    if (gitToken && owner) {
+    if (gitToken && owner && repo) {
       dispatch(fetchCommits())
     }
-  }, [dispatch, gitToken, owner])
+  }, [dispatch, gitToken, owner, repo])
 
   useEffect(() => {
     const secretKey = credentials?.secretKey
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
+      const repo = Cookies.get('repo')
+
       if (encryptedGitToken) {
         const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
         dispatch(setGitToken(decryptedGitToken))
@@ -91,6 +97,9 @@ const VersionControlComponent = ({ t }) => {
       if (encryptedOwner) {
         const decryptedOwner = decryptData(encryptedOwner, secretKey)
         dispatch(setOwner(decryptedOwner))
+      }
+      if (repo) {
+        dispatch(setRepo(repo))
       }
     }
   }, [credentials, dispatch])
@@ -124,7 +133,6 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onCommitRevertClick = async (sha) => {
-    // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       dispatch(getRevertChanges(sha))
       dispatch(fetchCommits())
@@ -137,10 +145,17 @@ const VersionControlComponent = ({ t }) => {
 
   const handleGitTokenChange = (e) => {
     dispatch(setGitToken(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
   }
 
   const handleOwnerChange = (e) => {
     dispatch(setOwner(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
+  }
+
+  const handleRepoChange = (e) => {
+    dispatch(setRepo(e.target.value))
+    dispatch(clearCommits()) // Clear commits when repo changes
   }
 
   const handleCommitMessageChange = (e) => {
@@ -158,7 +173,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const renderStatusMessage = () => {
-    if (!gitToken || !owner) {
+    if (!gitToken || !owner || !repo || errors) {
       return <div></div>
     } else if (commits.length === 0) {
       return <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
@@ -202,10 +217,13 @@ const VersionControlComponent = ({ t }) => {
             </FlexBox>
 
             <Card className={classes.credentialsCard}>
-              <Title className={classes.cardTitle} level="H4">
+              <Title className={classes.credentialsCardTitle} level="H4">
                 {t('VERSION_CONTROL.CREDENTIALS')}
               </Title>
-              <Grid>
+              <Text id="versionControlTitle" data-cy="versionControlTitle" level={'H5'} className={classes.titleStyle}>
+                <span className={classes.credentialsDescriptionStyle}>{t('VERSION_CONTROL.CREDENTIALS_DESCRIPTION')}</span>
+              </Text>
+              <Grid className={classes.credentialsGridStyle}>
                 <>
                   <div style={{ display: 'inline-flex' }} className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
                     <div className={classes.inputField}>
@@ -223,7 +241,6 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-
                     <div className={classes.inputField}>
                       <Title level="H5" className={classes.currentInfoContainerTitle}>
                         {t('VERSION_CONTROL.GIT_TOKEN')}*
@@ -240,7 +257,22 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CREDENTIALS')}</div>}
+                    <div className={classes.inputField}>
+                      <Title level="H5" className={classes.currentInfoContainerTitle}>
+                        {t('VERSION_CONTROL.REPOSITORY')}*
+                      </Title>
+                      <Input
+                        id="repoInput"
+                        data-cy="repoInput"
+                        value={repo}
+                        onChange={handleRepoChange}
+                        placeholder="Repository"
+                        valueState="Information"
+                        valueStateMessage={<div>{t('VERSION_CONTROL.REPOSITORY_MESSAGE')}</div>}
+                        required
+                      />
+                    </div>
+                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}</div>}
                   </div>
                 </>
               </Grid>
@@ -252,60 +284,18 @@ const VersionControlComponent = ({ t }) => {
                   <Title level="H4" className={classes.versionListText}>
                     {t('VERSION_CONTROL.VERSION_LIST')}
                   </Title>
-
                   <Button
                     id="backupButton"
                     data-cy="backupButton"
                     design="Emphasized"
                     className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                     onClick={onCreateBackupClick}
-                    disabled={!gitToken || !owner}
+                    disabled={!gitToken || !owner || !repo || errors !== null}
                   >
                     {t('VERSION_CONTROL.BACKUP')}
                   </Button>
                 </div>
               </>
-              {/* <Dialog
-                open={isDialogOpen}
-                className="ui-dialog"
-                headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
-                state={ValueState.Information}
-                onAfterClose={onCancelBackupClick}
-                id="backupDialog"
-                data-cy="backupDialog"
-                header={
-                  <div id="header" className={classes.headerOuterDivStyle2}>
-                    {t('VERSION_CONTROL.UPLOAD_MESSAGE')}
-                  </div>
-                }
-                children={
-                  <div className={classes.specifyFileLableStyle}>
-                    <ul>
-                      {filesToUpdate.map((file, index) => (
-                        <li key={index}>{file}</li>
-                      ))}
-                    </ul>
-                    <TextArea
-                      data-cy="commitMessageInput"
-                      value={commitMessage}
-                      onInput={handleCommitMessageChange}
-                      placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
-                      rows={4}
-                      disabled={filesToUpdate.includes('N/A')}
-                    />
-                  </div>
-                }
-                footer={
-                  <div className={classes.footerOuterDivStyle}>
-                    <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
-                      {t('VERSION_CONTROL.CONFIRM')}
-                    </Button>
-                    <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
-                      {t('VERSION_CONTROL.CANCEL')}
-                    </Button>
-                  </div>
-                }
-              /> */}
 
               <div>
                 {renderStatusMessage() ?? (

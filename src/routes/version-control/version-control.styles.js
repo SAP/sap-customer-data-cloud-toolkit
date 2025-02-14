@@ -120,6 +120,7 @@ const styles = {
   },
   outerDivStyle: {
     composes: 'cdc-tools-background',
+    height: 'calc(100vh - 100px)',
     maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
   },
@@ -181,6 +182,15 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  credentialsCardTitle: {
+    ...spacing.sapUiSmallMarginTop,
+    ...spacing.sapUiSmallMarginBegin,
+    width: '-webkit-fill-available',
+    marginBottom: 'var(--_ui5-v1-24-4_card_header_subtitle_margin_top)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   flexButton: {
     textAlign: 'end',
     float: 'inline-end',
@@ -205,6 +215,16 @@ const styles = {
   },
   filesToUpdate: {
     paddingBottom: '7px',
+  },
+  credentialsDescriptionStyle: {
+    color: 'var(--sapContent_LabelColor)',
+    fontFamily: 'var(--sapFontFamily)',
+    fontSize: 'var(--sapFontSize)',
+    fontWeight: 'var(--sapFontWeight)',
+    marginLeft: '17px',
+  },
+  credentialsGridStyle: {
+    ...spacing.sapUiSmallMarginTop,
   },
 }
 
