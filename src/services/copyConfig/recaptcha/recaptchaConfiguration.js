@@ -16,7 +16,6 @@ class RecaptchaConfiguration {
   #riskProviders
 
   constructor(credentials, site, dataCenter) {
-    console.log('credentials', credentials)
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
@@ -41,6 +40,7 @@ class RecaptchaConfiguration {
       if (riskProvidersResponse.errorCode !== 0) {
         throw new Error(`Error fetching Risk Providers configuration: ${riskProvidersResponse.errorMessage}`)
       }
+
       return {
         errorCode: recaptchaResponse.errorCode,
         recaptchaConfig: recaptchaResponse.Config,
@@ -49,8 +49,7 @@ class RecaptchaConfiguration {
         riskProvidersConfig: riskProvidersResponse.config,
       }
     } catch (error) {
-      console.error(`Error in RecaptchaConfiguration.get: ${error}`)
-      throw error
+      throw new Error(`Error in RecaptchaConfiguration.get: ${error}`)
     }
   }
 
@@ -74,9 +73,6 @@ class RecaptchaConfiguration {
         security: newSecurityConfig,
         registration: {
           requireCaptcha: registrationPolicies.requireCaptcha,
-          requireSecurityQuestion: registrationPolicies.requireSecurityQuestion,
-          requireLoginID: registrationPolicies.requireLoginID,
-          enforceCoppa: registrationPolicies.enforceCoppa,
         },
       }
 
@@ -87,22 +83,16 @@ class RecaptchaConfiguration {
         throw new Error(`Error fetching current policies: ${response.errorMessage}`)
       }
     } catch (error) {
-      console.error(`Error in setPolicies: ${error.message || error}`)
-      throw error
+      throw new Error(`Error in setPolicies: ${error.message || error}`)
     }
   }
 
   async setRiskProvidersConfig(site, dataCenter, riskProvidersConfig) {
-    try {
-      const response = await this.#riskProviders.set(site, dataCenter, riskProvidersConfig)
-      if (response.errorCode === 0) {
-        return response
-      } else {
-        throw new Error(`Error setting Risk Providers configuration: ${response.errorMessage}`)
-      }
-    } catch (error) {
-      console.error('Error in setRiskProvidersConfig:', error.message || error)
-      throw error
+    const response = await this.#riskProviders.set(site, dataCenter, riskProvidersConfig)
+    if (response.errorCode === 0) {
+      return response
+    } else {
+      throw new Error(`Error setting Risk Providers configuration: ${response.errorMessage}`)
     }
   }
 
