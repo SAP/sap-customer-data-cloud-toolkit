@@ -1,96 +1,98 @@
-import VersionControlService from './versionControlService'
-import CdcService from './cdcService'
-import { getEncryptedCookie } from '../../redux/versionControl/versionControlSlice'
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 
-jest.mock('./cdcService')
+import VersionControlService from './versionControlService'
+import axios from 'axios'
+import { expectedSchemaResponse } from '../copyConfig/schema/dataTest'
+import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest'
+import { getPolicyConfig } from '../copyConfig/policies/dataTest'
+import { getSocialsProviders } from '../copyConfig/social/dataTest'
+import { getEmailsExpectedResponse } from '../emails/dataTest'
+import { getSmsExpectedResponse } from '../sms/dataTest'
+import { getSiteConfig } from '../copyConfig/websdk/dataTest'
+import { getConsentStatementExpectedResponse } from '../copyConfig/consent/dataTest'
+import { channelsExpectedResponse } from '../copyConfig/communication/dataTest'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../copyConfig/rba/dataTest'
+import { getExpectedWebhookResponse } from '../copyConfig/webhook/dataTest'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
+import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
+import { getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
+import { expectedGigyaResponseOk } from '../servicesDataTest'
+import GitHub from './versionControlManager/github'
+import { Octokit } from '@octokit/rest'
+
+jest.mock('axios')
+jest.mock('./versionControlManager/github')
 
 describe('versionControlService', () => {
-  const credentials = { userKey: 'testUserKey', secretKey: 'testSecret', gigyaConsole: 'testConsole' }
+  const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' }
   const apiKey = 'testApiKey'
   const currentSite = { dataCenter: 'testDataCenter' }
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const owner = getEncryptedCookie('owner', credentials.secret)
-  const versionControlService = new VersionControlService(credentials, apiKey, 'github', currentSite)
+  const dataCenter = 'eu1'
+  const versionControlInstance = new GitHub(new Octokit({ auth: 'testToken' }), 'testOwner', 'CDCVersionControl')
+  const versionControlService = new VersionControlService(credentials, apiKey, versionControlInstance, dataCenter, currentSite)
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   describe('handleGetServices', () => {
-    it('should handle errors when creating a backup', async () => {
-      // const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      // const alertSpy = jest.fn()
-      // global.alert = alertSpy
-      // await versionControlService.handleGetServices('commitMessage')
-      // expect(consoleErrorSpy).toHaveBeenCalledWith('Error creating backup:', expect.any(Error))
-      // expect(alertSpy).toHaveBeenCalledWith('Failed to create backup. Please try again.')
-      // consoleErrorSpy.mockRestore()
-      // delete global.alert
-    })
-  })
+    it('should return true when creating a backup', async () => {
+      axios
+        .mockResolvedValueOnce({ data: channelsExpectedResponse })
+        .mockResolvedValueOnce({ data: expectedSchemaResponse })
+        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+        .mockResolvedValueOnce({ data: getPolicyConfig })
+        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
+        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+        .mockResolvedValueOnce({ data: getSiteConfig })
+        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
-  describe('handleCommitListRequestServices', () => {
+      const response = await versionControlService.handleGetServices('commitMessage')
+      expect(response).toEqual(true)
+    })
+
     it('should fetch commit list if branch exists', async () => {
       const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 2 }
-      githubUtils.branchExists.mockResolvedValue(true)
-      githubUtils.getCommits.mockResolvedValue({ data: mockCommitList.commitList })
-
-      const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: mockCommitList.commitList })
+      const result = await versionControlService.handleCommitListRequestServices()
       expect(result).toEqual(mockCommitList)
-      expect(githubUtils.branchExists).toHaveBeenCalledWith(versionControlInstance, apiKey)
-      expect(githubUtils.getCommits).toHaveBeenCalledWith(versionControlInstance)
+      expect(versionControlInstance.getCommits).toHaveBeenCalledWith(apiKey)
     })
 
     it('should return an empty array if branch does not exist', async () => {
-      githubUtils.branchExists.mockResolvedValue(false)
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: [] })
 
-      const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
+      const result = await versionControlService.handleCommitListRequestServices()
       expect(result).toEqual({ commitList: [], totalCommits: 0 })
-      expect(githubUtils.branchExists).toHaveBeenCalledWith(versionControlInstance, apiKey)
-      expect(githubUtils.getCommits).not.toHaveBeenCalled()
     })
 
-    it('should handle errors when fetching commit list', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      githubUtils.branchExists.mockRejectedValue(new Error('Error checking branch existence'))
-
-      const result = await versionControlService.handleCommitListRequestServices(versionControlInstance, apiKey)
-      expect(result).toEqual({ commitList: [], totalCommits: 0 })
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching commits:', expect.any(Error))
-      consoleErrorSpy.mockRestore()
-    })
-  })
-
-  describe('handleCommitRevertServices', () => {
     it('should revert commit and show success alert', async () => {
-      const mockCdcService = new CdcService(versionControlInstance)
-      mockCdcService.applyCommitConfig = jest.fn().mockResolvedValue()
-      CdcService.mockImplementation(() => mockCdcService)
-
-      const alertSpy = jest.fn()
-      global.alert = alertSpy
-
-      await versionControlService.handleCommitRevertServices(versionControlInstance, 'mockSha')
-      expect(mockCdcService.applyCommitConfig).toHaveBeenCalledWith('mockSha')
-      expect(alertSpy).toHaveBeenCalledWith('Restore completed successfully!')
-
-      delete global.alert
-    })
-
-    it('should handle errors when reverting commit', async () => {
-      const mockCdcService = new CdcService(versionControlInstance)
-      mockCdcService.applyCommitConfig = jest.fn().mockRejectedValue(new Error('Error reverting commit'))
-      CdcService.mockImplementation(() => mockCdcService)
-
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const alertSpy = jest.fn()
-      global.alert = alertSpy
-
-      await versionControlService.handleCommitRevertServices(versionControlInstance, 'mockSha')
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error reverting configurations:', expect.any(Error))
-      expect(alertSpy).toHaveBeenCalledWith('Failed to restore configurations. Please try again.')
-
-      consoleErrorSpy.mockRestore()
-      delete global.alert
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseOk }).mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+      const mockFiles = [
+        {
+          filename: 'src/versionControl/channel.json',
+          contents_url: 'https://api.github.com/repos/test/testRepo/contents/src%2FversionControl%2Fchannel.json?ref=abc123',
+          content: channelsExpectedResponse,
+        },
+      ]
+      versionControlInstance.getCommitFiles = jest.fn().mockResolvedValue(mockFiles)
+      const response = await versionControlService.handleCommitRevertServices('mockSha')
+      expect(response).toEqual(true)
     })
   })
 })

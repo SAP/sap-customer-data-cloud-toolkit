@@ -16,7 +16,6 @@ class RecaptchaConfiguration {
   #riskProviders
 
   constructor(credentials, site, dataCenter) {
-    console.log('credentials', credentials)
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
@@ -41,6 +40,7 @@ class RecaptchaConfiguration {
       if (riskProvidersResponse.errorCode !== 0) {
         throw new Error(`Error fetching Risk Providers configuration: ${riskProvidersResponse.errorMessage}`)
       }
+
       return {
         errorCode: recaptchaResponse.errorCode,
         recaptchaConfig: recaptchaResponse.Config,
@@ -151,7 +151,6 @@ class RecaptchaConfiguration {
         console.warn('Risk Providers config is invalid or undefined, skipping.')
       }
 
-      console.log('Recaptcha config set from Git:', config)
       return config
     } catch (error) {
       console.error('Error setting recaptcha config from Git:', error)

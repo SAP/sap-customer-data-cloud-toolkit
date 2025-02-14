@@ -2,196 +2,193 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
+import { channelsExpectedResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
+import { getConsentStatementExpectedResponse } from '../copyConfig/consent/dataTest'
+import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
+import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
+import { getPolicyConfig } from '../copyConfig/policies/dataTest'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../copyConfig/rba/dataTest'
+import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest'
+import { getSocialsProviders } from '../copyConfig/social/dataTest'
+import { getExpectedWebhookResponse } from '../copyConfig/webhook/dataTest'
+import { getSiteConfig } from '../copyConfig/websdk/dataTest'
+import { getEmailsExpectedResponse, getEmailsExpectedResponseWithMinimumTemplates } from '../emails/dataTest'
+import { expectedSchemaResponse } from '../importAccounts/schemaImport/schemaDatatest'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
+import { expectedGigyaResponseOk } from '../servicesDataTest'
+import { getSmsExpectedResponse } from '../sms/dataTest'
 import CdcService from './cdcService'
-import * as githubUtils from './githubUtils'
-import * as setters from './setters'
+import axios from 'axios'
 
-jest.mock('./githubUtils', () => ({
-  getCommitFiles: jest.fn(),
-}))
-
-jest.mock('./setters', () => ({
-  setPolicies: jest.fn(),
-  setWebSDK: jest.fn(),
-  setSMS: jest.fn(),
-  setExtension: jest.fn(),
-  setSchema: jest.fn(),
-  setScreenSets: jest.fn(),
-  setRBA: jest.fn(),
-  setEmailTemplates: jest.fn(),
-  setCommunicationTopics: jest.fn(),
-  setDataflow: jest.fn(),
-  setWebhook: jest.fn(),
-  setConsent: jest.fn(),
-  setSocial: jest.fn(),
-  setRecaptcha: jest.fn(),
-}))
-
+jest.mock('axios')
+jest.mock('./versionControlManager/github')
 describe('CdcService', () => {
-  let versionControl
-  let cdcService
-
+  const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' }
+  const apiKey = 'testApiKey'
+  const currentSite = { dataCenter: 'testDataCenter' }
+  const dataCenter = 'eu1'
+  const cdcService = new CdcService(credentials, apiKey, dataCenter, currentSite)
   beforeEach(() => {
-    versionControl = {
-      webSdk: { get: jest.fn().mockResolvedValue({}) },
-      dataflow: { search: jest.fn().mockResolvedValue({}) },
-      emails: { get: jest.fn().mockResolvedValue({}) },
-      extension: { get: jest.fn().mockResolvedValue({}) },
-      policies: { get: jest.fn().mockResolvedValue({}) },
-      rba: { get: jest.fn().mockResolvedValue({}) },
-      riskAssessment: { get: jest.fn().mockResolvedValue({}) },
-      schema: { get: jest.fn().mockResolvedValue({}) },
-      screenSets: { get: jest.fn().mockResolvedValue({}) },
-      sms: { get: jest.fn().mockResolvedValue({}) },
-      communication: { get: jest.fn().mockResolvedValue({}) },
-      topic: { searchTopics: jest.fn().mockResolvedValue({ key: 'value' }) }, // Ensuring mock data is not empty
-      webhook: { get: jest.fn().mockResolvedValue({}) },
-      consent: { get: jest.fn().mockResolvedValue({}) },
-      social: { get: jest.fn().mockResolvedValue({}) },
-      recaptcha: { get: jest.fn().mockResolvedValue({}) },
-    }
-    cdcService = new CdcService(versionControl)
-  })
-
-  describe('getCdcData', () => {
-    it('should return an array of promises', () => {
-      const responses = cdcService.getCdcData()
-      expect(Array.isArray(responses)).toBe(true)
-      expect(responses.length).toBe(16) // Ensure this matches the number of responses in getCdcData
-      responses.forEach((response) => {
-        expect(response).toHaveProperty('name')
-        expect(response).toHaveProperty('promise')
-      })
-    })
+    jest.clearAllMocks()
   })
 
   describe('fetchCDCConfigs', () => {
     it('should fetch all CDC configs', async () => {
-      const mockData = { key: 'value' }
-      Object.keys(versionControl).forEach((key) => {
-        if (versionControl[key].get) {
-          versionControl[key].get.mockResolvedValue(mockData)
-        } else if (versionControl[key].search) {
-          versionControl[key].search.mockResolvedValue(mockData)
-        }
-      })
-
+      const webSdkSpy = jest.spyOn(cdcService.webSdk, 'get')
+      const dataflowSpy = jest.spyOn(cdcService.dataflow, 'search')
+      const emailsSpy = jest.spyOn(cdcService.emails, 'get')
+      const extensionSpy = jest.spyOn(cdcService.extension, 'get')
+      const policiesSpy = jest.spyOn(cdcService.policies, 'get')
+      const rbaSpy = jest.spyOn(cdcService.rba, 'get')
+      const riskAssessmentSpy = jest.spyOn(cdcService.riskAssessment, 'get')
+      const schemaSpy = jest.spyOn(cdcService.schema, 'get')
+      const screenSetsSpy = jest.spyOn(cdcService.screenSets, 'get')
+      const smsSpy = jest.spyOn(cdcService.sms, 'get')
+      const channelSpy = jest.spyOn(cdcService.communication, 'get')
+      const topicSpy = jest.spyOn(cdcService.topic, 'searchTopics')
+      const webhookSpy = jest.spyOn(cdcService.webhook, 'get')
+      const consentSpy = jest.spyOn(cdcService.consent, 'get')
+      const socialSpy = jest.spyOn(cdcService.social, 'get')
+      const recaptchaSpy = jest.spyOn(cdcService.recaptcha, 'get')
+      axios
+        .mockResolvedValueOnce({ data: channelsExpectedResponse })
+        .mockResolvedValueOnce({ data: expectedSchemaResponse })
+        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+        .mockResolvedValueOnce({ data: getPolicyConfig })
+        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
+        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+        .mockResolvedValueOnce({ data: getSiteConfig })
+        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
       const configs = await cdcService.fetchCDCConfigs()
-      expect(configs).toEqual({
-        webSdk: mockData,
-        dataflow: mockData,
-        emails: mockData,
-        extension: mockData,
-        policies: mockData,
-        rba: mockData,
-        riskAssessment: mockData,
-        schema: mockData,
-        screenSets: mockData,
-        sms: mockData,
-        channel: mockData, // Adjusted from communication to channel
-        topic: mockData, // Ensuring topic returns mock data
-        webhook: mockData,
-        consent: mockData,
-        social: mockData,
-        recaptcha: mockData,
-      })
+      const ammountOfResponses = countObjects(configs)
+      expect(ammountOfResponses).toBe(285)
+      expect(webSdkSpy).toHaveBeenCalled()
+      expect(webSdkSpy.mock.calls.length).toBe(1)
+      expect(dataflowSpy).toHaveBeenCalled()
+      expect(dataflowSpy.mock.calls.length).toBe(1)
+      expect(emailsSpy).toHaveBeenCalled()
+      expect(emailsSpy.mock.calls.length).toBe(1)
+      expect(extensionSpy).toHaveBeenCalled()
+      expect(extensionSpy.mock.calls.length).toBe(1)
+      expect(policiesSpy).toHaveBeenCalled()
+      expect(policiesSpy.mock.calls.length).toBe(1)
+      expect(rbaSpy).toHaveBeenCalled()
+      expect(rbaSpy.mock.calls.length).toBe(1)
+      expect(riskAssessmentSpy).toHaveBeenCalled()
+      expect(riskAssessmentSpy.mock.calls.length).toBe(1)
+      expect(schemaSpy).toHaveBeenCalled()
+      expect(schemaSpy.mock.calls.length).toBe(1)
+      expect(smsSpy).toHaveBeenCalled()
+      expect(smsSpy.mock.calls.length).toBe(1)
+      expect(screenSetsSpy).toHaveBeenCalled()
+      expect(screenSetsSpy.mock.calls.length).toBe(1)
+      expect(channelSpy).toHaveBeenCalled()
+      expect(channelSpy.mock.calls.length).toBe(1)
+      expect(topicSpy).toHaveBeenCalled()
+      expect(topicSpy.mock.calls.length).toBe(1)
+      expect(webhookSpy).toHaveBeenCalled()
+      expect(webhookSpy.mock.calls.length).toBe(1)
+      expect(consentSpy).toHaveBeenCalled()
+      expect(consentSpy.mock.calls.length).toBe(1)
+      expect(socialSpy).toHaveBeenCalled()
+      expect(socialSpy.mock.calls.length).toBe(1)
+      expect(recaptchaSpy).toHaveBeenCalled()
+      expect(recaptchaSpy.mock.calls.length).toBe(1)
     })
 
-    it('should handle errors when fetching CDC configs', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-
-      versionControl.webSdk.get.mockRejectedValue(new Error('Error fetching webSdk'))
-      versionControl.dataflow.search.mockResolvedValue({ key: 'value' })
-      Object.keys(versionControl).forEach((key) => {
-        if (versionControl[key].get && key !== 'webSdk' && key !== 'dataflow') {
-          versionControl[key].get.mockRejectedValue(new Error(`Error fetching ${key}`))
-        }
-        if (versionControl[key].search && key !== 'dataflow') {
-          versionControl[key].search.mockRejectedValue(new Error(`Error fetching ${key}`))
-        }
-      })
-
-      // Special case to handle the expected 'topic' result
-      versionControl.topic.searchTopics.mockResolvedValue({})
-
-      const configs = await cdcService.fetchCDCConfigs()
-      expect(configs).toEqual({
-        webSdk: undefined,
-        dataflow: { key: 'value' },
-        emails: undefined,
-        extension: undefined,
-        policies: undefined,
-        rba: undefined,
-        riskAssessment: undefined,
-        schema: undefined,
-        screenSets: undefined,
-        sms: undefined,
-        channel: undefined, // Adjusted from communication to channel
-        topic: {}, // Ensuring topic can handle empty response
-        webhook: undefined,
-        consent: undefined,
-        social: undefined,
-        recaptcha: undefined,
-      })
-
-      consoleErrorSpy.mockRestore()
-    })
-
-    it('should throw an error if getCdcData does not return an array', async () => {
-      jest.spyOn(cdcService, 'getCdcData').mockReturnValueOnce(null)
-      await expect(cdcService.fetchCDCConfigs()).rejects.toThrow('getCdcData must return an array')
-    })
-  })
-
-  describe('applyCommitConfig', () => {
     it('should apply commit config correctly', async () => {
+      const webSdkSpy = jest.spyOn(cdcService.webSdk, 'set')
+      const setSiteEmailsWithDataCenterMock = jest.fn()
+      jest.spyOn(cdcService.emails, 'getEmail').mockReturnValue({
+        setSiteEmailsWithDataCenter: setSiteEmailsWithDataCenterMock,
+      })
+      const extensionSpy = jest.spyOn(cdcService.extension, 'set')
+      const policiesSpy = jest.spyOn(cdcService.policies, 'set')
+      const screenSetsSpy = jest.spyOn(cdcService.screenSets, 'set')
+      const channelsSpy = jest.spyOn(cdcService.communication, 'setChannels')
+      const topicSpy = jest.spyOn(cdcService.communication, 'setTopics')
+      const schemaSpy = jest.spyOn(cdcService.schema, 'set')
+      axios
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+
       const mockFiles = [
-        { filename: 'src/versionControl/webSdk.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/emails.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/extension.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
+        { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
+        { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
         { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/rba.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/schema.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/screenSets.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/sms.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/channel.json', content: { key: 'value' } }, // Changed from communication.json to channel.json
-        { filename: 'src/versionControl/topic.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/webhook.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
+        { filename: 'src/versionControl/schema.json', content: expectedSchemaResponse },
+        { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
+        { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
+        { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse }, // Changed from communication.json to channel.json
+        { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
         { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
         { filename: 'src/versionControl/social.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/recaptcha.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/dataflow.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
       ]
-      githubUtils.getCommitFiles.mockResolvedValue(mockFiles)
-
-      await cdcService.applyCommitConfig('mockSha')
-
-      expect(setters.setWebSDK).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setEmailTemplates).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setExtension).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setPolicies).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setRBA).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setSchema).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setScreenSets).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setSMS).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setCommunicationTopics).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setWebhook).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setConsent).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setSocial).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setRecaptcha).toHaveBeenCalledWith({ key: 'value' })
-      expect(setters.setDataflow).toHaveBeenCalledWith({ key: 'value' })
-    })
-
-    it('should handle unknown file types', async () => {
-      const mockFiles = [{ filename: 'src/versionControl/unknown.json', content: { key: 'value' } }]
-      githubUtils.getCommitFiles.mockResolvedValue(mockFiles)
-
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
-
-      await cdcService.applyCommitConfig('mockSha')
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Unknown file type: unknown')
-      consoleWarnSpy.mockRestore()
+      await cdcService.applyCommitConfig(mockFiles)
+      expect(webSdkSpy).toHaveBeenCalled()
+      expect(webSdkSpy.mock.calls.length).toBe(1)
+      expect(setSiteEmailsWithDataCenterMock).toHaveBeenCalled()
+      expect(setSiteEmailsWithDataCenterMock.mock.calls.length).toBe(9)
+      expect(extensionSpy).toHaveBeenCalled()
+      expect(extensionSpy.mock.calls.length).toBe(1)
+      expect(policiesSpy).toHaveBeenCalled()
+      expect(policiesSpy.mock.calls.length).toBe(1)
+      expect(screenSetsSpy).toHaveBeenCalled()
+      expect(screenSetsSpy.mock.calls.length).toBe(1)
+      expect(channelsSpy).toHaveBeenCalled()
+      expect(channelsSpy.mock.calls.length).toBe(1)
+      expect(topicSpy).toHaveBeenCalled()
+      expect(topicSpy.mock.calls.length).toBe(1)
+      expect(schemaSpy).toHaveBeenCalled()
+      expect(schemaSpy.mock.calls.length).toBe(5)
     })
   })
 })
+
+function countObjects(object) {
+  let count = 0
+
+  function recursiveCount(innerObj) {
+    if (typeof innerObj === 'object' && innerObj !== null) {
+      count++
+      for (const key in innerObj) {
+        if (innerObj.hasOwnProperty(key)) {
+          recursiveCount(innerObj[key])
+        }
+      }
+    }
+  }
+
+  recursiveCount(object)
+  return count
+}

@@ -2,8 +2,6 @@ import Options from '../copyConfig/options'
 
 export const createOptions = (items) => {
   if (!Array.isArray(items)) {
-    console.log('itens', items)
-
     if (typeof items === 'object' && items !== null) {
       items = Object.values(items)
     } else {

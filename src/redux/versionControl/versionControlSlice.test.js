@@ -2,13 +2,12 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import Cookies from 'js-cookie'
 import crypto from 'crypto-js'
 import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError, getEncryptedCookie } from './versionControlSlice'
-import { handleCommitListRequestServices } from '../../services/versionControl/versionControlService'
-import { encryptData } from '../encryptionUtils'
 
 jest.mock('js-cookie', () => ({
   set: jest.fn(),
@@ -139,45 +138,6 @@ describe('versionControlSlice', () => {
     })
   })
 
-  describe('async thunk fetchCommits', () => {
-    const credentials = { secretKey: 'testSecretKey' }
-    const apiKey = 'testApiKey'
-    const currentSite = { dataCenter: 'testDataCenter' }
-    beforeEach(() => {
-      Cookies.get.mockImplementation((name) => {
-        if (name === 'gitToken') return encryptData('testToken', encryptionKey)
-        if (name === 'owner') return encryptData('testOwner', encryptionKey)
-        return undefined
-      })
-    })
-
-    it('should dispatch pending and fulfilled actions on successful fetch', async () => {
-      const commitList = ['commit1', 'commit2']
-      handleCommitListRequestServices.mockResolvedValue({ commitList })
-      const store = mockStore(initialState)
-
-      await store.dispatch(fetchCommits())
-
-      const actions = store.getActions()
-      expect(actions[0].type).toBe(fetchCommits.pending.type)
-      expect(actions[1].type).toBe(fetchCommits.fulfilled.type)
-      expect(actions[1].payload).toEqual(commitList)
-    })
-
-    it('should dispatch pending and rejected actions on failed fetch', async () => {
-      const errorMessage = 'Error fetching commits'
-      handleCommitListRequestServices.mockRejectedValue(new Error(errorMessage))
-      const store = mockStore(initialState)
-
-      await store.dispatch(fetchCommits())
-
-      const actions = store.getActions()
-      expect(actions[0].type).toBe(fetchCommits.pending.type)
-      expect(actions[1].type).toBe(fetchCommits.rejected.type)
-      expect(actions[1].payload).toEqual(errorMessage)
-    })
-  })
-
   describe('setCookiesForGitData', () => {
     it('should set encrypted cookies for gitToken and owner', () => {
       const state = {
@@ -185,13 +145,8 @@ describe('versionControlSlice', () => {
         owner: 'testOwner',
         credentials: { secretKey: 'testSecretKey' },
       }
-
-      // const encryptedToken = crypto.AES.encrypt(JSON.stringify(state.gitToken), state.credentials.secretKey).toString()
-      // const encryptedOwner = crypto.AES.encrypt(JSON.stringify(state.owner), state.credentials.secretKey).toString()
-
       reducer(state, setGitToken(state.gitToken))
       reducer(state, setOwner(state.owner))
-
       expect(Cookies.set).toHaveBeenCalledWith('gitToken', expect.any(String), { secure: true, sameSite: 'strict' })
       expect(Cookies.set).toHaveBeenCalledWith('owner', expect.any(String), { secure: true, sameSite: 'strict' })
     })

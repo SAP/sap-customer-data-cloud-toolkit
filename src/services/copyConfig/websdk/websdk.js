@@ -23,7 +23,6 @@ class WebSdk {
   }
 
   async get() {
-    console.log('credentials', this.#credentials)
     const response = await this.siteConfigurator.getSiteConfig(this.originApiKey, this.originDataCenter)
     response.context = JSON.stringify({ id: 'webSdk', targetApiKey: this.originApiKey })
     return response

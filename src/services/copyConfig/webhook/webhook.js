@@ -35,7 +35,6 @@ class Webhook {
     const res = await client.post(url, this.#setWebhookParameters(site, body)).catch(function (error) {
       return generateErrorResponse(error, Webhook.#ERROR_MSG_SET_CONFIG)
     })
-    console.log('res webHook', res)
     return res.data
   }
 

@@ -95,7 +95,6 @@ class GitHub extends VersionControlManager {
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
     await this.createBranch(apiKey)
-    console.log('configs---->', configs)
     const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
@@ -158,12 +157,13 @@ class GitHub extends VersionControlManager {
       tree: newTree.sha,
       parents: [baseTreeSha],
     })
+
     await this.versionControl.rest.git.updateRef({
       owner: this.owner,
       repo: this.repo,
       ref: `heads/${defaultBranch}`,
       sha: newCommit.sha,
-      force: true, // Force update to handle non-fast-forward updates
+      force: true,
     })
   }
 
@@ -193,8 +193,6 @@ class GitHub extends VersionControlManager {
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
     if (currentGitContentDecoded) {
       try {
-        currentGitContent = JSON.parse(currentGitContentDecoded)
-        console.log('currentGitContent---->', currentGitContent)
         currentGitContent = removeIgnoredFields(currentGitContent)
       } catch (error) {
         currentGitContent = {}

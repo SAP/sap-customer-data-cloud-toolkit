@@ -33,7 +33,6 @@ const ImportAccountConfigurationTree = ({
     const checkBoxId = event.srcElement.id
     const value = event.srcElement.checked
     setFields(event)
-    console.log('branches-->,', branches)
     dispatch(setConfigurationStatus({ checkBoxId, value, branches }))
 
     if (treeNodeInputValue) {

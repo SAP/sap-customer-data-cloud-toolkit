@@ -82,7 +82,6 @@ const VersionControlComponent = ({ t }) => {
   useEffect(() => {
     const secretKey = credentials?.secretKey
     if (secretKey) {
-      console.log('entered')
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
       if (encryptedGitToken) {
@@ -100,7 +99,6 @@ const VersionControlComponent = ({ t }) => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       const formattedFiles = unwrapResult(resultAction)
-      console.log('formattedFiles--->', formattedFiles)
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
@@ -124,7 +122,6 @@ const VersionControlComponent = ({ t }) => {
   const onCancelBackupClick = () => {
     setIsDialogOpen(false)
   }
-  console.log('commits--_>', commits)
 
   const onCommitRevertClick = async (sha) => {
     // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)

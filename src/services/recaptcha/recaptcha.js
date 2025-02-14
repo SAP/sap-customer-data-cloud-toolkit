@@ -53,9 +53,6 @@ class Recaptcha {
   }
 
   #getRecaptchaParameters(apiKey) {
-    console.log('apiKey', apiKey)
-    console.log('user', this.userKey)
-    console.log('secret', this.secret)
     return {
       apiKey,
       userKey: this.userKey,

@@ -39,14 +39,14 @@ class Communication {
     return responses
   }
 
-  async setChannels(destinationSite, destinationSiteConfiguration, content, fileType) {
+  async setChannels(destinationSite, destinationSiteConfiguration, content) {
     const responses = []
     const channelsPayload = Communication.#splitChannels(content)
     for (const channel of channelsPayload) {
       responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
     }
   }
-  async setTopics(destinationSite, destinationSiteConfiguration, content, fileType) {
+  async setTopics(destinationSite, destinationSiteConfiguration, content) {
     const responses = []
 
     for (const topic of content) {

@@ -68,17 +68,21 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const cdcDataArray = await this.#getCdcData()
-    if (!Array.isArray(cdcDataArray)) {
-      throw new Error('getCdcData must return an array')
+    try {
+      const cdcDataArray = await this.#getCdcData()
+      if (!Array.isArray(cdcDataArray)) {
+        throw new Error('getCdcData must return an array')
+      }
+      const cdcData = await Promise.all(
+        cdcDataArray.map(async ({ name, promise }) => {
+          const data = await promise
+          return { [name]: data }
+        }),
+      )
+      return Object.assign({}, ...cdcData)
+    } catch (error) {
+      throw new Error(error)
     }
-    const cdcData = await Promise.all(
-      cdcDataArray.map(async ({ name, promise }) => {
-        const data = await promise.catch((err) => console.error(`Error resolving ${name}:`, err))
-        return { [name]: data }
-      }),
-    )
-    return Object.assign({}, ...cdcData)
   }
 
   applyCommitConfig = async (files) => {
@@ -151,10 +155,10 @@ class CdcService {
         case 'channel':
         case 'topic':
           if (filteredResponse.Channels) {
-            await this.communication.setChannels(this.apiKey, this.siteInfo, filteredResponse.Channels, 'channel')
+            await this.communication.setChannels(this.apiKey, this.siteInfo, filteredResponse.Channels)
           }
           if (filteredResponse.results) {
-            await this.communication.setTopics(this.apiKey, this.siteInfo, filteredResponse.results, 'topic')
+            await this.communication.setTopics(this.apiKey, this.siteInfo, filteredResponse.results)
           }
           break
         case 'dataflow':
