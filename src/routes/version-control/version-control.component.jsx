@@ -24,7 +24,6 @@ import {
   Card,
   Grid,
   Label,
-  CardHeader,
 } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
@@ -134,7 +133,6 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onCommitRevertClick = async (sha) => {
-    // const versionControl = createVersionControlInstance(credentials, apiKey, currentSite, gitToken, owner)
     try {
       dispatch(getRevertChanges(sha))
       dispatch(fetchCommits())
@@ -218,16 +216,14 @@ const VersionControlComponent = ({ t }) => {
               </Text>
             </FlexBox>
 
-            {/* <Card
-              header={
-                <CardHeader className={classes.cardTitle} level="H4" titleText={t('VERSION_CONTROL.CREDENTIALS')} subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}></CardHeader>
-              }
-            > */}
             <Card className={classes.credentialsCard}>
-              <Title className={classes.cardTitle} level="H4">
+              <Title className={classes.credentialsCardTitle} level="H4">
                 {t('VERSION_CONTROL.CREDENTIALS')}
               </Title>
-              <Grid>
+              <Text id="versionControlTitle" data-cy="versionControlTitle" level={'H5'} className={classes.titleStyle}>
+                <span className={classes.credentialsDescriptionStyle}>{t('VERSION_CONTROL.CREDENTIALS_DESCRIPTION')}</span>
+              </Text>
+              <Grid className={classes.credentialsGridStyle}>
                 <>
                   <div style={{ display: 'inline-flex' }} className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
                     <div className={classes.inputField}>
@@ -276,7 +272,7 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CREDENTIALS')}</div>}
+                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}</div>}
                   </div>
                 </>
               </Grid>
@@ -288,60 +284,18 @@ const VersionControlComponent = ({ t }) => {
                   <Title level="H4" className={classes.versionListText}>
                     {t('VERSION_CONTROL.VERSION_LIST')}
                   </Title>
-
                   <Button
                     id="backupButton"
                     data-cy="backupButton"
                     design="Emphasized"
                     className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                     onClick={onCreateBackupClick}
-                    disabled={!gitToken || !owner || !repo}
+                    disabled={!gitToken || !owner || !repo || errors !== null}
                   >
                     {t('VERSION_CONTROL.BACKUP')}
                   </Button>
                 </div>
               </>
-              {/* <Dialog
-                open={isDialogOpen}
-                className="ui-dialog"
-                headerText={t('VERSION_CONTROL.COMMIT_MESSAGE')}
-                state={ValueState.Information}
-                onAfterClose={onCancelBackupClick}
-                id="backupDialog"
-                data-cy="backupDialog"
-                header={
-                  <div id="header" className={classes.headerOuterDivStyle2}>
-                    {t('VERSION_CONTROL.UPLOAD_MESSAGE')}
-                  </div>
-                }
-                children={
-                  <div className={classes.specifyFileLableStyle}>
-                    <ul>
-                      {filesToUpdate.map((file, index) => (
-                        <li key={index}>{file}</li>
-                      ))}
-                    </ul>
-                    <TextArea
-                      data-cy="commitMessageInput"
-                      value={commitMessage}
-                      onInput={handleCommitMessageChange}
-                      placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
-                      rows={4}
-                      disabled={filesToUpdate.includes('N/A')}
-                    />
-                  </div>
-                }
-                footer={
-                  <div className={classes.footerOuterDivStyle}>
-                    <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
-                      {t('VERSION_CONTROL.CONFIRM')}
-                    </Button>
-                    <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
-                      {t('VERSION_CONTROL.CANCEL')}
-                    </Button>
-                  </div>
-                }
-              /> */}
 
               <div>
                 {renderStatusMessage() ?? (
