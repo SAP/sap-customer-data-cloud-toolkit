@@ -39,6 +39,22 @@ describe('GitHub Test Suit', () => {
     const getCommit = await github.getCommits(defaultBranch)
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
+  it('should get an error when it does not have branches - getCommits', async () => {
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getBranchesMock = jest.fn().mockRejectedValueOnce()
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+        repos: {
+          listBranches: getBranchesMock,
+        },
+      },
+    }
+    await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
+  })
   it('should create a branch if it does not exist', async () => {
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
@@ -62,6 +78,23 @@ describe('GitHub Test Suit', () => {
       repo,
       branch: defaultBranch,
     })
+  })
+  it('should return false when credentials are not valid', async () => {
+    const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('Invalid owner'))
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+      },
+    }
+
+    await expect(github.createBranch(apiKey)).rejects.toThrow('Invalid owner')
+  })
+
+  it('should throw error when apikey does not exist', async () => {
+    await expect(github.createBranch()).rejects.toThrow('API key is missing')
   })
 
   it('should return the files in the commit', async () => {

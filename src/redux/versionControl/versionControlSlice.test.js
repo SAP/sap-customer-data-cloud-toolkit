@@ -182,8 +182,15 @@ describe('versionControlSlice', () => {
       expect(newState.revert).toEqual(true)
       expect(newState.isFetching).toEqual(false)
     })
+    it('should update state when getRevertChanges is pending', async () => {
+      const action = getRevertChanges.pending
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(true)
+      expect(newState.error).toEqual(null)
+      expect(newState.versionControl.commits.length).toEqual(0)
+    })
     it('should update state when getRevertChanges is rejected', async () => {
-      const action = getRevertChanges.fulfilled('Failed to revert configurations')
+      const action = getRevertChanges.rejected('', '', '', 'Failed to revert configurations')
       const newState = reducer(initialState, action)
       expect(newState.revert).toEqual('Failed to revert configurations')
       expect(newState.isFetching).toEqual(false)
@@ -202,6 +209,14 @@ describe('versionControlSlice', () => {
       expect(newState.commits[0].login).toEqual('testOwner')
       expect(newState.isFetching).toEqual(false)
     })
+    it('should update state when fetchCommits is pending', async () => {
+      const action = fetchCommits.pending
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(true)
+      expect(newState.error).toEqual(null)
+      expect(newState.versionControl.commits.length).toEqual(0)
+    })
+
     it('should update state when fetchCommits is rejected', async () => {
       const action = fetchCommits.rejected('', '', '', 'Failed to fetch commits for branch: testApiKey')
       const newState = reducer(initialState, action)
@@ -213,6 +228,13 @@ describe('versionControlSlice', () => {
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(false)
       expect(newState.revert).toEqual(true)
+    })
+    it('should update state when getServices is pending', async () => {
+      const action = getServices.pending
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(true)
+      expect(newState.error).toEqual(null)
+      expect(newState.versionControl.commits.length).toEqual(0)
     })
     it('should update state when getServices is rejected', async () => {
       const action = getServices.rejected('', '', '', 'Failed to get services')
@@ -227,6 +249,15 @@ describe('versionControlSlice', () => {
       expect(newState.isFetching).toEqual(false)
       expect(newState.revert).toEqual(['Dataflow', 'WebSdk'])
     })
+
+    it('should update state when prepareFilesForUpdate is pending', async () => {
+      const action = prepareFilesForUpdate.pending
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(true)
+      expect(newState.error).toEqual(null)
+      expect(newState.versionControl.commits.length).toEqual(0)
+    })
+
     it('should update state when prepareFilesForUpdate is rejected', async () => {
       const action = prepareFilesForUpdate.rejected('', '', '', 'Failed to prepare files')
       const newState = reducer(initialState, action)
