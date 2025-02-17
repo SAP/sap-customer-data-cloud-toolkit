@@ -28,7 +28,7 @@ const emailExampleFile = 'email-templates.zip'
 const smsExampleFile = 'sms-templates.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid ApiKey parameter`
+const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid APIKey identified. Invalid ApiKey parameter`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
@@ -2001,4 +2001,5 @@ export {
   commitMessage,
   mockedVersionControlGetResponse,
   mockedVersionControlGetCommitsResponse,
+  owner,
 }

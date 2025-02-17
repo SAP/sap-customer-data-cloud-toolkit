@@ -45,6 +45,7 @@ class Communication {
     for (const channel of channelsPayload) {
       responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
     }
+    return responses
   }
   async setTopics(destinationSite, destinationSiteConfiguration, content) {
     const responses = []
@@ -52,6 +53,7 @@ class Communication {
     for (const topic of content) {
       responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration, topic))
     }
+    return responses
   }
 
   #isChildSite(siteInfo, siteApiKey) {

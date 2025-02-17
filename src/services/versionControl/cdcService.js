@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import Communication from '../copyConfig/communication/communication'
 import Topic from '../copyConfig/communication/topic'
 import ConsentConfiguration from '../copyConfig/consent/consentConfiguration'
@@ -69,7 +70,7 @@ class CdcService {
 
   fetchCDCConfigs = async () => {
     try {
-      const cdcDataArray = await this.#getCdcData()
+      const cdcDataArray = this.#getCdcData()
       if (!Array.isArray(cdcDataArray)) {
         throw new Error('getCdcData must return an array')
       }
@@ -89,18 +90,12 @@ class CdcService {
     for (const file of files) {
       const fileType = file.filename.split('/').pop().split('.').shift()
       let filteredResponse = file.content
-      let options
       switch (fileType) {
         case 'webSdk':
           await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
           break
         case 'emails':
-          cleanEmailResponse(filteredResponse)
-          for (let key in filteredResponse) {
-            if (key !== 'errorCode') {
-              await this.emails.getEmail().setSiteEmailsWithDataCenter(this.apiKey, key, filteredResponse[key], this.dataCenter)
-            }
-          }
+          await this.applyEmailsConfig(filteredResponse)
           break
         case 'extension':
           if (filteredResponse.result.length > 0) {
@@ -113,36 +108,10 @@ class CdcService {
           break
         case 'rba':
         case 'riskAssessment':
-          if (filteredResponse[0]) {
-            await this.rba.setAccountTakeoverProtection(this.apiKey, filteredResponse[0])
-          }
-          if (filteredResponse[1]) {
-            await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, filteredResponse[1])
-          }
-          if (filteredResponse[2]) {
-            await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, filteredResponse[2])
-          }
+          await this.applyRbaConfig(filteredResponse)
           break
         case 'schema':
-          for (let key in filteredResponse) {
-            if (filteredResponse.hasOwnProperty(key)) {
-              if (key === 'dataSchema') {
-                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.dataSchema)
-              }
-              if (key === 'addressesSchema') {
-                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.addressesSchema)
-              }
-              if (key === 'internalSchema') {
-                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.internalSchema)
-              }
-              if (key === 'profileSchema') {
-                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.profileSchema)
-              }
-              if (key === 'subscriptionsSchema') {
-                await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.subscriptionsSchema)
-              }
-            }
-          }
+          await this.applySchemaConfig(filteredResponse)
           break
         case 'screenSets':
           for (const screenSet of filteredResponse.screenSets) {
@@ -154,26 +123,13 @@ class CdcService {
           break
         case 'channel':
         case 'topic':
-          if (filteredResponse.Channels) {
-            await this.communication.setChannels(this.apiKey, this.siteInfo, filteredResponse.Channels)
-          }
-          if (filteredResponse.results) {
-            await this.communication.setTopics(this.apiKey, this.siteInfo, filteredResponse.results)
-          }
+          await this.applyCommunicationConfig(filteredResponse)
           break
         case 'dataflow':
-          if (filteredResponse.result) {
-            options = createOptions(filteredResponse.result)
-            await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
-            break
-          }
+          await this.applyDataflowConfig(filteredResponse)
           break
         case 'webhook':
-          if (filteredResponse.webhooks) {
-            options = createOptions(filteredResponse.webhooks)
-            await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
-            break
-          }
+          await this.applyWebhookConfig(filteredResponse)
           break
         case 'consent':
           if (filteredResponse.preferences) {
@@ -190,6 +146,72 @@ class CdcService {
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }
+    }
+  }
+
+  async applyEmailsConfig(filteredResponse) {
+    cleanEmailResponse(filteredResponse)
+    for (let key in filteredResponse) {
+      if (key !== 'errorCode') {
+        await this.emails.getEmail().setSiteEmailsWithDataCenter(this.apiKey, key, filteredResponse[key], this.dataCenter)
+      }
+    }
+  }
+
+  async applySchemaConfig(filteredResponse) {
+    for (let key in filteredResponse) {
+      if (filteredResponse.hasOwnProperty(key)) {
+        if (key === 'dataSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.dataSchema)
+        }
+        if (key === 'addressesSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.addressesSchema)
+        }
+        if (key === 'internalSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.internalSchema)
+        }
+        if (key === 'profileSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.profileSchema)
+        }
+        if (key === 'subscriptionsSchema') {
+          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.subscriptionsSchema)
+        }
+      }
+    }
+  }
+
+  async applyRbaConfig(filteredResponse) {
+    if (filteredResponse[0]) {
+      await this.rba.setAccountTakeoverProtection(this.apiKey, filteredResponse[0])
+    }
+    if (filteredResponse[1]) {
+      await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, filteredResponse[1])
+    }
+    if (filteredResponse[2]) {
+      await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, filteredResponse[2])
+    }
+  }
+
+  async applyCommunicationConfig(filteredResponse) {
+    if (filteredResponse.Channels) {
+      await this.communication.setChannels(this.apiKey, this.siteInfo, filteredResponse.Channels)
+    }
+    if (filteredResponse.results) {
+      await this.communication.setTopics(this.apiKey, this.siteInfo, filteredResponse.results)
+    }
+  }
+
+  async applyDataflowConfig(filteredResponse) {
+    if (filteredResponse.result) {
+      const options = createOptions(filteredResponse.result)
+      await this.dataflow.copyDataflows(this.apiKey, this.siteInfo, filteredResponse, options)
+    }
+  }
+
+  async applyWebhookConfig(filteredResponse) {
+    if (filteredResponse.webhooks) {
+      const options = createOptions(filteredResponse.webhooks)
+      await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
     }
   }
 }

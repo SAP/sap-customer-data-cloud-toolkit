@@ -188,8 +188,8 @@ const VersionControlComponent = ({ t }) => {
       state={ValueState.Success}
       closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onSuccessDialogAfterClose}
-      id="copyConfigSuccessPopup"
-      data-cy="copyConfigSuccessPopup"
+      id="versionControlSuccessPopup"
+      data-cy="versionControlSuccessPopup"
     >
       <Text>{successMessage}</Text>
     </DialogMessageInform>
