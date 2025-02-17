@@ -59,6 +59,8 @@ class VersionControlService {
             return fileName.charAt(0).toUpperCase() + fileName.slice(1)
           })
         : ['N/A']
+
+    console.log('formatted files', formattedFiles)
     return formattedFiles
   }
 }
