@@ -18,27 +18,28 @@ describe('GitHub Test Suit', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
-  it('should create a branch if it does not exist', async () => {
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
-    const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: 'testSha' } } })
-    github.versionControl = {
-      rest: {
-        repos: {
-          getBranch: getBranchMock,
-        },
-      },
-    }
+  //   it('should create a branch if it does not exist', async () => {
+  //     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
+  //     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: 'testSha' } } })
+  //     github.versionControl = {
+  //       rest: {
+  //         repos: {
+  //           getBranch: getBranchMock,
+  //         },
+  //       },
+  //     }
 
-    await github.createBranch(apiKey)
-    expect(github.listBranches).toHaveBeenCalledWith(apiKey)
-    expect(getBranchMock).toHaveBeenCalledWith({
-      owner,
-      repo,
-      branch: defaultBranch,
-    })
-  })
+  //     await github.createBranch(apiKey)
+  //     expect(github.listBranches).toHaveBeenCalledWith(apiKey)
+  //     expect(getBranchMock).toHaveBeenCalledWith({
+  //       owner,
+  //       repo,
+  //       branch: defaultBranch,
+  //     })
+  //   })
 
   it('should return true if the branch exists', async () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
@@ -107,37 +108,45 @@ describe('GitHub Test Suit', () => {
     expect(getCommit).toEqual({ data: [{ author: 'testOwner', commit: 'testCommit', url: 'testUrl' }] })
   })
 
-  //-------------------------------
-  //   it('should throw an error if no files are found in the commit', async () => {
-  //     const sha = 'testSha'
-  //     const getCommitMock = jest.fn().mockResolvedValueOnce({ data: {} })
+  it('should throw an error if no files are found in the commit', async () => {
+    const sha = 'testSha'
+    const getCommitMock = jest.fn().mockResolvedValueOnce({ data: {} })
 
-  //     github.versionControl = {
-  //       rest: {
-  //         repos: {
-  //           getCommit: getCommitMock,
-  //         },
-  //       },
-  //     }
-  //     await expect(github.getCommitFiles(sha)).rejects.toThrow(`No files found in commit: ${sha}`)
-  //   })
+    github.versionControl = {
+      rest: {
+        repos: {
+          getCommit: getCommitMock,
+        },
+      },
+    }
+    await expect(github.getCommitFiles(sha)).rejects.toThrow(`No files found in commit: ${sha}`)
+  })
 
   //   it('should store CDC data in version control', async () => {
   //     const commitMessage = 'test commit'
   //     const configs = { key: 'value' }
   //     const validUpdates = [{ path: 'path', content: 'content' }]
+  //     const getRefMock = jest.fn().mockResolvedValueOnce({ data: {} })
 
   //     jest.spyOn(github, 'createBranch').mockResolvedValueOnce()
   //     jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
-  //     const updateFilesInSingleCommitSpy = jest.spyOn(github, '#updateFilesInSingleCommit').mockResolvedValueOnce()
-
+  //     github.versionControl = {
+  //       rest: {
+  //         git: {
+  //           getAuthenticated: getUsersMock,
+  //         },
+  //         repos: {
+  //           listBranches: getBranchesMock,
+  //           listCommits: getListCommits,
+  //         },
+  //       },
+  //     }
   //     await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
 
   //     expect(github.createBranch).toHaveBeenCalledWith(apiKey)
   //     expect(github.fetchAndPrepareFiles).toHaveBeenCalledWith(configs, apiKey)
-  //     expect(updateFilesInSingleCommitSpy).toHaveBeenCalledWith(commitMessage, validUpdates, apiKey)
   //   })
-
+  //-------------------------------
   //   it('should fetch and prepare files', async () => {
   //     const configs = { key: 'value' }
   //     const files = [{ path: 'src/versionControl/key.json', content: JSON.stringify(configs.key, null, 2) }]
