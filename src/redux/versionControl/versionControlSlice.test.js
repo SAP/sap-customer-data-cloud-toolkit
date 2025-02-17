@@ -7,7 +7,20 @@ import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import Cookies from 'js-cookie'
 import crypto from 'crypto-js'
-import reducer, { setGitToken, setOwner, fetchCommits, selectCommits, selectIsFetching, selectGitToken, selectOwner, selectError, getEncryptedCookie } from './versionControlSlice'
+import reducer, {
+  setGitToken,
+  setOwner,
+  fetchCommits,
+  selectCommits,
+  selectIsFetching,
+  selectGitToken,
+  selectOwner,
+  selectError,
+  getEncryptedCookie,
+  getRevertChanges,
+  getServices,
+  prepareFilesForUpdate,
+} from './versionControlSlice'
 
 jest.mock('js-cookie', () => ({
   set: jest.fn(),
@@ -32,6 +45,7 @@ describe('versionControlSlice', () => {
       isFetching: false,
       error: null,
       repo: '',
+      revert: false,
     },
   }
 
@@ -58,6 +72,7 @@ describe('versionControlSlice', () => {
         isFetching: false,
         error: null,
         repo: '',
+        revert: false,
       })
     })
 
@@ -158,6 +173,65 @@ describe('versionControlSlice', () => {
       const result = getEncryptedCookie(name, 'testSecretKey')
       expect(console.error).toHaveBeenCalledWith(`No ${name} found in cookies`)
       expect(result).toBeUndefined()
+    })
+  })
+  describe('Async thunk', () => {
+    it('should update state when getRevertChanges is fulfilled', async () => {
+      const action = getRevertChanges.fulfilled(true)
+      const newState = reducer(initialState, action)
+      expect(newState.revert).toEqual(true)
+      expect(newState.isFetching).toEqual(false)
+    })
+    it('should update state when getRevertChanges is rejected', async () => {
+      const action = getRevertChanges.fulfilled('Failed to revert configurations')
+      const newState = reducer(initialState, action)
+      expect(newState.revert).toEqual('Failed to revert configurations')
+      expect(newState.isFetching).toEqual(false)
+    })
+    it('should update state when fetchCommits is fulfilled', async () => {
+      const commits = [
+        {
+          login: 'testOwner',
+          id: 48961605,
+
+          site_admin: false,
+        },
+      ]
+      const action = fetchCommits.fulfilled(commits)
+      const newState = reducer(initialState, action)
+      expect(newState.commits[0].login).toEqual('testOwner')
+      expect(newState.isFetching).toEqual(false)
+    })
+    it('should update state when fetchCommits is rejected', async () => {
+      const action = fetchCommits.rejected('', '', '', 'Failed to fetch commits for branch: testApiKey')
+      const newState = reducer(initialState, action)
+      expect(newState.error).toEqual(`Failed to fetch commits for branch: testApiKey`)
+      expect(newState.isFetching).toEqual(false)
+    })
+    it('should update state when getServices is fulfilled', async () => {
+      const action = getServices.fulfilled(true)
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(false)
+      expect(newState.revert).toEqual(true)
+    })
+    it('should update state when getServices is rejected', async () => {
+      const action = getServices.rejected('', '', '', 'Failed to get services')
+      const newState = reducer(initialState, action)
+      expect(newState.error).toEqual('Failed to get services')
+      expect(newState.isFetching).toEqual(false)
+    })
+    it('should update state when prepareFilesForUpdate is fulfilled', async () => {
+      const formattedFiles = ['Dataflow', 'WebSdk']
+      const action = prepareFilesForUpdate.fulfilled(formattedFiles)
+      const newState = reducer(initialState, action)
+      expect(newState.isFetching).toEqual(false)
+      expect(newState.revert).toEqual(['Dataflow', 'WebSdk'])
+    })
+    it('should update state when prepareFilesForUpdate is rejected', async () => {
+      const action = prepareFilesForUpdate.rejected('', '', '', 'Failed to prepare files')
+      const newState = reducer(initialState, action)
+      expect(newState.error).toEqual('Failed to prepare files')
+      expect(newState.isFetching).toEqual(false)
     })
   })
 })

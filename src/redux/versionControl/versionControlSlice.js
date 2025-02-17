@@ -24,6 +24,7 @@ const versionControlSlice = createSlice({
     repo: '',
     isFetching: false,
     error: null,
+    revert: false,
   },
   reducers: {
     setGitToken(state, action) {
@@ -55,6 +56,42 @@ const versionControlSlice = createSlice({
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
+      state.isFetching = false
+      state.error = action.payload
+    })
+    builder.addCase(getRevertChanges.pending, (state) => {
+      state.isFetching = true
+      state.error = null
+    })
+    builder.addCase(getRevertChanges.fulfilled, (state, action) => {
+      state.isFetching = false
+      state.revert = action.payload
+    })
+    builder.addCase(getRevertChanges.rejected, (state, action) => {
+      state.isFetching = false
+      state.error = action.payload
+    })
+    builder.addCase(getServices.pending, (state) => {
+      state.isFetching = true
+      state.error = null
+    })
+    builder.addCase(getServices.fulfilled, (state, action) => {
+      state.isFetching = false
+      state.revert = action.payload
+    })
+    builder.addCase(getServices.rejected, (state, action) => {
+      state.isFetching = false
+      state.error = action.payload
+    })
+    builder.addCase(prepareFilesForUpdate.pending, (state) => {
+      state.isFetching = true
+      state.error = null
+    })
+    builder.addCase(prepareFilesForUpdate.fulfilled, (state, action) => {
+      state.isFetching = false
+      state.revert = action.payload
+    })
+    builder.addCase(prepareFilesForUpdate.rejected, (state, action) => {
       state.isFetching = false
       state.error = action.payload
     })
