@@ -193,6 +193,7 @@ class GitHub extends VersionControlManager {
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
     if (currentGitContentDecoded) {
       try {
+        currentGitContent = JSON.parse(currentGitContentDecoded)
         currentGitContent = removeIgnoredFields(currentGitContent)
       } catch (error) {
         currentGitContent = {}
