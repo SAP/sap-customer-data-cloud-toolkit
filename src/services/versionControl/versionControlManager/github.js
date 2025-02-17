@@ -106,14 +106,12 @@ class GitHub extends VersionControlManager {
       path: `src/versionControl/${key}.json`,
       content: JSON.stringify(configs[key], null, 2),
     }))
-
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
         const result = await this.#updateGitFileContent(file.path, file.content, apiKey)
         return result
       }),
     )
-
     return fileUpdates.filter((update) => update !== null)
   }
 

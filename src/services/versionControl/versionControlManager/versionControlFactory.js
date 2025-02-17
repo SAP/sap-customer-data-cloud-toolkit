@@ -2,10 +2,10 @@ import { Octokit } from '@octokit/rest'
 import GitHub from './github'
 
 class VersionControlFactory {
-  static getVersionControlFactory(versionControl, currentGitToken, currentOwner) {
+  static getVersionControlFactory(versionControl, currentGitToken, currentOwner, currentRepo) {
     switch (versionControl) {
       case 'github':
-        return new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+        return new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, currentRepo)
       case 'other':
         return new GitHub(new Octokit(), 'no owner', 'no repo')
       default:

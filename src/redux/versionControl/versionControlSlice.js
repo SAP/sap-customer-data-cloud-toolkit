@@ -69,7 +69,8 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const currentDataCenter = currentSiteInfo.dataCenter
   const gitToken = getEncryptedCookie('gitToken', credentials.secret)
   const owner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
+  const repo = Cookies.get('repo')
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
@@ -84,7 +85,8 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const currentDataCenter = currentSiteInfo.dataCenter
   const gitToken = getEncryptedCookie('gitToken', credentials.secret)
   const owner = getEncryptedCookie('owner', credentials.secret)
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
+  const repo = Cookies.get('repo')
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
@@ -110,7 +112,8 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const currentDataCenter = currentSiteInfo.dataCenter
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
+  const repo = Cookies.get('repo')
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
@@ -130,7 +133,8 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner)
+  const repo = Cookies.get('repo')
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
   if (!gitToken || !owner) {
     return rejectWithValue('Git token or owner is missing')
   }
