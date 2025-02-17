@@ -6,6 +6,8 @@ class VersionControlFactory {
     switch (versionControl) {
       case 'github':
         return new GitHub(new Octokit({ auth: currentGitToken }), currentOwner, 'CDCVersionControl')
+      case 'other':
+        return 'not yet implemented'
       default:
         throw new Error('Invalid Version Control')
     }
