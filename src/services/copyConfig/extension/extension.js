@@ -186,7 +186,7 @@ class Extension {
         destinationSite,
         destinationSiteConfiguration.dataCenter,
         sourceSiteExtension,
-        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite),
+        Extension.#createPayloadForModifyingChildSite(sourceSiteExtension, destinationSite)
       )
     }
   }
