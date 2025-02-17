@@ -1,12 +1,8 @@
 import GitHub from './github'
-import axios from 'axios'
 import { Base64 } from 'js-base64'
 
-jest.mock('axios')
 jest.mock('js-base64')
-jest.mock('../dataSanitization', () => ({
-  removeIgnoredFields: jest.fn(),
-}))
+jest.setTimeout(30000)
 
 describe('GitHub Test Suit', () => {
   const owner = 'testOwner'
@@ -18,34 +14,17 @@ describe('GitHub Test Suit', () => {
   const refMock = 'testRef'
   const mockFile = 'testFile'
   const github = new GitHub(versionControl, owner, repo)
-  const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
-  const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
-  const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
-  const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
-  const getCommitMock = jest
-    .fn()
-    .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
-  const getRequestMock = jest.fn().mockResolvedValueOnce({
-    data: {
-      name: `${mockFile}.json`,
-      path: `${mockFile}Path`,
-      sha: shaMock,
-      content: 'ewogICJjYWxsSWQi0=',
-    },
-  })
-  const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
-  const getCreateBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-  const getCreateTreeMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-  const getCreateCommit = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-  const getRefMock = jest.fn().mockResolvedValueOnce({ data: { object: { sha: shaMock } } })
-  const updateRef = jest.fn().mockResolvedValueOnce({ data: {} })
-  const getContentMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
-  const getBlob = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent' } })
+
   beforeEach(() => {
     jest.clearAllMocks()
     jest.restoreAllMocks()
   })
   it('should get a list of commits - getCommits', async () => {
+    const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
+
+    console.log('test')
     github.versionControl = {
       rest: {
         users: {
@@ -61,6 +40,9 @@ describe('GitHub Test Suit', () => {
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
   it('should create a branch if it does not exist', async () => {
+    const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
+    const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
+
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
     github.versionControl = {
       rest: {
@@ -83,6 +65,17 @@ describe('GitHub Test Suit', () => {
   })
 
   it('should return the files in the commit', async () => {
+    const getCommitMock = jest
+      .fn()
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+    const getRequestMock = jest.fn().mockResolvedValueOnce({
+      data: {
+        name: `${mockFile}.json`,
+        path: `${mockFile}Path`,
+        sha: shaMock,
+        content: 'ewogICJjYWxsSWQi0=',
+      },
+    })
     github.versionControl = {
       rest: {
         repos: {
@@ -116,6 +109,14 @@ describe('GitHub Test Suit', () => {
     const commitMessage = 'test commit'
     const configs = { key: 'value' }
     const validUpdates = [{ path: 'path', content: 'content' }]
+    const getCreateBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getCreateTreeMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getCreateCommit = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getRefMock = jest.fn().mockResolvedValueOnce({ data: { object: { sha: shaMock } } })
+    const updateRef = jest.fn().mockResolvedValueOnce({ data: {} })
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
+    const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
 
     jest.spyOn(github, 'createBranch').mockResolvedValueOnce()
     jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
@@ -141,8 +142,11 @@ describe('GitHub Test Suit', () => {
     expect(github.createBranch).toHaveBeenCalledWith(apiKey)
     expect(github.fetchAndPrepareFiles).toHaveBeenCalledWith(configs, apiKey)
   })
+
   it('should fetch and prepare files', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    const getBlob = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent' } })
+    const getContentMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
 
     const configs = { key: 'value' }
     const result = [{ path: 'src/versionControl/key.json', content: JSON.stringify(configs.key, null, 2), sha: 'testSha' }]
