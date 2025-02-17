@@ -192,7 +192,7 @@ describe('versionControlSlice', () => {
     it('should update state when getRevertChanges is rejected', async () => {
       const action = getRevertChanges.rejected('', '', '', 'Failed to revert configurations')
       const newState = reducer(initialState, action)
-      expect(newState.revert).toEqual('Failed to revert configurations')
+      expect(newState.error).toEqual('Failed to revert configurations')
       expect(newState.isFetching).toEqual(false)
     })
     it('should update state when fetchCommits is fulfilled', async () => {
