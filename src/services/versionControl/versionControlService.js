@@ -16,7 +16,6 @@ class VersionControlService {
   constructor(credentials, apiKey, versionControl, dataCenter, siteInfo) {
     this.credentials = credentials
     this.apiKey = apiKey
-    this.repo = 'CDCVersionControl'
     this.defaultBranch = apiKey
     this.dataCenter = dataCenter
     this.siteInfo = siteInfo
@@ -59,8 +58,6 @@ class VersionControlService {
             return fileName.charAt(0).toUpperCase() + fileName.slice(1)
           })
         : ['N/A']
-
-    console.log('formatted files', formattedFiles)
     return formattedFiles
   }
 }
