@@ -176,7 +176,7 @@ const VersionControlComponent = ({ t }) => {
     if (!gitToken || !owner || !repo || errors) {
       return <div></div>
     } else if (commits.length === 0) {
-      return <Bar className={classes.noCommitsBar} startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
+      return <Bar className={classes.noCommitsBar} id="versionControlCommitBar" startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
     }
     return null
   }
@@ -282,7 +282,7 @@ const VersionControlComponent = ({ t }) => {
               </Grid>
             </Card>
 
-            <Card className={classes.versionListTable}>
+            <Card className={classes.versionListTable} id="versionListTable">
               <>
                 <div id="versionList" className={classes.cardTitle}>
                   <Title level="H4" className={classes.versionListText}>
