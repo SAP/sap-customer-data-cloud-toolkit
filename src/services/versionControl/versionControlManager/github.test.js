@@ -55,6 +55,19 @@ describe('GitHub Test Suit', () => {
     }
     await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
   })
+  it('should fail to fetch commits for branch - getCommits', async () => {
+    const getBranchesMock = jest.fn().mockResolvedValueOnce()
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+
+    github.versionControl = {
+      rest: {
+        repos: {
+          listBranches: getBranchesMock,
+        },
+      },
+    }
+    await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
+  })
   it('should create a branch if it does not exist', async () => {
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
@@ -197,5 +210,41 @@ describe('GitHub Test Suit', () => {
     const fileUpdates = await github.fetchAndPrepareFiles(configs, apiKey)
 
     expect(fileUpdates).toEqual(result)
+  })
+  it('should return an error when there are no branches on the fetch and prepare files', async () => {
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    const getContentMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
+    github.versionControl = {
+      rest: {
+        repos: {
+          getContent: getContentMock,
+        },
+      },
+    }
+    const configs = { key: 'value' }
+    Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
+    const response = await github.fetchAndPrepareFiles(configs, apiKey)
+    expect(response[0].content).toEqual('"value"')
+    expect(response[0].sha).toEqual('testSha')
+  })
+  it('should create a blob when there are no files on the fetch and prepare files', async () => {
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    const getContentMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getBlobMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
+    github.versionControl = {
+      rest: {
+        repos: {
+          getContent: getContentMock,
+        },
+        git: {
+          getBlob: getBlobMock,
+        },
+      },
+    }
+    const configs = { key: 'value' }
+    Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
+    const response = await github.fetchAndPrepareFiles(configs, apiKey)
+    expect(response[0].content).toEqual('"value"')
+    expect(response[0].sha).toEqual('testSha')
   })
 })
