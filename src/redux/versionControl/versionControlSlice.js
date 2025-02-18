@@ -183,10 +183,9 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   }
 })
 const setCookies = (state) => {
-  const credentials = state.credentials
-  if (state.gitToken && state.owner && state.repo && credentials?.secretKey) {
-    const encryptedToken = encryptData(state.gitToken, credentials.secretKey)
-    const encryptedOwner = encryptData(state.owner, credentials.secretKey)
+  if (state.gitToken && state.owner && state.repo && state.credentials?.secretKey) {
+    const encryptedToken = encryptData(state.gitToken, state.credentials.secretKey)
+    const encryptedOwner = encryptData(state.owner, state.credentials.secretKey)
     if (encryptedToken && encryptedOwner) {
       Cookies.set('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
       Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })

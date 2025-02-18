@@ -101,10 +101,7 @@ describe('versionControlSlice', () => {
     })
     it('should update state to revert when reverting changes', async () => {
       const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
-      console.log('storeb4', store)
       await store.dispatch(getRevertChanges('testSha'))
-      console.log('storeafter', store)
-
       const actions = store.getActions()
       expect(actions[0].type).toBe(getRevertChanges.pending.type)
 
@@ -114,13 +111,9 @@ describe('versionControlSlice', () => {
     })
     it('should update state when getting services', async () => {
       const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
-      console.log('storeb4', store)
       await store.dispatch(getServices('test message'))
-      console.log('storeafter', store)
-
       const actions = store.getActions()
       expect(actions[0].type).toBe(getServices.pending.type)
-
       const expectedState = { ...initialState.versionControl, isFetching: true, error: null }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)

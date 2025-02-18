@@ -25,7 +25,6 @@ class GitHub extends VersionControlManager {
         owner: this.owner,
         repo: this.repo,
       })
-      console.log('branch.name', branches)
       return branches ? branches.some((branch) => branch.name === branchName) : false
     } catch (error) {
       throw new Error(error)
@@ -39,7 +38,6 @@ class GitHub extends VersionControlManager {
       ref: sha,
     })
 
-    console.log('commit-data', commitData)
     if (!commitData.files) {
       throw new Error(`No files found in commit: ${sha}`)
     }
@@ -52,7 +50,6 @@ class GitHub extends VersionControlManager {
     return Promise.all(
       files.map(async (file) => {
         const content = await this.#fetchFileContent(file.contents_url)
-        console.log('content-url', content)
         return { ...file, content: JSON.parse(Base64.decode(content)) }
       }),
     )
@@ -74,7 +71,6 @@ class GitHub extends VersionControlManager {
               per_page,
               page,
             })
-            console.log('response--->', response)
 
             allCommits = allCommits.concat(response.data)
 
@@ -228,7 +224,6 @@ class GitHub extends VersionControlManager {
         ref: `refs/heads/${branch}`,
         sha: mainBranch.commit.sha,
       })
-      console.log('data from createRef', data)
     } catch (error) {
       throw new Error('Error fetching branch:', error)
     }
@@ -268,7 +263,6 @@ class GitHub extends VersionControlManager {
 
   async #fetchFileContent(contents_url) {
     const { data: response } = await this.versionControl.request(contents_url)
-    console.log('response', response)
     if (!response || !response.content) {
       const { data: blobData } = await await this.versionControl.rest.git.getBlob({
         owner: this.owner,

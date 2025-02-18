@@ -24,7 +24,6 @@ describe('GitHub Test Suit', () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
 
-    console.log('test')
     github.versionControl = {
       rest: {
         users: {
