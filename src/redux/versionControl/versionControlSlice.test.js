@@ -114,6 +114,7 @@ describe('versionControlSlice', () => {
       await store.dispatch(getServices('test message'))
       const actions = store.getActions()
       expect(actions[0].type).toBe(getServices.pending.type)
+
       const expectedState = { ...initialState.versionControl, isFetching: true, error: null }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
