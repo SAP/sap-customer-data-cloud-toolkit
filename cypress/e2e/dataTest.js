@@ -1972,7 +1972,7 @@ const mockedVersionControlGetCommitsResponse = {
     login: 'web-flow',
     id: 19864447,
     node_id: 'MDQ6VXNlcjE5ODY0NDQ3',
-    avatar_url: 'https://avatars.githubusercontent.com/u/19864447?v=4',
+    avatar_url: 'test.com/u/19864447?v=4',
     gravatar_id: '',
     url: 'testurl.com/users/web-flow',
     html_url: 'https://github.com/web-flow',
