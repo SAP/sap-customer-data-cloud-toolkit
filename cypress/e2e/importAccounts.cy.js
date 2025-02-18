@@ -59,9 +59,9 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.clearAllLocalStorage()
       cy.clearAllSessionStorage()
     })
-    it('Should write on the search input and check the amount of checkboxes', () => {
+    it.only('Should write on the search input and check the amount of checkboxes', () => {
       cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
-      cy.get('#schemaInput').shadow().find('input').type('data.loyalty.rewardPoints').type('{enter}')
+      cy.get('#schemaInput').shadow().find('input').type('data.loyalty.rewardPoints{enter}')
       cy.get('#importAccountsCard').get('ui5-tree-item-custom').should('have.length', 3)
     })
   })
