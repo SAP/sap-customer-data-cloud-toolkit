@@ -1839,24 +1839,108 @@ const mockedVersionControlGetResponse = [
   {
     name: 'main',
     commit: {
-      sha: 'abc123',
-      url: 'https://api.github.com/repos/iamgaspar/CDCVersionControl/commits/abc123',
+      sha: 'testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/commits/testSha',
     },
   },
 ]
 
-const mockedVersionControlGetCommitsResponse = [
-  {
-    sha: 'abc123',
-    commit: {
-      message: 'Initial commit',
-      author: {
-        name: 'John Doe',
-        date: '2021-01-01T00:00:00Z',
-      },
+const mockedVersionControlGetCommitsResponse = {
+  sha: 'testSha',
+  commit: {
+    message: 'Initial commit',
+    author: {
+      name: 'John Doe',
+      date: '2021-01-01T00:00:00Z',
     },
   },
-]
+}
+
+const mockFetchCommits = {
+  ref: 'refs/heads/testApiKey',
+  node_id: 'REF_abc123_bac',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  object: {
+    sha: 'testsha',
+    type: 'commit',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/123abc123',
+  },
+}
+
+const mockGetBlob = {
+  sha: 'testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/blobs/testSha',
+}
+
+const mockTree = {
+  sha: 'testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
+  tree: [
+    {
+      path: 'testRepo',
+      mode: '100644',
+      type: 'blob',
+      sha: 'testSha',
+      size: 22,
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/blobs/testSha',
+    },
+    {
+      path: 'src',
+      mode: '040000',
+      type: 'tree',
+      sha: 'testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
+    },
+  ],
+  truncated: false,
+}
+
+const mockCommits = {
+  sha: 'testSha',
+  node_id: 'id_test',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
+  html_url: 'https://github.com/testOwner/testRepo/commit/testSha',
+  author: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T11:33:22Z',
+  },
+  committer: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T11:33:22Z',
+  },
+  tree: {
+    sha: 'testSha',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
+  },
+  message: 'Backup created',
+  parents: [
+    {
+      sha: 'testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
+      html_url: 'https://github.com/testOwner/testRepo/commit/testSha',
+    },
+  ],
+  verification: {
+    verified: false,
+    reason: 'unsigned',
+    signature: null,
+    payload: null,
+    verified_at: null,
+  },
+}
+
+const mockGetRef = {
+  ref: 'refs/heads/testApiKey',
+  node_id: 'testId',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  object: {
+    sha: 'testSha',
+    type: 'commit',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
+  },
+}
 
 const setRiskProvidersMock = {
   callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
@@ -2002,4 +2086,9 @@ export {
   mockedVersionControlGetResponse,
   mockedVersionControlGetCommitsResponse,
   owner,
+  mockFetchCommits,
+  mockGetBlob,
+  mockTree,
+  mockCommits,
+  mockGetRef,
 }

@@ -272,7 +272,11 @@ const VersionControlComponent = ({ t }) => {
                         required
                       />
                     </div>
-                    {(!gitToken || !owner || errors) && <div className={classes.warningMessage}>{t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}</div>}
+                    {(!gitToken || !owner || errors) && (
+                      <div id="warningCredentials" className={classes.warningMessage}>
+                        {t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}
+                      </div>
+                    )}
                   </div>
                 </>
               </Grid>

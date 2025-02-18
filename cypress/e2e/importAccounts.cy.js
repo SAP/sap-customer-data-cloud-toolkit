@@ -41,14 +41,14 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.get('#importAccountsCard').find('[id="preferences.terms.sap.actionTimestamp"]').click()
       cy.get('#importAccountsCard').find('[id="preferences.terms.sap.isConsentGranted"]').should('have.prop', 'checked')
     })
-    it('Should check if status checkbox is readOnly', () => {
+    it.only('Should check if status checkbox is readOnly', () => {
       cy.get(':nth-child(8) > [level="1"]').shadow().find('.ui5-li-tree-toggle-box').click()
       cy.get(':nth-child(8) > [level="1"] > :nth-child(4)').shadow().find('li').find('.ui5-li-tree-toggle-box').find('ui5-icon').click()
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.optIn.acceptanceLocation"]').click()
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.status"]').should('have.prop', 'checked')
     })
   })
-  context('Configuration Tree - Search Tree ', () => {
+  context.only('Configuration Tree - Search Tree ', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')

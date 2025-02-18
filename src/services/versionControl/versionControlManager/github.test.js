@@ -227,6 +227,7 @@ describe('GitHub Test Suit', () => {
     expect(response[0].content).toEqual('"value"')
     expect(response[0].sha).toEqual('testSha')
   })
+
   it('should create a blob when there are no files on the fetch and prepare files', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     const getContentMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
