@@ -136,6 +136,65 @@ describe('GitHub Test Suit', () => {
 
     expect(result).toEqual([{ filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
   })
+  it('should return a blob when there is no response content', async () => {
+    const getCommitMock = jest
+      .fn()
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+    const getRequestMock = jest.fn().mockResolvedValueOnce({
+      data: {
+        name: `${mockFile}.json`,
+        path: `${mockFile}Path`,
+        sha: shaMock,
+      },
+    })
+    const getBlobMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
+
+    github.versionControl = {
+      rest: {
+        repos: {
+          getCommit: getCommitMock,
+        },
+        git: {
+          getBlob: getBlobMock,
+        },
+      },
+      request: getRequestMock,
+    }
+    Base64.decode.mockReturnValueOnce('{"key":"value1"}')
+
+    const result = await github.getCommitFiles('testSha')
+
+    expect(result).toEqual([{ filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
+  })
+  it('should return an error when the blob has no context', async () => {
+    const url = '"https://versionControl.com/testRepos/owner/testRepos/contents/"'
+    const getCommitMock = jest
+      .fn()
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+    const getRequestMock = jest.fn().mockResolvedValueOnce({
+      data: {
+        name: `${mockFile}.json`,
+        path: `${mockFile}Path`,
+        sha: shaMock,
+      },
+    })
+    const getBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+
+    github.versionControl = {
+      rest: {
+        repos: {
+          getCommit: getCommitMock,
+        },
+        git: {
+          getBlob: getBlobMock,
+        },
+      },
+      request: getRequestMock,
+    }
+    Base64.decode.mockReturnValueOnce('{"key":"value1"}')
+
+    await expect(github.getCommitFiles('testSha')).rejects.toThrow(`Failed to fetch blob content for URL: ${url}`)
+  })
 
   it('should throw an error if no files are found in the commit', async () => {
     const sha = 'testSha'
