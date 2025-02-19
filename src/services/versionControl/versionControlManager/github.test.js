@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import GitHub from './github'
 import { Base64 } from 'js-base64'
 
@@ -68,23 +73,44 @@ describe('GitHub Test Suit', () => {
     await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
   })
   it('should create a branch if it does not exist', async () => {
+    const commitMessage = 'test commit'
+    const configs = { key: 'value' }
+
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
+    const getCreateBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getCreateTreeMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getCreateCommit = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
+    const getRefMock = jest.fn().mockResolvedValueOnce({ data: { object: { sha: shaMock } } })
+    const updateRef = jest.fn().mockResolvedValueOnce({ data: {} })
+    const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
 
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
     github.versionControl = {
       rest: {
         repos: {
           getBranch: getBranchMock,
+          listCommits: getListCommits,
+          listBranches: getBranchesMock,
         },
         git: {
           createRef: getCreateRefMock,
+          getAuthenticated: getUsersMock,
+          getRef: getRefMock,
+          createBlob: getCreateBlobMock,
+          createTree: getCreateTreeMock,
+          createCommit: getCreateCommit,
+          updateRef: updateRef,
+        },
+        users: {
+          getAuthenticated: getUsersMock,
         },
       },
     }
 
-    await github.createBranch(apiKey)
-    expect(github.listBranches).toHaveBeenCalledWith(apiKey)
+    await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
     expect(getBranchMock).toHaveBeenCalledWith({
       owner,
       repo,
@@ -92,8 +118,9 @@ describe('GitHub Test Suit', () => {
     })
   })
   it('should return false when credentials are not valid', async () => {
+    const commitMessage = 'test commit'
+    const configs = { key: 'value' }
     const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('Invalid owner'))
-
     github.versionControl = {
       rest: {
         users: {
@@ -102,11 +129,13 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    await expect(github.createBranch(apiKey)).rejects.toThrow('Invalid owner')
+    await expect(github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)).rejects.toThrow('Invalid owner')
   })
 
   it('should throw error when apikey does not exist', async () => {
-    await expect(github.createBranch()).rejects.toThrow('API key is missing')
+    const commitMessage = 'test commit'
+    const configs = { key: 'value' }
+    await expect(github.storeCdcDataInVersionControl(commitMessage, configs)).rejects.toThrow('API key is missing')
   })
 
   it('should return the files in the commit', async () => {
@@ -221,13 +250,15 @@ describe('GitHub Test Suit', () => {
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
+    const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
 
-    jest.spyOn(github, 'createBranch').mockResolvedValueOnce()
     jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
 
     github.versionControl = {
       rest: {
         git: {
+          createRef: getCreateRefMock,
           getAuthenticated: getUsersMock,
           getRef: getRefMock,
           createBlob: getCreateBlobMock,
@@ -236,14 +267,17 @@ describe('GitHub Test Suit', () => {
           updateRef: updateRef,
         },
         repos: {
+          getBranch: getBranchMock,
           listBranches: getBranchesMock,
           listCommits: getListCommits,
+        },
+        users: {
+          getAuthenticated: getUsersMock,
         },
       },
     }
     await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
 
-    expect(github.createBranch).toHaveBeenCalledWith(apiKey)
     expect(github.fetchAndPrepareFiles).toHaveBeenCalledWith(configs, apiKey)
   })
 

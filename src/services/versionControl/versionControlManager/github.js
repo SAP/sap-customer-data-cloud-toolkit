@@ -1,19 +1,14 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import VersionControlManager from './versionControlManager'
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from '../dataSanitization'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
-
-  async createBranch(apiKey) {
-    if (!apiKey) {
-      throw new Error('API key is missing')
-    }
-    const branchExists = await this.listBranches(apiKey)
-    if (!branchExists) {
-      this.#getBranchAndCreateRef(apiKey)
-    }
-  }
 
   async listBranches(branchName) {
     try {
@@ -93,7 +88,7 @@ class GitHub extends VersionControlManager {
   }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
-    await this.createBranch(apiKey)
+    await this.#createBranch(apiKey)
     const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
@@ -112,6 +107,16 @@ class GitHub extends VersionControlManager {
       }),
     )
     return fileUpdates.filter((update) => update !== null)
+  }
+
+  async #createBranch(apiKey) {
+    if (!apiKey) {
+      throw new Error('API key is missing')
+    }
+    const branchExists = await this.listBranches(apiKey)
+    if (!branchExists) {
+      this.#getBranchAndCreateRef(apiKey)
+    }
   }
 
   async #updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
@@ -218,7 +223,7 @@ class GitHub extends VersionControlManager {
         repo: this.repo,
         branch: GitHub.#SOURCE_BRANCH,
       })
-      const data = await this.versionControl.rest.git.createRef({
+      await this.versionControl.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
         ref: `refs/heads/${branch}`,
