@@ -1,7 +1,7 @@
 import StorageProvider from './storageProvider'
 
 class AzureStorageProvider extends StorageProvider {
-  getReader() {
+  getReader(nextStep) {
     return {
       id: 'azure.blob',
       type: 'datasource.read.azure.blob',
@@ -12,6 +12,7 @@ class AzureStorageProvider extends StorageProvider {
         fileNameRegex: '{{readFileNameRegex}}',
         blobPrefix: '{{blobPrefix}}',
       },
+      next: [nextStep],
     }
   }
 

@@ -8,9 +8,11 @@ class FullAccount extends AccountManager {
   }
 
   #createDataflow(storageProvider) {
+    const readFile = 'file.parse.dsv'
     const dataflow = this.#genericFullAccountDataflow(storageProvider.getWriter().id)
-    dataflow.steps.splice(1, 0, storageProvider.getReader())
+    dataflow.steps.splice(1, 0, storageProvider.getReader(readFile))
     dataflow.steps.splice(7, 0, storageProvider.getWriter())
+    console.log('Dataflow: ', dataflow)
     return dataflow
   }
 
