@@ -19,8 +19,8 @@ describe('Version Control Test Suite', () => {
   it('should display the version control page', () => {
     utils.mockGetConfigurationRequests()
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetResponse }).as('getBranches')
-    cy.intercept('GET', 'api.github.com/repos/testOwner/testRepo/branches/main', { body: dataTest.mockedVersionControlGetResponse })
-    cy.intercept('GET', 'api.github.com/repos/testOwner/testRepo/commits?sha=testSha&per_page=100&page=1', {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=testSha&per_page=100&page=1`, {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
@@ -35,19 +35,19 @@ describe('Version Control Test Suite', () => {
     cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/trees`, {
       body: dataTest.mockTree,
     })
-    cy.intercept('POST', 'https://api.github.com/repos/testOwner/testRepo/git/commits', {
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/commits`, {
       body: dataTest.mockCommits,
     })
-    cy.intercept('PATCH', 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads%2Fundefined', {
+    cy.intercept('PATCH', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {
       body: dataTest.mockGetRef,
     })
-    cy.intercept('GET', 'https://api.github.com/repos/testOwner/testRepo/git/ref/heads%2Fundefined', {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
       body: dataTest.mockGetRef,
     })
-    cy.intercept('POST', 'https://api.github.com/repos/iamgaspar/CDCVersionControl/git/refs', {
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/refs`, {
       body: dataTest.mockGetRef,
     })
-    cy.intercept('OPTIONS', 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads%2Fundefined', {})
+    cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {})
     cy.get('#versionControlTitle').should('have.text', 'Version Control')
     cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
     cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
@@ -76,7 +76,7 @@ describe('Version Control Test Suite', () => {
       body: dataTest.mockedUserAuthentication,
     })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetResponse })
-    cy.intercept('GET', 'https://api.github.com/repos/testOwner/testRepo/commits?sha=testSha', {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=testSha`, {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     })
 

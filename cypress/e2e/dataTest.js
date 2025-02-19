@@ -2035,7 +2035,7 @@ const mockCommits = {
   sha: 'testSha',
   node_id: 'id_test',
   url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
-  html_url: 'https://github.com/testOwner/testRepo/commit/testSha',
+  html_url: 'test.com/testOwner/testRepo/commit/testSha',
   author: {
     name: 'testOwner',
     email: '48961605+testOwner@users.noreply.github.com',
@@ -2055,7 +2055,7 @@ const mockCommits = {
     {
       sha: 'testSha',
       url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
-      html_url: 'https://github.com/testOwner/testRepo/commit/testSha',
+      html_url: 'test.com/testOwner/testRepo/commit/testSha',
     },
   ],
   verification: {
