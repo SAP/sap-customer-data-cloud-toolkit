@@ -141,7 +141,7 @@ describe('GitHub Test Suit', () => {
   it('should return the files in the commit', async () => {
     const getCommitMock = jest
       .fn()
-      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"' }] } })
     const getRequestMock = jest.fn().mockResolvedValueOnce({
       data: {
         name: `${mockFile}.json`,
@@ -162,12 +162,12 @@ describe('GitHub Test Suit', () => {
 
     const result = await github.getCommitFiles('testSha')
 
-    expect(result).toEqual([{ filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
+    expect(result).toEqual([{ filename: mockFile, contents_url: '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
   })
   it('should return a blob when there is no response content', async () => {
     const getCommitMock = jest
       .fn()
-      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"' }] } })
     const getRequestMock = jest.fn().mockResolvedValueOnce({
       data: {
         name: `${mockFile}.json`,
@@ -192,13 +192,13 @@ describe('GitHub Test Suit', () => {
 
     const result = await github.getCommitFiles('testSha')
 
-    expect(result).toEqual([{ filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
+    expect(result).toEqual([{ filename: mockFile, contents_url: '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"', content: { key: 'value1' } }])
   })
   it('should return an error when the blob has no context', async () => {
-    const url = '"https://versionControl.com/testRepos/owner/testRepos/contents/"'
+    const url = '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"'
     const getCommitMock = jest
       .fn()
-      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://versionControl.com/testRepos/owner/testRepos/contents/"' }] } })
+      .mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: '"https://randomVersionControl.xpto/testRepos/owner/testRepos/contents/"' }] } })
     const getRequestMock = jest.fn().mockResolvedValueOnce({
       data: {
         name: `${mockFile}.json`,
