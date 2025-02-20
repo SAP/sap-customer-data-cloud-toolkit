@@ -107,8 +107,9 @@ const VersionControlComponent = ({ t }) => {
   const onCreateBackupClick = async () => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
-      const formattedFiles = unwrapResult(resultAction)
-      setFilesToUpdate(formattedFiles)
+      console.log('result', resultAction)
+      // const formattedFiles = unwrapResult(resultAction)
+      // setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
       console.error('Error preparing backup:', error)
