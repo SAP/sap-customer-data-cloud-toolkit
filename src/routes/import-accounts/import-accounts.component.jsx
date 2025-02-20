@@ -12,7 +12,12 @@ import styles from './import-accounts.styles.js'
 import ServerImportComponent from '../server-import/server-import.component.jsx'
 import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
 import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
+import {
+  selectCurrentSiteInformation,
+  getCurrentSiteInformation,
+  selectCurrentSiteApiKey,
+  updateCurrentSiteApiKey,
+} from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import {
   getConfigurationTree,
@@ -25,11 +30,13 @@ import {
   selectIsLoading,
   clearConfigurations,
   setSuggestionClickConfiguration,
+  selectAccountType,
+  setAccountOptionType,
 } from '../../redux/importAccounts/importAccountsSlice.js'
-import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
-import { AccountType } from '../../services/importAccounts/accountManager/accountType.js'
+import { ROUTE_IMPORT_ACCOUNTS } from '../../inject/constants.js'
+import { getApiKey } from '../../redux/utils.js'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
@@ -38,23 +45,35 @@ const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
-  const apikey = getApiKey(window.location.hash)
+  const apikey = useSelector(selectCurrentSiteApiKey)
   const isLoading = useSelector(selectIsLoading)
+  const accountType = useSelector(selectAccountType)
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
-  const [accountOption, setAccountOption] = useState(AccountType.Full)
   const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
+  window.navigation.onnavigate = (event) => {
+    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_IMPORT_ACCOUNTS)) {
+      if (apikey !== getApiKey(window.location.hash)) {
+        dispatch(updateCurrentSiteApiKey())
+      }
+      dispatch(getCurrentSiteInformation())
+      dispatch(getConfigurationTree(accountType))
+      dispatch(setAccountOptionType(accountType))
+    }
+  }
+
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurationTree(AccountType.Full))
-  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
+    dispatch(getConfigurationTree(accountType))
+    dispatch(setAccountOptionType(accountType))
+  }, [dispatch, apikey, credentials, accountType, currentSiteInfo.dataCenter])
 
   const onSaveHandler = async () => {
-    dispatch(setConfigurations(accountOption))
+    dispatch(setConfigurations(accountType))
     await trackUsage({ featureName: PAGE_TITLE })
   }
 
@@ -62,7 +81,7 @@ const ImportAccountsComponent = ({ t }) => {
     const selectedValue = event.target.value
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree(selectedValue))
-    setAccountOption(selectedValue)
+    dispatch(setAccountOptionType(selectedValue))
   }
 
   const handleTreeNodeClick = (treeNodeId) => {

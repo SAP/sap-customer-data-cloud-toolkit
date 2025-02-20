@@ -23,6 +23,7 @@ export const importAccountsSlice = createSlice({
     showSuccessMessage: false,
     currentSiteInformation: {},
     selectedConfiguration: [],
+    accountType: 'Full',
   },
   reducers: {
     setConfigurationStatus(state, action) {
@@ -71,6 +72,9 @@ export const importAccountsSlice = createSlice({
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)
       state.selectedConfiguration = configuration
+    },
+    setAccountOptionType(state, action) {
+      state.accountType = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -141,11 +145,12 @@ export const {
   setSugestionSchema,
   setSwitchOptions,
   clearConfigurations,
+  setAccountOptionType,
 } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectIsLoading = (state) => state.importAccounts.isLoading
 export const selectSugestionConfigurations = (state) => state.importAccounts.selectedConfiguration
 export const selectParentNode = (state) => state.importAccounts.parentNode
-
+export const selectAccountType = (state) => state.importAccounts.accountType
 export default importAccountsSlice.reducer
