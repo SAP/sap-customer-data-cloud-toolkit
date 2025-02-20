@@ -8,8 +8,9 @@ class LiteAccount extends AccountManager {
   }
 
   #createDataflow(storageProvider) {
+    const readFile = 'file.parse.dsv'
     const dataflow = this.#genericLiteAccountDataflow(storageProvider.getWriter().id)
-    dataflow.steps.splice(1, 0, this.storageProvider.getReader())
+    dataflow.steps.splice(1, 0, this.storageProvider.getReader(readFile))
     dataflow.steps.splice(4, 0, this.storageProvider.getWriter())
     return dataflow
   }
