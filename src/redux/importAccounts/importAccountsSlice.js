@@ -76,6 +76,9 @@ export const importAccountsSlice = createSlice({
     setAccountOptionType(state, action) {
       state.accountType = action.payload
     },
+    clearSelectConfiguration(state) {
+      state.selectedConfiguration = []
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getConfigurationTree.pending, (state) => {
@@ -146,6 +149,7 @@ export const {
   setSwitchOptions,
   clearConfigurations,
   setAccountOptionType,
+  clearSelectConfiguration,
 } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations

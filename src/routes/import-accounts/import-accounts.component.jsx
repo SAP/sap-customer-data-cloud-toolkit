@@ -32,6 +32,7 @@ import {
   setSuggestionClickConfiguration,
   selectAccountType,
   setAccountOptionType,
+  clearSelectConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
@@ -55,6 +56,7 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
+
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_IMPORT_ACCOUNTS)) {
       if (apikey !== getApiKey(window.location.hash)) {
@@ -63,6 +65,10 @@ const ImportAccountsComponent = ({ t }) => {
       dispatch(getCurrentSiteInformation())
       dispatch(getConfigurationTree(accountType))
       dispatch(setAccountOptionType(accountType))
+      dispatch(clearSelectConfiguration())
+      setTreeNodeInputValue('')
+      setSchemaInputValue('')
+      setExpandableNode(false)
     }
   }
 
