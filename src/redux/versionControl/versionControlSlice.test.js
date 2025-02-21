@@ -6,7 +6,6 @@
 import configureMockStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import Cookies from 'js-cookie'
-import crypto from 'crypto-js'
 import reducer, {
   setGitToken,
   setOwner,
