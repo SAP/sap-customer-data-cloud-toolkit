@@ -55,3 +55,30 @@ export const cleanResponse = (response) => {
     delete response.preferencesCenter.redirectURL
   }
 }
+
+export const deepEqual = (obj1, obj2) => {
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+    return obj1 === obj2
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  keys1.sort()
+  keys2.sort()
+
+  for (let i = 0; i < keys1.length; i++) {
+    if (keys1[i] !== keys2[i]) {
+      return false
+    }
+    if (!deepEqual(obj1[keys1[i]], obj2[keys2[i]])) {
+      return false
+    }
+  }
+
+  return true
+}

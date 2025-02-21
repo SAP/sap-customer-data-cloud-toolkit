@@ -5,7 +5,7 @@
 
 import VersionControlManager from './versionControlManager'
 import { Base64 } from 'js-base64'
-import { removeIgnoredFields } from '../dataSanitization'
+import { deepEqual, removeIgnoredFields } from '../dataSanitization'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
@@ -213,8 +213,7 @@ class GitHub extends VersionControlManager {
 
     let newContent = JSON.parse(cdcFileContent)
     const sanitizedNewContent = removeIgnoredFields(newContent)
-
-    if (JSON.stringify(currentGitContent) !== JSON.stringify(sanitizedNewContent)) {
+    if (!deepEqual(currentGitContent, sanitizedNewContent)) {
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2), // Save the original content
