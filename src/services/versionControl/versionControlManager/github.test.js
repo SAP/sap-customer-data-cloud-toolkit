@@ -77,7 +77,7 @@ describe('GitHub Test Suit', () => {
     const configs = { key: 'value' }
 
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
-    const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
+    const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: { ref: '/refs/heads/test' } })
     const getCreateBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
     const getCreateTreeMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
     const getCreateCommit = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
@@ -87,7 +87,8 @@ describe('GitHub Test Suit', () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
 
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         repos: {
@@ -111,10 +112,10 @@ describe('GitHub Test Suit', () => {
     }
 
     await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
-    expect(getBranchMock).toHaveBeenCalledWith({
+    expect(getRefMock).toHaveBeenCalledWith({
       owner,
       repo,
-      branch: defaultBranch,
+      ref: `heads/${apiKey}`,
     })
   })
   it('should return false when credentials are not valid', async () => {
@@ -255,6 +256,8 @@ describe('GitHub Test Suit', () => {
 
     jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
 
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         git: {
