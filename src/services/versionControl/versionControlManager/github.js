@@ -231,7 +231,7 @@ class GitHub extends VersionControlManager {
         repo: this.repo,
         branch: GitHub.#SOURCE_BRANCH,
       })
-      await this.versionControl.rest.git.createRef({
+      const ref = await this.versionControl.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
         ref: `refs/heads/${branch}`,
