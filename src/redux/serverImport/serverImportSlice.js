@@ -26,20 +26,28 @@ export const serverImportExtendedSlice = createSlice({
     isLoading: false,
     showSuccessMessage: false,
     currentSiteInformation: {},
+    serverProvider: '',
   },
   reducers: {
     getServerConfiguration(state, action) {
-      const option = getConfigurationByKey(state.serverConfigurations, action.payload.selectedOption)
+      const option = getConfigurationByKey(state.serverConfigurations, state.serverProvider)
       const initOption = option.filter((item) => item.id === action.payload.id)[0]
       initOption.value = action.payload.value
       state.accountType = action.payload.accountType
     },
-    clearConfigurations(state) {
+    clearServerConfigurations(state) {
       clearAllValues(state.serverConfigurations)
     },
     setAccountType(state, action) {
       getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
       state.accountType = action.payload.accountType
+    },
+    setServerProvider(state) {
+      const SERVER_TYPE = 'azure'
+      state.serverProvider = SERVER_TYPE
+    },
+    updateServerProvider(state, action) {
+      state.serverProvider = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -127,7 +135,7 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   }
 })
 
-export const { getServerConfiguration, setAccountType, clearConfigurations } = serverImportExtendedSlice.actions
+export const { getServerConfiguration, setAccountType, clearServerConfigurations, setServerProvider, updateServerProvider } = serverImportExtendedSlice.actions
 
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
 
@@ -135,4 +143,5 @@ export const selectAccountType = (state) => state.serverImport.accountType
 
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
 export const selectCurrentPartner = (state) => state.serverImport.currentSitePartner
+export const selectServerProvider = (state) => state.serverImport.serverProvider
 export default serverImportExtendedSlice.reducer

@@ -9,7 +9,7 @@
 
 import { AccountType } from '../../services/importAccounts/accountManager/accountType'
 import { initialState, initialStateWithServerConfigurations } from './dataTest'
-import { clearConfigurations, getServerConfiguration } from './serverImportSlice'
+import { clearServerConfigurations, getServerConfiguration } from './serverImportSlice'
 import serverImportReducer from './serverImportSlice'
 describe('serverImportSlice test suite', () => {
   const SERVER_TYPE = 'azure'
@@ -27,7 +27,7 @@ describe('serverImportSlice test suite', () => {
   })
   test('should remove the values', () => {
     initialStateWithServerConfigurations.serverConfigurations.azure[0].value = 'testing'
-    const newState = serverImportReducer(initialStateWithServerConfigurations, clearConfigurations())
+    const newState = serverImportReducer(initialStateWithServerConfigurations, clearServerConfigurations())
     expect(newState.serverConfigurations.azure[0].value).toBe(undefined)
   })
 })

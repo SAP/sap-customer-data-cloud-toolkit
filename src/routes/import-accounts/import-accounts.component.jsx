@@ -38,6 +38,7 @@ import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js
 import { trackUsage } from '../../lib/tracker.js'
 import { ROUTE_IMPORT_ACCOUNTS } from '../../inject/constants.js'
 import { getApiKey } from '../../redux/utils.js'
+import { clearServerConfigurations, selectServerProvider } from '../../redux/serverImport/serverImportSlice.js'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
@@ -56,7 +57,7 @@ const ImportAccountsComponent = ({ t }) => {
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
-
+  const serverProviderOption = useSelector(selectServerProvider)
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_IMPORT_ACCOUNTS)) {
       if (apikey !== getApiKey(window.location.hash)) {
@@ -66,6 +67,8 @@ const ImportAccountsComponent = ({ t }) => {
       dispatch(getConfigurationTree(accountType))
       dispatch(setAccountOptionType(accountType))
       dispatch(clearSelectConfiguration())
+      dispatch(clearConfigurations())
+      dispatch(clearServerConfigurations(serverProviderOption))
       setTreeNodeInputValue('')
       setSchemaInputValue('')
       setExpandableNode(false)

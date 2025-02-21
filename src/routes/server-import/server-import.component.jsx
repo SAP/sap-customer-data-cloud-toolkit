@@ -13,14 +13,17 @@ import { Bar, Text, Button, Option, Select, ValueState, Panel, Label, MessageStr
 import FormItemWithIcon from '../../components/server-import-form/server-import-form.container.jsx'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component.jsx'
 import {
-  clearConfigurations,
+  clearServerConfigurations,
   getConfigurations,
   getDataflowRedirection,
   getServerConfiguration,
   selectServerConfigurations,
+  selectServerProvider,
   selectShowSuccessDialog,
   setAccountType,
   setDataflow,
+  setServerProvider,
+  updateServerProvider,
 } from '../../redux/serverImport/serverImportSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
@@ -32,7 +35,6 @@ import { AccountType } from '../../services/importAccounts/accountManager/accoun
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 
 const PAGE_TITLE = 'Deploy and Import'
-const SERVER_TYPE = 'azure'
 
 const ServerImportComponent = ({ t }) => {
   const classes = useStyles()
@@ -41,13 +43,13 @@ const ServerImportComponent = ({ t }) => {
   const apikey = useSelector(selectCurrentSiteApiKey)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
-  const [selectedOption, setSelectedOption] = useState(SERVER_TYPE)
   const [accountOption, setAccountOption] = useState(AccountType.Full)
   const [showDialog, setShowSuccessDialog] = useState(false)
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
+  const serverProviderOption = useSelector(selectServerProvider)
 
   useEffect(() => {
     const fetchDataflowURL = async () => {
@@ -59,17 +61,17 @@ const ServerImportComponent = ({ t }) => {
     fetchDataflowURL()
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurations())
+    dispatch(setServerProvider())
   }, [dispatch, apikey, credentials, redirectionDataflowURL, currentSiteInfo.dataCenter])
 
   const handleAccountOptionChange = (event) => {
     const selectedValue = event.target.value
-    const setSelectedServerOption = selectedOption
-    dispatch(setAccountType({ accountType: selectedValue, serverType: setSelectedServerOption }))
+    dispatch(setAccountType({ accountType: selectedValue, serverType: serverProviderOption }))
     setAccountOption(selectedValue)
   }
 
   const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value)
+    dispatch(updateServerProvider(event.target.value))
   }
 
   const onSuccessDialogAfterCloseHandler = async () => {
@@ -78,18 +80,18 @@ const ServerImportComponent = ({ t }) => {
   }
 
   const handleInputChange = (event, id) => {
-    dispatch(getServerConfiguration({ selectedOption, id, value: event.target.value, accountType: accountOption }))
+    dispatch(getServerConfiguration({ id, value: event.target.value, accountType: accountOption }))
   }
 
   const disableDeployButton = () => {
-    if (serverConfigurations[selectedOption]) {
-      return !isInputFilled(serverConfigurations[selectedOption])
+    if (serverConfigurations[serverProviderOption]) {
+      return !isInputFilled(serverConfigurations[serverProviderOption])
     }
   }
 
   const handleSubmit = async () => {
-    if (selectedOption && accountOption) {
-      const resultAction = await dispatch(setDataflow({ option: selectedOption, accountType: accountOption }))
+    if (serverProviderOption && accountOption) {
+      const resultAction = await dispatch(setDataflow({ option: serverProviderOption, accountType: accountOption }))
       if (setDataflow.fulfilled.match(resultAction)) {
         setCreatedDataflowId(resultAction.payload)
       }
@@ -98,7 +100,7 @@ const ServerImportComponent = ({ t }) => {
   }
 
   const onCancelHandler = () => {
-    dispatch(clearConfigurations({ option: selectedOption }))
+    dispatch(clearServerConfigurations({ option: serverProviderOption }))
   }
 
   const handleLinkClick = async () => {
@@ -107,7 +109,7 @@ const ServerImportComponent = ({ t }) => {
   }
 
   const renderFormItemsInGrid = () => {
-    return serverConfigurations[selectedOption].map((field) => (
+    return serverConfigurations[serverProviderOption].map((field) => (
       <div key={field.id} className={classes.gridItem}>
         <FormItemWithIcon field={field} handleInputChange={handleInputChange} />
       </div>
@@ -164,7 +166,7 @@ const ServerImportComponent = ({ t }) => {
                 ))}
               </Select>
             </div>
-            <div className={classes.gridContainer}>{serverConfigurations[selectedOption] && renderFormItemsInGrid()}</div>
+            <div className={classes.gridContainer}>{serverConfigurations[serverProviderOption] && renderFormItemsInGrid()}</div>
           </div>
           <Bar
             design="Footer"
