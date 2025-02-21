@@ -108,8 +108,8 @@ const VersionControlComponent = ({ t }) => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       console.log('result', resultAction)
-      // const formattedFiles = unwrapResult(resultAction)
-      // setFilesToUpdate(formattedFiles)
+      const formattedFiles = unwrapResult(resultAction)
+      setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
       console.error('Error preparing backup:', error)

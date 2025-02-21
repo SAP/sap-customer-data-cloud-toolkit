@@ -86,9 +86,18 @@ class GitHub extends VersionControlManager {
       throw new Error(error)
     }
   }
+  async waitForCreation(apiKey, delay = 1000) {
+    await this.listBranches(apiKey)
+
+    await new Promise((resolve) => setTimeout(resolve, delay))
+  }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
     await this.#createBranch(apiKey)
+    const commits = await this.getCommits(apiKey)
+    if (commits.data.length === 0) {
+      await this.waitForCreation(apiKey)
+    }
     const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
