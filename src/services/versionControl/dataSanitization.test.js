@@ -2,7 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */ 
-import { removeIgnoredFields, cleanEmailResponse, cleanResponse } from './dataSanitization'
+import { removeIgnoredFields, cleanEmailResponse, cleanResponse, deepEqual } from './dataSanitization'
 
 describe('Data sanitization tests', () => {
   test('removeIgnoredFields removes specified fields from objects', () => {
@@ -49,4 +49,60 @@ describe('Data sanitization tests', () => {
       preferencesCenter: {},
     })
   })
+  
+   describe('deepEqual tests', () => {
+     test('deepEqual returns true for identical objects', () => {
+       const obj1 = { a: 1, b: { c: 2, d: 3 } }
+       const obj2 = { a: 1, b: { c: 2, d: 3 } }
+       expect(deepEqual(obj1, obj2)).toBe(true)
+     })
+
+     test('deepEqual returns false for different objects', () => {
+       const obj1 = { a: 1, b: { c: 2, d: 3 } }
+       const obj2 = { a: 1, b: { c: 2, d: 4 } }
+       expect(deepEqual(obj1, obj2)).toBe(false)
+     })
+
+     test('deepEqual returns true for objects with different key order', () => {
+       const obj1 = { a: 1, b: { c: 2, d: 3 } }
+       const obj2 = { b: { d: 3, c: 2 }, a: 1 }
+       expect(deepEqual(obj1, obj2)).toBe(true)
+     })
+
+     test('deepEqual returns false for objects with different keys', () => {
+       const obj1 = { a: 1, b: { c: 2, d: 3 } }
+       const obj2 = { a: 1, b: { c: 2, e: 3 } }
+       expect(deepEqual(obj1, obj2)).toBe(false)
+     })
+
+     test('deepEqual returns true for identical arrays', () => {
+       const arr1 = [1, 2, { a: 3, b: 4 }]
+       const arr2 = [1, 2, { a: 3, b: 4 }]
+       expect(deepEqual(arr1, arr2)).toBe(true)
+     })
+
+     test('deepEqual returns false for different arrays', () => {
+       const arr1 = [1, 2, { a: 3, b: 4 }]
+       const arr2 = [1, 2, { a: 3, b: 5 }]
+       expect(deepEqual(arr1, arr2)).toBe(false)
+     })
+
+     test('deepEqual returns true for identical primitive values', () => {
+       expect(deepEqual(1, 1)).toBe(true)
+       expect(deepEqual('test', 'test')).toBe(true)
+       expect(deepEqual(null, null)).toBe(true)
+     })
+
+     test('deepEqual returns false for different primitive values', () => {
+       expect(deepEqual(1, 2)).toBe(false)
+       expect(deepEqual('test', 'Test')).toBe(false)
+       expect(deepEqual(null, undefined)).toBe(false)
+     })
+
+     test('deepEqual returns true for nested objects with different key order', () => {
+       const obj1 = { a: 1, b: { c: 2, d: { e: 3, f: 4 } } }
+       const obj2 = { b: { d: { f: 4, e: 3 }, c: 2 }, a: 1 }
+       expect(deepEqual(obj1, obj2)).toBe(true)
+     })
+   })
 })
