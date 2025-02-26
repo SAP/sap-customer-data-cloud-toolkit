@@ -9,7 +9,7 @@ export const removeIgnoredFields = (obj) => {
   } else if (obj && typeof obj === 'object') {
     const newObj = {}
     for (let key in obj) {
-      if (obj.hasOwnProperty(key) && key !== 'callId' && key !== 'time') {
+      if (obj.hasOwnProperty(key) && key !== 'callId' && key !== 'time' && key !== 'lastModified') {
         newObj[key] = removeIgnoredFields(obj[key])
       }
     }

@@ -156,9 +156,6 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   }
   try {
     const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
-    console.log('===============commitList=====================')
-    console.log(commitList)
-    console.log('====================================')
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
     return rejectWithValue(error.message)
