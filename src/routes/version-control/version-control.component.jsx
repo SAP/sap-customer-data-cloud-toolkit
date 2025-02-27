@@ -107,7 +107,6 @@ const VersionControlComponent = ({ t }) => {
   const onCreateBackupClick = async () => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
-      console.log('result', resultAction)
       const formattedFiles = unwrapResult(resultAction)
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
@@ -276,6 +275,9 @@ const VersionControlComponent = ({ t }) => {
                     {(!gitToken || !owner || errors) && (
                       <div id="warningCredentials" className={classes.warningMessage}>
                         {t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}
+                        <a href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/Documentation#prettier" target="_blank" rel="noopener noreferrer">
+                          {t('VERSION_CONTROL.DOCUMENTATION_LINK')}
+                        </a>
                       </div>
                     )}
                   </div>
