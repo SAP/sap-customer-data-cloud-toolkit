@@ -37,8 +37,8 @@ export const getRootElementsStructure = () => {
           branches: [],
         },
         {
-          id: 'loginIds.email',
-          name: 'email',
+          id: 'loginIds.emails',
+          name: 'emails',
           value: false,
           branches: [],
         },

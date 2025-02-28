@@ -21,7 +21,7 @@ export const expectedFullAccount = [
     value: false,
     branches: [
       { id: 'loginIds.username', name: 'username', value: false, branches: [] },
-      { id: 'loginIds.email', name: 'email', value: false, branches: [] },
+      { id: 'loginIds.emails', name: 'emails', value: false, branches: [] },
       { id: 'loginIds.unverifiedEmail', name: 'unverifiedEmail', value: false, branches: [] },
     ],
   },
@@ -40,7 +40,7 @@ export const expectedResultFromTree = [
   'uid',
   'phoneNumber',
   'loginIds.username',
-  'loginIds.email',
+  'loginIds.emails',
   'isActive',
   'profile.photoURL',
   'profile.oidcData.website',
