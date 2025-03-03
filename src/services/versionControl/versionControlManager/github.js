@@ -304,30 +304,34 @@ class GitHub extends VersionControlManager {
     return file
   }
 
-  // async #validateCredentials() {
-  //   try {
-  //     const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
-  //     if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
-  //       throw new Error('Invalid owner')
-  //     }
-  //     return true
-  //   } catch (error) {
-  //     throw new Error(error)
-  //   }
-  // }
-
   async #validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
         throw new Error('Invalid owner')
       }
-      await this.#getBranch(GitHub.#SOURCE_BRANCH)
       return true
     } catch (error) {
-      throw new Error('Invalid Token')
+      throw new Error(error)
     }
   }
+
+  // async #validateCredentials() {
+  //   try {
+  //     const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
+  //     if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
+  //       throw new Error('Invalid owner')
+  //     }
+  //     await this.#getBranch(GitHub.#SOURCE_BRANCH)
+  //     return true
+  //   } catch (error) {
+  //     if (error.message === 'Invalid owner') {
+  //       throw new Error('Invalid owner')
+  //     } else {
+  //       throw new Error('Invalid Token')
+  //     }
+  //   }
+  // }
 
   async #fetchFileContent(contents_url) {
     const { data: response } = await this.versionControl.request(contents_url)
