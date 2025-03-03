@@ -50,7 +50,7 @@ class VersionControlService {
 
   prepareFilesForUpdate = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
-    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey)
+    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey, this.siteInfo)
     const formattedFiles =
       validUpdates.length > 0
         ? validUpdates.map((file) => {

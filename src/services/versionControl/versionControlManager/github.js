@@ -7,6 +7,7 @@ import VersionControlManager from './versionControlManager'
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
+import { skipForChildSite } from '../utils'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
@@ -105,14 +106,14 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async fetchAndPrepareFiles(configs, apiKey) {
+  async fetchAndPrepareFiles(configs, apiKey, siteInfo) {
     const files = Object.keys(configs).map((key) => ({
       path: `src/versionControl/${key}.json`,
       content: JSON.stringify(configs[key], null, 2),
     }))
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
-        const result = await this.#updateGitFileContent(file.path, file.content, apiKey)
+        const result = await this.#updateGitFileContent(file.path, file.content, apiKey, siteInfo)
         return result
       }),
     )
@@ -179,7 +180,7 @@ class GitHub extends VersionControlManager {
     })
   }
 
-  async #updateGitFileContent(filePath, cdcFileContent, defaultBranch) {
+  async #updateGitFileContent(filePath, cdcFileContent, defaultBranch, siteInfo) {
     let getGitFileInfo
 
     try {
@@ -215,12 +216,12 @@ class GitHub extends VersionControlManager {
     let newContent = JSON.parse(cdcFileContent)
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
-    if (filePath === 'src/versionControl/legalStatment.json' || filePath === 'src/versionControl/consent.json') {
-      console.log('====================================')
-      console.log(newContent)
-      console.log('====================================')
-    }
-    if (!_.isEqual(currentGitContent, sanitizedNewContent)) {
+    // if (filePath === 'src/versionControl/legalStatment.json' || filePath === 'src/versionControl/consent.json') {
+    //   console.log('====================================')
+    //   console.log(newContent)
+    //   console.log('====================================')
+    // }
+    if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2), // Save the original content

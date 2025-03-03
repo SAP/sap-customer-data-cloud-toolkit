@@ -3,6 +3,7 @@
  * License: Apache-2.0
  */
 
+import { skipForChildSite } from '../utils'
 import GitHub from './github'
 import { Base64 } from 'js-base64'
 
@@ -20,6 +21,7 @@ describe('GitHub Test Suit', () => {
   const mockFile = 'testFile'
   const github = new GitHub(versionControl, owner, repo)
   const contentUrl = '"url.com/testRepos/owner/testRepos/contents/"'
+  const siteInfo = { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } }
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -295,7 +297,7 @@ describe('GitHub Test Suit', () => {
         },
       },
     }
-    const fileUpdates = await github.fetchAndPrepareFiles(configs, apiKey)
+    const fileUpdates = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
 
     expect(fileUpdates).toEqual(result)
   })
@@ -311,7 +313,7 @@ describe('GitHub Test Suit', () => {
     }
     const configs = { key: 'value' }
     Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
-    const response = await github.fetchAndPrepareFiles(configs, apiKey)
+    const response = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     expect(response[0].content).toEqual('"value"')
     expect(response[0].sha).toEqual('testSha')
   })
@@ -332,8 +334,28 @@ describe('GitHub Test Suit', () => {
     }
     const configs = { key: 'value' }
     Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
-    const response = await github.fetchAndPrepareFiles(configs, apiKey)
+    const response = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     expect(response[0].content).toEqual('"value"')
     expect(response[0].sha).toEqual('testSha')
+  })
+})
+
+describe('skipForChildSite', () => {
+  it('should return true for child site with non-copyable file', () => {
+    const siteInfo = { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } }
+    const getGitFileInfo = { name: 'social.json' }
+    expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(false)
+  })
+
+  it('should return false for child site with copyable file', () => {
+    const siteInfo = { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } }
+    const getGitFileInfo = { name: 'other.json' }
+    expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
+  })
+
+  it('should return true for parent site', () => {
+    const siteInfo = { siteGroupOwner: 'targetApiKey', context: { targetApiKey: 'targetApiKey' } }
+    const getGitFileInfo = { name: 'social.json' }
+    expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
   })
 })

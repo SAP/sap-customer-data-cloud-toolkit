@@ -36,3 +36,11 @@ export const extractConsentIdsAndLanguages = (preferences) => {
   }
   return idsAndLanguages
 }
+
+export const skipForChildSite = (getGitFileInfo, siteInfo) => {
+  let canBeCopied = false
+  const notCopy = ['social.json', 'dataflow.json', 'webhook.json', 'rba.json']
+  const isChildSite = siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteInfo.context.targetApiKey
+  canBeCopied = (isChildSite && !notCopy.includes(getGitFileInfo.name)) || !isChildSite
+  return canBeCopied
+}
