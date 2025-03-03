@@ -140,10 +140,12 @@ export const getEncryptedCookie = (name, secretKey) => {
   const decryptedValue = decryptData(encryptedValue, secretKey)
   return decryptedValue
 }
-
-export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
-  const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
+const getCommonData = (state) => {
+  const credentials = {
+    userKey: state.credentials.credentials.userKey,
+    secret: state.credentials.credentials.secretKey,
+    gigyaConsole: state.credentials.credentials.gigyaConsole,
+  }
   const apiKey = getApiKey(window.location.hash)
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
@@ -151,10 +153,18 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
   const repo = Cookies.get('repo')
   const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
+
   if (!gitToken || !owner) {
-    return rejectWithValue('Git token or owner is missing')
+    throw new Error('Git token or owner is missing')
   }
+
+  return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
+}
+
+export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
   try {
+    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
     const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
@@ -164,24 +174,14 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
 
 export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const apiKey = getApiKey(window.location.hash)
-  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
-  const currentDataCenter = currentSiteInfo.dataCenter
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
-  const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
-  const repo = Cookies.get('repo')
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
-  if (!gitToken || !owner) {
-    return rejectWithValue('Git token or owner is missing')
-  }
-
   try {
+    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
     return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
   } catch (error) {
     return rejectWithValue(error.message)
   }
 })
+
 const setCookies = (state) => {
   const credentials = state.credentials
   if (state.gitToken && state.owner && state.repo && credentials?.secretKey) {
