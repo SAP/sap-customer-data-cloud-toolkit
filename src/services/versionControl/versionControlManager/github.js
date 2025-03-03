@@ -232,21 +232,55 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getBranchAndCreateRef(branch) {
+  // async #getBranchAndCreateRef(branch) {
+  //   try {
+  //     const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
+  //       owner: this.owner,
+  //       repo: this.repo,
+  //       branch: GitHub.#SOURCE_BRANCH,
+  //     })
+  //     const ref = await this.versionControl.rest.git.createRef({
+  //       owner: this.owner,
+  //       repo: this.repo,
+  //       ref: `refs/heads/${branch}`,
+  //       sha: mainBranch.commit.sha,
+  //     })
+  //   } catch (error) {
+  //     throw new Error('Error fetching branch:', error)
+  //   }
+  // }
+  async #getBranch() {
     try {
       const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
         owner: this.owner,
         repo: this.repo,
         branch: GitHub.#SOURCE_BRANCH,
       })
-      const ref = await this.versionControl.rest.git.createRef({
+      return mainBranch
+    } catch (error) {
+      throw new Error(`There is no main Branch`)
+    }
+  }
+
+  async #createRef(branch, sha) {
+    try {
+      await this.versionControl.rest.git.createRef({
         owner: this.owner,
         repo: this.repo,
         ref: `refs/heads/${branch}`,
-        sha: mainBranch.commit.sha,
+        sha,
       })
     } catch (error) {
-      throw new Error('Error fetching branch:', error)
+      throw new Error(`Error creating ref: ${error.message}`)
+    }
+  }
+
+  async #getBranchAndCreateRef(branch) {
+    try {
+      const mainBranch = await this.#getBranch()
+      await this.#createRef(branch, mainBranch.commit.sha)
+    } catch (error) {
+      throw new Error(`Error in getBranchAndCreateRef: ${error.message}`)
     }
   }
 
@@ -270,15 +304,28 @@ class GitHub extends VersionControlManager {
     return file
   }
 
+  // async #validateCredentials() {
+  //   try {
+  //     const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
+  //     if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
+  //       throw new Error('Invalid owner')
+  //     }
+  //     return true
+  //   } catch (error) {
+  //     throw new Error(error)
+  //   }
+  // }
+
   async #validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
         throw new Error('Invalid owner')
       }
+      await this.#getBranch(GitHub.#SOURCE_BRANCH)
       return true
     } catch (error) {
-      throw new Error(error)
+      throw new Error('Invalid Token')
     }
   }
 
