@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
 import { getResponseWithContext } from '../dataTest.js'
@@ -25,6 +24,7 @@ describe('ConsentConfiguration test suite', () => {
   const dataCenter = 'eu1'
   const consentConfiguration = new ConsentConfiguration(credentials, apiKey, dataCenter)
   const consentOptions = new ConsentOptions()
+  const siteInfo = { dataCenter }
 
   test('nothing to copy', async () => {
     const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptionsDisabled())
@@ -141,4 +141,116 @@ describe('ConsentConfiguration test suite', () => {
     expect(responses[errorIdx + 1].context.id.startsWith('consent_')).toBeTruthy()
     expect(responses[errorIdx + 1].severity).toEqual(ERROR_SEVERITY_INFO)
   })
+  // New tests for setConsentsAndLegalStatements, setFromFiles, copyLegalStatementsFroFile
+
+  test('setConsentsAndLegalStatements - success scenario', async () => {
+    // Arrange
+    const content = getConsentStatementExpectedResponse
+
+    // Comprehensive mock for axios calls
+    axios.mockImplementation((config) => {
+      // Mocking getLegalStatements and getConsents based on identified URLs
+      if (config.url.includes('getLegalStatements')) {
+        return Promise.resolve({
+          data: { ...getLegalStatementExpectedResponse, errorCode: 0 },
+        })
+      }
+
+      if (config.url.includes('getConsents')) {
+        return Promise.resolve({
+          data: { ...getConsentStatementExpectedResponse, errorCode: 0 },
+        })
+      }
+
+      // Return default mock response
+      return Promise.resolve({ data: { errorCode: 0, severity: 'INFO' } })
+    })
+
+    // Act
+    const responses = await consentConfiguration.setConsentsAndLegalStatements(apiKey, siteInfo, content)
+
+    // Assert
+    expect(responses.flat().length).toBeGreaterThan(0) // Flatten responses for length check
+    responses.flat().forEach((response) => {
+      expect(response.errorCode).toBe(0) // Check for correct errorCode in response
+      expect(response.severity).toBe('INFO') // Verify severity as expected
+    })
+  })
+
+test('setFromFiles - success scenario', async () => {
+  // Arrange
+  const content = getConsentStatementExpectedResponse
+
+  // Comprehensive mock for axios calls
+  axios.mockImplementation((config) => {
+    // Mocking getLegalStatements and getConsents based on identified URLs
+    if (config.url.includes('getLegalStatements')) {
+      return Promise.resolve({
+        data: {
+          ...getLegalStatementExpectedResponse,
+          legalStatements: getLegalStatementExpectedResponse.legalStatements,
+          errorCode: 0,
+          severity: 'INFO',
+        },
+      })
+    }
+
+    if (config.url.includes('getConsents')) {
+      return Promise.resolve({
+        data: {
+          ...getConsentStatementExpectedResponse,
+          errorCode: 0,
+          severity: 'INFO',
+        },
+      })
+    }
+
+    // Mocking default response with necessary data
+    return Promise.resolve({ data: { errorCode: 0, severity: 'INFO' } })
+  })
+
+  // Act
+  const responses = await consentConfiguration.setFromFiles(apiKey, siteInfo, content)
+
+  // Assert
+  expect(responses.flat().length).toBeGreaterThan(0) // Flatten responses for length check
+  responses.flat().forEach((response) => {
+    expect(response.errorCode).toBe(0) // Ensure error code is 0
+    expect(response.severity).toBe('INFO') // Verify severity as expected
+  })
+})
+
+ test('copyLegalStatementsFroFile - success scenario', async () => {
+   // Arrange
+   const legalStatementsPayload = [
+     {
+       consentId: 'terms.termsConsentId1',
+       language: 'en',
+       legalStatements: getLegalStatementExpectedResponse.legalStatements,
+     },
+     {
+       consentId: 'terms.consentId2',
+       language: 'pt',
+       legalStatements: getLegalStatementExpectedResponse.legalStatements,
+     },
+   ]
+
+   // Mock axios to return a successful outcome for setting legal statements
+   axios.mockImplementation((config) => {
+     if (config.url.includes('setLegalStatements')) {
+       return Promise.resolve({ data: { errorCode: 0, severity: 'INFO' } })
+     }
+     return Promise.resolve({ data: { errorCode: 0, severity: 'INFO' } })
+   })
+
+   // Act
+   const responses = await consentConfiguration.copyLegalStatementsFroFile(apiKey, siteInfo, legalStatementsPayload)
+
+   // Assert
+   expect(responses.length).toEqual(legalStatementsPayload.length) // Check the correct number of responses
+   responses.forEach((response) => {
+     expect(response.errorCode).toBe(0) // Ensure error code is 0
+     expect(response.severity).toBe('INFO') // Verify severity as expected
+   })
+ })
 })

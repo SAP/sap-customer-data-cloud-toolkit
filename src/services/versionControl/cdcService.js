@@ -20,7 +20,7 @@ import Social from '../copyConfig/social/social'
 import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
 import { cleanEmailResponse, cleanResponse } from './dataSanitization'
-import { createOptions } from './utils'
+import { createOptions, extractConsentIdsAndLanguages } from './utils'
 
 class CdcService {
   constructor(credentials, apiKey, dataCenter, siteInfo) {
@@ -61,7 +61,7 @@ class CdcService {
       { name: 'channel', promise: this.communication.get() },
       { name: 'topic', promise: this.topic.searchTopics() },
       { name: 'webhook', promise: this.webhook.get() },
-      { name: 'consent', promise: this.consent.get() },
+      { name: 'consent', promise: this.consent.getConsentsAndLegalStatements() },
       { name: 'social', promise: this.social.get() },
       { name: 'recaptcha', promise: this.recaptcha.get() },
     ]
@@ -87,6 +87,8 @@ class CdcService {
   }
 
   applyCommitConfig = async (files) => {
+    let consentsContent = null
+
     for (const file of files) {
       const fileType = file.filename.split('/').pop().split('.').shift()
       let filteredResponse = file.content
@@ -133,8 +135,7 @@ class CdcService {
           break
         case 'consent':
           if (filteredResponse.preferences) {
-            await this.consent.setFromFiles(this.apiKey, this.siteInfo, filteredResponse)
-            break
+            consentsContent = filteredResponse
           }
           break
         case 'social':
@@ -146,6 +147,10 @@ class CdcService {
         default:
           console.warn(`Unknown file type: ${fileType}`)
       }
+    }
+
+    if (consentsContent) {
+      await this.consent.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, consentsContent)
     }
   }
 

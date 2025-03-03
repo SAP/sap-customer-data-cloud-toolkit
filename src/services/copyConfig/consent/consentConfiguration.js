@@ -8,6 +8,7 @@ import LegalStatement from './legalStatement.js'
 import { stringToJson } from '../objectHelper.js'
 import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
 import ConsentDefaultLanguage from './consentDefaultLanguage.js'
+import { extractConsentIdsAndLanguages } from '../../versionControl/utils.js'
 
 class ConsentConfiguration {
   #credentials
@@ -28,6 +29,23 @@ class ConsentConfiguration {
 
   async get() {
     return this.#consentStatement.get()
+  }
+
+  async getConsentsAndLegalStatements() {
+    const consents = await this.get()
+    if (consents.errorCode !== 0) {
+      return consents
+    }
+
+    const consentsWithLegalStatements = { ...consents }
+    const idsAndLanguages = extractConsentIdsAndLanguages(consents.preferences)
+    for (const { consentId, language } of idsAndLanguages) {
+      const legalStatements = await this.#legalStatement.getFilteredLegalStatement(consentId, language)
+      consentsWithLegalStatements.preferences[consentId].legalStatements = consentsWithLegalStatements.preferences[consentId].legalStatements || {}
+      consentsWithLegalStatements.preferences[consentId].legalStatements[language] = legalStatements.legalStatements
+    }
+
+    return consentsWithLegalStatements
   }
 
   async copy(destinationSite, destinationSiteConfiguration, options) {
@@ -104,15 +122,67 @@ class ConsentConfiguration {
     return responses
   }
 
-  async setFromFiles(destinationSite, dataCenter, content) {
+  async setConsentsAndLegalStatements(apiKey, siteInfo, content) {
+    // Remove legalStatements from preferences
+    const preferencesWithoutLegalStatements = JSON.parse(JSON.stringify(content.preferences))
+    for (const consentId of Object.keys(preferencesWithoutLegalStatements)) {
+      delete preferencesWithoutLegalStatements[consentId].legalStatements
+    }
+
+    const consentsPayload = ConsentConfiguration.#splitConsents(preferencesWithoutLegalStatements)
+    const legalStatementsPayload = ConsentConfiguration.#splitLegalStatements(content.preferences)
+
+    const consentResponses = await this.copyConsentStatements(apiKey, siteInfo, consentsPayload)
+    const legalStatementResponses = await this.copyLegalStatementsFroFile(apiKey, siteInfo, legalStatementsPayload)
+
+    return [...consentResponses, ...legalStatementResponses]
+  }
+
+  static #splitLegalStatements(preferences) {
+    const legalStatementsList = []
+    for (const consentId of Object.keys(preferences)) {
+      const consent = preferences[consentId]
+      if (consent.legalStatements) {
+        for (const language of Object.keys(consent.legalStatements)) {
+          const payload = {
+            consentId,
+            language,
+            legalStatements: consent.legalStatements[language],
+          }
+          legalStatementsList.push(payload)
+        }
+      }
+    }
+    return legalStatementsList
+  }
+
+  async setFromFiles(destinationSite, destinationSiteConfiguration, content) {
     let responses = []
 
     const consentsPayload = ConsentConfiguration.#splitConsents(content.preferences)
-    responses.push(...(await this.copyConsentStatements(destinationSite, dataCenter, consentsPayload)))
+    responses.push(...(await this.copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
+
+    const legalStatementsPayload = ConsentConfiguration.#splitLegalStatements(content.preferences)
+    responses.push(...(await this.copyLegalStatementsFroFile(destinationSite, destinationSiteConfiguration, legalStatementsPayload)))
+
     responses = responses.flat()
     stringToJson(responses, 'context')
     responses = ConsentConfiguration.#addSeverityToResponses(responses)
     return responses
+  }
+
+  async copyLegalStatementsFroFile(destinationSite, destinationSiteConfiguration, legalStatementsPayload) {
+    const promises = []
+    for (const legalStatementPayload of legalStatementsPayload) {
+      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, legalStatementPayload))
+    }
+    return Promise.all(promises)
+  }
+
+  async #copyLegalStatement(destinationSite, dataCenter, legalStatementPayload) {
+    const { consentId, language, legalStatements } = legalStatementPayload
+    const response = await this.#legalStatement.set(destinationSite, dataCenter, consentId, language, legalStatements)
+    return response
   }
   static #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey

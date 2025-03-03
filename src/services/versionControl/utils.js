@@ -23,3 +23,16 @@ export const createOptions = (items) => {
 
   return new Options(optionsData)
 }
+
+export const extractConsentIdsAndLanguages = (preferences) => {
+  const idsAndLanguages = []
+  for (const consentId of Object.keys(preferences)) {
+    const consent = preferences[consentId]
+    if (consent.langs) {
+      for (const language of consent.langs) {
+        idsAndLanguages.push({ consentId, language })
+      }
+    }
+  }
+  return idsAndLanguages
+}

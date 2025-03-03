@@ -215,6 +215,11 @@ class GitHub extends VersionControlManager {
     let newContent = JSON.parse(cdcFileContent)
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
+    if (filePath === 'src/versionControl/legalStatment.json' || filePath === 'src/versionControl/consent.json') {
+      console.log('====================================')
+      console.log(newContent)
+      console.log('====================================')
+    }
     if (!_.isEqual(currentGitContent, sanitizedNewContent)) {
       return {
         path: filePath,
