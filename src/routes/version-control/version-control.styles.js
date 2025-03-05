@@ -107,8 +107,17 @@ const styles = {
     borderRadius: '10px 10px 2px 2px',
   },
   fullContainer: {
+    display: 'flex',
+    flexDirection: 'column',
     overflowY: 'auto',
+    height: '90vh',
     width: '100%',
+    composes: 'cdc-tools-background',
+  },
+  titleStyle: {
+    ...spacing.sapUiTinyMarginBottom,
+    ...spacing.sapUiTinyMarginTop,
+    marginLeft: '10px',
   },
   titleSpanStyle: { fontSize: '24px' },
   pageTitleSpanStyle: {
@@ -119,9 +128,6 @@ const styles = {
     height: '50px',
   },
   outerDivStyle: {
-    composes: 'cdc-tools-background',
-    height: 'calc(100vh - 100px)',
-    maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
   },
   headerTextFlexboxStyle: {
