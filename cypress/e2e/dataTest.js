@@ -1847,7 +1847,7 @@ const mockedVersionControlGetResponse = [
     name: 'main',
     commit: {
       sha: '8043e2042a3c1627d2f42fe30296dd8f117d60bf',
-      url: 'testurl.com/repos/iamGaspar/CDCVersionControl/commits/8043e2042a3c1627d2f42fe30296dd8f117d60bf',
+      url: 'testurl.com/repos/testOwner/CDCVersionControl/commits/8043e2042a3c1627d2f42fe30296dd8f117d60bf',
     },
     protected: false,
   },
