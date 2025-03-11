@@ -28,9 +28,11 @@ describe('GitHub Test Suit', () => {
     jest.restoreAllMocks()
   })
   it('should get a list of commits - getCommits', async () => {
-    const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
-    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
-    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
+     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
+     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
+
 
     github.versionControl = {
       rest: {
@@ -40,6 +42,7 @@ describe('GitHub Test Suit', () => {
         repos: {
           listBranches: getBranchesMock,
           listCommits: getListCommits,
+          getBranch: getBranchMock,
         },
       },
     }

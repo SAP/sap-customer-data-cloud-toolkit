@@ -310,6 +310,7 @@ class GitHub extends VersionControlManager {
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
         throw new Error('Invalid owner')
       }
+      await this.#getBranch()
       return true
     } catch (error) {
       throw new Error(error)
