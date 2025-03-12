@@ -5,7 +5,7 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import VersionControlService from '../../services/versionControl/versionControlService'
-import { getApiKey, getErrorAsArray } from '../utils'
+import { getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
 import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
@@ -100,14 +100,7 @@ const versionControlSlice = createSlice({
 
 export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
-  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
-  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
-  const currentDataCenter = currentSiteInfo.dataCenter
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const owner = getEncryptedCookie('owner', credentials.secret)
-  const repo = Cookies.get('repo')
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
+  const { credentials, currentSiteApiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
@@ -116,14 +109,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
 })
 export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMessage, { getState, rejectWithValue }) => {
   const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
-  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
-  const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
-  const currentDataCenter = currentSiteInfo.dataCenter
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const owner = getEncryptedCookie('owner', credentials.secret)
-  const repo = Cookies.get('repo')
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
+  const { credentials, currentSiteApiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
     return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
@@ -146,14 +132,13 @@ const getCommonData = (state) => {
     secret: state.credentials.credentials.secretKey,
     gigyaConsole: state.credentials.credentials.gigyaConsole,
   }
-  const apiKey = getApiKey(window.location.hash)
+  const apiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
   const repo = Cookies.get('repo')
   const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
-
   if (!gitToken || !owner) {
     throw new Error('Git token or owner is missing')
   }

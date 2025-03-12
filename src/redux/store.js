@@ -1,5 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit'
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
 
+import { configureStore } from '@reduxjs/toolkit'
 import sitesReducer from './sites/siteSlice'
 import dataCentersReducer from './dataCenters/dataCentersSlice'
 import siteStructuresReducer from './siteStructures/siteStructuresSlice'

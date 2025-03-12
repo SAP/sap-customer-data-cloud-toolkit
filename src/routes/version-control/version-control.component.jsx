@@ -50,8 +50,12 @@ import { decryptData } from '../../redux/encryptionUtils'
 import styles from './version-control.styles'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import { unwrapResult } from '@reduxjs/toolkit'
+import { getApiKey } from '../../redux/utils'
+import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
+import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
-const useStyles = createUseStyles(styles, { name: 'VersionControl' })
+const PAGE_TITLE = 'VersionControl'
+const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
 
 const VersionControlComponent = ({ t }) => {
   const classes = useStyles()
@@ -64,6 +68,7 @@ const VersionControlComponent = ({ t }) => {
   const owner = useSelector(selectOwner)
   const errors = useSelector(selectError)
   const repo = useSelector(selectRepo)
+  const apiKey = useSelector(selectCurrentSiteApiKey)
 
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -71,6 +76,14 @@ const VersionControlComponent = ({ t }) => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
 
+  window.navigation.onnavigate = (event) => {
+    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_VERSION_CONTROL)) {
+      if (apiKey !== getApiKey(window.location.hash)) {
+        dispatch(updateCurrentSiteApiKey())
+      }
+      dispatch(getCurrentSiteInformation())
+    }
+  }
   useEffect(() => {
     if (credentials) {
       dispatch(setCredentials(credentials))
@@ -108,6 +121,7 @@ const VersionControlComponent = ({ t }) => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       const formattedFiles = unwrapResult(resultAction)
+      debugger
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
