@@ -43,8 +43,8 @@ export const getRootElementsStructure = () => {
           branches: [],
         },
         {
-          id: 'loginIds.unverifiedEmail',
-          name: 'unverifiedEmail',
+          id: 'loginIds.unverifiedEmails',
+          name: 'unverifiedEmails',
           value: false,
           branches: [],
         },

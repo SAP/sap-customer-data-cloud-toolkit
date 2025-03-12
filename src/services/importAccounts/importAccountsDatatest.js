@@ -22,7 +22,7 @@ export const expectedFullAccount = [
     branches: [
       { id: 'loginIds.username', name: 'username', value: false, branches: [] },
       { id: 'loginIds.emails', name: 'emails', value: false, branches: [] },
-      { id: 'loginIds.unverifiedEmail', name: 'unverifiedEmail', value: false, branches: [] },
+      { id: 'loginIds.unverifiedEmails', name: 'unverifiedEmails', value: false, branches: [] },
     ],
   },
   { id: 'isActive', name: 'isActive', value: false, branches: [] },
