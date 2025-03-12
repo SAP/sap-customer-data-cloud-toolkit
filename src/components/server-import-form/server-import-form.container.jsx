@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import { useState } from 'react'
 import { Icon, Input, Popover } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'

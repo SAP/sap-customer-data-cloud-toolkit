@@ -3,16 +3,22 @@
  * License: Apache-2.0
  */
 
+const UID_TOOLTIP = 'When importing a new account the UID must be empty'
+
 function createMandatoryBranch(branchId) {
-  return [
-    {
-      id: branchId,
-      name: branchId,
-      value: true,
-      branches: [],
-      mandatory: true,
-    },
-  ]
+  const branch = {
+    id: branchId,
+    name: branchId,
+    value: true,
+    branches: [],
+    mandatory: true,
+  }
+
+  if (branchId === 'uid') {
+    branch.tooltip = UID_TOOLTIP
+  }
+
+  return [branch]
 }
 export function getUID() {
   return createMandatoryBranch('uid')
