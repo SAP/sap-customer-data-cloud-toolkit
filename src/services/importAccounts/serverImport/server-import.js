@@ -43,6 +43,9 @@ class ServerImport {
     if (createDataflow.errorCode === 0) {
       await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowConfig)
     }
+    if (createDataflow.errorCode !== 0) {
+      throw new Error(createDataflow.errorMessage)
+    }
     return createDataflow.id
   }
 
@@ -63,7 +66,6 @@ class ServerImport {
     }
     if (!dataflowFound) {
       if (retryCount > 0) {
-        console.log(`Retrying searchDataflowOnApiKey... Attempts left: ${retryCount}`)
         return await this.searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount - 1)
       }
       return false

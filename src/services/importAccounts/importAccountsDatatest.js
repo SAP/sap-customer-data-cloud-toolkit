@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { profileBranches, dataBranches, subscriptionsBranches, internalBranches, addressesBranches, preferencesBranches, communicationsBranches } from './mainDataSet'
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
 export const expectedFullAccount = [
