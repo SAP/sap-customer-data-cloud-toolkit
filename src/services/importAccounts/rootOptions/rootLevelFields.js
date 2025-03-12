@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-const UID_TOOLTIP = 'When importing a new account the UID must be empty'
+const UID_TOOLTIP = 'When importing a new account the UID column must be empty'
 
 function createMandatoryBranch(branchId) {
   const branch = {
