@@ -55,8 +55,6 @@ const ServerImportComponent = ({ t }) => {
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
   const serverProviderOption = useSelector(selectServerProvider)
-  console.log('errors--->', errors)
-  console.log('length', errors.length)
   useEffect(() => {
     const fetchDataflowURL = async () => {
       const url = await dispatch(getDataflowRedirection())
@@ -87,8 +85,11 @@ const ServerImportComponent = ({ t }) => {
         id="serverImportSuccessPopup"
         data-cy="serverImportSuccessPopup"
       >
-        <Text className={classes.errorMessage}>{errors[0].errorMessage}</Text>
-        <Text className={classes.errorMessage}>{errors[0].errorDetails}</Text>
+        <Text className={classes.errorMessage}>
+          {errors[0].errorMessage}
+          <br />
+          {errors[0].errorDetails}
+        </Text>
       </DialogMessageInform>
     ) : (
       ''
