@@ -26,7 +26,7 @@ class VersionControlService {
   handleGetServices = async (commitMessage) => {
     try {
       const configs = await this.cdcService.fetchCDCConfigs()
-      await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch)
+      await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch, this.siteInfo)
       return true
     } catch (error) {
       throw new Error(error)

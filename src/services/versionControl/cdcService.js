@@ -87,7 +87,6 @@ class CdcService {
   }
 
   applyCommitConfig = async (files) => {
-
     for (const file of files) {
       const fileType = file.filename.split('/').pop().split('.').shift()
       let filteredResponse = file.content

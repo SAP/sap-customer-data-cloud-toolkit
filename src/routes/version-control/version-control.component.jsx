@@ -121,7 +121,6 @@ const VersionControlComponent = ({ t }) => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
       const formattedFiles = unwrapResult(resultAction)
-      debugger
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {

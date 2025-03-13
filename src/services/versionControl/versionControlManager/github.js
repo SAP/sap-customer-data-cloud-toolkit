@@ -94,13 +94,13 @@ class GitHub extends VersionControlManager {
     await new Promise((resolve) => setTimeout(resolve, delay))
   }
 
-  async storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
+  async storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo) {
     await this.#createBranch(apiKey)
     const commits = await this.getCommits(apiKey)
     if (commits.data.length === 0) {
       await this.waitForCreation(apiKey)
     }
-    const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey)
+    const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
     }
@@ -188,7 +188,6 @@ class GitHub extends VersionControlManager {
       if (!branchExistsResult) {
         throw new Error('Branch does not exist')
       }
-
       getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     } catch (error) {
       if (error.status === 404 || error.message === 'Branch does not exist') {

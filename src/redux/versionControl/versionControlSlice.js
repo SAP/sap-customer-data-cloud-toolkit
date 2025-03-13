@@ -100,18 +100,18 @@ const versionControlSlice = createSlice({
 
 export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha, { getState, rejectWithValue }) => {
   const state = getState()
-  const { credentials, currentSiteApiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+  const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
 })
 export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMessage, { getState, rejectWithValue }) => {
   const state = getState()
-  const { credentials, currentSiteApiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+  const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, currentSiteApiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -177,7 +177,7 @@ const setCookies = (state) => {
       Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
     }
   }
-  Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' }) // Set repo cookie without encryption
+  Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' })
 }
 
 export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits } = versionControlSlice.actions
