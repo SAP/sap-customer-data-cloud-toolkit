@@ -99,7 +99,9 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     marginLeft: '10px',
   },
-
+  errorListOuterDivStyle: {
+    ...spacing.sapUiSmallMarginTop,
+  },
   warningDataflow: {
     marginTop: '4px',
   },

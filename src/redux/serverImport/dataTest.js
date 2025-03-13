@@ -8,6 +8,7 @@ export const initialState = {
   isLoading: false,
   serverConfigurations: [],
   showSuccessMessage: false,
+  showErrorMessage: false,
   serverProvider: '',
 }
 
@@ -19,5 +20,6 @@ export const initialStateWithServerConfigurations = {
   isLoading: false,
   serverConfigurations: serverStructure,
   showSuccessMessage: false,
+  showErrorMessage: false,
   serverProvider: 'azure',
 }

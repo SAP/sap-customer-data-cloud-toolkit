@@ -10,6 +10,7 @@ import { clearAllValues, getConfigurationByKey } from './utils'
 import Dataflow from '../../services/copyConfig/dataflow/dataflow'
 import StorageProviderFactory from '../../services/importAccounts/storageProvider/storageProviderFactory'
 import AccountManagerFactory from '../../services/importAccounts/accountManager/accountManagerFactory'
+import TemplateFactory from '../../services/importAccounts/accountManager/templateManagerFactory'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
@@ -25,6 +26,7 @@ export const serverImportExtendedSlice = createSlice({
     errors: [],
     isLoading: false,
     showSuccessMessage: false,
+    showErrorMessage: false,
     currentSiteInformation: {},
     serverProvider: '',
   },
@@ -77,6 +79,7 @@ export const serverImportExtendedSlice = createSlice({
     builder.addCase(setDataflow.rejected, (state, action) => {
       state.isLoading = false
       state.showSuccessMessage = false
+      state.showErrorMessage = true
       state.errors = action.payload
     })
     builder.addCase(getDataflowRedirection.pending, (state) => {
@@ -130,9 +133,10 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
   const storageProvider = StorageProviderFactory.getStorageProvider(option.option)
-  const accountManager = AccountManagerFactory.getAccountManager(state.serverImport.accountType, storageProvider)
+  const templateManager = TemplateFactory.getTemplate(state.serverImport.accountType, option.option)
+  const accountManager = AccountManagerFactory.getAccountManager(state.serverImport.accountType, storageProvider, templateManager)
   try {
-    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter, accountManager).setDataflow(state.serverImport.serverConfigurations, option)
+    return await new ServerImport(credentials, currentSiteApiKey, currentDataCenter, accountManager).setDataflow(state.serverImport.serverConfigurations, option)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -145,6 +149,7 @@ export const selectServerConfigurations = (state) => state.serverImport.serverCo
 export const selectAccountType = (state) => state.serverImport.accountType
 
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
+export const selectShowErrorDialog = (state) => state.serverImport.showErrorMessage
 export const selectCurrentPartner = (state) => state.serverImport.currentSitePartner
 export const selectServerProvider = (state) => state.serverImport.serverProvider
 export const selectErrors = (state) => state.serverImport.errors

@@ -17,8 +17,9 @@ jest.mock('axios')
 describe('ServerImport Test Suite', () => {
   const site = 'apiKey'
   const dataCenter = 'us1'
+  const testTemplate = `{"id" : "test"}`
   const storageProvider = new AzureStorageProvider()
-  const accountManager = new FullAccount(storageProvider)
+  const accountManager = new FullAccount(storageProvider, testTemplate)
   const serverImport = new ServerImport(credentials, site, dataCenter, accountManager)
   const commonAccountOption = 'Lite'
 

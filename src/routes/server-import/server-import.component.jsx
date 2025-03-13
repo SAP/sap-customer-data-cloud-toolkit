@@ -26,6 +26,7 @@ import {
   updateServerProvider,
   selectErrors,
   clearErrors,
+  selectShowErrorDialog,
 } from '../../redux/serverImport/serverImportSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
@@ -50,6 +51,7 @@ const ServerImportComponent = ({ t }) => {
   const [showDialog, setShowSuccessDialog] = useState(false)
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const showErrorDialog = useSelector(selectShowErrorDialog)
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
   const serverProviderOption = useSelector(selectServerProvider)
@@ -74,23 +76,32 @@ const ServerImportComponent = ({ t }) => {
     setAccountOption(selectedValue)
   }
 
-  const onMessageStripCloseHandler = () => {
-    dispatch(clearErrors())
-  }
-
-  const showErrors = () => {
-    return errors.length ? (
-      <MessageStrip id="messageStripError" data-cy="messageStripError" design="Negative" onClose={onMessageStripCloseHandler}>
-        {errors}
-      </MessageStrip>
+  const showErrors = () =>
+    errors.length ? (
+      <DialogMessageInform
+        open={showErrorDialog}
+        headerText="Error"
+        state={ValueState.Error}
+        closeButtonContent="Close"
+        onAfterClose={onErrorDialogAfterCloseHandler}
+        id="serverImportSuccessPopup"
+        data-cy="serverImportSuccessPopup"
+      >
+        <Text className={classes.errorMessage}>{errors[0].errorMessage}</Text>
+        <Text className={classes.errorMessage}>{errors[0].errorDetails}</Text>
+      </DialogMessageInform>
     ) : (
       ''
     )
-  }
+
   const handleOptionChange = (event) => {
     dispatch(updateServerProvider(event.target.value))
   }
 
+  const onErrorDialogAfterCloseHandler = async () => {
+    dispatch(clearErrors())
+    await trackUsage({ featureName: PAGE_TITLE })
+  }
   const onSuccessDialogAfterCloseHandler = async () => {
     setShowSuccessDialog(false)
     await trackUsage({ featureName: PAGE_TITLE })
@@ -108,7 +119,7 @@ const ServerImportComponent = ({ t }) => {
 
   const handleSubmit = async () => {
     if (serverProviderOption && accountOption) {
-      const resultAction = await dispatch(setDataflow({ option: serverProviderOption, accountType: accountOption }))
+      const resultAction = await dispatch(setDataflow({ option: serverProviderOption }))
       if (setDataflow.fulfilled.match(resultAction)) {
         setCreatedDataflowId(resultAction.payload)
       }

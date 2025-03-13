@@ -33,8 +33,7 @@ class ServerImport {
       const createdDataflowId = await this.#createAndCheckDataflow(dataflowConfig)
       return createdDataflowId
     } catch (error) {
-      console.log('error setDataflow', error)
-      throw new Error(error)
+      throw error
     }
   }
 
@@ -45,11 +44,10 @@ class ServerImport {
 
   async #createAndCheckDataflow(dataflowConfig) {
     const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, this.#accountManager.getDataflow())
-    if (createDataflow.errorCode === 0) {
-      await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowConfig)
-    }
     if (createDataflow.errorCode !== 0) {
-      throw new Error(createDataflow.errorMessage)
+      throw createDataflow
+    } else {
+      await this.#searchDataflowOnApiKey(this.#site, createDataflow.id, dataflowConfig)
     }
     return createDataflow.id
   }
