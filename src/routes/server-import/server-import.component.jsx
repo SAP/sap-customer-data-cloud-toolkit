@@ -24,6 +24,8 @@ import {
   setDataflow,
   setServerProvider,
   updateServerProvider,
+  selectErrors,
+  clearErrors,
 } from '../../redux/serverImport/serverImportSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
@@ -43,6 +45,7 @@ const ServerImportComponent = ({ t }) => {
   const apikey = useSelector(selectCurrentSiteApiKey)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const serverConfigurations = useSelector(selectServerConfigurations)
+  const errors = useSelector(selectErrors)
   const [accountOption, setAccountOption] = useState(AccountType.Full)
   const [showDialog, setShowSuccessDialog] = useState(false)
   const [isServerImportExpanded, setServerImportExpanded] = useState(false)
@@ -50,7 +53,8 @@ const ServerImportComponent = ({ t }) => {
   const [createdDataflowId, setCreatedDataflowId] = useState('')
   const [redirectionDataflowURL, setRedirectionDataflowURL] = useState('')
   const serverProviderOption = useSelector(selectServerProvider)
-
+  console.log('errors--->', errors)
+  console.log('length', errors.length)
   useEffect(() => {
     const fetchDataflowURL = async () => {
       const url = await dispatch(getDataflowRedirection())
@@ -70,6 +74,19 @@ const ServerImportComponent = ({ t }) => {
     setAccountOption(selectedValue)
   }
 
+  const onMessageStripCloseHandler = () => {
+    dispatch(clearErrors())
+  }
+
+  const showErrors = () => {
+    return errors.length ? (
+      <MessageStrip id="messageStripError" data-cy="messageStripError" design="Negative" onClose={onMessageStripCloseHandler}>
+        {errors}
+      </MessageStrip>
+    ) : (
+      ''
+    )
+  }
   const handleOptionChange = (event) => {
     dispatch(updateServerProvider(event.target.value))
   }
@@ -199,6 +216,7 @@ const ServerImportComponent = ({ t }) => {
         </Panel>
       </div>
       {showDialog && showSuccessMessage()}
+      {showErrors()}
     </>
   )
 }

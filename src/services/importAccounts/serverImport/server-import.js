@@ -28,9 +28,14 @@ class ServerImport {
   }
 
   async setDataflow(configurations, option) {
-    const dataflowConfig = this.getConfigurations(configurations, option.option)
-    const createdDataflowId = await this.#createAndCheckDataflow(dataflowConfig)
-    return createdDataflowId
+    try {
+      const dataflowConfig = this.getConfigurations(configurations, option.option)
+      const createdDataflowId = await this.#createAndCheckDataflow(dataflowConfig)
+      return createdDataflowId
+    } catch (error) {
+      console.log('error setDataflow', error)
+      throw new Error(error)
+    }
   }
 
   async #scheduleReplacedDataflow(createDataflowId) {

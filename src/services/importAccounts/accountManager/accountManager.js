@@ -153,7 +153,7 @@ class AccountManager {
       id: 'Success File',
       type: 'file.format.dsv',
       params: {
-        fileName: `Error_${accountType}Account_Upload_\${now}.csv`,
+        fileName: `Success_import${accountType}Account_\${now}.csv`,
         columnSeparator: ',',
         escapeCharacter: '\\',
         maxFileSize: 2,

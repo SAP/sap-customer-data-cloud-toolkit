@@ -38,6 +38,9 @@ export const serverImportExtendedSlice = createSlice({
     clearServerConfigurations(state) {
       clearAllValues(state.serverConfigurations)
     },
+    clearErrors(state) {
+      state.errors = []
+    },
     setAccountType(state, action) {
       getConfigurationByKey(state.serverConfigurations, action.payload.serverType)
       state.accountType = action.payload.accountType
@@ -135,7 +138,7 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   }
 })
 
-export const { getServerConfiguration, setAccountType, clearServerConfigurations, setServerProvider, updateServerProvider } = serverImportExtendedSlice.actions
+export const { getServerConfiguration, setAccountType, clearServerConfigurations, clearErrors, setServerProvider, updateServerProvider } = serverImportExtendedSlice.actions
 
 export const selectServerConfigurations = (state) => state.serverImport.serverConfigurations
 
@@ -144,4 +147,5 @@ export const selectAccountType = (state) => state.serverImport.accountType
 export const selectShowSuccessDialog = (state) => state.serverImport.showSuccessMessage
 export const selectCurrentPartner = (state) => state.serverImport.currentSitePartner
 export const selectServerProvider = (state) => state.serverImport.serverProvider
+export const selectErrors = (state) => state.serverImport.errors
 export default serverImportExtendedSlice.reducer
