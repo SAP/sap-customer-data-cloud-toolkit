@@ -3,20 +3,31 @@
  * License: Apache-2.0
  */
 
+import { removePropertyFromObjectCascading } from '../copyConfig/objectHelper'
+
 export const removeIgnoredFields = (obj) => {
-  if (Array.isArray(obj)) {
-    return obj.map((item) => removeIgnoredFields(item))
-  } else if (obj && typeof obj === 'object') {
-    const newObj = {}
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key) && key !== 'callId' && key !== 'time' && key !== 'lastModified') {
-        newObj[key] = removeIgnoredFields(obj[key])
-      }
-    }
-    return newObj
-  }
-  return obj
+  const ignoredFields = ['callId', 'time', 'lastModified']
+  const newObj = { ...obj }
+  ignoredFields.forEach((field) => {
+    removePropertyFromObjectCascading(newObj, field)
+  })
+  return newObj
 }
+
+// export const removeIgnoredFields = (obj) => {
+//   if (Array.isArray(obj)) {
+//     return obj.map((item) => removeIgnoredFields(item))
+//   } else if (obj && typeof obj === 'object') {
+//     const newObj = {}
+//     for (let key in obj) {
+//       if (obj.hasOwnProperty(key) && key !== 'callId' && key !== 'time' && key !== 'lastModified') {
+//         newObj[key] = removeIgnoredFields(obj[key])
+//       }
+//     }
+//     return newObj
+//   }
+//   return obj
+// }
 
 export const cleanEmailResponse = (response) => {
   if (response.doubleOptIn) {

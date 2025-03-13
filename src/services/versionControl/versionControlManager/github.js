@@ -215,9 +215,11 @@ class GitHub extends VersionControlManager {
     let newContent = JSON.parse(cdcFileContent)
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
-    // if (filePath === 'src/versionControl/legalStatment.json' || filePath === 'src/versionControl/consent.json') {
-    //   console.log('====================================')
+    // if (filePath === 'src/versionControl/rba.json') {
+    //   console.log('===========CDCContent===============')
     //   console.log(newContent)
+    //   console.log('===========sanitizedContent===============')
+    //   console.log(sanitizedNewContent)
     //   console.log('====================================')
     // }
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
@@ -231,23 +233,6 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  // async #getBranchAndCreateRef(branch) {
-  //   try {
-  //     const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       branch: GitHub.#SOURCE_BRANCH,
-  //     })
-  //     const ref = await this.versionControl.rest.git.createRef({
-  //       owner: this.owner,
-  //       repo: this.repo,
-  //       ref: `refs/heads/${branch}`,
-  //       sha: mainBranch.commit.sha,
-  //     })
-  //   } catch (error) {
-  //     throw new Error('Error fetching branch:', error)
-  //   }
-  // }
   async #getBranch() {
     try {
       const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
@@ -315,23 +300,6 @@ class GitHub extends VersionControlManager {
       throw new Error(error)
     }
   }
-
-  // async #validateCredentials() {
-  //   try {
-  //     const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
-  //     if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
-  //       throw new Error('Invalid owner')
-  //     }
-  //     await this.#getBranch(GitHub.#SOURCE_BRANCH)
-  //     return true
-  //   } catch (error) {
-  //     if (error.message === 'Invalid owner') {
-  //       throw new Error('Invalid owner')
-  //     } else {
-  //       throw new Error('Invalid Token')
-  //     }
-  //   }
-  // }
 
   async #fetchFileContent(contents_url) {
     const { data: response } = await this.versionControl.request(contents_url)
