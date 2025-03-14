@@ -39,7 +39,10 @@ class ServerImport {
 
   async #scheduleReplacedDataflow(createDataflowId) {
     const schedule = this.scheduleStructure(createDataflowId)
-    await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+    const scheduler = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+    if (scheduler.errorCode !== 0) {
+      throw scheduler
+    }
   }
 
   async #createAndCheckDataflow(dataflowConfig) {
@@ -59,12 +62,14 @@ class ServerImport {
     }
   }
 
-  async searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount = 5) {
+  async searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount = 10) {
     const searchDataflow = await this.#dataFlow.search()
     let dataflowFound = false
-    for (const dataflow of searchDataflow.result) {
-      if (dataflow.id === dataflowId && dataflow.apiKey === apiKey) {
-        return true
+    if (searchDataflow.result) {
+      for (const dataflow of searchDataflow.result) {
+        if (dataflow.id === dataflowId && dataflow.apiKey === apiKey) {
+          return true
+        }
       }
     }
     if (!dataflowFound) {

@@ -82,8 +82,8 @@ const ServerImportComponent = ({ t }) => {
         state={ValueState.Error}
         closeButtonContent="Close"
         onAfterClose={onErrorDialogAfterCloseHandler}
-        id="serverImportSuccessPopup"
-        data-cy="serverImportSuccessPopup"
+        id="serverImportErrorPopup"
+        data-cy="serverImportErrorPopup"
       >
         <Text className={classes.errorMessage}>
           {errors[0].errorMessage}
