@@ -183,8 +183,12 @@ const ServerImportComponent = ({ t }) => {
             <div className={classes.serverDropDown}>
               <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_ACCOUNT_TYPE')}</div>
               <Select id="selectAccountType" onChange={handleAccountOptionChange} className={classes.selectBox}>
-                <Option value={AccountType.Full}> {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}</Option>
-                <Option value={AccountType.Lite}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}</Option>
+                <Option id="fullAccountOption" value={AccountType.Full}>
+                  {t('SERVER_IMPORT_COMPONENT.TEMPLATES_FULL_ACCOUNT')}
+                </Option>
+                <Option id="liteAccountOption" value={AccountType.Lite}>
+                  {t('SERVER_IMPORT_COMPONENT.TEMPLATES_LITE_ACCOUNT')}
+                </Option>
               </Select>
               <div className={classes.smallTitle}>{t('SERVER_IMPORT_COMPONENT.TEMPLATES_SELECT_LOCAL_STORAGE')}</div>
               <Select id="selectStorageServer" onChange={handleOptionChange} className={classes.selectBox}>
