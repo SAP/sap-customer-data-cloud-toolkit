@@ -21,6 +21,7 @@ import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
 import { cleanEmailResponse, cleanResponse } from './dataSanitization'
 import { createOptions } from './utils'
+import ConsentConfigurationManager from '../versionControl/consent/consentConfiguration'
 
 class CdcService {
   constructor(credentials, apiKey, dataCenter, siteInfo) {
@@ -42,6 +43,7 @@ class CdcService {
     this.topic = new Topic(this.credentials, apiKey, dataCenter)
     this.webhook = new Webhook(this.credentials, apiKey, dataCenter)
     this.consent = new ConsentConfiguration(this.credentials, apiKey, dataCenter)
+    this.consentManager = new ConsentConfigurationManager(this.credentials, apiKey, dataCenter)
     this.social = new Social(this.credentials, apiKey, dataCenter)
     this.recaptcha = new RecaptchaConfiguration(this.credentials, apiKey, dataCenter)
   }
@@ -61,7 +63,7 @@ class CdcService {
       { name: 'channel', promise: this.communication.get() },
       { name: 'topic', promise: this.topic.searchTopics() },
       { name: 'webhook', promise: this.webhook.get() },
-      { name: 'consent', promise: this.consent.getConsentsAndLegalStatements() },
+      { name: 'consent', promise: this.consentManager.getConsentsAndLegalStatements() },
       { name: 'social', promise: this.social.get() },
       { name: 'recaptcha', promise: this.recaptcha.get() },
     ]

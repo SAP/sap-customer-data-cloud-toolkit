@@ -31,23 +31,6 @@ class ConsentConfiguration {
     return this.#consentStatement.get()
   }
 
-  async getConsentsAndLegalStatements() {
-    const consents = await this.get()
-    if (consents.errorCode !== 0) {
-      return consents
-    }
-
-    const consentsWithLegalStatements = { ...consents }
-    const idsAndLanguages = extractConsentIdsAndLanguages(consents.preferences)
-    for (const { consentId, language } of idsAndLanguages) {
-      const legalStatements = await this.#legalStatement.getFilteredLegalStatement(consentId, language)
-      consentsWithLegalStatements.preferences[consentId].legalStatements = consentsWithLegalStatements.preferences[consentId].legalStatements || {}
-      consentsWithLegalStatements.preferences[consentId].legalStatements[language] = legalStatements.legalStatements
-    }
-
-    return consentsWithLegalStatements
-  }
-
   async copy(destinationSite, destinationSiteConfiguration, options) {
     let responses = []
     if (options && options.value === false) {

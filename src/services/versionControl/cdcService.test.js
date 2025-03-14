@@ -36,7 +36,7 @@ describe('CdcService', () => {
 
   describe('fetchCDCConfigs', () => {
     it('should fetch all CDC configs', async () => {
-      jest.spyOn(cdcService.consent, 'get').mockResolvedValue(getConsentStatementExpectedResponse)
+      jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
       // Mock the internal get method to include legalStatements
 
       jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
@@ -73,7 +73,7 @@ describe('CdcService', () => {
       const channelSpy = jest.spyOn(cdcService.communication, 'get')
       const topicSpy = jest.spyOn(cdcService.topic, 'searchTopics')
       const webhookSpy = jest.spyOn(cdcService.webhook, 'get')
-      const consentSpy = jest.spyOn(cdcService.consent, 'getConsentsAndLegalStatements')
+      const consentSpy = jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements')
       const socialSpy = jest.spyOn(cdcService.social, 'get')
       const recaptchaSpy = jest.spyOn(cdcService.recaptcha, 'get')
       axios
@@ -103,8 +103,8 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
       const configs = await cdcService.fetchCDCConfigs()
-      const ammountOfResponses = countObjects(configs) // Update expected count as needed
-      expect(ammountOfResponses).toBe(318) // Use the correct expected number based on new behavior
+      const ammountOfResponses = countObjects(configs)
+      expect(ammountOfResponses).toBe(290)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()

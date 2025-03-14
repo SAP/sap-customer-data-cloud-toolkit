@@ -38,12 +38,11 @@ describe('versionControlService', () => {
   })
 
   describe('handleGetServices', () => {
-    jest.spyOn(versionControlService.cdcService.consent, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
+    jest.spyOn(versionControlService.cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
     it('should return true when creating a backup', async () => {
       axios
         .mockResolvedValueOnce({ data: channelsExpectedResponse })
         .mockResolvedValueOnce({ data: expectedSchemaResponse })
-        // .mockResolvedValueOnce({ data: { preferences: {} } }) // Simplified consents
         .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
         .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
         .mockResolvedValueOnce({ data: getPolicyConfig })
