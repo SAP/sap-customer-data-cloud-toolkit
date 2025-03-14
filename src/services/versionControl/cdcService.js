@@ -13,6 +13,7 @@ import Policy from '../copyConfig/policies/policies'
 import Rba from '../copyConfig/rba/rba'
 import RiskAssessment from '../copyConfig/rba/riskAssessment'
 import RecaptchaConfiguration from '../copyConfig/recaptcha/recaptchaConfiguration'
+import RecaptchaConfigurationManager from './recaptcha/recaptchConfigurationVersionControl'
 import Schema from '../copyConfig/schema/schema'
 import ScreenSet from '../copyConfig/screenset/screenset'
 import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
@@ -46,6 +47,7 @@ class CdcService {
     this.consentManager = new ConsentConfigurationManager(this.credentials, apiKey, dataCenter)
     this.social = new Social(this.credentials, apiKey, dataCenter)
     this.recaptcha = new RecaptchaConfiguration(this.credentials, apiKey, dataCenter)
+    this.recaptchaManager = new RecaptchaConfigurationManager(this.credentials, apiKey, dataCenter)
   }
 
   #getCdcData = () => {
@@ -142,7 +144,7 @@ class CdcService {
           await this.social.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
           break
         case 'recaptcha':
-          await this.recaptcha.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
+          await this.recaptchaManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
           break
         default:
           console.warn(`Unknown file type: ${fileType}`)
