@@ -51,15 +51,6 @@ class Social {
     return response
   }
 
-  async setFromFiles(apiKey, dataCenter, config) {
-    const response = await this.set(apiKey, config, dataCenter)
-    if (response.context) {
-      response['context'] = response.context.replace(/&quot;/g, '"')
-      stringToJson(response, 'context')
-    }
-    return response
-  }
-
   #getSocialConfigParameters(apiKey) {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey

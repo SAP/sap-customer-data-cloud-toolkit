@@ -23,6 +23,7 @@ import WebSdk from '../copyConfig/websdk/websdk'
 import { cleanEmailResponse, cleanResponse } from './dataSanitization'
 import { createOptions } from './utils'
 import ConsentConfigurationManager from './consent/consentConfigurationVersionControl'
+import SocialManager from './social/socialManager'
 
 class CdcService {
   constructor(credentials, apiKey, dataCenter, siteInfo) {
@@ -48,6 +49,7 @@ class CdcService {
     this.social = new Social(this.credentials, apiKey, dataCenter)
     this.recaptcha = new RecaptchaConfiguration(this.credentials, apiKey, dataCenter)
     this.recaptchaManager = new RecaptchaConfigurationManager(this.credentials, apiKey, dataCenter)
+    this.socialManager = new SocialManager(this.credentials, apiKey, dataCenter)
   }
 
   #getCdcData = () => {
@@ -141,7 +143,7 @@ class CdcService {
           }
           break
         case 'social':
-          await this.social.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
+          await this.socialManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
           break
         case 'recaptcha':
           await this.recaptchaManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
