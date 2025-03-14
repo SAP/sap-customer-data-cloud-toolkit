@@ -4,8 +4,8 @@
  */
 
 import ConsentConfiguration from '../../copyConfig/consent/consentConfiguration'
-import LegalStatement from '../../copyConfig/consent/legalStatement'
-import { extractConsentIdsAndLanguages } from '../../versionControl/utils'
+import LegalStatementManager from './legalStatementVersionControl'
+import { extractConsentIdsAndLanguages } from '../utils'
 
 class ConsentConfigurationManager {
   #consentConfiguration
@@ -13,7 +13,7 @@ class ConsentConfigurationManager {
 
   constructor(credentials, site, dataCenter) {
     this.#consentConfiguration = new ConsentConfiguration(credentials, site, dataCenter)
-    this.#legalStatement = new LegalStatement(credentials, site, dataCenter)
+    this.#legalStatement = new LegalStatementManager(credentials, site, dataCenter)
   }
 
   async getConsentsAndLegalStatements() {

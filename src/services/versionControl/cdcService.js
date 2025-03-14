@@ -21,7 +21,7 @@ import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
 import { cleanEmailResponse, cleanResponse } from './dataSanitization'
 import { createOptions } from './utils'
-import ConsentConfigurationManager from '../versionControl/consent/consentConfiguration'
+import ConsentConfigurationManager from './consent/consentConfigurationVersionControl'
 
 class CdcService {
   constructor(credentials, apiKey, dataCenter, siteInfo) {

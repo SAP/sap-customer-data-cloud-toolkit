@@ -4,7 +4,7 @@
  */
 
 import axios from 'axios'
-import ConsentConfigurationManager from './consentConfiguration'
+import ConsentConfigurationManager from './consentConfigurationVersionControl'
 import { credentials, getConsentStatementExpectedResponse, getLegalStatementExpectedResponse } from './dataTest'
 
 jest.mock('axios')
@@ -19,7 +19,7 @@ describe('ConsentConfigurationManager test suite', () => {
       .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
       .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
       .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
-      .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse }) 
+      .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
 
     const response = await consentConfigurationManager.getConsentsAndLegalStatements()
 
