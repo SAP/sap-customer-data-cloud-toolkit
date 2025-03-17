@@ -287,6 +287,7 @@ const VersionControlComponent = ({ t }) => {
                     </div>
                     {(!gitToken || !owner || errors) && (
                       <div id="warningCredentials" className={classes.warningMessage}>
+                        {errors && <div className={classes.errorMessage}>{(errors.toString())}</div>}
                         {t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}
                         <a href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/Documentation#prettier" target="_blank" rel="noopener noreferrer">
                           {t('VERSION_CONTROL.DOCUMENTATION_LINK')}

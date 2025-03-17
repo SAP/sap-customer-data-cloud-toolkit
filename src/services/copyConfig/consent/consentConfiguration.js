@@ -38,7 +38,7 @@ class ConsentConfiguration {
     }
     let response = await this.#consentStatement.get()
     if (response.errorCode === 0) {
-      const consentsPayload = ConsentConfiguration.#splitConsents(response.preferences)
+      const consentsPayload = ConsentConfiguration.splitConsents(response.preferences)
       responses.push(...(await this.copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
     } else {
       responses.push(response)
@@ -49,7 +49,7 @@ class ConsentConfiguration {
     return responses
   }
 
-  static #splitConsents(consents) {
+  static splitConsents(consents) {
     const consentsList = []
     for (const consent of Object.keys(consents)) {
       const payload = { preferences: {} }
@@ -105,68 +105,6 @@ class ConsentConfiguration {
     return responses
   }
 
-  async setConsentsAndLegalStatements(apiKey, siteInfo, content) {
-    // Remove legalStatements from preferences
-    const preferencesWithoutLegalStatements = JSON.parse(JSON.stringify(content.preferences))
-    for (const consentId of Object.keys(preferencesWithoutLegalStatements)) {
-      delete preferencesWithoutLegalStatements[consentId].legalStatements
-    }
-
-    const consentsPayload = ConsentConfiguration.#splitConsents(preferencesWithoutLegalStatements)
-    const legalStatementsPayload = ConsentConfiguration.#splitLegalStatements(content.preferences)
-
-    const consentResponses = await this.copyConsentStatements(apiKey, siteInfo, consentsPayload)
-    const legalStatementResponses = await this.copyLegalStatementsFroFile(apiKey, siteInfo, legalStatementsPayload)
-
-    return [...consentResponses, ...legalStatementResponses]
-  }
-
-  static #splitLegalStatements(preferences) {
-    const legalStatementsList = []
-    for (const consentId of Object.keys(preferences)) {
-      const consent = preferences[consentId]
-      if (consent.legalStatements) {
-        for (const language of Object.keys(consent.legalStatements)) {
-          const payload = {
-            consentId,
-            language,
-            legalStatements: consent.legalStatements[language],
-          }
-          legalStatementsList.push(payload)
-        }
-      }
-    }
-    return legalStatementsList
-  }
-
-  async setFromFiles(destinationSite, destinationSiteConfiguration, content) {
-    let responses = []
-
-    const consentsPayload = ConsentConfiguration.#splitConsents(content.preferences)
-    responses.push(...(await this.copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
-
-    const legalStatementsPayload = ConsentConfiguration.#splitLegalStatements(content.preferences)
-    responses.push(...(await this.copyLegalStatementsFroFile(destinationSite, destinationSiteConfiguration, legalStatementsPayload)))
-
-    responses = responses.flat()
-    stringToJson(responses, 'context')
-    responses = ConsentConfiguration.#addSeverityToResponses(responses)
-    return responses
-  }
-
-  async copyLegalStatementsFroFile(destinationSite, destinationSiteConfiguration, legalStatementsPayload) {
-    const promises = []
-    for (const legalStatementPayload of legalStatementsPayload) {
-      promises.push(this.#copyLegalStatement(destinationSite, destinationSiteConfiguration.dataCenter, legalStatementPayload))
-    }
-    return Promise.all(promises)
-  }
-
-  async #copyLegalStatement(destinationSite, dataCenter, legalStatementPayload) {
-    const { consentId, language, legalStatements } = legalStatementPayload
-    const response = await this.#legalStatement.set(destinationSite, dataCenter, consentId, language, legalStatements)
-    return response
-  }
   static #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }

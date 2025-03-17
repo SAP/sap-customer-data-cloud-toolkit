@@ -139,7 +139,7 @@ class CdcService {
           break
         case 'consent':
           if (filteredResponse.preferences) {
-            await this.consent.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, filteredResponse)
+            await this.consentManager.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, filteredResponse)
           }
           break
         case 'social':
