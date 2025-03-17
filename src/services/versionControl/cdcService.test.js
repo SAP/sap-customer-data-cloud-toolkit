@@ -32,6 +32,7 @@ describe('CdcService', () => {
   const cdcService = new CdcService(credentials, apiKey, dataCenter, currentSite)
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
   describe('fetchCDCConfigs', () => {
@@ -184,6 +185,67 @@ describe('CdcService', () => {
       expect(topicSpy.mock.calls.length).toBe(1)
       expect(schemaSpy).toHaveBeenCalled()
       expect(schemaSpy.mock.calls.length).toBe(5)
+    })
+
+    it('should log errors when applying commit config fails', async () => {
+      const setSiteEmailsWithDataCenterMock = jest.fn().mockRejectedValue(new Error('emails error'))
+      jest.spyOn(cdcService.emails, 'getEmail').mockReturnValue({
+        setSiteEmailsWithDataCenter: setSiteEmailsWithDataCenterMock,
+      })
+
+      const mockFiles = [
+        { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
+        { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
+        { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
+        { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
+        { filename: 'src/versionControl/schema.json', content: expectedSchemaResponse },
+        { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
+        { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
+        { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse },
+        { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
+        { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/social.json', content: { key: 'value' } },
+        { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
+      ]
+
+      const expectedGigyaResponseNotOk = {
+        statusCode: 500,
+        errorCode: 0,
+        statusReason: 'Forbidden',
+        callId: 'callId',
+        apiVersion: 2,
+        time: Date.now(),
+      }
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
     })
   })
 })

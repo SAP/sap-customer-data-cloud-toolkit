@@ -98,47 +98,97 @@ class CdcService {
       let filteredResponse = file.content
       switch (fileType) {
         case 'webSdk':
-          await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
+          try {
+            await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
+          } catch (error) {
+             throw new Error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'emails':
-          await this.applyEmailsConfig(filteredResponse)
+          try {
+            await this.applyEmailsConfig(filteredResponse)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'extension':
-          if (filteredResponse.result.length > 0) {
-            await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
+          try {
+            if (filteredResponse.result.length > 0) {
+              await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
+            }
+          } catch (error) {
+            console.log(`Error applying config for file type ${fileType}:`, error)
+            console.error(`Error applying config for file type ${fileType}:`, error)
           }
           break
         case 'policies':
-          cleanResponse(filteredResponse)
-          await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
+          try {
+            cleanResponse(filteredResponse)
+            await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
+          } catch (error) {
+            console.log('policies error: ', error)
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'rba':
         case 'riskAssessment':
-          await this.applyRbaConfig(filteredResponse)
+          try {
+            await this.applyRbaConfig(filteredResponse)
+          } catch (error) {
+            console.log('rba error', error)
+
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'schema':
-          await this.applySchemaConfig(filteredResponse)
+          try {
+            await this.applySchemaConfig(filteredResponse)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'screenSets':
-          for (const screenSet of filteredResponse.screenSets) {
-            await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
+          try {
+            for (const screenSet of filteredResponse.screenSets) {
+              await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
+            }
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
           }
           break
         case 'sms':
-          this.sms.getSms().set(this.apiKey, this.dataCenter, filteredResponse.templates)
+          try {
+            this.sms.getSms().set(this.apiKey, this.dataCenter, filteredResponse.templates)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'channel':
         case 'topic':
-          await this.applyCommunicationConfig(filteredResponse)
+          try {
+            await this.applyCommunicationConfig(filteredResponse)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'dataflow':
-          await this.applyDataflowConfig(filteredResponse)
+          try {
+            await this.applyDataflowConfig(filteredResponse)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'webhook':
-          await this.applyWebhookConfig(filteredResponse)
+          try {
+            // await this.applyWebhookConfig(filteredResponse)
+            await this.applyWebhookConfig(filteredResponse)
+          } catch (error) {
+            console.error(`Error applying config for file type ${fileType}:`, error)
+          }
           break
         case 'consent':
           if (filteredResponse.preferences) {
+            // if (filteredResponse.preferences) {
             await this.consentManager.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, filteredResponse)
           }
           break
