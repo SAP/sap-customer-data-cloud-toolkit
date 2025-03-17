@@ -47,18 +47,23 @@ class ConsentConfigurationManager {
   }
 
   async setConsentsAndLegalStatements(apiKey, siteInfo, content) {
-    const preferencesWithoutLegalStatements = JSON.parse(JSON.stringify(content.preferences))
-    for (const consentId of Object.keys(preferencesWithoutLegalStatements)) {
-      delete preferencesWithoutLegalStatements[consentId].legalStatements
+    try {
+      const preferencesWithoutLegalStatements = JSON.parse(JSON.stringify(content.preferences))
+      for (const consentId of Object.keys(preferencesWithoutLegalStatements)) {
+        delete preferencesWithoutLegalStatements[consentId].legalStatements
+      }
+
+      const consentsPayload = ConsentConfiguration.splitConsents(preferencesWithoutLegalStatements)
+      const legalStatementsPayload = ConsentConfigurationManager.#splitLegalStatements(content.preferences)
+
+      const consentResponses = await this.#consentConfiguration.copyConsentStatements(apiKey, siteInfo, consentsPayload)
+      const legalStatementResponses = await this.copyLegalStatementsFromFile(apiKey, siteInfo, legalStatementsPayload)
+
+      return [...consentResponses, ...legalStatementResponses]
+    } catch (error) {
+      console.error('Error in setConsentsAndLegalStatements:', error)
+      throw error
     }
-
-    const consentsPayload = ConsentConfiguration.splitConsents(preferencesWithoutLegalStatements) //porquê?
-    const legalStatementsPayload = ConsentConfigurationManager.#splitLegalStatements(content.preferences)
-
-    const consentResponses = await this.#consentConfiguration.copyConsentStatements(apiKey, siteInfo, consentsPayload)
-    const legalStatementResponses = await this.copyLegalStatementsFromFile(apiKey, siteInfo, legalStatementsPayload)
-
-    return [...consentResponses, ...legalStatementResponses]
   }
 
   static #splitLegalStatements(preferences) {

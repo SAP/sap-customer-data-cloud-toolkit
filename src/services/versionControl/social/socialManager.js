@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Social from '../../copyConfig/social/social.js'
 import { stringToJson } from '../../copyConfig/objectHelper.js'
 
@@ -23,12 +22,18 @@ class SocialManager {
   }
 
   async setFromFiles(apiKey, dataCenter, config) {
-    const response = await this.social.set(apiKey, config, dataCenter)
-    if (response.context) {
-      response['context'] = response.context.replace(/&quot;/g, '"')
-      stringToJson(response, 'context')
+    try {
+      const response = await this.social.set(apiKey, config, dataCenter)
+      if (response.context) {
+        response['context'] = response.context.replace(/&quot;/g, '"')
+        stringToJson(response, 'context')
+      }
+      return response
+    } catch (error) {
+      console.log('Error setting social config from Git:', error)
+      console.error('Error setting recaptcha config from Git:', error)
+      throw error
     }
-    return response
   }
 }
 export default SocialManager

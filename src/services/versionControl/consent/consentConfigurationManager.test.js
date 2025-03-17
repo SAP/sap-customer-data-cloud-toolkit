@@ -1,8 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
-
 import axios from 'axios'
 import ConsentConfigurationManager from './consentConfigurationVersionControl'
 import { credentials, getConsentStatementExpectedResponse, getLegalStatementExpectedResponse } from './dataTest'
@@ -74,8 +69,36 @@ describe('ConsentConfigurationManager test suite', () => {
       expect(response.severity).toBe('INFO') // Verify severity as expected
     })
   })
+
+  test('setConsentsAndLegalStatements - error scenario', async () => {
+    const content = getConsentStatementExpectedResponse
+
+    axios.mockImplementation((config) => {
+      if (config.url.includes('getLegalStatements')) {
+        return Promise.resolve({
+          data: { errorCode: 500, errorMessage: 'Internal Server Error' },
+        })
+      }
+
+      if (config.url.includes('getConsents')) {
+        return Promise.resolve({
+          data: { errorCode: 500, errorMessage: 'Internal Server Error' },
+        })
+      }
+
+      return Promise.resolve({ data: { errorCode: 500, errorMessage: 'Internal Server Error' } })
+    })
+
+    const responses = await consentConfigurationManager.setConsentsAndLegalStatements(apiKey, siteInfo, content)
+
+    expect(responses.flat().length).toBeGreaterThan(0) // Flatten responses for length check
+    responses.flat().forEach((response) => {
+      expect(response.errorCode).toBe(500) // Check for correct errorCode in response
+      expect(response.errorMessage).toBe('Internal Server Error') // Verify error message as expected
+    })
+  })
+
   test('copyLegalStatementsFromFile - success scenario', async () => {
-    // Arrange
     const legalStatementsPayload = [
       {
         consentId: 'terms.termsConsentId1',
@@ -89,7 +112,6 @@ describe('ConsentConfigurationManager test suite', () => {
       },
     ]
 
-    // Mock axios to return a successful outcome for setting legal statements
     axios.mockImplementation((config) => {
       if (config.url.includes('setLegalStatements')) {
         return Promise.resolve({ data: { errorCode: 0, severity: 'INFO' } })
