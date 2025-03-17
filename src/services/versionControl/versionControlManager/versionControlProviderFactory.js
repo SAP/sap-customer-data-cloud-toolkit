@@ -4,16 +4,15 @@
  */
 
 import { Octokit } from '@octokit/rest'
-import GitHub from './github'
 
-class VersionControlFactory {
-  static getVersionControlFactory(versionControl, versionControlProvider, currentOwner, currentRepo) {
+class VersionControlProviderFactory {
+  static getVersionControlProviderFactory(versionControl, currentGitToken) {
     switch (versionControl) {
       case 'github':
-        return new GitHub(versionControlProvider, currentOwner, currentRepo)
+        return new Octokit({ auth: currentGitToken })
       default:
         throw new Error('Invalid Version Control')
     }
   }
 }
-export default VersionControlFactory
+export default VersionControlProviderFactory

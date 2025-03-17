@@ -9,6 +9,7 @@ import { getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
 import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
+import VersionControlProviderFactory from '../../services/versionControl/versionControlManager/versionControlProviderFactory'
 
 const VERSION_CONTROL_STATE_NAME = 'versionControl'
 const FETCH_COMMITS_ACTION = `${VERSION_CONTROL_STATE_NAME}/fetchCommits`
@@ -138,7 +139,8 @@ const getCommonData = (state) => {
   const gitToken = getEncryptedCookie('gitToken', credentials.secret) // Retrieve the encrypted token
   const owner = getEncryptedCookie('owner', credentials.secret) // Retrieve the encrypted owner
   const repo = Cookies.get('repo')
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', gitToken, owner, repo)
+  const versionControlProviderFactory = VersionControlProviderFactory.getVersionControlProviderFactory('github', gitToken)
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', versionControlProviderFactory, owner, repo)
   if (!gitToken || !owner) {
     throw new Error('Git token or owner is missing')
   }
