@@ -117,7 +117,7 @@ const VersionControlComponent = ({ t }) => {
   const onCreateBackupClick = async () => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
-      const formattedFiles = resultAction.length > 0 ? resultAction : [t('VERSION_CONTROL.NO_COMMITS')]
+      const formattedFiles = resultAction.payload
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
@@ -396,40 +396,48 @@ const VersionControlComponent = ({ t }) => {
                 </div>
               }
               children={
-                <div className={classes.specifyFileLableStyle}>
+                filesToUpdate.length > 0 ? (
                   <div className={classes.specifyFileLableStyle}>
-                    <Label id="specifyFileLabel">{t('VERSION_CONTROL.UPLOAD_MESSAGE')}</Label>
+                    <div className={classes.specifyFileLableStyle}>
+                      <Label id="specifyFileLabel">{t('VERSION_CONTROL.UPLOAD_MESSAGE')}</Label>
+                    </div>
+                    <ul>
+                      {filesToUpdate.map((file, index) => (
+                        <li className={classes.filesToUpdate} key={index}>
+                          <Text>{file}</Text>
+                        </li>
+                      ))}
+                    </ul>
+                    <TextArea
+                      data-cy="commitMessageInput"
+                      value={commitMessage}
+                      onInput={handleCommitMessageChange}
+                      placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
+                      rows={4}
+                    />
                   </div>
-                  <ul>
-                    {filesToUpdate.map((file, index) => (
-                      <li className={classes.filesToUpdate} key={index}>
-                        <Text>{file}</Text>
-                      </li>
-                    ))}
-                  </ul>
-                  <TextArea
-                    data-cy="commitMessageInput"
-                    value={commitMessage}
-                    onInput={handleCommitMessageChange}
-                    placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
-                    rows={4}
-                    disabled={filesToUpdate.includes(t('VERSION_CONTROL.NO_COMMITS'))}
-                  />
-                </div>
+                ) : (
+                  <div className={classes.specifyFileLableStyle}>
+                    <Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>
+                  </div>
+                )
               }
               footer={
                 <div className={classes.footerOuterDivStyle}>
-                  <Button
-                    data-cy="confirmBackupButton"
-                    className="btn dialog-button-1"
-                    onClick={onConfirmBackupClick}
-                    disabled={filesToUpdate.includes(t('VERSION_CONTROL.NO_COMMITS'))}
-                  >
-                    {t('VERSION_CONTROL.CONFIRM')}
-                  </Button>
-                  <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
-                    {t('VERSION_CONTROL.CANCEL')}
-                  </Button>
+                  {filesToUpdate.length > 0 ? (
+                    <>
+                      <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick}>
+                        {t('VERSION_CONTROL.CONFIRM')}
+                      </Button>
+                      <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
+                        {t('VERSION_CONTROL.CANCEL')}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button data-cy="okButton" className="btn dialog-button-1" onClick={onCancelBackupClick}>
+                      {t('GLOBAL.OK')}
+                    </Button>
+                  )}
                 </div>
               }
             />
