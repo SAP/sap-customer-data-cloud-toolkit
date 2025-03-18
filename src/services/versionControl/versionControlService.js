@@ -57,7 +57,7 @@ class VersionControlService {
             const fileName = file.path.replace('src/versionControl/', '').replace('.json', '')
             return fileName.charAt(0).toUpperCase() + fileName.slice(1)
           })
-        : ['N/A']
+        : []
     return formattedFiles
   }
 }

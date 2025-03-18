@@ -117,7 +117,7 @@ const VersionControlComponent = ({ t }) => {
   const onCreateBackupClick = async () => {
     try {
       const resultAction = await dispatch(prepareFilesForUpdate())
-      const formattedFiles = unwrapResult(resultAction)
+      const formattedFiles = resultAction.length > 0 ? resultAction : [t('VERSION_CONTROL.NO_COMMITS')]
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
@@ -413,13 +413,18 @@ const VersionControlComponent = ({ t }) => {
                     onInput={handleCommitMessageChange}
                     placeholder={t('VERSION_CONTROL.COMMIT_MESSAGE_PLACEHOLDER')}
                     rows={4}
-                    disabled={filesToUpdate.includes('N/A')}
+                    disabled={filesToUpdate.includes(t('VERSION_CONTROL.NO_COMMITS'))}
                   />
                 </div>
               }
               footer={
                 <div className={classes.footerOuterDivStyle}>
-                  <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick} disabled={filesToUpdate.includes('N/A')}>
+                  <Button
+                    data-cy="confirmBackupButton"
+                    className="btn dialog-button-1"
+                    onClick={onConfirmBackupClick}
+                    disabled={filesToUpdate.includes(t('VERSION_CONTROL.NO_COMMITS'))}
+                  >
                     {t('VERSION_CONTROL.CONFIRM')}
                   </Button>
                   <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
