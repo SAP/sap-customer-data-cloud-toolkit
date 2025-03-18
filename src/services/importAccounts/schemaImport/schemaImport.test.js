@@ -10,7 +10,6 @@ import {
   expectedSchemaCleanAddress,
   expectedSchemaResponse,
   expectedSchemaResponseCleaned,
-  expectedSchemaResponseWithoutFields,
   expectedTransformedLiteResponse,
   transformedSchema,
 } from './schemaDatatest'

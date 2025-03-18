@@ -59,11 +59,7 @@ export const expectedSchemaCleanAddress = {
   internalSchema: internalSchemaFields,
   addressesSchema: addressesSchemaFields,
 }
-export const expectedSchemaResponseWithoutFields = {
-  profileSchema: profileSchemaFields,
-  dataSchema: dataSchemaFields,
-  subscriptionsSchema: subscriptionsSchemaFields,
-}
+
 export const expectedSchemaResponseCleaned = {
   callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',
   statusCode: 200,
