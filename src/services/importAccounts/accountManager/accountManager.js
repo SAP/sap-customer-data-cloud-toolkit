@@ -5,6 +5,7 @@ class AccountManager {
   constructor(storageProvider) {
     this.storageProvider = storageProvider
   }
+
   getDataflow() {
     return this.dataflow
   }
