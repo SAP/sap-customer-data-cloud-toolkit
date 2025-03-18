@@ -1,8 +1,3 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
-
 import React, { useState, useEffect } from 'react'
 import { withTranslation } from 'react-i18next'
 import {
@@ -75,6 +70,8 @@ const VersionControlComponent = ({ t }) => {
   const [filesToUpdate, setFilesToUpdate] = useState([])
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_VERSION_CONTROL)) {
@@ -125,17 +122,21 @@ const VersionControlComponent = ({ t }) => {
       setIsDialogOpen(true)
     } catch (error) {
       console.error('Error preparing backup:', error)
+      setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
+      setShowErrorDialog(true)
     }
   }
 
   const onConfirmBackupClick = async () => {
     try {
-      dispatch(getServices(commitMessage))
-      dispatch(fetchCommits())
+      await dispatch(getServices(commitMessage))
+      await dispatch(fetchCommits())
       setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error creating backup:', error)
+      setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
+      setShowErrorDialog(true)
     } finally {
       setIsDialogOpen(false)
     }
@@ -147,12 +148,14 @@ const VersionControlComponent = ({ t }) => {
 
   const onCommitRevertClick = async (sha) => {
     try {
-      dispatch(getRevertChanges(sha))
-      dispatch(fetchCommits())
-      setSuccessMessage('success')
+      await dispatch(getRevertChanges(sha))
+      await dispatch(fetchCommits())
+      setSuccessMessage(t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error reverting commit:', error)
+      setErrorMessage(t('VERSION_CONTROL.REVERT.ERROR.MESSAGE'))
+      setShowErrorDialog(true)
     }
   }
 
@@ -185,6 +188,10 @@ const VersionControlComponent = ({ t }) => {
     setShowSuccessDialog(false)
   }
 
+  const onErrorDialogAfterClose = () => {
+    setShowErrorDialog(false)
+  }
+
   const renderStatusMessage = () => {
     if (!gitToken || !owner || !repo || errors) {
       return <div></div>
@@ -205,6 +212,20 @@ const VersionControlComponent = ({ t }) => {
       data-cy="versionControlSuccessPopup"
     >
       <Text>{successMessage}</Text>
+    </DialogMessageInform>
+  )
+
+  const showErrorMessage = () => (
+    <DialogMessageInform
+      open={showErrorDialog}
+      headerText={t('GLOBAL.ERROR')}
+      state={ValueState.Error}
+      closeButtonContent={t('GLOBAL.OK')}
+      onAfterClose={onErrorDialogAfterClose}
+      id="versionControlErrorPopup"
+      data-cy="versionControlErrorPopup"
+    >
+      <Text>{errorMessage}</Text>
     </DialogMessageInform>
   )
 
@@ -287,7 +308,7 @@ const VersionControlComponent = ({ t }) => {
                     </div>
                     {(!gitToken || !owner || errors) && (
                       <div id="warningCredentials" className={classes.warningMessage}>
-                        {errors && <div className={classes.errorMessage}>{(errors.toString())}</div>}
+                        {errors && <div className={classes.errorMessage}>{errors.toString()}</div>}
                         {t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}
                         <a href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/Documentation#prettier" target="_blank" rel="noopener noreferrer">
                           {t('VERSION_CONTROL.DOCUMENTATION_LINK')}
@@ -411,6 +432,7 @@ const VersionControlComponent = ({ t }) => {
         </div>
       </div>
       {showSuccessMessage()}
+      {showErrorMessage()}
     </>
   )
 }
