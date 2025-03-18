@@ -215,13 +215,6 @@ class GitHub extends VersionControlManager {
     let newContent = JSON.parse(cdcFileContent)
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
-    // if (filePath === 'src/versionControl/rba.json') {
-    //   console.log('===========CDCContent===============')
-    //   console.log(newContent)
-    //   console.log('===========sanitizedContent===============')
-    //   console.log(sanitizedNewContent)
-    //   console.log('====================================')
-    // }
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
       return {
         path: filePath,
