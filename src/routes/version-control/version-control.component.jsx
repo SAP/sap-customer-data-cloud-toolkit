@@ -127,12 +127,12 @@ const VersionControlComponent = ({ t }) => {
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {
-      setIsLoading(false) // Hide the loading indicator
+      setIsLoading(false)
     }
   }
 
   const onConfirmBackupClick = async () => {
-    setIsDialogOpen(false) // Close the dialog first
+    setIsDialogOpen(false)
     setIsLoading(true)
     try {
       await dispatch(getServices(commitMessage))
@@ -177,12 +177,12 @@ const VersionControlComponent = ({ t }) => {
 
   const handleOwnerChange = (e) => {
     dispatch(setOwner(e.target.value))
-    dispatch(clearCommits()) // Clear commits when repo changes
+    dispatch(clearCommits())
   }
 
   const handleRepoChange = (e) => {
     dispatch(setRepo(e.target.value))
-    dispatch(clearCommits()) // Clear commits when repo changes
+    dispatch(clearCommits())
   }
 
   const handleCommitMessageChange = (e) => {
