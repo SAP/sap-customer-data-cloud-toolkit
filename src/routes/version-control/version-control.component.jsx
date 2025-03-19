@@ -123,7 +123,6 @@ const VersionControlComponent = ({ t }) => {
       setFilesToUpdate(formattedFiles)
       setIsDialogOpen(true)
     } catch (error) {
-      console.error('Error preparing backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {

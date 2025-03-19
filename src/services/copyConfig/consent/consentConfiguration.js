@@ -8,7 +8,6 @@ import LegalStatement from './legalStatement.js'
 import { stringToJson } from '../objectHelper.js'
 import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_ERROR, ERROR_SEVERITY_INFO, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
 import ConsentDefaultLanguage from './consentDefaultLanguage.js'
-import { extractConsentIdsAndLanguages } from '../../versionControl/utils.js'
 
 class ConsentConfiguration {
   #credentials
