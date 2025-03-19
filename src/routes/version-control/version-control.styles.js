@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+import { FlexBoxAlignItems } from '@ui5/webcomponents-react'
 import { spacing } from '@ui5/webcomponents-react-base'
 import { sapUiSmallMarginTop } from '@ui5/webcomponents-react-base/dist/styling/spacing.js'
 
@@ -232,6 +233,12 @@ const styles = {
   credentialsGridStyle: {
     ...spacing.sapUiSmallMarginTop,
   },
+
+  okButtonStyle: {
+    height: '30px', 
+    borderRadius: '5px',
+    position: 'absolute',
+    width: '69.28px',  },
 }
 
 export default styles

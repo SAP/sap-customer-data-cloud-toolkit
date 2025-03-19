@@ -434,7 +434,7 @@ const VersionControlComponent = ({ t }) => {
                       </Button>
                     </>
                   ) : (
-                    <Button data-cy="okButton" className="btn dialog-button-1" onClick={onCancelBackupClick}>
+                    <Button data-cy="okButton" className={`${classes.okButtonStyle} btn dialog-button-1`} onClick={onCancelBackupClick}>
                       {t('GLOBAL.OK')}
                     </Button>
                   )}
