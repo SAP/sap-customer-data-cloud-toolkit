@@ -1,5 +1,5 @@
 import { AccountType } from './accountType'
-import { azureFullAccountTemplate } from '../serverImport/AzureAccountsTemplates/azureFullAccountTemplate'
+import { azureFullAccountTemplate } from '../serverImport/AzureAccountsTemplates/AzureFullAccountTemplate'
 import { azureLiteAccountTemplate } from '../serverImport/AzureAccountsTemplates/azureLiteAccountTemplate'
 
 class TemplateFactory {
