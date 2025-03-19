@@ -25,9 +25,5 @@ class VersionControlManager {
   storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
     throw new Error('Method not implemented.')
   }
-
-  fetchAndPrepareFiles(configs, apiKey) {
-    throw new Error('Method not implemented.')
-  }
 }
 export default VersionControlManager

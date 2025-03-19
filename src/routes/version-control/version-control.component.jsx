@@ -38,6 +38,7 @@ import {
   getRevertChanges,
   clearCommits,
   selectError,
+  selectFilesToUpdate,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import Cookies from 'js-cookie'
@@ -65,9 +66,9 @@ const VersionControlComponent = ({ t }) => {
   const repo = useSelector(selectRepo)
   const apiKey = useSelector(selectCurrentSiteApiKey)
 
+  const filesToUpdate = useSelector(selectFilesToUpdate)
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [filesToUpdate, setFilesToUpdate] = useState([])
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [showErrorDialog, setShowErrorDialog] = useState(false)
@@ -116,11 +117,9 @@ const VersionControlComponent = ({ t }) => {
   }, [credentials, dispatch])
 
   const onCreateBackupClick = async () => {
-    setIsLoading(true) // Show the loading indicator
+    setIsLoading(true)
     try {
-      const resultAction = await dispatch(prepareFilesForUpdate())
-      const formattedFiles = resultAction.payload
-      setFilesToUpdate(formattedFiles)
+      await dispatch(prepareFilesForUpdate())
       setIsDialogOpen(true)
     } catch (error) {
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
@@ -171,7 +170,7 @@ const VersionControlComponent = ({ t }) => {
 
   const handleGitTokenChange = (e) => {
     dispatch(setGitToken(e.target.value))
-    dispatch(clearCommits()) // Clear commits when repo changes
+    dispatch(clearCommits())
   }
 
   const handleOwnerChange = (e) => {

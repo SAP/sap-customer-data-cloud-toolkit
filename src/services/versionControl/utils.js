@@ -44,3 +44,10 @@ export const skipForChildSite = (getGitFileInfo, siteInfo) => {
   canBeCopied = (isChildSite && !notCopy.includes(getGitFileInfo.name)) || !isChildSite
   return canBeCopied
 }
+
+export const generateFileObjects = (configs) => {
+  return Object.keys(configs).map((key) => ({
+    path: `src/versionControl/${key}.json`,
+    content: JSON.stringify(configs[key], null, 2),
+  }))
+}

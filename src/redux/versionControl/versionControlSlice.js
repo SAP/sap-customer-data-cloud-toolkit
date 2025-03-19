@@ -26,6 +26,7 @@ const versionControlSlice = createSlice({
     isFetching: false,
     error: null,
     revert: false,
+    filesToUpdate: [],
   },
   reducers: {
     setGitToken(state, action) {
@@ -91,6 +92,7 @@ const versionControlSlice = createSlice({
     builder.addCase(prepareFilesForUpdate.fulfilled, (state, action) => {
       state.isFetching = false
       state.revert = action.payload
+      state.filesToUpdate = action.payload
     })
     builder.addCase(prepareFilesForUpdate.rejected, (state, action) => {
       state.isFetching = false
@@ -163,7 +165,8 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const state = getState()
   try {
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+    const files = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+    return files
   } catch (error) {
     return rejectWithValue(error.message)
   }
@@ -190,5 +193,6 @@ export const selectGitToken = (state) => state.versionControl.gitToken
 export const selectOwner = (state) => state.versionControl.owner
 export const selectRepo = (state) => state.versionControl.repo
 export const selectError = (state) => state.versionControl.error
+export const selectFilesToUpdate = (state) => state.versionControl.filesToUpdate
 
 export default versionControlSlice.reducer

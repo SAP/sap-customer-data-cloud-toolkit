@@ -7,7 +7,7 @@ import VersionControlManager from './versionControlManager'
 import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
-import { skipForChildSite } from '../utils'
+import { skipForChildSite, generateFileObjects } from '../utils'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
@@ -107,10 +107,7 @@ class GitHub extends VersionControlManager {
   }
 
   async fetchAndPrepareFiles(configs, apiKey, siteInfo) {
-    const files = Object.keys(configs).map((key) => ({
-      path: `src/versionControl/${key}.json`,
-      content: JSON.stringify(configs[key], null, 2),
-    }))
+    const files = generateFileObjects(configs)
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
         const result = await this.#updateGitFileContent(file.path, file.content, apiKey, siteInfo)
