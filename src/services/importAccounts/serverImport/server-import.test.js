@@ -10,7 +10,6 @@ import { commonConfigurations, commonOption, expectedScheduleStructure, mockedCr
 import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../../copyConfig/dataflow/dataTest.js'
 import { setConfigSuccessResponse } from '../../../redux/copyConfigurationExtended/dataTest.js'
 import { getResponseWithContext } from '../../copyConfig/dataTest.js'
-import AzureStorageProvider from '../storageProvider/azureStorageProvider.js'
 import FullAccount from '../accountManager/fullAccountManager.js'
 jest.mock('axios')
 
@@ -18,7 +17,7 @@ describe('ServerImport Test Suite', () => {
   const site = 'apiKey'
   const dataCenter = 'us1'
   const testTemplate = `{"id" : "test"}`
-  const storageProvider = new AzureStorageProvider()
+  const storageProvider = 'azure'
   const accountManager = new FullAccount(storageProvider, testTemplate)
   const serverImport = new ServerImport(credentials, site, dataCenter, accountManager)
   const commonAccountOption = 'Lite'

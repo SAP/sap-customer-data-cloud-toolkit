@@ -11,9 +11,3 @@ export const isInputFilled = (configurations) => {
   }
   return true
 }
-
-export const buildDataflowURL = (partner, apiKey) => {
-  if (partner && apiKey) {
-    return `https://console.gigya.com/#/${partner}/${apiKey}/orchestrate/etl-app`
-  }
-}

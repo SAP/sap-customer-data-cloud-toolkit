@@ -7,10 +7,9 @@ import ServerImport from '../../services/importAccounts/serverImport/server-impo
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
-import Dataflow from '../../services/copyConfig/dataflow/dataflow'
-import StorageProviderFactory from '../../services/importAccounts/storageProvider/storageProviderFactory'
 import AccountManagerFactory from '../../services/importAccounts/accountManager/accountManagerFactory'
-import TemplateFactory from '../../services/importAccounts/accountManager/templateManagerFactory'
+import TemplateFactory from '../../services/importAccounts/accountManager/templateFactory/templateManagerFactory'
+import UrlBuilder from '../../services/gigya/urlBuilder'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
 const GET_CONFIGURATIONS_ACTION = `${SERVER_IMPORT_STATE_NAME}/getConfigurations`
@@ -116,12 +115,11 @@ export const getDataflowRedirection = createAsyncThunk(GET_REDIRECTION_URL_ACTIO
   const state = getState()
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
-  const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
   const partnerId = state.serverImport.currentSitePartner
   const endpoint = 'orchestrate/etl-app'
 
   try {
-    return new Dataflow(credentials, currentSiteApiKey, currentDataCenter).buildRedirectDataflowURL(currentSiteApiKey, partnerId, endpoint)
+    return UrlBuilder.buildGigyaPageUrl(credentials.gigyaConsole, currentSiteApiKey, partnerId, endpoint)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -132,12 +130,12 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-  const storageProvider = StorageProviderFactory.getStorageProvider(option.option)
-  const templateManager = TemplateFactory.getTemplate(state.serverImport.accountType, option.option)
-  const accountManager = AccountManagerFactory.getAccountManager(state.serverImport.accountType, storageProvider, templateManager)
+  const templateManager = TemplateFactory.create(state.serverImport.accountType, option.option)
+  const accountManager = AccountManagerFactory.create(state.serverImport.accountType, option.option, templateManager)
   try {
     return await new ServerImport(credentials, currentSiteApiKey, currentDataCenter, accountManager).setDataflow(state.serverImport.serverConfigurations, option)
   } catch (error) {
+    console.log('error--->', error)
     return rejectWithValue(getErrorAsArray(error))
   }
 })

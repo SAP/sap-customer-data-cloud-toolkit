@@ -38,8 +38,8 @@ class ServerImport {
   }
 
   async #scheduleReplacedDataflow(createDataflowId) {
-    const schedule = this.scheduleStructure(createDataflowId)
-    const scheduler = await this.#dataFlow.setScheduling(this.#site, this.#dataCenter, schedule)
+    const scheduleStructure = this.scheduleStructure(createDataflowId)
+    const scheduler = await this.#dataFlow.schedule(this.#site, this.#dataCenter, scheduleStructure)
     if (scheduler.errorCode !== 0) {
       throw scheduler
     }

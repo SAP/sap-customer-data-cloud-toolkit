@@ -32,7 +32,7 @@ class Dataflow {
     return UrlBuilder.buildGigyaPageUrl(this.#credentials.gigyaConsole, site, partner, endpoint)
   }
 
-  async setScheduling(site, dataCenter, body) {
+  async schedule(site, dataCenter, body) {
     const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
     const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
     const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {

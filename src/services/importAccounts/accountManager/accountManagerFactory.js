@@ -1,9 +1,14 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import { AccountType } from './accountType'
 import FullAccount from './fullAccountManager'
 import LiteAccount from './liteAccountManager'
 
 class AccountManagerFactory {
-  static getAccountManager(accountType, storageProvider, template) {
+  static create(accountType, storageProvider, template) {
     switch (accountType) {
       case AccountType.Full:
         return new FullAccount(storageProvider, template)
