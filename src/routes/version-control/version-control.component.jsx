@@ -437,10 +437,10 @@ const VersionControlComponent = ({ t }) => {
                   <div className={classes.footerOuterDivStyle}>
                     {filesToUpdate.length > 0 ? (
                       <>
-                        <Button data-cy="confirmBackupButton" design="Emphasized" onClick={onConfirmBackupClick}>
+                        <Button data-cy="confirmBackupButton" className="btn dialog-button-1" onClick={onConfirmBackupClick}>
                           {t('VERSION_CONTROL.CONFIRM')}
                         </Button>
-                        <Button data-cy="cancelBackupButton" className="dialog-button-2" onClick={onCancelBackupClick}>
+                        <Button data-cy="cancelBackupButton" className="btn dialog-button-2" onClick={onCancelBackupClick}>
                           {t('VERSION_CONTROL.CANCEL')}
                         </Button>
                       </>
