@@ -288,11 +288,8 @@ class GitHub extends VersionControlManager {
       await this.#getBranch()
       return true
     } catch (error) {
-      if (error.message.includes('Bad credentials')) {
-        throw new Error('Invalid Credentials')
-      } else {
-        throw new Error(error.message)
-      }
+      const isAuthError = error.message.includes('Bad credentials')
+      throw new Error(isAuthError ? 'Invalid Credentials' : error.message)
     }
   }
 
