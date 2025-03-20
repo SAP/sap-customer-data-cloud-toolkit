@@ -56,15 +56,15 @@ class ServerImport {
   }
 
   async #searchDataflowOnApiKey(apiKey, dataflowId, dataflowConfig) {
-    const searchDataflow = await this.searchDataflowIdOnApiKey(apiKey, dataflowId)
+    const searchDataflow = await this.searchDataflowIdOnApiKey(dataflowId)
     if (searchDataflow) {
       await this.#replaceAndSetDataflow(dataflowId, dataflowConfig)
     } else {
-      throw new Error('Dataflow not found')
+      throw new Error(`The Dataflow with the ID ${dataflowId} was not found on the site ${apiKey}`)
     }
   }
 
-  async searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount = 10) {
+  async searchDataflowIdOnApiKey(dataflowId, retryCount = 10) {
     let attempts = 0
 
     do {
@@ -77,8 +77,9 @@ class ServerImport {
           }
         }
       }
-      attempts++
-    } while (attempts < retryCount)
+
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+    } while (++attempts < retryCount)
 
     return false
   }
