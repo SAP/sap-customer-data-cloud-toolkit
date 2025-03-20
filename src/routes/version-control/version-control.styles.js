@@ -235,7 +235,6 @@ const styles = {
 
   okButtonStyle: {
     height: '30px',
-    borderRadius: '5px',
     position: 'absolute',
     width: '69.28px',
   },
