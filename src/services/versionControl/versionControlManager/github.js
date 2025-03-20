@@ -24,7 +24,7 @@ class GitHub extends VersionControlManager {
       })
       return branches ? branches.some((branch) => branch.name === branchName) : false
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error.message)
     }
   }
 
@@ -232,7 +232,7 @@ class GitHub extends VersionControlManager {
       })
       return mainBranch
     } catch (error) {
-      throw new Error(`There is no main Branch`)
+      throw new Error('there is no main branch for this repository')
     }
   }
 
@@ -287,7 +287,7 @@ class GitHub extends VersionControlManager {
       await this.#getBranch()
       return true
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error.message)
     }
   }
 
