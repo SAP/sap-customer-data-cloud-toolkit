@@ -3,6 +3,7 @@
  * License: Apache-2.0
  */
 
+import { mockedCreateDataflowResponseOk } from '../../src/services/importAccounts/serverImport/dataTest'
 import * as dataTest from './dataTest'
 import * as utils from './utils'
 
@@ -13,10 +14,12 @@ describe('Server Import test suite', () => {
       cy.get('#serverImportPanel').click()
       utils.checkServerImportState('Full')
     })
+
     it('Import Full account', () => {
       cy.intercept('POST', 'idx.createDataflow', {
-        body: dataTest.mockedGigyaResponseOk,
+        body: mockedCreateDataflowResponseOk,
       })
+
       cy.intercept('POST', 'idx.search', {
         body: dataTest.mockedSearchDataflowsResponse,
       })
@@ -35,7 +38,7 @@ describe('Server Import test suite', () => {
 
     it('Import Lite account', () => {
       cy.intercept('POST', 'idx.createDataflow', {
-        body: dataTest.mockedGigyaResponseOk,
+        body: mockedCreateDataflowResponseOk,
       })
       cy.intercept('POST', 'idx.search', {
         body: dataTest.mockedSearchDataflowsResponse,

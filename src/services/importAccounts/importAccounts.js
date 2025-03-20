@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import ConsentStatement from '../copyConfig/consent/consentStatement'
 import { createCSVFile } from '../exportToCsv/exportToCsv'
 import TopicImportFields from './communicationImport/communicationImport'

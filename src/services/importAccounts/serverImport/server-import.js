@@ -11,16 +11,16 @@ class ServerImport {
   #site
   #dataCenter
   #dataFlow
-  #accountManager
+  #dataflowTemplate
 
   static #SERVER_IMPORT_SCHEDULER = 'server_import_scheduler'
 
-  constructor(credentials, site, dataCenter, accountManager) {
+  constructor(credentials, site, dataCenter, dataflowTemplate) {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
     this.#dataFlow = new Dataflow(credentials, site, dataCenter)
-    this.#accountManager = accountManager
+    this.#dataflowTemplate = dataflowTemplate
   }
 
   getStructure() {
@@ -38,7 +38,7 @@ class ServerImport {
   }
 
   async #scheduleReplacedDataflow(createDataflowId) {
-    const scheduleStructure = this.scheduleStructure(createDataflowId)
+    const scheduleStructure = this.#scheduleStructure(createDataflowId)
     const scheduler = await this.#dataFlow.schedule(this.#site, this.#dataCenter, scheduleStructure)
     if (scheduler.errorCode !== 0) {
       throw scheduler
@@ -46,7 +46,7 @@ class ServerImport {
   }
 
   async #createAndCheckDataflow(dataflowConfig) {
-    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, this.#accountManager.getDataflow())
+    const createDataflow = await this.#dataFlow.create(this.#site, this.#dataCenter, JSON.parse(this.#dataflowTemplate))
     if (createDataflow.errorCode !== 0) {
       throw createDataflow
     } else {
@@ -59,40 +59,42 @@ class ServerImport {
     const searchDataflow = await this.searchDataflowIdOnApiKey(apiKey, dataflowId)
     if (searchDataflow) {
       await this.#replaceAndSetDataflow(dataflowId, dataflowConfig)
+    } else {
+      throw new Error('Dataflow not found')
     }
   }
 
   async searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount = 10) {
-    const searchDataflow = await this.#dataFlow.search()
-    let dataflowFound = false
-    if (searchDataflow.result) {
-      for (const dataflow of searchDataflow.result) {
-        if (dataflow.id === dataflowId && dataflow.apiKey === apiKey) {
-          return true
+    let attempts = 0
+
+    do {
+      const searchDataflow = await this.#dataFlow.search()
+
+      if (searchDataflow.result) {
+        for (const dataflow of searchDataflow.result) {
+          if (dataflow.id === dataflowId) {
+            return true
+          }
         }
       }
-    }
-    if (!dataflowFound) {
-      if (retryCount > 0) {
-        return await this.searchDataflowIdOnApiKey(apiKey, dataflowId, retryCount - 1)
-      }
-      return false
-    }
+      attempts++
+    } while (attempts < retryCount)
+
+    return false
   }
 
   async #replaceAndSetDataflow(dataflowId, dataflowConfig) {
-    const setResponse = await this.#dataFlow.set(this.#site, this.#dataCenter, this.#accountManager.replaceVariables(dataflowId, dataflowConfig))
+    const setResponse = await this.#dataFlow.set(this.#site, this.#dataCenter, this.#replaceVariables(dataflowId, dataflowConfig))
     if (setResponse.errorCode === 0) {
       await this.#scheduleReplacedDataflow(dataflowId)
     }
-    return setResponse
   }
 
   getConfigurations(configurations, key) {
     return configurations[key]
   }
 
-  scheduleStructure(id) {
+  #scheduleStructure(id) {
     const structure = {
       data: {
         name: ServerImport.#SERVER_IMPORT_SCHEDULER,
@@ -102,6 +104,21 @@ class ServerImport {
       },
     }
     return structure
+  }
+  #replaceVariables(id, variables) {
+    const dataflowTemplate = JSON.parse(this.#dataflowTemplate)
+    dataflowTemplate.id = id
+    let dataflowString = JSON.stringify(dataflowTemplate)
+    for (const variable of variables) {
+      const regex = new RegExp(variable.id, 'g')
+      if (variable.value) {
+        const escapedValue = variable.value.replace(/\\/g, '\\\\')
+        dataflowString = dataflowString.replaceAll(regex, escapedValue)
+      } else {
+        dataflowString = dataflowString.replaceAll(regex, '')
+      }
+    }
+    return JSON.parse(dataflowString)
   }
 }
 

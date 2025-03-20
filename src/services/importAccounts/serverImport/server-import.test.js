@@ -6,21 +6,17 @@
 import ServerImport from './server-import.js'
 import { credentials } from '../../servicesDataTest.js'
 import axios from 'axios'
-import { commonConfigurations, commonOption, expectedScheduleStructure, mockedCreateDataflowResponseOk } from './dataTest.js'
+import { commonConfigurations, commonOption, mockedCreateDataflowResponseOk } from './dataTest.js'
 import { getExpectedCreateDataflowResponse, getSearchDataflowsExpectedResponse } from '../../copyConfig/dataflow/dataTest.js'
 import { setConfigSuccessResponse } from '../../../redux/copyConfigurationExtended/dataTest.js'
 import { getResponseWithContext } from '../../copyConfig/dataTest.js'
-import FullAccount from '../accountManager/fullAccountManager.js'
 jest.mock('axios')
 
 describe('ServerImport Test Suite', () => {
   const site = 'apiKey'
   const dataCenter = 'us1'
   const testTemplate = `{"id" : "test"}`
-  const storageProvider = 'azure'
-  const accountManager = new FullAccount(storageProvider, testTemplate)
-  const serverImport = new ServerImport(credentials, site, dataCenter, accountManager)
-  const commonAccountOption = 'Lite'
+  const serverImport = new ServerImport(credentials, site, dataCenter, testTemplate)
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -43,7 +39,7 @@ describe('ServerImport Test Suite', () => {
       })
       .mockResolvedValueOnce({ data: createDataflowResponse.id.id })
       .mockResolvedValueOnce({ data: setConfigSuccessResponse })
-    const result = await serverImport.setDataflow(commonConfigurations, commonOption, commonAccountOption)
+    const result = await serverImport.setDataflow(commonConfigurations, commonOption)
     expect(result).toEqual(createDataflowResponse.id.id)
   })
 
@@ -51,11 +47,5 @@ describe('ServerImport Test Suite', () => {
     const key = 'azure'
     const result = serverImport.getConfigurations(commonConfigurations, key)
     expect(result).toEqual(commonConfigurations.azure)
-  })
-
-  test('should create schedule structure', () => {
-    const responseId = 'dataflowId'
-    const result = serverImport.scheduleStructure(responseId)
-    expect(result).toEqual(expectedScheduleStructure)
   })
 })

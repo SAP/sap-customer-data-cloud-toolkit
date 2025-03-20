@@ -7,8 +7,7 @@ import ServerImport from '../../services/importAccounts/serverImport/server-impo
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
 import { clearAllValues, getConfigurationByKey } from './utils'
-import AccountManagerFactory from '../../services/importAccounts/accountManager/accountManagerFactory'
-import TemplateFactory from '../../services/importAccounts/accountManager/templateFactory/templateManagerFactory'
+import TemplateManagerFactory from '../../services/importAccounts/accountManager/templateFactory/templateManagerFactory'
 import UrlBuilder from '../../services/gigya/urlBuilder'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
@@ -130,12 +129,10 @@ export const setDataflow = createAsyncThunk(SET_CONFIGURATIONS_ACTION, async (op
   const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
   const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-  const templateManager = TemplateFactory.create(state.serverImport.accountType, option.option)
-  const accountManager = AccountManagerFactory.create(state.serverImport.accountType, option.option, templateManager)
+  const storageProviderTemplate = TemplateManagerFactory.create(state.serverImport.accountType, option.option)
   try {
-    return await new ServerImport(credentials, currentSiteApiKey, currentDataCenter, accountManager).setDataflow(state.serverImport.serverConfigurations, option)
+    return await new ServerImport(credentials, currentSiteApiKey, currentDataCenter, storageProviderTemplate).setDataflow(state.serverImport.serverConfigurations, option)
   } catch (error) {
-    console.log('error--->', error)
     return rejectWithValue(getErrorAsArray(error))
   }
 })

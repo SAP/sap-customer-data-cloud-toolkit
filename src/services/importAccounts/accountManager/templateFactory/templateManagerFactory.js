@@ -5,15 +5,15 @@
 
 import AzureTemplateFactory from './azureTemplateFactory'
 
-class TemplateFactory {
+class TemplateManagerFactory {
   static create(accountType, storageProvider) {
     switch (storageProvider) {
       case 'azure':
         return AzureTemplateFactory.make(accountType)
       default:
-        return null
+        throw new Error(`Unable to crete template for the storage provider: ${storageProvider}`)
     }
   }
 }
 
-export default TemplateFactory
+export default TemplateManagerFactory

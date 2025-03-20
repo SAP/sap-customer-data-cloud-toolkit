@@ -96,17 +96,6 @@ export function mockCopyConfigRequests(response, method, url) {
 }
 
 let interceptCount = true
-export function mockSearchResponse(response, method, url) {
-  cy.intercept(method, url, (req) => {
-    if (interceptCount) {
-      interceptCount = false
-      req.reply({ body: mockedSearchDataflowsResponse })
-    } else {
-      interceptCount = true
-      req.reply({ body: mockedSearchDataflowsEmptyResponse })
-    }
-  })
-}
 
 export function resizeObserverLoopErrRe() {
   const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
@@ -211,26 +200,6 @@ export function mockConfigurationTreeFullAccount() {
   cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockPreferencesResponse }).as('getPreferences')
   cy.intercept('POST', 'accounts.communications.settings.search', { body: expectedCommunicationResponse }).as('getCommunication')
   cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
-}
-
-export function mockSetConfigurationRequests() {
-  mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
-  mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
-  mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
-  mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
-  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setConsentsStatements')
-  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
-  mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
-  mockResponse(mockedSetWebhookResponse, 'POST', 'accounts.webhooks.set')
-  mockResponse(mockedSetExtensionResponse, 'POST', 'accounts.extensions.modify')
-  mockResponse(mockedSetDataflowResponse, 'POST', 'idx.setDataflow')
-  mockSearchResponse(mockedCreateDataflowResponse, 'POST', 'idx.createDataflow')
-  mockResponse(mockedSetRiskAssessmentResponse, 'POST', 'accounts.rba.riskAssessment.setConfig')
-  mockResponse(mockedSetUnknownLocationNotificationResponse, 'POST', 'accounts.setPolicies')
-  mockResponse(mockedSetRbaPolicyResponse, 'POST', 'accounts.rba.setPolicy')
-  mockResponse(setCaptchaConfigMock, 'POST', 'admin.captcha.setConfig')
-  mockResponse(setPoliciesMock, 'POST', 'accounts.setPolicies')
-  mockResponse(setRiskProvidersMock, 'POST', 'admin.riskProviders.setConfig')
 }
 
 export function mockGetUserSitesRequest() {
