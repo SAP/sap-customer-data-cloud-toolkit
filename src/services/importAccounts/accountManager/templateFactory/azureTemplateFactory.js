@@ -4,8 +4,8 @@
  */
 
 import { AccountType } from '../../accountManager/accountType'
-import { azureFullAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureFullAccountTemplate'
-import { azureLiteAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureLiteAccountTemplate'
+import { azureFullAccountTemplate } from '../../serverImport/azureAccountsTemplates/AzureFullAccountTemplate'
+import { azureLiteAccountTemplate } from '../../serverImport/azureAccountsTemplates/AzureLiteAccountTemplate'
 
 class AzureTemplateFactory {
   static make(accountType) {
