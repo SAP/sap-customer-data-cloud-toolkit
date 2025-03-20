@@ -54,8 +54,7 @@
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
-    },
-    "testEnvironment": "jsdom"
+    }
   },
   "nyc": {
     "excludeAfterRemap": true,
