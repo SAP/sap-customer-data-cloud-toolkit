@@ -5,7 +5,7 @@
 
 import { AccountType } from '../../accountManager/accountType'
 import { azureFullAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureFullAccountTemplate'
-import { azureLiteAccountTemplates } from '../../serverImport/azureAccountsTemplates/azureLiteAccountTemplate'
+import { azureLiteAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureLiteAccountTemplate'
 
 class AzureTemplateFactory {
   static make(accountType) {
@@ -13,7 +13,7 @@ class AzureTemplateFactory {
       case AccountType.Full:
         return azureFullAccountTemplate
       case AccountType.Lite:
-        return azureLiteAccountTemplates
+        return azureLiteAccountTemplate
       default:
         throw new Error(`Unable to find template for account type: ${accountType}`)
     }

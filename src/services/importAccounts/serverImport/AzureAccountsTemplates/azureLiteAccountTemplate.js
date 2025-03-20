@@ -3,7 +3,7 @@
  * License: Apache-2.0
  */
 
-export const azureLiteAccountTemplates = `
+export const azureLiteAccountTemplate = `
 {
  "name": "{{dataflowName}}",
  "status": "published",
