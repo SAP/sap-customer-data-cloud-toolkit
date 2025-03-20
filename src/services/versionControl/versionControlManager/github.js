@@ -281,13 +281,18 @@ class GitHub extends VersionControlManager {
   async #validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
+
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
-        throw new Error('Invalid owner')
+        throw new Error('Invalid Credentials')
       }
       await this.#getBranch()
       return true
     } catch (error) {
-      throw new Error(error.message)
+      if (error.message.includes('Bad credentials')) {
+        throw new Error('Invalid Credentials')
+      } else {
+        throw new Error(error.message)
+      }
     }
   }
 

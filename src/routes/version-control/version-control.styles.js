@@ -215,7 +215,7 @@ const styles = {
     marginBottom: '24px',
   },
   warningMessage: {
-    marginTop: '32px',
+    marginTop: '25px',
     width: 'max-content',
     color: 'var( --sapErrorColor)',
   },
