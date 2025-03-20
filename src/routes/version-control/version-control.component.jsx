@@ -48,6 +48,7 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import { getApiKey } from '../../redux/utils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
+import { trackUsage } from '../../lib/tracker'
 import { BusyIndicator } from '@ui5/webcomponents-react'
 
 const PAGE_TITLE = 'VersionControl'
@@ -137,6 +138,7 @@ const VersionControlComponent = ({ t }) => {
       await dispatch(fetchCommits())
       setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
+      await trackUsage({ featureName: PAGE_TITLE })
     } catch (error) {
       console.error('Error creating backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
@@ -159,6 +161,7 @@ const VersionControlComponent = ({ t }) => {
       await dispatch(fetchCommits())
       setSuccessMessage(t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
+      await trackUsage({ featureName: PAGE_TITLE })
     } catch (error) {
       console.error('Error reverting commit:', error)
       setErrorMessage(t('VERSION_CONTROL.REVERT.ERROR.MESSAGE'))
