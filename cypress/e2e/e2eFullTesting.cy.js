@@ -51,6 +51,8 @@ describe('All features full Test Suite', () => {
     validateChanges(dataTest.childOfBaseDomainName, true)
     navigateToChosenSite(dataTest.baseDomainName)
     deleteSiteCreated()
+
+    cy.run('versionControl.cy.js')
   })
 
   function createSiteAndCopyConfig(pareSiteDomain, childSiteDomain) {

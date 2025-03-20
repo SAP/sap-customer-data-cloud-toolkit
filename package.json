@@ -3,6 +3,7 @@
   "version": "1.9.0",
   "private": true,
   "dependencies": {
+    "@octokit/rest": "^21.0.2",
     "@reduxjs/toolkit": "^1.8.6",
     "@sap_oss/automated-usage-tracking-tool": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.5",
@@ -17,9 +18,12 @@
     "crypto-js": "^4.2.0",
     "fast-xml-parser": "^4.2.5",
     "i18next": "^23.0.0",
+    "js-base64": "^3.7.7",
+    "js-cookie": "^3.0.5",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "os": "^0.1.2",
+    "pagino": "^1.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.1.4",
@@ -50,10 +54,13 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(@ui5|lit-html|@babel|axios)).*\\.js$"
+      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit|universal-user-agent|before-after-hook)).*\\.js$"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
+    },
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
     }
   },
   "nyc": {

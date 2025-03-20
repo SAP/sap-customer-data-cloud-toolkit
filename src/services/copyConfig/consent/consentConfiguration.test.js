@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import { credentials, expectedGigyaResponseInvalidAPI, expectedGigyaResponseOk, verifyResponseIsNotOk, verifyResponseIsOk } from '../../servicesDataTest.js'
 import { getResponseWithContext } from '../dataTest.js'
@@ -25,6 +24,7 @@ describe('ConsentConfiguration test suite', () => {
   const dataCenter = 'eu1'
   const consentConfiguration = new ConsentConfiguration(credentials, apiKey, dataCenter)
   const consentOptions = new ConsentOptions()
+  const siteInfo = { dataCenter }
 
   test('nothing to copy', async () => {
     const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptionsDisabled())

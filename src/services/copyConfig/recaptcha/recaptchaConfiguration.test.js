@@ -1,11 +1,6 @@
-/*
- * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
- * License: Apache-2.0
- */
-
 import axios from 'axios'
-import RecaptchaConfiguration from './recaptchaConfiguration.js'
-import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../../recaptcha/dataTest.js'
+import RecaptchaConfiguration from './recaptchaConfiguration'
+import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../../recaptcha/dataTest'
 jest.mock('axios')
 
 describe('RecaptchaConfiguration test suite', () => {
@@ -16,196 +11,211 @@ describe('RecaptchaConfiguration test suite', () => {
   }
   const site = 'testSite'
   const dataCenter = 'eu1'
-  const recaptchaConfig = new RecaptchaConfiguration(credentials, site, dataCenter)
+  let recaptchaConfig
 
-  test('copy configurations successfully', async () => {
-    const mockRecaptchaResponse = getRecaptchaExpectedResponse()
-    const mockPoliciesResponse = getRecaptchaPoliciesResponse()
-    const mockRiskProvidersResponse = getRiskProvidersResponse()
-    const expectedGigyaResponseOk = {
-      statusCode: 200,
-      errorCode: 0,
-      statusReason: 'OK',
-      callId: 'callId',
-      apiVersion: 2,
-      time: Date.now(),
-    }
-
-    axios
-      .mockResolvedValueOnce({ data: mockRecaptchaResponse })
-      .mockResolvedValueOnce({ data: mockPoliciesResponse })
-      .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-      .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-
-    const response = await recaptchaConfig.copy('targetSite', { dataCenter: 'eu1' })
-
-    expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
-    expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
-    expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
-    expect(response.riskProvidersConfig).toEqual(mockRiskProvidersResponse.config)
-
-    expect(axios).toHaveBeenCalledTimes(6)
-
-    expect(axios).toHaveBeenNthCalledWith(
-      4,
-      expect.objectContaining({
-        method: 'POST',
-        url: expect.stringContaining('admin.captcha.setConfig'),
-        data: expect.any(URLSearchParams),
-      }),
-    )
-
-    expect(axios).toHaveBeenNthCalledWith(
-      5,
-      expect.objectContaining({
-        method: 'POST',
-        url: expect.stringContaining('accounts.setPolicies'),
-        data: expect.any(URLSearchParams),
-      }),
-    )
-
-    expect(axios).toHaveBeenNthCalledWith(
-      6,
-      expect.objectContaining({
-        method: 'POST',
-        url: expect.stringContaining('admin.riskProviders.setConfig'),
-        data: expect.any(URLSearchParams),
-      }),
-    )
+  beforeEach(() => {
+    recaptchaConfig = new RecaptchaConfiguration(credentials, site, dataCenter)
+    jest.resetAllMocks()
   })
 
-  test('get recaptcha configuration successfully', async () => {
-    const mockRecaptchaResponse = {
-      errorCode: 0,
-      Config: [{ Type: 1 }, { Type: 2 }],
-    }
-    const mockPoliciesResponse = {
-      errorCode: 0,
-      security: { policy: 'testPolicy' },
-      registration: { requireCaptcha: false },
-    }
-    const mockRiskProvidersResponse = {
-      errorCode: 0,
-      config: { provider: 'testProvider' },
-    }
+  describe('Tests that reset data', () => {
+    test('copy configurations successfully', async () => {
+      const mockRecaptchaResponse = getRecaptchaExpectedResponse()
+      const mockPoliciesResponse = getRecaptchaPoliciesResponse()
+      const mockRiskProvidersResponse = getRiskProvidersResponse()
+      const expectedGigyaResponseOk = {
+        statusCode: 200,
+        errorCode: 0,
+        statusReason: 'OK',
+        callId: 'callId',
+        apiVersion: 2,
+        time: Date.now(),
+      }
 
-    axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+      axios
+        .mockResolvedValueOnce({ data: mockRecaptchaResponse })
+        .mockResolvedValueOnce({ data: mockPoliciesResponse })
+        .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
 
-    const response = await recaptchaConfig.get()
+      const response = await recaptchaConfig.copy('targetSite', {
+        dataCenter: 'eu1',
+      })
 
-    expect(response.errorCode).toBe(0)
-    expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
-    expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
-    expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
-    expect(response.riskProvidersConfig).toEqual(mockRiskProvidersResponse.config)
-  })
+      expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
+      expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
+      expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
+      expect(response.riskProvidersConfig).toEqual(mockRiskProvidersResponse.config)
 
-  test('get recaptcha configuration with error', async () => {
-    const mockErrorResponse = {
-      errorCode: 500,
-      errorMessage: 'Internal server error',
-    }
+      expect(axios).toHaveBeenCalledTimes(6)
 
-    axios.mockResolvedValueOnce({ data: mockErrorResponse })
+      expect(axios).toHaveBeenNthCalledWith(
+        4,
+        expect.objectContaining({
+          method: 'POST',
+          url: expect.stringContaining('admin.captcha.setConfig'),
+          data: expect.any(URLSearchParams),
+        }),
+      )
 
-    await expect(recaptchaConfig.get()).rejects.toThrow('Error fetching reCAPTCHA policies: Internal server error')
-  })
+      expect(axios).toHaveBeenNthCalledWith(
+        5,
+        expect.objectContaining({
+          method: 'POST',
+          url: expect.stringContaining('accounts.setPolicies'),
+          data: expect.any(URLSearchParams),
+        }),
+      )
 
-  test('set recaptcha configuration successfully', async () => {
-    const mockResponse = { errorCode: 0 }
+      expect(axios).toHaveBeenNthCalledWith(
+        6,
+        expect.objectContaining({
+          method: 'POST',
+          url: expect.stringContaining('admin.riskProviders.setConfig'),
+          data: expect.any(URLSearchParams),
+        }),
+      )
+    })
 
-    axios.mockResolvedValueOnce({ data: mockResponse })
+    test('get recaptcha configuration successfully', async () => {
+      const mockRecaptchaResponse = {
+        errorCode: 0,
+        Config: [{ Type: 1 }, { Type: 2 }],
+      }
+      const mockPoliciesResponse = {
+        errorCode: 0,
+        security: { policy: 'testPolicy' },
+        registration: { requireCaptcha: false },
+      }
+      const mockRiskProvidersResponse = {
+        errorCode: 0,
+        config: { provider: 'testProvider' },
+      }
 
-    const response = await recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })
+      axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
 
-    expect(response.errorCode).toBe(0)
-  })
+      const response = await recaptchaConfig.get()
 
-  test('set recaptcha configuration with error', async () => {
-    const mockErrorResponse = {
-      errorCode: 500,
-      errorMessage: 'Internal server error',
-    }
+      expect(response.errorCode).toBe(0)
+      expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
+      expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
+      expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
+      expect(response.riskProvidersConfig).toEqual(mockRiskProvidersResponse.config)
+    })
 
-    axios.mockResolvedValueOnce({ data: mockErrorResponse })
+    test('get recaptcha configuration with error', async () => {
+      const mockErrorResponse = {
+        errorCode: 500,
+        errorMessage: 'Internal server error',
+      }
 
-    await expect(recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })).rejects.toThrow('Error setting reCAPTCHA configuration: Internal server error')
-  })
+      axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-  test('setPolicies throws error when current config fetch fails', async () => {
-    const mockErrorResponse = {
-      errorCode: 500,
-      errorMessage: 'Failed to fetch policies',
-    }
+      await expect(recaptchaConfig.get()).rejects.toThrow('Error fetching reCAPTCHA policies: Internal server error')
+    })
 
-    axios.mockResolvedValueOnce({ data: mockErrorResponse })
+    test('set recaptcha configuration successfully', async () => {
+      const mockResponse = { errorCode: 0 }
 
-    await expect(recaptchaConfig.setPolicies(site, 'eu1', { riskAssessmentWithReCaptchaV3: true }, { requireCaptcha: true })).rejects.toThrow(
-      'Error fetching current policies: Failed to fetch policies',
-    )
-  })
+      axios.mockResolvedValueOnce({ data: mockResponse })
 
-  test('setRiskProvidersConfig throws error when response has non-zero errorCode', async () => {
-    const mockErrorResponse = {
-      errorCode: 500,
-      errorMessage: 'Failed to set risk providers',
-    }
+      const response = await recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })
 
-    axios.mockResolvedValueOnce({ data: mockErrorResponse })
+      expect(response.errorCode).toBe(0)
+    })
 
-    await expect(recaptchaConfig.setRiskProvidersConfig(site, dataCenter, { provider: 'testProvider' })).rejects.toThrow(
-      'Error setting Risk Providers configuration: Failed to set risk providers',
-    )
-  })
+    test('set recaptcha configuration with error', async () => {
+      const mockErrorResponse = {
+        errorCode: 500,
+        errorMessage: 'Internal server error',
+      }
 
-  test('copy configurations should handle missing configurations gracefully', async () => {
-    const mockRecaptchaResponse = {
-      errorCode: 0,
-      Config: null,
-    }
-    const mockPoliciesResponse = {
-      errorCode: 0,
-      security: null,
-      registration: null,
-    }
-    const mockRiskProvidersResponse = {
-      errorCode: 0,
-      config: null,
-    }
+      axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+      await expect(recaptchaConfig.setRecaptchaConfig(site, dataCenter, { test: 'config' })).rejects.toThrow('Error setting reCAPTCHA configuration: Internal server error')
+    })
 
-    await expect(recaptchaConfig.copy('targetSite', 'eu1')).rejects.toThrow('Recaptcha config is invalid or undefined.')
-  })
+    test('setPolicies throws error when current config fetch fails', async () => {
+      const mockErrorResponse = {
+        errorCode: 500,
+        errorMessage: 'Failed to fetch policies',
+      }
 
-  test('copy fails when setRecaptchaConfig fails', async () => {
-    const mockRecaptchaResponse = getRecaptchaExpectedResponse()
-    const mockPoliciesResponse = getRecaptchaPoliciesResponse()
-    const mockRiskProvidersResponse = getRiskProvidersResponse()
-    const mockSetRecaptchaError = { errorCode: 500, errorMessage: 'Failed to set recaptcha config' }
+      axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    axios
-      .mockResolvedValueOnce({ data: mockRecaptchaResponse })
-      .mockResolvedValueOnce({ data: mockPoliciesResponse })
-      .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
-      .mockResolvedValueOnce({ data: mockSetRecaptchaError })
+      await expect(recaptchaConfig.setPolicies(site, 'eu1', { riskAssessmentWithReCaptchaV3: true }, { requireCaptcha: true })).rejects.toThrow(
+        'Error fetching current policies: Failed to fetch policies',
+      )
+    })
 
-    await expect(recaptchaConfig.copy('targetSite', { dataCenter: 'eu1' })).rejects.toThrow('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
-  })
-  test('get recaptcha configuration with invalid risk providers', async () => {
-    const mockRecaptchaResponse = getRecaptchaExpectedResponse()
-    const mockPoliciesResponse = getRecaptchaPoliciesResponse()
-    const mockRiskProvidersResponse = { errorCode: 0, config: null }
+    test('setRiskProvidersConfig throws error when response has non-zero errorCode', async () => {
+      const mockErrorResponse = {
+        errorCode: 500,
+        errorMessage: 'Failed to set risk providers',
+      }
 
-    axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+      axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-    const response = await recaptchaConfig.get()
+      await expect(
+        recaptchaConfig.setRiskProvidersConfig(site, dataCenter, {
+          provider: 'testProvider',
+        }),
+      ).rejects.toThrow('Error setting Risk Providers configuration: Failed to set risk providers')
+    })
 
-    expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
-    expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
-    expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
-    expect(response.riskProvidersConfig).toBe(null)
+    test('copy configurations should handle missing configurations gracefully', async () => {
+      const mockRecaptchaResponse = {
+        errorCode: 0,
+        Config: null,
+      }
+      const mockPoliciesResponse = {
+        errorCode: 0,
+        security: null,
+        registration: null,
+      }
+      const mockRiskProvidersResponse = {
+        errorCode: 0,
+        config: null,
+      }
+
+      axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+
+      await expect(recaptchaConfig.copy('targetSite', 'eu1')).rejects.toThrow('Recaptcha config is invalid or undefined.')
+    })
+
+    test('copy fails when setRecaptchaConfig fails', async () => {
+      const mockRecaptchaResponse = getRecaptchaExpectedResponse()
+      const mockPoliciesResponse = getRecaptchaPoliciesResponse()
+      const mockRiskProvidersResponse = getRiskProvidersResponse()
+      const mockSetRecaptchaError = {
+        errorCode: 500,
+        errorMessage: 'Failed to set recaptcha config',
+      }
+
+      axios
+        .mockResolvedValueOnce({ data: mockRecaptchaResponse })
+        .mockResolvedValueOnce({ data: mockPoliciesResponse })
+        .mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+        .mockResolvedValueOnce({ data: mockSetRecaptchaError })
+
+      await expect(recaptchaConfig.copy('targetSite', { dataCenter: 'eu1' })).rejects.toThrow('Error setting reCAPTCHA configuration: Failed to set recaptcha config')
+    })
+
+    test('get recaptcha configuration with invalid risk providers', async () => {
+      const mockRecaptchaResponse = getRecaptchaExpectedResponse()
+      const mockPoliciesResponse = getRecaptchaPoliciesResponse()
+      const mockRiskProvidersResponse = { errorCode: 0, config: null }
+
+      axios.mockResolvedValueOnce({ data: mockRecaptchaResponse }).mockResolvedValueOnce({ data: mockPoliciesResponse }).mockResolvedValueOnce({ data: mockRiskProvidersResponse })
+
+      const response = await recaptchaConfig.get()
+
+      expect(response.recaptchaConfig).toEqual(mockRecaptchaResponse.Config)
+      expect(response.securityPolicies).toEqual(mockPoliciesResponse.security)
+      expect(response.registrationPolicies).toEqual(mockPoliciesResponse.registration)
+      expect(response.riskProvidersConfig).toBe(null)
+    })
   })
 })

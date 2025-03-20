@@ -28,7 +28,7 @@ const emailExampleFile = 'email-templates.zip'
 const smsExampleFile = 'sms-templates.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid ApiKey parameter`
+const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid APIKey identified. Invalid ApiKey parameter`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
@@ -65,6 +65,16 @@ const prettifySingleNoJavascript = 'CloseThere is no Javascript on this Screen-S
 const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
 const prettifySingleError = 'CloseError formatting Screen-Set ID'
 const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Format on any Screen-Set.'
+const importData = 'Import Data'
+const importAccountsDescription = 'Import accounts and generate csv with schema and legal fields'
+const importAccountDownloadButton = 'Download Template'
+const importAccountsSubtitle = 'This will export the chosen fields to a CSV file. You can then import this file to create accounts.'
+const versionControlIconName = 'Version Control'
+const versionControlTitle = 'Version Control'
+const owner = 'testOwner'
+const gitToken = 'testGitToken'
+const commitMessage = 'Test commit message'
+
 const mockedPrettierGetScreenSetResponse = {
   callId: '5a4395b432794df383c2a35740ae90b0',
   errorCode: 0,
@@ -1792,7 +1802,6 @@ const getRiskProvidersResponse = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
@@ -1826,6 +1835,249 @@ const setPoliciesMock = {
   registration: { requireCaptcha: true },
 }
 
+const mockedVersionControlGetResponse = [
+  {
+    name: 'testApiKey',
+    commit: {
+      sha: 'testSha',
+      url: 'testurl.com/repos/testOwner/testRepo/commits/testSha',
+    },
+  },
+  {
+    name: 'main',
+    commit: {
+      sha: '8043e2042a3c1627d2f42fe30296dd8f117d60bf',
+      url: 'testurl.com/repos/testOwner/CDCVersionControl/commits/8043e2042a3c1627d2f42fe30296dd8f117d60bf',
+    },
+    protected: false,
+  },
+]
+
+const mockedUserAuthentication = {
+  login: 'testOwner',
+  id: 48961605,
+  node_id: 'MDQ6VXNlcjQ4OTYxNjA1',
+  avatar_url: 'testurl.com/u/48961605?v=4',
+  gravatar_id: '',
+  url: 'testurl.com/users/testOwner',
+  html_url: 'testurl.com/testOwner',
+  followers_url: 'testurl.com/users/testOwner/followers',
+  following_url: 'testurl.com/users/testOwner/following{/other_user}',
+  gists_url: 'testurl.com/users/testOwner/gists{/gist_id}',
+  starred_url: 'testurl.com/users/testOwner/starred{/owner}{/repo}',
+  subscriptions_url: 'testurl.com/users/testOwner/subscriptions',
+  organizations_url: 'testurl.com/users/testOwner/orgs',
+  repos_url: 'testurl.com/users/testOwner/repos',
+  events_url: 'testurl.com/users/testOwner/events{/privacy}',
+  received_events_url: 'testurl.com/users/testOwner/received_events',
+  type: 'User',
+  user_view_type: 'private',
+  site_admin: false,
+  name: null,
+  company: null,
+  blog: '',
+  location: null,
+  email: null,
+  hireable: null,
+  bio: null,
+  twitter_username: null,
+  notification_email: null,
+  public_repos: 0,
+  public_gists: 0,
+  followers: 0,
+  following: 1,
+  created_at: '2019-03-26T17:24:45Z',
+  updated_at: '2025-01-25T16:23:53Z',
+  private_gists: 0,
+  total_private_repos: 2,
+  owned_private_repos: 2,
+  disk_usage: 1440,
+  collaborators: 0,
+  two_factor_authentication: true,
+  plan: {
+    name: 'free',
+    space: 976562499,
+    collaborators: 0,
+    private_repos: 10000,
+  },
+}
+const createCommitResponse = {
+  sha: 'testSha',
+  node_id: 'C_kwDONOvK_toAKDRkZTc0NDAwNmJjMDFkZTA1ZmRkOTA2MmI2YWY3ZjRmMjVmYTdjNjY',
+  url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+  html_url: 'testurl.com/testOwner/testRepo/commit/testSha',
+  author: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T16:10:18Z',
+  },
+  committer: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T16:10:18Z',
+  },
+  tree: {
+    sha: 'testSha',
+    url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+  },
+  message: 'Backup created',
+  parents: [
+    {
+      sha: 'testSha',
+      url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+      html_url: 'testurl.com/testOwner/testRepo/commit/testSha',
+    },
+  ],
+  verification: {
+    verified: false,
+    reason: 'unsigned',
+    signature: null,
+    payload: null,
+    verified_at: null,
+  },
+}
+
+const mockedVersionControlGetCommitsResponse = {
+  sha: 'testSha',
+  node_id: 'C_kwDONOvK_toAKDgwNDNlMjA0MmEzYzE2MjdkMmY0MmZlMzAyOTZkZDhmMTE3ZDYwYmY',
+  commit: {
+    author: {
+      name: 'testOwner',
+      email: '48961605+testOwner@users.noreply.github.com',
+      date: '2024-11-13T12:41:21Z',
+    },
+    committer: {
+      name: 'GitHub',
+      email: 'noreply@github.com',
+      date: '2024-11-13T12:41:21Z',
+    },
+    message: 'Create test CDCRepo branch creation',
+    tree: {
+      sha: 'ef3a3e134ada6bb2538add324b307736b144dddc',
+      url: 'testurl.com/repos/testOwner/testRepo/git/trees/ef3a3e134ada6bb2538add324b307736b144dddc',
+    },
+    url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+    comment_count: 0,
+    verification: {
+      verified: true,
+      reason: 'valid',
+      signature:
+        '-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJnNJ5xCRC1aQ7uu5UhlAAABegQAFnluB7G1RPSG/ZM5bo80iA8\nPrSJFVXLLTd1sgv8jH8gkDTr8wRu4ck5XnfgW/1Ou6fX9GFIPG1AiZ4u73qeBTvf\nNxrgV/Tg18wY6cd63GcPJlk10r1Om4CXafQlSPlsb90o0CQLfZwKI+/vIqD8ZEXt\nMqkQcEYvRZkvMBUfGMbVcC15fuslsC8ktxMTlPgb8bP5No0fc/ghlYB/Ja8Ry37n\n7/RDijajISW9oJzozJ+EFqa1Yy5VtsgLX2saI8x3Y1Y+jSdLn6uNjZshA8ceH6ru\nM+fxAHsBmAhsEnSDE76rhIzSapTJ0gB2u85XWX8bOOui++l7zId8m2WKyRIkzU5z\ntd2xpuE1HD019WET4tHb5XPMJxEPbxSDbMXD3LbStue7gEqN6RuzRiBdbhNd1XEA\nWJGzsQQpu3UYhOPFD3wC6nLvMw1WO8G3DyOFPkd8opJ1wYk0o4a5vADMoHsKlBGD\n2GiMA5Vup9oGkrlY+Df7WaJzS+smusmZ+U7HPM++pZ2NTJm1ff13WqryTu+AhABr\niDQu01pMGI/AecsDhj05dR9rTInt2aWNUEUsGIMk7ka/aq3NNmi2gHD5/G8J4BvR\n1tpVsVoQpnqDG7Xiqp6DGbrvg6OWqaeTqZRskSd/s5z4o5qod3Y5jwECNJAeGU40\n+ch7uwatHA9G4T6FipQd\n=hUCL\n-----END PGP SIGNATURE-----\n',
+      payload:
+        'tree ef3a3e134ada6bb2538add324b307736b144dddc\nauthor testOwner <48961605+testOwner@users.noreply.github.com> 1731501681 +0000\ncommitter GitHub <noreply@github.com> 1731501681 +0000\nCreate test CDCRepo branch creation',
+      verified_at: '2024-11-13T12:53:02Z',
+    },
+  },
+  committer: {
+    login: 'web-flow',
+    id: 19864447,
+    node_id: 'MDQ6VXNlcjE5ODY0NDQ3',
+    avatar_url: 'test.com/u/19864447?v=4',
+    gravatar_id: '',
+    url: 'testurl.com/users/web-flow',
+    html_url: 'https://github.com/web-flow',
+    followers_url: 'testurl.com/users/web-flow/followers',
+    following_url: 'testurl.com/users/web-flow/following{/other_user}',
+    gists_url: 'testurl.com/users/web-flow/gists{/gist_id}',
+    starred_url: 'testurl.com/users/web-flow/starred{/owner}{/repo}',
+    subscriptions_url: 'testurl.com/users/web-flow/subscriptions',
+    organizations_url: 'testurl.com/users/web-flow/orgs',
+    repos_url: 'testurl.com/users/web-flow/repos',
+    events_url: 'testurl.com/users/web-flow/events{/privacy}',
+    received_events_url: 'testurl.com/users/web-flow/received_events',
+    type: 'User',
+    user_view_type: 'public',
+    site_admin: false,
+  },
+  parents: [],
+}
+
+const mockFetchCommits = {
+  ref: 'refs/heads/testApiKey',
+  node_id: 'REF_abc123_bac',
+  url: 'testurl.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  object: {
+    sha: 'testsha',
+    type: 'commit',
+    url: 'testurl.com/repos/testOwner/testRepo/git/commits/123abc123',
+  },
+}
+
+const mockGetBlob = {
+  sha: 'testSha',
+  url: 'testurl.com/repos/testOwner/testRepo/git/blobs/testSha',
+}
+
+const mockTree = {
+  sha: 'testSha',
+  url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+  tree: [
+    {
+      path: 'testRepo',
+      mode: '100644',
+      type: 'blob',
+      sha: 'testSha',
+      size: 22,
+      url: 'testurl.com/repos/testOwner/testRepo/git/blobs/testSha',
+    },
+    {
+      path: 'src',
+      mode: '040000',
+      type: 'tree',
+      sha: 'testSha',
+      url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+    },
+  ],
+  truncated: false,
+}
+
+const mockCommits = {
+  sha: 'testSha',
+  node_id: 'id_test',
+  url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+  html_url: 'test.com/testOwner/testRepo/commit/testSha',
+  author: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T11:33:22Z',
+  },
+  committer: {
+    name: 'testOwner',
+    email: '48961605+testOwner@users.noreply.github.com',
+    date: '2025-02-18T11:33:22Z',
+  },
+  tree: {
+    sha: 'testSha',
+    url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+  },
+  message: 'Backup created',
+  parents: [
+    {
+      sha: 'testSha',
+      url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+      html_url: 'test.com/testOwner/testRepo/commit/testSha',
+    },
+  ],
+  verification: {
+    verified: false,
+    reason: 'unsigned',
+    signature: null,
+    payload: null,
+    verified_at: null,
+  },
+}
+
+const mockGetRef = {
+  ref: 'refs/heads/testApiKey',
+  node_id: 'testId',
+  url: 'testurl.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  object: {
+    sha: 'testSha',
+    type: 'commit',
+    url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+  },
+}
+
 const setRiskProvidersMock = {
   callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
   errorCode: 0,
@@ -1836,7 +2088,6 @@ const setRiskProvidersMock = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },
@@ -1960,4 +2211,22 @@ export {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
+  versionControlIconName,
+  versionControlTitle,
+  gitToken,
+  commitMessage,
+  mockedVersionControlGetResponse,
+  mockedVersionControlGetCommitsResponse,
+  owner,
+  mockFetchCommits,
+  mockGetBlob,
+  mockTree,
+  mockCommits,
+  mockGetRef,
+  mockedUserAuthentication,
+  createCommitResponse,
 }

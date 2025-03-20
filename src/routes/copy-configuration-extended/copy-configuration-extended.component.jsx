@@ -260,7 +260,6 @@ const CopyConfigurationExtended = ({ t }) => {
                 {t('COPY_CONFIGURATION_EXTENDED.HEADER_TEXT')}
               </Text>
             </FlexBox>
-
             <Card header={<CardHeader titleText={t('COPY_CONFIGURATION_EXTENDED.SELECT_TARGET_SITES')} />}>
               <Grid>
                 <>
