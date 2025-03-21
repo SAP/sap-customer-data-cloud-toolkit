@@ -35,4 +35,5 @@ class SocialManager {
     }
   }
 }
+
 export default SocialManager
