@@ -28,10 +28,6 @@ class Dataflow {
     this.#dataCenter = dataCenter
   }
 
-  buildRedirectDataflowURL(site, partner, endpoint) {
-    return UrlBuilder.buildGigyaPageUrl(this.#credentials.gigyaConsole, site, partner, endpoint)
-  }
-
   async schedule(site, dataCenter, body) {
     const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
     const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)

@@ -4,7 +4,6 @@
  */
 
 import Dataflow from '../../copyConfig/dataflow/dataflow'
-import { serverStructure } from './serverStructure/serverStructure'
 
 class ServerImport {
   #credentials
@@ -21,10 +20,6 @@ class ServerImport {
     this.#dataCenter = dataCenter
     this.#dataFlow = new Dataflow(credentials, site, dataCenter)
     this.#dataflowTemplate = dataflowTemplate
-  }
-
-  getStructure() {
-    return serverStructure
   }
 
   async setDataflow(configurations, option) {

@@ -3,9 +3,9 @@
  * License: Apache-2.0
  */
 
-import { AccountType } from '../../accountManager/accountType'
-import { azureFullAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureFullAccountTemplate'
-import { azureLiteAccountTemplate } from '../../serverImport/azureAccountsTemplates/azureLiteAccountTemplate'
+import { AccountType } from '../accountType'
+import { azureFullAccountTemplate } from '../serverImport/azureAccountsTemplates/azureFullAccountTemplate'
+import { azureLiteAccountTemplate } from '../serverImport/azureAccountsTemplates/azureLiteAccountTemplate'
 
 class AzureTemplateFactory {
   static make(accountType) {

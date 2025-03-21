@@ -12,7 +12,7 @@ import { expectedCommunicationResponse } from './communicationImport/dataTest'
 import { getRootElementsStructure } from './rootOptions/rootLevelFields'
 import { expectedFullAccount } from './importAccountsDatatest'
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
-import { AccountType } from './accountManager/accountType'
+import { AccountType } from './accountType'
 
 jest.mock('axios')
 jest.setTimeout(10000)

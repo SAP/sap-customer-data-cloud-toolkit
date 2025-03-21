@@ -7,7 +7,7 @@
  * @jest-environment jsdom
  */
 
-import { AccountType } from '../../services/importAccounts/accountManager/accountType'
+import { AccountType } from '../../services/importAccounts/accountType'
 import { initialState, initialStateWithServerConfigurations } from './dataTest'
 import serverImportReducer, { clearServerConfigurations, getConfigurations, getServerConfiguration, setAccountType, setDataflow, updateServerProvider } from './serverImportSlice'
 

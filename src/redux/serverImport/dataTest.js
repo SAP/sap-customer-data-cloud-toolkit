@@ -1,4 +1,4 @@
-import { serverStructure } from '../../services/importAccounts/serverImport/serverStructure/serverStructure'
+import { serverStructure } from './utils.js'
 
 export const initialState = {
   currentSiteApiKey: '',

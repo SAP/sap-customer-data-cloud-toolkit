@@ -22,11 +22,6 @@ describe('ServerImport Test Suite', () => {
     jest.restoreAllMocks()
   })
 
-  test('should get structure', () => {
-    const structure = serverImport.getStructure()
-    expect(structure).toBeDefined()
-  })
-
   test('should set dataflow for azure option', async () => {
     const createDataflowResponse = getExpectedCreateDataflowResponse(0)
     axios

@@ -12,7 +12,7 @@ import SchemaImportFields from './schemaImport/schemaImportFields'
 import { getContext, getLiteRootElementsStructure, getRootElementsStructure, getUID } from './rootOptions/rootLevelFields'
 import TreeSearch from './treeSearch/treeSearch'
 import { getRootElements } from './utils'
-import { AccountType } from './accountManager/accountType'
+import { AccountType } from './accountType'
 class ImportAccounts {
   #credentials
   #site

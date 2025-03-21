@@ -33,7 +33,7 @@ import { getCurrentSiteInformation, selectCurrentSiteApiKey, selectCurrentSiteIn
 import { isInputFilled } from './utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import styles from './server-import.styles.js'
-import { AccountType } from '../../services/importAccounts/accountManager/accountType.js'
+import { AccountType } from '../../services/importAccounts/accountType.js'
 
 const useStyles = createUseStyles(styles, { name: 'Server Import' })
 

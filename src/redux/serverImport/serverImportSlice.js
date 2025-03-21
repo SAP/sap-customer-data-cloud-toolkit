@@ -6,8 +6,8 @@
 import ServerImport from '../../services/importAccounts/serverImport/server-import'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getApiKey, getErrorAsArray, getPartner } from '../utils'
-import { clearAllValues, getConfigurationByKey } from './utils'
-import TemplateManagerFactory from '../../services/importAccounts/accountManager/templateFactory/templateManagerFactory'
+import { clearAllValues, getConfigurationByKey, serverStructure } from './utils'
+import TemplateManagerFactory from '../../services/importAccounts/templateFactory/templateManagerFactory'
 import UrlBuilder from '../../services/gigya/urlBuilder'
 
 const SERVER_IMPORT_STATE_NAME = 'serverImport'
@@ -98,13 +98,8 @@ export const serverImportExtendedSlice = createSlice({
 })
 
 export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
-  const state = getState()
-  const credentials = { userKey: state.credentials.credentials.userKey, secret: state.credentials.credentials.secretKey, gigyaConsole: state.credentials.credentials.gigyaConsole }
-  const currentSiteApiKey = state.copyConfigurationExtended.currentSiteApiKey
-  const currentDataCenter = state.copyConfigurationExtended.currentSiteInformation.dataCenter
-
   try {
-    return new ServerImport(credentials, currentSiteApiKey, currentDataCenter).getStructure()
+    return serverStructure
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
