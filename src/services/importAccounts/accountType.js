@@ -3,4 +3,7 @@
  * License: Apache-2.0
  */
 
-export const ZIP_FILE_MIME_TYPE = 'application/zip'
+export const AccountType = {
+  Lite: 'Lite',
+  Full: 'Full',
+}

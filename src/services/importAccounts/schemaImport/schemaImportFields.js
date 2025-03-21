@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import Schema from '../../copyConfig/schema/schema'
 import { extractAndTransformSchemaFields } from './transformSchemaFields'
 
@@ -19,6 +20,7 @@ class SchemaImportFields {
     this.#dataCenter = dataCenter
     this.#schema = new Schema(credentials, site, dataCenter)
   }
+
   async exportSchemaData() {
     const schemaResponse = await this.getSchema()
     if (schemaResponse.errorCode === 0) {
@@ -26,6 +28,7 @@ class SchemaImportFields {
     }
     return schemaResponse
   }
+
   async exportTransformedSchemaData() {
     const result = []
     const cleanSchemaResponse = await this.exportSchemaData()
@@ -33,17 +36,22 @@ class SchemaImportFields {
     result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
     return result
   }
+
   async exportLiteSchemaData() {
     const result = []
     const schemaResponse = await this.getSchema()
-    const cleanSchemaResponse = this.cleanLiteSchemaData(schemaResponse)
+    if (schemaResponse.errorCode === 0) {
+      this.cleanLiteSchemaData(schemaResponse)
+      result.push(...extractAndTransformSchemaFields(schemaResponse))
+    }
 
-    result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
     return result
   }
+
   async getSchema() {
     return this.#schema.get()
   }
+
   cleanSchemaData(schemaResponse) {
     delete schemaResponse.apiVersion
     delete schemaResponse.context
@@ -87,6 +95,7 @@ class SchemaImportFields {
 
     removeEmail(schemaResponse.subscriptionsSchema.fields)
   }
+
   cleanLiteSchemaData(schemaResponse) {
     delete schemaResponse.apiVersion
     delete schemaResponse.context
@@ -95,12 +104,13 @@ class SchemaImportFields {
     delete schemaResponse.statusReason
     delete schemaResponse.time
     delete schemaResponse.callId
-    this.removeFieldFromSubscriptionSchema(schemaResponse)
+    this.removeFieldFromSubscriptionSchema(schemaResponse.subscriptionsSchema.fields)
     this.removeFieldFromAddressesSchema(schemaResponse)
     delete schemaResponse.addressesSchema
     delete schemaResponse.internalSchema
     return schemaResponse
   }
+
   removeFieldFromAddressesSchema(schemaResponse) {
     const traverseAndRemoveEmail = (obj) => {
       for (let key in obj) {
@@ -117,6 +127,7 @@ class SchemaImportFields {
     traverseAndRemoveEmail(schemaResponse)
     return schemaResponse
   }
+
   removeFieldFromSubscriptionSchema(schemaResponse) {
     const traverseAndRemoveEmail = (obj) => {
       for (let key in obj) {

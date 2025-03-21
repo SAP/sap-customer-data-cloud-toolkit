@@ -6,6 +6,7 @@ describe('Import Account - Configuration Tree test suite', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
@@ -13,12 +14,14 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.clearAllLocalStorage()
       cy.clearAllSessionStorage()
     })
+
     it('Should export data schema successfully from a full account', () => {
       cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
       cy.get('[data-cy ="importDataSaveButton"]').should('not.be.disabled')
       cy.get('#data').click().should('have.prop', 'checked')
       cy.get('#importDataSaveButton').click()
     })
+
     it('Should export data schema successfully from a lite account', () => {
       cy.get('#importDataSelectAccount').click()
       cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-li').contains('Lite Account').click()
@@ -28,12 +31,14 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.get('#data').click().should('have.prop', 'checked')
       cy.get('#importDataSaveButton').click()
     })
+
     it('Should check if isSubscribe checkbox is readOnly', () => {
       cy.get(':nth-child(4) > [level="1"]').shadow().find('.ui5-li-tree-toggle-box').click()
       cy.get(':nth-child(4) > [level="1"] > :nth-child(2)').shadow().find('li').find('.ui5-li-tree-toggle-box').find('ui5-icon').click()
       cy.get('#importAccountsCard').find('[id="subscriptions.newsletter.commercial.tags"]').click()
       cy.get('#importAccountsCard').find('[id="subscriptions.newsletter.commercial.isSubscribed"]').should('have.prop', 'checked')
     })
+
     it('Should check if isConsentGranted checkbox is readOnly', () => {
       cy.get(':nth-child(7) > [level="1"]').shadow().find('.ui5-li-tree-toggle-box').click()
       cy.get(':nth-child(7) > [level="1"] > :nth-child(2)').shadow().find('li').find('.ui5-li-tree-toggle-box').find('ui5-icon').click()
@@ -41,17 +46,26 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.get('#importAccountsCard').find('[id="preferences.terms.sap.actionTimestamp"]').click()
       cy.get('#importAccountsCard').find('[id="preferences.terms.sap.isConsentGranted"]').should('have.prop', 'checked')
     })
+
     it('Should check if status checkbox is readOnly', () => {
       cy.get(':nth-child(8) > [level="1"]').shadow().find('.ui5-li-tree-toggle-box').click()
       cy.get(':nth-child(8) > [level="1"] > :nth-child(4)').shadow().find('li').find('.ui5-li-tree-toggle-box').find('ui5-icon').click()
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.optIn.acceptanceLocation"]').click()
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.status"]').should('have.prop', 'checked')
     })
+
+    it('Should clear all the checkboxes when the user clicks on the cancel button', () => {
+      cy.get('#profile').click()
+      cy.get('#importDataCancelButton').click()
+      cy.wait(1000)
+      cy.get('#profile').shadow().find('[role="checkbox"]').should('not.have.prop', 'checked')
+    })
   })
   context('Configuration Tree - Search Tree ', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
@@ -63,6 +77,11 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
       cy.get('#schemaInput').shadow().find('input').type('data.loyalty.rewardPoints').type('{enter}')
       cy.get('#importAccountsCard').get('ui5-tree-item-custom').should('have.length', 3)
+    })
+    it('Should write on the search input and we should not see any configuration if the name does not exist', () => {
+      cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
+      cy.get('#schemaInput').shadow().find('input').type('testing')
+      cy.get('#schemaInput').find('ui5-suggestion-item').should('not.exist')
     })
   })
 })
