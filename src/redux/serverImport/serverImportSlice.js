@@ -54,17 +54,11 @@ export const serverImportExtendedSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getConfigurations.pending, (state) => {
-      state.isLoading = true
-    })
     builder.addCase(getConfigurations.fulfilled, (state, action) => {
       state.isLoading = false
       state.serverConfigurations = action.payload
     })
-    builder.addCase(getConfigurations.rejected, (state, action) => {
-      state.isLoading = false
-      state.errors = action.payload
-    })
+
     builder.addCase(setDataflow.pending, (state) => {
       state.isLoading = true
       state.errors = []
@@ -98,11 +92,7 @@ export const serverImportExtendedSlice = createSlice({
 })
 
 export const getConfigurations = createAsyncThunk(GET_CONFIGURATIONS_ACTION, async (_, { getState, rejectWithValue }) => {
-  try {
-    return serverStructure
-  } catch (error) {
-    return rejectWithValue(getErrorAsArray(error))
-  }
+  return serverStructure
 })
 
 export const getDataflowRedirection = createAsyncThunk(GET_REDIRECTION_URL_ACTION, async (_, { getState, rejectWithValue }) => {

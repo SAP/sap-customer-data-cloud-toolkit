@@ -7,11 +7,10 @@ import AzureTemplateFactory from './azureTemplateFactory'
 
 class TemplateManagerFactory {
   static create(accountType, storageProvider) {
-    switch (storageProvider) {
-      case 'azure':
-        return AzureTemplateFactory.make(accountType)
-      default:
-        throw new Error(`Unable to crete template for the storage provider: ${storageProvider}`)
+    if (storageProvider === 'azure') {
+      return AzureTemplateFactory.make(accountType)
+    } else {
+      throw new Error(`Unable to create template for the storage provider: ${storageProvider}`)
     }
   }
 }

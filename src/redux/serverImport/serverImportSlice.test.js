@@ -9,7 +9,7 @@
 
 import { AccountType } from '../../services/importAccounts/accountType'
 import { initialState, initialStateWithServerConfigurations } from './dataTest'
-import serverImportReducer, { clearServerConfigurations, getConfigurations, getServerConfiguration, setAccountType, setDataflow, updateServerProvider } from './serverImportSlice'
+import serverImportReducer, { clearServerConfigurations, getServerConfiguration, setAccountType, setDataflow, updateServerProvider } from './serverImportSlice'
 
 describe('serverImportSlice test suite', () => {
   const SERVER_TYPE = 'azure'
@@ -32,12 +32,7 @@ describe('serverImportSlice test suite', () => {
     const newState = serverImportReducer(initialStateWithServerConfigurations, clearServerConfigurations())
     expect(newState.serverConfigurations.azure[0].value).toBe(undefined)
   })
-  test('should update state when getConfigurations is rejected', () => {
-    const action = getConfigurations.rejected('', '', '', 'Failed to revert configurations')
-    const newState = serverImportReducer(initialStateWithServerConfigurations, action)
-    expect(newState.errors).toEqual('Failed to revert configurations')
-    expect(newState.isLoading).toEqual(false)
-  })
+
   test('should update state when setDataflow is rejected', () => {
     const action = setDataflow.rejected('', '', '', 'Failed to revert configurations')
     const newState = serverImportReducer(initialStateWithServerConfigurations, action)

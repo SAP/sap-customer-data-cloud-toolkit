@@ -28,6 +28,7 @@ class ServerImport {
       const createdDataflowId = await this.#createAndCheckDataflow(dataflowConfig)
       return createdDataflowId
     } catch (error) {
+      console.error('Error in setDataflow:', error)
       throw error
     }
   }
