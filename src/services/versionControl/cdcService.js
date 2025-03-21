@@ -93,113 +93,76 @@ class CdcService {
   }
 
   applyCommitConfig = async (files) => {
+    const configHandlers = {
+      webSdk: async (filteredResponse) => {
+        await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
+      },
+      emails: async (filteredResponse) => {
+        await this.applyEmailsConfig(filteredResponse)
+      },
+      extension: async (filteredResponse) => {
+        if (filteredResponse.result.length > 0) {
+          await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
+        }
+      },
+      policies: async (filteredResponse) => {
+        cleanResponse(filteredResponse)
+        await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
+      },
+      rba: async (filteredResponse) => {
+        await this.applyRbaConfig(filteredResponse)
+      },
+      riskAssessment: async (filteredResponse) => {
+        await this.applyRbaConfig(filteredResponse)
+      },
+      schema: async (filteredResponse) => {
+        await this.applySchemaConfig(filteredResponse)
+      },
+      screenSets: async (filteredResponse) => {
+        for (const screenSet of filteredResponse.screenSets) {
+          await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
+        }
+      },
+      sms: async (filteredResponse) => {
+        this.sms.getSms().set(this.apiKey, this.dataCenter, filteredResponse.templates)
+      },
+      channel: async (filteredResponse) => {
+        await this.applyCommunicationConfig(filteredResponse)
+      },
+      topic: async (filteredResponse) => {
+        await this.applyCommunicationConfig(filteredResponse)
+      },
+      dataflow: async (filteredResponse) => {
+        await this.applyDataflowConfig(filteredResponse)
+      },
+      webhook: async (filteredResponse) => {
+        await this.applyWebhookConfig(filteredResponse)
+      },
+      consent: async (filteredResponse) => {
+        if (filteredResponse.preferences) {
+          await this.consentManager.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, filteredResponse)
+        }
+      },
+      social: async (filteredResponse) => {
+        await this.socialManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
+      },
+      recaptcha: async (filteredResponse) => {
+        await this.recaptchaManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
+      },
+    }
+
     for (const file of files) {
       const fileType = file.filename.split('/').pop().split('.').shift()
-      let filteredResponse = file.content
-      switch (fileType) {
-        case 'webSdk':
-          try {
-            await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
-          } catch (error) {
-             throw new Error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'emails':
-          try {
-            await this.applyEmailsConfig(filteredResponse)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'extension':
-          try {
-            if (filteredResponse.result.length > 0) {
-              await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
-            }
-          } catch (error) {
-            console.log(`Error applying config for file type ${fileType}:`, error)
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'policies':
-          try {
-            cleanResponse(filteredResponse)
-            await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
-          } catch (error) {
-            console.log('policies error: ', error)
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'rba':
-        case 'riskAssessment':
-          try {
-            await this.applyRbaConfig(filteredResponse)
-          } catch (error) {
-            console.log('rba error', error)
+      const filteredResponse = file.content
 
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'schema':
-          try {
-            await this.applySchemaConfig(filteredResponse)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'screenSets':
-          try {
-            for (const screenSet of filteredResponse.screenSets) {
-              await this.screenSets.set(this.apiKey, this.dataCenter, screenSet)
-            }
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'sms':
-          try {
-            this.sms.getSms().set(this.apiKey, this.dataCenter, filteredResponse.templates)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'channel':
-        case 'topic':
-          try {
-            await this.applyCommunicationConfig(filteredResponse)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'dataflow':
-          try {
-            await this.applyDataflowConfig(filteredResponse)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'webhook':
-          try {
-            // await this.applyWebhookConfig(filteredResponse)
-            await this.applyWebhookConfig(filteredResponse)
-          } catch (error) {
-            console.error(`Error applying config for file type ${fileType}:`, error)
-          }
-          break
-        case 'consent':
-          if (filteredResponse.preferences) {
-            // if (filteredResponse.preferences) {
-            await this.consentManager.setConsentsAndLegalStatements(this.apiKey, this.siteInfo, filteredResponse)
-          }
-          break
-        case 'social':
-          await this.socialManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
-          break
-        case 'recaptcha':
-          await this.recaptchaManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
-          break
-        default:
-          console.warn(`Unknown file type: ${fileType}`)
+      if (configHandlers[fileType]) {
+        try {
+          await configHandlers[fileType](filteredResponse)
+        } catch (error) {
+          throw new Error(`Error applying config for file type ${fileType}: ${error.message}`)
+        }
+      } else {
+        throw new Error(`Unknown file type: ${fileType}`)
       }
     }
   }

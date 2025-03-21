@@ -5,7 +5,9 @@
 
 import { skipForChildSite } from '../utils'
 import GitHub from './github'
+import { Base64 } from 'js-base64'
 
+jest.mock('js-base64')
 jest.setTimeout(30000)
 
 describe('GitHub Test Suit', () => {
@@ -22,16 +24,9 @@ describe('GitHub Test Suit', () => {
   const siteInfo = { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } }
 
   beforeEach(() => {
-    global.atob = jest.fn((str) => {
-      return JSON.stringify({ key: 'value1' })
-    })
-    global.btoa = jest.fn((obj) => {
-      return JSON.stringify(obj)
-    })
     jest.clearAllMocks()
     jest.restoreAllMocks()
   })
-
   it('should get a list of commits - getCommits', async () => {
     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
@@ -53,7 +48,6 @@ describe('GitHub Test Suit', () => {
     const getCommit = await github.getCommits(defaultBranch)
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
-
   it('should get an error when it does not have branches - getCommits', async () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getBranchesMock = jest.fn().mockRejectedValueOnce()
@@ -70,7 +64,6 @@ describe('GitHub Test Suit', () => {
     }
     await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
   })
-
   it('should fail to fetch commits for branch - getCommits', async () => {
     const getBranchesMock = jest.fn().mockResolvedValueOnce()
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
@@ -84,7 +77,6 @@ describe('GitHub Test Suit', () => {
     }
     await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
   })
-
   it('should create a branch if it does not exist', async () => {
     const commitMessage = 'test commit'
     const configs = { key: 'value' }
@@ -130,7 +122,6 @@ describe('GitHub Test Suit', () => {
       ref: `heads/${apiKey}`,
     })
   })
-
   it('should return false when credentials are not valid', async () => {
     const commitMessage = 'test commit'
     const configs = { key: 'value' }
@@ -170,11 +161,12 @@ describe('GitHub Test Suit', () => {
       },
       request: getRequestMock,
     }
+    Base64.decode.mockReturnValueOnce('{"key":"value1"}')
+
     const result = await github.getCommitFiles('testSha')
 
     expect(result).toEqual([{ filename: mockFile, contents_url: contentUrl, content: { key: 'value1' } }])
   })
-
   it('should return a blob when there is no response content', async () => {
     const getCommitMock = jest.fn().mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: contentUrl }] } })
     const getRequestMock = jest.fn().mockResolvedValueOnce({
@@ -197,11 +189,12 @@ describe('GitHub Test Suit', () => {
       },
       request: getRequestMock,
     }
+    Base64.decode.mockReturnValueOnce('{"key":"value1"}')
+
     const result = await github.getCommitFiles('testSha')
 
     expect(result).toEqual([{ filename: mockFile, contents_url: contentUrl, content: { key: 'value1' } }])
   })
-
   it('should return an error when the blob has no context', async () => {
     const getCommitMock = jest.fn().mockResolvedValueOnce({ data: { files: [{ sha: shaMock, filename: mockFile, contents_url: contentUrl }] } })
     const getRequestMock = jest.fn().mockResolvedValueOnce({
@@ -224,6 +217,7 @@ describe('GitHub Test Suit', () => {
       },
       request: getRequestMock,
     }
+    Base64.decode.mockReturnValueOnce('{"key":"value1"}')
 
     await expect(github.getCommitFiles('testSha')).rejects.toThrow(`Failed to fetch blob content for URL: ${contentUrl}`)
   })
@@ -309,7 +303,6 @@ describe('GitHub Test Suit', () => {
 
     expect(fileUpdates).toEqual(result)
   })
-
   it('should return an error when there are no branches on the fetch and prepare files', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     const getContentMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
@@ -321,6 +314,7 @@ describe('GitHub Test Suit', () => {
       },
     }
     const configs = { key: 'value' }
+    Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
     const response = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     expect(response[0].content).toEqual('"value"')
     expect(response[0].sha).toEqual('testSha')
@@ -341,6 +335,7 @@ describe('GitHub Test Suit', () => {
       },
     }
     const configs = { key: 'value' }
+    Base64.decode.mockReturnValueOnce({ data: { content: 'testContent', sha: shaMock } })
     const response = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     expect(response[0].content).toEqual('"value"')
     expect(response[0].sha).toEqual('testSha')

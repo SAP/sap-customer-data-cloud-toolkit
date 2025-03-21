@@ -6,6 +6,7 @@
 import VersionControlManager from './versionControlManager'
 import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
+import { Base64 } from 'js-base64'
 import { skipForChildSite, generateFileObjects } from '../utils'
 
 class GitHub extends VersionControlManager {
@@ -46,7 +47,7 @@ class GitHub extends VersionControlManager {
     return Promise.all(
       files.map(async (file) => {
         const content = await this.#fetchFileContent(file.contents_url)
-        return { ...file, content: JSON.parse(atob(content)) }
+        return { ...file, content: JSON.parse(Base64.decode(content)) }
       }),
     )
   }
@@ -197,8 +198,10 @@ class GitHub extends VersionControlManager {
     }
 
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
+    console.log('rawGitContent: ', Base64.decode(rawGitContent))
+
     let currentGitContent = {}
-    const currentGitContentDecoded = rawGitContent ? atob(rawGitContent) : '{}'
+    const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
@@ -212,6 +215,12 @@ class GitHub extends VersionControlManager {
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
+      console.log('=================!isEqual===================')
+      console.log(filePath)
+      console.log('Git Content')
+      console.log(currentGitContent)
+      console.log('CDC Content')
+      console.log(sanitizedNewContent)
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2), // Save the original content
