@@ -4,7 +4,6 @@
  */
 
 import VersionControlManager from './versionControlManager'
-import { Base64 } from 'js-base64'
 import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
 import { skipForChildSite, generateFileObjects } from '../utils'
@@ -47,7 +46,7 @@ class GitHub extends VersionControlManager {
     return Promise.all(
       files.map(async (file) => {
         const content = await this.#fetchFileContent(file.contents_url)
-        return { ...file, content: JSON.parse(Base64.decode(content)) }
+        return { ...file, content: JSON.parse(atob(content)) }
       }),
     )
   }
@@ -199,7 +198,7 @@ class GitHub extends VersionControlManager {
 
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
     let currentGitContent = {}
-    const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
+    const currentGitContentDecoded = rawGitContent ? atob(rawGitContent) : '{}'
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)

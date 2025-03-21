@@ -45,6 +45,7 @@ describe('versionControlSlice', () => {
       error: null,
       repo: '',
       revert: false,
+      filesToUpdate: [],
     },
   }
 
@@ -72,6 +73,7 @@ describe('versionControlSlice', () => {
         error: null,
         repo: '',
         revert: false,
+        filesToUpdate: [],
       })
     })
 
