@@ -429,7 +429,7 @@ const VersionControlComponent = ({ t }) => {
                     </div>
                   ) : (
                     <div className={classes.specifyFileLableStyle}>
-                      <Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>
+                      <Text>{t('VERSION_CONTROL.NO_CHANGES')}</Text>
                     </div>
                   )
                 }
