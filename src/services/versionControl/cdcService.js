@@ -101,7 +101,7 @@ class CdcService {
           try {
             await this.webSdk.set(this.apiKey, filteredResponse, this.dataCenter)
           } catch (error) {
-             throw new Error(`Error applying config for file type ${fileType}:`, error)
+            throw new Error(`Error applying config for file type ${fileType}:`, error)
           }
           break
         case 'emails':
@@ -117,7 +117,6 @@ class CdcService {
               await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
             }
           } catch (error) {
-            console.log(`Error applying config for file type ${fileType}:`, error)
             console.error(`Error applying config for file type ${fileType}:`, error)
           }
           break
@@ -126,7 +125,6 @@ class CdcService {
             cleanResponse(filteredResponse)
             await this.policies.set(this.apiKey, filteredResponse, this.dataCenter)
           } catch (error) {
-            console.log('policies error: ', error)
             console.error(`Error applying config for file type ${fileType}:`, error)
           }
           break
@@ -135,8 +133,6 @@ class CdcService {
           try {
             await this.applyRbaConfig(filteredResponse)
           } catch (error) {
-            console.log('rba error', error)
-
             console.error(`Error applying config for file type ${fileType}:`, error)
           }
           break

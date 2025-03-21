@@ -35,7 +35,6 @@ class VersionControlService {
 
   handleCommitListRequestServices = async () => {
     const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
-    console.log('commit-list--->', commitList)
     return { commitList, totalCommits: commitList.length }
   }
 

@@ -30,7 +30,6 @@ class SocialManager {
       }
       return response
     } catch (error) {
-      console.log('Error setting social config from Git:', error)
       console.error('Error setting recaptcha config from Git:', error)
       throw error
     }

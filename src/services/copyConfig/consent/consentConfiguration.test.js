@@ -24,7 +24,6 @@ describe('ConsentConfiguration test suite', () => {
   const dataCenter = 'eu1'
   const consentConfiguration = new ConsentConfiguration(credentials, apiKey, dataCenter)
   const consentOptions = new ConsentOptions()
-  const siteInfo = { dataCenter }
 
   test('nothing to copy', async () => {
     const responses = await consentConfiguration.copy(apiKey, { dataCenter }, consentOptions.getOptionsDisabled())

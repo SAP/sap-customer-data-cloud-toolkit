@@ -64,7 +64,6 @@ describe('versionControlService', () => {
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
       const response = await versionControlService.handleGetServices('commitMessage')
-      console.log('response, ', response)
       expect(response).toEqual(true)
     })
 

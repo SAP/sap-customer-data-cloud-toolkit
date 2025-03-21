@@ -129,7 +129,7 @@ describe('Version Control Test Suite', () => {
     cy.get('#versionControlSuccessPopup').should('be.visible').should('contain.text', 'Restore completed successfully!')
   })
 
-  it.only('should fetch commits and enable the revert operation', () => {
+  it('should fetch commits and enable the revert operation', () => {
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
@@ -143,6 +143,7 @@ describe('Version Control Test Suite', () => {
     cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
     cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
     cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
-    cy.get('[data-cy="backupButton"]').should('not.be.disabled')
+    cy.get('[data-cy="backupButton"]').should('not.be.disabled').click()
+    cy.get('#backupDialog').should('contain.text', 'There are no changes since your last backup.')
   })
 })

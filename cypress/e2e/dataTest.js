@@ -1846,7 +1846,7 @@ const mockedVersionControlGetResponse = {
 
 const mockedVersionControlGetListBranches = [
   {
-    name: 'testApiKey',
+    name: 'undefined',
     commit: {
       sha: 'testSha',
       url: 'https://api.github.com/repos/iamGaspar/repo/commits/testSha',
