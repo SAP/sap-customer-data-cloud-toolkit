@@ -18,7 +18,7 @@ describe('Version Control Test Suite', () => {
 
   it('should display the version control page', () => {
     utils.mockGetConfigurationRequests()
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetResponse }).as('getBranches')
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=testSha&per_page=100&page=1`, {
       body: dataTest.mockedVersionControlGetCommitsResponse,
@@ -41,9 +41,7 @@ describe('Version Control Test Suite', () => {
     cy.intercept('PATCH', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {
       body: dataTest.mockGetRef,
     })
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
-      body: dataTest.mockGetRef,
-    })
+
     cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/refs`, {
       body: dataTest.mockGetRef,
     })
@@ -108,5 +106,44 @@ describe('Version Control Test Suite', () => {
     cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
     cy.get('[data-cy="backupButton"]').should('not.be.disabled')
     cy.get('#versionControlCommitBar').should('contain.text', 'There are no commits for this API key')
+  })
+
+  it('should fetch commits and enable the revert operation', () => {
+    utils.mockGetConfigurationRequests()
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
+      body: dataTest.mockedVersionControlGetCommitsResponse,
+    }).as('getCommits')
+    cy.intercept('GET', `${url}/user`, {
+      body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
+    })
+
+    cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
+    cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
+    cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
+    cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
+    cy.get('[data-cy="backupButton"]').should('not.be.disabled')
+    cy.get('#versionControlTable').should('be.visible').should('contain.text', 'Create test CDCRepo branch creation')
+    cy.get('#commitRevertButton-0').should('be.visible').click()
+    cy.get('#versionControlSuccessPopup').should('be.visible').should('contain.text', 'Restore completed successfully!')
+  })
+
+  it('should fetch commits and enable the revert operation', () => {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
+      body: dataTest.mockedVersionControlGetCommitsResponse,
+    }).as('getCommits')
+    cy.intercept('GET', `${url}/user`, {
+      body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
+    })
+
+    cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
+    cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
+    cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
+    cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
+    cy.get('[data-cy="backupButton"]').should('not.be.disabled').click()
+    cy.get('#backupDialog').should('contain.text', 'There are no changes since your last backup.')
   })
 })

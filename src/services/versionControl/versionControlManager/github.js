@@ -68,7 +68,6 @@ class GitHub extends VersionControlManager {
               per_page,
               page,
             })
-
             allCommits = allCommits.concat(response.data)
 
             if (response.data.length < per_page) {
@@ -77,8 +76,7 @@ class GitHub extends VersionControlManager {
 
             page += 1
           } catch (error) {
-            console.error(`Failed to fetch commits for branch: ${apiKey}`, error)
-            throw error
+            throw Error(`Failed to fetch commits for branch: ${apiKey}`, error)
           }
         }
         return { data: allCommits }
@@ -198,8 +196,6 @@ class GitHub extends VersionControlManager {
     }
 
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
-    console.log('rawGitContent: ', Base64.decode(rawGitContent))
-
     let currentGitContent = {}
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
     if (currentGitContentDecoded) {
@@ -215,12 +211,6 @@ class GitHub extends VersionControlManager {
     const sanitizedNewContent = removeIgnoredFields(newContent)
 
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
-      console.log('=================!isEqual===================')
-      console.log(filePath)
-      console.log('Git Content')
-      console.log(currentGitContent)
-      console.log('CDC Content')
-      console.log(sanitizedNewContent)
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2), // Save the original content

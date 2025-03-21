@@ -41,6 +41,6 @@ describe('SocialManager test suite', () => {
 
     await expect(socialManager.setFromFiles(apiKey, dataCenter, config)).rejects.toThrow('Error setting social config')
     expect(Social.prototype.set).toHaveBeenCalledWith(apiKey, config, dataCenter)
-    expect(console.error).toHaveBeenCalledWith('Error setting recaptcha config from Git:', mockError)
+    expect(console.error).toHaveBeenCalledWith('Error setting social config from Git:', mockError)
   })
 })
