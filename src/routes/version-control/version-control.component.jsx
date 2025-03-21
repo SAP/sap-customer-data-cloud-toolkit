@@ -353,6 +353,7 @@ const VersionControlComponent = ({ t }) => {
                   {renderStatusMessage() ?? (
                     <div className={classes.tableContainer}>
                       <Table
+                        id="versionControlTable"
                         stickyColumnHeader={true}
                         growing={TableGrowingMode.Scroll}
                         onLoadMore={onLoadMore}

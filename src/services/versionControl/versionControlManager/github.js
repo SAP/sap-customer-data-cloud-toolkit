@@ -21,6 +21,8 @@ class GitHub extends VersionControlManager {
         owner: this.owner,
         repo: this.repo,
       })
+      console.log('branches--->', branches)
+      console.log('branchName--->', branchName)
       return branches ? branches.some((branch) => branch.name === branchName) : false
     } catch (error) {
       throw new Error(error.message)
@@ -57,6 +59,7 @@ class GitHub extends VersionControlManager {
       let page = 1
       const per_page = 100 // Maximum allowed per page
       const hasBranch = await this.listBranches(apiKey)
+      console.log('hasBranch--->', hasBranch)
       if (hasBranch) {
         while (true) {
           try {
@@ -67,7 +70,7 @@ class GitHub extends VersionControlManager {
               per_page,
               page,
             })
-
+            console.log('response--->', response)
             allCommits = allCommits.concat(response.data)
 
             if (response.data.length < per_page) {
@@ -96,6 +99,7 @@ class GitHub extends VersionControlManager {
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo) {
     await this.#createBranch(apiKey)
     const commits = await this.getCommits(apiKey)
+    console.log('commits--->,', commits)
     if (commits.data.length === 0) {
       await this.waitForCreation(apiKey)
     }
@@ -122,17 +126,21 @@ class GitHub extends VersionControlManager {
     }
     const branchExists = await this.listBranches(apiKey)
     if (!branchExists) {
+      console.log('entered ref')
       this.#getBranchAndCreateRef(apiKey)
     }
   }
 
   async #updateFilesInSingleCommit(commitMessage, files, defaultBranch) {
+    console.log('commitMessage--->', commitMessage)
+    console.log('defaultBranch--->', defaultBranch)
     const { data: refData } = await this.versionControl.rest.git.getRef({
       owner: this.owner,
       repo: this.repo,
       ref: `heads/${defaultBranch}`,
     })
 
+    console.log('refData--->', refData)
     const baseTreeSha = refData.object.sha
 
     const blobs = await Promise.all(
@@ -151,6 +159,7 @@ class GitHub extends VersionControlManager {
         }
       }),
     )
+    console.log('blobs--->', blobs)
 
     const { data: newTree } = await this.versionControl.rest.git.createTree({
       owner: this.owner,
@@ -158,6 +167,7 @@ class GitHub extends VersionControlManager {
       tree: blobs,
       base_tree: baseTreeSha,
     })
+    console.log('newTree--->', newTree)
 
     const { data: newCommit } = await this.versionControl.rest.git.createCommit({
       owner: this.owner,
@@ -166,6 +176,7 @@ class GitHub extends VersionControlManager {
       tree: newTree.sha,
       parents: [baseTreeSha],
     })
+    console.log('newCommit--->', newTree)
 
     await this.versionControl.rest.git.updateRef({
       owner: this.owner,
@@ -251,6 +262,8 @@ class GitHub extends VersionControlManager {
   async #getBranchAndCreateRef(branch) {
     try {
       const mainBranch = await this.#getBranch()
+      console.log('mainBranch--->', mainBranch)
+      console.log('mainBranch--->', mainBranch.commit)
       await this.#createRef(branch, mainBranch.commit.sha)
     } catch (error) {
       throw new Error(`Error in getBranchAndCreateRef: ${error.message}`)
