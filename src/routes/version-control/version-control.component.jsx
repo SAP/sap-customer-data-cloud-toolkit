@@ -19,6 +19,7 @@ import {
   Card,
   Grid,
   Label,
+  BusyIndicator,
 } from '@ui5/webcomponents-react'
 import { createUseStyles } from 'react-jss'
 import { useSelector, useDispatch } from 'react-redux'
@@ -48,7 +49,6 @@ import DialogMessageInform from '../../components/dialog-message-inform/dialog-m
 import { getApiKey } from '../../redux/utils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
-import { BusyIndicator } from '@ui5/webcomponents-react'
 
 const PAGE_TITLE = 'VersionControl'
 const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
