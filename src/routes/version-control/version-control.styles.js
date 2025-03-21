@@ -215,7 +215,9 @@ const styles = {
     marginBottom: '24px',
   },
   warningMessage: {
-    marginTop: '25px',
+    alignContent: 'center',
+    height: '41px',
+    alignSelf: 'self-end',
     width: 'max-content',
     color: 'var( --sapErrorColor)',
   },
