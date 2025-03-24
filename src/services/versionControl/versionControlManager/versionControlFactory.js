@@ -7,12 +7,11 @@ import GitHub from './github'
 
 class VersionControlFactory {
   static getVersionControlFactory(versionControl, versionControlProvider, currentOwner, currentRepo) {
-    switch (versionControl) {
-      case 'github':
-        return new GitHub(versionControlProvider, currentOwner, currentRepo)
-      default:
-        throw new Error('Invalid Version Control')
+    if (versionControl === 'github') {
+      return new GitHub(versionControlProvider, currentOwner, currentRepo)
     }
+
+    throw new Error('Invalid Version Control')
   }
 }
 export default VersionControlFactory

@@ -1862,6 +1862,16 @@ const mockedVersionControlGetListBranches = [
     protected: false,
   },
 ]
+const mockedVersionControlGetListBranches2 = [
+  {
+    name: 'undefined',
+    commit: {
+      sha: 'testSha',
+      url: 'https://api.github.com/repos/iamGaspar/repo/commits/testSha',
+    },
+    protected: false,
+  },
+]
 
 const mockedUserAuthentication = {
   login: 'testOwner',
@@ -1995,6 +2005,8 @@ const mockedUserVersionControl = {
     private_repos: 10000,
   },
 }
+
+const mockedVersionControlGetCommitsEmptyResponse = []
 
 const mockedVersionControlGetCommitsResponse = [
   {
@@ -2298,4 +2310,6 @@ export {
   createCommitResponse,
   mockedUserVersionControl,
   mockedVersionControlGetListBranches,
+  mockedVersionControlGetListBranches2,
+  mockedVersionControlGetCommitsEmptyResponse,
 }
