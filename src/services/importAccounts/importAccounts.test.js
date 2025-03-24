@@ -2,6 +2,7 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import ImportAccounts from './importAccounts'
 import { credentials } from '../servicesDataTest'
 import { expectedSchemaResponse } from './schemaImport/schemaDatatest'
@@ -11,13 +12,13 @@ import { expectedCommunicationResponse } from './communicationImport/dataTest'
 import { getRootElementsStructure } from './rootOptions/rootLevelFields'
 import { expectedFullAccount } from './importAccountsDatatest'
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
+import { AccountType } from './accountType'
 
 jest.mock('axios')
 jest.setTimeout(10000)
 describe('Import Account - SchemaImport test suite', () => {
   const targetDataCenter = 'eu1'
   const targetApiKey = 'targetApiKey'
-  const fullAccount = 'Full'
   let importAccounts
 
   beforeEach(() => {
@@ -32,7 +33,7 @@ describe('Import Account - SchemaImport test suite', () => {
       .mockResolvedValueOnce({ data: expectedCommunicationResponse })
       .mockResolvedValueOnce({ data: passwordObjectStructure() })
       .mockResolvedValueOnce({ data: getRootElementsStructure() })
-    const importAccount = await importAccounts.importAccountToConfigTree(fullAccount)
+    const importAccount = await importAccounts.importAccountToConfigTree(AccountType.Full)
     expect(importAccount).toEqual(expectedFullAccount)
   })
 })

@@ -53,6 +53,7 @@ export const initialState = {
   parentNode: [],
   selectedConfiguration: [],
   showSuccessMessage: false,
+  accountType: 'Full',
 }
 
 export const initialStateWithConfigurations = {

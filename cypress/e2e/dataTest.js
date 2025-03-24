@@ -28,7 +28,7 @@ const emailExampleFile = 'email-templates.zip'
 const smsExampleFile = 'sms-templates.zip'
 const importEmailsFileHeaderText = 'Import email templates'
 const importSmsFileHeaderText = 'Import SMS templates'
-const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid ApiKey parameter`
+const importEmailTemplatesErrorMessage = `Invalid ApiKey parameterInvalid APIKey identified. Invalid ApiKey parameter`
 const smsTemplatesIconName = 'SMS Templates'
 const smsTemplatesExportErrorMessage = 'Error getting SMS templates'
 const smsTemplatesExportErrorMessageDetail = 'Error getting SMS templatesThere was an error when getting the SMS templates or you do not have the required permissions to call it.'
@@ -65,6 +65,9 @@ const prettifySingleNoJavascript = 'CloseThere is no Javascript on this Screen-S
 const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
 const prettifySingleError = 'CloseError formatting Screen-Set ID'
 const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Format on any Screen-Set.'
+const importAccounts = 'Import Data'
+const serverImportHeader = 'Deploy and Import'
+const serverImportSuccessMessage = 'The dataflow was deployed successfully (ID: df1).'
 const importData = 'Import Data'
 const importAccountsDescription = 'Import accounts and generate csv with schema and legal fields'
 const importAccountDownloadButton = 'Download Template'
@@ -1592,7 +1595,7 @@ const mockedSetExtensionResponse = {
   context: `{"targetApiKey":"${dummyApiKey}","id":"extensions_"}`,
 }
 
-const mockedGigyaResponseOk = {
+export const mockedGigyaResponseOk = {
   statusCode: 200,
   errorCode: 0,
   statusReason: 'OK',
@@ -1962,6 +1965,9 @@ export {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  importAccounts,
+  serverImportHeader,
+  serverImportSuccessMessage,
   importData,
   importAccountsDescription,
   importAccountDownloadButton,

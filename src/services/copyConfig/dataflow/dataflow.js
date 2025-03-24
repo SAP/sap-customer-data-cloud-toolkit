@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import UrlBuilder from '../../gigya/urlBuilder.js'
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
@@ -27,6 +26,15 @@ class Dataflow {
     this.#credentials = credentials
     this.#site = site
     this.#dataCenter = dataCenter
+  }
+
+  async schedule(site, dataCenter, body) {
+    const endpoint = Dataflow.#getSetSchedulingDataflowEndpoint()
+    const url = UrlBuilder.buildUrl(Dataflow.#NAMESPACE, dataCenter, endpoint, this.#credentials.gigyaConsole)
+    const res = await client.post(url, this.#setSchedulingDataflowParameters(site, body)).catch(function (error) {
+      return generateErrorResponse(error, Dataflow.#ERROR_MSG_SET_CONFIG)
+    })
+    return res.data
   }
 
   async set(site, dataCenter, body) {
@@ -112,9 +120,20 @@ class Dataflow {
     parameters.data = JSON.stringify(body)
     return parameters
   }
+  #setSchedulingDataflowParameters(apiKey, config) {
+    const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
+
+    parameters.data = JSON.stringify(config.data)
+
+    return parameters
+  }
 
   static #getSetDataflowEndpoint() {
     return `${Dataflow.#NAMESPACE}.setDataflow`
+  }
+
+  static #getSetSchedulingDataflowEndpoint() {
+    return `${Dataflow.#NAMESPACE}.createScheduling`
   }
 
   static #getSetDataflowDraftEndpoint() {
@@ -139,6 +158,7 @@ class Dataflow {
     if (destinationSiteDataflows.errorCode !== 0) {
       return [destinationSiteDataflows]
     }
+
     for (const dataflow of options.getOptions().branches) {
       if (dataflow.value) {
         promises.push(this.#copyDataflow(destinationSite, destinationSiteConfiguration.dataCenter, dataflow.name, response, destinationSiteDataflows, dataflow.variables))
