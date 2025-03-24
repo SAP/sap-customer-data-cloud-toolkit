@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const styles = {
   targetInfoContainerInput: {
     width: '100%',

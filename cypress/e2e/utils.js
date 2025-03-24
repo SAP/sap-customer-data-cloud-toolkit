@@ -6,6 +6,9 @@
 /* eslint-disable no-undef */
 
 import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
+import { expectedCommunicationResponse } from '../../src/services/importAccounts/communicationImport/dataTest'
+import { mockPreferencesResponse } from '../../src/services/importAccounts/preferencesImport/dataTest'
+import { expectedSchemaResponse } from '../../src/services/importAccounts/schemaImport/schemaDatatest'
 import {
   dummyApiKey,
   mockedCreateDataflowResponse,
@@ -46,6 +49,11 @@ import {
   setCaptchaConfigMock,
   setPoliciesMock,
   setRiskProvidersMock,
+  serverImportHeader,
+  importData,
+  importAccountsDescription,
+  importAccountDownloadButton,
+  importAccountsSubtitle,
 } from './dataTest'
 
 export function startUp(pageName) {
@@ -58,7 +66,18 @@ export function startUp(pageName) {
   cy.contains(pageName).realClick()
   cy.reload()
 }
+export function getImportAccountsInformation() {
+  cy.get('#importAccountsTitle').should('contain.text', importData)
+  cy.get('#importAccountsHeaderText').should('contain.text', importAccountsDescription)
+  cy.get('#importAccountsPanel').shadow().find('.ui5-panel-header-title').should('contain.text', importAccountDownloadButton)
+  cy.get('#importAccountsPanel').find('ui5-label').should('contain.text', importAccountsSubtitle)
+}
 
+export function checkServerImportState(accountType) {
+  cy.get('#serverImportPanel').shadow().find('.ui5-panel-header-title').should('contain.text', serverImportHeader)
+  cy.get('#selectAccountType').should('contain.text', `${accountType} Account`)
+  cy.get('#selectStorageServer').should('contain.text', 'Azure')
+}
 export function clearCredentials() {
   resizeObserverLoopErrRe()
   const openPopoverButton = cy.get('body').find('#openPopoverButton')
@@ -77,17 +96,6 @@ export function mockCopyConfigRequests(response, method, url) {
 }
 
 let interceptCount = true
-export function mockSearchResponse(response, method, url) {
-  cy.intercept(method, url, (req) => {
-    if (interceptCount) {
-      interceptCount = false
-      req.reply({ body: mockedSearchDataflowsResponse })
-    } else {
-      interceptCount = true
-      req.reply({ body: mockedSearchDataflowsEmptyResponse })
-    }
-  })
-}
 
 export function resizeObserverLoopErrRe() {
   const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/
@@ -123,8 +131,8 @@ export function getBaseDomain(baseDomain, timeout) {
 export function getDataCenters(chosenDataCenter) {
   cy.wait(1000)
   cy.get('[data-cy ="cdctools-dataCenter"]').shadow().find('ui5-icon').realClick()
-  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(0).shadow().find('li > ui5-checkbox').click()
   cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(1).shadow().find('li > ui5-checkbox').click()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover > ui5-list').find('ui5-li').eq(2).shadow().find('li > ui5-checkbox').click()
   return cy
     .get('[data-cy ="cdctools-dataCenter"]')
     .shadow()
@@ -139,9 +147,8 @@ export function getSiteStructure(optionNumber, timeout) {
   cy.get('[data-cy ="cdctools-siteStructure"]').should('be.visible')
   cy.get('[data-cy ="cdctools-siteStructure"]', { timeout: timeout }).click()
   cy.wait(1000)
-  return cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').find('ui5-li').eq(optionNumber).click(1, 1) // Specify explicit coordinates because clickable text has a 66 characters limitation
 }
-
 export function deleteChildSite(length) {
   cy.get('ui5-table-row').eq(length).find('ui5-table-cell').eq(4).find('ui5-button').shadow().find('button').click()
   cy.get('ui5-responsive-popover').find(' [accessible-name="Delete Item 2 of 2"]').eq(0).shadow().find('button').realClick()
@@ -188,25 +195,11 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.getPolicies', { body: mockedGetPolicyResponse }).as('accounts.getPolicies')
   cy.intercept('POST', 'admin.riskProviders.getConfig', { body: getRiskProvidersResponse }).as('riskProviders.getConfig')
 }
-
-export function mockSetConfigurationRequests() {
-  mockResponse(mockedSetSchemaResponse, 'POST', 'accounts.setSchema')
-  mockResponse(mockedSetPolicyResponse, 'POST', 'accounts.setPolicies')
-  mockResponse(mockedSetSmsTemplatesResponse, 'POST', 'accounts.sms.templates.set')
-  mockResponse(mockedSetSocialsConfigsResponse, 'POST', 'socialize.setProvidersConfig')
-  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setConsentsStatements')
-  mockResponse(mockedSetConsentResponse, 'POST', 'accounts.setLegalStatements')
-  mockResponse(mockedSetCommunicationResponse, 'POST', 'accounts.communication.setChannels')
-  mockResponse(mockedSetWebhookResponse, 'POST', 'accounts.webhooks.set')
-  mockResponse(mockedSetExtensionResponse, 'POST', 'accounts.extensions.modify')
-  mockResponse(mockedSetDataflowResponse, 'POST', 'idx.setDataflow')
-  mockSearchResponse(mockedCreateDataflowResponse, 'POST', 'idx.createDataflow')
-  mockResponse(mockedSetRiskAssessmentResponse, 'POST', 'accounts.rba.riskAssessment.setConfig')
-  mockResponse(mockedSetUnknownLocationNotificationResponse, 'POST', 'accounts.setPolicies')
-  mockResponse(mockedSetRbaPolicyResponse, 'POST', 'accounts.rba.setPolicy')
-  mockResponse(setCaptchaConfigMock, 'POST', 'admin.captcha.setConfig')
-  mockResponse(setPoliciesMock, 'POST', 'accounts.setPolicies')
-  mockResponse(setRiskProvidersMock, 'POST', 'admin.riskProviders.setConfig')
+export function mockConfigurationTreeFullAccount() {
+  cy.intercept('POST', 'accounts.getSchema', { body: expectedSchemaResponse }).as('getSchema')
+  cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockPreferencesResponse }).as('getPreferences')
+  cy.intercept('POST', 'accounts.communications.settings.search', { body: expectedCommunicationResponse }).as('getCommunication')
+  cy.intercept('POST', 'admin.getSiteConfig', { body: siteConfigResponse }).as('getSiteConfig')
 }
 
 export function mockGetUserSitesRequest() {
@@ -280,10 +273,9 @@ export function writeParentSiteTable(baseDomain, siteDescription, dataCenterOpti
   cy.get('[data-cy ="descriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(siteDescription).should('have.value', siteDescription)
   cy.wait(1000)
   cy.get('[data-cy ="dataCenterSelect"]').click()
-  cy.get('ui5-static-area-item').shadow().find('.ui5-select-popover').eq(1).find('ui5-li').eq(dataCenterOption).realClick()
+  cy.get('ui5-static-area-item').shadow().find('ui5-responsive-popover').eq(7).find('ui5-li').eq(dataCenterOption).realClick()
   cy.wait(500)
 }
-
 export function writeChildrenSiteTable(childrenDomain, childrenDescription) {
   cy.get('[data-cy ="childBaseDomainInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDomain).should('have.value', childrenDomain)
   cy.get('[data-cy ="childDescriptionInput"]').shadow().find('[class = "ui5-input-inner"]').type(childrenDescription).should('have.value', childrenDescription)

@@ -14,6 +14,11 @@ class UrlBuilder {
     return `${protocol}://${namespace}.${dc}.${domain}/${endpoint}`
   }
 
+  static buildGigyaPageUrl(gigyaConsole, apiKey, partner, endpoint) {
+    const console = this.#getConsole(gigyaConsole)
+    const protocol = 'https'
+    return `${protocol}://${console}/#/${partner}/${apiKey}/${endpoint}`
+  }
   static #getConsole(gigyaConsole) {
     return gigyaConsole ? gigyaConsole : dataCenters.filter((dataCenter) => dataCenter.isDefault === true)[0].console
   }

@@ -87,7 +87,6 @@ export const riskProvidersResponse = {
   config: {
     subscriberId: '',
     account: '',
-    password: '',
     environment: 0,
     integrationPoint: '',
   },

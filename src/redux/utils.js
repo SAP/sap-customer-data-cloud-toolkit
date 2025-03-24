@@ -12,6 +12,7 @@ export const getApiKey = (hash) => {
   }
   return apiKey !== undefined ? apiKey : ''
 }
+
 export const getScreenSet = (hash) => {
   if (hash.href.includes('screenSetId')) {
     const match = hash.href.split('?')[1]
@@ -21,6 +22,15 @@ export const getScreenSet = (hash) => {
   }
 }
 
+export const getPartner = (hash) => {
+  let partner
+  if (hash.includes('login?returnUrl=')) {
+    partner = hash.split('/')[2]
+  } else {
+    partner = hash.split('/')[1]
+  }
+  return partner
+}
 export const getErrorAsArray = (error) => {
   return Array.isArray(error) ? error : [error]
 }
