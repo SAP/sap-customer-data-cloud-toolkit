@@ -6,7 +6,7 @@
 import { removePropertyFromObjectCascading } from '../copyConfig/objectHelper'
 
 export const removeIgnoredFields = (obj) => {
-  const ignoredFields = ['callId', 'time', 'lastModified']
+  const ignoredFields = ['callId', 'time', 'lastModified', 'version']
   const newObj = { ...obj }
   ignoredFields.forEach((field) => {
     removePropertyFromObjectCascading(newObj, field)
