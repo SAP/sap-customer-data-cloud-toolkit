@@ -6,8 +6,6 @@
 export const preferencesFieldId = 'preferences'
 export const communicationFieldId = 'communications'
 export const communicationMandatoryFieldId = 'status'
-export const fullAccountType = 'Full'
-export const liteAccountType = 'Lite'
 export const getRootElements = [
   'uid',
   'dataCenter',

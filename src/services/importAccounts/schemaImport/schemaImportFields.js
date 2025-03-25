@@ -33,17 +33,22 @@ class SchemaImportFields {
     result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
     return result
   }
+
   async exportLiteSchemaData() {
     const result = []
     const schemaResponse = await this.getSchema()
-    const cleanSchemaResponse = this.cleanLiteSchemaData(schemaResponse)
+    if (schemaResponse.errorCode === 0) {
+      this.cleanLiteSchemaData(schemaResponse)
+      result.push(...extractAndTransformSchemaFields(schemaResponse))
+    }
 
-    result.push(...extractAndTransformSchemaFields(cleanSchemaResponse))
     return result
   }
+
   async getSchema() {
     return this.#schema.get()
   }
+
   cleanSchemaData(schemaResponse) {
     delete schemaResponse.apiVersion
     delete schemaResponse.context
@@ -95,7 +100,7 @@ class SchemaImportFields {
     delete schemaResponse.statusReason
     delete schemaResponse.time
     delete schemaResponse.callId
-    this.removeFieldFromSubscriptionSchema(schemaResponse)
+    this.removeFieldFromSubscriptionSchema(schemaResponse.subscriptionsSchema.fields)
     this.removeFieldFromAddressesSchema(schemaResponse)
     delete schemaResponse.addressesSchema
     delete schemaResponse.internalSchema

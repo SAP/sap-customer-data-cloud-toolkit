@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 const badRequest = 'Bad Request'
 const invalidApiParam = 'Invalid ApiKey parameter'
 const apiKey = 'apiKey'

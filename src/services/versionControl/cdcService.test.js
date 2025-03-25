@@ -166,7 +166,7 @@ describe('CdcService', () => {
 
       const configs = await cdcService.fetchCDCConfigs()
       const ammountOfResponses = countObjects(configs)
-      expect(ammountOfResponses).toBe(290)
+      expect(ammountOfResponses).toBe(291)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()

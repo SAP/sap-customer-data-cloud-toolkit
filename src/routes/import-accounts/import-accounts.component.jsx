@@ -2,13 +2,22 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
+import { useEffect, useState } from 'react'
 import { withTranslation } from 'react-i18next'
-import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUseStyles } from 'react-jss'
-import { Card, Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, CardHeader } from '@ui5/webcomponents-react'
+import { Bar, Title, Text, TitleLevel, FlexBox, Grid, Button, Select, Option, Panel, Label } from '@ui5/webcomponents-react'
 import styles from './import-accounts.styles.js'
-import { selectCurrentSiteInformation, getCurrentSiteInformation } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
+import ServerImportComponent from '../server-import/server-import.component.jsx'
+import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
+import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
+import {
+  selectCurrentSiteInformation,
+  getCurrentSiteInformation,
+  selectCurrentSiteApiKey,
+  updateCurrentSiteApiKey,
+} from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice.js'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice.js'
 import {
   getConfigurationTree,
@@ -21,12 +30,15 @@ import {
   selectIsLoading,
   clearConfigurations,
   setSuggestionClickConfiguration,
+  selectAccountType,
+  setAccountOptionType,
+  clearSelectConfiguration,
 } from '../../redux/importAccounts/importAccountsSlice.js'
-import ImportAccountsConfigurations from '../../components/import-accounts-configurations/import-accounts-configurations.component.jsx'
-import SearchBar from '../../components/search-schema-input/search-schemas-input.component.jsx'
-import { getApiKey } from '../../redux/utils.js'
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
+import { ROUTE_IMPORT_ACCOUNTS } from '../../inject/constants.js'
+import { getApiKey } from '../../redux/utils.js'
+import { clearServerConfigurations, selectServerProvider } from '../../redux/serverImport/serverImportSlice.js'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
@@ -35,29 +47,50 @@ const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const credentials = useSelector(selectCredentials)
-  const apikey = getApiKey(window.location.hash)
+  const apikey = useSelector(selectCurrentSiteApiKey)
   const isLoading = useSelector(selectIsLoading)
+  const accountType = useSelector(selectAccountType)
   const [schemaInputValue, setSchemaInputValue] = useState('')
   const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
   const [expandableNode, setExpandableNode] = useState(false)
-  const [accountOption, setAccountOption] = useState('Full')
+  const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
+  const serverProviderOption = useSelector(selectServerProvider)
+  window.navigation.onnavigate = (event) => {
+    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_IMPORT_ACCOUNTS)) {
+      if (apikey !== getApiKey(window.location.hash)) {
+        dispatch(updateCurrentSiteApiKey())
+      }
+      dispatch(getCurrentSiteInformation())
+      dispatch(getConfigurationTree(accountType))
+      dispatch(setAccountOptionType(accountType))
+      dispatch(clearSelectConfiguration())
+      dispatch(clearConfigurations())
+      dispatch(clearServerConfigurations(serverProviderOption))
+      setTreeNodeInputValue('')
+      setSchemaInputValue('')
+      setExpandableNode(false)
+    }
+  }
+
   useEffect(() => {
     dispatch(getCurrentSiteInformation())
-    dispatch(getConfigurationTree('Full'))
-  }, [dispatch, apikey, credentials, currentSiteInfo.dataCenter])
+    dispatch(getConfigurationTree(accountType))
+    dispatch(setAccountOptionType(accountType))
+  }, [dispatch, apikey, credentials, accountType, currentSiteInfo.dataCenter])
 
   const onSaveHandler = async () => {
-    dispatch(setConfigurations(accountOption))
+    dispatch(setConfigurations(accountType))
     await trackUsage({ featureName: PAGE_TITLE })
   }
+
   const handleSelectChange = (event) => {
     const selectedValue = event.target.value
     dispatch(getCurrentSiteInformation())
     dispatch(getConfigurationTree(selectedValue))
-    setAccountOption(selectedValue)
+    dispatch(setAccountOptionType(selectedValue))
   }
 
   const handleTreeNodeClick = (treeNodeId) => {
@@ -81,9 +114,11 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const disableSaveButton = () => {
     return !areConfigurationsFilled(configurations) || isLoading
   }
+
   const showConfigurations = (config) => {
     return (
       <ImportAccountsConfigurations
@@ -96,10 +131,18 @@ const ImportAccountsComponent = ({ t }) => {
       />
     )
   }
+
   const onCancelHandler = () => {
     if (!isLoading) {
       dispatch(clearConfigurations())
+      setSchemaInputValue('')
+      setTreeNodeInputValue()
+      setExpandableNode(false)
     }
+  }
+
+  const handleToggleCard = () => {
+    setExpanded(true)
   }
 
   return (
@@ -122,16 +165,15 @@ const ImportAccountsComponent = ({ t }) => {
                 {t('IMPORT_ACCOUNTS_COMPONENT_TEXT')}
               </Text>
             </FlexBox>
-            <Card
-              header={
-                <CardHeader
-                  titleText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
-                  className={classes.titleSpanStyle}
-                  subtitleText={t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}
-                ></CardHeader>
-              }
-              className={classes.cardContainer}
+            <Panel
+              id="importAccountsPanel"
+              className={classes.panelContainer}
+              headerText={t('IMPORT_ACCOUNTS_SELECT_SCHEMA_FIELDS')}
+              collapsed={!isCardExpanded}
+              onToggle={handleToggleCard}
+              noAnimation={true}
             >
+              <Label>{t('IMPORT_ACCOUNTS_FORM_HEADER_TEXT')}</Label>
               <Grid>
                 <>
                   <div className={classes.currentInfoContainer} data-layout-span="XL5 L5 M5 S5">
@@ -159,7 +201,6 @@ const ImportAccountsComponent = ({ t }) => {
                 </>
               </Grid>
               {showConfigurations(treeNodeInputValue ? selectedConfigurations : configurations)}
-
               <div className={classes.selectConfigurationOuterDivStyle}>
                 <div className={classes.selectConfigurationInnerDivStyle}>
                   <Bar
@@ -192,8 +233,9 @@ const ImportAccountsComponent = ({ t }) => {
                   ></Bar>
                 </div>
               </div>
-            </Card>
+            </Panel>
           </div>
+          <ServerImportComponent />
         </div>
       </div>
     </>

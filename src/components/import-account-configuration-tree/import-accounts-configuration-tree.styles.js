@@ -6,7 +6,8 @@
 const styles = {
   tooltipIconStyle: {
     alignSelf: 'center',
-    marginLeft: '6px',
+    marginLeft: '4px',
+    color: '#1d2d3e',
   },
 }
 

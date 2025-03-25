@@ -2,7 +2,9 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { spacing } from '@ui5/webcomponents-react-base'
+
 const styles = {
   errorDialogStyle: {
     textAlign: 'left',
@@ -30,15 +32,21 @@ const styles = {
   },
 
   outerDivStyle: {
-    composes: 'cdc-tools-background',
-    maxHeight: '80vh',
     ...spacing.sapUiSmallMargin,
   },
-  fullContainer: {
-    overflowY: 'auto',
+  panelContainer: {
     width: '100%',
   },
+  fullContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: 'auto',
+    height: '90vh',
+    width: '100%',
+    composes: 'cdc-tools-background',
+  },
   headerOuterDivStyle: {
+    ...spacing.sapUiSmallMarginBottom,
     width: '100%',
   },
   selectAccountDiv: {

@@ -37,6 +37,7 @@ export const MENU_ELEMENTS = [
   { name: 'Copy Config. Extended', appendAfterText: 'Copy Configuration', route: ROUTE_COPY_CONFIG_EXTENDED },
   { name: 'Import Data', appendAfterText: 'Dataflows', route: ROUTE_IMPORT_ACCOUNTS },
   { name: 'Version Control', appendAfterText: 'Certificate Provisioning', route: ROUTE_VERSION_CONTROL },
+  { name: 'Import Data', appendAfterText: 'Dataflows', route: ROUTE_IMPORT_ACCOUNTS },
   { name: 'Prettier', route: ROUTE_PRETTIER },
   { name: 'Prettify all screens', route: ROUTE_PRETTIFY_ALL_SCREENS },
 ]

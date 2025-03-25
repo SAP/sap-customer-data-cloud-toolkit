@@ -6,6 +6,7 @@ describe('Import Account - Configuration Tree test suite', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
@@ -47,11 +48,19 @@ describe('Import Account - Configuration Tree test suite', () => {
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.optIn.acceptanceLocation"]').click()
       cy.get('#importAccountsCard').find('[id="communications.C_mobileApp.status"]').should('have.prop', 'checked')
     })
+
+    it('Should clear all the checkboxes when the user clicks on the cancel button', () => {
+      cy.get('#profile').click()
+      cy.get('#importDataCancelButton').click()
+      cy.wait(1000)
+      cy.get('#profile').shadow().find('[role="checkbox"]').should('not.have.prop', 'checked')
+    })
   })
-  context.only('Configuration Tree - Search Tree ', () => {
+  context('Configuration Tree - Search Tree ', () => {
     beforeEach(() => {
       utils.mockConfigurationTreeFullAccount()
       utils.startUp('Import Data')
+      cy.get('#importAccountsPanel').click()
       utils.getImportAccountsInformation()
     })
     afterEach(() => {
@@ -61,8 +70,13 @@ describe('Import Account - Configuration Tree test suite', () => {
     })
     it('Should write on the search input and check the amount of checkboxes', () => {
       cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
-      cy.get('#schemaInput').shadow().find('input').type('data.loyalty.rewardPoints')
+      cy.get('#schemaInput').shadow().find('input').type('data.loyalty.rewardPoints').type('{enter}')
       cy.get('#importAccountsCard').get('ui5-tree-item-custom').should('have.length', 3)
+    })
+    it('Should write on the search input and we should not see any configuration if the name does not exist', () => {
+      cy.get('#importAccountsCard').get('ui5-tree').should('have.length', 20)
+      cy.get('#schemaInput').shadow().find('input').type('testing')
+      cy.get('#schemaInput').find('ui5-suggestion-item').should('not.exist')
     })
   })
 })

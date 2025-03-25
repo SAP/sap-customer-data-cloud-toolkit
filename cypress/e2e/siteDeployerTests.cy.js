@@ -15,7 +15,7 @@ describe('Site Deployer Test Suite', () => {
 
   it('Should create 3 parent sites with different datacenters', () => {
     utils.getBaseDomain(dataTest.baseDomain, 0)
-    utils.getSiteStructure(1)
+    utils.getSiteStructure(5)
     cy.get('[data-cy ="cdctools-siteStructure"]').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
     utils.getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '18')
@@ -27,7 +27,7 @@ describe('Site Deployer Test Suite', () => {
   it('Should create 3 parent sites (dev, stag, prod) with US datacenter', () => {
     utils.getCreateButton().should('be.disabled')
     utils.getBaseDomain(dataTest.baseDomain, 0)
-    utils.getSiteStructure(1)
+    utils.getSiteStructure(5)
     cy.get('[data-cy ="cdctools-siteStructure"]').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
     utils.getDataCenters('US')
     utils.getCreateButton().should('not.be.disabled')

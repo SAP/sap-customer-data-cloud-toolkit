@@ -18,6 +18,7 @@ export const expectedSchemaResponse = {
   callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',
   statusCode: 200,
   statusReason: 'OK',
+  errorCode: 0,
   time: '2024-12-05T18:17:23.716Z',
   profileSchema: profileSchemaFields,
   dataSchema: dataSchemaFields,
@@ -56,11 +57,6 @@ export const expectedSchemaCleanAddress = {
   subscriptionsSchema: subscriptionsSchemaFields,
   internalSchema: internalSchemaFields,
   addressesSchema: addressesSchemaFields,
-}
-export const expectedSchemaResponseWithoutFields = {
-  profileSchema: profileSchemaFields,
-  dataSchema: dataSchemaFields,
-  subscriptionsSchema: subscriptionsSchemaFields,
 }
 export const expectedSchemaResponseCleaned = {
   callId: 'e67ef8a0e6314103a7b2ef4bdda4da69',

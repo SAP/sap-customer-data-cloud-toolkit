@@ -1,7 +1,12 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import ImportAccounts from '../../services/importAccounts/importAccounts'
 import { clearConfigurationsErrors, clearTargetSitesErrors, findConfiguration } from '../copyConfigurationExtended/utils'
 import { getApiKey, getErrorAsArray } from '../utils'
-import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, getConfigurationPath } from './utils'
+import { setParentsValue, propagateConfigurationSelectBox, getAllConfiguration, clearConfigurationsState, setSugestionItemParent } from './utils'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const IMPORT_ACCOUNTS_STATE_NAME = 'importAccounts'
 const GET_CONFIGURATIONS_ACTION = `${IMPORT_ACCOUNTS_STATE_NAME}/getConfigurationTree`
@@ -18,6 +23,7 @@ export const importAccountsSlice = createSlice({
     showSuccessMessage: false,
     currentSiteInformation: {},
     selectedConfiguration: [],
+    accountType: 'Full',
   },
   reducers: {
     setConfigurationStatus(state, action) {
@@ -55,17 +61,23 @@ export const importAccountsSlice = createSlice({
       propagateConfigurationSelectBox(configuration, action.payload)
     },
     setSugestionSchema(state, action) {
-      setParentsValue(state.selectedConfiguration, action.payload.checkBoxId, action.payload.value)
+      setSugestionItemParent(state.selectedConfiguration, state.configurations, action.payload.checkBoxId, action.payload.value)
     },
     setSuggestionClickConfiguration(state, action) {
-      const config = getConfigurationPath(state.selectedConfiguration, action.payload.checkBoxId)
-      if (config) {
-        state.selectedConfiguration = [config]
+      const configuration = getAllConfiguration(state.configurations, [action.payload.checkBoxId])
+      if (configuration.length > 0) {
+        state.selectedConfiguration = configuration
       }
     },
     setSelectedConfiguration(state, action) {
       const configuration = getAllConfiguration(state.configurations, action.payload)
       state.selectedConfiguration = configuration
+    },
+    setAccountOptionType(state, action) {
+      state.accountType = action.payload
+    },
+    clearSelectConfiguration(state) {
+      state.selectedConfiguration = []
     },
   },
   extraReducers: (builder) => {
@@ -136,11 +148,13 @@ export const {
   setSugestionSchema,
   setSwitchOptions,
   clearConfigurations,
+  setAccountOptionType,
+  clearSelectConfiguration,
 } = importAccountsSlice.actions
 
 export const selectConfigurations = (state) => state.importAccounts.configurations
 export const selectIsLoading = (state) => state.importAccounts.isLoading
 export const selectSugestionConfigurations = (state) => state.importAccounts.selectedConfiguration
 export const selectParentNode = (state) => state.importAccounts.parentNode
-
+export const selectAccountType = (state) => state.importAccounts.accountType
 export default importAccountsSlice.reducer

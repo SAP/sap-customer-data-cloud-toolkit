@@ -1,3 +1,8 @@
+/*
+ * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
+ * License: Apache-2.0
+ */
+
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
 
 export const profileSchemaFields = {
@@ -392,19 +397,19 @@ export const preferencesBranches = [
 
 export const communicationsBranches = [
   {
-    id: 'C_Email',
+    id: 'communications.C_Email',
     name: 'C_Email',
     value: false,
     branches: [{ id: 'communications.C_Email.status', name: 'status', value: false, branches: [] }],
   },
   {
-    id: 'T_Email',
+    id: 'communications.T_Email',
     name: 'T_Email',
     value: false,
     branches: [{ id: 'communications.T_Email.status', name: 'status', value: false, branches: [] }],
   },
   {
-    id: 'C_mobileApp',
+    id: 'communications.C_mobileApp',
     name: 'C_mobileApp',
     value: false,
     branches: [

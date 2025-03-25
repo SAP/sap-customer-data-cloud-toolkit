@@ -2,10 +2,11 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
 import { profileBranches, dataBranches, subscriptionsBranches, internalBranches, addressesBranches, preferencesBranches, communicationsBranches } from './mainDataSet'
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
 export const expectedFullAccount = [
-  { id: 'uid', name: 'uid', value: true, branches: [], mandatory: true },
+  { id: 'uid', name: 'uid', value: true, branches: [], mandatory: true, tooltip: 'When importing a new account the UID column must be empty' },
   { id: 'profile', name: 'profile', value: false, branches: profileBranches, switchId: 'object' },
   { id: 'data', name: 'data', value: false, branches: dataBranches, switchId: 'object' },
   { id: 'subscriptions', name: 'subscriptions', value: false, branches: subscriptionsBranches, switchId: 'object' },
@@ -21,8 +22,8 @@ export const expectedFullAccount = [
     value: false,
     branches: [
       { id: 'loginIds.username', name: 'username', value: false, branches: [] },
-      { id: 'loginIds.email', name: 'email', value: false, branches: [] },
-      { id: 'loginIds.unverifiedEmail', name: 'unverifiedEmail', value: false, branches: [] },
+      { id: 'loginIds.emails', name: 'emails', value: false, branches: [] },
+      { id: 'loginIds.unverifiedEmails', name: 'unverifiedEmails', value: false, branches: [] },
     ],
   },
   { id: 'isActive', name: 'isActive', value: false, branches: [] },
@@ -40,7 +41,7 @@ export const expectedResultFromTree = [
   'uid',
   'phoneNumber',
   'loginIds.username',
-  'loginIds.email',
+  'loginIds.emails',
   'isActive',
   'profile.photoURL',
   'profile.oidcData.website',
