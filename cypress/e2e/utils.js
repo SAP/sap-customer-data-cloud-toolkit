@@ -9,12 +9,8 @@ import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, ex
 import { expectedCommunicationResponse } from '../../src/services/importAccounts/communicationImport/dataTest'
 import { mockPreferencesResponse } from '../../src/services/importAccounts/preferencesImport/dataTest'
 import { expectedSchemaResponse } from '../../src/services/importAccounts/schemaImport/schemaDatatest'
-import { expectedCommunicationResponse } from '../../src/services/importAccounts/communicationImport/dataTest'
-import { mockPreferencesResponse } from '../../src/services/importAccounts/preferencesImport/dataTest'
-import { expectedSchemaResponse } from '../../src/services/importAccounts/schemaImport/schemaDatatest'
 import {
   dummyApiKey,
-  mockedCreateDataflowResponse,
   mockedCreateExtensionExpectedResponse,
   mockedGetCommunicationChannelsExpectedResponse,
   mockedGetCommunicationTopicsExpectedResponse,
@@ -25,33 +21,16 @@ import {
   mockedGetPolicyResponse,
   mockedGetSchemaResponse,
   mockedGetScreenSetResponse,
-  mockedPrettierGetScreenSetResponse,
   mockedGetSmsConfigsResponse,
   mockedGetSocialsConfigsResponse,
   mockedGetWebhookExpectedResponse,
-  mockedSearchDataflowsEmptyResponse,
   mockedSearchDataflowsResponse,
-  mockedSetCommunicationResponse,
-  mockedSetConsentResponse,
-  mockedSetDataflowResponse,
-  mockedSetExtensionResponse,
-  mockedSetPolicyResponse,
-  mockedSetRbaPolicyResponse,
-  mockedSetRiskAssessmentResponse,
-  mockedSetSchemaResponse,
-  mockedSetSmsTemplatesResponse,
-  mockedSetSocialsConfigsResponse,
-  mockedSetUnknownLocationNotificationResponse,
-  mockedSetWebhookResponse,
   mockedUserSitesResponse,
   policiesPopoverText,
   siteConfigResponse,
   targetSitePopoverText,
   getRecaptchaExpectedResponse,
   getRiskProvidersResponse,
-  setCaptchaConfigMock,
-  setPoliciesMock,
-  setRiskProvidersMock,
   serverImportHeader,
   importData,
   importAccountsDescription,
