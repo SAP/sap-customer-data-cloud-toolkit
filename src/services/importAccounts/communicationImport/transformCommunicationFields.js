@@ -41,6 +41,7 @@ function transformCommunications(communications, parentKey) {
       value: false,
       branches: [],
     }
+
     channels[item.topicChannelId].branches.push(statusBranch)
     if (item.schema && item.schema.properties && item.schema.properties.optIn) {
       const optInProperties = item.schema.properties.optIn.properties

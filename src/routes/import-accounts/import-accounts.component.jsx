@@ -104,6 +104,7 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
   const handleSuggestionClick = (nodeId) => {
     if (nodeId) {
       dispatch(setSuggestionClickConfiguration({ checkBoxId: nodeId }))

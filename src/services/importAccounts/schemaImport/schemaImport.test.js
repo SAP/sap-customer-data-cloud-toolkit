@@ -62,11 +62,13 @@ describe('Import Account - SchemaImport test suite', () => {
     const response = await schemaImport.exportLiteSchemaData()
     expect(response).toEqual(expectedLiteSchemaResponse)
   })
+
   test('get schema data successfully', async () => {
     axios.mockResolvedValueOnce({ data: expectedSchemaResponse })
     const response = await schemaImport.getSchema()
     expect(response).toEqual(expectedSchemaResponse)
   })
+
   test('clean lite schema data successfully', () => {
     const schemaResponse = { ...expectedSchemaResponse }
     const cleanedSchema = schemaImport.cleanLiteSchemaData(schemaResponse)

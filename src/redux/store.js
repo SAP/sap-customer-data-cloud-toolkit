@@ -29,6 +29,7 @@ export default configureStore({
     siteDeployerCopyConfiguration: siteDeployerCopyConfigurationReducer,
     targetSitesTooltipIcon: targetSitesTooltipIconReducer,
     serverImport: serverImportExtendedSliceReducer,
+    serverImport: serverImportExtendedSliceReducer,
     importAccounts: importAccountsSliceReducer,
     versionControl: versionControlReducer,
   },
