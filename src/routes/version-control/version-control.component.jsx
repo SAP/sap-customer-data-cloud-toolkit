@@ -65,7 +65,6 @@ const VersionControlComponent = ({ t }) => {
   const errors = useSelector(selectError)
   const repo = useSelector(selectRepo)
   const apiKey = useSelector(selectCurrentSiteApiKey)
-
   const filesToUpdate = useSelector(selectFilesToUpdate)
   const [commitMessage, setCommitMessage] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -155,13 +154,16 @@ const VersionControlComponent = ({ t }) => {
     setIsLoading(true)
 
     try {
-      await dispatch(getRevertChanges(sha))
+      const response = await dispatch(getRevertChanges(sha))
+      if (getRevertChanges.rejected.match(response)) {
+        throw new Error('Failed to revert changes')
+      }
       await dispatch(fetchCommits())
       setSuccessMessage(t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
     } catch (error) {
       console.error('Error reverting commit:', error)
-      setErrorMessage(t('VERSION_CONTROL.REVERT.ERROR.MESSAGE'))
+      setErrorMessage(error.message)
       setShowErrorDialog(true)
     } finally {
       setIsLoading(false)
@@ -346,6 +348,11 @@ const VersionControlComponent = ({ t }) => {
                     >
                       {t('VERSION_CONTROL.BACKUP')}
                     </Button>
+                  </div>
+                  <div>
+                    <Text id="versionControlTitle" data-cy="versionControlTitle" level={'H5'} className={classes.titleStyle}>
+                      <span className={classes.credentialsDescriptionStyle}>{t('VERSION_CONTROL.WAIT_FOR_COMMIT')}</span>
+                    </Text>
                   </div>
                 </>
 

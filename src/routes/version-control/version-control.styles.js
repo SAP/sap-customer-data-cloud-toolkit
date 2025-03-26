@@ -183,7 +183,6 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiSmallMarginBegin,
     width: '-webkit-fill-available',
-    ...spacing.sapUiSmallMarginBottom,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -229,7 +228,7 @@ const styles = {
     fontFamily: 'var(--sapFontFamily)',
     fontSize: 'var(--sapFontSize)',
     fontWeight: 'var(--sapFontWeight)',
-    marginLeft: '17px',
+    marginLeft: '8px',
   },
   credentialsGridStyle: {
     ...spacing.sapUiSmallMarginTop,

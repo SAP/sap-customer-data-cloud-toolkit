@@ -167,5 +167,6 @@
   "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",
   "VERSION_CONTROL.TITLE": "Version Control",
   "VERSION_CONTROL.UPLOAD_MESSAGE": "The following configurations were modified and will be uploaded:",
-  "VERSION_CONTROL.VERSION_LIST": "Version List"
+  "VERSION_CONTROL.VERSION_LIST": "Version List",
+  "VERSION_CONTROL.WAIT_FOR_COMMIT": "After a backup, the commit entry may take time to appear on the list below."
 }
