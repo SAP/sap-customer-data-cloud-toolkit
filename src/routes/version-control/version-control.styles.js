@@ -229,7 +229,7 @@ const styles = {
     fontFamily: 'var(--sapFontFamily)',
     fontSize: 'var(--sapFontSize)',
     fontWeight: 'var(--sapFontWeight)',
-    marginLeft: '17px',
+    marginLeft: '8px',
   },
   credentialsGridStyle: {
     ...spacing.sapUiSmallMarginTop,
