@@ -49,6 +49,65 @@ describe('GitHub Test Suit', () => {
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
 
+  it('should get an error Validating Token', async () => {
+    const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('Invalid Token')) // Simulate invalid credentials
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }] })
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+        repos: {
+          listBranches: getBranchesMock,
+        },
+      },
+    }
+    await expect(github.listBranches(defaultBranch)).rejects.toThrow('Invalid Token')
+  })
+
+  it('should get an error Validating Credentials when login does not match owner', async () => {
+    const getUsersMock = jest.fn().mockResolvedValueOnce({
+      data: { login: 'differentOwner' }, // Simulate a different login
+    })
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+      },
+    }
+    await expect(github.listBranches('testBranch')).rejects.toThrow('Invalid Credentials')
+  })
+
+it('should throw an error when the main branch does not exist - storeCdcDataInVersionControl', async () => {
+  const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: 'testOwner' } }) // Mock valid credentials
+  const getBranchMock = jest.fn().mockRejectedValueOnce(new Error('there is no main branch for this repository'))
+  const listBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: 'main' }] }) // Mock branch listing
+  const fetchAndPrepareFilesMock = jest.fn().mockResolvedValueOnce([{ path: 'path', content: 'content' }]) // Mock valid updates
+
+  github.versionControl = {
+    rest: {
+      users: {
+        getAuthenticated: getUsersMock,
+      },
+      repos: {
+        getBranch: getBranchMock,
+        listBranches: listBranchesMock,
+      },
+    },
+  }
+
+  jest.spyOn(github, 'fetchAndPrepareFiles').mockImplementation(fetchAndPrepareFilesMock)
+
+  const commitMessage = 'test commit'
+  const configs = { key: 'value' }
+  const apiKey = 'testApiKey'
+
+  await expect(github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)).rejects.toThrow('there is no main branch for this repository')
+})
+
   it('should stop fetching commits when response data is less than per_page - getCommits', async () => {
     const getListCommits = jest
       .fn()
@@ -371,41 +430,40 @@ describe('GitHub Test Suit', () => {
     expect(result[0].sha).toBeUndefined()
   })
 
-// it('should not store data if there are no valid updates - storeCdcDataInVersionControl', async () => {
-//   jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce([]) // Simulate no valid updates
+  // it('should not store data if there are no valid updates - storeCdcDataInVersionControl', async () => {
+  //   jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce([]) // Simulate no valid updates
 
-//   const commitMessage = 'test commit'
-//   const configs = { key: 'value' }
+  //   const commitMessage = 'test commit'
+  //   const configs = { key: 'value' }
 
-//   const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: 'testMainBranchSha' } } })
-//   const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: { ref: 'refs/heads/test' } })
-//   const getListCommitsMock = jest.fn().mockResolvedValueOnce({ data: [{ commit: 'testCommit' }] })
-//   const updateRefMock = jest.fn().mockResolvedValueOnce({ data: {} })
+  //   const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: 'testMainBranchSha' } } })
+  //   const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: { ref: 'refs/heads/test' } })
+  //   const getListCommitsMock = jest.fn().mockResolvedValueOnce({ data: [{ commit: 'testCommit' }] })
+  //   const updateRefMock = jest.fn().mockResolvedValueOnce({ data: {} })
 
-//   github.versionControl = {
-//     rest: {
-//       repos: {
-//         getBranch: getBranchMock,
-//         listBranches: jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }] }),
-//         listCommits: getListCommitsMock,
-//       },
-//       git: {
-//         createRef: getCreateRefMock,
-//         updateRef: updateRefMock,
-//       },
-//       users: {
-//         getAuthenticated: jest.fn().mockResolvedValueOnce({ data: { login: owner } }),
-//       },
-//     },
-//   }
+  //   github.versionControl = {
+  //     rest: {
+  //       repos: {
+  //         getBranch: getBranchMock,
+  //         listBranches: jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }] }),
+  //         listCommits: getListCommitsMock,
+  //       },
+  //       git: {
+  //         createRef: getCreateRefMock,
+  //         updateRef: updateRefMock,
+  //       },
+  //       users: {
+  //         getAuthenticated: jest.fn().mockResolvedValueOnce({ data: { login: owner } }),
+  //       },
+  //     },
+  //   }
 
-//   await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo)
+  //   await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo)
 
-//   // After storeCdcDataInVersionControl, check the number of valid updates.
-//   const validUpdates = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
-//   expect(validUpdates.length).toBe(0) // There should be no valid updates
-// })
-
+  //   // After storeCdcDataInVersionControl, check the number of valid updates.
+  //   const validUpdates = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
+  //   expect(validUpdates.length).toBe(0) // There should be no valid updates
+  // })
 
   it('should fetch and prepare files', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
