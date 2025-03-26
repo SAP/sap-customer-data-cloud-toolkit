@@ -183,7 +183,6 @@ const styles = {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiSmallMarginBegin,
     width: '-webkit-fill-available',
-    ...spacing.sapUiSmallMarginBottom,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',

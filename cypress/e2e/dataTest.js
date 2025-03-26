@@ -1842,7 +1842,7 @@ const mockedVersionControlGetResponse = {
   name: 'main',
   commit: {
     sha: 'testSha',
-    url: 'testurl.com/repos/testOwner/testRepo/commits/testSha',
+    url: 'https://api.github.com/repos/testOwner/testRepo/commits/testSha',
   },
   protected: false,
 }
@@ -1880,19 +1880,19 @@ const mockedUserAuthentication = {
   login: 'testOwner',
   id: 48961605,
   node_id: 'MDQ6VXNlcjQ4OTYxNjA1',
-  avatar_url: 'testurl.com/u/48961605?v=4',
+  avatar_url: 'https://api.github.com/u/48961605?v=4',
   gravatar_id: '',
-  url: 'testurl.com/users/testOwner',
-  html_url: 'testurl.com/testOwner',
-  followers_url: 'testurl.com/users/testOwner/followers',
-  following_url: 'testurl.com/users/testOwner/following{/other_user}',
-  gists_url: 'testurl.com/users/testOwner/gists{/gist_id}',
-  starred_url: 'testurl.com/users/testOwner/starred{/owner}{/repo}',
-  subscriptions_url: 'testurl.com/users/testOwner/subscriptions',
-  organizations_url: 'testurl.com/users/testOwner/orgs',
-  repos_url: 'testurl.com/users/testOwner/repos',
-  events_url: 'testurl.com/users/testOwner/events{/privacy}',
-  received_events_url: 'testurl.com/users/testOwner/received_events',
+  url: 'https://api.github.com/users/testOwner',
+  html_url: 'https://api.github.com/testOwner',
+  followers_url: 'https://api.github.com/users/testOwner/followers',
+  following_url: 'https://api.github.com/users/testOwner/following{/other_user}',
+  gists_url: 'https://api.github.com/users/testOwner/gists{/gist_id}',
+  starred_url: 'https://api.github.com/users/testOwner/starred{/owner}{/repo}',
+  subscriptions_url: 'https://api.github.com/users/testOwner/subscriptions',
+  organizations_url: 'https://api.github.com/users/testOwner/orgs',
+  repos_url: 'https://api.github.com/users/testOwner/repos',
+  events_url: 'https://api.github.com/users/testOwner/events{/privacy}',
+  received_events_url: 'https://api.github.com/users/testOwner/received_events',
   type: 'User',
   user_view_type: 'private',
   site_admin: false,
@@ -1927,8 +1927,8 @@ const mockedUserAuthentication = {
 const createCommitResponse = {
   sha: 'testSha',
   node_id: 'C_kwDONOvK_toAKDRkZTc0NDAwNmJjMDFkZTA1ZmRkOTA2MmI2YWY3ZjRmMjVmYTdjNjY',
-  url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
-  html_url: 'testurl.com/testOwner/testRepo/commit/testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
+  html_url: 'https://api.github.com/testOwner/testRepo/commit/testSha',
   author: {
     name: 'testOwner',
     email: '48961605+testOwner@users.noreply.github.com',
@@ -1941,14 +1941,14 @@ const createCommitResponse = {
   },
   tree: {
     sha: 'testSha',
-    url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
   },
   message: 'Backup created',
   parents: [
     {
       sha: 'testSha',
-      url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
-      html_url: 'testurl.com/testOwner/testRepo/commit/testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
+      html_url: 'https://api.github.com/testOwner/testRepo/commit/testSha',
     },
   ],
   verification: {
@@ -2029,9 +2029,9 @@ const mockedVersionControlGetCommitsResponse = [
       message: 'Create test CDCRepo branch creation',
       tree: {
         sha: 'testSha',
-        url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+        url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
       },
-      url: 'testurl.com/repos/testOwner/testRepo/commits/testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/commits/testSha',
       comment_count: 0,
       verification: {
         verified: true,
@@ -2049,26 +2049,41 @@ const mockedVersionControlGetCommitsResponse = [
       node_id: 'MDQ6VXNlcjE5ODY0NDQ3',
       avatar_url: 'test.com/u/19864447?v=4',
       gravatar_id: '',
-      url: 'testurl.com/users/web-flow',
+      url: 'https://api.github.com/users/web-flow',
       html_url: 'https://github.com/web-flow',
-      followers_url: 'testurl.com/users/web-flow/followers',
-      following_url: 'testurl.com/users/web-flow/following{/other_user}',
-      gists_url: 'testurl.com/users/web-flow/gists{/gist_id}',
-      starred_url: 'testurl.com/users/web-flow/starred{/owner}{/repo}',
-      subscriptions_url: 'testurl.com/users/web-flow/subscriptions',
-      organizations_url: 'testurl.com/users/web-flow/orgs',
-      repos_url: 'testurl.com/users/web-flow/repos',
-      events_url: 'testurl.com/users/web-flow/events{/privacy}',
-      received_events_url: 'testurl.com/users/web-flow/received_events',
+      followers_url: 'https://api.github.com/users/web-flow/followers',
+      following_url: 'https://api.github.com/users/web-flow/following{/other_user}',
+      gists_url: 'https://api.github.com/users/web-flow/gists{/gist_id}',
+      starred_url: 'https://api.github.com/users/web-flow/starred{/owner}{/repo}',
+      subscriptions_url: 'https://api.github.com/users/web-flow/subscriptions',
+      organizations_url: 'https://api.github.com/users/web-flow/orgs',
+      repos_url: 'https://api.github.com/users/web-flow/repos',
+      events_url: 'https://api.github.com/users/web-flow/events{/privacy}',
+      received_events_url: 'https://api.github.com/users/web-flow/received_events',
       type: 'User',
       user_view_type: 'public',
       site_admin: false,
     },
+    files: [
+      {
+        sha: 'testSha',
+        filename: 'policies',
+        status: 'modified',
+        additions: 2,
+        deletions: 2,
+        changes: 4,
+        blob_url: 'https://github.com/testOwner/testRepo/blob/testSha/policies',
+        raw_url: 'https://github.com/testOwner/testRepo/raw/testSha/policies',
+        contents_url: '/repos/testOwner/testRepo/contents/policies?ref=testSha',
+        patch:
+          '@@ -1,11 +1,11 @@\n {\n-  "callId": "e4ac87ae7d6c403a8f9a29c44ba0ac49",\n+  "callId": "e848dff38ecf4beab8513b5a47c4545e",\n   "context": "{\\"id\\":\\"smsTemplates\\",\\"targetApiKey\\":\\"4_anUcVDIu7iIQP-uPNKi7aQ\\"}",\n   "errorCode": 0,\n   "apiVersion": 2,\n   "statusCode": 200,\n   "statusReason": "OK",\n-  "time": "2025-03-21T13:41:09.819Z",\n+  "time": "2025-03-21T14:35:00.264Z",\n   "templates": {\n     "otp": {\n       "globalTemplates": {',
+      },
+    ],
     parents: [
       {
         sha: 'testSha',
-        url: 'testurl.com/repos/testOwner/testRepo/commits/testSha',
-        html_url: 'testurl.com/testOwner/testRepo/commit/testSha',
+        url: 'https://api.github.com/repos/testOwner/testRepo/commits/testSha',
+        html_url: 'https://api.github.com/testOwner/testRepo/commit/testSha',
       },
     ],
   },
@@ -2077,22 +2092,22 @@ const mockedVersionControlGetCommitsResponse = [
 const mockFetchCommits = {
   ref: 'refs/heads/testApiKey',
   node_id: 'REF_abc123_bac',
-  url: 'testurl.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
   object: {
     sha: 'testsha',
     type: 'commit',
-    url: 'testurl.com/repos/testOwner/testRepo/git/commits/123abc123',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/123abc123',
   },
 }
 
 const mockGetBlob = {
   sha: 'testSha',
-  url: 'testurl.com/repos/testOwner/testRepo/git/blobs/testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/blobs/testSha',
 }
 
 const mockTree = {
   sha: 'testSha',
-  url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
   tree: [
     {
       path: 'testRepo',
@@ -2100,14 +2115,14 @@ const mockTree = {
       type: 'blob',
       sha: 'testSha',
       size: 22,
-      url: 'testurl.com/repos/testOwner/testRepo/git/blobs/testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/blobs/testSha',
     },
     {
       path: 'src',
       mode: '040000',
       type: 'tree',
       sha: 'testSha',
-      url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
     },
   ],
   truncated: false,
@@ -2116,7 +2131,7 @@ const mockTree = {
 const mockCommits = {
   sha: 'testSha',
   node_id: 'id_test',
-  url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
   html_url: 'test.com/testOwner/testRepo/commit/testSha',
   author: {
     name: 'testOwner',
@@ -2130,13 +2145,13 @@ const mockCommits = {
   },
   tree: {
     sha: 'testSha',
-    url: 'testurl.com/repos/testOwner/testRepo/git/trees/testSha',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/trees/testSha',
   },
   message: 'Backup created',
   parents: [
     {
       sha: 'testSha',
-      url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+      url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
       html_url: 'test.com/testOwner/testRepo/commit/testSha',
     },
   ],
@@ -2152,11 +2167,11 @@ const mockCommits = {
 const mockGetRef = {
   ref: 'refs/heads/testApiKey',
   node_id: 'testId',
-  url: 'testurl.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
+  url: 'https://api.github.com/repos/testOwner/testRepo/git/refs/heads/testApiKey',
   object: {
     sha: 'testSha',
     type: 'commit',
-    url: 'testurl.com/repos/testOwner/testRepo/git/commits/testSha',
+    url: 'https://api.github.com/repos/testOwner/testRepo/git/commits/testSha',
   },
 }
 
