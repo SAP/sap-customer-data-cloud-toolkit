@@ -23,107 +23,40 @@ function createMandatoryBranch(branchId) {
 export function getUID() {
   return createMandatoryBranch('uid')
 }
+function createNode(id, name, value = false, branches = []) {
+  return {
+    id,
+    name,
+    value,
+    branches,
+  }
+}
+
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
-    {
-      id: 'phoneNumber',
-      name: 'phoneNumber',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'loginIds',
-      name: 'loginIds',
-      value: false,
-      branches: [
-        {
-          id: 'loginIds.username',
-          name: 'username',
-          value: false,
-          branches: [],
-        },
-        {
-          id: 'loginIds.emails',
-          name: 'emails',
-          value: false,
-          branches: [],
-        },
-        {
-          id: 'loginIds.unverifiedEmails',
-          name: 'unverifiedEmails',
-          value: false,
-          branches: [],
-        },
-      ],
-    },
-    {
-      id: 'isActive',
-      name: 'isActive',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'isRegistered',
-      name: 'isRegistered',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'isVerified',
-      name: 'isVerified',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'verified',
-      name: 'verified',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'regSource',
-      name: 'regSource',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'dataCenter',
-      name: 'dataCenter',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'registered',
-      name: 'registered',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'context',
-      name: 'context',
-      value: false,
-      branches: [],
-    },
-
-    {
-      id: 'lang',
-      name: 'lang',
-      value: false,
-      branches: [],
-    },
+    createNode('phoneNumber', 'phoneNumber'),
+    createNode('loginIds', 'loginIds', false, [
+      createNode('loginIds.username', 'username'),
+      createNode('loginIds.emails', 'emails'),
+      createNode('loginIds.unverifiedEmails', 'unverifiedEmails'),
+    ]),
+    createNode('isActive', 'isActive'),
+    createNode('isRegistered', 'isRegistered'),
+    createNode('isVerified', 'isVerified'),
+    createNode('verified', 'verified'),
+    createNode('regSource', 'regSource'),
+    createNode('dataCenter', 'dataCenter'),
+    createNode('registered', 'registered'),
+    createNode('context', 'context'),
+    createNode('lang', 'lang'),
   ]
   return rootElementsStructure
 }
+
 export const getContext = () => {
-  return [
-    {
-      id: 'context',
-      name: 'context',
-      value: false,
-      branches: [],
-    },
-  ]
+  return [createNode('context', 'context')]
 }
+
 export const getLiteRootElementsStructure = () => {
   return createMandatoryBranch('email')
 }
