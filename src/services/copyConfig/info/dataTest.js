@@ -59,7 +59,7 @@ export function getExpectedSchemaResponseExcept(exceptions) {
   })
   return response
 }
-export function getInfoExpectedResponse(supports) {
+function createCommonResponse(supports) {
   const schemaOptions = new SchemaOptions(undefined)
   const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
 
@@ -178,139 +178,7 @@ export function getInfoExpectedResponse(supports) {
       },
     ],
   }
-  const recaptcha = {
-    formatName: false,
-    id: 'recaptchaPolicies',
-    name: 'CAPTCHA Policies',
-    value: supports,
-    link: '-',
-  }
 
-  const rbaOptions = new RbaOptions(undefined)
-  const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()
-
-  return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, rba, recaptcha]
-}
-
-export const getInfoExpectedResponseChild = (supports) => {
-  const schemaOptions = new SchemaOptions(undefined)
-  const schema = supports ? schemaOptions.getOptions() : schemaOptions.getOptionsDisabled()
-
-  const SCREEN_SET_COLLECTION_DEFAULT = 'Default'
-  const screenSets = createScreenSetCollection(SCREEN_SET_COLLECTION_DEFAULT, supports)
-
-  const policiesOptions = new PolicyOptions(undefined)
-  policiesOptions.addSupportedPolicies(getPolicyConfig)
-  const policies = supports ? policiesOptions.getOptions() : policiesOptions.getOptionsDisabled()
-
-  const socialIdentities = {
-    id: 'socialIdentities',
-    name: 'socialIdentities',
-    value: supports,
-    link: '-',
-  }
-
-  const emailOptions = new EmailOptions(undefined)
-  emailOptions.addEmails(getEmailsExpectedResponse)
-  const emailTemplates = supports ? emailOptions.getOptions() : emailOptions.getOptionsDisabled()
-
-  const smsTemplates = {
-    id: 'smsTemplates',
-    name: 'SMS Templates',
-    formatName: false,
-    value: supports,
-  }
-
-  const webSdk = {
-    id: 'webSdk',
-    name: 'webSdk',
-    value: supports,
-  }
-
-  const consent = {
-    id: 'consent',
-    name: 'consentStatements',
-    value: supports,
-  }
-
-  const communicationTopics = {
-    id: 'communicationTopics',
-    name: 'communicationTopics',
-    value: supports,
-  }
-
-  const dataflows = {
-    id: 'dataflows',
-    name: 'dataflows',
-    value: supports,
-    formatName: true,
-    branches: [
-      {
-        id: 'dataflow1',
-        name: 'dataflow1',
-        value: supports,
-        formatName: false,
-      },
-      {
-        id: 'dataflow2',
-        name: 'dataflow2',
-        value: supports,
-        formatName: false,
-        variables: [
-          { variable: '{{hostname}}', value: '' },
-          { variable: '{{username}}', value: '' },
-          { variable: '{{mobile}}', value: '' },
-          { variable: '{{phoneNumber}}', value: '' },
-          { variable: '{{userKey}}', value: '' },
-          { variable: '{{accounts}}', value: '' },
-          { variable: '{{wrapField}}', value: '' },
-          { variable: '{{injectValue}}', value: '' },
-        ],
-      },
-    ],
-  }
-
-  const webhooks = {
-    id: 'Webhooks',
-    name: 'Webhooks',
-    value: supports,
-    formatName: false,
-    branches: [
-      {
-        id: 'webhook1',
-        name: 'webhook1',
-        value: supports,
-        formatName: false,
-      },
-      {
-        id: 'webhook2',
-        name: 'webhook2',
-        value: supports,
-        formatName: false,
-      },
-    ],
-  }
-
-  const extensions = {
-    id: 'Extensions',
-    name: 'Extensions',
-    value: supports,
-    formatName: false,
-    branches: [
-      {
-        id: 'OnBeforeAccountsRegister',
-        name: 'OnBeforeAccountsRegister',
-        value: supports,
-        formatName: false,
-      },
-      {
-        id: 'OnBeforeAccountsLogin',
-        name: 'OnBeforeAccountsLogin',
-        value: supports,
-        formatName: false,
-      },
-    ],
-  }
   const recaptcha = {
     formatName: false,
     id: 'recaptchaPolicies',
@@ -320,4 +188,19 @@ export const getInfoExpectedResponseChild = (supports) => {
   }
 
   return [schema, consent, communicationTopics, screenSets, policies, socialIdentities, emailTemplates, smsTemplates, webSdk, dataflows, webhooks, extensions, recaptcha]
+}
+
+export function getInfoExpectedResponse(supports) {
+  const commonResponse = createCommonResponse(supports)
+
+  const rbaOptions = new RbaOptions(undefined)
+  const rba = supports ? rbaOptions.getOptions() : rbaOptions.getOptionsDisabled()
+
+  const responseWithRba = [...commonResponse.slice(0, -1), rba, commonResponse[commonResponse.length - 1]]
+
+  return responseWithRba
+}
+
+export const getInfoExpectedResponseChild = (supports) => {
+  return createCommonResponse(supports)
 }

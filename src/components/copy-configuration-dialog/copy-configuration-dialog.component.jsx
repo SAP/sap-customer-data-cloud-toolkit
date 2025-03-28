@@ -100,7 +100,7 @@ const CopyConfigurationDialog = ({ t }) => {
     }
   }
 
-  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(siteId, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus, siteId)
 
   const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
     onSelectAllIncludeUrlChangeHandler(dispatch, configurations, siteId, setConfigurationStatus)

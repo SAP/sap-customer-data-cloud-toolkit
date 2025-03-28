@@ -6,7 +6,7 @@
 export const handleRadioButtonChange = (event, treeNode, setRbaRulesOperation, dispatch) => {
   const REPLACE_BUTTON_ID = 'replace'
 
-  var selectedButton = 'merge'
+  let selectedButton = 'merge'
 
   if (event.detail?.selectedOption?.dataset?.id) selectedButton = event.detail.selectedOption.dataset.id
 
