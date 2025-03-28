@@ -100,7 +100,15 @@ const ConfigurationTree = ({
               checked={treeNode.value}
               onChange={onCheckBoxStateChangeHandler}
             />
-            <TreeNodeTooltip treeNode={treeNode} t={t} classes={classes} onMouseOverHandler={onMouseOverHandler} onMouseOutHandler={onMouseOutHandler} openPopover={openPopover} />
+            <TreeNodeTooltip
+              treeNode={treeNode}
+              t={t}
+              classes={classes}
+              onMouseOverHandler={onMouseOverHandler}
+              onMouseOutHandler={onMouseOutHandler}
+              openPopover={openPopover}
+              message={'CONFIGURATION_TREE.TOOLTIP'}
+            />
             {showDataflowSettings(treeNode)}
             {showError(treeNode)}
             {showRBARulesButtons(treeNode)}

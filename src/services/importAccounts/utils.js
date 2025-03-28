@@ -92,11 +92,12 @@ export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accu
   return currentLevel
 }
 
-export function createSimpleNode(id, name, value = false, branches = []) {
-  return {
+export function createSimpleNode(id, name = undefined, value = false, branches = []) {
+  const node = {
     id,
-    name,
     value,
     branches,
   }
+  node.name = name || id.split('.').pop()
+  return node
 }

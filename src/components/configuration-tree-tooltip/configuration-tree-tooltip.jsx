@@ -8,7 +8,7 @@ import { Icon, Popover } from '@ui5/webcomponents-react'
 import MessagePopoverButton from '../message-popover-button/message-popover-button.component.jsx'
 import { getHighestSeverity } from '../configuration-tree/utils.js'
 
-const TreeNodeTooltip = ({ treeNode, t, classes, onMouseOverHandler, onMouseOutHandler, openPopover }) => {
+const TreeNodeTooltip = ({ treeNode, t, classes, onMouseOverHandler, onMouseOutHandler, openPopover, message }) => {
   return (
     <>
       {treeNode.tooltip && (
@@ -22,7 +22,7 @@ const TreeNodeTooltip = ({ treeNode, t, classes, onMouseOverHandler, onMouseOutH
             className={classes.tooltipIconStyle}
           />
           <Popover id={`${treeNode.id}Popover`} opener={`${treeNode.id}TooltipIcon`} open={openPopover(treeNode.id)}>
-            {t(`${treeNode.tooltip}`)}
+            {t(`${message}_${treeNode.tooltip}`)}
           </Popover>
         </>
       )}
