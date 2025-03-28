@@ -91,3 +91,12 @@ export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accu
   })
   return currentLevel
 }
+
+export function createSimpleNode(id, name, value = false, branches = []) {
+  return {
+    id,
+    name,
+    value,
+    branches,
+  }
+}
