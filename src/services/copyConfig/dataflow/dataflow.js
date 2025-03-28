@@ -266,7 +266,15 @@ class Dataflow {
   }
 
   static getVariables(dataflow) {
-    return new Set(dataflow.match(/{{.*?}}/g))
+    const variables = []
+    const regex = /{{[^{}]*}}/g // Updated regex to avoid catastrophic backtracking
+    let match
+
+    while ((match = regex.exec(dataflow)) !== null) {
+      variables.push(match[0])
+    }
+
+    return new Set(variables)
   }
 
   static #replaceVariables(dataflow, variables) {
