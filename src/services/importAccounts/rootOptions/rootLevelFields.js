@@ -3,6 +3,8 @@
  * License: Apache-2.0
  */
 
+import { createSimpleNode } from '../utils'
+
 const UID_TOOLTIP = 'When importing a new account the UID column must be empty'
 
 function createMandatoryBranch(branchId) {
@@ -23,38 +25,30 @@ function createMandatoryBranch(branchId) {
 export function getUID() {
   return createMandatoryBranch('uid')
 }
-function createNode(id, name, value = false, branches = []) {
-  return {
-    id,
-    name,
-    value,
-    branches,
-  }
-}
 
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
-    createNode('phoneNumber', 'phoneNumber'),
-    createNode('loginIds', 'loginIds', false, [
-      createNode('loginIds.username', 'username'),
-      createNode('loginIds.emails', 'emails'),
-      createNode('loginIds.unverifiedEmails', 'unverifiedEmails'),
+    createSimpleNode('phoneNumber', 'phoneNumber'),
+    createSimpleNode('loginIds', 'loginIds', false, [
+      createSimpleNode('loginIds.username', 'username'),
+      createSimpleNode('loginIds.emails', 'emails'),
+      createSimpleNode('loginIds.unverifiedEmails', 'unverifiedEmails'),
     ]),
-    createNode('isActive', 'isActive'),
-    createNode('isRegistered', 'isRegistered'),
-    createNode('isVerified', 'isVerified'),
-    createNode('verified', 'verified'),
-    createNode('regSource', 'regSource'),
-    createNode('dataCenter', 'dataCenter'),
-    createNode('registered', 'registered'),
-    createNode('context', 'context'),
-    createNode('lang', 'lang'),
+    createSimpleNode('isActive', 'isActive'),
+    createSimpleNode('isRegistered', 'isRegistered'),
+    createSimpleNode('isVerified', 'isVerified'),
+    createSimpleNode('verified', 'verified'),
+    createSimpleNode('regSource', 'regSource'),
+    createSimpleNode('dataCenter', 'dataCenter'),
+    createSimpleNode('registered', 'registered'),
+    createSimpleNode('context', 'context'),
+    createSimpleNode('lang', 'lang'),
   ]
   return rootElementsStructure
 }
 
 export const getContext = () => {
-  return [createNode('context', 'context')]
+  return [createSimpleNode('context', 'context')]
 }
 
 export const getLiteRootElementsStructure = () => {

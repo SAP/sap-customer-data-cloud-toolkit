@@ -2,40 +2,27 @@
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
  */
+
+import { createSimpleNode } from '../utils'
+
 export const passwordObjectStructure = () => {
   const passwordStructure = [
-    {
-      id: 'password',
-      name: 'password',
-      value: false,
-      branches: [
-        { id: 'password.compoundHashedPassword', name: 'compoundHashedPassword', value: false, branches: [] },
-        { id: 'password.hashedPassword', name: 'hashedPassword', value: false, branches: [] },
-
-        {
-          id: 'password.hashSettings',
-          name: 'hashSettings',
-          value: false,
-          branches: [
-            { id: 'password.hashSettings.algorithm', name: 'algorithm', value: false, branches: [] },
-            { id: 'password.hashSettings.salt', name: 'salt', value: false, branches: [] },
-            { id: 'password.hashSettings.rounds', name: 'rounds', value: false, branches: [] },
-            { id: 'password.hashSettings.format', name: 'format', value: false, branches: [] },
-            { id: 'password.hashSettings.binaryFormat', name: 'binaryFormat', value: false, branches: [] },
-            { id: 'password.hashSettings.URL', name: 'URL', value: false, branches: [] },
-          ],
-        },
-        {
-          id: 'password.secretQuestionAndAnswer',
-          name: 'secretQuestionAndAnswer',
-          value: false,
-          branches: [
-            { id: 'password.secretQuestionAndAnswer.secretQuestion', name: 'secretQuestion', value: false, branches: [] },
-            { id: 'password.secretQuestionAndAnswer.secretAnswer', name: 'secretAnswer', value: false, branches: [] },
-          ],
-        },
-      ],
-    },
+    createSimpleNode('password', 'password', false, [
+      createSimpleNode('password.compoundHashedPassword', 'compoundHashedPassword'),
+      createSimpleNode('password.hashedPassword', 'hashedPassword'),
+      createSimpleNode('password.hashSettings', 'hashSettings', false, [
+        createSimpleNode('password.hashSettings.algorithm', 'algorithm'),
+        createSimpleNode('password.hashSettings.salt', 'salt'),
+        createSimpleNode('password.hashSettings.rounds', 'rounds'),
+        createSimpleNode('password.hashSettings.format', 'format'),
+        createSimpleNode('password.hashSettings.binaryFormat', 'binaryFormat'),
+        createSimpleNode('password.hashSettings.URL', 'URL'),
+      ]),
+      createSimpleNode('password.secretQuestionAndAnswer', 'secretQuestionAndAnswer', false, [
+        createSimpleNode('password.secretQuestionAndAnswer.secretQuestion', 'secretQuestion'),
+        createSimpleNode('password.secretQuestionAndAnswer.secretAnswer', 'secretAnswer'),
+      ]),
+    ]),
   ]
   return passwordStructure
 }
