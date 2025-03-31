@@ -3,6 +3,8 @@
  * License: Apache-2.0
  */
 
+import { createSimpleNode } from '../utils'
+
 const UID_TOOLTIP = 'When importing a new account the UID column must be empty'
 
 function createMandatoryBranch(branchId) {
@@ -23,38 +25,26 @@ function createMandatoryBranch(branchId) {
 export function getUID() {
   return createMandatoryBranch('uid')
 }
-function createNode(id, name, value = false, branches = []) {
-  return {
-    id,
-    name,
-    value,
-    branches,
-  }
-}
 
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
-    createNode('phoneNumber', 'phoneNumber'),
-    createNode('loginIds', 'loginIds', false, [
-      createNode('loginIds.username', 'username'),
-      createNode('loginIds.emails', 'emails'),
-      createNode('loginIds.unverifiedEmails', 'unverifiedEmails'),
-    ]),
-    createNode('isActive', 'isActive'),
-    createNode('isRegistered', 'isRegistered'),
-    createNode('isVerified', 'isVerified'),
-    createNode('verified', 'verified'),
-    createNode('regSource', 'regSource'),
-    createNode('dataCenter', 'dataCenter'),
-    createNode('registered', 'registered'),
-    createNode('context', 'context'),
-    createNode('lang', 'lang'),
+    createSimpleNode('phoneNumber'),
+    createSimpleNode('loginIds', null, false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
+    createSimpleNode('isActive'),
+    createSimpleNode('isRegistered'),
+    createSimpleNode('isVerified'),
+    createSimpleNode('verified'),
+    createSimpleNode('regSource'),
+    createSimpleNode('dataCenter'),
+    createSimpleNode('registered'),
+    createSimpleNode('context'),
+    createSimpleNode('lang'),
   ]
   return rootElementsStructure
 }
 
 export const getContext = () => {
-  return [createNode('context', 'context')]
+  return [createSimpleNode('context')]
 }
 
 export const getLiteRootElementsStructure = () => {
