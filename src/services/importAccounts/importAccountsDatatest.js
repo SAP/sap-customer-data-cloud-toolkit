@@ -17,7 +17,7 @@ export const expectedFullAccount = [
   { id: 'communications', name: 'communications', value: false, branches: communicationsBranches },
   passwordObjectStructure()[0],
   createSimpleNode('phoneNumber'),
-  createSimpleNode('loginIds', false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
+  createSimpleNode('loginIds', null, false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
   createSimpleNode('isActive'),
   createSimpleNode('isRegistered'),
   createSimpleNode('isVerified'),
