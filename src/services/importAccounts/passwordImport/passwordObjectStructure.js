@@ -7,20 +7,20 @@ import { createSimpleNode } from '../utils'
 
 export const passwordObjectStructure = () => {
   const passwordStructure = [
-    createSimpleNode('password', 'password', false, [
-      createSimpleNode('password.compoundHashedPassword', 'compoundHashedPassword'),
-      createSimpleNode('password.hashedPassword', 'hashedPassword'),
-      createSimpleNode('password.hashSettings', 'hashSettings', false, [
-        createSimpleNode('password.hashSettings.algorithm', 'algorithm'),
-        createSimpleNode('password.hashSettings.salt', 'salt'),
-        createSimpleNode('password.hashSettings.rounds', 'rounds'),
-        createSimpleNode('password.hashSettings.format', 'format'),
-        createSimpleNode('password.hashSettings.binaryFormat', 'binaryFormat'),
-        createSimpleNode('password.hashSettings.URL', 'URL'),
+    createSimpleNode('password', null, false, [
+      createSimpleNode('password.compoundHashedPassword'),
+      createSimpleNode('password.hashedPassword'),
+      createSimpleNode('password.hashSettings', null, false, [
+        createSimpleNode('password.hashSettings.algorithm'),
+        createSimpleNode('password.hashSettings.salt'),
+        createSimpleNode('password.hashSettings.rounds'),
+        createSimpleNode('password.hashSettings.format'),
+        createSimpleNode('password.hashSettings.binaryFormat'),
+        createSimpleNode('password.hashSettings.URL'),
       ]),
-      createSimpleNode('password.secretQuestionAndAnswer', 'secretQuestionAndAnswer', false, [
-        createSimpleNode('password.secretQuestionAndAnswer.secretQuestion', 'secretQuestion'),
-        createSimpleNode('password.secretQuestionAndAnswer.secretAnswer', 'secretAnswer'),
+      createSimpleNode('password.secretQuestionAndAnswer', null, false, [
+        createSimpleNode('password.secretQuestionAndAnswer.secretQuestion'),
+        createSimpleNode('password.secretQuestionAndAnswer.secretAnswer'),
       ]),
     ]),
   ]

@@ -92,7 +92,7 @@ export function createNode(splitKeys, fieldDetail, parentKey, currentLevel, accu
   return currentLevel
 }
 
-export function createSimpleNode(id, name = undefined, value = false, branches = []) {
+export function createSimpleNode(id, name = null, value = false, branches = []) {
   const node = {
     id,
     value,

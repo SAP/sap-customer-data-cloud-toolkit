@@ -28,27 +28,23 @@ export function getUID() {
 
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
-    createSimpleNode('phoneNumber', 'phoneNumber'),
-    createSimpleNode('loginIds', 'loginIds', false, [
-      createSimpleNode('loginIds.username', 'username'),
-      createSimpleNode('loginIds.emails', 'emails'),
-      createSimpleNode('loginIds.unverifiedEmails', 'unverifiedEmails'),
-    ]),
-    createSimpleNode('isActive', 'isActive'),
-    createSimpleNode('isRegistered', 'isRegistered'),
-    createSimpleNode('isVerified', 'isVerified'),
-    createSimpleNode('verified', 'verified'),
-    createSimpleNode('regSource', 'regSource'),
-    createSimpleNode('dataCenter', 'dataCenter'),
-    createSimpleNode('registered', 'registered'),
-    createSimpleNode('context', 'context'),
-    createSimpleNode('lang', 'lang'),
+    createSimpleNode('phoneNumber'),
+    createSimpleNode('loginIds', null, false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
+    createSimpleNode('isActive'),
+    createSimpleNode('isRegistered'),
+    createSimpleNode('isVerified'),
+    createSimpleNode('verified'),
+    createSimpleNode('regSource'),
+    createSimpleNode('dataCenter'),
+    createSimpleNode('registered'),
+    createSimpleNode('context'),
+    createSimpleNode('lang'),
   ]
   return rootElementsStructure
 }
 
 export const getContext = () => {
-  return [createSimpleNode('context', 'context')]
+  return [createSimpleNode('context')]
 }
 
 export const getLiteRootElementsStructure = () => {
