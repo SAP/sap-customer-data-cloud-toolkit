@@ -90,9 +90,6 @@ const VersionControlComponent = ({ t }) => {
 
   useEffect(() => {
     const secretKey = credentials?.secretKey
-    const fetchAndSaveExistingCommits = async () => {
-      await dispatch(fetchCommits()).unwrap()
-    }
 
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
@@ -112,10 +109,6 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setRepo(repo))
       }
     }
-
-    if (gitToken && owner && repo) {
-      fetchAndSaveExistingCommits()
-    }
   }, [credentials, gitToken, owner, repo, dispatch])
 
   const onCreateBackupClick = async () => {
@@ -134,33 +127,35 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     setIsDialogOpen(false)
     setIsLoading(true)
-    let counter = 0
     try {
+      const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
+      const lastCommitIdBeforeBackup = initialCommitList.length > 0 ? initialCommitList[0].sha : null
+
       await dispatch(getServices(commitMessage))
-      let existingCommits = parseInt(Cookies.get('existingCommits') || '0', 10)
-      if (existingCommits === 0) {
-        existingCommits = 1
-      }
-      let currentCommits = 0
+
+      let lastCommitIdAfterFetch = null
 
       do {
-        const response = await dispatch(fetchCommits()).unwrap()
-        const commitList = response || []
-        currentCommits = commitList.length
-        if (currentCommits < existingCommits) {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
-        }
-      } while (currentCommits < existingCommits && counter++ < 60)
+        const commitList = (await dispatch(fetchCommits()).unwrap()) || []
+        lastCommitIdAfterFetch = commitList.length > 0 ? commitList[0].sha : null
 
-      setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
-      setShowSuccessDialog(true)
+        if (lastCommitIdAfterFetch !== lastCommitIdBeforeBackup) {
+          await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+        }
+      } while (lastCommitIdAfterFetch === lastCommitIdBeforeBackup)
+
+      if (lastCommitIdAfterFetch !== lastCommitIdBeforeBackup) {
+        setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
+        setShowSuccessDialog(true)
+      } else {
+        throw new Error('Failed to detect new commit after backup')
+      }
     } catch (error) {
       console.error('Error creating backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {
       setIsLoading(false)
-      setIsDialogOpen(false)
     }
   }
 
