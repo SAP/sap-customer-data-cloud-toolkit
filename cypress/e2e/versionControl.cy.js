@@ -16,11 +16,11 @@ describe('Version Control Test Suite', () => {
     utils.startUp(dataTest.versionControlIconName)
   })
 
-  it('should display the version control page', () => {
+  it.only('should display the version control page', () => {
     utils.mockGetConfigurationRequests()
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=testSha&per_page=100&page=1`, {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {

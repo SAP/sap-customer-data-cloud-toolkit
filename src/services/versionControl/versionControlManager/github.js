@@ -8,6 +8,7 @@ import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
 import { Base64 } from 'js-base64'
 import { skipForChildSite, generateFileObjects } from '../utils'
+import Cookies from 'js-cookie'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
@@ -79,8 +80,10 @@ class GitHub extends VersionControlManager {
             throw Error(`Failed to fetch commits for branch: ${apiKey}`, error)
           }
         }
+        Cookies.set('existingCommits', allCommits.length, { secure: true, sameSite: 'strict' })
         return { data: allCommits }
       }
+      Cookies.set('existingCommits', 0, { secure: true, sameSite: 'strict' })
       return { data: [] }
     } catch (error) {
       throw new Error(error)

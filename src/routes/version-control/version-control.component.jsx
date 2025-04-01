@@ -96,6 +96,9 @@ const VersionControlComponent = ({ t }) => {
 
   useEffect(() => {
     const secretKey = credentials?.secretKey
+    const fetchAndSaveExistingCommits = async () => {
+      await dispatch(fetchCommits()).unwrap()
+    }
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
@@ -113,7 +116,10 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setRepo(repo))
       }
     }
-  }, [credentials, dispatch])
+    if (gitToken && owner && repo) {
+      fetchAndSaveExistingCommits()
+    }
+  }, [credentials, gitToken, owner, repo, dispatch])
 
   const onCreateBackupClick = async () => {
     setIsLoading(true)
@@ -131,9 +137,24 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     setIsDialogOpen(false)
     setIsLoading(true)
+    let counter = 0
     try {
       await dispatch(getServices(commitMessage))
-      await dispatch(fetchCommits())
+      let existingCommits = parseInt(Cookies.get('existingCommits') || '0', 10)
+      if (existingCommits === 0) {
+        existingCommits = 1
+      }
+      let currentCommits = 0
+
+      do {
+        const response = await dispatch(fetchCommits()).unwrap()
+        const commitList = response || []
+        currentCommits = commitList.length
+        if (currentCommits < existingCommits) {
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
+      } while (currentCommits < existingCommits && counter++ < 60)
+
       setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
       setShowSuccessDialog(true)
     } catch (error) {
@@ -348,11 +369,6 @@ const VersionControlComponent = ({ t }) => {
                     >
                       {t('VERSION_CONTROL.BACKUP')}
                     </Button>
-                  </div>
-                  <div>
-                    <Text id="versionControlTitle" data-cy="versionControlTitle" level={'H5'} className={classes.titleStyle}>
-                      <span className={classes.credentialsDescriptionStyle}>{t('VERSION_CONTROL.WAIT_FOR_COMMIT')}</span>
-                    </Text>
                   </div>
                 </>
 
