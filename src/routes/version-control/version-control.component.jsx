@@ -89,33 +89,30 @@ const VersionControlComponent = ({ t }) => {
   }, [dispatch, credentials])
 
   useEffect(() => {
-    if (gitToken && owner && repo) {
-      dispatch(fetchCommits())
-    }
-  }, [dispatch, gitToken, owner, repo])
-
-  useEffect(() => {
     const secretKey = credentials?.secretKey
     const fetchAndSaveExistingCommits = async () => {
       await dispatch(fetchCommits()).unwrap()
     }
+
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
-      const repo = Cookies.get('repo')
 
       if (encryptedGitToken) {
         const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
         dispatch(setGitToken(decryptedGitToken))
       }
+
       if (encryptedOwner) {
         const decryptedOwner = decryptData(encryptedOwner, secretKey)
         dispatch(setOwner(decryptedOwner))
       }
+
       if (repo) {
         dispatch(setRepo(repo))
       }
     }
+
     if (gitToken && owner && repo) {
       fetchAndSaveExistingCommits()
     }
