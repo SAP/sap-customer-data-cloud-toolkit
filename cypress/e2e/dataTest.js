@@ -65,6 +65,9 @@ const prettifySingleNoJavascript = 'CloseThere is no Javascript on this Screen-S
 const prettifySingleSuccess = 'ClosePrettify Javascript has been successful.'
 const prettifySingleError = 'CloseError formatting Screen-Set ID'
 const prettifyMultipleScreensNoJavascript = 'CloseThere is no Javascript to Format on any Screen-Set.'
+const importAccounts = 'Import Data'
+const serverImportHeader = 'Deploy and Import'
+const serverImportSuccessMessage = 'The dataflow was deployed successfully (ID: df1).'
 const importData = 'Import Data'
 const importAccountsDescription = 'Import accounts and generate csv with schema and legal fields'
 const importAccountDownloadButton = 'Download Template'
@@ -74,10 +77,6 @@ const versionControlTitle = 'Version Control'
 const owner = 'testOwner'
 const gitToken = 'testGitToken'
 const commitMessage = 'Test commit message'
-
-const importAccounts = 'Import Data'
-const serverImportHeader = 'Deploy and Import'
-const serverImportSuccessMessage = 'The dataflow was deployed successfully (ID: df1).'
 const mockedPrettierGetScreenSetResponse = {
   callId: '5a4395b432794df383c2a35740ae90b0',
   errorCode: 0,
