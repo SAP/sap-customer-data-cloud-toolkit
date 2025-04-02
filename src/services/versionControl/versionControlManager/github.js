@@ -203,7 +203,6 @@ class GitHub extends VersionControlManager {
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
-        debugger
         currentGitContent = removeIgnoredFields(currentGitContent, filedsToBeIgnored)
       } catch (error) {
         currentGitContent = {}
@@ -214,7 +213,6 @@ class GitHub extends VersionControlManager {
     const sanitizedNewContent = removeIgnoredFields(newContent, filedsToBeIgnored)
 
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
-
       const fieldsToBeRemoved = ['callId', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'time']
 
       newContent = removeIgnoredFields(newContent, fieldsToBeRemoved)
