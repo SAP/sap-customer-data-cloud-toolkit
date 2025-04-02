@@ -115,9 +115,6 @@ const VersionControlComponent = ({ t }) => {
     }
 
     if (gitToken && owner && repo) {
-      console.log('Git token:', gitToken)
-      console.log('Owner:', owner)
-      console.log('Repo:', repo)
       fetchAndSaveExistingCommits()
     }
   }, [credentials, gitToken, owner, repo, dispatch])
