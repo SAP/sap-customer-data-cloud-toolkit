@@ -2065,14 +2065,14 @@ const mockedVersionControlGetCommitsResponse = [
     },
     files: [
       {
-        sha: 'testSha',
+        sha: 'testSha2',
         filename: 'policies',
         status: 'modified',
         additions: 2,
         deletions: 2,
         changes: 4,
-        blob_url: 'https://github.com/testOwner/testRepo/blob/testSha/policies',
-        raw_url: 'https://github.com/testOwner/testRepo/raw/testSha/policies',
+        blob_url: 'https://github.com/testOwner/testRepo/blob/testSha2/policies',
+        raw_url: 'https://github.com/testOwner/testRepo/raw/testSha2/policies',
         contents_url: '/repos/testOwner/testRepo/contents/policies?ref=testSha',
         patch:
           '@@ -1,11 +1,11 @@\n {\n-  "callId": "e4ac87ae7d6c403a8f9a29c44ba0ac49",\n+  "callId": "e848dff38ecf4beab8513b5a47c4545e",\n   "context": "{\\"id\\":\\"smsTemplates\\",\\"targetApiKey\\":\\"4_anUcVDIu7iIQP-uPNKi7aQ\\"}",\n   "errorCode": 0,\n   "apiVersion": 2,\n   "statusCode": 200,\n   "statusReason": "OK",\n-  "time": "2025-03-21T13:41:09.819Z",\n+  "time": "2025-03-21T14:35:00.264Z",\n   "templates": {\n     "otp": {\n       "globalTemplates": {',
