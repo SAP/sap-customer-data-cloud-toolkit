@@ -198,19 +198,25 @@ class GitHub extends VersionControlManager {
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
     let currentGitContent = {}
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
+    const filedsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason']
+
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
-        currentGitContent = removeIgnoredFields(currentGitContent)
+        currentGitContent = removeIgnoredFields(currentGitContent, filedsToBeIgnored)
       } catch (error) {
         currentGitContent = {}
       }
     }
 
     let newContent = JSON.parse(cdcFileContent)
-    const sanitizedNewContent = removeIgnoredFields(newContent)
+    const sanitizedNewContent = removeIgnoredFields(newContent, filedsToBeIgnored)
 
     if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
+      const fieldsToBeRemoved = ['callId', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'time']
+
+      newContent = removeIgnoredFields(newContent, fieldsToBeRemoved)
+
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2), // Save the original content

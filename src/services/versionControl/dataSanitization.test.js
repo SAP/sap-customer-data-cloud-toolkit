@@ -5,6 +5,7 @@
 import { removeIgnoredFields, cleanEmailResponse, cleanResponse } from './dataSanitization'
 
 describe('Data sanitization tests', () => {
+
   test('removeIgnoredFields removes specified fields from objects', () => {
     const input = {
       field1: 'value1',
@@ -12,7 +13,8 @@ describe('Data sanitization tests', () => {
       time: 'timeValue',
       nested: { field2: 'value2', callId: 'nestedCallId', time: 'nestedTime' },
     }
-    const output = removeIgnoredFields(input)
+    const fieldsToRemove = ['callId', 'time']
+    const output = removeIgnoredFields(input, fieldsToRemove)
     expect(output).toEqual({ field1: 'value1', nested: { field2: 'value2' } })
   })
 
