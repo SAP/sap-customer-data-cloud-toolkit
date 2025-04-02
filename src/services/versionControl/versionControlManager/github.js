@@ -203,7 +203,6 @@ class GitHub extends VersionControlManager {
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
-        debugger
         currentGitContent = removeIgnoredFields(currentGitContent, filedsToBeIgnored)
       } catch (error) {
         currentGitContent = {}

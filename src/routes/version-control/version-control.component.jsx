@@ -134,22 +134,22 @@ const VersionControlComponent = ({ t }) => {
     setIsLoading(true)
     try {
       const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
-      const lastCommitIdBeforeBackup = initialCommitList.length > 0 ? initialCommitList[0].sha : null
+      const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
 
       await dispatch(getServices(commitMessage))
 
-      let lastCommitIdAfterFetch = null
+      let lastCommitDateAfterFetch = null
 
       do {
         const commitList = (await dispatch(fetchCommits()).unwrap()) || []
-        lastCommitIdAfterFetch = commitList.length > 0 ? commitList[0].sha : null
+        lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
 
-        if (lastCommitIdAfterFetch !== lastCommitIdBeforeBackup) {
+        if (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
           await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
         }
-      } while (lastCommitIdAfterFetch === lastCommitIdBeforeBackup)
+      } while (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup)
 
-      if (lastCommitIdAfterFetch !== lastCommitIdBeforeBackup) {
+      if (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) {
         setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
         setShowSuccessDialog(true)
       } else {
