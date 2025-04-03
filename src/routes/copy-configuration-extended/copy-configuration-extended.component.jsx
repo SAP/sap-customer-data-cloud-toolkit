@@ -158,7 +158,7 @@ const CopyConfigurationExtended = ({ t }) => {
     dispatch(removeTargetSite(event.detail.item.dataset.apikey))
   }
 
-  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus)
+  const onSelectAllCheckboxChangeHandler = onSelectAllCheckboxChange(setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus, null)
 
   const onSelectAllIncludeUrlChangeHandlerWrapper = () => {
     onSelectAllIncludeUrlChangeHandler(dispatch, configurations, null, setConfigurationStatus)

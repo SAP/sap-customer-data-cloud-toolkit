@@ -10,7 +10,9 @@
   right: 0px;
   height: 0;
   width: calc(100% - 241px);
+  display: none;
 }
+
 .cdc-tools-app-loading {
   position: absolute;
   top: 50px;
@@ -31,6 +33,7 @@
   right: 0px;
   height: auto;
   width: 100%;
+  display: none;
 }
 
 .cdc-tools-app.show-cdc-tools {
@@ -136,8 +139,4 @@
   .cdc-toolbox--topbar-menu-container {
     top: -68px;
   }
-}
-
-/* Theme specific fixes: new_horizon */
-[data-sap-theme='new_horizon'] {
 }
