@@ -12,6 +12,7 @@ describe('Version Control Test Suite', () => {
   const protocol = 'https://'
   const host = 'api.github.com'
   const url = `${protocol}${host}`
+  let requestCount = 0
   beforeEach(() => {
     utils.startUp(dataTest.versionControlIconName)
   })
@@ -21,7 +22,15 @@ describe('Version Control Test Suite', () => {
     let mockedCommits = [
       {
         sha: 'initialCommitSha',
-        commit: { message: 'Initial commit', committer: { date: '2023-01-01T00:00:00Z' } },
+        commit: {
+          message: 'Initial commit',
+          committer: { date: '2023-01-01T00:00:00Z' },
+          author: {
+            name: 'testOwner',
+            email: '48961605+testOwner@users.noreply.github.com',
+            date: '2024-11-13T12:41:21Z',
+          },
+        },
         files: [
           {
             sha: 'testSha2',
@@ -48,9 +57,45 @@ describe('Version Control Test Suite', () => {
     ]
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
-      statusCode: 200,
-      body: mockedCommits,
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, (req) => {
+      requestCount++
+
+      if (requestCount > 4) {
+        mockedCommits.unshift({
+          sha: 'afterCommitSha',
+          commit: {
+            message: 'New commit after backup',
+            committer: { date: '2024-11-13T13:41:21Z' },
+            author: {
+              name: 'testOwner',
+              email: '48961605+testOwner@users.noreply.github.com',
+              date: '2024-11-13T13:41:21Z',
+            },
+          },
+          files: [
+            {
+              sha: 'testSha3',
+              filename: 'newFile',
+              status: 'added',
+              additions: 5,
+              deletions: 0,
+              changes: 5,
+              blob_url: 'https://github.com/testOwner/testRepo/blob/testSha3/newFile',
+              raw_url: 'https://github.com/testOwner/testRepo/raw/testSha3/newFile',
+              contents_url: '/repos/testOwner/testRepo/contents/newFile?ref=testSha3',
+              patch: '@@ -0,0 +1,5 @@\n+New content added to the file\n',
+            },
+          ],
+          parents: [
+            {
+              sha: 'initialCommitSha',
+              url: 'https://api.github.com/repos/testOwner/testRepo/commits/initialCommitSha',
+              html_url: 'https://api.github.com/testOwner/testRepo/commit/initialCommitSha',
+            },
+          ],
+        })
+      }
+      req.reply({ body: mockedCommits })
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
