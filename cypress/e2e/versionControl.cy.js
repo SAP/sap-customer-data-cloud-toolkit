@@ -16,12 +16,41 @@ describe('Version Control Test Suite', () => {
     utils.startUp(dataTest.versionControlIconName)
   })
 
-  it.only('should display the version control page', () => {
+  it('should display the version control page', () => {
     utils.mockGetConfigurationRequests()
+    let mockedCommits = [
+      {
+        sha: 'initialCommitSha',
+        commit: { message: 'Initial commit', committer: { date: '2023-01-01T00:00:00Z' } },
+        files: [
+          {
+            sha: 'testSha2',
+            filename: 'policies',
+            status: 'modified',
+            additions: 2,
+            deletions: 2,
+            changes: 4,
+            blob_url: 'https://github.com/testOwner/testRepo/blob/testSha2/policies',
+            raw_url: 'https://github.com/testOwner/testRepo/raw/testSha2/policies',
+            contents_url: '/repos/testOwner/testRepo/contents/policies?ref=testSha',
+            patch:
+              '@@ -1,11 +1,11 @@\n {\n-  "callId": "e4ac87ae7d6c403a8f9a29c44ba0ac49",\n+  "callId": "e848dff38ecf4beab8513b5a47c4545e",\n   "context": "{\\"id\\":\\"smsTemplates\\",\\"targetApiKey\\":\\"4_anUcVDIu7iIQP-uPNKi7aQ\\"}",\n   "errorCode": 0,\n   "apiVersion": 2,\n   "statusCode": 200,\n   "statusReason": "OK",\n-  "time": "2025-03-21T13:41:09.819Z",\n+  "time": "2025-03-21T14:35:00.264Z",\n   "templates": {\n     "otp": {\n       "globalTemplates": {',
+          },
+        ],
+        parents: [
+          {
+            sha: 'testSha',
+            url: 'https://api.github.com/repos/testOwner/testRepo/commits/testSha',
+            html_url: 'https://api.github.com/testOwner/testRepo/commit/testSha',
+          },
+        ],
+      },
+    ]
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
-      body: dataTest.mockedVersionControlGetCommitsResponse,
+      statusCode: 200,
+      body: mockedCommits,
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
@@ -157,7 +186,7 @@ describe('Version Control Test Suite', () => {
     cy.get('#versionControlSuccessPopup').should('be.visible').should('contain.text', 'Restore completed successfully!')
   })
 
-  it('should fetch commits and enable the revert operation', () => {
+  it('should not do the backup because there is no changes', () => {
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {

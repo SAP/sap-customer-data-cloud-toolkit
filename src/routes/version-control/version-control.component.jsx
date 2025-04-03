@@ -82,20 +82,16 @@ const VersionControlComponent = ({ t }) => {
       dispatch(getCurrentSiteInformation())
     }
   }
+
   useEffect(() => {
     if (credentials) {
       dispatch(setCredentials(credentials))
     }
-  }, [dispatch, credentials])
 
-  useEffect(() => {
-    if (gitToken && owner && repo) {
-      dispatch(fetchCommits())
-    }
-  }, [dispatch, gitToken, owner, repo])
-
-  useEffect(() => {
     const secretKey = credentials?.secretKey
+    const fetchAndSaveExistingCommits = async () => {
+      await dispatch(fetchCommits()).unwrap()
+    }
 
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
@@ -106,13 +102,19 @@ const VersionControlComponent = ({ t }) => {
         const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
         dispatch(setGitToken(decryptedGitToken))
       }
+
       if (encryptedOwner) {
         const decryptedOwner = decryptData(encryptedOwner, secretKey)
         dispatch(setOwner(decryptedOwner))
       }
+
       if (repo) {
         dispatch(setRepo(repo))
       }
+    }
+
+    if (gitToken && owner && repo) {
+      fetchAndSaveExistingCommits()
     }
   }, [credentials, gitToken, owner, repo, dispatch])
 
@@ -132,6 +134,7 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     setIsDialogOpen(false)
     setIsLoading(true)
+    let counter = 0
     try {
       const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
       const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
@@ -171,6 +174,7 @@ const VersionControlComponent = ({ t }) => {
       setShowErrorDialog(true)
     } finally {
       setIsLoading(false)
+      setIsDialogOpen(false)
     }
   }
 
