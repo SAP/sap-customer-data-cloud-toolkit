@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'
@@ -41,7 +40,6 @@ class Social {
 
   async copy(targetApi, targetSiteConfiguration, options = []) {
     let response = await this.get(this.originApiKey)
-
     if (response.errorCode === 0) {
       response = await this.set(targetApi, response, targetSiteConfiguration.dataCenter)
     }

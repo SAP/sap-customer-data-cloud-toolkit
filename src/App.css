@@ -4,6 +4,7 @@
  */
 
 .cdc-tools-app {
+  display: none;
   position: absolute;
   top: 72px;
   right: 0px;
@@ -26,6 +27,7 @@
   display: block;
 }
 .cdc-tools-app-container {
+  display: none;
   position: absolute;
   top: 6px;
   right: 0px;
@@ -134,9 +136,6 @@
     border-color: var(--sapField_Hover_BorderColor);
   }
 
-  .cdc-tools-app-container {
-    top: 0;
-  }
   .cdc-toolbox--topbar-menu-container {
     top: -68px;
   }

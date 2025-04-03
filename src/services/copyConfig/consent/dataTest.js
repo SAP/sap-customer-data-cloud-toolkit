@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import { ERROR_CODE_CANNOT_CHANGE_CONSENTS_ON_CHILD_SITE, ERROR_SEVERITY_WARNING } from '../../errors/generateErrorResponse.js'
 
 export const getConsentStatementExpectedResponse = {

@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import client from '../../gigya/client.js'
 import generateErrorResponse from '../../errors/generateErrorResponse.js'
 import UrlBuilder from '../../gigya/urlBuilder.js'

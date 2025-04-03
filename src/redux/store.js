@@ -4,7 +4,6 @@
  */
 
 import { configureStore } from '@reduxjs/toolkit'
-
 import sitesReducer from './sites/siteSlice'
 import dataCentersReducer from './dataCenters/dataCentersSlice'
 import siteStructuresReducer from './siteStructures/siteStructuresSlice'
@@ -14,6 +13,7 @@ import credentialsReducer from './credentials/credentialsSlice'
 import copyConfigurationExtendedReducer from './copyConfigurationExtended/copyConfigurationExtendedSlice'
 import siteDeployerCopyConfigurationReducer from './siteDeployerCopyConfiguration/siteDeployerCopyConfigurationSlice'
 import targetSitesTooltipIconReducer from './targetSitesTooltipIcon/targetSitesTooltipIconSlice'
+import versionControlReducer from './versionControl/versionControlSlice'
 import serverImportExtendedSliceReducer from './serverImport/serverImportSlice'
 import importAccountsSliceReducer from './importAccounts/importAccountsSlice'
 
@@ -30,6 +30,7 @@ export default configureStore({
     targetSitesTooltipIcon: targetSitesTooltipIconReducer,
     serverImport: serverImportExtendedSliceReducer,
     importAccounts: importAccountsSliceReducer,
+    versionControl: versionControlReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
