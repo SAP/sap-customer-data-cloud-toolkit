@@ -134,7 +134,6 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     setIsDialogOpen(false)
     setIsLoading(true)
-    let counter = 0
     try {
       const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
       const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
@@ -154,15 +153,9 @@ const VersionControlComponent = ({ t }) => {
         if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
           await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
         }
-      } while (
-        (!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || 
-        (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup)
-      )
+      } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
 
-      if (
-        (lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) ||
-        (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) 
-      ) {
+      if ((lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup)) {
         setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
         setShowSuccessDialog(true)
       } else {
@@ -174,7 +167,6 @@ const VersionControlComponent = ({ t }) => {
       setShowErrorDialog(true)
     } finally {
       setIsLoading(false)
-      setIsDialogOpen(false)
     }
   }
 
