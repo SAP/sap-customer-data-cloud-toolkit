@@ -131,44 +131,41 @@ const VersionControlComponent = ({ t }) => {
     }
   }
 
-  const onConfirmBackupClick = async () => {
-    setIsDialogOpen(false)
-    setIsLoading(true)
-    try {
-      const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
-      const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
+const onConfirmBackupClick = async () => {
+  setIsDialogOpen(false)
+  setIsLoading(true)
 
-      await dispatch(getServices(commitMessage))
+  try {
+    const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
+    const lastCommitDateBeforeBackup = initialCommitList[0]?.commit.author.date ? new Date(initialCommitList[0].commit.author.date) : null
 
-      let lastCommitDateAfterFetch = null
+    await dispatch(getServices(commitMessage))
 
-      do {
-        const commitList = (await dispatch(fetchCommits()).unwrap()) || []
-        lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
+    const isNewCommitAvailable = async () => {
+      const commitList = (await dispatch(fetchCommits()).unwrap()) || []
+      const lastCommitDateAfterFetch = commitList[0]?.commit.author.date ? new Date(commitList[0].commit.author.date) : null
 
-        if (!lastCommitDateBeforeBackup && commitList.length > 0) {
-          break
-        }
+      if (!lastCommitDateBeforeBackup && commitList.length > 0) return true
 
-        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
-        }
-      } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
-
-      if ((lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup)) {
-        setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
-        setShowSuccessDialog(true)
-      } else {
-        throw new Error('Failed to detect new commit after backup')
-      }
-    } catch (error) {
-      console.error('Error creating backup:', error)
-      setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
-      setShowErrorDialog(true)
-    } finally {
-      setIsLoading(false)
+      return lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup
     }
+
+    let commitDetected = false
+    while (!commitDetected) {
+      commitDetected = await isNewCommitAvailable()
+      if (!commitDetected) await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+    }
+
+    setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
+    setShowSuccessDialog(true)
+  } catch (error) {
+    console.error('Error creating backup:', error)
+    setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
+    setShowErrorDialog(true)
+  } finally {
+    setIsLoading(false)
   }
+}
 
   const onCancelBackupClick = () => {
     setIsDialogOpen(false)
