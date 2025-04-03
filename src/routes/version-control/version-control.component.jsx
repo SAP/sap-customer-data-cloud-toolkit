@@ -82,13 +82,12 @@ const VersionControlComponent = ({ t }) => {
       dispatch(getCurrentSiteInformation())
     }
   }
+
   useEffect(() => {
     if (credentials) {
       dispatch(setCredentials(credentials))
     }
-  }, [dispatch, credentials])
 
-  useEffect(() => {
     const secretKey = credentials?.secretKey
     const fetchAndSaveExistingCommits = async () => {
       await dispatch(fetchCommits()).unwrap()
