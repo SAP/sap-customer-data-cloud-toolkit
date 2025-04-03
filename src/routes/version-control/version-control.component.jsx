@@ -144,12 +144,22 @@ const VersionControlComponent = ({ t }) => {
         const commitList = (await dispatch(fetchCommits()).unwrap()) || []
         lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
 
-        if (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
+        if (!lastCommitDateBeforeBackup && commitList.length > 0) {
+          break
+        }
+
+        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
           await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
         }
-      } while (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup)
+      } while (
+        (!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || 
+        (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup)
+      )
 
-      if (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) {
+      if (
+        (lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) ||
+        (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) 
+      ) {
         setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
         setShowSuccessDialog(true)
       } else {
