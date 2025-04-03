@@ -14,10 +14,6 @@ class GitHub extends VersionControlManager {
 
   async listBranches(branchName) {
     try {
-      const credentialsValid = await this.#validateCredentials()
-      if (!credentialsValid) {
-        return false
-      }
       const { data: branches } = await this.versionControl.rest.repos.listBranches({
         owner: this.owner,
         repo: this.repo,
@@ -179,10 +175,10 @@ class GitHub extends VersionControlManager {
     let getGitFileInfo
 
     try {
-      const branchExistsResult = await this.listBranches(defaultBranch)
-      if (!branchExistsResult) {
-        throw new Error('Branch does not exist')
-      }
+      // const branchExistsResult = await this.listBranches(defaultBranch)
+      // if (!branchExistsResult) {
+      //   throw new Error('Branch does not exist')
+      // }
       getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     } catch (error) {
       if (error.status === 404 || error.message === 'Branch does not exist') {
