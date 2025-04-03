@@ -134,33 +134,39 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     setIsDialogOpen(false)
     setIsLoading(true)
-    let counter = 0
     try {
+      const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
+      const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
+
       await dispatch(getServices(commitMessage))
-      let existingCommits = parseInt(Cookies.get('existingCommits') || '0', 10)
-      if (existingCommits === 0) {
-        existingCommits = 1
-      }
-      let currentCommits = 0
+
+      let lastCommitDateAfterFetch = null
 
       do {
-        const response = await dispatch(fetchCommits()).unwrap()
-        const commitList = response || []
-        currentCommits = commitList.length
-        if (currentCommits < existingCommits) {
-          await new Promise((resolve) => setTimeout(resolve, 1000))
-        }
-      } while (currentCommits < existingCommits && counter++ < 60)
+        const commitList = (await dispatch(fetchCommits()).unwrap()) || []
+        lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
 
-      setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
-      setShowSuccessDialog(true)
+        if (!lastCommitDateBeforeBackup && commitList.length > 0) {
+          break
+        }
+
+        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
+          await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+        }
+      } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
+
+      if ((lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup)) {
+        setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
+        setShowSuccessDialog(true)
+      } else {
+        throw new Error('Failed to detect new commit after backup')
+      }
     } catch (error) {
       console.error('Error creating backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {
       setIsLoading(false)
-      setIsDialogOpen(false)
     }
   }
 
