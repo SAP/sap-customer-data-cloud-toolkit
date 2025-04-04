@@ -39,25 +39,24 @@ class ZipManager {
 
     const zip = new JSZip()
     const directories = []
-    const contents = await zip.loadAsync(zipContent)
+    const contents = await zip.loadAsync(zipContent).then(function (zip) {
+      zip.forEach(function (relativePath, zipEntry) {
+        fileCount++
+        if (relativePath.endsWith('/')) {
+          directories.push(relativePath)
+        }
+
+        if (directories.length > MAX_DIRECTORIES) {
+          throw new Error(`Exceeded maximum allowed directories: ${MAX_DIRECTORIES}`)
+        }
+        if (fileCount > MAX_FILES) {
+          throw new Error('Reached max. number of files')
+        }
+      })
+      return zip
+    })
 
     // Iterate through the zip entries
-    contents.forEach(function (relativePath, zipEntry) {
-      fileCount++
-
-      if (relativePath.endsWith('/')) {
-        directories.push(relativePath)
-      }
-
-      console.log('directories', directories.length)
-      if (directories.length > MAX_DIRECTORIES) {
-        throw new Error(`Exceeded maximum allowed directories: ${MAX_DIRECTORIES}`)
-      }
-      if (fileCount > MAX_FILES) {
-        throw new Error('Reached max. number of files')
-      }
-    })
-    console.log('contents', contents)
     const promises = []
     Object.keys(contents.files).forEach(function (filename) {
       const entry = zip.files[filename]
