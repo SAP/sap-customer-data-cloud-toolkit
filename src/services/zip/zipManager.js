@@ -34,7 +34,7 @@ class ZipManager {
   async read(zipContent) {
     const MAX_DIRECTORIES = 20
     const MAX_FILES = MAX_DIRECTORIES * 47
-
+    const MAX_FILE_SIZE = 512000
     let fileCount = 0
 
     const zip = new JSZip()
@@ -44,19 +44,20 @@ class ZipManager {
         fileCount++
         if (relativePath.endsWith('/')) {
           directories.push(relativePath)
+        } else {
+          if (zipEntry._data.uncompressedSize > MAX_FILE_SIZE) {
+            throw new Error(`Exceeded maximum allowed file size: ${MAX_FILE_SIZE}`)
+          }
         }
+        //ver original in debugger and compare with this loadasync method
 
-        if (directories.length > MAX_DIRECTORIES) {
-          throw new Error(`Exceeded maximum allowed directories: ${MAX_DIRECTORIES}`)
-        }
         if (fileCount > MAX_FILES) {
-          throw new Error('Reached max. number of files')
+          throw new Error('Unexpected zip file content: Exceeded maximum allowed files')
         }
       })
       return zip
     })
 
-    // Iterate through the zip entries
     const promises = []
     Object.keys(contents.files).forEach(function (filename) {
       const entry = zip.files[filename]

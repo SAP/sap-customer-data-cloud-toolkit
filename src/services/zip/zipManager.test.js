@@ -29,12 +29,14 @@ describe('files test suite', () => {
 
     const zipManager = new ZipManager()
     const path = zipManager.createFile('template', 'name.html', 'content')
+    const maxFiles = MAX_DIRECTORIES * 47
     expect(path).toBe('template/name.html')
-    for (let i = 0; i <= 20; i++) {
-      zipManager.createFile(`template${i}`, 'name3.html', `content${i}`)
+
+    for (let i = 0; i <= maxFiles; i++) {
+      zipManager.createFile(`template`, `name${i}.html`, `content${i}`)
     }
 
-    await expect(zipManager.read(zipManager.createZipArchive())).rejects.toThrow(`Exceeded maximum allowed directories: ${MAX_DIRECTORIES}`)
+    await expect(zipManager.read(zipManager.createZipArchive())).rejects.toThrow('Unexpected zip file content: Exceeded maximum allowed files')
   })
 
   test('strange characters', async () => {
