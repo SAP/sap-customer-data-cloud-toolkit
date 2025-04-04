@@ -3,13 +3,24 @@
  * License: Apache-2.0
  */
 
-import { removePropertyFromObjectCascading } from '../copyConfig/objectHelper'
+
+const removeFieldsRecursively = (obj, fieldsToRemove) => {
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => removeFieldsRecursively(item, fieldsToRemove))
+  } else if (obj && typeof obj === 'object') {
+    Object.keys(obj).forEach((key) => {
+      if (fieldsToRemove.includes(key)) {
+        delete obj[key]
+      } else {
+        removeFieldsRecursively(obj[key], fieldsToRemove)
+      }
+    })
+  }
+}
 
 export const removeIgnoredFields = (obj, fieldsToRemove) => {
   const newObj = { ...obj }
-  fieldsToRemove.forEach((field) => {
-    removePropertyFromObjectCascading(newObj, field)
-  })
+  removeFieldsRecursively(newObj, fieldsToRemove)
   return newObj
 }
 
