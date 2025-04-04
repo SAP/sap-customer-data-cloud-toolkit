@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import ZipManager from './zipManager.js'
 
 describe('files test suite', () => {
@@ -23,6 +22,21 @@ describe('files test suite', () => {
 
     const filesContent = await zipManager.read(zipManager.createZipArchive())
     expect(filesContent).toEqual(expectedZipEntries)
+  })
+
+  test('error - Exceeded maximum allowed directories', async () => {
+    const MAX_DIRECTORIES = 20
+
+    const zipManager = new ZipManager()
+    const path = zipManager.createFile('template', 'name.html', 'content')
+    const maxFiles = MAX_DIRECTORIES * 47
+    expect(path).toBe('template/name.html')
+
+    for (let i = 0; i <= maxFiles; i++) {
+      zipManager.createFile(`template`, `name${i}.html`, `content${i}`)
+    }
+
+    await expect(zipManager.read(zipManager.createZipArchive())).rejects.toThrow('Unexpected zip file content: Exceeded maximum allowed files')
   })
 
   test('strange characters', async () => {
