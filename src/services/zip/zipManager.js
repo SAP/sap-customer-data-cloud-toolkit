@@ -42,10 +42,21 @@ class ZipManager {
     const contents = await zip.loadAsync(zipContent).then(function (zip) {
       console.log('zip', zip)
       zip.forEach(function (relativePath, zipEntry) {
+        fileCount++
         console.log('relativePath', relativePath)
-        console.log('file', zipEntry)
-        if (fileCount > MAX_FILES) {
-          throw 'Reached max. number of files'
+        console.log('zipEntry', zipEntry)
+        console.log('fileCount', fileCount)
+        if (zipEntry.name) {
+          zip
+            .file(zipEntry.name)
+            .async('nodebuffer')
+            .then(function (content) {
+              totalSize += content.length
+              console.log('totalSize', totalSize)
+              if (fileCount > MAX_FILES) {
+                throw 'Reached max. number of files'
+              }
+            })
         }
       })
     })
