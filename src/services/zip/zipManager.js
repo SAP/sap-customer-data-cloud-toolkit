@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import JSZip from 'jszip'
 import { Buffer } from 'buffer'
 
@@ -33,8 +32,23 @@ class ZipManager {
   }
 
   async read(zipContent) {
+    const MAX_FILES = 10000
+    const MAX_SIZE = 100000000
+
+    let fileCount = 0
+    let totalSize = 0
     const zip = new JSZip()
-    const contents = await zip.loadAsync(zipContent)
+    console.log('zipContent', await zipContent)
+    const contents = await zip.loadAsync(zipContent).then(function (zip) {
+      console.log('zip', zip)
+      zip.forEach(function (relativePath, zipEntry) {
+        console.log('relativePath', relativePath)
+        console.log('file', zipEntry)
+        if (fileCount > MAX_FILES) {
+          throw 'Reached max. number of files'
+        }
+      })
+    })
 
     const promises = []
     Object.keys(contents.files).forEach(function (filename) {
