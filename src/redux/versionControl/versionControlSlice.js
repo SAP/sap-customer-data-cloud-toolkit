@@ -27,6 +27,7 @@ const versionControlSlice = createSlice({
     error: null,
     revert: false,
     filesToUpdate: [],
+    isValidCredentials: null,
   },
   reducers: {
     setGitToken(state, action) {
@@ -98,6 +99,17 @@ const versionControlSlice = createSlice({
       state.isFetching = false
       state.error = action.payload
     })
+    builder.addCase(validateCredentials.pending, (state) => {
+      state.isValidCredentials = null
+      state.error = null
+    })
+    builder.addCase(validateCredentials.fulfilled, (state, action) => {
+      state.isValidCredentials = action.payload
+    })
+    builder.addCase(validateCredentials.rejected, (state, action) => {
+      state.isValidCredentials = false
+      state.error = action.payload
+    })
   },
 })
 
@@ -150,6 +162,18 @@ const getCommonData = (state) => {
   return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
 }
 
+export const validateCredentials = createAsyncThunk('versionControl/validateCredentials', async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  const { versionControl } = getCommonData(state) // Get the GitHub instance
+
+  try {
+    const isValid = await versionControl.validateCredentials() // Call the GitHub method
+    return isValid
+  } catch (error) {
+    return rejectWithValue(error.message)
+  }
+})
+
 export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
   const state = getState()
   try {
@@ -194,5 +218,6 @@ export const selectOwner = (state) => state.versionControl.owner
 export const selectRepo = (state) => state.versionControl.repo
 export const selectError = (state) => state.versionControl.error
 export const selectFilesToUpdate = (state) => state.versionControl.filesToUpdate
+export const selectIsValidCredentials = (state) => state.versionControl.isValidCredentials
 
 export default versionControlSlice.reducer

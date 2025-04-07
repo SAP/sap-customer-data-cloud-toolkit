@@ -35,6 +35,7 @@ import {
   selectRepo,
   getServices,
   fetchCommits,
+  validateCredentials,
   prepareFilesForUpdate,
   getRevertChanges,
   clearCommits,
@@ -89,6 +90,17 @@ const VersionControlComponent = ({ t }) => {
     }
 
     const secretKey = credentials?.secretKey
+    const fetchAndSaveExistingCommits = async () => {
+      try {
+        const isValid = await dispatch(validateCredentials()).unwrap()
+        if (!isValid) {
+          throw new Error(t('VERSION_CONTROL.INVALID_CREDENTIALS'))
+        }
+        await dispatch(fetchCommits()).unwrap()
+      } catch (error) {
+        throw new Error('Error fetching commits:', error)
+      }
+    }
 
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
@@ -113,11 +125,7 @@ const VersionControlComponent = ({ t }) => {
     if (gitToken && owner && repo) {
       fetchAndSaveExistingCommits()
     }
-  }, [credentials, gitToken, owner, repo, dispatch])
-
-  const fetchAndSaveExistingCommits = () => {
-    dispatch(fetchCommits())
-  }
+  }, [credentials, gitToken, owner, repo, t, dispatch])
 
   const onCreateBackupClick = async () => {
     setIsLoading(true)
@@ -163,7 +171,6 @@ const VersionControlComponent = ({ t }) => {
         throw new Error('Failed to detect new commit after backup')
       }
     } catch (error) {
-      console.error('Error creating backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {

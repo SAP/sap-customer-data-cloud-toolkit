@@ -14,10 +14,6 @@ class GitHub extends VersionControlManager {
 
   async listBranches(branchName) {
     try {
-      const credentialsValid = await this.#validateCredentials()
-      if (!credentialsValid) {
-        return false
-      }
       const { data: branches } = await this.versionControl.rest.repos.listBranches({
         owner: this.owner,
         repo: this.repo,
@@ -281,7 +277,7 @@ class GitHub extends VersionControlManager {
     return file
   }
 
-  async #validateCredentials() {
+  async validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
 
