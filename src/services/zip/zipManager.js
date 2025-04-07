@@ -45,9 +45,17 @@ class ZipManager {
         if (relativePath.endsWith('/')) {
           directories.push(relativePath)
         } else {
-          if (zipEntry._data.uncompressedSize > MAX_FILE_SIZE) {
-            throw new Error(`Exceeded maximum allowed file size: ${MAX_FILE_SIZE}`)
-          }
+          zip
+            .file(zipEntry.name)
+            .async('uint8array')
+            .then(function (data) {
+              const fileSize = data.length // Size in bytes
+              console.log(`Size of ${zipEntry.name}: ${fileSize} bytes`)
+
+              if (fileSize > MAX_FILE_SIZE) {
+                throw new Error(`Exceeded maximum allowed file size: ${MAX_FILE_SIZE}`)
+              }
+            })
         }
 
         if (fileCount > MAX_FILES) {
