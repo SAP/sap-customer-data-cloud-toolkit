@@ -89,9 +89,6 @@ const VersionControlComponent = ({ t }) => {
     }
 
     const secretKey = credentials?.secretKey
-    const fetchAndSaveExistingCommits = async () => {
-      await dispatch(fetchCommits()).unwrap()
-    }
 
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
@@ -117,6 +114,10 @@ const VersionControlComponent = ({ t }) => {
       fetchAndSaveExistingCommits()
     }
   }, [credentials, gitToken, owner, repo, dispatch])
+
+  const fetchAndSaveExistingCommits = () => {
+    dispatch(fetchCommits())
+  }
 
   const onCreateBackupClick = async () => {
     setIsLoading(true)
