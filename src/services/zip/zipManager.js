@@ -50,7 +50,6 @@ class ZipManager {
             .async('uint8array')
             .then(function (data) {
               const fileSize = data.length // Size in bytes
-              console.log(`Size of ${zipEntry.name}: ${fileSize} bytes`)
 
               if (fileSize > MAX_FILE_SIZE) {
                 throw new Error(`Exceeded maximum allowed file size: ${MAX_FILE_SIZE}`)
