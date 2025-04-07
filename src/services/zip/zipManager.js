@@ -42,6 +42,11 @@ class ZipManager {
     const contents = await zip.loadAsync(zipContent).then(function (zip) {
       zip.forEach(function (relativePath, zipEntry) {
         fileCount++
+
+        if (relativePath.includes('..') || relativePath.startsWith('/')) {
+          throw new Error(`Unsafe file path detected: ${relativePath}`)
+        }
+
         if (relativePath.endsWith('/')) {
           directories.push(relativePath)
         } else {
