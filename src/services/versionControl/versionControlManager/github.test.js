@@ -485,7 +485,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const configs = { key: { nestedKey: 'value' } } // Pass an object instead of a string
+    const configs = { key: { nestedKey: 'value' } } 
 
     Base64.decode.mockImplementation((encodedContent) => {
       if (encodedContent === Base64.encode(JSON.stringify({ key: { nestedKey: 'value' } }))) {
