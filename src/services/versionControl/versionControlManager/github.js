@@ -167,7 +167,6 @@ class GitHub extends VersionControlManager {
       repo: this.repo,
       ref: `heads/${defaultBranch}`,
       sha: newCommit.sha,
-      force: true,
     })
   }
 
