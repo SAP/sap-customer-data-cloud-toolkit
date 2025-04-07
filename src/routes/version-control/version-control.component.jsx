@@ -125,7 +125,7 @@ const VersionControlComponent = ({ t }) => {
     if (gitToken && owner && repo) {
       fetchAndSaveExistingCommits()
     }
-  }, [credentials, gitToken, owner, repo, dispatch])
+  }, [credentials, gitToken, owner, repo, t, dispatch])
 
   const onCreateBackupClick = async () => {
     setIsLoading(true)
