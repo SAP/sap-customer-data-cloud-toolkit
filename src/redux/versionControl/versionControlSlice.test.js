@@ -46,6 +46,7 @@ describe('versionControlSlice', () => {
       repo: '',
       revert: false,
       filesToUpdate: [],
+      isValidCredentials: null,
     },
   }
 
@@ -74,6 +75,7 @@ describe('versionControlSlice', () => {
         repo: '',
         revert: false,
         filesToUpdate: [],
+        isValidCredentials: null,
       })
     })
 
