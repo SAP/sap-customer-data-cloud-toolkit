@@ -43,7 +43,7 @@ class ZipManager {
       zip.forEach(function (relativePath, zipEntry) {
         fileCount++
 
-        if (relativePath.includes('..') || relativePath.startsWith('/')) {
+        if (relativePath.startsWith('../')) {
           throw new Error(`Unsafe file path detected: ${relativePath}`)
         }
 
