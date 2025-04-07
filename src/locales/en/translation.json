@@ -151,6 +151,7 @@
   "VERSION_CONTROL.DATE": "Date",
   "VERSION_CONTROL.DOCUMENTATION_LINK": "(Read more)",
   "VERSION_CONTROL.DESCRIPTION.TEXT": "Manage and track changes to configurations, ensuring version history and easy rollbacks.",
+  "VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE": "Failed to fetch the new commit.",
   "VERSION_CONTROL.GIT_TOKEN": "Token",
   "VERSION_CONTROL.GIT_TOKEN_MESSAGE": "Please insert the access Token.",
   "VERSION_CONTROL.ID": "Commit Id",

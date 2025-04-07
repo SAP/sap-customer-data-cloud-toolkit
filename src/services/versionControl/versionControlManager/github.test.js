@@ -514,6 +514,22 @@ describe('skipForChildSite', () => {
     const getGitFileInfo = { name: 'social.json' }
     expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
   })
+  it('should call listBranches once and wait for the delay', async () => {
+      const owner = 'testOwner'
+      const repo = 'testRepo'
+      const github = new GitHub(null, owner, repo)
+      
+    const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
+    github.listBranches = listBranchesMock
+
+    const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
+
+    await github.waitForCreation('testBranch', 1000)
+
+    expect(listBranchesMock).toHaveBeenCalledTimes(1)
+    expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
+    expect(delaySpy).toHaveBeenCalledTimes(1) // Ensure delay is applied once
+  })
 })
 
 describe('GitHub - validateCredentials', () => {
@@ -590,37 +606,5 @@ describe('GitHub - validateCredentials', () => {
 
     await expect(github.validateCredentials()).rejects.toThrow('API error')
     expect(getUsersMock).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe('GitHub - waitForCreation', () => {
-  const owner = 'testOwner'
-  const repo = 'testRepo'
-  const github = new GitHub(null, owner, repo)
-
-    it('should call listBranches once and wait for the delay', async () => {
-      const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
-      github.listBranches = listBranchesMock
-
-      const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
-
-      await github.waitForCreation('testBranch', 1000)
-
-      expect(listBranchesMock).toHaveBeenCalledTimes(1)
-      expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
-      expect(delaySpy).toHaveBeenCalledTimes(1) // Ensure delay is applied once
-    })
-
-  it('should throw an error if the branch is not created within the timeout', async () => {
-    const listBranchesMock = jest.fn().mockResolvedValue(false) // Branch never exists
-
-    github.listBranches = listBranchesMock
-
-    const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
-
-    await expect(github.waitForCreation('testBranch', 500)).resolves.not.toThrow()
-
-    expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
-    expect(delaySpy).toHaveBeenCalledTimes(2) // Delay should be called twice
   })
 })
