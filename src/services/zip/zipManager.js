@@ -33,62 +33,37 @@ class ZipManager {
 
   async read(zipContent) {
     const MAX_DIRECTORIES = 20
-    const MAX_FILES = MAX_DIRECTORIES * 47
-    const MAX_FILE_SIZE = 51200
+    const MAX_NUMBER_OF_LANGUAGES = 50
+    const MAX_FILES = MAX_DIRECTORIES * MAX_NUMBER_OF_LANGUAGES
+    const MAX_TOTAL_UNCOMPRESSED_SIZE = 200 * 1024 * 1024
     let fileCount = 0
-
+    let totalUncompressedSize = 0
+    const newContentMap = new Map()
+    const promises = []
     const zip = new JSZip()
-    const directories = []
-    const contents = await zip.loadAsync(zipContent).then(function (zip) {
+    const content = await zip.loadAsync(zipContent).then(async function (zip) {
       zip.forEach(function (relativePath, zipEntry) {
         fileCount++
-
-        if (relativePath.startsWith('../')) {
-          throw new Error(`Unsafe file path detected: ${relativePath}`)
+        if (!zipEntry.dir) {
+          const fileSize = zipEntry._data.uncompressedSize // Size in bytes
+          totalUncompressedSize += fileSize
+          if (totalUncompressedSize > MAX_TOTAL_UNCOMPRESSED_SIZE) {
+            throw new Error(`Exceeded maximum allowed file size: ${MAX_TOTAL_UNCOMPRESSED_SIZE}`)
+          }
+          promises.push(zipEntry.name)
+          promises.push(zipEntry.async('string'))
         }
-
-        if (relativePath.endsWith('/')) {
-          directories.push(relativePath)
-        } else {
-          zip
-            .file(zipEntry.name)
-            .async('uint8array')
-            .then(function (data) {
-              const fileSize = data.length // Size in bytes
-
-              if (fileSize > MAX_FILE_SIZE) {
-                throw new Error(`Exceeded maximum allowed file size: ${MAX_FILE_SIZE}`)
-              }
-            })
-        }
-
         if (fileCount > MAX_FILES) {
           throw new Error('Unexpected zip file content: Exceeded maximum allowed files')
         }
       })
-      return zip
-    })
-
-    const promises = []
-    Object.keys(contents.files).forEach(function (filename) {
-      const entry = zip.files[filename]
-      if (!entry.dir) {
-        promises.push(filename)
-        promises.push(entry.async('string')) // get entry file content
+      const fileContent = await Promise.all(promises)
+      for (let i = 0; i < fileContent.length; i += 2) {
+        newContentMap.set(fileContent[i], fileContent[i + 1])
       }
+      return newContentMap
     })
-
-    const newContentMap = new Map()
-    return Promise.all(promises)
-      .then((fileContent) => {
-        return fileContent
-      })
-      .then((entries) => {
-        for (let i = 0; i < entries.length; i += 2) {
-          newContentMap.set(entries[i], entries[i + 1])
-        }
-        return newContentMap
-      })
+    return content
   }
 }
 
