@@ -165,6 +165,7 @@ describe('GitHub Test Suit', () => {
     })
   })
 
+
   it('should return false if the branch does not exist - listBranches', async () => {
     const branchName = 'feature-branch'
     const getBranchesMock = jest.fn().mockResolvedValueOnce({
@@ -193,6 +194,7 @@ describe('GitHub Test Suit', () => {
 
     github.versionControl = {
       rest: {
+
         repos: {
           listBranches: getBranchesMock,
         },
@@ -515,10 +517,10 @@ describe('skipForChildSite', () => {
     expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
   })
   it('should call listBranches once and wait for the delay', async () => {
-      const owner = 'testOwner'
-      const repo = 'testRepo'
-      const github = new GitHub(null, owner, repo)
-      
+    const owner = 'testOwner'
+    const repo = 'testRepo'
+    const github = new GitHub(null, owner, repo)
+
     const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
     github.listBranches = listBranchesMock
 
