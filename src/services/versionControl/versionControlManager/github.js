@@ -231,7 +231,7 @@ class GitHub extends VersionControlManager {
       })
       return mainBranch
     } catch (error) {
-      throw new Error('there is no main branch for this repository')
+      throw new Error('Repository does not exist or it does not contain the main branch.')
     }
   }
 
