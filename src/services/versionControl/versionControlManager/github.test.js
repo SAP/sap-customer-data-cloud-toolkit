@@ -49,8 +49,6 @@ describe('GitHub Test Suit', () => {
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
 
-
-
   it('should stop fetching commits when response data is less than per_page - getCommits', async () => {
     const getListCommits = jest
       .fn()
@@ -167,6 +165,7 @@ describe('GitHub Test Suit', () => {
     })
   })
 
+
   it('should return false if the branch does not exist - listBranches', async () => {
     const branchName = 'feature-branch'
     const getBranchesMock = jest.fn().mockResolvedValueOnce({
@@ -195,6 +194,7 @@ describe('GitHub Test Suit', () => {
 
     github.versionControl = {
       rest: {
+
         repos: {
           listBranches: getBranchesMock,
         },
@@ -429,7 +429,7 @@ describe('GitHub Test Suit', () => {
       data: { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: shaMock },
     })
 
-    const configs = { key: { nestedKey: 'value' } } 
+    const configs = { key: { nestedKey: 'value' } }
     const expectedResult = [
       {
         path: 'src/versionControl/key.json',
@@ -455,9 +455,6 @@ describe('GitHub Test Suit', () => {
 
     expect(fileUpdates).toEqual(expectedResult)
   })
-
-
-
 
   it('should return an empty array when branch does not exist - getCommits', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
@@ -485,7 +482,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const configs = { key: { nestedKey: 'value' } } 
+    const configs = { key: { nestedKey: 'value' } }
 
     Base64.decode.mockImplementation((encodedContent) => {
       if (encodedContent === Base64.encode(JSON.stringify({ key: { nestedKey: 'value' } }))) {
@@ -518,6 +515,22 @@ describe('skipForChildSite', () => {
     const siteInfo = { siteGroupOwner: 'targetApiKey', context: { targetApiKey: 'targetApiKey' } }
     const getGitFileInfo = { name: 'social.json' }
     expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
+  })
+  it('should call listBranches once and wait for the delay', async () => {
+    const owner = 'testOwner'
+    const repo = 'testRepo'
+    const github = new GitHub(null, owner, repo)
+
+    const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
+    github.listBranches = listBranchesMock
+
+    const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
+
+    await github.waitForCreation('testBranch', 1000)
+
+    expect(listBranchesMock).toHaveBeenCalledTimes(1)
+    expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
+    expect(delaySpy).toHaveBeenCalledTimes(1) // Ensure delay is applied once
   })
 })
 

@@ -150,6 +150,8 @@ const VersionControlComponent = ({ t }) => {
       await dispatch(getServices(commitMessage))
 
       let lastCommitDateAfterFetch = null
+      const startTime = Date.now() // Track the start time
+      const timeout = 3 * 60 * 1000 // 3 minutes in milliseconds
 
       do {
         const commitList = (await dispatch(fetchCommits()).unwrap()) || []
@@ -161,6 +163,12 @@ const VersionControlComponent = ({ t }) => {
 
         if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
           await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+        }
+        // Break the loop if the timeout is reached
+        if (Date.now() - startTime > timeout) {
+          setErrorMessage(t('VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE'))
+          setShowErrorDialog(true)
+          return
         }
       } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
 
