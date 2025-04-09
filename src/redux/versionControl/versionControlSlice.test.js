@@ -19,6 +19,7 @@ import reducer, {
   getRevertChanges,
   getServices,
   prepareFilesForUpdate,
+  validateCredentials,
 } from './versionControlSlice'
 
 jest.mock('js-cookie', () => ({
@@ -133,6 +134,13 @@ describe('versionControlSlice', () => {
       const action = { type: fetchCommits.rejected.type, payload: 'Some error' }
       const state = reducer(initialState.versionControl, action)
       expect(state).toEqual({ ...initialState.versionControl, isFetching: false, error: action.payload })
+    })
+    it('should update state with isValidCredentials as false and set the error', () => {
+      const action = { type: validateCredentials.rejected.type, payload: 'Invalid credentials' }
+      const state = reducer(initialState.versionControl, action)
+
+      expect(state.isValidCredentials).toBe(false)
+      expect(state.error).toBe('Invalid credentials')
     })
   })
 
