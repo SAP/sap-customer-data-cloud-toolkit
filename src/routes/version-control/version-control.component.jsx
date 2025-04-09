@@ -152,31 +152,32 @@ const VersionControlComponent = ({ t }) => {
       let lastCommitDateAfterFetch = null
       const startTime = Date.now() // Track the start time
       const timeout = 3 * 60 * 1000 // 3 minutes in milliseconds
+      let hasNewCommit = false
 
-      do {
+      while (Date.now() - startTime <= timeout) {
         const commitList = (await dispatch(fetchCommits()).unwrap()) || []
         lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
 
         if (!lastCommitDateBeforeBackup && commitList.length > 0) {
+          hasNewCommit = true
           break
         }
 
-        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) {
+          hasNewCommit = true
+          break
         }
-        // Break the loop if the timeout is reached
-        if (Date.now() - startTime > timeout) {
-          setErrorMessage(t('VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE'))
-          setShowErrorDialog(true)
-          return
-        }
-      } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
 
-      if ((lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup)) {
+        // Wait 1 second before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
+
+      if (hasNewCommit) {
         setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
         setShowSuccessDialog(true)
       } else {
-        throw new Error('Failed to detect new commit after backup')
+        setErrorMessage(t('VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE'))
+        setShowErrorDialog(true)
       }
     } catch (error) {
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
