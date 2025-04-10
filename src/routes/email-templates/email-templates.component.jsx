@@ -99,7 +99,9 @@ const EmailTemplates = ({ t }) => {
     document.body.appendChild(element)
     element.click()
     document.body.removeChild(element)
-    dispatch(clearExportFile())
+    setTimeout(() => {
+      dispatch(clearExportFile())
+    }, 0)
   }
 
   const getErrorDialogHeaderText = () => {
