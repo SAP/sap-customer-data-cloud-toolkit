@@ -49,65 +49,6 @@ describe('GitHub Test Suit', () => {
     expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
   })
 
-  it('should get an error Validating Token', async () => {
-    const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('Invalid Token')) // Simulate invalid credentials
-    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }] })
-
-    github.versionControl = {
-      rest: {
-        users: {
-          getAuthenticated: getUsersMock,
-        },
-        repos: {
-          listBranches: getBranchesMock,
-        },
-      },
-    }
-    await expect(github.listBranches(defaultBranch)).rejects.toThrow('Invalid Token')
-  })
-
-  it('should get an error Validating Credentials when login does not match owner', async () => {
-    const getUsersMock = jest.fn().mockResolvedValueOnce({
-      data: { login: 'differentOwner' }, // Simulate a different login
-    })
-
-    github.versionControl = {
-      rest: {
-        users: {
-          getAuthenticated: getUsersMock,
-        },
-      },
-    }
-    await expect(github.listBranches('testBranch')).rejects.toThrow('Invalid Credentials')
-  })
-
-  it('should throw an error when the main branch does not exist - storeCdcDataInVersionControl', async () => {
-    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: 'testOwner' } }) // Mock valid credentials
-    const getBranchMock = jest.fn().mockRejectedValueOnce(new Error('there is no main branch for this repository'))
-    const listBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: 'main' }] }) // Mock branch listing
-    const fetchAndPrepareFilesMock = jest.fn().mockResolvedValueOnce([{ path: 'path', content: 'content' }]) // Mock valid updates
-
-    github.versionControl = {
-      rest: {
-        users: {
-          getAuthenticated: getUsersMock,
-        },
-        repos: {
-          getBranch: getBranchMock,
-          listBranches: listBranchesMock,
-        },
-      },
-    }
-
-    jest.spyOn(github, 'fetchAndPrepareFiles').mockImplementation(fetchAndPrepareFilesMock)
-
-    const commitMessage = 'test commit'
-    const configs = { key: 'value' }
-    const apiKey = 'testApiKey'
-
-    await expect(github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)).rejects.toThrow('there is no main branch for this repository')
-  })
-
   it('should stop fetching commits when response data is less than per_page - getCommits', async () => {
     const getListCommits = jest
       .fn()
@@ -202,19 +143,69 @@ describe('GitHub Test Suit', () => {
     })
   })
 
-  it('should return false when credentials are not valid', async () => {
-    const commitMessage = 'test commit'
-    const configs = { key: 'value' }
-    const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('Invalid owner'))
+  it('should return true if the branch exists - listBranches', async () => {
+    const branchName = 'main'
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({
+      data: [{ name: 'main' }, { name: 'develop' }],
+    })
+
     github.versionControl = {
       rest: {
-        users: {
-          getAuthenticated: getUsersMock,
+        repos: {
+          listBranches: getBranchesMock,
         },
       },
     }
 
-    await expect(github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)).rejects.toThrow('Invalid owner')
+    const result = await github.listBranches(branchName)
+    expect(result).toBe(true)
+    expect(getBranchesMock).toHaveBeenCalledWith({
+      owner: github.owner,
+      repo: github.repo,
+    })
+  })
+
+
+  it('should return false if the branch does not exist - listBranches', async () => {
+    const branchName = 'feature-branch'
+    const getBranchesMock = jest.fn().mockResolvedValueOnce({
+      data: [{ name: 'main' }, { name: 'develop' }],
+    })
+
+    github.versionControl = {
+      rest: {
+        repos: {
+          listBranches: getBranchesMock,
+        },
+      },
+    }
+
+    const result = await github.listBranches(branchName)
+    expect(result).toBe(false)
+    expect(getBranchesMock).toHaveBeenCalledWith({
+      owner: github.owner,
+      repo: github.repo,
+    })
+  })
+
+  it('should throw an error if listBranches fails', async () => {
+    const branchName = 'main'
+    const getBranchesMock = jest.fn().mockRejectedValueOnce(new Error('API error'))
+
+    github.versionControl = {
+      rest: {
+
+        repos: {
+          listBranches: getBranchesMock,
+        },
+      },
+    }
+
+    await expect(github.listBranches(branchName)).rejects.toThrow('API error')
+    expect(getBranchesMock).toHaveBeenCalledWith({
+      owner: github.owner,
+      repo: github.repo,
+    })
   })
 
   it('should return false when branchName is not found - listBranches', async () => {
@@ -438,7 +429,7 @@ describe('GitHub Test Suit', () => {
       data: { content: Base64.encode(JSON.stringify({ key: 'value' })), sha: shaMock },
     })
 
-    const configs = { key: { nestedKey: 'value' } } 
+    const configs = { key: { nestedKey: 'value' } }
     const expectedResult = [
       {
         path: 'src/versionControl/key.json',
@@ -464,9 +455,6 @@ describe('GitHub Test Suit', () => {
 
     expect(fileUpdates).toEqual(expectedResult)
   })
-
-
-
 
   it('should return an empty array when branch does not exist - getCommits', async () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
@@ -494,7 +482,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const configs = { key: { nestedKey: 'value' } } // Pass an object instead of a string
+    const configs = { key: { nestedKey: 'value' } }
 
     Base64.decode.mockImplementation((encodedContent) => {
       if (encodedContent === Base64.encode(JSON.stringify({ key: { nestedKey: 'value' } }))) {
@@ -527,5 +515,98 @@ describe('skipForChildSite', () => {
     const siteInfo = { siteGroupOwner: 'targetApiKey', context: { targetApiKey: 'targetApiKey' } }
     const getGitFileInfo = { name: 'social.json' }
     expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
+  })
+  it('should call listBranches once and wait for the delay', async () => {
+    const owner = 'testOwner'
+    const repo = 'testRepo'
+    const github = new GitHub(null, owner, repo)
+
+    const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
+    github.listBranches = listBranchesMock
+
+    const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
+
+    await github.waitForCreation('testBranch', 1000)
+
+    expect(listBranchesMock).toHaveBeenCalledTimes(1)
+    expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
+    expect(delaySpy).toHaveBeenCalledTimes(1) // Ensure delay is applied once
+  })
+})
+
+describe('GitHub - validateCredentials', () => {
+  const owner = 'testOwner'
+  const repo = 'testRepo'
+  const github = new GitHub(null, owner, repo)
+
+  it('should validate credentials successfully when login matches owner and main branch exists', async () => {
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: 'testSha' } } })
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+        repos: {
+          getBranch: getBranchMock,
+        },
+      },
+    }
+
+    const result = await github.validateCredentials()
+    expect(result).toBe(true)
+    expect(getUsersMock).toHaveBeenCalledTimes(1)
+    expect(getBranchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw an error when login does not match owner', async () => {
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: 'differentOwner' } })
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+      },
+    }
+
+    await expect(github.validateCredentials()).rejects.toThrow('Invalid Credentials')
+    expect(getUsersMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw an error when the main branch does not exist', async () => {
+    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
+    const getBranchMock = jest.fn().mockRejectedValueOnce(new Error('there is no main branch for this repository'))
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+        repos: {
+          getBranch: getBranchMock,
+        },
+      },
+    }
+
+    await expect(github.validateCredentials()).rejects.toThrow('there is no main branch for this repository')
+    expect(getUsersMock).toHaveBeenCalledTimes(1)
+    expect(getBranchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw an error when API call fails', async () => {
+    const getUsersMock = jest.fn().mockRejectedValueOnce(new Error('API error'))
+
+    github.versionControl = {
+      rest: {
+        users: {
+          getAuthenticated: getUsersMock,
+        },
+      },
+    }
+
+    await expect(github.validateCredentials()).rejects.toThrow('API error')
+    expect(getUsersMock).toHaveBeenCalledTimes(1)
   })
 })

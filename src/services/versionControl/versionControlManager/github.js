@@ -167,7 +167,6 @@ class GitHub extends VersionControlManager {
       repo: this.repo,
       ref: `heads/${defaultBranch}`,
       sha: newCommit.sha,
-      force: true,
     })
   }
 
@@ -278,7 +277,7 @@ class GitHub extends VersionControlManager {
     return file
   }
 
-  async #validateCredentials() {
+  async validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
 

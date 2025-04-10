@@ -35,6 +35,7 @@ import {
   selectRepo,
   getServices,
   fetchCommits,
+  validateCredentials,
   prepareFilesForUpdate,
   getRevertChanges,
   clearCommits,
@@ -90,7 +91,15 @@ const VersionControlComponent = ({ t }) => {
 
     const secretKey = credentials?.secretKey
     const fetchAndSaveExistingCommits = async () => {
-      await dispatch(fetchCommits()).unwrap()
+      try {
+        const isValid = await dispatch(validateCredentials()).unwrap()
+        if (!isValid) {
+          throw new Error(t('VERSION_CONTROL.INVALID_CREDENTIALS'))
+        }
+        await dispatch(fetchCommits()).unwrap()
+      } catch (error) {
+        throw new Error('Error fetching commits:', error)
+      }
     }
 
     if (secretKey) {
@@ -116,7 +125,7 @@ const VersionControlComponent = ({ t }) => {
     if (gitToken && owner && repo) {
       fetchAndSaveExistingCommits()
     }
-  }, [credentials, gitToken, owner, repo, dispatch])
+  }, [credentials, gitToken, owner, repo, t, dispatch])
 
   const onCreateBackupClick = async () => {
     setIsLoading(true)
@@ -141,28 +150,36 @@ const VersionControlComponent = ({ t }) => {
       await dispatch(getServices(commitMessage))
 
       let lastCommitDateAfterFetch = null
+      const startTime = Date.now() // Track the start time
+      const timeout = 3 * 60 * 1000 // 3 minutes in milliseconds
+      let hasNewCommit = false
 
-      do {
+      while (Date.now() - startTime <= timeout) {
         const commitList = (await dispatch(fetchCommits()).unwrap()) || []
         lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
 
         if (!lastCommitDateBeforeBackup && commitList.length > 0) {
+          hasNewCommit = true
           break
         }
 
-        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait 1 second before retrying
+        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) {
+          hasNewCommit = true
+          break
         }
-      } while ((!lastCommitDateBeforeBackup && !lastCommitDateAfterFetch) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch <= lastCommitDateBeforeBackup))
 
-      if ((lastCommitDateBeforeBackup === null && lastCommitDateAfterFetch !== null) || (lastCommitDateAfterFetch && lastCommitDateAfterFetch > lastCommitDateBeforeBackup)) {
+        // Wait 1 second before retrying
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
+
+      if (hasNewCommit) {
         setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
         setShowSuccessDialog(true)
       } else {
-        throw new Error('Failed to detect new commit after backup')
+        setErrorMessage(t('VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE'))
+        setShowErrorDialog(true)
       }
     } catch (error) {
-      console.error('Error creating backup:', error)
       setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
       setShowErrorDialog(true)
     } finally {

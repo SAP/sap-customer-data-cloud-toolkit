@@ -25,5 +25,9 @@ class VersionControlManager {
   storeCdcDataInVersionControl(commitMessage, configs, apiKey) {
     throw new Error('Method not implemented.')
   }
+
+  validateCredentials() {
+    throw new Error('Method not implemented.')
+  }
 }
 export default VersionControlManager
