@@ -117,7 +117,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const state = getState()
   const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).revertBackup(sha)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -126,7 +126,7 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const state = getState()
   const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).createBackup(commitMessage)
   } catch (error) {
     return rejectWithValue(getErrorAsArray(error))
   }
@@ -178,7 +178,7 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const state = getState()
   try {
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
+    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getCommitsFromBranch()
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
     return rejectWithValue(error.message)
@@ -189,7 +189,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const state = getState()
   try {
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    const files = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+    const files = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getFilesForBackup()
     return files
   } catch (error) {
     return rejectWithValue(error.message)

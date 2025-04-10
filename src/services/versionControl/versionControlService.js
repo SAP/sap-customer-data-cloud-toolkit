@@ -23,7 +23,7 @@ class VersionControlService {
     this.#versionControl = versionControl
   }
 
-  handleGetServices = async (commitMessage) => {
+  createBackup = async (commitMessage) => {
     try {
       const configs = await this.cdcService.fetchCDCConfigs()
       await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch, this.siteInfo)
@@ -33,12 +33,12 @@ class VersionControlService {
     }
   }
 
-  handleCommitListRequestServices = async () => {
+  getCommitsFromBranch = async () => {
     const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
     return { commitList, totalCommits: commitList.length }
   }
 
-  handleCommitRevertServices = async (sha) => {
+  revertBackup = async (sha) => {
     try {
       const files = await this.#versionControl.getCommitFiles(sha)
       await this.cdcService.applyCommitConfig(files)
@@ -48,7 +48,7 @@ class VersionControlService {
     }
   }
 
-  prepareFilesForUpdate = async () => {
+  getFilesForBackup = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
     const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey, this.siteInfo)
     const formattedFiles =
