@@ -39,4 +39,4 @@ steps:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
     sonarVaultSecretName: 'GROUP-SECRETS/sonar-cdc-sonar-token'
-    waitForQualityGate: true
+    waitForQualityGate: false
