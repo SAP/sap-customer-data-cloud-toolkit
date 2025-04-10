@@ -3,6 +3,7 @@
   "version": "1.10.0",
   "private": true,
   "dependencies": {
+    "@octokit/rest": "^21.0.2",
     "@reduxjs/toolkit": "^1.8.6",
     "@sap_oss/automated-usage-tracking-tool": "^1.0.0",
     "@testing-library/jest-dom": "6.6.3",
@@ -17,6 +18,8 @@
     "crypto-js": "^4.2.0",
     "fast-xml-parser": "4.4.1",
     "i18next": "^23.0.0",
+    "js-base64": "^3.7.7",
+    "js-cookie": "^3.0.5",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "os": "^0.1.2",

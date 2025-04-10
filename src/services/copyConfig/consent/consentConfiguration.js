@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import ConsentStatement from './consentStatement.js'
 import LegalStatement from './legalStatement.js'
 import { stringToJson } from '../objectHelper.js'
@@ -38,7 +37,7 @@ class ConsentConfiguration {
     }
     let response = await this.#consentStatement.get()
     if (response.errorCode === 0) {
-      const consentsPayload = ConsentConfiguration.#splitConsents(response.preferences)
+      const consentsPayload = ConsentConfiguration.splitConsents(response.preferences)
       responses.push(...(await this.copyConsentStatements(destinationSite, destinationSiteConfiguration, consentsPayload)))
     } else {
       responses.push(response)
@@ -49,7 +48,7 @@ class ConsentConfiguration {
     return responses
   }
 
-  static #splitConsents(consents) {
+  static splitConsents(consents) {
     const consentsList = []
     for (const consent of Object.keys(consents)) {
       const payload = { preferences: {} }
