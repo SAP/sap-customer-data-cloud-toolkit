@@ -12,7 +12,7 @@ import { skipForChildSite, generateFileObjects } from '../utils'
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
 
-  async listBranches(branchName) {
+  async hasBranch(branchName) {
     try {
       const { data: branches } = await this.versionControl.rest.repos.listBranches({
         owner: this.owner,
@@ -52,8 +52,8 @@ class GitHub extends VersionControlManager {
     try {
       let allCommits = []
       let page = 1
-      const per_page = 100 // Maximum allowed per page
-      const hasBranch = await this.listBranches(apiKey)
+      const per_page = 100
+      const hasBranch = await this.hasBranch(apiKey)
       if (hasBranch) {
         while (true) {
           try {
@@ -67,7 +67,7 @@ class GitHub extends VersionControlManager {
             allCommits = allCommits.concat(response.data)
 
             if (response.data.length < per_page) {
-              break // No more pages to fetch
+              break
             }
 
             page += 1
@@ -83,7 +83,7 @@ class GitHub extends VersionControlManager {
     }
   }
   async waitForCreation(apiKey, delay = 1000) {
-    await this.listBranches(apiKey)
+    await this.hasBranch(apiKey)
 
     await new Promise((resolve) => setTimeout(resolve, delay))
   }
@@ -115,9 +115,9 @@ class GitHub extends VersionControlManager {
     if (!apiKey) {
       throw new Error('API key is missing')
     }
-    const branchExists = await this.listBranches(apiKey)
+    const branchExists = await this.hasBranch(apiKey)
     if (!branchExists) {
-      this.#getBranchAndCreateRef(apiKey)
+      this.#getMainBranchAndCreateRef(apiKey)
     }
   }
 
@@ -174,10 +174,10 @@ class GitHub extends VersionControlManager {
     let getGitFileInfo
 
     try {
-      // const branchExistsResult = await this.listBranches(defaultBranch)
-      // if (!branchExistsResult) {
-      //   throw new Error('Branch does not exist')
-      // }
+      const branchExistsResult = await this.hasBranch(defaultBranch)
+      if (!branchExistsResult) {
+        throw new Error('Branch does not exist')
+      }
       getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     } catch (error) {
       if (error.status === 404 || error.message === 'Branch does not exist') {
@@ -214,7 +214,7 @@ class GitHub extends VersionControlManager {
 
       return {
         path: filePath,
-        content: JSON.stringify(newContent, null, 2), // Save the original content
+        content: JSON.stringify(newContent, null, 2),
         sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
       }
     } else {
@@ -222,7 +222,7 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getBranch() {
+  async #getMainBranch() {
     try {
       const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
         owner: this.owner,
@@ -231,7 +231,7 @@ class GitHub extends VersionControlManager {
       })
       return mainBranch
     } catch (error) {
-      throw new Error('there is no main branch for this repository')
+      throw new Error('There is no main branch for this repository')
     }
   }
 
@@ -248,12 +248,12 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getBranchAndCreateRef(branch) {
+  async #getMainBranchAndCreateRef(branch) {
     try {
-      const mainBranch = await this.#getBranch()
+      const mainBranch = await this.#getMainBranch()
       await this.#createRef(branch, mainBranch.commit.sha)
     } catch (error) {
-      throw new Error(`Error in getBranchAndCreateRef: ${error.message}`)
+      throw new Error(`Error in getMainBranchAndCreateRef: ${error.message}`)
     }
   }
 
@@ -280,11 +280,12 @@ class GitHub extends VersionControlManager {
   async validateCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
-
+      console.log('Authenticated user:', authenticatedUser)
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
         throw new Error('Invalid Credentials')
       }
-      await this.#getBranch()
+
+      await this.#getMainBranch()
       return true
     } catch (error) {
       if (error.message.includes('Bad credentials')) {
