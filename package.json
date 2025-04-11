@@ -94,7 +94,7 @@
     "@cypress/code-coverage": "^3.10.0",
     "@cypress/instrument-cra": "^1.4.0",
     "@cypress/xvfb": "^1.2.4",
-    "babel-plugin-istanbul": "^6.1.1",
+    "babel-plugin-istanbul": "^7.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "concurrently": "^8.0.0",
     "cypress": "^12.5.0",
