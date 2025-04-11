@@ -3,6 +3,7 @@
   "version": "1.10.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.27.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@sap_oss/automated-usage-tracking-tool": "^1.0.0",
     "@testing-library/jest-dom": "6.6.3",
