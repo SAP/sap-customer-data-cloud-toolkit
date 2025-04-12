@@ -108,6 +108,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(validateCredentials.rejected, (state, action) => {
       state.isValidCredentials = false
+      console.log('Error validating credentials:', action.payload)
       state.error = action.payload
     })
   },

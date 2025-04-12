@@ -82,6 +82,7 @@ class GitHub extends VersionControlManager {
       throw new Error(error)
     }
   }
+
   async waitForCreation(apiKey, delay = 1000) {
     await this.hasBranch(apiKey)
 

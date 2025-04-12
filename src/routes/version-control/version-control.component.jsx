@@ -88,11 +88,12 @@ const VersionControlComponent = ({ t }) => {
     if (credentials) {
       dispatch(setCredentials(credentials))
     }
-
+    // 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
     const secretKey = credentials?.secretKey
     const fetchAndSaveExistingCommits = async () => {
       try {
         const isValid = await dispatch(validateCredentials()).unwrap()
+        console.log('Credentials are valid:', isValid)
         if (!isValid) {
           throw new Error(t('VERSION_CONTROL.INVALID_CREDENTIALS'))
         }
