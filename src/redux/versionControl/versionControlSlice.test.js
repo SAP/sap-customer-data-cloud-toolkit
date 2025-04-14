@@ -83,6 +83,7 @@ describe('versionControlSlice', () => {
         showSuccessDialog: false,
         successMessage: '',
         validationError: null,
+        credentials: null
       })
     })
 
