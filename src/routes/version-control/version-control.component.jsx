@@ -35,7 +35,7 @@ import {
   selectRepo,
   getServices,
   fetchCommits,
-  validateCredentials,
+  validateVersionControlCredentials,
   prepareFilesForUpdate,
   getRevertChanges,
   clearCommits,
@@ -92,7 +92,7 @@ const VersionControlComponent = ({ t }) => {
     const secretKey = credentials?.secretKey
     const fetchAndSaveExistingCommits = async () => {
       try {
-        const isValid = await dispatch(validateCredentials()).unwrap()
+        const isValid = await dispatch(validateVersionControlCredentials()).unwrap()
         console.log('Credentials are valid:', isValid)
         if (!isValid) {
           throw new Error(t('VERSION_CONTROL.INVALID_CREDENTIALS'))

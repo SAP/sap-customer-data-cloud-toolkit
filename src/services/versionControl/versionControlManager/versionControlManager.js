@@ -26,7 +26,7 @@ class VersionControlManager {
     throw new Error('Method not implemented.')
   }
 
-  validateCredentials() {
+  validateVersionControlCredentials() {
     throw new Error('Method not implemented.')
   }
 }

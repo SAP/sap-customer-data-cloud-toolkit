@@ -44,9 +44,7 @@ class VersionControlService {
 
   getFilesForBackup = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
-    console.log('configs-->', configs)
     const validUpdates = await this.#versionControl.fetchFilesAndUpdateGitContent(configs, this.apiKey, this.siteInfo)
-    console.log('validUpdates-->', validUpdates)
 
     const formattedFiles =
       validUpdates.length > 0

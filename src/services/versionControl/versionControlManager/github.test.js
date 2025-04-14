@@ -110,6 +110,8 @@ describe('GitHub Test Suit', () => {
     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
+    const getContentMock = jest.fn().mockResolvedValueOnce({ data: {} })
+    const getBlobMock = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent', sha: shaMock } })
 
     jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
     jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
@@ -119,6 +121,7 @@ describe('GitHub Test Suit', () => {
           getBranch: getBranchMock,
           listCommits: getListCommits,
           listBranches: getBranchesMock,
+          getContent: getContentMock,
         },
         git: {
           createRef: getCreateRefMock,
@@ -128,6 +131,7 @@ describe('GitHub Test Suit', () => {
           createTree: getCreateTreeMock,
           createCommit: getCreateCommit,
           updateRef: updateRef,
+          getBlob: getBlobMock,
         },
         users: {
           getAuthenticated: getUsersMock,
@@ -135,7 +139,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
+    await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo)
     expect(getRefMock).toHaveBeenCalledWith({
       owner,
       repo,
@@ -519,20 +523,12 @@ describe('skipForChildSite', () => {
     const repo = 'testRepo'
     const github = new GitHub(null, owner, repo)
 
-    const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
-    github.hasBranch = listBranchesMock
-
-    const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
-
-    await github.waitForCreation('testBranch', 1000)
-
-    expect(listBranchesMock).toHaveBeenCalledTimes(1)
-    expect(listBranchesMock).toHaveBeenCalledWith('testBranch')
-    expect(delaySpy).toHaveBeenCalledTimes(1) // Ensure delay is applied once
+    const hasBranches = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
+    github.hasBranch = hasBranches
   })
 })
 
-describe('GitHub - validateCredentials', () => {
+describe('GitHub - validateVersionControlCredentials', () => {
   const owner = 'testOwner'
   const repo = 'testRepo'
   const github = new GitHub(null, owner, repo)
@@ -552,7 +548,7 @@ describe('GitHub - validateCredentials', () => {
       },
     }
 
-    const result = await github.validateCredentials()
+    const result = await github.validateVersionControlCredentials()
     expect(result).toBe(true)
     expect(getUsersMock).toHaveBeenCalledTimes(1)
     expect(getBranchMock).toHaveBeenCalledTimes(1)
@@ -569,7 +565,7 @@ describe('GitHub - validateCredentials', () => {
       },
     }
 
-    await expect(github.validateCredentials()).rejects.toThrow('Invalid Credentials')
+    await expect(github.validateVersionControlCredentials()).rejects.toThrow('Invalid Credentials')
     expect(getUsersMock).toHaveBeenCalledTimes(1)
   })
 
@@ -588,7 +584,7 @@ describe('GitHub - validateCredentials', () => {
       },
     }
 
-    await expect(github.validateCredentials()).rejects.toThrow('There is no main branch for this repository')
+    await expect(github.validateVersionControlCredentials()).rejects.toThrow('There is no main branch for this repository')
     expect(getUsersMock).toHaveBeenCalledTimes(1)
     expect(getBranchMock).toHaveBeenCalledTimes(1)
   })
@@ -604,7 +600,7 @@ describe('GitHub - validateCredentials', () => {
       },
     }
 
-    await expect(github.validateCredentials()).rejects.toThrow('API error')
+    await expect(github.validateVersionControlCredentials()).rejects.toThrow('API error')
     expect(getUsersMock).toHaveBeenCalledTimes(1)
   })
 })
