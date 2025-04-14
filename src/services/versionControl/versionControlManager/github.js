@@ -75,9 +75,9 @@ class GitHub extends VersionControlManager {
             throw Error(`Failed to fetch commits for branch: ${apiKey}`, error)
           }
         }
-        return { data: allCommits }
+        return allCommits
       }
-      return { data: [] }
+      return []
     } catch (error) {
       throw new Error(error)
     }
@@ -90,14 +90,24 @@ class GitHub extends VersionControlManager {
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo) {
     await this.#createBranch(apiKey)
-    const commits = await this.getCommits(apiKey)
-    if (commits.data.length === 0) {
+    let commits = await this.getCommits(apiKey)
+    if (commits.length === 0) {
       await this.waitForCreation(apiKey)
     }
     const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey, siteInfo)
     if (validUpdates.length > 0) {
+      const expectedCommitCount = commits.length + 1
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
+
+      const startTime = Date.now()
+      const timeout = 60 * 1000
+
+      while (commits.length !== expectedCommitCount && Date.now() - startTime <= timeout) {
+        commits = await this.getCommits(apiKey)
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
     }
+    return commits
   }
 
   async fetchAndPrepareFiles(configs, apiKey, siteInfo) {

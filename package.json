@@ -53,7 +53,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(@ui5|lit-html|@babel|axios)).*\\.js$"
+      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit|universal-user-agent|before-after-hook)).*\\.js$"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"

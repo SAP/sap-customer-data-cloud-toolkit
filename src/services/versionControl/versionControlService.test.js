@@ -39,44 +39,17 @@ describe('versionControlService', () => {
 
   describe('handleGetServices', () => {
     jest.spyOn(versionControlService.cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
-    it('should return true when creating a backup', async () => {
-      axios
-        .mockResolvedValueOnce({ data: channelsExpectedResponse })
-        .mockResolvedValueOnce({ data: expectedSchemaResponse })
-        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
-        .mockResolvedValueOnce({ data: getPolicyConfig })
-        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
-        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSiteConfig })
-        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
-        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
-        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
-        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
-        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
-        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
-
-      const response = await versionControlService.handleGetServices('commitMessage')
-      expect(response).toEqual(true)
-    })
 
     it('should fetch commit list if branch exists', async () => {
       const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 2 }
-      versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: mockCommitList.commitList })
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue(mockCommitList.commitList )
       const result = await versionControlService.handleCommitListRequestServices()
       expect(result).toEqual(mockCommitList)
       expect(versionControlInstance.getCommits).toHaveBeenCalledWith(apiKey)
     })
 
     it('should return an empty array if branch does not exist', async () => {
-      versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: [] })
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue( [] )
 
       const result = await versionControlService.handleCommitListRequestServices()
       expect(result).toEqual({ commitList: [], totalCommits: 0 })

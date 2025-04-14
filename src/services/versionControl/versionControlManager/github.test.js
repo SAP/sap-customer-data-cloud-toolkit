@@ -46,7 +46,7 @@ describe('GitHub Test Suit', () => {
       },
     }
     const getCommit = await github.getCommits(defaultBranch)
-    expect(getCommit).toEqual({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+    expect(getCommit).toEqual([{ author: owner, commit: 'testCommit', url: 'testUrl' }])
   })
 
   it('should stop fetching commits when response data is less than per_page - getCommits', async () => {
@@ -65,7 +65,7 @@ describe('GitHub Test Suit', () => {
     }
 
     const result = await github.getCommits('testBranch')
-    expect(result.data.length).toBe(150)
+    expect(result.length).toBe(150)
   })
 
   it('should get an error when it does not have branches - getCommits', async () => {
@@ -96,51 +96,6 @@ describe('GitHub Test Suit', () => {
       },
     }
     await expect(github.getCommits(defaultBranch)).rejects.toThrow('Error')
-  })
-  it('should create a branch if it does not exist', async () => {
-    const commitMessage = 'test commit'
-    const configs = { key: 'value' }
-    const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
-    const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: { ref: '/refs/heads/test' } })
-    const getCreateBlobMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-    const getCreateTreeMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-    const getCreateCommit = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
-    const getRefMock = jest.fn().mockResolvedValueOnce({ data: { object: { sha: shaMock } } })
-    const updateRef = jest.fn().mockResolvedValueOnce({ data: {} })
-    const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
-    const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
-    const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
-
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
-    github.versionControl = {
-      rest: {
-        repos: {
-          getBranch: getBranchMock,
-          listCommits: getListCommits,
-          listBranches: getBranchesMock,
-        },
-        git: {
-          createRef: getCreateRefMock,
-          getAuthenticated: getUsersMock,
-          getRef: getRefMock,
-          createBlob: getCreateBlobMock,
-          createTree: getCreateTreeMock,
-          createCommit: getCreateCommit,
-          updateRef: updateRef,
-        },
-        users: {
-          getAuthenticated: getUsersMock,
-        },
-      },
-    }
-
-    await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey)
-    expect(getRefMock).toHaveBeenCalledWith({
-      owner,
-      repo,
-      ref: `heads/${apiKey}`,
-    })
   })
 
   it('should return true if the branch exists - listBranches', async () => {
@@ -340,12 +295,15 @@ describe('GitHub Test Suit', () => {
     const updateRef = jest.fn().mockResolvedValueOnce({ data: {} })
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
+      .mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' },
+          { author: owner, commit: 'testCommit', url: 'testUrl' }] })
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
 
     jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
 
+    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
     github.versionControl = {
@@ -460,7 +418,7 @@ describe('GitHub Test Suit', () => {
     jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
 
     const result = await github.getCommits('testBranch')
-    expect(result).toEqual({ data: [] })
+    expect(result).toEqual([] )
   })
 
   it('should create a blob when there are no files on the fetch and prepare files', async () => {

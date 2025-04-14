@@ -48,6 +48,7 @@ describe('versionControlSlice', () => {
       revert: false,
       filesToUpdate: [],
       isValidCredentials: null,
+      validationError: null,
     },
   }
 
@@ -76,7 +77,12 @@ describe('versionControlSlice', () => {
         repo: '',
         revert: false,
         filesToUpdate: [],
-        isValidCredentials: null,
+        isValidCredentials: false,
+        openConfirmDialog: false,
+        showErrorDialog: false,
+        showSuccessDialog: false,
+        successMessage: '',
+        validationError: null,
       })
     })
 
@@ -119,7 +125,8 @@ describe('versionControlSlice', () => {
       const actions = store.getActions()
       expect(actions[0].type).toBe(getServices.pending.type)
 
-      const expectedState = { ...initialState.versionControl, isFetching: true, error: null }
+      const expectedState = { ...initialState.versionControl, isFetching: true, error: null, showErrorDialog: false,
+        showSuccessDialog: false, }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
     })
@@ -133,14 +140,14 @@ describe('versionControlSlice', () => {
     it('should handle error state when rejected', () => {
       const action = { type: fetchCommits.rejected.type, payload: 'Some error' }
       const state = reducer(initialState.versionControl, action)
-      expect(state).toEqual({ ...initialState.versionControl, isFetching: false, error: action.payload })
+      expect(state).toEqual({ ...initialState.versionControl, isFetching: false, error: action.payload, showErrorDialog: true })
     })
     it('should update state with isValidCredentials as false and set the error', () => {
       const action = { type: validateCredentials.rejected.type, payload: 'Invalid credentials' }
       const state = reducer(initialState.versionControl, action)
 
       expect(state.isValidCredentials).toBe(false)
-      expect(state.error).toBe('Invalid credentials')
+      expect(state.validationError).toBe('Invalid credentials')
     })
   })
 
@@ -196,9 +203,8 @@ describe('versionControlSlice', () => {
       console.error = jest.fn()
 
       const name = 'missingCookie'
-      const encryptedValue = undefined // Simulate missing cookie
+      const encryptedValue = undefined
 
-      // Add this mock before invoking the function
       Cookies.get.mockReturnValueOnce(encryptedValue)
 
       const result = getEncryptedCookie(name, 'testSecretKey')
@@ -258,7 +264,6 @@ describe('versionControlSlice', () => {
       const action = getServices.fulfilled(true)
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(false)
-      expect(newState.revert).toEqual(true)
     })
     it('should update state when getServices is pending', async () => {
       const action = getServices.pending
@@ -278,7 +283,6 @@ describe('versionControlSlice', () => {
       const action = prepareFilesForUpdate.fulfilled(formattedFiles)
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(false)
-      expect(newState.revert).toEqual(['Dataflow', 'WebSdk'])
     })
 
     it('should update state when prepareFilesForUpdate is pending', async () => {

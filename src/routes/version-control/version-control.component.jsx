@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { createUseStyles } from 'react-jss'
+import { useSelector, useDispatch } from 'react-redux'
 import { withTranslation } from 'react-i18next'
+import Cookies from 'js-cookie'
 import {
   Bar,
   Input,
@@ -21,35 +24,38 @@ import {
   Label,
   BusyIndicator,
 } from '@ui5/webcomponents-react'
-import { createUseStyles } from 'react-jss'
-import { useSelector, useDispatch } from 'react-redux'
 import {
   setGitToken,
   setOwner,
   setRepo,
-  setCredentials,
-  selectCommits,
-  selectIsFetching,
-  selectGitToken,
-  selectOwner,
-  selectRepo,
+  setOpenConfirmDialog,
+  setShowSuccessDialog,
+  setShowErrorDialog,
   getServices,
   fetchCommits,
   validateCredentials,
   prepareFilesForUpdate,
   getRevertChanges,
-  clearCommits,
+  selectCommits,
+  selectIsFetching,
+  selectGitToken,
+  selectOwner,
+  selectRepo,
   selectError,
   selectFilesToUpdate,
+  selectValidationError,
+  selectOpenConfirmDialog,
+  selectShowSuccessDialog,
+  selectShowErrorDialog,
+  selectSuccessMessage
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
-import Cookies from 'js-cookie'
-import { decryptData } from '../../redux/encryptionUtils'
-import styles from './version-control.styles'
+import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
+import styles from './version-control.styles'
+import { decryptData } from '../../redux/encryptionUtils'
 import { getApiKey } from '../../redux/utils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
-import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 
 const PAGE_TITLE = 'VersionControl'
 const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
@@ -63,17 +69,17 @@ const VersionControlComponent = ({ t }) => {
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
-  const errors = useSelector(selectError)
+  const error = useSelector(selectError)
   const repo = useSelector(selectRepo)
   const apiKey = useSelector(selectCurrentSiteApiKey)
   const filesToUpdate = useSelector(selectFilesToUpdate)
+  const validationError = useSelector(selectValidationError)
+  const openConfirmDialog = useSelector(selectOpenConfirmDialog)
+  const showSuccessDialog = useSelector(selectShowSuccessDialog)
+  const showErrorDialog = useSelector(selectShowErrorDialog)
+  const successMessage = useSelector(selectSuccessMessage)
+
   const [commitMessage, setCommitMessage] = useState('')
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
-  const [showErrorDialog, setShowErrorDialog] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
   window.navigation.onnavigate = (event) => {
     if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_VERSION_CONTROL)) {
@@ -85,22 +91,9 @@ const VersionControlComponent = ({ t }) => {
   }
 
   useEffect(() => {
-    if (credentials) {
-      dispatch(setCredentials(credentials))
-    }
+    dispatch(validateCredentials())
 
     const secretKey = credentials?.secretKey
-    const fetchAndSaveExistingCommits = async () => {
-      try {
-        const isValid = await dispatch(validateCredentials()).unwrap()
-        if (!isValid) {
-          throw new Error(t('VERSION_CONTROL.INVALID_CREDENTIALS'))
-        }
-        await dispatch(fetchCommits()).unwrap()
-      } catch (error) {
-        throw new Error('Error fetching commits:', error)
-      }
-    }
 
     if (secretKey) {
       const encryptedGitToken = Cookies.get('gitToken')
@@ -121,109 +114,38 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setRepo(repo))
       }
     }
-
     if (gitToken && owner && repo) {
-      fetchAndSaveExistingCommits()
+      dispatch(fetchCommits())
     }
-  }, [credentials, gitToken, owner, repo, t, dispatch])
+  }, [credentials, gitToken, owner, repo, dispatch])
 
-  const onCreateBackupClick = async () => {
-    setIsLoading(true)
-    try {
-      await dispatch(prepareFilesForUpdate())
-      setIsDialogOpen(true)
-    } catch (error) {
-      setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
-      setShowErrorDialog(true)
-    } finally {
-      setIsLoading(false)
-    }
+  const onCreateBackupClick = () => {
+    dispatch(prepareFilesForUpdate())
   }
 
   const onConfirmBackupClick = async () => {
-    setIsDialogOpen(false)
-    setIsLoading(true)
-    try {
-      const initialCommitList = (await dispatch(fetchCommits()).unwrap()) || []
-      const lastCommitDateBeforeBackup = initialCommitList.length > 0 ? new Date(initialCommitList[0].commit.author.date) : null
-
-      await dispatch(getServices(commitMessage))
-
-      let lastCommitDateAfterFetch = null
-      const startTime = Date.now() // Track the start time
-      const timeout = 3 * 60 * 1000 // 3 minutes in milliseconds
-      let hasNewCommit = false
-
-      while (Date.now() - startTime <= timeout) {
-        const commitList = (await dispatch(fetchCommits()).unwrap()) || []
-        lastCommitDateAfterFetch = commitList.length > 0 ? new Date(commitList[0].commit.author.date) : null
-
-        if (!lastCommitDateBeforeBackup && commitList.length > 0) {
-          hasNewCommit = true
-          break
-        }
-
-        if (lastCommitDateAfterFetch && lastCommitDateBeforeBackup && lastCommitDateAfterFetch > lastCommitDateBeforeBackup) {
-          hasNewCommit = true
-          break
-        }
-
-        // Wait 1 second before retrying
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-      }
-
-      if (hasNewCommit) {
-        setSuccessMessage(t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE'))
-        setShowSuccessDialog(true)
-      } else {
-        setErrorMessage(t('VERSION_CONTROL.BACKUP.FAIL.TO.FETCH.COMMIT.MESSAGE'))
-        setShowErrorDialog(true)
-      }
-    } catch (error) {
-      setErrorMessage(t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
-      setShowErrorDialog(true)
-    } finally {
-      setIsLoading(false)
-    }
+    dispatch(getServices(commitMessage))
+    dispatch(setOpenConfirmDialog(false))
   }
 
   const onCancelBackupClick = () => {
-    setIsDialogOpen(false)
+    dispatch(setOpenConfirmDialog(false))
   }
 
-  const onCommitRevertClick = async (sha) => {
-    setIsLoading(true)
-
-    try {
-      const response = await dispatch(getRevertChanges(sha))
-      if (getRevertChanges.rejected.match(response)) {
-        throw new Error('Failed to revert changes')
-      }
-      await dispatch(fetchCommits())
-      setSuccessMessage(t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE'))
-      setShowSuccessDialog(true)
-    } catch (error) {
-      console.error('Error reverting commit:', error)
-      setErrorMessage(error.message)
-      setShowErrorDialog(true)
-    } finally {
-      setIsLoading(false)
-    }
+  const onCommitRevertClick = (sha) => {
+    dispatch(getRevertChanges(sha))
   }
 
   const handleGitTokenChange = (e) => {
     dispatch(setGitToken(e.target.value))
-    dispatch(clearCommits())
   }
 
   const handleOwnerChange = (e) => {
     dispatch(setOwner(e.target.value))
-    dispatch(clearCommits())
   }
 
   const handleRepoChange = (e) => {
     dispatch(setRepo(e.target.value))
-    dispatch(clearCommits())
   }
 
   const handleCommitMessageChange = (e) => {
@@ -237,15 +159,15 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onSuccessDialogAfterClose = () => {
-    setShowSuccessDialog(false)
+    dispatch(setShowSuccessDialog(false))
   }
 
   const onErrorDialogAfterClose = () => {
-    setShowErrorDialog(false)
+    dispatch(setShowErrorDialog(false))
   }
 
   const renderStatusMessage = () => {
-    if (!gitToken || !owner || !repo || errors) {
+    if (!gitToken || !owner || !repo || error) {
       return <div></div>
     } else if (commits.length === 0) {
       return <Bar className={classes.noCommitsBar} id="versionControlCommitBar" startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
@@ -277,13 +199,13 @@ const VersionControlComponent = ({ t }) => {
       id="versionControlErrorPopup"
       data-cy="versionControlErrorPopup"
     >
-      <Text>{errorMessage}</Text>
+      <Text>{error}</Text>
     </DialogMessageInform>
   )
 
   return (
     <>
-      <BusyIndicator active={isLoading} delay={0}>
+      <BusyIndicator active={isFetching} delay={0}>
         <div className={classes.fullContainer}>
           <Bar
             design="Header"
@@ -359,9 +281,9 @@ const VersionControlComponent = ({ t }) => {
                           required
                         />
                       </div>
-                      {(!gitToken || !owner || errors) && (
+                      {(!gitToken || !owner || validationError) && (
                         <div id="warningCredentials" className={classes.warningMessage}>
-                          {errors && <div className={classes.errorMessage}>{errors.toString()}</div>}
+                          {validationError && <div className={classes.errorMessage}>{validationError.toString()}</div>}
                           {t('VERSION_CONTROL.INSERT_CONFIGURATIONS')}
                           <a href="https://github.com/SAP/sap-customer-data-cloud-toolkit/wiki/Documentation#prettier" target="_blank" rel="noopener noreferrer">
                             {t('VERSION_CONTROL.DOCUMENTATION_LINK')}
@@ -385,7 +307,7 @@ const VersionControlComponent = ({ t }) => {
                       design="Emphasized"
                       className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                       onClick={onCreateBackupClick}
-                      disabled={isLoading || !gitToken || !owner || !repo || errors !== null}
+                      disabled={isFetching || !gitToken || !owner || !repo || error !== null}
                     >
                       {t('VERSION_CONTROL.BACKUP')}
                     </Button>
@@ -427,7 +349,7 @@ const VersionControlComponent = ({ t }) => {
                                 data-cy="revertCommitButton"
                                 className={classes.singlePrettifyRestoreButton}
                                 onClick={() => onCommitRevertClick(commit.sha)}
-                                disabled={isLoading}
+                                disabled={isFetching}
                               >
                                 {t('VERSION_CONTROL.RESTORE')}
                               </Button>
@@ -440,7 +362,7 @@ const VersionControlComponent = ({ t }) => {
                 </div>
               </Card>
               <Dialog
-                open={isDialogOpen}
+                open={openConfirmDialog}
                 className="ui-dialog"
                 onAfterClose={onCancelBackupClick}
                 id="backupDialog"
