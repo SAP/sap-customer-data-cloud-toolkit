@@ -5,7 +5,6 @@
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import VersionControlService from '../../services/versionControl/versionControlService'
-import { getErrorAsArray } from '../utils'
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
 import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
@@ -72,6 +71,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(fetchCommits.fulfilled, (state, action) => {
       state.isFetching = false
+      state.error = null
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
@@ -147,7 +147,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   try {
     return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(error))
+    return rejectWithValue(error.message)
   }
 })
 
@@ -157,7 +157,7 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   try {
     return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(error))
+    return rejectWithValue(error.messages)
   }
 })
 
@@ -208,7 +208,7 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
     const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(error.message))
+    return rejectWithValue(error.message)
   }
 })
 
