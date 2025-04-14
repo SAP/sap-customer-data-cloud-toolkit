@@ -34,6 +34,7 @@ const versionControlSlice = createSlice({
     showErrorDialog: false,
     showSuccessDialog: false,
     successMessage: '',
+    credentials: null
   },
   reducers: {
     setGitToken(state, action) {
@@ -47,6 +48,9 @@ const versionControlSlice = createSlice({
     setRepo(state, action) {
       state.repo = action.payload
       setCookies(state)
+    },
+    setCredentials(state, action) {
+      state.credentials = action.payload
     },
     setOpenConfirmDialog(state, action) {
       state.openConfirmDialog = action.payload

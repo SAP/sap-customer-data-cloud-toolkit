@@ -31,6 +31,7 @@ import {
   setOpenConfirmDialog,
   setShowSuccessDialog,
   setShowErrorDialog,
+  setCredentials,
   getServices,
   fetchCommits,
   validateCredentials,
@@ -91,6 +92,10 @@ const VersionControlComponent = ({ t }) => {
   }
 
   useEffect(() => {
+    if (credentials) {
+      dispatch(setCredentials(credentials))
+    }
+
     dispatch(validateCredentials())
 
     const secretKey = credentials?.secretKey
