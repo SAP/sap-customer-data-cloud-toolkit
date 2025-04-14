@@ -55,7 +55,7 @@ describe('GitHub Test Suit', () => {
       .mockResolvedValueOnce({ data: Array(100).fill({}) }) // First page
       .mockResolvedValueOnce({ data: Array(50).fill({}) }) // Last page
 
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         repos: {
@@ -86,7 +86,7 @@ describe('GitHub Test Suit', () => {
   })
   it('should fail to fetch commits for branch - getCommits', async () => {
     const getBranchesMock = jest.fn().mockResolvedValueOnce()
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
 
     github.versionControl = {
       rest: {
@@ -111,8 +111,8 @@ describe('GitHub Test Suit', () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: defaultBranch }, { commit: shaMock }, { protected: false }] })
 
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         repos: {
@@ -143,7 +143,7 @@ describe('GitHub Test Suit', () => {
     })
   })
 
-  it('should return true if the branch exists - listBranches', async () => {
+  it('should return true if the branch exists - hasBranch', async () => {
     const branchName = 'main'
     const getBranchesMock = jest.fn().mockResolvedValueOnce({
       data: [{ name: 'main' }, { name: 'develop' }],
@@ -157,7 +157,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const result = await github.listBranches(branchName)
+    const result = await github.hasBranch(branchName)
     expect(result).toBe(true)
     expect(getBranchesMock).toHaveBeenCalledWith({
       owner: github.owner,
@@ -165,8 +165,7 @@ describe('GitHub Test Suit', () => {
     })
   })
 
-
-  it('should return false if the branch does not exist - listBranches', async () => {
+  it('should return false if the branch does not exist - hasBranch', async () => {
     const branchName = 'feature-branch'
     const getBranchesMock = jest.fn().mockResolvedValueOnce({
       data: [{ name: 'main' }, { name: 'develop' }],
@@ -180,7 +179,7 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const result = await github.listBranches(branchName)
+    const result = await github.hasBranch(branchName)
     expect(result).toBe(false)
     expect(getBranchesMock).toHaveBeenCalledWith({
       owner: github.owner,
@@ -188,27 +187,26 @@ describe('GitHub Test Suit', () => {
     })
   })
 
-  it('should throw an error if listBranches fails', async () => {
+  it('should throw an error if hasBranch fails', async () => {
     const branchName = 'main'
     const getBranchesMock = jest.fn().mockRejectedValueOnce(new Error('API error'))
 
     github.versionControl = {
       rest: {
-
         repos: {
           listBranches: getBranchesMock,
         },
       },
     }
 
-    await expect(github.listBranches(branchName)).rejects.toThrow('API error')
+    await expect(github.hasBranch(branchName)).rejects.toThrow('API error')
     expect(getBranchesMock).toHaveBeenCalledWith({
       owner: github.owner,
       repo: github.repo,
     })
   })
 
-  it('should return false when branchName is not found - listBranches', async () => {
+  it('should return false when branchName is not found - hasBranch', async () => {
     const getBranchesMock = jest.fn().mockResolvedValueOnce({ data: [{ name: 'otherBranch' }] })
     const getListCommits = jest.fn().mockResolvedValueOnce({ data: [{ author: owner, commit: 'testCommit', url: 'testUrl' }] })
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
@@ -226,7 +224,7 @@ describe('GitHub Test Suit', () => {
         },
       },
     }
-    const result = await github.listBranches('testBranch')
+    const result = await github.hasBranch('testBranch')
     expect(result).toBe(false)
   })
 
@@ -344,10 +342,10 @@ describe('GitHub Test Suit', () => {
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
 
-    jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
+    jest.spyOn(github, 'fetchFilesAndUpdateGitContent').mockResolvedValueOnce(validUpdates)
 
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         git: {
@@ -371,7 +369,7 @@ describe('GitHub Test Suit', () => {
     }
     await github.storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo)
 
-    expect(github.fetchAndPrepareFiles).toHaveBeenCalledWith(configs, apiKey, siteInfo)
+    expect(github.fetchFilesAndUpdateGitContent).toHaveBeenCalledWith(configs, apiKey, siteInfo)
   })
 
   it('should use default content when file does not exist - updateGitFileContent', async () => {
@@ -389,10 +387,10 @@ describe('GitHub Test Suit', () => {
     const getCreateRefMock = jest.fn().mockResolvedValueOnce({ data: refMock })
     const getBranchMock = jest.fn().mockResolvedValueOnce({ data: { commit: { sha: shaMock } } })
 
-    jest.spyOn(github, 'fetchAndPrepareFiles').mockResolvedValueOnce(validUpdates)
+    jest.spyOn(github, 'fetchFilesAndUpdateGitContent').mockResolvedValueOnce(validUpdates)
 
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
     github.versionControl = {
       rest: {
         git: {
@@ -416,13 +414,13 @@ describe('GitHub Test Suit', () => {
       },
     }
 
-    const result = await github.fetchAndPrepareFiles(configs, apiKey, { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } })
+    const result = await github.fetchFilesAndUpdateGitContent(configs, apiKey, { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } })
     console.log(getFileMock.mock.calls)
     expect(result[0].sha).toBeUndefined()
   })
 
   it('should fetch and prepare files', async () => {
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
 
     const getBlob = jest.fn().mockResolvedValueOnce({ data: { content: 'testContent' } })
     const getContentMock = jest.fn().mockResolvedValueOnce({
@@ -451,20 +449,20 @@ describe('GitHub Test Suit', () => {
 
     Base64.decode.mockReturnValueOnce(JSON.stringify({ key: 'value' }))
 
-    const fileUpdates = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
+    const fileUpdates = await github.fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo)
 
     expect(fileUpdates).toEqual(expectedResult)
   })
 
   it('should return an empty array when branch does not exist - getCommits', async () => {
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(false)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(false)
 
     const result = await github.getCommits('testBranch')
     expect(result).toEqual({ data: [] })
   })
 
   it('should create a blob when there are no files on the fetch and prepare files', async () => {
-    jest.spyOn(github, 'listBranches').mockResolvedValueOnce(true)
+    jest.spyOn(github, 'hasBranch').mockResolvedValueOnce(true)
 
     const getContentMock = jest.fn().mockResolvedValueOnce({ data: { sha: shaMock } })
     const getBlobMock = jest.fn().mockResolvedValueOnce({
@@ -491,7 +489,7 @@ describe('GitHub Test Suit', () => {
       throw new Error(`Unexpected input to Base64.decode: ${encodedContent}`)
     })
 
-    const response = await github.fetchAndPrepareFiles(configs, apiKey, siteInfo)
+    const response = await github.fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo)
 
     expect(response[0].content).toEqual(JSON.stringify(configs.key, null, 2))
     expect(response[0].sha).toEqual('testSha')
@@ -516,13 +514,13 @@ describe('skipForChildSite', () => {
     const getGitFileInfo = { name: 'social.json' }
     expect(skipForChildSite(getGitFileInfo, siteInfo)).toBe(true)
   })
-  it('should call listBranches once and wait for the delay', async () => {
+  it('should call hasBranch once and wait for the delay', async () => {
     const owner = 'testOwner'
     const repo = 'testRepo'
     const github = new GitHub(null, owner, repo)
 
     const listBranchesMock = jest.fn().mockResolvedValueOnce(true) // Simulate branch exists
-    github.listBranches = listBranchesMock
+    github.hasBranch = listBranchesMock
 
     const delaySpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
 
@@ -577,7 +575,7 @@ describe('GitHub - validateCredentials', () => {
 
   it('should throw an error when the main branch does not exist', async () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: owner } })
-    const getBranchMock = jest.fn().mockRejectedValueOnce(new Error('there is no main branch for this repository'))
+    const getBranchMock = jest.fn().mockRejectedValueOnce(new Error('There is no main branch for this repository'))
 
     github.versionControl = {
       rest: {
@@ -590,7 +588,7 @@ describe('GitHub - validateCredentials', () => {
       },
     }
 
-    await expect(github.validateCredentials()).rejects.toThrow('there is no main branch for this repository')
+    await expect(github.validateCredentials()).rejects.toThrow('There is no main branch for this repository')
     expect(getUsersMock).toHaveBeenCalledTimes(1)
     expect(getBranchMock).toHaveBeenCalledTimes(1)
   })

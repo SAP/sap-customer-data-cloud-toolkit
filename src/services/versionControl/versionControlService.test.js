@@ -22,7 +22,11 @@ import { getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataT
 import { expectedGigyaResponseOk } from '../servicesDataTest'
 import GitHub from './versionControlManager/github'
 import { Octokit } from '@octokit/rest'
-
+jest.mock('@octokit/rest', () => {
+  return {
+    Octokit: jest.fn(),
+  }
+})
 jest.mock('axios')
 jest.mock('./versionControlManager/github')
 
@@ -63,14 +67,14 @@ describe('versionControlService', () => {
         .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
-      const response = await versionControlService.handleGetServices('commitMessage')
+      const response = await versionControlService.createBackup('commitMessage')
       expect(response).toEqual(true)
     })
 
     it('should fetch commit list if branch exists', async () => {
       const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 2 }
       versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: mockCommitList.commitList })
-      const result = await versionControlService.handleCommitListRequestServices()
+      const result = await versionControlService.getCommitsFromBranch()
       expect(result).toEqual(mockCommitList)
       expect(versionControlInstance.getCommits).toHaveBeenCalledWith(apiKey)
     })
@@ -78,7 +82,7 @@ describe('versionControlService', () => {
     it('should return an empty array if branch does not exist', async () => {
       versionControlInstance.getCommits = jest.fn().mockResolvedValue({ data: [] })
 
-      const result = await versionControlService.handleCommitListRequestServices()
+      const result = await versionControlService.getCommitsFromBranch()
       expect(result).toEqual({ commitList: [], totalCommits: 0 })
     })
 
@@ -92,7 +96,7 @@ describe('versionControlService', () => {
         },
       ]
       versionControlInstance.getCommitFiles = jest.fn().mockResolvedValue(mockFiles)
-      const response = await versionControlService.handleCommitRevertServices('mockSha')
+      const response = await versionControlService.revertBackup('mockSha')
       expect(response).toEqual(true)
     })
   })

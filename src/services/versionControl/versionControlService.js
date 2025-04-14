@@ -6,12 +6,6 @@
 import CdcService from './cdcService'
 
 class VersionControlService {
-  #credentials
-  #apiKey
-  #currentSite
-  #gitToken
-  #owner
-  #repo
   #versionControl
   constructor(credentials, apiKey, versionControl, dataCenter, siteInfo) {
     this.credentials = credentials
@@ -50,7 +44,10 @@ class VersionControlService {
 
   getFilesForBackup = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
-    const validUpdates = await this.#versionControl.fetchAndPrepareFiles(configs, this.apiKey, this.siteInfo)
+    console.log('configs-->', configs)
+    const validUpdates = await this.#versionControl.fetchFilesAndUpdateGitContent(configs, this.apiKey, this.siteInfo)
+    console.log('validUpdates-->', validUpdates)
+
     const formattedFiles =
       validUpdates.length > 0
         ? validUpdates.map((file) => {

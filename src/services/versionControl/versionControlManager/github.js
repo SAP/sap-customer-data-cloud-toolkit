@@ -95,13 +95,13 @@ class GitHub extends VersionControlManager {
     if (commits.data.length === 0) {
       await this.waitForCreation(apiKey)
     }
-    const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey, siteInfo)
+    const validUpdates = await this.fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo)
     if (validUpdates.length > 0) {
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
     }
   }
 
-  async fetchAndPrepareFiles(configs, apiKey, siteInfo) {
+  async fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo) {
     const files = generateFileObjects(configs)
     const fileUpdates = await Promise.all(
       files.map(async (file) => {
@@ -175,10 +175,10 @@ class GitHub extends VersionControlManager {
     let getGitFileInfo
 
     try {
-      const branchExistsResult = await this.hasBranch(defaultBranch)
-      if (!branchExistsResult) {
-        throw new Error('Branch does not exist')
-      }
+      // const branchExistsResult = await this.hasBranch(defaultBranch)
+      // if (!branchExistsResult) {
+      //   throw new Error('Branch does not exist')
+      // }
       getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     } catch (error) {
       if (error.status === 404 || error.message === 'Branch does not exist') {
@@ -259,22 +259,25 @@ class GitHub extends VersionControlManager {
   }
 
   async #getFile(path, defaultBranch) {
-    const { data: file } = await this.versionControl.rest.repos.getContent({
-      owner: this.owner,
-      repo: this.repo,
-      path,
-      ref: defaultBranch,
-    })
-
-    if (!file || !file.content || file.size > 100 * 1024) {
-      const { data: blobData } =
-        (await this.versionControl.rest.git.getBlob({
-          owner: this.owner,
-          repo: this.repo,
-          file_sha: file && file.sha,
-        })) || {}
-      file.content = blobData ? blobData.content : null
-    }
+    console.log('path-->', path)
+    console.log('defaultBranch-->', defaultBranch)
+    // const { data: file } = await this.versionControl.rest.repos.getContent({
+    //   owner: this.owner,
+    //   repo: this.repo,
+    //   path,
+    //   ref: defaultBranch,
+    // })
+    // console.log('file-->', file)
+    let file
+    // if (!file || !file.content || file.size > 100 * 1024) {
+    const { data: blobData } =
+      (await this.versionControl.rest.git.getBlob({
+        owner: this.owner,
+        repo: this.repo,
+        file_sha: file && file.sha,
+      })) || {}
+    file.content = blobData ? blobData.content : null
+    // }
     return file
   }
 
