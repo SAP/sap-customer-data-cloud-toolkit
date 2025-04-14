@@ -130,9 +130,9 @@ class GitHub extends VersionControlManager {
     })
 
     const baseTreeSha = refData.object.sha
-
     const blobs = await Promise.all(
       files.map(async (file) => {
+        console.log('file-->', file)
         const { data } = await this.versionControl.rest.git.createBlob({
           owner: this.owner,
           repo: this.repo,
@@ -174,22 +174,22 @@ class GitHub extends VersionControlManager {
   async #updateGitFileContent(filePath, cdcFileContent, defaultBranch, siteInfo) {
     let getGitFileInfo
 
-    try {
-      // const branchExistsResult = await this.hasBranch(defaultBranch)
-      // if (!branchExistsResult) {
-      //   throw new Error('Branch does not exist')
-      // }
-      getGitFileInfo = await this.#getFile(filePath, defaultBranch)
-    } catch (error) {
-      if (error.status === 404 || error.message === 'Branch does not exist') {
-        return {
-          path: filePath,
-          content: cdcFileContent,
-          sha: undefined,
-        }
-      }
-      throw error
-    }
+    // try {
+    // const branchExistsResult = await this.hasBranch(defaultBranch)
+    // if (!branchExistsResult) {
+    //   throw new Error('Branch does not exist')
+    // }
+    //   getGitFileInfo = await this.#getFile(filePath, defaultBranch)
+    // } catch (error) {
+    //   if (error.status === 404 || error.message === 'Branch does not exist') {
+    //     return {
+    //       path: filePath,
+    //       content: cdcFileContent,
+    //       sha: undefined,
+    //     }
+    //   }
+    //   throw error
+    // }
 
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
     let currentGitContent = {}
@@ -261,23 +261,22 @@ class GitHub extends VersionControlManager {
   async #getFile(path, defaultBranch) {
     console.log('path-->', path)
     console.log('defaultBranch-->', defaultBranch)
-    // const { data: file } = await this.versionControl.rest.repos.getContent({
-    //   owner: this.owner,
-    //   repo: this.repo,
-    //   path,
-    //   ref: defaultBranch,
-    // })
-    // console.log('file-->', file)
-    let file
-    // if (!file || !file.content || file.size > 100 * 1024) {
-    const { data: blobData } =
-      (await this.versionControl.rest.git.getBlob({
-        owner: this.owner,
-        repo: this.repo,
-        file_sha: file && file.sha,
-      })) || {}
-    file.content = blobData ? blobData.content : null
-    // }
+    const { data: file } = await this.versionControl.rest.repos.getContent({
+      owner: this.owner,
+      repo: this.repo,
+      path,
+      ref: defaultBranch,
+    })
+    console.log('file-->', file)
+    if (!file || !file.content || file.size > 100 * 1024) {
+      const { data: blobData } =
+        (await this.versionControl.rest.git.getBlob({
+          owner: this.owner,
+          repo: this.repo,
+          file_sha: file && file.sha,
+        })) || {}
+      file.content = blobData ? blobData.content : null
+    }
     return file
   }
 
