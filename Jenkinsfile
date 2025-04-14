@@ -52,4 +52,5 @@ node() {
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
+
 }

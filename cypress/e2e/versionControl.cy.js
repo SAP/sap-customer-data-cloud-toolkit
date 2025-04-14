@@ -297,6 +297,6 @@ describe('Version Control Test Suite', () => {
     cy.get('[data-cy="backupButton"]').should('not.be.disabled')
     cy.get('#versionControlTable').should('be.visible').should('contain.text', 'Create test CDCRepo branch creation')
     cy.get('#commitRevertButton-0').should('be.visible').click()
-    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'Failed to revert changes')
+    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkFailed to revert configurations')
   })
 })

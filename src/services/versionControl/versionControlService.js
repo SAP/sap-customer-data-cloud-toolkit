@@ -20,15 +20,14 @@ class VersionControlService {
   createBackup = async (commitMessage) => {
     try {
       const configs = await this.cdcService.fetchCDCConfigs()
-      await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch, this.siteInfo)
-      return true
+      return await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch, this.siteInfo)
     } catch (error) {
       throw new Error(error)
     }
   }
 
   getCommitsFromBranch = async () => {
-    const { data: commitList } = await this.#versionControl.getCommits(this.defaultBranch)
+    const commitList = await this.#versionControl.getCommits(this.defaultBranch)
     return { commitList, totalCommits: commitList.length }
   }
 

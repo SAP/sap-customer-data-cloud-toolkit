@@ -156,6 +156,7 @@
   "VERSION_CONTROL.GIT_TOKEN_MESSAGE": "Please insert the access Token.",
   "VERSION_CONTROL.ID": "Commit Id",
   "VERSION_CONTROL.INSERT_CONFIGURATIONS": "Please insert the correct configurations.",
+  "VERSION_CONTROL.INVALID_CREDENTIALS": "Invalid credentials",
   "VERSION_CONTROL.NO_CHANGES": "There are no changes since your last backup.",
   "VERSION_CONTROL.NO_COMMITS": "There are no commits for this API key.",
   "VERSION_CONTROL.OWNER": "Username",
