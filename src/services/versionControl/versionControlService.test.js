@@ -5,24 +5,16 @@
 
 import VersionControlService from './versionControlService'
 import axios from 'axios'
-import { expectedSchemaResponse } from '../copyConfig/schema/dataTest'
-import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest'
-import { getPolicyConfig } from '../copyConfig/policies/dataTest'
-import { getSocialsProviders } from '../copyConfig/social/dataTest'
-import { getEmailsExpectedResponse } from '../emails/dataTest'
-import { getSmsExpectedResponse } from '../sms/dataTest'
-import { getSiteConfig } from '../copyConfig/websdk/dataTest'
 import { getConsentStatementExpectedResponse } from '../copyConfig/consent/dataTest'
 import { channelsExpectedResponse } from '../copyConfig/communication/dataTest'
-import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../copyConfig/rba/dataTest'
-import { getExpectedWebhookResponse } from '../copyConfig/webhook/dataTest'
-import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
-import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
-import { getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
 import { expectedGigyaResponseOk } from '../servicesDataTest'
 import GitHub from './versionControlManager/github'
 import { Octokit } from '@octokit/rest'
-
+jest.mock('@octokit/rest', () => {
+  return {
+    Octokit: jest.fn(),
+  }
+})
 jest.mock('axios')
 jest.mock('./versionControlManager/github')
 
@@ -42,16 +34,16 @@ describe('versionControlService', () => {
 
     it('should fetch commit list if branch exists', async () => {
       const mockCommitList = { commitList: [{ sha: 'commit1' }, { sha: 'commit2' }], totalCommits: 2 }
-      versionControlInstance.getCommits = jest.fn().mockResolvedValue(mockCommitList.commitList )
-      const result = await versionControlService.handleCommitListRequestServices()
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue(mockCommitList.commitList)
+      const result = await versionControlService.getCommitsFromBranch()
       expect(result).toEqual(mockCommitList)
       expect(versionControlInstance.getCommits).toHaveBeenCalledWith(apiKey)
     })
 
     it('should return an empty array if branch does not exist', async () => {
-      versionControlInstance.getCommits = jest.fn().mockResolvedValue( [] )
+      versionControlInstance.getCommits = jest.fn().mockResolvedValue([])
 
-      const result = await versionControlService.handleCommitListRequestServices()
+      const result = await versionControlService.getCommitsFromBranch()
       expect(result).toEqual({ commitList: [], totalCommits: 0 })
     })
 
@@ -65,7 +57,7 @@ describe('versionControlService', () => {
         },
       ]
       versionControlInstance.getCommitFiles = jest.fn().mockResolvedValue(mockFiles)
-      const response = await versionControlService.handleCommitRevertServices('mockSha')
+      const response = await versionControlService.revertBackup('mockSha')
       expect(response).toEqual(true)
     })
   })

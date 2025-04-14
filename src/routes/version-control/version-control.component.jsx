@@ -34,7 +34,7 @@ import {
   setCredentials,
   getServices,
   fetchCommits,
-  validateCredentials,
+  validateVersionControlCredentials,
   prepareFilesForUpdate,
   getRevertChanges,
   selectCommits,
@@ -48,7 +48,7 @@ import {
   selectOpenConfirmDialog,
   selectShowSuccessDialog,
   selectShowErrorDialog,
-  selectSuccessMessage
+  selectSuccessMessage,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -96,7 +96,7 @@ const VersionControlComponent = ({ t }) => {
       dispatch(setCredentials(credentials))
     }
 
-    dispatch(validateCredentials())
+    dispatch(validateVersionControlCredentials())
 
     const secretKey = credentials?.secretKey
 

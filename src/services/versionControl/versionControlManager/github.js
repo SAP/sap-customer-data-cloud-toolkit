@@ -12,7 +12,7 @@ import { skipForChildSite, generateFileObjects } from '../utils'
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
 
-  async listBranches(branchName) {
+  async hasBranch(branchName) {
     try {
       const { data: branches } = await this.versionControl.rest.repos.listBranches({
         owner: this.owner,
@@ -52,8 +52,8 @@ class GitHub extends VersionControlManager {
     try {
       let allCommits = []
       let page = 1
-      const per_page = 100 // Maximum allowed per page
-      const hasBranch = await this.listBranches(apiKey)
+      const per_page = 100
+      const hasBranch = await this.hasBranch(apiKey)
       if (hasBranch) {
         while (true) {
           try {
@@ -67,7 +67,7 @@ class GitHub extends VersionControlManager {
             allCommits = allCommits.concat(response.data)
 
             if (response.data.length < per_page) {
-              break // No more pages to fetch
+              break
             }
 
             page += 1
@@ -82,19 +82,12 @@ class GitHub extends VersionControlManager {
       throw new Error(error)
     }
   }
-  async waitForCreation(apiKey, delay = 1000) {
-    await this.listBranches(apiKey)
-
-    await new Promise((resolve) => setTimeout(resolve, delay))
-  }
 
   async storeCdcDataInVersionControl(commitMessage, configs, apiKey, siteInfo) {
     await this.#createBranch(apiKey)
     let commits = await this.getCommits(apiKey)
-    if (commits.length === 0) {
-      await this.waitForCreation(apiKey)
-    }
-    const validUpdates = await this.fetchAndPrepareFiles(configs, apiKey, siteInfo)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const validUpdates = await this.fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo)
     if (validUpdates.length > 0) {
       const expectedCommitCount = commits.length + 1
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
@@ -110,24 +103,39 @@ class GitHub extends VersionControlManager {
     return commits
   }
 
-  async fetchAndPrepareFiles(configs, apiKey, siteInfo) {
+  async fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo) {
     const files = generateFileObjects(configs)
-    const fileUpdates = await Promise.all(
-      files.map(async (file) => {
-        const result = await this.#updateGitFileContent(file.path, file.content, apiKey, siteInfo)
-        return result
-      }),
-    )
-    return fileUpdates.filter((update) => update !== null)
+    const hasBranch = await this.hasBranch(apiKey)
+    let result = []
+
+    if (hasBranch) {
+      const fileResults = await Promise.all(
+        files.map(async (file) => {
+          return await this.#updateGitFileContent(file.path, file.content, apiKey, siteInfo)
+        }),
+      )
+      result = [...fileResults]
+    } else {
+      const fileResults = files.map((file) => {
+        return {
+          path: file.path,
+          content: file.content,
+          sha: undefined,
+        }
+      })
+      result = [...fileResults]
+    }
+
+    return result.filter((update) => update !== null)
   }
 
   async #createBranch(apiKey) {
     if (!apiKey) {
       throw new Error('API key is missing')
     }
-    const branchExists = await this.listBranches(apiKey)
-    if (!branchExists) {
-      this.#getBranchAndCreateRef(apiKey)
+    const hasBranch = await this.hasBranch(apiKey)
+    if (!hasBranch) {
+      this.#getMainBranchAndCreateRef(apiKey)
     }
   }
 
@@ -139,7 +147,6 @@ class GitHub extends VersionControlManager {
     })
 
     const baseTreeSha = refData.object.sha
-
     const blobs = await Promise.all(
       files.map(async (file) => {
         const { data } = await this.versionControl.rest.git.createBlob({
@@ -181,26 +188,8 @@ class GitHub extends VersionControlManager {
   }
 
   async #updateGitFileContent(filePath, cdcFileContent, defaultBranch, siteInfo) {
-    let getGitFileInfo
-
-    try {
-      const branchExistsResult = await this.listBranches(defaultBranch)
-      if (!branchExistsResult) {
-        throw new Error('Branch does not exist')
-      }
-      getGitFileInfo = await this.#getFile(filePath, defaultBranch)
-    } catch (error) {
-      if (error.status === 404 || error.message === 'Branch does not exist') {
-        return {
-          path: filePath,
-          content: cdcFileContent,
-          sha: undefined,
-        }
-      }
-      throw error
-    }
-
-    const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
+    const getGitFileInfo = await this.#getFile(filePath, defaultBranch)
+    const rawGitContent = getGitFileInfo.content
     let currentGitContent = {}
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
     const filedsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason']
@@ -224,7 +213,7 @@ class GitHub extends VersionControlManager {
 
       return {
         path: filePath,
-        content: JSON.stringify(newContent, null, 2), // Save the original content
+        content: JSON.stringify(newContent, null, 2),
         sha: getGitFileInfo ? getGitFileInfo.sha : undefined,
       }
     } else {
@@ -232,7 +221,7 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getBranch() {
+  async #getMainBranch() {
     try {
       const { data: mainBranch } = await this.versionControl.rest.repos.getBranch({
         owner: this.owner,
@@ -241,7 +230,7 @@ class GitHub extends VersionControlManager {
       })
       return mainBranch
     } catch (error) {
-      throw new Error('there is no main branch for this repository')
+      throw new Error('There is no main branch for this repository')
     }
   }
 
@@ -258,12 +247,12 @@ class GitHub extends VersionControlManager {
     }
   }
 
-  async #getBranchAndCreateRef(branch) {
+  async #getMainBranchAndCreateRef(branch) {
     try {
-      const mainBranch = await this.#getBranch()
+      const mainBranch = await this.#getMainBranch()
       await this.#createRef(branch, mainBranch.commit.sha)
     } catch (error) {
-      throw new Error(`Error in getBranchAndCreateRef: ${error.message}`)
+      throw new Error(`Error in getMainBranchAndCreateRef: ${error.message}`)
     }
   }
 
@@ -274,7 +263,6 @@ class GitHub extends VersionControlManager {
       path,
       ref: defaultBranch,
     })
-
     if (!file || !file.content || file.size > 100 * 1024) {
       const { data: blobData } =
         (await this.versionControl.rest.git.getBlob({
@@ -287,14 +275,14 @@ class GitHub extends VersionControlManager {
     return file
   }
 
-  async validateCredentials() {
+  async validateVersionControlCredentials() {
     try {
       const { data: authenticatedUser } = await this.versionControl.rest.users.getAuthenticated()
-
       if (authenticatedUser.login.toLowerCase() !== this.owner.toLowerCase()) {
         throw new Error('Invalid Credentials')
       }
-      await this.#getBranch()
+
+      await this.#getMainBranch()
       return true
     } catch (error) {
       if (error.message.includes('Bad credentials')) {

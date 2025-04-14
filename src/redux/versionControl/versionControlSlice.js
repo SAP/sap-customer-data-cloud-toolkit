@@ -33,7 +33,7 @@ const versionControlSlice = createSlice({
     showErrorDialog: false,
     showSuccessDialog: false,
     successMessage: '',
-    credentials: null
+    credentials: null,
   },
   reducers: {
     setGitToken(state, action) {
@@ -62,7 +62,7 @@ const versionControlSlice = createSlice({
     },
     setSuccessMessage(state, action) {
       state.successMessage = action.payload
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCommits.pending, (state) => {
@@ -126,15 +126,15 @@ const versionControlSlice = createSlice({
       state.error = action.payload
       state.showErrorDialog = true
     })
-    builder.addCase(validateCredentials.pending, (state) => {
+    builder.addCase(validateVersionControlCredentials.pending, (state) => {
       state.isValidCredentials = null
       state.validationError = null
     })
-    builder.addCase(validateCredentials.fulfilled, (state, action) => {
+    builder.addCase(validateVersionControlCredentials.fulfilled, (state, action) => {
       state.isValidCredentials = action.payload
       state.validationError = null
     })
-    builder.addCase(validateCredentials.rejected, (state, action) => {
+    builder.addCase(validateVersionControlCredentials.rejected, (state, action) => {
       state.isValidCredentials = false
       state.validationError = action.payload
     })
@@ -145,7 +145,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   const state = getState()
   const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitRevertServices(sha)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).revertBackup(sha)
   } catch (error) {
     return rejectWithValue(error.message)
   }
@@ -155,7 +155,7 @@ export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMe
   const state = getState()
   const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleGetServices(commitMessage)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).createBackup(commitMessage)
   } catch (error) {
     return rejectWithValue(error.messages)
   }
@@ -190,12 +190,12 @@ const getCommonData = (state) => {
   return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
 }
 
-export const validateCredentials = createAsyncThunk('versionControl/validateCredentials', async (_, { getState, rejectWithValue }) => {
+export const validateVersionControlCredentials = createAsyncThunk('versionControl/validateVersionControlCredentials', async (_, { getState, rejectWithValue }) => {
   const state = getState()
   const { versionControl } = getCommonData(state)
 
   try {
-    return await versionControl.validateCredentials()
+    return await versionControl.validateVersionControlCredentials()
   } catch (error) {
     return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
   }
@@ -205,7 +205,7 @@ export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { g
   const state = getState()
   try {
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).handleCommitListRequestServices()
+    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getCommitsFromBranch()
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
     return rejectWithValue(error.message)
@@ -216,7 +216,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   const state = getState()
   try {
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).prepareFilesForUpdate()
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getFilesForBackup()
   } catch (error) {
     return rejectWithValue(i18n.t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
   }
@@ -235,8 +235,8 @@ const setCookies = (state) => {
   Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' })
 }
 
-export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits,
-  setOpenConfirmDialog, setShowErrorDialog, setShowSuccessDialog, setSuccessMessage} = versionControlSlice.actions
+export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits, setOpenConfirmDialog, setShowErrorDialog, setShowSuccessDialog, setSuccessMessage } =
+  versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
 export const selectIsFetching = (state) => state.versionControl.isFetching
