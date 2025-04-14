@@ -105,10 +105,10 @@ class GitHub extends VersionControlManager {
 
   async fetchFilesAndUpdateGitContent(configs, apiKey, siteInfo) {
     const files = generateFileObjects(configs)
-    const branchExistsResult = await this.hasBranch(apiKey)
+    const hasBranch = await this.hasBranch(apiKey)
     let result = []
 
-    if (branchExistsResult) {
+    if (hasBranch) {
       const fileResults = await Promise.all(
         files.map(async (file) => {
           return await this.#updateGitFileContent(file.path, file.content, apiKey, siteInfo)
@@ -133,8 +133,8 @@ class GitHub extends VersionControlManager {
     if (!apiKey) {
       throw new Error('API key is missing')
     }
-    const branchExists = await this.hasBranch(apiKey)
-    if (!branchExists) {
+    const hasBranch = await this.hasBranch(apiKey)
+    if (!hasBranch) {
       this.#getMainBranchAndCreateRef(apiKey)
     }
   }
@@ -188,7 +188,7 @@ class GitHub extends VersionControlManager {
   }
 
   async #updateGitFileContent(filePath, cdcFileContent, defaultBranch, siteInfo) {
-    let getGitFileInfo = await this.#getFile(filePath, defaultBranch)
+    const getGitFileInfo = await this.#getFile(filePath, defaultBranch)
     const rawGitContent = getGitFileInfo.content
     let currentGitContent = {}
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
