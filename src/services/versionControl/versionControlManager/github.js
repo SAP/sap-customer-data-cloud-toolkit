@@ -174,22 +174,22 @@ class GitHub extends VersionControlManager {
   async #updateGitFileContent(filePath, cdcFileContent, defaultBranch, siteInfo) {
     let getGitFileInfo
 
-    // try {
-    // const branchExistsResult = await this.hasBranch(defaultBranch)
-    // if (!branchExistsResult) {
-    //   throw new Error('Branch does not exist')
-    // }
-    //   getGitFileInfo = await this.#getFile(filePath, defaultBranch)
-    // } catch (error) {
-    //   if (error.status === 404 || error.message === 'Branch does not exist') {
-    //     return {
-    //       path: filePath,
-    //       content: cdcFileContent,
-    //       sha: undefined,
-    //     }
-    //   }
-    //   throw error
-    // }
+    try {
+      const branchExistsResult = await this.hasBranch(defaultBranch)
+      if (!branchExistsResult) {
+        throw new Error('Branch does not exist')
+      }
+      getGitFileInfo = await this.#getFile(filePath, defaultBranch)
+    } catch (error) {
+      if (error.status === 404 || error.message === 'Branch does not exist') {
+        return {
+          path: filePath,
+          content: cdcFileContent,
+          sha: undefined,
+        }
+      }
+      throw error
+    }
 
     const rawGitContent = getGitFileInfo ? getGitFileInfo.content : '{}'
     let currentGitContent = {}
