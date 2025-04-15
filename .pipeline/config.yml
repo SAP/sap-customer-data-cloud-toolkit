@@ -16,11 +16,23 @@ stages:
   Central Build:
     hadolintExecute: false
 steps:
+  artifactPrepareVersion:
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
+  executeBuild:
+    buildType: stage
+  sapCallStagingService:
+    url: 'https://staging.repositories.cloud.sap/stage/api'
+    profile: 'group-3103-default'
   checkmarxOneExecuteScan:
     projectName: 'sap-customer-data-cloud-toolkit-2025'
     applicationName: 'OS_CX_AUTOMATION'
     preset: 'SAP_Corp_JavaScript_Client' # you can find the preset per language here - https://github.wdf.sap.corp/pages/Security-Testing/doc/cxone/Presets/
     filterPattern: '!**/node_modules/**,!**/coverage/**,!**/whitesource/**,!**/build/**,**/*.html, **/*.xml, **/*.js, **/*.jsx'
+  sapCheckPPMSCompliance:
+    ppmsCredentialsId: ''
+    ppmsID: '73554900100200022073'
+    uploadChangeRequest: true
+    whitesourceProductToken: ''
   whitesourceExecuteScan:
     buildTool: 'npm'
     userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
@@ -39,4 +51,10 @@ steps:
     serverUrl: 'https://sonar.tools.sap'
     sonarVaultSecretName: 'GROUP-SECRETS/sonar-cdc-sonar-token'
     waitForQualityGate: true
-
+  sapCumulusUpload:
+    pipelineId: '99a5c6dc-e368-4f20-b5c0-58f0e4a3e571'
+  npmExecuteScripts:
+    dockerImage: 'cypress/browsers:node-20.13.0-chrome-124.0.6367.155-1-ff-125.0.3-edge-124.0.2478.80-1'
+    runScripts:
+      - test
+      - cypress:ci
