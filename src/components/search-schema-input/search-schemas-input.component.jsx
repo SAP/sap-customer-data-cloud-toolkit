@@ -26,7 +26,6 @@ const SearchBar = ({ handleSuggestionClick, configurations, setSchemaInputValue,
         setSuggestions(filteredSuggestions)
         handleTreeNodeClick(filteredSuggestions)
       } else {
-        console.log('No suggestions found')
         handleTreeNodeClick('')
         setSuggestions([])
       }
