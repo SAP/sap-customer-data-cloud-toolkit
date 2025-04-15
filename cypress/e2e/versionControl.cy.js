@@ -19,6 +19,7 @@ describe('Version Control Test Suite', () => {
 
   it('should display the version control page', () => {
     utils.mockGetConfigurationRequests()
+
     let mockedCommits = [
       {
         sha: 'initialCommitSha',
@@ -97,13 +98,239 @@ describe('Version Control Test Suite', () => {
       }
       req.reply({ body: mockedCommits })
     }).as('getCommits')
+
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
     })
+
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fpolicies.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'policies.json',
+        path: 'src/versionControl/policies.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FwebSdk.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'webSdk.json',
+        path: 'src/versionControl/webSdk.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fdataflow.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'dataflow.json',
+        path: 'src/versionControl/dataflow.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Femails.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'emails.json',
+        path: 'src/versionControl/emails.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fextension.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'extension.json',
+        path: 'src/versionControl/extension.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frba.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'rba.json',
+        path: 'src/versionControl/rba.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FriskAssessment.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'riskAssessment.json',
+        path: 'src/versionControl/riskAssessment.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fschema.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'schema.json',
+        path: 'src/versionControl/schema.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FscreenSets.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'screenSets.json',
+        path: 'src/versionControl/screenSets.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsms.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'sms.json',
+        path: 'src/versionControl/sms.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fchannel.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'channel.json',
+        path: 'src/versionControl/channel.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Ftopic.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'topic.json',
+        path: 'src/versionControl/topic.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fwebhook.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'webhook.json',
+        path: 'src/versionControl/webhook.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fconsent.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'consent.json',
+        path: 'src/versionControl/consent.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsocial.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'social.json',
+        path: 'src/versionControl/social.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frecaptcha.json?ref=undefined`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'recaptcha.json',
+        path: 'src/versionControl/recaptcha.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
+
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
       body: dataTest.mockFetchCommits,
     })
+
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs/testSha`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: dataTest.mockGetBlob,
+    })
+
     cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/blobs`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
       body: dataTest.mockGetBlob,
     })
     cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/trees`, {
@@ -203,7 +430,7 @@ describe('Version Control Test Suite', () => {
     })
 
     cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=testSha`, {
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=undefined`, {
       statusCode: 200,
       body: {
         contents_url: 'mocked content',
