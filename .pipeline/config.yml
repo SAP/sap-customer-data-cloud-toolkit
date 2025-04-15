@@ -54,6 +54,7 @@ steps:
   sapCumulusUpload:
     pipelineId: '99a5c6dc-e368-4f20-b5c0-58f0e4a3e571'
   npmExecuteScripts:
+    dockerImage: 'cypress/browsers:node-20.13.0-chrome-124.0.6367.155-1-ff-125.0.3-edge-124.0.2478.80-1'
     runScripts:
       - test
       - cypress:ci
