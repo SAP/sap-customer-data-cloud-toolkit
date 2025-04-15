@@ -428,7 +428,19 @@ describe('Version Control Test Suite', () => {
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
     })
-
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=testSha`, {
+      body: {
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        name: 'policies.json',
+        path: 'src/versionControl/policies.json',
+        sha: 'testSha',
+        size: 100,
+      },
+    })
     cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=undefined`, {
       statusCode: 200,
@@ -444,7 +456,18 @@ describe('Version Control Test Suite', () => {
         encoding: 'base64',
       },
     })
-
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs/testSha`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: {
+        sha: 'testSha',
+        content: 'eyJ0ZW1wbGF0ZXMiOiAidmFsdWUifQ==',
+        encoding: 'base64',
+      },
+    })
     cy.intercept('GET', `accounts.setPolicies`, {
       statusCode: 200,
     })
