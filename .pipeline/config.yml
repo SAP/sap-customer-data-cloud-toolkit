@@ -53,3 +53,7 @@ steps:
     waitForQualityGate: true
   sapCumulusUpload:
     pipelineId: '99a5c6dc-e368-4f20-b5c0-58f0e4a3e571'
+  npmExecuteScripts:
+    runScripts:
+      - test
+      - cypress:ci

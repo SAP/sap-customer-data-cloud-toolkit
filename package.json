@@ -1,7 +1,7 @@
 {
   "name": "sap-customer-data-cloud-toolkit",
   "version": "1.10.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@octokit/rest": "^21.0.2",
     "@reduxjs/toolkit": "^1.8.6",
