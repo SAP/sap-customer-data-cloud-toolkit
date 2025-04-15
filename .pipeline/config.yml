@@ -17,7 +17,7 @@ stages:
     hadolintExecute: false
 steps:
   artifactPrepareVersion:
-  gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
   executeBuild:
     buildType: stage
   sapCallStagingService:
