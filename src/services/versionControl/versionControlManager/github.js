@@ -4,7 +4,6 @@
  */
 
 import VersionControlManager from './versionControlManager'
-import { removeIgnoredFields } from '../dataSanitization'
 import _ from 'lodash'
 import { Base64 } from 'js-base64'
 import { skipForChildSite, generateFileObjects } from '../utils'
@@ -192,25 +191,18 @@ class GitHub extends VersionControlManager {
     const rawGitContent = getGitFileInfo.content
     let currentGitContent = {}
     const currentGitContentDecoded = rawGitContent ? Base64.decode(rawGitContent) : '{}'
-    const filedsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason']
 
     if (currentGitContentDecoded) {
       try {
         currentGitContent = JSON.parse(currentGitContentDecoded)
-        currentGitContent = removeIgnoredFields(currentGitContent, filedsToBeIgnored)
       } catch (error) {
         currentGitContent = {}
       }
     }
 
     let newContent = JSON.parse(cdcFileContent)
-    const sanitizedNewContent = removeIgnoredFields(newContent, filedsToBeIgnored)
 
-    if (!_.isEqual(currentGitContent, sanitizedNewContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
-      const fieldsToBeRemoved = ['callId', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'time']
-
-      newContent = removeIgnoredFields(newContent, fieldsToBeRemoved)
-
+    if (!_.isEqual(currentGitContent, newContent) && skipForChildSite(getGitFileInfo, siteInfo)) {
       return {
         path: filePath,
         content: JSON.stringify(newContent, null, 2),
