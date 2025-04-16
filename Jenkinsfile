@@ -28,6 +28,7 @@ node() {
         //publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: false, reportDir: 'coverage/cypress/lcov-report', reportFiles: 'index.html', reportName: 'End to end test coverage report'])
     }
 
+
     stage('SonarQube report') {
         def scannerHome = tool 'cdc-tools-chrome-extension';
         def nodeHome = tool 'nodejs16';
@@ -52,4 +53,5 @@ node() {
     stage('Checkmarx report') {
         checkmarxExecuteScan script:this
     }
+
 }
