@@ -92,12 +92,12 @@ class GitHub extends VersionControlManager {
       const expectedCommitCount = commits.length + 1
       await this.#updateFilesInSingleCommit(commitMessage, validUpdates, apiKey)
 
-      const startTime = Date.now()
-      const timeout = 60 * 1000
+      const fetchIntervalInMilliseconds = 2000
+      let maxTries = 30
 
-      while (commits.length !== expectedCommitCount && Date.now() - startTime <= timeout) {
+      while (commits.length !== expectedCommitCount && maxTries-- > 0) {
         commits = await this.getCommits(apiKey)
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, fetchIntervalInMilliseconds))
       }
     }
     return commits
