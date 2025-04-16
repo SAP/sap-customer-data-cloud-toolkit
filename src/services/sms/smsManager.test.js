@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import axios from 'axios'
 import * as ConfiguratorTestData from '../configurator/dataTest.js'
 import ZipManager from '../zip/zipManager.js'
@@ -91,7 +90,6 @@ describe('Sms Manager test suite', () => {
     axios.mockResolvedValueOnce({ data: ConfiguratorTestData.getSiteConfigSuccessfullyMultipleMember(0) }).mockResolvedValue({ data: CommonTestData.expectedGigyaResponseOk })
 
     const response = await smsManager.import(apiKey, zipContent)
-    //console.log('response=' + JSON.stringify(response))
     CommonTestData.verifyResponseIsOk(response)
     expect(response).toEqual(CommonTestData.expectedGigyaResponseOk)
     expect(spy).toHaveBeenCalledWith(apiKey, setSmsExpectedTemplateArgument())
@@ -134,11 +132,8 @@ describe('Sms Manager test suite', () => {
     jszip.file('nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('bin/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('otp/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
-    jszip.file('tfa/globalTemplates/nl.html', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('__MACOSX/tfa/globalTemplates/nl.txt', getSmsExpectedResponse.templates.otp.globalTemplates.templates.nl)
     jszip.file('tfa/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
-    jszip.file('otp/templatesPerCountryCode/351/en.html', getSmsExpectedResponse.templates.tfa.templatesPerCountryCode['351'].templates.en)
-    jszip.file('tfa/globalTemplates/en.default.txt', getSmsExpectedResponse.templates.tfa.globalTemplates.templates.en)
     return jszip.generateAsync({ type: 'arraybuffer' })
   }
 
