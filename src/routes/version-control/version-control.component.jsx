@@ -49,6 +49,7 @@ import {
   selectShowSuccessDialog,
   selectShowErrorDialog,
   selectSuccessMessage,
+  selectAreCredentialsValid
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -79,6 +80,7 @@ const VersionControlComponent = ({ t }) => {
   const showSuccessDialog = useSelector(selectShowSuccessDialog)
   const showErrorDialog = useSelector(selectShowErrorDialog)
   const successMessage = useSelector(selectSuccessMessage)
+  const areCredentialsValid = useSelector(selectAreCredentialsValid)
 
   const [commitMessage, setCommitMessage] = useState('')
 
@@ -96,7 +98,9 @@ const VersionControlComponent = ({ t }) => {
       dispatch(setCredentials(credentials))
     }
 
-    dispatch(validateVersionControlCredentials())
+    if(!areCredentialsValid) {
+      dispatch(validateVersionControlCredentials())
+    }
 
     const secretKey = credentials?.secretKey
 
@@ -119,7 +123,8 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setRepo(repo))
       }
     }
-    if (gitToken && owner && repo) {
+    debugger
+    if (gitToken && owner && repo && areCredentialsValid) {
       dispatch(fetchCommits())
     }
   }, [credentials, gitToken, owner, repo, dispatch])

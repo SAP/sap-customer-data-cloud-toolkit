@@ -28,7 +28,7 @@ const versionControlSlice = createSlice({
     validationError: null,
     revert: false,
     filesToUpdate: [],
-    isValidCredentials: false,
+    areCredentialsValid: false,
     openConfirmDialog: false,
     showErrorDialog: false,
     showSuccessDialog: false,
@@ -127,15 +127,15 @@ const versionControlSlice = createSlice({
       state.showErrorDialog = true
     })
     builder.addCase(validateVersionControlCredentials.pending, (state) => {
-      state.isValidCredentials = null
+      state.areCredentialsValid = false
       state.validationError = null
     })
     builder.addCase(validateVersionControlCredentials.fulfilled, (state, action) => {
-      state.isValidCredentials = action.payload
+      state.areCredentialsValid = action.payload
       state.validationError = null
     })
     builder.addCase(validateVersionControlCredentials.rejected, (state, action) => {
-      state.isValidCredentials = false
+      state.areCredentialsValid = false
       state.validationError = action.payload
     })
   },
@@ -250,5 +250,6 @@ export const selectOpenConfirmDialog = (state) => state.versionControl.openConfi
 export const selectShowErrorDialog = (state) => state.versionControl.showErrorDialog
 export const selectShowSuccessDialog = (state) => state.versionControl.showSuccessDialog
 export const selectSuccessMessage = (state) => state.versionControl.successMessage
+export const selectAreCredentialsValid = (state) => state.versionControl.areCredentialsValid
 
 export default versionControlSlice.reducer
