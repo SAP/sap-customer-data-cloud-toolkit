@@ -20,7 +20,7 @@ import SmsConfiguration from '../copyConfig/sms/smsConfiguration'
 import Social from '../copyConfig/social/social'
 import Webhook from '../copyConfig/webhook/webhook'
 import WebSdk from '../copyConfig/websdk/websdk'
-import { cleanEmailResponse, cleanResponse } from './dataSanitization'
+import { cleanEmailResponse, cleanResponse, removeIgnoredFields } from './dataSanitization'
 import { createOptions } from './utils'
 import ConsentConfigurationManager from './consent/consentConfigurationVersionControl'
 import SocialManager from './social/socialManager'
@@ -75,6 +75,8 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
+    const filedsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason']
+
     try {
       const cdcDataArray = this.#getCdcData()
       if (!Array.isArray(cdcDataArray)) {
@@ -83,7 +85,8 @@ class CdcService {
       const cdcData = await Promise.all(
         cdcDataArray.map(async ({ name, promise }) => {
           const data = await promise
-          return { [name]: data }
+          const result = removeIgnoredFields(data, filedsToBeIgnored)
+          return { [name]: result }
         }),
       )
       return Object.assign({}, ...cdcData)
