@@ -162,6 +162,7 @@
   "VERSION_CONTROL.OWNER": "Username",
   "VERSION_CONTROL.OWNER_MESSAGE": "Please insert the Username.",
   "VERSION_CONTROL.REPOSITORY": "Repository",
+  "VERSION_CONTROL.REPOSITORY_ERROR_MESSAGE": "Repository does not exist or it does not contain the main branch.",
   "VERSION_CONTROL.REPOSITORY_MESSAGE": "Please insert the Repository.",
   "VERSION_CONTROL.RESTORE": "Revert",
   "VERSION_CONTROL.REVERT.ERROR.MESSAGE": "Restore failed!",

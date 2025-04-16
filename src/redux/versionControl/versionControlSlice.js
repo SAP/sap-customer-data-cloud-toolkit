@@ -38,14 +38,17 @@ const versionControlSlice = createSlice({
   reducers: {
     setGitToken(state, action) {
       state.gitToken = action.payload
+      state.areCredentialsValid = false
       setCookies(state)
     },
     setOwner(state, action) {
       state.owner = action.payload
+      state.areCredentialsValid = false
       setCookies(state)
     },
     setRepo(state, action) {
       state.repo = action.payload
+      state.areCredentialsValid = false
       setCookies(state)
     },
     setCredentials(state, action) {
@@ -95,19 +98,19 @@ const versionControlSlice = createSlice({
       state.error = action.payload
       state.showErrorDialog = true
     })
-    builder.addCase(getServices.pending, (state) => {
+    builder.addCase(createBackup.pending, (state) => {
       state.isFetching = true
       state.error = null
       state.showSuccessDialog = false
       state.showErrorDialog = false
     })
-    builder.addCase(getServices.fulfilled, (state, action) => {
+    builder.addCase(createBackup.fulfilled, (state, action) => {
       state.isFetching = false
       state.successMessage = i18n.t('VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE')
       state.showSuccessDialog = true
       state.commits = action.payload
     })
-    builder.addCase(getServices.rejected, (state, action) => {
+    builder.addCase(createBackup.rejected, (state, action) => {
       state.isFetching = false
       state.error = action.payload
       state.showErrorDialog = true
@@ -129,6 +132,7 @@ const versionControlSlice = createSlice({
     builder.addCase(validateVersionControlCredentials.pending, (state) => {
       state.areCredentialsValid = false
       state.validationError = null
+      state.commits = []
     })
     builder.addCase(validateVersionControlCredentials.fulfilled, (state, action) => {
       state.areCredentialsValid = action.payload
@@ -151,11 +155,12 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   }
 })
 
-export const getServices = createAsyncThunk(GET_SERVICES_ACTION, async (commitMessage, { getState, rejectWithValue }) => {
+export const createBackup = createAsyncThunk(GET_SERVICES_ACTION, async (commitMessage, { getState, rejectWithValue }) => {
   const state = getState()
   const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).createBackup(commitMessage)
+    const commitList = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).createBackup(commitMessage)
+    return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
     return rejectWithValue(error.messages)
   }
@@ -195,9 +200,14 @@ export const validateVersionControlCredentials = createAsyncThunk('versionContro
   const { versionControl } = getCommonData(state)
 
   try {
-    return await versionControl.validateVersionControlCredentials()
+    const areCredentialsValid = await versionControl.validateVersionControlCredentials()
+    if(!areCredentialsValid) {
+      return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
+    } else {
+      return true
+    }
   } catch (error) {
-    return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
+    return rejectWithValue(i18n.t('VERSION_CONTROL.REPOSITORY_ERROR_MESSAGE'))
   }
 })
 

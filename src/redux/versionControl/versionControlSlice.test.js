@@ -17,7 +17,7 @@ import reducer, {
   selectError,
   getEncryptedCookie,
   getRevertChanges,
-  getServices,
+  createBackup,
   prepareFilesForUpdate,
   validateVersionControlCredentials,
 } from './versionControlSlice'
@@ -122,9 +122,9 @@ describe('versionControlSlice', () => {
     })
     it('should update state when getting services', async () => {
       const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
-      await store.dispatch(getServices('test message'))
+      await store.dispatch(createBackup('test message'))
       const actions = store.getActions()
-      expect(actions[0].type).toBe(getServices.pending.type)
+      expect(actions[0].type).toBe(createBackup.pending.type)
 
       const expectedState = { ...initialState.versionControl, isFetching: true, error: null, showErrorDialog: false,
         showSuccessDialog: false, }
@@ -262,19 +262,19 @@ describe('versionControlSlice', () => {
       expect(newState.isFetching).toEqual(false)
     })
     it('should update state when getServices is fulfilled', async () => {
-      const action = getServices.fulfilled(true)
+      const action = createBackup.fulfilled(true)
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(false)
     })
     it('should update state when getServices is pending', async () => {
-      const action = getServices.pending
+      const action = createBackup.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
       expect(newState.error).toEqual(null)
       expect(newState.versionControl.commits.length).toEqual(0)
     })
     it('should update state when getServices is rejected', async () => {
-      const action = getServices.rejected('', '', '', 'Failed to get services')
+      const action = createBackup.rejected('', '', '', 'Failed to get services')
       const newState = reducer(initialState, action)
       expect(newState.error).toEqual('Failed to get services')
       expect(newState.isFetching).toEqual(false)

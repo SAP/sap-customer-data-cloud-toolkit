@@ -514,7 +514,7 @@ describe('GitHub - validateVersionControlCredentials', () => {
     expect(getBranchMock).toHaveBeenCalledTimes(1)
   })
 
-  it('should throw an error when login does not match owner', async () => {
+  it('should return false when login does not match owner', async () => {
     const getUsersMock = jest.fn().mockResolvedValueOnce({ data: { login: 'differentOwner' } })
 
     github.versionControl = {
@@ -525,7 +525,7 @@ describe('GitHub - validateVersionControlCredentials', () => {
       },
     }
 
-    await expect(github.validateVersionControlCredentials()).rejects.toThrow('Invalid Credentials')
+    await expect(github.validateVersionControlCredentials()).resolves.toBe(false)
     expect(getUsersMock).toHaveBeenCalledTimes(1)
   })
 

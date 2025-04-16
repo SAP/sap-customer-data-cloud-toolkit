@@ -32,7 +32,7 @@ import {
   setShowSuccessDialog,
   setShowErrorDialog,
   setCredentials,
-  getServices,
+  createBackup,
   fetchCommits,
   validateVersionControlCredentials,
   prepareFilesForUpdate,
@@ -98,13 +98,9 @@ const VersionControlComponent = ({ t }) => {
       dispatch(setCredentials(credentials))
     }
 
-    if(!areCredentialsValid) {
-      dispatch(validateVersionControlCredentials())
-    }
-
     const secretKey = credentials?.secretKey
 
-    if (secretKey) {
+    if (secretKey && !areCredentialsValid) {
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
       const repo = Cookies.get('repo')
@@ -122,19 +118,23 @@ const VersionControlComponent = ({ t }) => {
       if (repo) {
         dispatch(setRepo(repo))
       }
+
+      if(gitToken && owner && repo) {
+        dispatch(validateVersionControlCredentials())
+      }
     }
-    debugger
-    if (gitToken && owner && repo && areCredentialsValid) {
+
+    if (areCredentialsValid) {
       dispatch(fetchCommits())
     }
-  }, [credentials, gitToken, owner, repo, dispatch])
+  }, [credentials, gitToken, owner, repo, dispatch, areCredentialsValid])
 
   const onCreateBackupClick = () => {
     dispatch(prepareFilesForUpdate())
   }
 
   const onConfirmBackupClick = async () => {
-    dispatch(getServices(commitMessage))
+    dispatch(createBackup(commitMessage))
     dispatch(setOpenConfirmDialog(false))
   }
 
