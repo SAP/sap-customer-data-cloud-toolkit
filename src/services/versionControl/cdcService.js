@@ -75,7 +75,7 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const filedsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason']
+    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
 
     try {
       const cdcDataArray = this.#getCdcData()
@@ -85,7 +85,10 @@ class CdcService {
       const cdcData = await Promise.all(
         cdcDataArray.map(async ({ name, promise }) => {
           const data = await promise
-          const result = removeIgnoredFields(data, filedsToBeIgnored)
+          if (name === 'sms') {
+            SmsConfiguration.addSmsTemplatesPerCountryCode(data)
+          }
+          const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
         }),
       )

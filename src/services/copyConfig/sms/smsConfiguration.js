@@ -3,7 +3,6 @@
  * License: Apache-2.0
  */
 
-
 import Sms from '../../sms/sms.js'
 import { stringToJson } from '../objectHelper.js'
 
@@ -39,6 +38,18 @@ class SmsConfiguration {
 
   static hasSmsTemplates(response) {
     return response.templates !== undefined && Object.keys(response.templates).length > 0
+  }
+
+  static addSmsTemplatesPerCountryCode(response) {
+    if (!response.templates.otp.templatesPerCountryCode) {
+      response.templates.otp.templatesPerCountryCode = {}
+    }
+
+    if (!response.templates.tfa.templatesPerCountryCode) {
+      response.templates.tfa.templatesPerCountryCode = {}
+    }
+
+    return response
   }
 }
 

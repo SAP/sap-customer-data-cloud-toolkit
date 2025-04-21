@@ -99,8 +99,6 @@ describe('CdcService', () => {
     })
     it('should fetch all CDC configs', async () => {
       jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
-      // Mock the internal get method to include legalStatements
-
       jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
         callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
         errorCode: 0,
@@ -139,7 +137,6 @@ describe('CdcService', () => {
       const socialSpy = jest.spyOn(cdcService.social, 'get')
       const recaptchaSpy = jest.spyOn(cdcService.recaptcha, 'get')
       axios
-
         .mockResolvedValueOnce({ data: channelsExpectedResponse })
         .mockResolvedValueOnce({ data: expectedSchemaResponse })
         .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
@@ -149,10 +146,97 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getPolicyConfig })
         .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
         .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
         .mockResolvedValueOnce({ data: getSiteConfig })
         .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
         .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
+        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
+        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
+
+      const configs = await cdcService.fetchCDCConfigs()
+      const objectCount = countObjects(configs)
+      expect(objectCount).toBe(292)
+      expect(webSdkSpy).toHaveBeenCalled()
+      expect(dataflowSpy).toHaveBeenCalled()
+      expect(emailsSpy).toHaveBeenCalled()
+      expect(extensionSpy).toHaveBeenCalled()
+      expect(policiesSpy).toHaveBeenCalled()
+      expect(rbaSpy).toHaveBeenCalled()
+      expect(riskAssessmentSpy).toHaveBeenCalled()
+      expect(schemaSpy).toHaveBeenCalled()
+      expect(smsSpy).toHaveBeenCalled()
+      expect(screenSetsSpy).toHaveBeenCalled()
+      expect(channelSpy).toHaveBeenCalled()
+      expect(topicSpy).toHaveBeenCalled()
+      expect(webhookSpy).toHaveBeenCalled()
+      expect(consentSpy).toHaveBeenCalled()
+      expect(socialSpy).toHaveBeenCalled()
+      expect(recaptchaSpy).toHaveBeenCalled()
+    })
+
+    it('should fetch all CDC configs - when sms there is no global templates ', async () => {
+      jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
+      jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
+        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+        errorCode: 0,
+        apiVersion: 2,
+        statusCode: 200,
+        statusReason: 'OK',
+        time: '2024-08-30T08:22:37.389Z',
+        legalStatements: {
+          versions: {
+            2: {
+              purpose: 'Updated terms',
+              LegalStatementStatus: 'Published',
+            },
+            1: {
+              purpose: 'Initial terms',
+              LegalStatementStatus: 'Archived',
+            },
+          },
+        },
+      })
+
+      const webSdkSpy = jest.spyOn(cdcService.webSdk, 'get')
+      const dataflowSpy = jest.spyOn(cdcService.dataflow, 'search')
+      const emailsSpy = jest.spyOn(cdcService.emails, 'get')
+      const extensionSpy = jest.spyOn(cdcService.extension, 'get')
+      const policiesSpy = jest.spyOn(cdcService.policies, 'get')
+      const rbaSpy = jest.spyOn(cdcService.rba, 'get')
+      const riskAssessmentSpy = jest.spyOn(cdcService.riskAssessment, 'get')
+      const schemaSpy = jest.spyOn(cdcService.schema, 'get')
+      const screenSetsSpy = jest.spyOn(cdcService.screenSets, 'get')
+      const smsSpy = jest.spyOn(cdcService.sms, 'get')
+      const channelSpy = jest.spyOn(cdcService.communication, 'get')
+      const topicSpy = jest.spyOn(cdcService.topic, 'searchTopics')
+      const webhookSpy = jest.spyOn(cdcService.webhook, 'get')
+      const consentSpy = jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements')
+      const socialSpy = jest.spyOn(cdcService.social, 'get')
+      const recaptchaSpy = jest.spyOn(cdcService.recaptcha, 'get')
+      const smsExpectedResponseWithNoTemplates = { ...getSmsExpectedResponse }
+      delete smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode
+      axios
+        .mockResolvedValueOnce({ data: channelsExpectedResponse })
+        .mockResolvedValueOnce({ data: expectedSchemaResponse })
+        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+        .mockResolvedValueOnce({ data: { ...getConsentStatementExpectedResponse, preferences: getConsentStatementExpectedResponse.preferences } })
+        .mockResolvedValueOnce({ data: { ...getLegalStatementExpectedResponse, legalStatements: getLegalStatementExpectedResponse.legalStatements } })
+        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+        .mockResolvedValueOnce({ data: getPolicyConfig })
+        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
+        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+        .mockResolvedValueOnce({ data: getSiteConfig })
+        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+        .mockResolvedValueOnce({ data: smsExpectedResponseWithNoTemplates })
         .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
         .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
         .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
@@ -166,7 +250,9 @@ describe('CdcService', () => {
 
       const configs = await cdcService.fetchCDCConfigs()
       const ammountOfResponses = countObjects(configs)
-      expect(ammountOfResponses).toBe(291)
+      expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
+      expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
+      expect(ammountOfResponses).toBe(288)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()

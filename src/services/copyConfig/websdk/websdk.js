@@ -54,7 +54,9 @@ class WebSdk {
     parameters.apiKey = apiKey
     parameters.userKey = this.#credentials.userKey
     parameters.secret = this.#credentials.secret
-    parameters.globalConf = config.globalConf
+    if (config.globalConf) {
+      parameters.globalConf = config.globalConf
+    }
     parameters.context = JSON.stringify({ id: 'webSdk', targetApiKey: apiKey })
     return parameters
   }
