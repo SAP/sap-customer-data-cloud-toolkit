@@ -34,37 +34,47 @@ describe('route utils test suite', () => {
   })
 
   it('should call callback with hash after clicking change site button', () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers()
     setEventListenersForRoute(false, setAreEventListenersAttachedMock, callbackMock)
     const button = document.createElement('button')
     button.innerText = ' Change Site '
     document.body.appendChild(button)
     button.click()
-    jest.runAllTimers();
-    expect(callbackMock).toHaveBeenCalledWith(window.location.hash)
-    document.body.removeChild(button)
+    jest.runAllTimers()
+    try {
+      expect(callbackMock).toHaveBeenCalledWith(window.location.hash)
+    } finally {
+      document.body.removeChild(button)
+    }
   })
 
   it('should call callback with hash after clicking go to parent button', () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers()
     setEventListenersForRoute(false, setAreEventListenersAttachedMock, callbackMock)
     const button = document.createElement('button')
     button.innerText = ' Go To Parent '
     document.body.appendChild(button)
     button.click()
-    jest.runAllTimers();
-    expect(callbackMock).toHaveBeenCalledWith(window.location.hash)
-    document.body.removeChild(button)
+    jest.runAllTimers()
+    try {
+      expect(callbackMock).toHaveBeenCalledWith(window.location.hash)
+    } finally {
+      document.body.removeChild(button)
+    }
   })
 
   it('should not call callback for unrelated click events', () => {
+    jest.useFakeTimers()
     setEventListenersForRoute(false, setAreEventListenersAttachedMock, callbackMock)
     const unrelatedButton = document.createElement('button')
     unrelatedButton.innerText = ' Unrelated Button '
     document.body.appendChild(unrelatedButton)
     unrelatedButton.click()
-    jest.advanceTimersByTime(1000)
-    expect(callbackMock).not.toHaveBeenCalled()
-    document.body.removeChild(unrelatedButton)
+    jest.runAllTimers()
+    try {
+      expect(callbackMock).not.toHaveBeenCalled()
+    } finally {
+      document.body.removeChild(unrelatedButton)
+    }
   })
 })
