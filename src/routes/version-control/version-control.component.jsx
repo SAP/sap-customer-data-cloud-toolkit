@@ -52,12 +52,12 @@ import {
   selectAreCredentialsValid
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
-import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
+import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey, selectIsLoading } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
 import DialogMessageInform from '../../components/dialog-message-inform/dialog-message-inform.component'
 import styles from './version-control.styles'
 import { decryptData } from '../../redux/encryptionUtils'
-import { getApiKey } from '../../redux/utils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
+import { setEventListenersForRoute } from '../utils'
 
 const PAGE_TITLE = 'VersionControl'
 const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
@@ -81,17 +81,19 @@ const VersionControlComponent = ({ t }) => {
   const showErrorDialog = useSelector(selectShowErrorDialog)
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
+  const areConfigurationsLoading = useSelector(selectIsLoading)
 
   const [commitMessage, setCommitMessage] = useState('')
+  const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
 
-  window.navigation.onnavigate = (event) => {
-    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_VERSION_CONTROL)) {
-      if (apiKey !== getApiKey(window.location.hash)) {
-        dispatch(updateCurrentSiteApiKey())
-      }
+  const updateApiKey = (newUrl) => {
+    if (newUrl.includes(ROUTE_VERSION_CONTROL)) {
+      dispatch(updateCurrentSiteApiKey())
       dispatch(getCurrentSiteInformation())
     }
   }
+
+  setEventListenersForRoute(areEventListenersAttached, setAreEventListenersAttached, updateApiKey)
 
   useEffect(() => {
     if (credentials) {
@@ -127,7 +129,7 @@ const VersionControlComponent = ({ t }) => {
     if (areCredentialsValid) {
       dispatch(fetchCommits())
     }
-  }, [credentials, gitToken, owner, repo, dispatch, areCredentialsValid])
+  }, [credentials, gitToken, owner, repo, dispatch, areCredentialsValid, apiKey])
 
   const onCreateBackupClick = () => {
     dispatch(prepareFilesForUpdate())
@@ -215,7 +217,7 @@ const VersionControlComponent = ({ t }) => {
 
   return (
     <>
-      <BusyIndicator active={isFetching} delay={0}>
+      <BusyIndicator active={isFetching || areConfigurationsLoading} delay={0}>
         <div className={classes.fullContainer}>
           <Bar
             design="Header"
@@ -317,7 +319,7 @@ const VersionControlComponent = ({ t }) => {
                       design="Emphasized"
                       className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                       onClick={onCreateBackupClick}
-                      disabled={isFetching || !gitToken || !owner || !repo || error !== null}
+                      disabled={isFetching || !gitToken || !owner || !repo || validationError !== null}
                     >
                       {t('VERSION_CONTROL.BACKUP')}
                     </Button>
