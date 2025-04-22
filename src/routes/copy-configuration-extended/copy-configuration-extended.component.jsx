@@ -46,15 +46,13 @@ import {
   setDataflowVariableValues,
   setRbaRulesOperation,
 } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
-
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { trackUsage } from '../../lib/tracker.js'
-
 import { areCredentialsFilled } from '../../redux/credentials/utils'
-
 import { cleanTreeVerticalScrolls, areConfigurationsFilled, sendReportOnWarnings } from './utils'
 import { getApiKey } from '../../redux/utils'
+import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
@@ -64,8 +62,7 @@ import '@ui5/webcomponents/dist/features/InputSuggestions.js'
 import '@ui5/webcomponents-icons/dist/information.js'
 
 import styles from './copy-configuration-extended.styles'
-
-import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
+import { setEventListenersForRoute } from '../utils'
 
 const useStyles = createUseStyles(styles, { name: 'CopyConfigurationExtended' })
 
@@ -89,12 +86,11 @@ const CopyConfigurationExtended = ({ t }) => {
 
   const [tarketApiKeyInputValue, setTarketApiKeyInputValue] = useState('')
   const [selectAllCheckboxState, setSelectAllCheckboxState] = useState(false)
+  const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
 
-  window.navigation.onnavigate = (event) => {
-    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
-      if (currentSiteApiKey !== getApiKey(window.location.hash)) {
+  const updateApiKey = (newUrl) => {
+    if (newUrl.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
         dispatch(updateCurrentSiteApiKey())
-      }
 
       if (areCredentialsFilled(credentials) && currentSiteApiKey) {
         dispatch(getConfigurations())
@@ -113,9 +109,17 @@ const CopyConfigurationExtended = ({ t }) => {
     }
   }
 
+  setEventListenersForRoute(areEventListenersAttached, setAreEventListenersAttached, updateApiKey)
+
   useEffect(() => {
     if (currentSiteApiKey === '') {
       dispatch(updateCurrentSiteApiKey())
+    }
+
+    if (window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
+      if (currentSiteApiKey !== getApiKey(window.location.hash)) {
+        dispatch(updateCurrentSiteApiKey())
+      }
     }
 
     if (areCredentialsFilled(credentials) && currentSiteApiKey) {
