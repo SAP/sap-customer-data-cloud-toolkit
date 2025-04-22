@@ -112,16 +112,6 @@ const CopyConfigurationExtended = ({ t }) => {
   setEventListenersForRoute(areEventListenersAttached, setAreEventListenersAttached, updateApiKey)
 
   useEffect(() => {
-    if (currentSiteApiKey === '') {
-      dispatch(updateCurrentSiteApiKey())
-    }
-
-    if (window.location.hash.includes(ROUTE_COPY_CONFIG_EXTENDED)) {
-      if (currentSiteApiKey !== getApiKey(window.location.hash)) {
-        dispatch(updateCurrentSiteApiKey())
-      }
-    }
-
     if (areCredentialsFilled(credentials) && currentSiteApiKey) {
       dispatch(getAvailableTargetSites())
       dispatch(setAvailableTargetSitesFromLocalStorage(credentials.secretKey))
