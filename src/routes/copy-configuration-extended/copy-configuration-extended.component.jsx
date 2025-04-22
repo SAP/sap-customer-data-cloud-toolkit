@@ -50,9 +50,7 @@ import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 
 import { trackUsage } from '../../lib/tracker.js'
 import { areCredentialsFilled } from '../../redux/credentials/utils'
-import { cleanTreeVerticalScrolls, areConfigurationsFilled, sendReportOnWarnings } from './utils'
-import { getApiKey } from '../../redux/utils'
-import { onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler } from '../../routes/copy-configuration-extended/utils'
+import { cleanTreeVerticalScrolls, areConfigurationsFilled, sendReportOnWarnings, onSelectAllCheckboxChange, onSelectAllIncludeUrlChangeHandler  } from './utils'
 
 import { ROUTE_COPY_CONFIG_EXTENDED } from '../../inject/constants'
 
