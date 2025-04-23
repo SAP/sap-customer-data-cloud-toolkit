@@ -186,19 +186,19 @@ class CdcService {
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
         if (key === 'dataSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.dataSchema)
+          await this.schema.set(this.apiKey, this.dataCenter, { dataSchema: filteredResponse.dataSchema })
         }
         if (key === 'addressesSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.addressesSchema)
+          await this.schema.set(this.apiKey, this.dataCenter, { addressesSchema: filteredResponse.addressesSchema })
         }
         if (key === 'internalSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.internalSchema)
+          await this.schema.set(this.apiKey, this.dataCenter, { internalSchema: filteredResponse.internalSchema })
         }
         if (key === 'profileSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.profileSchema)
+          await this.schema.set(this.apiKey, this.dataCenter, { profileSchema: filteredResponse.profileSchema })
         }
         if (key === 'subscriptionsSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.subscriptionsSchema)
+          await this.schema.set(this.apiKey, this.dataCenter, { subscriptionsSchema: filteredResponse.subscriptionsSchema })
         }
       }
     }
