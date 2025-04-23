@@ -75,7 +75,10 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
+    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason',
+      'jwtKeyVersion', 'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'CNAME', 'shortURLDomain', 'shortURLRedirMethod', 'encryptPII',
+      'siteGroupConfig', 'customAPIDomainPrefix', 'enableHSTS', 'dataCenter', 'tags', 'captchaProvider', 'enableDataSharing', 'isCDP',
+      'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha']
 
     try {
       const cdcDataArray = this.#getCdcData()
