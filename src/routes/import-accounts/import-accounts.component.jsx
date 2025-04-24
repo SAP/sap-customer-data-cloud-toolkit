@@ -37,8 +37,8 @@ import {
 import { areConfigurationsFilled } from '../copy-configuration-extended/utils.js'
 import { trackUsage } from '../../lib/tracker.js'
 import { ROUTE_IMPORT_ACCOUNTS } from '../../inject/constants.js'
-import { getApiKey } from '../../redux/utils.js'
 import { clearServerConfigurations, selectServerProvider } from '../../redux/serverImport/serverImportSlice.js'
+import { setEventListenersForRoute } from '../utils'
 
 const useStyles = createUseStyles(styles, { name: 'ImportAccounts' })
 const PAGE_TITLE = 'Import Data'
@@ -46,23 +46,25 @@ const PAGE_TITLE = 'Import Data'
 const ImportAccountsComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+
   const credentials = useSelector(selectCredentials)
   const apikey = useSelector(selectCurrentSiteApiKey)
   const isLoading = useSelector(selectIsLoading)
   const accountType = useSelector(selectAccountType)
-  const [schemaInputValue, setSchemaInputValue] = useState('')
-  const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
-  const [expandableNode, setExpandableNode] = useState(false)
-  const [isCardExpanded, setExpanded] = useState(false)
   const currentSiteInfo = useSelector(selectCurrentSiteInformation)
   const configurations = useSelector(selectConfigurations)
   const selectedConfigurations = useSelector(selectSugestionConfigurations)
   const serverProviderOption = useSelector(selectServerProvider)
-  window.navigation.onnavigate = (event) => {
-    if (event.navigationType === 'replace' && window.location.hash.includes(ROUTE_IMPORT_ACCOUNTS)) {
-      if (apikey !== getApiKey(window.location.hash)) {
-        dispatch(updateCurrentSiteApiKey())
-      }
+
+  const [schemaInputValue, setSchemaInputValue] = useState('')
+  const [treeNodeInputValue, setTreeNodeInputValue] = useState('')
+  const [expandableNode, setExpandableNode] = useState(false)
+  const [isCardExpanded, setExpanded] = useState(false)
+  const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
+
+  const updateApiKey = (newUrl) => {
+    if (newUrl.includes(ROUTE_IMPORT_ACCOUNTS)) {
+      dispatch(updateCurrentSiteApiKey())
       dispatch(getCurrentSiteInformation())
       dispatch(getConfigurationTree(accountType))
       dispatch(setAccountOptionType(accountType))
@@ -74,6 +76,8 @@ const ImportAccountsComponent = ({ t }) => {
       setExpandableNode(false)
     }
   }
+
+  setEventListenersForRoute(areEventListenersAttached, setAreEventListenersAttached, updateApiKey)
 
   useEffect(() => {
     dispatch(getCurrentSiteInformation())

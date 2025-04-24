@@ -593,17 +593,17 @@ describe('Version Control Test Suite', () => {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits/testSha`, {
-      body: dataTest.mockedVersionControlGetCommitsResponse[1],
+      body: dataTest.mockedVersionControlGetCommitsResponse[0],
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
     })
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=testSha`, {
-      name: 'policies.json',
-      path: 'src/versionControl/policies.json',
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/extension?ref=testSha`, {
+      name: 'extension.json',
+      path: 'src/versionControl/extension.json',
       sha: '1d58d2417a0fcd42ad7b7948c406aa0f839e68ef',
       size: 834,
-      url: 'https://api.github.com/repos/Helsinky/version_control/contents/src/versionControl/policies.json?ref=d72e07eac8733ce556a96e961a0c25219dd05dd9',
+      url: 'https://api.github.com/repos/Helsinky/version_control/contents/src/versionControl/extension.json?ref=d72e07eac8733ce556a96e961a0c25219dd05dd9',
       html_url: 'https://github.com/Helsinky/version_control/blob/d72e07eac8733ce556a96e961a0c25219dd05dd9/src/versionControl/extension.json',
       git_url: 'https://api.github.com/repos/Helsinky/version_control/git/blobs/1d58d2417a0fcd42ad7b7948c406aa0f839e68ef',
       download_url: 'https://raw.githubusercontent.com/Helsinky/version_control/d72e07eac8733ce556a96e961a0c25219dd05dd9/src/versionControl/extension.json',
@@ -630,6 +630,6 @@ describe('Version Control Test Suite', () => {
     cy.get('[data-cy="backupButton"]').should('not.be.disabled')
     cy.get('#versionControlTable').should('be.visible').should('contain.text', 'Create test CDCRepo branch creation')
     cy.get('#commitRevertButton-0').should('be.visible').click()
-    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkFailed to revert configurations')
+    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkExtension')
   })
 })

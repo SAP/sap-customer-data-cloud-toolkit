@@ -25,7 +25,7 @@ const versionControlSlice = createSlice({
     owner: '',
     repo: '',
     isFetching: false,
-    errors: null,
+    errors: [],
     validationError: null,
     revert: false,
     filesToUpdate: [],
@@ -68,17 +68,17 @@ const versionControlSlice = createSlice({
       state.successMessage = action.payload
     },
     clearErrors(state) {
-      state.errors = null
+      state.errors = []
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCommits.pending, (state) => {
       state.isFetching = true
-      state.errors = null
+      state.errors = []
     })
     builder.addCase(fetchCommits.fulfilled, (state, action) => {
       state.isFetching = false
-      state.errors = null
+      state.errors = []
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
@@ -89,7 +89,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(getRevertChanges.pending, (state) => {
       state.isFetching = true
-      state.errors = null
+      state.errors = []
     })
     builder.addCase(getRevertChanges.fulfilled, (state, action) => {
       state.isFetching = false
@@ -104,7 +104,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(createBackup.pending, (state) => {
       state.isFetching = true
-      state.errors = null
+      state.errors = []
       state.showSuccessDialog = false
       state.showErrorDialog = false
     })
@@ -121,7 +121,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(prepareFilesForUpdate.pending, (state) => {
       state.isFetching = true
-      state.errors = null
+      state.errors = []
     })
     builder.addCase(prepareFilesForUpdate.fulfilled, (state, action) => {
       state.isFetching = false
