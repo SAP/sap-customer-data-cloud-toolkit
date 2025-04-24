@@ -10,6 +10,7 @@ import { encryptData, decryptData } from '../encryptionUtils'
 import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
 import VersionControlProviderFactory from '../../services/versionControl/versionControlManager/versionControlProviderFactory'
 import i18n from '../../i18n'
+import { getErrorAsArray } from '../utils'
 
 const VERSION_CONTROL_STATE_NAME = 'versionControl'
 const FETCH_COMMITS_ACTION = `${VERSION_CONTROL_STATE_NAME}/fetchCommits`
@@ -24,7 +25,7 @@ const versionControlSlice = createSlice({
     owner: '',
     repo: '',
     isFetching: false,
-    error: null,
+    errors: [],
     validationError: null,
     revert: false,
     filesToUpdate: [],
@@ -66,26 +67,29 @@ const versionControlSlice = createSlice({
     setSuccessMessage(state, action) {
       state.successMessage = action.payload
     },
+    clearErrors(state) {
+      state.errors = []
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCommits.pending, (state) => {
       state.isFetching = true
-      state.error = null
+      state.errors = []
     })
     builder.addCase(fetchCommits.fulfilled, (state, action) => {
       state.isFetching = false
-      state.error = null
+      state.errors = []
       state.commits = action.payload
     })
     builder.addCase(fetchCommits.rejected, (state, action) => {
       state.isFetching = false
       state.commits = []
-      state.error = action.payload
+      state.errors = action.payload
       state.showErrorDialog = true
     })
     builder.addCase(getRevertChanges.pending, (state) => {
       state.isFetching = true
-      state.error = null
+      state.errors = []
     })
     builder.addCase(getRevertChanges.fulfilled, (state, action) => {
       state.isFetching = false
@@ -95,12 +99,12 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(getRevertChanges.rejected, (state, action) => {
       state.isFetching = false
-      state.error = action.payload
+      state.errors = action.payload
       state.showErrorDialog = true
     })
     builder.addCase(createBackup.pending, (state) => {
       state.isFetching = true
-      state.error = null
+      state.errors = []
       state.showSuccessDialog = false
       state.showErrorDialog = false
     })
@@ -112,12 +116,12 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(createBackup.rejected, (state, action) => {
       state.isFetching = false
-      state.error = action.payload
+      state.errors = action.payload
       state.showErrorDialog = true
     })
     builder.addCase(prepareFilesForUpdate.pending, (state) => {
       state.isFetching = true
-      state.error = null
+      state.errors = []
     })
     builder.addCase(prepareFilesForUpdate.fulfilled, (state, action) => {
       state.isFetching = false
@@ -126,7 +130,7 @@ const versionControlSlice = createSlice({
     })
     builder.addCase(prepareFilesForUpdate.rejected, (state, action) => {
       state.isFetching = false
-      state.error = action.payload
+      state.errors = action.payload
       state.showErrorDialog = true
     })
     builder.addCase(validateVersionControlCredentials.pending, (state) => {
@@ -151,7 +155,7 @@ export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha,
   try {
     return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).revertBackup(sha)
   } catch (error) {
-    return rejectWithValue(error.message)
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 
@@ -201,7 +205,7 @@ export const validateVersionControlCredentials = createAsyncThunk('versionContro
 
   try {
     const areCredentialsValid = await versionControl.validateVersionControlCredentials()
-    if(!areCredentialsValid) {
+    if (!areCredentialsValid) {
       return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
     } else {
       return true
@@ -245,7 +249,7 @@ const setCookies = (state) => {
   Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' })
 }
 
-export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits, setOpenConfirmDialog, setShowErrorDialog, setShowSuccessDialog, setSuccessMessage } =
+export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits, setOpenConfirmDialog, setShowErrorDialog, setShowSuccessDialog, setSuccessMessage, clearErrors } =
   versionControlSlice.actions
 
 export const selectCommits = (state) => state.versionControl.commits
@@ -253,7 +257,7 @@ export const selectIsFetching = (state) => state.versionControl.isFetching
 export const selectGitToken = (state) => state.versionControl.gitToken
 export const selectOwner = (state) => state.versionControl.owner
 export const selectRepo = (state) => state.versionControl.repo
-export const selectError = (state) => state.versionControl.error
+export const selectErrors = (state) => state.versionControl.errors
 export const selectFilesToUpdate = (state) => state.versionControl.filesToUpdate
 export const selectValidationError = (state) => state.versionControl.validationError
 export const selectOpenConfirmDialog = (state) => state.versionControl.openConfirmDialog

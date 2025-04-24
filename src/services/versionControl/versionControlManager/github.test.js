@@ -379,7 +379,6 @@ describe('GitHub Test Suit', () => {
     }
 
     const result = await github.fetchFilesAndUpdateGitContent(configs, apiKey, { siteGroupOwner: 'owner', context: { targetApiKey: 'targetApiKey' } })
-    console.log(getFileMock.mock.calls)
     expect(result[0].sha).toBeUndefined()
   })
 

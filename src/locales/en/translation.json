@@ -165,7 +165,7 @@
   "VERSION_CONTROL.REPOSITORY_ERROR_MESSAGE": "Repository does not exist or it does not contain the main branch.",
   "VERSION_CONTROL.REPOSITORY_MESSAGE": "Please insert the Repository.",
   "VERSION_CONTROL.RESTORE": "Revert",
-  "VERSION_CONTROL.REVERT.ERROR.MESSAGE": "Restore failed!",
+  "VERSION_CONTROL.REVERT.ERROR.MESSAGE": "Error Reverting",
   "VERSION_CONTROL.REVERT.SUCCESS.MESSAGE": "Restore completed successfully!",
   "VERSION_CONTROL.SUCCESS_MESSAGE": "Backup created successfully!",
   "VERSION_CONTROL.TITLE": "Version Control",
