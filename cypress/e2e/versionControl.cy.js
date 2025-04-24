@@ -419,11 +419,11 @@ describe('Version Control Test Suite', () => {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits/testSha`, {
-      body: dataTest.mockedVersionControlGetCommitsResponse[0],
+      body: dataTest.mockedVersionControlGetCommitsResponse[1],
     }).as('getCommits')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits`, {
       statusCode: 200,
-      body: dataTest.mockedVersionControlGetCommitsResponse[0],
+      body: dataTest.mockedVersionControlGetCommitsResponse[1],
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
