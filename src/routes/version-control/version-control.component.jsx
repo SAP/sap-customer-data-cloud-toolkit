@@ -42,14 +42,15 @@ import {
   selectGitToken,
   selectOwner,
   selectRepo,
-  selectError,
+  selectErrors,
   selectFilesToUpdate,
   selectValidationError,
   selectOpenConfirmDialog,
   selectShowSuccessDialog,
   selectShowErrorDialog,
   selectSuccessMessage,
-  selectAreCredentialsValid
+  selectAreCredentialsValid,
+  clearErrors,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -58,6 +59,7 @@ import styles from './version-control.styles'
 import { decryptData } from '../../redux/encryptionUtils'
 import { getApiKey } from '../../redux/utils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
+import MessageList from '../../components/message-list/message-list.component'
 
 const PAGE_TITLE = 'VersionControl'
 const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
@@ -71,7 +73,7 @@ const VersionControlComponent = ({ t }) => {
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
-  const error = useSelector(selectError)
+  const errors = useSelector(selectErrors)
   const repo = useSelector(selectRepo)
   const apiKey = useSelector(selectCurrentSiteApiKey)
   const filesToUpdate = useSelector(selectFilesToUpdate)
@@ -81,7 +83,6 @@ const VersionControlComponent = ({ t }) => {
   const showErrorDialog = useSelector(selectShowErrorDialog)
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
-
   const [commitMessage, setCommitMessage] = useState('')
 
   window.navigation.onnavigate = (event) => {
@@ -119,7 +120,7 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setRepo(repo))
       }
 
-      if(gitToken && owner && repo) {
+      if (gitToken && owner && repo) {
         dispatch(validateVersionControlCredentials())
       }
     }
@@ -174,10 +175,11 @@ const VersionControlComponent = ({ t }) => {
 
   const onErrorDialogAfterClose = () => {
     dispatch(setShowErrorDialog(false))
+    dispatch(clearErrors())
   }
 
   const renderStatusMessage = () => {
-    if (!gitToken || !owner || !repo || error) {
+    if (!gitToken || !owner || !repo) {
       return <div></div>
     } else if (commits.length === 0) {
       return <Bar className={classes.noCommitsBar} id="versionControlCommitBar" startContent={<Text>{t('VERSION_CONTROL.NO_COMMITS')}</Text>} />
@@ -202,14 +204,14 @@ const VersionControlComponent = ({ t }) => {
   const showErrorMessage = () => (
     <DialogMessageInform
       open={showErrorDialog}
-      headerText={t('GLOBAL.ERROR')}
+      headerText={t('VERSION_CONTROL.REVERT.ERROR.MESSAGE')}
       state={ValueState.Error}
       closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onErrorDialogAfterClose}
       id="versionControlErrorPopup"
       data-cy="versionControlErrorPopup"
     >
-      <Text>{error}</Text>
+      <MessageList messages={errors} />
     </DialogMessageInform>
   )
 
@@ -317,7 +319,7 @@ const VersionControlComponent = ({ t }) => {
                       design="Emphasized"
                       className={`${classes.singlePrettifyButton} ${classes.backupButton} ${classes.flexButton}`}
                       onClick={onCreateBackupClick}
-                      disabled={isFetching || !gitToken || !owner || !repo || error !== null}
+                      disabled={isFetching || !gitToken || !owner || !repo || errors !== null}
                     >
                       {t('VERSION_CONTROL.BACKUP')}
                     </Button>
@@ -434,7 +436,7 @@ const VersionControlComponent = ({ t }) => {
       </BusyIndicator>
 
       {showSuccessMessage()}
-      {showErrorMessage()}
+      {errors && showErrorMessage()}
     </>
   )
 }

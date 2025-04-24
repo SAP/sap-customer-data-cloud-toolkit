@@ -108,7 +108,7 @@ class CdcService {
       },
       extension: async (filteredResponse) => {
         if (filteredResponse.result.length > 0) {
-          await this.extension.set(this.apiKey, this.dataCenter, filteredResponse.result[0])
+          await this.applyExtensionConfig(filteredResponse.result)
         }
       },
       policies: async (filteredResponse) => {
@@ -156,21 +156,22 @@ class CdcService {
         await this.recaptchaManager.setFromFiles(this.apiKey, this.dataCenter, filteredResponse)
       },
     }
-
-    for (const file of files) {
+    const promises = files.map((file) => {
       const fileType = file.filename.split('/').pop().split('.').shift()
+      const capitalizedFileType = fileType.charAt(0).toUpperCase() + fileType.slice(1)
       const filteredResponse = file.content
-
       if (configHandlers[fileType]) {
-        try {
-          await configHandlers[fileType](filteredResponse)
-        } catch (error) {
-          throw new Error(`Error applying config for file type ${fileType}: ${error.message}`)
-        }
+        return configHandlers[fileType](filteredResponse).catch((error) => {
+          const wrappedError = new Error(error.message)
+          wrappedError.titleText = capitalizedFileType
+          wrappedError.originalError = error
+          throw wrappedError
+        })
       } else {
         throw new Error(`Unknown file type: ${fileType}`)
       }
-    }
+    })
+    return Promise.all(promises)
   }
 
   async applyEmailsConfig(filteredResponse) {
@@ -182,24 +183,19 @@ class CdcService {
     }
   }
 
+  async applyExtensionConfig(filteredResponse) {
+    for (const result of filteredResponse) {
+      const response = await this.extension.set(this.apiKey, this.dataCenter, result)
+      if (response.errorCode !== 0) {
+        return Promise.reject(response)
+      }
+    }
+  }
+
   async applySchemaConfig(filteredResponse) {
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
-        if (key === 'dataSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.dataSchema)
-        }
-        if (key === 'addressesSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.addressesSchema)
-        }
-        if (key === 'internalSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.internalSchema)
-        }
-        if (key === 'profileSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.profileSchema)
-        }
-        if (key === 'subscriptionsSchema') {
-          await this.schema.set(this.apiKey, this.dataCenter, filteredResponse.subscriptionsSchema)
-        }
+        await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
       }
     }
   }

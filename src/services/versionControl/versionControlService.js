@@ -37,14 +37,13 @@ class VersionControlService {
       await this.cdcService.applyCommitConfig(files)
       return true
     } catch (error) {
-      throw new Error('Failed to revert configurations')
+      return Promise.reject(error)
     }
   }
 
   getFilesForBackup = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
     const validUpdates = await this.#versionControl.fetchFilesAndUpdateGitContent(configs, this.apiKey, this.siteInfo)
-
     const formattedFiles =
       validUpdates.length > 0
         ? validUpdates.map((file) => {
