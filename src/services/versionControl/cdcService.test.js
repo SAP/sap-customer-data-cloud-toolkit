@@ -162,8 +162,7 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
       const configs = await cdcService.fetchCDCConfigs()
-      const objectCount = countObjects(configs)
-      expect(objectCount).toBe(286)
+
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
@@ -180,6 +179,28 @@ describe('CdcService', () => {
       expect(consentSpy).toHaveBeenCalled()
       expect(socialSpy).toHaveBeenCalled()
       expect(recaptchaSpy).toHaveBeenCalled()
+
+      expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
+      expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
+      expect(configs.dataflow.profileSchema).not.toEqual(undefined)
+      expect(configs.dataflow.dataSchema).not.toEqual(undefined)
+      expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
+      expect(configs.dataflow.internalSchema).not.toEqual(undefined)
+      expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
+      expect(configs.emails).not.toEqual(undefined)
+      expect(configs.extension).not.toEqual(undefined)
+      expect(configs.policies.screenSets.length).toEqual(8)
+      expect(configs.rba).not.toEqual(undefined)
+      expect(configs.riskAssessment).not.toEqual(undefined)
+      expect(configs.schema).not.toEqual(undefined)
+      expect(configs.screenSets.webhooks.length).toEqual(2)
+      expect(configs.sms.templates).not.toEqual(undefined)
+      expect(configs.channel.result.length).toEqual(2)
+      expect(configs.topic).not.toEqual(undefined)
+      expect(configs.webhook).not.toEqual(undefined)
+      expect(configs.consent).not.toEqual(undefined)
+      expect(configs.social).not.toEqual(undefined)
+      expect(configs.recaptcha).not.toEqual(undefined)
     })
 
     it('should fetch all CDC configs - when sms there is no global templates', async () => {
@@ -249,10 +270,7 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
       const configs = await cdcService.fetchCDCConfigs()
-      const ammountOfResponses = countObjects(configs)
-      expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
-      expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
-      expect(ammountOfResponses).toBe(282)
+
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
@@ -269,6 +287,30 @@ describe('CdcService', () => {
       expect(consentSpy).toHaveBeenCalled()
       expect(socialSpy).toHaveBeenCalled()
       expect(recaptchaSpy).toHaveBeenCalled()
+
+      expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
+      expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
+      expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
+      expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
+      expect(configs.dataflow.profileSchema).not.toEqual(undefined)
+      expect(configs.dataflow.dataSchema).not.toEqual(undefined)
+      expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
+      expect(configs.dataflow.internalSchema).not.toEqual(undefined)
+      expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
+      expect(configs.emails).not.toEqual(undefined)
+      expect(configs.extension).not.toEqual(undefined)
+      expect(configs.policies.screenSets.length).toEqual(8)
+      expect(configs.rba).not.toEqual(undefined)
+      expect(configs.riskAssessment).not.toEqual(undefined)
+      expect(configs.schema).not.toEqual(undefined)
+      expect(configs.screenSets.webhooks.length).toEqual(2)
+      expect(configs.sms.templates).not.toEqual(undefined)
+      expect(configs.channel.result.length).toEqual(2)
+      expect(configs.topic).not.toEqual(undefined)
+      expect(configs.webhook).not.toEqual(undefined)
+      expect(configs.consent).not.toEqual(undefined)
+      expect(configs.social).not.toEqual(undefined)
+      expect(configs.recaptcha).not.toEqual(undefined)
     })
 
     it('should apply commit config correctly', async () => {
@@ -336,20 +378,3 @@ describe('CdcService', () => {
   })
 })
 
-function countObjects(object) {
-  let count = 0
-
-  function recursiveCount(innerObj) {
-    if (typeof innerObj === 'object' && innerObj !== null) {
-      count++
-      for (const key in innerObj) {
-        if (innerObj.hasOwnProperty(key)) {
-          recursiveCount(innerObj[key])
-        }
-      }
-    }
-  }
-
-  recursiveCount(object)
-  return count
-}

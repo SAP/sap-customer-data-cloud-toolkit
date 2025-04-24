@@ -75,10 +75,12 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason',
-      'jwtKeyVersion', 'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'CNAME', 'shortURLDomain', 'shortURLRedirMethod', 'encryptPII',
+    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode',
+      'statusReason', 'jwtKeyVersion']
+
+    const fieldsToBeIgnoredInWebsdk = [ ...fieldsToBeIgnored ,'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'settings',
       'siteGroupConfig', 'customAPIDomainPrefix', 'enableHSTS', 'dataCenter', 'tags', 'captchaProvider', 'enableDataSharing', 'isCDP',
-      'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha']
+      'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha', 'description']
 
     try {
       const cdcDataArray = this.#getCdcData()
@@ -90,6 +92,10 @@ class CdcService {
           const data = await promise
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
+          }
+          if(name === 'webSdk') {
+            const result = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
+            return { [name]: result }
           }
           const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
