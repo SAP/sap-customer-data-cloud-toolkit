@@ -43,7 +43,7 @@ describe('versionControlSlice', () => {
       gitToken: '',
       owner: '',
       isFetching: false,
-      errors: null,
+      errors: [],
       repo: '',
       revert: false,
       filesToUpdate: [],
@@ -73,7 +73,7 @@ describe('versionControlSlice', () => {
         gitToken: '',
         owner: '',
         isFetching: false,
-        errors: null,
+        errors: [],
         repo: '',
         revert: false,
         filesToUpdate: [],
@@ -106,7 +106,7 @@ describe('versionControlSlice', () => {
       const actions = store.getActions()
       expect(actions[0].type).toBe(fetchCommits.pending.type)
 
-      const expectedState = { ...initialState.versionControl, isFetching: true, errors: null }
+      const expectedState = { ...initialState.versionControl, isFetching: true, errors: [] }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
     })
@@ -116,7 +116,7 @@ describe('versionControlSlice', () => {
       const actions = store.getActions()
       expect(actions[0].type).toBe(getRevertChanges.pending.type)
 
-      const expectedState = { ...initialState.versionControl, isFetching: true, errors: null }
+      const expectedState = { ...initialState.versionControl, isFetching: true, errors: [] }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
     })
@@ -126,7 +126,7 @@ describe('versionControlSlice', () => {
       const actions = store.getActions()
       expect(actions[0].type).toBe(createBackup.pending.type)
 
-      const expectedState = { ...initialState.versionControl, isFetching: true, errors: null, showErrorDialog: false, showSuccessDialog: false }
+      const expectedState = { ...initialState.versionControl, isFetching: true, errors: [], showErrorDialog: false, showSuccessDialog: false }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
     })
@@ -223,7 +223,7 @@ describe('versionControlSlice', () => {
       const action = getRevertChanges.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
-      expect(newState.errors).toEqual(null)
+      expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
     })
     it('should update state when getRevertChanges is rejected', async () => {
@@ -250,7 +250,7 @@ describe('versionControlSlice', () => {
       const action = fetchCommits.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
-      expect(newState.errors).toEqual(null)
+      expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
     })
 
@@ -269,7 +269,7 @@ describe('versionControlSlice', () => {
       const action = createBackup.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
-      expect(newState.errors).toEqual(null)
+      expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
     })
     it('should update state when getServices is rejected', async () => {
@@ -289,7 +289,7 @@ describe('versionControlSlice', () => {
       const action = prepareFilesForUpdate.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
-      expect(newState.errors).toEqual(null)
+      expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
     })
 
