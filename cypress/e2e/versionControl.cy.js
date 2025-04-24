@@ -5,6 +5,7 @@
 
 /* eslint-disable no-undef */
 
+import { expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
 import * as dataTest from './dataTest'
 import * as utils from './utils'
 
@@ -481,109 +482,107 @@ describe('Version Control Test Suite', () => {
     cy.get('#versionControlSuccessPopup').should('be.visible').should('contain.text', 'Restore completed successfully!')
   })
 
-  // it('should not do the backup because there is no changes', () => {
-  //   utils.mockGetConfigurationRequests()
+  it('should not do the backup because there is no changes', () => {
+    utils.mockGetConfigurationRequests()
 
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
-  //     body: dataTest.mockedVersionControlGetCommitsResponse,
-  //   }).as('getCommits')
-  //   cy.intercept('GET', `${url}/user`, {
-  //     body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
-  //   })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
+      body: dataTest.mockedVersionControlGetCommitsResponse,
+    }).as('getCommits')
+    cy.intercept('GET', `${url}/user`, {
+      body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
+    })
 
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fpolicies.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetPolicyResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FwebSdk.json?ref=undefined`, {
-  //     body: { content: dataTest.siteConfigResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fdataflow.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedSearchDataflowsResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Femails.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetEmailTemplatesConfigsResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fextension.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetExtensionExpectedResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frba.json?ref=undefined`, {
-  //     body: { content: expectedGetUnknownLocationNotificationResponseOk },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FriskAssessment.json?ref=undefined`, {
-  //     body: { content: expectedGetUnknownLocationNotificationResponseOk },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fschema.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetSchemaResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FscreenSets.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetScreenSetResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsms.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetSmsConfigsResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fchannel.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetCommunicationChannelsExpectedResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Ftopic.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetCommunicationTopicsExpectedResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fwebhook.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetWebhookExpectedResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fconsent.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetConsentStatementExpectedResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsocial.json?ref=undefined`, {
-  //     body: { content: dataTest.mockedGetSocialsConfigsResponse },
-  //   })
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frecaptcha.json?ref=undefined`, {
-  //     body: { content: dataTest.getRecaptchaExpectedResponse },
-  //   })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fpolicies.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetPolicyResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FwebSdk.json?ref=undefined`, {
+      body: { content: dataTest.siteConfigResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fdataflow.json?ref=undefined`, {
+      body: { content: dataTest.mockedSearchDataflowsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Femails.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetEmailTemplatesConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fextension.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetExtensionExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frba.json?ref=undefined`, {
+      body: { content: expectedGetUnknownLocationNotificationResponseOk },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FriskAssessment.json?ref=undefined`, {
+      body: { content: expectedGetUnknownLocationNotificationResponseOk },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fschema.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSchemaResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FscreenSets.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetScreenSetResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsms.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSmsConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fchannel.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetCommunicationChannelsExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Ftopic.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetCommunicationTopicsExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fwebhook.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetWebhookExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fconsent.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetConsentStatementExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsocial.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSocialsConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frecaptcha.json?ref=undefined`, {
+      body: { content: dataTest.getRecaptchaExpectedResponse },
+    })
 
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
-  //     body: dataTest.mockFetchCommits,
-  //   })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
+      body: dataTest.mockFetchCommits,
+    })
 
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs/testSha`, {
-  //     callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
-  //     errorCode: 0,
-  //     apiVersion: 2,
-  //     statusCode: 200,
-  //     statusReason: 'OK',
-  //     body: dataTest.mockGetBlob,
-  //   })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs/testSha`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: dataTest.mockGetBlob,
+    })
 
-  //   cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs`, {
-  //     callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
-  //     errorCode: 0,
-  //     apiVersion: 2,
-  //     statusCode: 200,
-  //     statusReason: 'OK',
-  //     body: dataTest.mockGetBlob,
-  //   })
-  //   cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/trees`, {
-  //     body: dataTest.mockTree,
-  //   })
-  //   cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/commits`, {
-  //     body: dataTest.mockCommits,
-  //   })
-  //   cy.intercept('PATCH', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {
-  //     body: dataTest.mockGetRef,
-  //   })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: dataTest.mockGetBlob,
+    })
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/trees`, {
+      body: dataTest.mockTree,
+    })
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/commits`, {
+      body: dataTest.mockCommits,
+    })
+    cy.intercept('PATCH', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {
+      body: dataTest.mockGetRef,
+    })
 
-  //   cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/refs`, {
-  //     body: dataTest.mockGetRef,
-  //   })
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/refs`, {
+      body: dataTest.mockGetRef,
+    })
 
-  //   cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
-  //   cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
-  //   cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
-  //   cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
-  //   // cy.get('[data-cy="backupButton"]').should('not.be.disabled').click()
-  //   // cy.get('#backupDialog').should('contain.text', 'There are no changes since your last backup.')
-  // })
+    cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
+    cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
+    cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
+    cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
+  })
 
   it('should popup the error dialog when reverting', () => {
     utils.mockGetConfigurationRequests()

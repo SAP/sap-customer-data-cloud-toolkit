@@ -158,7 +158,7 @@ describe('versionControlSlice', () => {
         gitToken: 'testToken',
         owner: 'testOwner',
         isFetching: true,
-        errors: 'testError',
+        errors: ['testError'],
       },
     }
 
@@ -179,7 +179,7 @@ describe('versionControlSlice', () => {
     })
 
     it('should select error', () => {
-      expect(selectErrors(state)).toEqual('testError')
+      expect(selectErrors(state)).toEqual(['testError'])
     })
   })
 
