@@ -6,7 +6,7 @@
 import axios from 'axios'
 import CdcService from './cdcService'
 import LegalStatement from '../copyConfig/consent/legalStatement'
-import { channelsExpectedResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
+import { channelsExpectedResponse, errorResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
 import { getConsentStatementExpectedResponse, getLegalStatementExpectedResponse } from '../copyConfig/consent/dataTest'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
 import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
@@ -43,21 +43,7 @@ describe('CdcService', () => {
         setSiteEmailsWithDataCenter: setSiteEmailsWithDataCenterMock,
       })
 
-      const mockFiles = [
-        { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
-        { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
-        { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
-        { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
-        { filename: 'src/versionControl/schema.json', content: expectedSchemaResponse },
-        { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
-        { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
-        { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse },
-        { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
-        { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/social.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
-      ]
+      const mockFiles = getMockFiles()
 
       const expectedGigyaResponseNotOk = {
         statusCode: 500,
@@ -180,27 +166,7 @@ describe('CdcService', () => {
       expect(socialSpy).toHaveBeenCalled()
       expect(recaptchaSpy).toHaveBeenCalled()
 
-      expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
-      expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
-      expect(configs.dataflow.profileSchema).not.toEqual(undefined)
-      expect(configs.dataflow.dataSchema).not.toEqual(undefined)
-      expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
-      expect(configs.dataflow.internalSchema).not.toEqual(undefined)
-      expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
-      expect(configs.emails).not.toEqual(undefined)
-      expect(configs.extension).not.toEqual(undefined)
-      expect(configs.policies.screenSets.length).toEqual(8)
-      expect(configs.rba).not.toEqual(undefined)
-      expect(configs.riskAssessment).not.toEqual(undefined)
-      expect(configs.schema).not.toEqual(undefined)
-      expect(configs.screenSets.webhooks.length).toEqual(2)
-      expect(configs.sms.templates).not.toEqual(undefined)
-      expect(configs.channel.result.length).toEqual(2)
-      expect(configs.topic).not.toEqual(undefined)
-      expect(configs.webhook).not.toEqual(undefined)
-      expect(configs.consent).not.toEqual(undefined)
-      expect(configs.social).not.toEqual(undefined)
-      expect(configs.recaptcha).not.toEqual(undefined)
+      validateConfigs(configs)
     })
 
     it('should fetch all CDC configs - when sms there is no global templates', async () => {
@@ -290,27 +256,7 @@ describe('CdcService', () => {
 
       expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
       expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
-      expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
-      expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
-      expect(configs.dataflow.profileSchema).not.toEqual(undefined)
-      expect(configs.dataflow.dataSchema).not.toEqual(undefined)
-      expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
-      expect(configs.dataflow.internalSchema).not.toEqual(undefined)
-      expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
-      expect(configs.emails).not.toEqual(undefined)
-      expect(configs.extension).not.toEqual(undefined)
-      expect(configs.policies.screenSets.length).toEqual(8)
-      expect(configs.rba).not.toEqual(undefined)
-      expect(configs.riskAssessment).not.toEqual(undefined)
-      expect(configs.schema).not.toEqual(undefined)
-      expect(configs.screenSets.webhooks.length).toEqual(2)
-      expect(configs.sms.templates).not.toEqual(undefined)
-      expect(configs.channel.result.length).toEqual(2)
-      expect(configs.topic).not.toEqual(undefined)
-      expect(configs.webhook).not.toEqual(undefined)
-      expect(configs.consent).not.toEqual(undefined)
-      expect(configs.social).not.toEqual(undefined)
-      expect(configs.recaptcha).not.toEqual(undefined)
+      validateConfigs(configs)
     })
 
     it('should apply commit config correctly', async () => {
@@ -342,21 +288,8 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
 
-      const mockFiles = [
-        { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
-        { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
-        { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
-        { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
-        { filename: 'src/versionControl/schema.json', content: expectedSchemaResponse },
-        { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
-        { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
-        { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse }, // Changed from communication.json to channel.json
-        { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
-        { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/social.json', content: { key: 'value' } },
-        { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
-      ]
+      const mockFiles = getMockFiles()
+
       await cdcService.applyCommitConfig(mockFiles)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(webSdkSpy.mock.calls.length).toBe(1)
@@ -376,5 +309,92 @@ describe('CdcService', () => {
       expect(schemaSpy.mock.calls.length).toBe(5)
     })
   })
+
+  it('should capture gigya errors', async () => {
+    axios
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+      .mockResolvedValueOnce({ data: errorResponse })
+
+
+    const configs = await cdcService.fetchCDCConfigs()
+
+    configs.rba.forEach(rbaConfig => {
+      expect(rbaConfig.errorCode).not.toEqual(0)
+    })
+
+    Object.entries(configs).forEach(([key, value]) => {
+      if (key === 'rba') {
+        value.forEach(rbaConfig => {
+          expect(rbaConfig.errorCode).toEqual(10000)
+        })
+      } else {
+        expect(value.errorCode).toEqual(10000)
+      }
+    })
+  })
 })
+
+const getMockFiles = () => {
+  return [
+    { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
+    { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
+    { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
+    { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
+    { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
+    { filename: 'src/versionControl/schema.json', content: expectedSchemaResponse },
+    { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
+    { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
+    { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse },
+    { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
+    { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
+    { filename: 'src/versionControl/social.json', content: { key: 'value' } },
+    { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
+  ]
+}
+
+const validateConfigs = (configs) => {
+  expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
+  expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
+  expect(configs.dataflow.profileSchema).not.toEqual(undefined)
+  expect(configs.dataflow.dataSchema).not.toEqual(undefined)
+  expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
+  expect(configs.dataflow.internalSchema).not.toEqual(undefined)
+  expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
+  expect(configs.emails).not.toEqual(undefined)
+  expect(configs.extension).not.toEqual(undefined)
+  expect(configs.policies.screenSets.length).toEqual(8)
+  expect(configs.rba).not.toEqual(undefined)
+  expect(configs.riskAssessment).not.toEqual(undefined)
+  expect(configs.schema).not.toEqual(undefined)
+  expect(configs.screenSets.webhooks.length).toEqual(2)
+  expect(configs.sms.templates).not.toEqual(undefined)
+  expect(configs.channel.result.length).toEqual(2)
+  expect(configs.topic).not.toEqual(undefined)
+  expect(configs.webhook).not.toEqual(undefined)
+  expect(configs.consent).not.toEqual(undefined)
+  expect(configs.social).not.toEqual(undefined)
+  expect(configs.recaptcha).not.toEqual(undefined)
+}
+
 

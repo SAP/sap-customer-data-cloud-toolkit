@@ -56,6 +56,15 @@ export const topicsExpectedResponse = {
   ],
 }
 
+export const errorResponse = {
+  callId: 'dd9d17c5c14040d8b6302cb0d38ffc29',
+  errorCode: 10000,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2023-03-29T13:24:09.547Z',
+}
+
 export function getNoChannelsExpectedResponse() {
   const response = JSON.parse(JSON.stringify(channelsExpectedResponse))
   response.Channels = {}

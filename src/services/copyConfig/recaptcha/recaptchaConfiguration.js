@@ -27,19 +27,8 @@ class RecaptchaConfiguration {
   async get() {
     try {
       const recaptchaResponse = await this.getRecaptcha().get(this.#site, this.#dataCenter)
-      if (recaptchaResponse.errorCode !== 0) {
-        throw new Error(`Error fetching reCAPTCHA policies: ${recaptchaResponse.errorMessage}`)
-      }
-
       const policiesResponse = await this.#policy.get()
-      if (policiesResponse.errorCode !== 0) {
-        throw new Error(`Error fetching security and registration policies: ${policiesResponse.errorMessage}`)
-      }
-
       const riskProvidersResponse = await this.#riskProviders.get(this.#site, this.#dataCenter)
-      if (riskProvidersResponse.errorCode !== 0) {
-        throw new Error(`Error fetching Risk Providers configuration: ${riskProvidersResponse.errorMessage}`)
-      }
 
       return {
         errorCode: recaptchaResponse.errorCode,

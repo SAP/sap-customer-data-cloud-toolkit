@@ -53,7 +53,7 @@ class CdcService {
   }
 
   #getCdcData = () => {
-    const responses = [
+    return [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
       { name: 'emails', promise: this.emails.get() },
@@ -71,16 +71,11 @@ class CdcService {
       { name: 'social', promise: this.social.get() },
       { name: 'recaptcha', promise: this.recaptcha.get() },
     ]
-    return responses
   }
 
   fetchCDCConfigs = async () => {
     const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode',
       'statusReason', 'jwtKeyVersion']
-
-    const fieldsToBeIgnoredInWebsdk = [ ...fieldsToBeIgnored ,'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'settings',
-      'siteGroupConfig', 'customAPIDomainPrefix', 'enableHSTS', 'dataCenter', 'tags', 'captchaProvider', 'enableDataSharing', 'isCDP',
-      'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha', 'description']
 
     try {
       const cdcDataArray = this.#getCdcData()
@@ -89,13 +84,19 @@ class CdcService {
       }
       const cdcData = await Promise.all(
         cdcDataArray.map(async ({ name, promise }) => {
-          const data = await promise
+          let data = await promise
+          if(data.errorCode !== 0) {
+            return { [name]: data }
+          }
+
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
           }
           if(name === 'webSdk') {
-            const result = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
-            return { [name]: result }
+            const fieldsToBeIgnoredInWebsdk = [ 'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'settings',
+              'siteGroupConfig', 'customAPIDomainPrefix', 'enableHSTS', 'dataCenter', 'tags', 'captchaProvider', 'enableDataSharing', 'isCDP',
+              'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha', 'description']
+            data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
           }
           const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
