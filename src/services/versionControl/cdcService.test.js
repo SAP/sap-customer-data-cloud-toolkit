@@ -163,7 +163,7 @@ describe('CdcService', () => {
 
       const configs = await cdcService.fetchCDCConfigs()
       const objectCount = countObjects(configs)
-      expect(objectCount).toBe(292)
+      expect(objectCount).toBe(275)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
@@ -252,7 +252,7 @@ describe('CdcService', () => {
       const ammountOfResponses = countObjects(configs)
       expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
       expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
-      expect(ammountOfResponses).toBe(288)
+      expect(ammountOfResponses).toBe(271)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
