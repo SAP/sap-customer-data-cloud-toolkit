@@ -7,9 +7,19 @@ import { removePropertyFromObjectCascading } from '../copyConfig/objectHelper'
 
 export const removeIgnoredFields = (obj, fieldsToRemove) => {
   const newObj = { ...obj }
-  fieldsToRemove.forEach((field) => {
-    removePropertyFromObjectCascading(newObj, field)
-  })
+
+  const recursivelyRemoveFields = (currentObj) => {
+    if (Array.isArray(currentObj)) {
+      currentObj.forEach((item) => recursivelyRemoveFields(item))
+    } else if (currentObj && typeof currentObj === 'object') {
+      fieldsToRemove.forEach((field) => {
+        removePropertyFromObjectCascading(currentObj, field)
+      })
+      Object.values(currentObj).forEach((value) => recursivelyRemoveFields(value))
+    }
+  }
+
+  recursivelyRemoveFields(newObj)
   return newObj
 }
 
