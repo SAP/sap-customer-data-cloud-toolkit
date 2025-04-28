@@ -74,9 +74,6 @@ class CdcService {
   }
 
   fetchCDCConfigs = async () => {
-    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode',
-      'statusReason', 'jwtKeyVersion']
-
     try {
       const cdcDataArray = this.#getCdcData()
       if (!Array.isArray(cdcDataArray)) {
@@ -88,7 +85,6 @@ class CdcService {
           if(data.errorCode !== 0) {
             return { [name]: data }
           }
-
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
           }
@@ -98,6 +94,8 @@ class CdcService {
               'invisibleRecaptcha', 'recaptchaV2', 'funCaptcha', 'description']
             data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
           }
+          const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode',
+            'statusReason', 'jwtKeyVersion']
           const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
         }),
