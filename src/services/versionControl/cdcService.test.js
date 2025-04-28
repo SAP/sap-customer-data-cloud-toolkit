@@ -338,17 +338,11 @@ describe('CdcService', () => {
       const configs = await cdcService.fetchCDCConfigs()
 
       configs.rba.forEach(rbaConfig => {
-        expect(rbaConfig.errorCode).not.toEqual(0)
+        expect(rbaConfig.errorCode).toEqual(10000)
       })
-
+      delete configs.rba
       Object.entries(configs).forEach(([key, value]) => {
-        if (key === 'rba') {
-          value.forEach(rbaConfig => {
-            expect(rbaConfig.errorCode).toEqual(10000)
-          })
-        } else {
           expect(value.errorCode).toEqual(10000)
-        }
       })
     })
   })
@@ -367,7 +361,7 @@ const getMockFiles = (sanitizedSchemaResponse) => {
     { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse },
     { filename: 'src/versionControl/topic.json', content: topicsExpectedResponse },
     { filename: 'src/versionControl/consent.json', content: { key: 'value' } },
-    { filename: 'src/versionControl/social.json', content: { key: 'value' } },
+    { filename: 'src/versionControl/social.json', content: SocialsTestData.getSocialsProviders('APP KEY') },
     { filename: 'src/versionControl/dataflow.json', content: getEmptyDataflowResponse() },
   ]
 }
