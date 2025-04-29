@@ -88,6 +88,11 @@ class CdcService {
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
           }
+
+          if (name === 'rba') {
+            data.splice(1, 1)
+          }
+
           if(name === 'webSdk') {
             const fieldsToBeIgnoredInWebsdk = [ 'baseDomain', 'trustedSiteURLs', 'trustedShareURLs', 'settings',
               'siteGroupConfig', 'customAPIDomainPrefix', 'enableHSTS', 'dataCenter', 'tags', 'captchaProvider', 'enableDataSharing', 'isCDP',
