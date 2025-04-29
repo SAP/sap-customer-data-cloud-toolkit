@@ -8,7 +8,12 @@ import CdcService from './cdcService'
 import * as SocialsTestData from '../copyConfig/social/dataTest'
 import LegalStatement from '../copyConfig/consent/legalStatement'
 import { channelsExpectedResponse, errorResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
-import { getConsentStatementExpectedResponse, getLegalStatementExpectedResponse } from '../copyConfig/consent/dataTest'
+import {
+  filteredLegalStatementExpectedResponse,
+  getConsentStatementExpectedResponse,
+  getFilteredLegalStatementExpectedResponse,
+  getLegalStatementExpectedResponse
+} from '../copyConfig/consent/dataTest'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
 import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
 import { getPolicyConfig } from '../copyConfig/policies/dataTest'
@@ -96,28 +101,6 @@ describe('CdcService', () => {
     })
 
     it('should fetch all CDC configs - when sms there is no global templates', async () => {
-      jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
-      jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
-        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
-        errorCode: 0,
-        apiVersion: 2,
-        statusCode: 200,
-        statusReason: 'OK',
-        time: '2024-08-30T08:22:37.389Z',
-        legalStatements: {
-          versions: {
-            2: {
-              purpose: 'Updated terms',
-              LegalStatementStatus: 'Published',
-            },
-            1: {
-              purpose: 'Initial terms',
-              LegalStatementStatus: 'Archived',
-            },
-          },
-        },
-      })
-
       const webSdkSpy = jest.spyOn(cdcService.webSdk, 'get')
       const dataflowSpy = jest.spyOn(cdcService.dataflow, 'search')
       const emailsSpy = jest.spyOn(cdcService.emails, 'get')
@@ -137,30 +120,7 @@ describe('CdcService', () => {
       const smsExpectedResponseWithNoTemplates = { ...getSmsExpectedResponse }
       delete smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode
 
-      axios
-        .mockResolvedValueOnce({ data: channelsExpectedResponse })
-        .mockResolvedValueOnce({ data: expectedSchemaResponse })
-        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-        .mockResolvedValueOnce({ data: { ...getConsentStatementExpectedResponse, preferences: getConsentStatementExpectedResponse.preferences } })
-        .mockResolvedValueOnce({ data: { ...getLegalStatementExpectedResponse, legalStatements: getLegalStatementExpectedResponse.legalStatements } })
-        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
-        .mockResolvedValueOnce({ data: getPolicyConfig })
-        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
-        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSiteConfig })
-        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
-        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
-        .mockResolvedValueOnce({ data: smsExpectedResponseWithNoTemplates })
-        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
-        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
-        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
-        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
+      mockAxiosResponses()
 
       const configs = await cdcService.fetchCDCConfigs()
 
@@ -222,28 +182,6 @@ describe('CdcService', () => {
     })
 
     it('should fetch all CDC configs', async () => {
-      jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
-      jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
-        callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
-        errorCode: 0,
-        apiVersion: 2,
-        statusCode: 200,
-        statusReason: 'OK',
-        time: '2024-08-30T08:22:37.389Z',
-        legalStatements: {
-          versions: {
-            2: {
-              purpose: 'Updated terms',
-              LegalStatementStatus: 'Published',
-            },
-            1: {
-              purpose: 'Initial terms',
-              LegalStatementStatus: 'Archived',
-            },
-          },
-        },
-      })
-
       const webSdkSpy = jest.spyOn(cdcService.webSdk, 'get')
       const dataflowSpy = jest.spyOn(cdcService.dataflow, 'search')
       const emailsSpy = jest.spyOn(cdcService.emails, 'get')
@@ -261,30 +199,7 @@ describe('CdcService', () => {
       const socialSpy = jest.spyOn(cdcService.social, 'get')
       const recaptchaSpy = jest.spyOn(cdcService.recaptcha, 'get')
 
-      axios
-        .mockResolvedValueOnce({ data: channelsExpectedResponse })
-        .mockResolvedValueOnce({ data: expectedSchemaResponse })
-        .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
-        .mockResolvedValueOnce({ data: { ...getConsentStatementExpectedResponse, preferences: getConsentStatementExpectedResponse.preferences } })
-        .mockResolvedValueOnce({ data: { ...getLegalStatementExpectedResponse, legalStatements: getLegalStatementExpectedResponse.legalStatements } })
-        .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
-        .mockResolvedValueOnce({ data: getPolicyConfig })
-        .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
-        .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
-        .mockResolvedValueOnce({ data: getSiteConfig })
-        .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
-        .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
-        .mockResolvedValueOnce({ data: getSmsExpectedResponse })
-        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
-        .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
-        .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
-        .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
-        .mockResolvedValueOnce({ data: getRecaptchaPoliciesResponse() })
-        .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
+      mockAxiosResponses()
 
       const configs = await cdcService.fetchCDCConfigs()
 
@@ -348,6 +263,37 @@ describe('CdcService', () => {
   })
 })
 
+const mockAxiosResponses = () => {
+  axios
+    .mockResolvedValueOnce({ data: getSiteConfig })
+    .mockResolvedValueOnce({ data: getSearchDataflowsExpectedResponse })
+    .mockResolvedValueOnce({ data: getEmptyDataflowResponse() })
+    .mockResolvedValueOnce({ data: getEmailsExpectedResponse })
+    .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+    .mockResolvedValueOnce({ data: getPolicyConfig })
+    .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+    .mockResolvedValueOnce({ data: getPolicyConfig })
+    .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+    .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
+    .mockResolvedValueOnce({ data: expectedSchemaResponse })
+    .mockResolvedValueOnce({ data: getExpectedScreenSetResponse() })
+    .mockResolvedValueOnce({ data: getSmsExpectedResponse })
+    .mockResolvedValueOnce({ data: channelsExpectedResponse })
+    .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+    .mockResolvedValueOnce({ data: getExpectedWebhookResponse() })
+    .mockResolvedValueOnce({ data: getConsentStatementExpectedResponse })
+    .mockResolvedValueOnce({ data: getSocialsProviders('APP KEY') })
+    .mockResolvedValueOnce({ data: getRecaptchaExpectedResponse() })
+    .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
+    .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
+    .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
+    .mockResolvedValueOnce({ data: getLegalStatementExpectedResponse })
+    .mockResolvedValueOnce({ data: getPolicyConfig })
+    .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
+}
+
+
+
 const getMockFiles = (sanitizedSchemaResponse) => {
   return [
     { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
@@ -367,27 +313,68 @@ const getMockFiles = (sanitizedSchemaResponse) => {
 }
 
 const validateConfigs = (configs) => {
-  expect(configs.webSdk.Channels.SMS).not.toEqual(undefined)
-  expect(configs.webSdk.Channels.WiFi).not.toEqual(undefined)
-  expect(configs.dataflow.profileSchema).not.toEqual(undefined)
-  expect(configs.dataflow.dataSchema).not.toEqual(undefined)
-  expect(configs.dataflow.subscriptionsSchema).not.toEqual(undefined)
-  expect(configs.dataflow.internalSchema).not.toEqual(undefined)
-  expect(configs.dataflow.addressesSchema).not.toEqual(undefined)
-  expect(configs.emails).not.toEqual(undefined)
-  expect(configs.extension).not.toEqual(undefined)
-  expect(configs.policies.screenSets.length).toEqual(8)
-  expect(configs.rba).not.toEqual(undefined)
-  expect(configs.riskAssessment).not.toEqual(undefined)
-  expect(configs.schema).not.toEqual(undefined)
-  expect(configs.screenSets.webhooks.length).toEqual(2)
-  expect(configs.sms.templates).not.toEqual(undefined)
-  expect(configs.channel.result.length).toEqual(2)
-  expect(configs.topic).not.toEqual(undefined)
-  expect(configs.webhook).not.toEqual(undefined)
-  expect(configs.consent).not.toEqual(undefined)
-  expect(configs.social).not.toEqual(undefined)
-  expect(configs.recaptcha).not.toEqual(undefined)
+  expect(configs.webSdk.globalConf).toBeDefined()
+
+  expect(configs.dataflow.resultCount).toEqual(0)
+
+  expect(configs.schema.profileSchema).toBeDefined()
+  expect(configs.schema.dataSchema).toBeDefined()
+  expect(configs.schema.subscriptionsSchema).toBeDefined()
+  expect(configs.schema.internalSchema).toBeDefined()
+  expect(configs.schema.addressesSchema).toBeDefined()
+
+  expect(configs.emails.magicLink).toBeDefined()
+  expect(configs.emails.codeVerification).toBeDefined()
+  expect(configs.emails.emailVerification).toBeDefined()
+  expect(configs.emails.emailNotifications).toBeDefined()
+  expect(configs.emails.preferencesCenter).toBeDefined()
+  expect(configs.emails.doubleOptIn).toBeDefined()
+  expect(configs.emails.passwordReset).toBeDefined()
+  expect(configs.emails.twoFactorAuth).toBeDefined()
+  expect(configs.emails.impossibleTraveler).toBeDefined()
+  expect(configs.emails.unknownLocationNotification).toBeDefined()
+  expect(configs.emails.passwordResetNotification).toBeDefined()
+
+  expect(configs.extension.result.length).toEqual(2)
+
+  expect(configs.policies.registration).toBeDefined()
+  expect(configs.policies.gigyaPlugins).toBeDefined()
+  expect(configs.policies.accountOptions).toBeDefined()
+  expect(configs.policies.passwordComplexity).toBeDefined()
+  expect(configs.policies.security).toBeDefined()
+  expect(configs.policies.emailVerification).toBeDefined()
+  expect(configs.policies.authentication).toBeDefined()
+  expect(configs.policies.doubleOptIn).toBeDefined()
+  expect(configs.policies.emailNotifications).toBeDefined()
+  expect(configs.policies.passwordReset).toBeDefined()
+  expect(configs.policies.profilePhoto).toBeDefined()
+  expect(configs.policies.federation).toBeDefined()
+  expect(configs.policies.twoFactorAuth).toBeDefined()
+  expect(configs.policies.rba).toBeDefined()
+  expect(configs.policies.preferencesCenter).toBeDefined()
+  expect(configs.policies.codeVerification).toBeDefined()
+
+  expect(configs.rba.length).toEqual(3)
+
+  expect(configs.riskAssessment).toBeDefined()
+
+  expect(configs.screenSets.screenSets.length).toEqual(8)
+
+  expect(configs.sms.templates.tfa).toBeDefined()
+  expect(configs.sms.templates.otp).toBeDefined()
+
+  expect(configs.channel.Channels.SMS).toBeDefined()
+  expect(configs.channel.Channels.WiFi).toBeDefined()
+
+  expect(configs.topic.resultCount).toEqual(0)
+
+  expect(configs.webhook.webhooks.length).toEqual(2)
+
+  expect(configs.consent.preferences).toBeDefined()
+
+  expect(configs.social.capabilities).toBeDefined()
+  expect(configs.social.settings).toBeDefined()
+  expect(configs.social.providers).toBeDefined()
+
+  expect(configs.recaptcha.recaptchaConfig.length).toEqual(4)
 }
-
-
