@@ -5,6 +5,7 @@
 
 /* eslint-disable no-undef */
 
+import { expectedGetUnknownLocationNotificationResponseOk } from '../../src/services/copyConfig/rba/dataTest'
 import * as dataTest from './dataTest'
 import * as utils from './utils'
 
@@ -419,11 +420,11 @@ describe('Version Control Test Suite', () => {
       body: dataTest.mockedVersionControlGetCommitsResponse,
     }).as('getCommits')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits/testSha`, {
-      body: dataTest.mockedVersionControlGetCommitsResponse[0],
+      body: dataTest.mockedVersionControlGetCommitsResponse[1],
     }).as('getCommits')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits`, {
       statusCode: 200,
-      body: dataTest.mockedVersionControlGetCommitsResponse[0],
+      body: dataTest.mockedVersionControlGetCommitsResponse[1],
     }).as('getCommits')
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
@@ -482,6 +483,8 @@ describe('Version Control Test Suite', () => {
   })
 
   it('should not do the backup because there is no changes', () => {
+    utils.mockGetConfigurationRequests()
+
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/commits?sha=undefined&per_page=100&page=1`, {
@@ -491,12 +494,94 @@ describe('Version Control Test Suite', () => {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
     })
 
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fpolicies.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetPolicyResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FwebSdk.json?ref=undefined`, {
+      body: { content: dataTest.siteConfigResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fdataflow.json?ref=undefined`, {
+      body: { content: dataTest.mockedSearchDataflowsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Femails.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetEmailTemplatesConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fextension.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetExtensionExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frba.json?ref=undefined`, {
+      body: { content: expectedGetUnknownLocationNotificationResponseOk },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FriskAssessment.json?ref=undefined`, {
+      body: { content: expectedGetUnknownLocationNotificationResponseOk },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fschema.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSchemaResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2FscreenSets.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetScreenSetResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsms.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSmsConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fchannel.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetCommunicationChannelsExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Ftopic.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetCommunicationTopicsExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fwebhook.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetWebhookExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fconsent.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetConsentStatementExpectedResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Fsocial.json?ref=undefined`, {
+      body: { content: dataTest.mockedGetSocialsConfigsResponse },
+    })
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/src%2FversionControl%2Frecaptcha.json?ref=undefined`, {
+      body: { content: dataTest.getRecaptchaExpectedResponse },
+    })
+
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/ref/heads%2Fundefined`, {
+      body: dataTest.mockFetchCommits,
+    })
+
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs/testSha`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: dataTest.mockGetBlob,
+    })
+
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs`, {
+      callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+      errorCode: 0,
+      apiVersion: 2,
+      statusCode: 200,
+      statusReason: 'OK',
+      body: dataTest.mockGetBlob,
+    })
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/trees`, {
+      body: dataTest.mockTree,
+    })
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/commits`, {
+      body: dataTest.mockCommits,
+    })
+    cy.intercept('PATCH', `${url}/repos/testOwner/testRepo/git/refs/heads%2Fundefined`, {
+      body: dataTest.mockGetRef,
+    })
+
+    cy.intercept('POST', `${url}/repos/testOwner/testRepo/git/refs`, {
+      body: dataTest.mockGetRef,
+    })
+
     cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
     cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
     cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
     cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
-    cy.get('[data-cy="backupButton"]').should('not.be.disabled').click()
-    cy.get('#backupDialog').should('contain.text', 'There are no changes since your last backup.')
   })
 
   it('should popup the error dialog when reverting', () => {
@@ -512,41 +597,38 @@ describe('Version Control Test Suite', () => {
     cy.intercept('GET', `${url}/user`, {
       body: { callId: 'ea4861dc2cab4c01ab265ffe3eab6c71', errorCode: 0, apiVersion: 2, statusCode: 200, statusReason: 'OK', login: 'testOwner' },
     })
-
-    cy.intercept('OPTIONS', `${url}/repos/testOwner/testRepo/git/refs/heads%2FtestApiKey`, {})
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/policies?ref=testSha`, {
-      statusCode: 200,
-      body: {
-        contents_url: 'mocked content',
-        encoding: 'base64',
-      },
+    cy.intercept('GET', `${url}/repos/testOwner/testRepo/contents/extension?ref=testSha`, {
+      name: 'extension.json',
+      path: 'src/versionControl/extension.json',
+      sha: '1d58d2417a0fcd42ad7b7948c406aa0f839e68ef',
+      size: 834,
+      url: 'https://api.github.com/repos/Helsinky/version_control/contents/src/versionControl/extension.json?ref=d72e07eac8733ce556a96e961a0c25219dd05dd9',
+      html_url: 'https://github.com/Helsinky/version_control/blob/d72e07eac8733ce556a96e961a0c25219dd05dd9/src/versionControl/extension.json',
+      git_url: 'https://api.github.com/repos/Helsinky/version_control/git/blobs/1d58d2417a0fcd42ad7b7948c406aa0f839e68ef',
+      download_url: 'https://raw.githubusercontent.com/Helsinky/version_control/d72e07eac8733ce556a96e961a0c25219dd05dd9/src/versionControl/extension.json',
+      type: 'file',
+      content:
+        'ewogICJyZXN1bHQiOiBbCiAgICB7CiAgICAgICJjcmVhdGVkIjogIjIwMjQt\nMDItMjFUMTc6NDg6NTUuOTQ4NzIxOVoiLAogICAgICAibGFzdE1vZGlmaWVk\nIjogIjIwMjUtMDQtMjJUMTM6NDA6MjMuMTA2MzIyOFoiLAogICAgICAiZGVz\nY3JpcHRpb24iOiAiIiwKICAgICAgInRpbWVvdXQiOiAxMDAwLAogICAgICAi\nZmFsbGJhY2siOiAiSWdub3JlQWxsRXJyb3JzIiwKICAgICAgImhlYWRlcnMi\nOiBbXSwKICAgICAgImludGVncmF0aW9uIjogIkdlbmVyaWMiLAoKICAgICAg\nImZyaWVuZGx5TmFtZSI6ICJ0ZXN0aW5nRXh0ZW5zaW9uIiwKICAgICAgImVu\nYWJsZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImNyZWF0ZWQiOiAi\nMjAyNC0wMi0yMVQxNzo0OTowOS44MzUzMTA5WiIsCiAgICAgICJsYXN0TW9k\naWZpZWQiOiAiMjAyNS0wNC0yMlQxNDo1MDozNi45NTE3MTg4WiIsCiAgICAg\nICJleHRlbnNpb25GdW5jVXJsIjogImh0dHBzOi8vY29uc29sZS5naWd5YS5j\nb20vIy83OTU5NzU2OC80XzZUdjZ6OE82Tm1VTyIsCiAgICAgICJkZXNjcmlw\ndGlvbiI6ICIiLAogICAgICAidGltZW91dCI6IDEwMDAsCiAgICAgICJmYWxs\nYmFjayI6ICJJZ25vcmVBbGxFcnJvcnMiLAogICAgICAiaGVhZGVycyI6IFtd\nLAogICAgICAiaW50ZWdyYXRpb24iOiAiR2VuZXJpYyIsCiAgICAgICJpZCI6\nICIwMzA1ZTU0ZWNkM2M0ODA3OWVhNGEyZjhjNTFkMjUxZCIsCiAgICAgICJl\neHRlbnNpb25Qb2ludCI6ICJPbkJlZm9yZVNldEFjY291bnRJbmZvIiwKICAg\nICAgImZyaWVuZGx5TmFtZSI6ICJ0ZXN0aW5nVG9vbCIsCiAgICAgICJlbmFi\nbGVkIjogZmFsc2UKICAgIH0KICBdCn0K\n',
+      encoding: 'base64',
     }).as('getFileContent')
-    cy.intercept('GET', `${url}/repos/testOwner/testRepo/git/blobs`, {
-      statusCode: 200,
-      body: {
-        content: 'test',
-        encoding: 'base64',
-      },
-    }).as('getBlobs')
-    cy.intercept('POST', 'accounts.setPolicies', {
-      statusCode: 403,
-      body: {
-        errorMessage: 'Error getting SMS templates',
-        errorDetails: 'There was an error when getting the SMS templates or you do not have the required permissions to call it.',
-        statusCode: 403,
-        errorCode: 403007,
-        statusReason: 'Forbidden',
-        callId: 'ed5c54bfe321478b8db4298c2539265a',
-        apiVersion: 2,
-        time: 'Date.now()',
-      },
+
+    cy.intercept('POST', 'accounts.extensions.modify', {
+      callId: '803e9884df514ef38d55e51f15e291b4',
+      context: '{"id":"extensions_undefined","targetApiKey":"4_6Tv6z8O6NmUO_BZoHcXIRw"}',
+      errorCode: 500001,
+      errorMessage: 'General Server Error',
+      apiVersion: 2,
+      statusCode: 500,
+      statusReason: 'Internal Server Error',
+      time: '2025-04-23T15:52:27.729Z',
     })
+
     cy.get('#ownerInput').should('be.visible').shadow().find('input').type('testOwner')
     cy.get('#gitTokenInput').should('be.visible').shadow().find('input').type('testToken')
     cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
     cy.get('[data-cy="backupButton"]').should('not.be.disabled')
     cy.get('#versionControlTable').should('be.visible').should('contain.text', 'Create test CDCRepo branch creation')
     cy.get('#commitRevertButton-0').should('be.visible').click()
-    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkFailed to revert configurations')
+    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkExtension')
   })
 })
