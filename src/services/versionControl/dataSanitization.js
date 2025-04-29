@@ -6,11 +6,21 @@
 import { removePropertyFromObjectCascading } from '../copyConfig/objectHelper'
 
 export const removeIgnoredFields = (obj, fieldsToRemove) => {
-  const newObj = { ...obj }
-  fieldsToRemove.forEach((field) => {
-    removePropertyFromObjectCascading(newObj, field)
-  })
-  return newObj
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removeIgnoredFields(item, fieldsToRemove))
+  }
+
+  if (typeof obj === 'object' && obj !== null) {
+    fieldsToRemove.forEach((field) => {
+      removePropertyFromObjectCascading(obj, field)
+    })
+
+    Object.keys(obj).forEach((key) => {
+      obj[key] = removeIgnoredFields(obj[key], fieldsToRemove)
+    })
+  }
+
+  return obj
 }
 
 export const cleanEmailResponse = (response) => {

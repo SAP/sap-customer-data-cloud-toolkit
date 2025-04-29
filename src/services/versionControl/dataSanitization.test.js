@@ -1,11 +1,10 @@
 /*
  * Copyright: Copyright 2023 SAP SE or an SAP affiliate company and cdc-tools-chrome-extension contributors
  * License: Apache-2.0
- */ 
+ */
 import { removeIgnoredFields, cleanEmailResponse, cleanResponse } from './dataSanitization'
 
 describe('Data sanitization tests', () => {
-
   test('removeIgnoredFields removes specified fields from objects', () => {
     const input = {
       field1: 'value1',
@@ -16,6 +15,21 @@ describe('Data sanitization tests', () => {
     const fieldsToRemove = ['callId', 'time']
     const output = removeIgnoredFields(input, fieldsToRemove)
     expect(output).toEqual({ field1: 'value1', nested: { field2: 'value2' } })
+  })
+
+  test('removeIgnoredFields removes specified fields from an object array', () => {
+    const input = {
+      field1: 'value1',
+      callId: 'callIdValue',
+      time: 'timeValue',
+      result: [
+        { field1: 'value1', callId: 'callIdValue', time: 'timeValue' },
+        { field2: 'value2', callId: 'callIdValue', time: 'timeValue' },
+      ],
+    }
+    const fieldsToRemove = ['callId', 'time']
+    const output = removeIgnoredFields(input, fieldsToRemove)
+    expect(output).toEqual({ field1: 'value1', result: [{ field1: 'value1' }, { field2: 'value2' }] })
   })
 
   test('cleanEmailResponse removes specific fields from response', () => {
