@@ -85,9 +85,15 @@ class CdcService {
       const cdcData = await Promise.all(
         cdcDataArray.map(async ({ name, promise }) => {
           const data = await promise
+
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
           }
+
+          if (name === 'rba') {
+            data.splice(1, 1)
+          }
+
           const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
         }),

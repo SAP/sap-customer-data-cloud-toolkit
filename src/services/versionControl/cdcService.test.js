@@ -107,7 +107,8 @@ describe('CdcService', () => {
       expect(schemaSpy).toHaveBeenCalled()
       expect(schemaSpy.mock.calls.length).toBe(5)
     })
-    it('should fetch all CDC configs - when sms there is no global templates ', async () => {
+
+    it('should fetch all CDC configs - when sms there is no global templates', async () => {
       jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
       jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
         callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
@@ -177,7 +178,7 @@ describe('CdcService', () => {
       const ammountOfResponses = countObjects(configs)
       expect(smsExpectedResponseWithNoTemplates.templates.tfa.templatesPerCountryCode).toEqual({})
       expect(smsExpectedResponseWithNoTemplates.templates.otp.templatesPerCountryCode).toEqual({})
-      expect(ammountOfResponses).toBe(263)
+      expect(ammountOfResponses).toBe(246)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
@@ -308,7 +309,7 @@ describe('CdcService', () => {
 
       const configs = await cdcService.fetchCDCConfigs()
       const objectCount = countObjects(configs)
-      expect(objectCount).toBe(263)
+      expect(objectCount).toBe(246)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(dataflowSpy).toHaveBeenCalled()
       expect(emailsSpy).toHaveBeenCalled()
