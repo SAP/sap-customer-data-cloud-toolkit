@@ -182,7 +182,7 @@ describe('CdcService', () => {
       expect(recaptchaSpy).toHaveBeenCalled()
     })
 
-    it('should fetch all CDC configs - when sms there is no global templates ', async () => {
+    it('should fetch all CDC configs - when sms there is no global templates', async () => {
       jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockResolvedValue(getConsentStatementExpectedResponse)
       jest.spyOn(LegalStatement.prototype, 'getFilteredLegalStatement').mockResolvedValue({
         callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
