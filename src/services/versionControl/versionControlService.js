@@ -66,12 +66,12 @@ class VersionControlService {
     const errors = []
     configs.rba.forEach(rbaConfig => {
       if(rbaConfig.errorCode && rbaConfig.errorMessage && rbaConfig.errorCode !== 0) {
-        errors.push(rbaConfig.errorMessage)
+        errors.push(rbaConfig)
       }
     })
     Object.entries(configs).forEach(([key, value]) => {
       if(key !== 'rba' && value.errorCode && value.errorMessage && value.errorCode !== 0) {
-        errors.push(value.errorMessage)
+        errors.push(value)
       }
     })
     return errors
