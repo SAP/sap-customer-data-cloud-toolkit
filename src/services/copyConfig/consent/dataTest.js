@@ -93,3 +93,24 @@ export const cannotChangeConsentsOnChildSite = {
   time: Date.now(),
   severity: ERROR_SEVERITY_WARNING,
 }
+
+export const filteredLegalStatementExpectedResponse = {
+  callId: 'ea4861dc2cab4c01ab265ffe3eab6c71',
+  errorCode: 0,
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2024-08-30T08:22:37.389Z',
+  legalStatements: {
+    versions: {
+      2: {
+        purpose: 'Updated terms',
+        LegalStatementStatus: 'Published',
+      },
+      1: {
+        purpose: 'Initial terms',
+        LegalStatementStatus: 'Archived',
+      },
+    },
+  },
+}

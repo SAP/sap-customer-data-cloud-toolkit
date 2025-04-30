@@ -87,17 +87,17 @@ const versionControlSlice = createSlice({
       state.errors = action.payload
       state.showErrorDialog = true
     })
-    builder.addCase(getRevertChanges.pending, (state) => {
+    builder.addCase(revertBackup.pending, (state) => {
       state.isFetching = true
       state.errors = []
     })
-    builder.addCase(getRevertChanges.fulfilled, (state, action) => {
+    builder.addCase(revertBackup.fulfilled, (state, action) => {
       state.isFetching = false
       state.revert = action.payload
       state.successMessage = i18n.t('VERSION_CONTROL.REVERT.SUCCESS.MESSAGE')
       state.showSuccessDialog = true
     })
-    builder.addCase(getRevertChanges.rejected, (state, action) => {
+    builder.addCase(revertBackup.rejected, (state, action) => {
       state.isFetching = false
       state.errors = action.payload
       state.showErrorDialog = true
@@ -149,13 +149,19 @@ const versionControlSlice = createSlice({
   },
 })
 
-export const getRevertChanges = createAsyncThunk(GET_REVERT_CHANGES, async (sha, { getState, rejectWithValue }) => {
+export const validateVersionControlCredentials = createAsyncThunk('versionControl/validateVersionControlCredentials', async (_, { getState, rejectWithValue }) => {
   const state = getState()
-  const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+  const { versionControl } = getCommonData(state)
+
   try {
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).revertBackup(sha)
+    const areCredentialsValid = await versionControl.validateVersionControlCredentials()
+    if (!areCredentialsValid) {
+      return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
+    } else {
+      return true
+    }
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(error))
+    return rejectWithValue(i18n.t('VERSION_CONTROL.REPOSITORY_ERROR_MESSAGE'))
   }
 })
 
@@ -166,9 +172,41 @@ export const createBackup = createAsyncThunk(GET_SERVICES_ACTION, async (commitM
     const commitList = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).createBackup(commitMessage)
     return commitList.filter((commit) => commit.parents.length > 0)
   } catch (error) {
-    return rejectWithValue(error.messages)
+    return rejectWithValue(getErrorAsArray(error.message))
   }
 })
+
+export const revertBackup = createAsyncThunk(GET_REVERT_CHANGES, async (sha, { getState, rejectWithValue }) => {
+  const state = getState()
+  const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+  try {
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).revertBackup(sha)
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error))
+  }
+})
+
+export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  try {
+    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getCommitsFromBranch()
+    return commitList.filter((commit) => commit.parents.length > 0)
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(error.message))
+  }
+})
+
+export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_ACTION, async (_, { getState, rejectWithValue }) => {
+  const state = getState()
+  try {
+    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
+    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getFilesForBackup()
+  } catch (error) {
+    return rejectWithValue(getErrorAsArray(i18n.t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE')))
+  }
+})
+
 
 export const getEncryptedCookie = (name, secretKey) => {
   const encryptedValue = Cookies.get(name)
@@ -198,43 +236,6 @@ const getCommonData = (state) => {
 
   return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
 }
-
-export const validateVersionControlCredentials = createAsyncThunk('versionControl/validateVersionControlCredentials', async (_, { getState, rejectWithValue }) => {
-  const state = getState()
-  const { versionControl } = getCommonData(state)
-
-  try {
-    const areCredentialsValid = await versionControl.validateVersionControlCredentials()
-    if (!areCredentialsValid) {
-      return rejectWithValue(i18n.t('VERSION_CONTROL.INVALID_CREDENTIALS'))
-    } else {
-      return true
-    }
-  } catch (error) {
-    return rejectWithValue(i18n.t('VERSION_CONTROL.REPOSITORY_ERROR_MESSAGE'))
-  }
-})
-
-export const fetchCommits = createAsyncThunk(FETCH_COMMITS_ACTION, async (_, { getState, rejectWithValue }) => {
-  const state = getState()
-  try {
-    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    const { commitList } = await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getCommitsFromBranch()
-    return commitList.filter((commit) => commit.parents.length > 0)
-  } catch (error) {
-    return rejectWithValue(error.message)
-  }
-})
-
-export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_ACTION, async (_, { getState, rejectWithValue }) => {
-  const state = getState()
-  try {
-    const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
-    return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getFilesForBackup()
-  } catch (error) {
-    return rejectWithValue(i18n.t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE'))
-  }
-})
 
 const setCookies = (state) => {
   const credentials = state.credentials
