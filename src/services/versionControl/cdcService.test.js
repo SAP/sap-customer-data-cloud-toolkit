@@ -6,25 +6,22 @@
 import axios from 'axios'
 import CdcService from './cdcService'
 import * as SocialsTestData from '../copyConfig/social/dataTest'
-import LegalStatement from '../copyConfig/consent/legalStatement'
 import { channelsExpectedResponse, errorResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
 import {
-  filteredLegalStatementExpectedResponse,
   getConsentStatementExpectedResponse,
-  getFilteredLegalStatementExpectedResponse,
   getLegalStatementExpectedResponse
 } from '../copyConfig/consent/dataTest'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
 import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
 import { getPolicyConfig } from '../copyConfig/policies/dataTest'
-import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk, expectedGetUnknownLocationNotificationResponseOk } from '../copyConfig/rba/dataTest'
+import { expectedGetRbaPolicyResponseOk, expectedGetRiskAssessmentResponseOk } from '../copyConfig/rba/dataTest'
 import { getExpectedScreenSetResponse } from '../copyConfig/screenset/dataTest'
 import { getSocialsProviders } from '../copyConfig/social/dataTest'
 import { getExpectedWebhookResponse } from '../copyConfig/webhook/dataTest'
 import { getSiteConfig } from '../copyConfig/websdk/dataTest'
 import { getEmailsExpectedResponse, getEmailsExpectedResponseWithMinimumTemplates } from '../emails/dataTest'
 import { expectedSchemaResponse } from '../importAccounts/schemaImport/schemaDatatest'
-import { getRecaptchaExpectedResponse, getRecaptchaPoliciesResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
+import { getRecaptchaExpectedResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
 import { expectedGigyaResponseOk } from '../servicesDataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
 
