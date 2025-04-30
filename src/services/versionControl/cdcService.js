@@ -53,7 +53,7 @@ class CdcService {
   }
 
   #getCdcData = () => {
-    const responses = [
+    return [
       { name: 'webSdk', promise: this.webSdk.get() },
       { name: 'dataflow', promise: this.dataflow.search() },
       { name: 'emails', promise: this.emails.get() },
@@ -71,12 +71,9 @@ class CdcService {
       { name: 'social', promise: this.social.get() },
       { name: 'recaptcha', promise: this.recaptcha.get() },
     ]
-    return responses
   }
 
   fetchCDCConfigs = async () => {
-    const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
-
     try {
       const cdcDataArray = this.#getCdcData()
       if (!Array.isArray(cdcDataArray)) {
@@ -84,7 +81,7 @@ class CdcService {
       }
       const cdcDataResults = await Promise.allSettled(
         cdcDataArray.map(async ({ name, promise }) => {
-          const data = await promise
+          let data = await promise
 
           if (data.errorCode && data.errorCode !== 0) {
             data.name = name
@@ -99,6 +96,28 @@ class CdcService {
             data.splice(1, 1)
           }
 
+          if (name === 'webSdk') {
+            const fieldsToBeIgnoredInWebsdk = [
+              'baseDomain',
+              'trustedSiteURLs',
+              'trustedShareURLs',
+              'settings',
+              'siteGroupConfig',
+              'customAPIDomainPrefix',
+              'enableHSTS',
+              'dataCenter',
+              'tags',
+              'captchaProvider',
+              'enableDataSharing',
+              'isCDP',
+              'invisibleRecaptcha',
+              'recaptchaV2',
+              'funCaptcha',
+              'description',
+            ]
+            data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
+          }
+          const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
           const result = removeIgnoredFields(data, fieldsToBeIgnored)
           return { [name]: result }
         }),

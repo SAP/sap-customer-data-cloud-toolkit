@@ -16,10 +16,14 @@ import reducer, {
   selectOwner,
   selectErrors,
   getEncryptedCookie,
-  getRevertChanges,
+  revertBackup,
   createBackup,
   prepareFilesForUpdate,
   validateVersionControlCredentials,
+  setShowErrorDialog,
+  setShowSuccessDialog,
+  setSuccessMessage,
+  clearErrors
 } from './versionControlSlice'
 
 jest.mock('js-cookie', () => ({
@@ -113,9 +117,9 @@ describe('versionControlSlice', () => {
     })
     it('should update state to revert when reverting changes', async () => {
       const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
-      await store.dispatch(getRevertChanges('testSha'))
+      await store.dispatch(revertBackup('testSha'))
       const actions = store.getActions()
-      expect(actions[0].type).toBe(getRevertChanges.pending.type)
+      expect(actions[0].type).toBe(revertBackup.pending.type)
 
       const expectedState = { ...initialState.versionControl, isFetching: true, errors: [] }
       const state = reducer(initialState.versionControl, actions[0])
@@ -149,6 +153,24 @@ describe('versionControlSlice', () => {
 
       expect(state.areCredentialsValid).toBe(false)
       expect(state.validationError).toBe('Invalid credentials')
+    })
+    it('should update showErrorDialog', () => {
+      const updatedState = reducer(initialState.versionControl, setShowErrorDialog(true))
+      expect(updatedState.showErrorDialog).toBe(true)
+    })
+    it('should update showSuccessDialog', () => {
+      const updatedState = reducer(initialState.versionControl, setShowSuccessDialog(true))
+      expect(updatedState.showSuccessDialog).toBe(true)
+    })
+    it('should update successMessage', () => {
+      const message = 'test message'
+      const updatedState = reducer(initialState.versionControl, setSuccessMessage(message))
+      expect(updatedState.successMessage).toEqual(message)
+    })
+    it('should clear errors', () => {
+      initialState.versionControl.errors = ['error1', 'error2']
+      const updatedState = reducer(initialState.versionControl, clearErrors())
+      expect(updatedState.errors).toEqual([])
     })
   })
 
@@ -215,20 +237,20 @@ describe('versionControlSlice', () => {
   })
   describe('Async thunk', () => {
     it('should update state when getRevertChanges is fulfilled', async () => {
-      const action = getRevertChanges.fulfilled(true)
+      const action = revertBackup.fulfilled(true)
       const newState = reducer(initialState, action)
       expect(newState.revert).toEqual(true)
       expect(newState.isFetching).toEqual(false)
     })
     it('should update state when getRevertChanges is pending', async () => {
-      const action = getRevertChanges.pending
+      const action = revertBackup.pending
       const newState = reducer(initialState, action)
       expect(newState.isFetching).toEqual(true)
       expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
     })
     it('should update state when getRevertChanges is rejected', async () => {
-      const action = getRevertChanges.rejected('', '', '', 'Failed to revert configurations')
+      const action = revertBackup.rejected('', '', '', 'Failed to revert configurations')
       const newState = reducer(initialState, action)
       expect(newState.errors).toEqual('Failed to revert configurations')
       expect(newState.isFetching).toEqual(false)

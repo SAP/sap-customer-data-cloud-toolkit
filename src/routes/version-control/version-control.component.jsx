@@ -36,7 +36,7 @@ import {
   fetchCommits,
   validateVersionControlCredentials,
   prepareFilesForUpdate,
-  getRevertChanges,
+  revertBackup,
   selectCommits,
   selectIsFetching,
   selectGitToken,
@@ -147,7 +147,7 @@ const VersionControlComponent = ({ t }) => {
   }
 
   const onCommitRevertClick = (sha) => {
-    dispatch(getRevertChanges(sha))
+    dispatch(revertBackup(sha))
   }
 
   const handleGitTokenChange = (e) => {

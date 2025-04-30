@@ -20,9 +20,13 @@ class VersionControlService {
   createBackup = async (commitMessage) => {
     try {
       const configs = await this.cdcService.fetchCDCConfigs()
+      const errors = this.#extractConfigErrors(configs)
+      if(errors.length > 0) {
+        return Promise.reject(errors)
+      }
       return await this.#versionControl.storeCdcDataInVersionControl(commitMessage || 'Backup created', configs, this.defaultBranch, this.siteInfo)
     } catch (error) {
-      throw new Error(error)
+      return Promise.reject(error)
     }
   }
 
@@ -43,6 +47,10 @@ class VersionControlService {
 
   getFilesForBackup = async () => {
     const configs = await this.cdcService.fetchCDCConfigs()
+    const errors = this.#extractConfigErrors(configs)
+    if(errors.length > 0) {
+      return Promise.reject(errors)
+    }
     const validUpdates = await this.#versionControl.fetchFilesAndUpdateGitContent(configs, this.apiKey, this.siteInfo)
     const formattedFiles =
       validUpdates.length > 0
@@ -52,6 +60,21 @@ class VersionControlService {
           })
         : []
     return formattedFiles
+  }
+
+  #extractConfigErrors(configs){
+    const errors = []
+    configs.rba.forEach(rbaConfig => {
+      if(rbaConfig.errorCode && rbaConfig.errorMessage && rbaConfig.errorCode !== 0) {
+        errors.push(rbaConfig)
+      }
+    })
+    Object.entries(configs).forEach(([key, value]) => {
+      if(key !== 'rba' && value.errorCode && value.errorMessage && value.errorCode !== 0) {
+        errors.push(value)
+      }
+    })
+    return errors
   }
 }
 

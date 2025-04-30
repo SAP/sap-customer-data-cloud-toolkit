@@ -60,5 +60,17 @@ describe('versionControlService', () => {
       const response = await versionControlService.revertBackup('mockSha')
       expect(response).toEqual(true)
     })
+
+    it('should reject with errors if config has errors', async () => {
+      const mockConfigs = { rba: [{ errorCode: 1, errorMessage: 'Error in RBA' }] }
+      versionControlService.cdcService.fetchCDCConfigs = jest.fn().mockResolvedValue(mockConfigs)
+      await expect(versionControlService.createBackup('Test commit')).rejects.toEqual(mockConfigs.rba)
+    })
+
+    it('should reject with an error if an exception is thrown', async () => {
+      const mockError = new Error('Unexpected error')
+      versionControlService.cdcService.fetchCDCConfigs = jest.fn().mockRejectedValue(mockError)
+      await expect(versionControlService.createBackup('Test commit')).rejects.toEqual(mockError)
+    })
   })
 })
