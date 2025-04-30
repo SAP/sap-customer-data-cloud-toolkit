@@ -82,9 +82,14 @@ class CdcService {
       if (!Array.isArray(cdcDataArray)) {
         throw new Error('getCdcData must return an array')
       }
-      const cdcData = await Promise.all(
+      const cdcDataResults = await Promise.allSettled(
         cdcDataArray.map(async ({ name, promise }) => {
           const data = await promise
+
+          if (data.errorCode && data.errorCode !== 0) {
+            data.name = name
+            throw data
+          }
 
           if (name === 'sms') {
             SmsConfiguration.addSmsTemplatesPerCountryCode(data)
@@ -98,9 +103,31 @@ class CdcService {
           return { [name]: result }
         }),
       )
-      return Object.assign({}, ...cdcData)
+
+      const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+
+      const failedResults = cdcDataResults
+        .filter((result) => result.status === 'rejected')
+        .map((result) => {
+          return {
+            name: result.reason.name,
+            error: result.reason,
+          }
+        })
+
+      if (failedResults.length > 0) {
+        const combinedError = failedResults.map(({ name, error }) => ({
+          titleText: name.charAt(0).toUpperCase() + name.slice(1),
+          subtitleText: error.errorMessage,
+          message: error,
+        }))
+
+        throw combinedError
+      }
+
+      return Object.assign({}, ...successfulResults)
     } catch (error) {
-      throw new Error(error)
+      throw error
     }
   }
 
@@ -168,8 +195,9 @@ class CdcService {
       const filteredResponse = file.content
       if (configHandlers[fileType]) {
         return configHandlers[fileType](filteredResponse).catch((error) => {
-          const wrappedError = new Error(error.message)
+          const wrappedError = new Error(error)
           wrappedError.titleText = capitalizedFileType
+          wrappedError.subtitleText = error.errorMessage
           wrappedError.originalError = error
           throw wrappedError
         })
@@ -211,10 +239,7 @@ class CdcService {
       await this.rba.setAccountTakeoverProtection(this.apiKey, filteredResponse[0])
     }
     if (filteredResponse[1]) {
-      await this.rba.setUnknownLocationNotification(this.apiKey, this.siteInfo, filteredResponse[1])
-    }
-    if (filteredResponse[2]) {
-      await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, filteredResponse[2])
+      await this.rba.setRbaRulesAndSettings(this.apiKey, this.siteInfo, filteredResponse[1])
     }
   }
 

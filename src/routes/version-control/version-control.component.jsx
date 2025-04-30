@@ -51,6 +51,7 @@ import {
   selectSuccessMessage,
   selectAreCredentialsValid,
   clearErrors,
+  selectErrorsTitle,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey, selectIsLoading } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -74,6 +75,7 @@ const VersionControlComponent = ({ t }) => {
   const gitToken = useSelector(selectGitToken)
   const owner = useSelector(selectOwner)
   const errors = useSelector(selectErrors)
+  const errorTitle = useSelector(selectErrorsTitle)
   const repo = useSelector(selectRepo)
   const apiKey = useSelector(selectCurrentSiteApiKey)
   const filesToUpdate = useSelector(selectFilesToUpdate)
@@ -84,10 +86,8 @@ const VersionControlComponent = ({ t }) => {
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
   const areConfigurationsLoading = useSelector(selectIsLoading)
-
   const [commitMessage, setCommitMessage] = useState('')
   const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
-
   const updateApiKey = (newUrl) => {
     if (newUrl.includes(ROUTE_VERSION_CONTROL)) {
       dispatch(updateCurrentSiteApiKey())
@@ -207,7 +207,7 @@ const VersionControlComponent = ({ t }) => {
   const showErrorMessage = () => (
     <DialogMessageInform
       open={showErrorDialog}
-      headerText={t('VERSION_CONTROL.REVERT.ERROR.MESSAGE')}
+      headerText={errorTitle}
       state={ValueState.Error}
       closeButtonContent={t('GLOBAL.OK')}
       onAfterClose={onErrorDialogAfterClose}
