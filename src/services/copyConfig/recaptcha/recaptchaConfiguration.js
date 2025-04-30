@@ -25,20 +25,27 @@ class RecaptchaConfiguration {
   }
 
   async get() {
-    try {
-      const recaptchaResponse = await this.getRecaptcha().get(this.#site, this.#dataCenter)
-      const policiesResponse = await this.#policy.get()
-      const riskProvidersResponse = await this.#riskProviders.get(this.#site, this.#dataCenter)
+    const recaptchaResponse = await this.getRecaptcha().get(this.#site, this.#dataCenter)
+    if (recaptchaResponse.errorCode !== 0) {
+      throw new Error(`Error fetching reCAPTCHA policies: ${recaptchaResponse.errorMessage}`)
+    }
 
-      return {
-        errorCode: recaptchaResponse.errorCode,
-        recaptchaConfig: recaptchaResponse.Config,
-        securityPolicies: policiesResponse.security,
-        registrationPolicies: policiesResponse.registration,
-        riskProvidersConfig: riskProvidersResponse.config,
-      }
-    } catch (error) {
-      throw new Error(`Error in RecaptchaConfiguration.get: ${error}`)
+    const policiesResponse = await this.#policy.get()
+    if (policiesResponse.errorCode !== 0) {
+      throw new Error(`Error fetching security and registration policies: ${policiesResponse.errorMessage}`)
+    }
+
+    const riskProvidersResponse = await this.#riskProviders.get(this.#site, this.#dataCenter)
+    if (riskProvidersResponse.errorCode !== 0) {
+      throw new Error(`Error fetching Risk Providers configuration: ${riskProvidersResponse.errorMessage}`)
+    }
+
+    return {
+      errorCode: recaptchaResponse.errorCode,
+      recaptchaConfig: recaptchaResponse.Config,
+      securityPolicies: policiesResponse.security,
+      registrationPolicies: policiesResponse.registration,
+      riskProvidersConfig: riskProvidersResponse.config
     }
   }
 
@@ -55,14 +62,14 @@ class RecaptchaConfiguration {
     try {
       const newSecurityConfig = {
         riskAssessmentWithReCaptchaV3: securityPolicies.riskAssessmentWithReCaptchaV3,
-        riskAssessmentWithTransUnion: securityPolicies.riskAssessmentWithTransUnion,
+        riskAssessmentWithTransUnion: securityPolicies.riskAssessmentWithTransUnion
       }
 
       const newConfig = {
         security: newSecurityConfig,
         registration: {
-          requireCaptcha: registrationPolicies.requireCaptcha,
-        },
+          requireCaptcha: registrationPolicies.requireCaptcha
+        }
       }
 
       const response = await this.#policy.set(targetSite, newConfig, targetDataCenter)

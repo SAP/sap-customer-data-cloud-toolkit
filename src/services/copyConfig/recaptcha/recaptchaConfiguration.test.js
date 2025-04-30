@@ -113,7 +113,7 @@ describe('RecaptchaConfiguration test suite', () => {
 
       axios.mockResolvedValueOnce({ data: mockErrorResponse })
 
-      await expect(recaptchaConfig.get()).rejects.toThrow('Error in RecaptchaConfiguration.get: TypeError: Cannot read properties of undefined (reading \'data\')')
+      await expect(recaptchaConfig.get()).rejects.toThrow('Error fetching reCAPTCHA policies: Internal server error')
     })
 
     test('set recaptcha configuration successfully', async () => {
