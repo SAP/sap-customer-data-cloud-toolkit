@@ -20,6 +20,10 @@ import reducer, {
   createBackup,
   prepareFilesForUpdate,
   validateVersionControlCredentials,
+  setShowErrorDialog,
+  setShowSuccessDialog,
+  setSuccessMessage,
+  clearErrors
 } from './versionControlSlice'
 
 jest.mock('js-cookie', () => ({
@@ -148,6 +152,24 @@ describe('versionControlSlice', () => {
 
       expect(state.areCredentialsValid).toBe(false)
       expect(state.validationError).toBe('Invalid credentials')
+    })
+    it('should update showErrorDialog', () => {
+      const updatedState = reducer(initialState.versionControl, setShowErrorDialog(true))
+      expect(updatedState.showErrorDialog).toBe(true)
+    })
+    it('should update showSuccessDialog', () => {
+      const updatedState = reducer(initialState.versionControl, setShowSuccessDialog(true))
+      expect(updatedState.showSuccessDialog).toBe(true)
+    })
+    it('should update successMessage', () => {
+      const message = 'test message'
+      const updatedState = reducer(initialState.versionControl, setSuccessMessage(message))
+      expect(updatedState.successMessage).toEqual(message)
+    })
+    it('should clear errors', () => {
+      initialState.versionControl.errors = ['error1', 'error2']
+      const updatedState = reducer(initialState.versionControl, clearErrors())
+      expect(updatedState.errors).toEqual([])
     })
   })
 
