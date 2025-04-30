@@ -59,6 +59,7 @@ export const topicsExpectedResponse = {
 export const errorResponse = {
   callId: 'dd9d17c5c14040d8b6302cb0d38ffc29',
   errorCode: 10000,
+  errorMessage: 'Invalid API key',
   apiVersion: 2,
   statusCode: 200,
   statusReason: 'OK',
