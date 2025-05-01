@@ -26,6 +26,7 @@ const versionControlSlice = createSlice({
     repo: '',
     isFetching: false,
     errors: [],
+    errorTitle: '',
     validationError: null,
     revert: false,
     filesToUpdate: [],
@@ -100,6 +101,7 @@ const versionControlSlice = createSlice({
     builder.addCase(revertBackup.rejected, (state, action) => {
       state.isFetching = false
       state.errors = action.payload
+      state.errorTitle = i18n.t('VERSION_CONTROL.REVERT.ERROR.MESSAGE')
       state.showErrorDialog = true
     })
     builder.addCase(createBackup.pending, (state) => {
@@ -131,6 +133,7 @@ const versionControlSlice = createSlice({
     builder.addCase(prepareFilesForUpdate.rejected, (state, action) => {
       state.isFetching = false
       state.errors = action.payload
+      state.errorTitle = i18n.t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE')
       state.showErrorDialog = true
     })
     builder.addCase(validateVersionControlCredentials.pending, (state) => {
@@ -207,7 +210,6 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
   }
 })
 
-
 export const getEncryptedCookie = (name, secretKey) => {
   const encryptedValue = Cookies.get(name)
   if (!encryptedValue) {
@@ -266,5 +268,5 @@ export const selectShowErrorDialog = (state) => state.versionControl.showErrorDi
 export const selectShowSuccessDialog = (state) => state.versionControl.showSuccessDialog
 export const selectSuccessMessage = (state) => state.versionControl.successMessage
 export const selectAreCredentialsValid = (state) => state.versionControl.areCredentialsValid
-
+export const selectErrorsTitle = (state) => state.versionControl.errorTitle
 export default versionControlSlice.reducer

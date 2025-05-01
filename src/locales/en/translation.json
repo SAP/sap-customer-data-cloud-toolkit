@@ -138,7 +138,7 @@
   "SMS_TEMPLATES_COMPONENT.TEMPLATES_IMPORTED_SUCCESSFULLY": "All SMS templates have been imported successfully.",
   "VERSION_CONTROL.ACTION": "Actions",
   "VERSION_CONTROL.BACKUP": "Create Backup",
-  "VERSION_CONTROL.BACKUP.ERROR.MESSAGE": "Backup failed!",
+  "VERSION_CONTROL.BACKUP.ERROR.MESSAGE": "Backup Failed",
   "VERSION_CONTROL.BACKUP.INFORMATION": "Backup Information",
   "VERSION_CONTROL.BACKUP.SUCCESS.MESSAGE": "Backup completed successfully!",
   "VERSION_CONTROL.CANCEL": "Cancel",

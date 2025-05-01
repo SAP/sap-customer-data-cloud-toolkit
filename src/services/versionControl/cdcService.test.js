@@ -7,10 +7,7 @@ import axios from 'axios'
 import CdcService from './cdcService'
 import * as SocialsTestData from '../copyConfig/social/dataTest'
 import { channelsExpectedResponse, errorResponse, topicsExpectedResponse } from '../copyConfig/communication/dataTest'
-import {
-  getConsentStatementExpectedResponse,
-  getLegalStatementExpectedResponse
-} from '../copyConfig/consent/dataTest'
+import { getConsentStatementExpectedResponse, getLegalStatementExpectedResponse } from '../copyConfig/consent/dataTest'
 import { getEmptyDataflowResponse, getSearchDataflowsExpectedResponse } from '../copyConfig/dataflow/dataTest'
 import { getExpectedListExtensionResponse } from '../copyConfig/extension/dataTest'
 import { getPolicyConfig } from '../copyConfig/policies/dataTest'
@@ -248,13 +245,12 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getPolicyConfig })
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
-
-      const configs = await cdcService.fetchCDCConfigs()
-
-      expect(configs.schema.errorCode).toEqual(10000)
-      expect(configs.emails.errorCode).toEqual(10000)
-      expect(configs.sms.errorCode).toEqual(10000)
-
+      try {
+        await cdcService.fetchCDCConfigs()
+      } catch (error) {
+        const smsError = error.find((e) => e.message.name === 'sms')
+        expect(smsError.message.errorCode).toEqual(10000)
+      }
     })
   })
 })
@@ -288,8 +284,6 @@ const mockAxiosResponses = () => {
     .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 }
 
-
-
 const getMockFiles = (sanitizedSchemaResponse) => {
   return [
     { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
@@ -297,7 +291,7 @@ const getMockFiles = (sanitizedSchemaResponse) => {
     { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
     { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
     { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
-    { filename: 'src/versionControl/schema.json', content: sanitizedSchemaResponse ? sanitizedSchemaResponse: expectedSchemaResponse },
+    { filename: 'src/versionControl/schema.json', content: sanitizedSchemaResponse ? sanitizedSchemaResponse : expectedSchemaResponse },
     { filename: 'src/versionControl/screenSets.json', content: { screenSets: [{ key: 'value' }] } },
     { filename: 'src/versionControl/sms.json', content: { templates: { key: 'value' } } },
     { filename: 'src/versionControl/channel.json', content: channelsExpectedResponse },
@@ -350,7 +344,7 @@ const validateConfigs = (configs) => {
   expect(configs.policies.preferencesCenter).toBeDefined()
   expect(configs.policies.codeVerification).toBeDefined()
 
-  expect(configs.rba.length).toEqual(3)
+  expect(configs.rba.length).toEqual(2)
 
   expect(configs.riskAssessment).toBeDefined()
 

@@ -77,6 +77,7 @@ describe('versionControlSlice', () => {
         gitToken: '',
         owner: '',
         isFetching: false,
+        errorTitle: '',
         errors: [],
         repo: '',
         revert: false,
