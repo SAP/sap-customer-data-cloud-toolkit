@@ -68,8 +68,8 @@ const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
 const VersionControlComponent = ({ t }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const credentials = useSelector(selectCredentials)
 
+  const credentials = useSelector(selectCredentials)
   const commits = useSelector(selectCommits)
   const isFetching = useSelector(selectIsFetching)
   const gitToken = useSelector(selectGitToken)
@@ -86,8 +86,10 @@ const VersionControlComponent = ({ t }) => {
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
   const areConfigurationsLoading = useSelector(selectIsLoading)
+
   const [commitMessage, setCommitMessage] = useState('')
   const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
+
   const updateApiKey = (newUrl) => {
     if (newUrl.includes(ROUTE_VERSION_CONTROL)) {
       dispatch(updateCurrentSiteApiKey())
@@ -107,7 +109,7 @@ const VersionControlComponent = ({ t }) => {
     if (secretKey && !areCredentialsValid) {
       const encryptedGitToken = Cookies.get('gitToken')
       const encryptedOwner = Cookies.get('owner')
-      const repo = Cookies.get('repo')
+      const cookieRepo = Cookies.get('repo')
 
       if (encryptedGitToken) {
         const decryptedGitToken = decryptData(encryptedGitToken, secretKey)
@@ -119,8 +121,8 @@ const VersionControlComponent = ({ t }) => {
         dispatch(setOwner(decryptedOwner))
       }
 
-      if (repo) {
-        dispatch(setRepo(repo))
+      if (cookieRepo) {
+        dispatch(setRepo(cookieRepo))
       }
 
       if (gitToken && owner && repo) {
