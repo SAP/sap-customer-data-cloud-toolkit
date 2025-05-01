@@ -84,8 +84,7 @@ class CdcService {
           let data = await promise
 
           if (data.errorCode && data.errorCode !== 0) {
-            data.name = name
-            throw data
+            return { [name]: data }
           }
 
           if (name === 'sms') {

@@ -214,8 +214,8 @@ describe('versionControlSlice', () => {
         credentials: { secretKey: 'testSecretKey' },
         repo: 'testRepo',
       }
-      reducer(state, setGitToken(state.gitToken))
-      reducer(state, setOwner(state.owner))
+      const action = validateVersionControlCredentials.fulfilled
+      reducer(state, action)
       expect(Cookies.set).toHaveBeenCalledWith('gitToken', expect.any(String), { secure: true, sameSite: 'strict' })
       expect(Cookies.set).toHaveBeenCalledWith('owner', expect.any(String), { secure: true, sameSite: 'strict' })
     })

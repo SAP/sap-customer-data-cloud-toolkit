@@ -41,17 +41,14 @@ const versionControlSlice = createSlice({
     setGitToken(state, action) {
       state.gitToken = action.payload
       state.areCredentialsValid = false
-      setCookies(state)
     },
     setOwner(state, action) {
       state.owner = action.payload
       state.areCredentialsValid = false
-      setCookies(state)
     },
     setRepo(state, action) {
       state.repo = action.payload
       state.areCredentialsValid = false
-      setCookies(state)
     },
     setCredentials(state, action) {
       state.credentials = action.payload
@@ -144,6 +141,7 @@ const versionControlSlice = createSlice({
     builder.addCase(validateVersionControlCredentials.fulfilled, (state, action) => {
       state.areCredentialsValid = action.payload
       state.validationError = null
+      setCookies(state)
     })
     builder.addCase(validateVersionControlCredentials.rejected, (state, action) => {
       state.areCredentialsValid = false
@@ -227,9 +225,9 @@ const getCommonData = (state) => {
   const apiKey = state.copyConfigurationExtended.currentSiteApiKey
   const currentSiteInfo = state.copyConfigurationExtended.currentSiteInformation
   const currentDataCenter = currentSiteInfo.dataCenter
-  const gitToken = getEncryptedCookie('gitToken', credentials.secret)
-  const owner = getEncryptedCookie('owner', credentials.secret)
-  const repo = Cookies.get('repo')
+  const gitToken = state.versionControl.gitToken
+  const owner = state.versionControl.owner
+  const repo = state.versionControl.repo
   const versionControlProviderFactory = VersionControlProviderFactory.getVersionControlProviderFactory('github', gitToken)
   const versionControl = VersionControlFactory.getVersionControlFactory('github', versionControlProviderFactory, owner, repo)
   if (!gitToken || !owner) {
@@ -269,4 +267,5 @@ export const selectShowSuccessDialog = (state) => state.versionControl.showSucce
 export const selectSuccessMessage = (state) => state.versionControl.successMessage
 export const selectAreCredentialsValid = (state) => state.versionControl.areCredentialsValid
 export const selectErrorsTitle = (state) => state.versionControl.errorTitle
+
 export default versionControlSlice.reducer

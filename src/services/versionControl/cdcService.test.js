@@ -245,12 +245,10 @@ describe('CdcService', () => {
         .mockResolvedValueOnce({ data: getPolicyConfig })
         .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 
-      try {
-        await cdcService.fetchCDCConfigs()
-      } catch (error) {
-        const smsError = error.find((e) => e.message.name === 'sms')
-        expect(smsError.message.errorCode).toEqual(10000)
-      }
+      const configs = await cdcService.fetchCDCConfigs()
+      expect(configs.schema.errorCode).toEqual(10000)
+      expect(configs.emails.errorCode).toEqual(10000)
+      expect(configs.sms.errorCode).toEqual(10000)
     })
   })
 })
