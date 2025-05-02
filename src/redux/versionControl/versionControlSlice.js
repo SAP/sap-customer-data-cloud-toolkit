@@ -204,7 +204,7 @@ export const prepareFilesForUpdate = createAsyncThunk(PREPARE_FILES_FOR_UPDATE_A
     const { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl } = getCommonData(state)
     return await new VersionControlService(credentials, apiKey, versionControl, currentDataCenter, currentSiteInfo).getFilesForBackup()
   } catch (error) {
-    return rejectWithValue(getErrorAsArray(i18n.t('VERSION_CONTROL.BACKUP.ERROR.MESSAGE')))
+    return rejectWithValue(getErrorAsArray(error))
   }
 })
 

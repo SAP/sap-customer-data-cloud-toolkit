@@ -84,6 +84,7 @@ class CdcService {
           let data = await promise
 
           if (data.errorCode && data.errorCode !== 0) {
+            data.titleText = name.charAt(0).toUpperCase() + name.slice(1)
             return { [name]: data }
           }
 
@@ -123,25 +124,6 @@ class CdcService {
       )
 
       const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
-
-      const failedResults = cdcDataResults
-        .filter((result) => result.status === 'rejected')
-        .map((result) => {
-          return {
-            name: result.reason.name,
-            error: result.reason,
-          }
-        })
-
-      if (failedResults.length > 0) {
-        const combinedError = failedResults.map(({ name, error }) => ({
-          titleText: name.charAt(0).toUpperCase() + name.slice(1),
-          subtitleText: error.errorMessage,
-          message: error,
-        }))
-
-        throw combinedError
-      }
 
       return Object.assign({}, ...successfulResults)
     } catch (error) {
