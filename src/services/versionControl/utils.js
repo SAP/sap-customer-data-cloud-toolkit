@@ -16,7 +16,7 @@ export const createOptions = (items) => {
 
   const optionsData = {
     branches: items.map((item) => ({
-      name: item.name,
+      name: item.name || item.extensionPoint,
       value: true,
     })),
   }
