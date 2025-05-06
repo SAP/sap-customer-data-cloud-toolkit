@@ -21,11 +21,23 @@ const styles = {
     height: '30px',
     backgroundColor: '#0070f3',
     color: '#fff',
-    minWidth: 'fit-content', // Added min-width property
+    minWidth: 'fit-content',
     '&:hover': {
       backgroundColor: '#005bb5',
     },
   },
+  errorDialogFooterText: {
+    marginBottom: '10px',
+    textAlign: 'center',
+  },
+
+  errorDialogFooterButton: {
+    width: '50px',
+    marginBottom: '5px',
+  },
+
+  textErrorMessage: { marginBottom: '5px', textAlign: 'right' },
+
   singlePrettifyRestoreButton: {
     height: '23px',
   },
@@ -167,6 +179,10 @@ const styles = {
     paddingTop: '12px',
     position: 'relative',
     left: 175,
+  },
+  footerButtonDivStyle: {
+    position: 'relative',
+    paddingBottom: '12px',
   },
   headerOuterDivStyle2: {
     height: '35px',

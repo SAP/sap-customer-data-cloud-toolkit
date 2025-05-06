@@ -52,6 +52,7 @@ import {
   selectAreCredentialsValid,
   clearErrors,
   selectErrorsTitle,
+  selectErrorsFooterMessage,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey, selectIsLoading } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -86,7 +87,7 @@ const VersionControlComponent = ({ t }) => {
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
   const areConfigurationsLoading = useSelector(selectIsLoading)
-
+  const footerMessage = useSelector(selectErrorsFooterMessage)
   const [commitMessage, setCommitMessage] = useState('')
   const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
 
@@ -215,6 +216,36 @@ const VersionControlComponent = ({ t }) => {
       onAfterClose={onErrorDialogAfterClose}
       id="versionControlErrorPopup"
       data-cy="versionControlErrorPopup"
+      footer={
+        footerMessage ? (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+              minHeight: '100px',
+            }}
+          >
+            <div style={{ marginBottom: '10px' }}>
+              <Text design="Emphasized" data-cy="errorDialogFooterText" className={classes.errorDialogFooterText}>
+                {footerMessage}
+              </Text>
+            </div>
+            <div className={classes.footerButtonDivStyle}>
+              <Button data-cy="importZipButton" className="btn dialog-button-1">
+                {t('GLOBAL.CONFIRM')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className={classes.footerButtonDivStyle}>
+            <Button data-cy="cancelImportZipButton" className="btn dialog-button-2">
+              {t('GLOBAL.CANCEL')}
+            </Button>
+          </div>
+        )
+      }
     >
       <MessageList messages={errors} />
     </DialogMessageInform>

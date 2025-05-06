@@ -193,19 +193,53 @@ class CdcService {
       const fileType = file.filename.split('/').pop().split('.').shift()
       const capitalizedFileType = fileType.charAt(0).toUpperCase() + fileType.slice(1)
       const filteredResponse = file.content
+
       if (configHandlers[fileType]) {
-        return configHandlers[fileType](filteredResponse).catch((error) => {
-          const wrappedError = new Error(error)
-          wrappedError.titleText = capitalizedFileType
-          wrappedError.subtitleText = error.errorMessage
-          wrappedError.originalError = error
-          throw wrappedError
-        })
+        return configHandlers[fileType](filteredResponse)
+          .then(() => ({ status: 'fulfilled', fileType }))
+          .catch((error) => {
+            const errors = Array.isArray(error) ? error : [error]
+            const wrappedErrors = errors.map((err) => ({
+              titleText: capitalizedFileType,
+              subtitleText: err.errorMessage || 'Unknown error',
+              originalError: err,
+            }))
+            return { status: 'rejected', fileType, errors: wrappedErrors }
+          })
       } else {
-        throw new Error(`Unknown file type: ${fileType}`)
+        return Promise.resolve({
+          status: 'rejected',
+          fileType,
+          errors: [{ titleText: fileType, subtitleText: 'Unknown file type', originalError: null }],
+        })
       }
     })
-    return Promise.all(promises)
+
+    const results = await Promise.allSettled(promises)
+    const fulfilled = results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    const rejected = fulfilled.filter((result) => result.status === 'rejected').map((result) => result)
+    if (rejected.length > 0) {
+      const allErrors = rejected.flatMap((rejection) => {
+        const errors = Array.isArray(rejection.errors) ? rejection.errors : []
+        return errors.map((error) => ({
+          fileType: rejection.fileType || 'Unknown',
+          ...error,
+        }))
+      })
+
+      throw allErrors
+    }
+
+    return fulfilled
+  }
+  generateErrorResponse = (error) => {
+    for (const key in error) {
+      if (error.hasOwnProperty(key)) {
+        const errorMessage = error[key].errorMessage
+        const errorCode = error[key].errorCode
+        return { titleText: key, subtitleText: errorMessage, originalError: error[key], errorCode: errorCode }
+      }
+    }
   }
 
   async applyEmailsConfig(filteredResponse) {
@@ -221,18 +255,30 @@ class CdcService {
     const options = createOptions(filteredResponse.result)
 
     const response = await this.extension.copyExtensions(this.apiKey, this.siteInfo, filteredResponse, options)
+    const promises = []
     for (const result of response) {
       if (result.errorCode !== 0) {
-        return Promise.reject(response)
+        promises.push(result)
       }
+    }
+    if (promises.length > 0) {
+      return Promise.reject(promises)
     }
   }
 
   async applySchemaConfig(filteredResponse) {
+    const promises = []
+
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
-        await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
+        const response = await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
+        if (response.errorCode !== 0) {
+          promises.push(response)
+        }
       }
+    }
+    if (promises.length > 0) {
+      return Promise.reject(promises)
     }
   }
 
