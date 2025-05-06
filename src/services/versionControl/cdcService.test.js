@@ -58,6 +58,8 @@ describe('CdcService', () => {
 
       axios
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
+        .mockResolvedValueOnce({ data: getExpectedListExtensionResponse() })
+        .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
         .mockResolvedValueOnce({ data: expectedGigyaResponseOk })
@@ -81,7 +83,7 @@ describe('CdcService', () => {
       expect(setSiteEmailsWithDataCenterMock).toHaveBeenCalled()
       expect(setSiteEmailsWithDataCenterMock.mock.calls.length).toBe(9)
       expect(extensionSpy).toHaveBeenCalled()
-      expect(extensionSpy.mock.calls.length).toBe(1)
+      expect(extensionSpy.mock.calls.length).toBe(2)
       expect(policiesSpy).toHaveBeenCalled()
       expect(policiesSpy.mock.calls.length).toBe(1)
       expect(screenSetsSpy).toHaveBeenCalled()
@@ -286,7 +288,7 @@ const getMockFiles = (sanitizedSchemaResponse) => {
   return [
     { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },
     { filename: 'src/versionControl/emails.json', content: getEmailsExpectedResponseWithMinimumTemplates() },
-    { filename: 'src/versionControl/extension.json', content: { result: [{ key: 'value' }] } },
+    { filename: 'src/versionControl/extension.json', content: getExpectedListExtensionResponse() },
     { filename: 'src/versionControl/policies.json', content: { key: 'value' } },
     { filename: 'src/versionControl/rba.json', content: expectedGetRbaPolicyResponseOk },
     { filename: 'src/versionControl/schema.json', content: sanitizedSchemaResponse ? sanitizedSchemaResponse : expectedSchemaResponse },

@@ -141,7 +141,7 @@ class CdcService {
       },
       extension: async (filteredResponse) => {
         if (filteredResponse.result.length > 0) {
-          await this.applyExtensionConfig(filteredResponse.result)
+          await this.applyExtensionConfig(filteredResponse)
         }
       },
       policies: async (filteredResponse) => {
@@ -218,9 +218,11 @@ class CdcService {
   }
 
   async applyExtensionConfig(filteredResponse) {
-    for (const result of filteredResponse) {
-      const response = await this.extension.set(this.apiKey, this.dataCenter, result)
-      if (response.errorCode !== 0) {
+    const options = createOptions(filteredResponse.result)
+
+    const response = await this.extension.copyExtensions(this.apiKey, this.siteInfo, filteredResponse, options)
+    for (const result of response) {
+      if (result.errorCode !== 0) {
         return Promise.reject(response)
       }
     }
