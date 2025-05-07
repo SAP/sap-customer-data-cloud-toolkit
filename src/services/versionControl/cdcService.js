@@ -123,16 +123,7 @@ class CdcService {
     )
 
     const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
-    const rejected = cdcDataResults.filter((result) => result.status === 'rejected').map((result) => result.reason)
-    if (rejected.length > 0) {
-      const allErrors = rejected.flatMap((rejection) => {
-        const errors = Array.isArray(rejection) ? rejection : [rejection]
-        return errors.map((error) => ({
-          ...error,
-        }))
-      })
-      throw allErrors
-    }
+    this.handleRejection(cdcDataResults)
 
     return Object.assign({}, ...successfulResults)
   }
@@ -219,17 +210,7 @@ class CdcService {
 
     const results = await Promise.allSettled(promises)
     const fulfilled = results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
-    const rejected = results.filter((result) => result.status === 'rejected').map((result) => result.reason)
-    if (rejected.length > 0) {
-      const allErrors = rejected.flatMap((rejection) => {
-        const errors = Array.isArray(rejection) ? rejection : []
-        return errors.map((error) => ({
-          ...error,
-        }))
-      })
-
-      throw allErrors
-    }
+    this.handleRejection(results)
 
     return fulfilled
   }
@@ -316,6 +297,18 @@ class CdcService {
     }
 
     return response
+  }
+
+  handleRejection(results) {
+    const rejected = results.filter((result) => result.status === 'rejected').map((result) => result.reason)
+    if (rejected.length > 0) {
+      throw rejected.flatMap((rejection) => {
+        const errors = Array.isArray(rejection) ? rejection : [rejection]
+        return errors.map((error) => ({
+          ...error,
+        }))
+      })
+    }
   }
 }
 
