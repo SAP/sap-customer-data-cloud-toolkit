@@ -6,9 +6,9 @@
 import GitHub from './github'
 
 class VersionControlFactory {
-  static getVersionControlFactory(versionControl, versionControlProvider, currentOwner, currentRepo) {
+  static getVersionControlFactory(versionControl, currentOwner, currentRepo, currentGitToken) {
     if (versionControl === 'github') {
-      return new GitHub(versionControlProvider, currentOwner, currentRepo)
+      return new GitHub(currentGitToken, currentOwner, currentRepo)
     }
 
     throw new Error('Invalid Version Control')

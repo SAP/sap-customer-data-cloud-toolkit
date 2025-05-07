@@ -4,12 +4,12 @@
  */
 
 class VersionControlManager {
-  versionControl
+  token
   owner
   repo
 
-  constructor(versionControl, owner, repo) {
-    this.versionControl = versionControl
+  constructor(token, owner, repo) {
+    this.token = token
     this.owner = owner
     this.repo = repo
   }

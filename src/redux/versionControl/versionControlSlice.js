@@ -8,7 +8,6 @@ import VersionControlService from '../../services/versionControl/versionControlS
 import Cookies from 'js-cookie'
 import { encryptData, decryptData } from '../encryptionUtils'
 import VersionControlFactory from '../../services/versionControl/versionControlManager/versionControlFactory'
-import VersionControlProviderFactory from '../../services/versionControl/versionControlManager/versionControlProviderFactory'
 import i18n from '../../i18n'
 import { getErrorAsArray } from '../utils'
 
@@ -231,8 +230,7 @@ const getCommonData = (state) => {
   const gitToken = state.versionControl.gitToken
   const owner = state.versionControl.owner
   const repo = state.versionControl.repo
-  const versionControlProviderFactory = VersionControlProviderFactory.getVersionControlProviderFactory('github', gitToken)
-  const versionControl = VersionControlFactory.getVersionControlFactory('github', versionControlProviderFactory, owner, repo)
+  const versionControl = VersionControlFactory.getVersionControlFactory('github', owner, repo, gitToken)
 
   return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
 }

@@ -7,9 +7,11 @@ import VersionControlManager from './versionControlManager'
 import _ from 'lodash'
 import { Base64 } from 'js-base64'
 import { skipForChildSite, generateFileObjects } from '../utils'
+import { Octokit } from '@octokit/rest'
 
 class GitHub extends VersionControlManager {
   static #SOURCE_BRANCH = 'main'
+  versionControl = new Octokit({ auth: this.token })
 
   async hasBranch(branchName) {
     try {
