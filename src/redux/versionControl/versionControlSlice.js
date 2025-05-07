@@ -233,9 +233,6 @@ const getCommonData = (state) => {
   const repo = state.versionControl.repo
   const versionControlProviderFactory = VersionControlProviderFactory.getVersionControlProviderFactory('github', gitToken)
   const versionControl = VersionControlFactory.getVersionControlFactory('github', versionControlProviderFactory, owner, repo)
-  if (!gitToken || !owner) {
-    throw new Error('Git token or owner is missing')
-  }
 
   return { credentials, apiKey, currentSiteInfo, currentDataCenter, versionControl }
 }

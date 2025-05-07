@@ -56,14 +56,6 @@ class LegalStatement {
     }
     return response
   }
-  
-  async getFilteredLegalStatement(consentId, language) {
-    let response = await this.get(consentId, language)
-    if (response.errorCode === 0) {
-      this.removeLegalStatementsWithStatus(response.legalStatements, 'Historic')
-    }
-    return response
-  }
 
   removeLegalStatementsWithStatus(legalStatements, status) {
     const type = LegalStatement.#getLegalStatementType(legalStatements)

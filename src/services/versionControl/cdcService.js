@@ -69,66 +69,62 @@ class CdcService {
       { name: 'webhook', promise: this.webhook.get() },
       { name: 'consent', promise: this.consentManager.getConsentsAndLegalStatements() },
       { name: 'social', promise: this.social.get() },
-      { name: 'recaptcha', promise: this.recaptcha.get() },
+      { name: 'recaptcha', promise: this.recaptcha.get() }
     ]
   }
 
   fetchCDCConfigs = async () => {
-    try {
-      const cdcDataArray = this.#getCdcData()
-      if (!Array.isArray(cdcDataArray)) {
-        throw new Error('getCdcData must return an array')
-      }
-      const cdcDataResults = await Promise.allSettled(
-        cdcDataArray.map(async ({ name, promise }) => {
-          let data = await promise
-
-          if (data.errorCode && data.errorCode !== 0) {
-            data.titleText = name.charAt(0).toUpperCase() + name.slice(1)
-            return { [name]: data }
-          }
-
-          if (name === 'sms') {
-            SmsConfiguration.addSmsTemplatesPerCountryCode(data)
-          }
-
-          if (name === 'rba') {
-            data.splice(1, 1)
-          }
-
-          if (name === 'webSdk') {
-            const fieldsToBeIgnoredInWebsdk = [
-              'baseDomain',
-              'trustedSiteURLs',
-              'trustedShareURLs',
-              'settings',
-              'siteGroupConfig',
-              'customAPIDomainPrefix',
-              'enableHSTS',
-              'dataCenter',
-              'tags',
-              'captchaProvider',
-              'enableDataSharing',
-              'isCDP',
-              'invisibleRecaptcha',
-              'recaptchaV2',
-              'funCaptcha',
-              'description',
-            ]
-            data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
-          }
-          const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
-          const result = removeIgnoredFields(data, fieldsToBeIgnored)
-          return { [name]: result }
-        }),
-      )
-
-      const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
-
-      return Object.assign({}, ...successfulResults)
-    } catch (error) {
-      throw error
+    const cdcDataArray = this.#getCdcData()
+    if (!Array.isArray(cdcDataArray)) {
+      throw new Error('getCdcData must return an array')
     }
+    const cdcDataResults = await Promise.allSettled(
+      cdcDataArray.map(async ({ name, promise }) => {
+        let data = await promise
+
+        if (data.errorCode && data.errorCode !== 0) {
+          data.titleText = name.charAt(0).toUpperCase() + name.slice(1)
+          return { [name]: data }
+        }
+
+        if (name === 'sms') {
+          this.addSmsTemplatesPerCountryCode(data)
+        }
+
+        if (name === 'rba') {
+          data.splice(1, 1)
+        }
+
+        if (name === 'webSdk') {
+          const fieldsToBeIgnoredInWebsdk = [
+            'baseDomain',
+            'trustedSiteURLs',
+            'trustedShareURLs',
+            'settings',
+            'siteGroupConfig',
+            'customAPIDomainPrefix',
+            'enableHSTS',
+            'dataCenter',
+            'tags',
+            'captchaProvider',
+            'enableDataSharing',
+            'isCDP',
+            'invisibleRecaptcha',
+            'recaptchaV2',
+            'funCaptcha',
+            'description'
+          ]
+          data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
+        }
+        const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
+        const result = removeIgnoredFields(data, fieldsToBeIgnored)
+        return { [name]: result }
+      })
+    )
+
+    const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+
+    return Object.assign({}, ...successfulResults)
   }
 
   applyCommitConfig = async (files) => {
@@ -298,6 +294,18 @@ class CdcService {
       const options = createOptions(filteredResponse.webhooks)
       await this.webhook.copyWebhooks(this.apiKey, this.dataCenter, filteredResponse, options)
     }
+  }
+
+  addSmsTemplatesPerCountryCode(response) {
+    if (!response.templates.otp.templatesPerCountryCode) {
+      response.templates.otp.templatesPerCountryCode = {}
+    }
+
+    if (!response.templates.tfa.templatesPerCountryCode) {
+      response.templates.tfa.templatesPerCountryCode = {}
+    }
+
+    return response
   }
 }
 
