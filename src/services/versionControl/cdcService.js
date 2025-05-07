@@ -212,7 +212,6 @@ class CdcService {
     })
 
     const results = await Promise.allSettled(promises)
-    console.log('results', results)
     const fulfilled = results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
     const rejected = results.filter((result) => result.status === 'rejected').map((result) => result.reason)
     if (rejected.length > 0) {
