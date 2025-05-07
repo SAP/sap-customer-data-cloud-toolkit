@@ -229,16 +229,6 @@ class CdcService {
     return fulfilled
   }
 
-  generateErrorResponse = (error) => {
-    for (const key in error) {
-      if (error.hasOwnProperty(key)) {
-        const errorMessage = error[key].errorMessage
-        const errorCode = error[key].errorCode
-        return { titleText: key, subtitleText: errorMessage, originalError: error[key], errorCode: errorCode }
-      }
-    }
-  }
-
   async applyEmailsConfig(filteredResponse) {
     cleanEmailResponse(filteredResponse)
     for (let key in filteredResponse) {

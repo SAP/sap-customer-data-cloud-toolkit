@@ -160,15 +160,13 @@ describe('CdcService', () => {
       }
       const expectedError = [
         {
-          fileType: 'emails',
           originalError: new Error('emails error'),
-          subtitleText: 'Unknown error',
+          subtitleText: undefined,
           titleText: 'Emails',
         },
         {
-          fileType: 'extension',
           originalError: new TypeError("Cannot read properties of undefined (reading 'find')"),
-          subtitleText: 'Unknown error',
+          subtitleText: undefined,
           titleText: 'Extension',
         },
       ]
