@@ -21,6 +21,7 @@ import { expectedSchemaResponse } from '../importAccounts/schemaImport/schemaDat
 import { getRecaptchaExpectedResponse, getRiskProvidersResponse } from '../recaptcha/dataTest'
 import { expectedGigyaResponseOk } from '../servicesDataTest'
 import { getSmsExpectedResponse } from '../sms/dataTest'
+import { getExpectedRejectionError, getExpectedRejectionErrors } from './cdcServiceDataTest'
 
 jest.mock('axios')
 jest.mock('./versionControlManager/github')
@@ -77,7 +78,7 @@ describe('CdcService', () => {
 
       const mockFiles = getMockFiles(sanitizedSchemaResponse)
 
-      const config = await cdcService.applyCommitConfig(mockFiles)
+      await cdcService.applyCommitConfig(mockFiles)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(webSdkSpy.mock.calls.length).toBe(1)
       expect(setSiteEmailsWithDataCenterMock).toHaveBeenCalled()
@@ -264,6 +265,10 @@ describe('CdcService', () => {
       expect(configs.emails.errorCode).toEqual(10000)
       expect(configs.sms.errorCode).toEqual(10000)
     })
+    it('should handle rejected errors', async () => {
+      mockRejectedValues(cdcService)
+      await expect(cdcService.fetchCDCConfigs()).rejects.toEqual(getExpectedRejectionErrors())
+    })
   })
 })
 
@@ -296,6 +301,24 @@ const mockAxiosResponses = () => {
     .mockResolvedValueOnce({ data: getRiskProvidersResponse() })
 }
 
+const mockRejectedValues = (cdcService) => {
+  jest.spyOn(cdcService.webSdk, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.dataflow, 'search').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.emails, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.extension, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.policies, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.rba, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.riskAssessment, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.schema, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.screenSets, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.sms, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.communication, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.topic, 'searchTopics').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.webhook, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.consentManager, 'getConsentsAndLegalStatements').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.social, 'get').mockRejectedValue(getExpectedRejectionError())
+  jest.spyOn(cdcService.recaptcha, 'get').mockRejectedValue(getExpectedRejectionError())
+}
 const getMockFiles = (sanitizedSchemaResponse) => {
   return [
     { filename: 'src/versionControl/webSdk.json', content: getSiteConfig },

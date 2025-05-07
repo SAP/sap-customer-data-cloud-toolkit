@@ -69,7 +69,7 @@ class CdcService {
       { name: 'webhook', promise: this.webhook.get() },
       { name: 'consent', promise: this.consentManager.getConsentsAndLegalStatements() },
       { name: 'social', promise: this.social.get() },
-      { name: 'recaptcha', promise: this.recaptcha.get() }
+      { name: 'recaptcha', promise: this.recaptcha.get() },
     ]
   }
 
@@ -112,17 +112,27 @@ class CdcService {
             'invisibleRecaptcha',
             'recaptchaV2',
             'funCaptcha',
-            'description'
+            'description',
           ]
           data = removeIgnoredFields(data, fieldsToBeIgnoredInWebsdk)
         }
         const fieldsToBeIgnored = ['callId', 'time', 'lastModified', 'version', 'context', 'errorCode', 'apiVersion', 'statusCode', 'statusReason', 'jwtKeyVersion']
         const result = removeIgnoredFields(data, fieldsToBeIgnored)
         return { [name]: result }
-      })
+      }),
     )
 
     const successfulResults = cdcDataResults.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    const rejected = cdcDataResults.filter((result) => result.status === 'rejected').map((result) => result.reason)
+    if (rejected.length > 0) {
+      const allErrors = rejected.flatMap((rejection) => {
+        const errors = Array.isArray(rejection) ? rejection : [rejection]
+        return errors.map((error) => ({
+          ...error,
+        }))
+      })
+      throw allErrors
+    }
 
     return Object.assign({}, ...successfulResults)
   }
