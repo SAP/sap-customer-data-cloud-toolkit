@@ -629,6 +629,6 @@ describe('Version Control Test Suite', () => {
     cy.get('[data-cy="backupButton"]').should('not.be.disabled')
     cy.get('#versionControlTable').should('be.visible').should('contain.text', 'Create test CDCRepo branch creation')
     cy.get('#commitRevertButton-0').should('be.visible').click()
-    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'OkExtension')
+    cy.get('#versionControlErrorPopup').should('be.visible').should('contain.text', 'Items not listed here have been successfully reverted.ConfirmExtensionExtension')
   })
 })

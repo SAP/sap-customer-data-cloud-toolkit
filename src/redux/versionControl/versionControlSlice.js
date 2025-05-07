@@ -27,6 +27,7 @@ const versionControlSlice = createSlice({
     isFetching: false,
     errors: [],
     errorTitle: '',
+    footerErrorMessage: '',
     validationError: null,
     revert: false,
     filesToUpdate: [],
@@ -67,6 +68,7 @@ const versionControlSlice = createSlice({
     },
     clearErrors(state) {
       state.errors = []
+      state.footerErrorMessage = ''
     },
   },
   extraReducers: (builder) => {
@@ -99,6 +101,7 @@ const versionControlSlice = createSlice({
       state.isFetching = false
       state.errors = action.payload
       state.errorTitle = i18n.t('VERSION_CONTROL.REVERT.ERROR.MESSAGE')
+      state.footerErrorMessage = i18n.t('VERSION_CONTROL.REVERT.FOOTER.MESSAGE')
       state.showErrorDialog = true
     })
     builder.addCase(createBackup.pending, (state) => {
@@ -267,5 +270,6 @@ export const selectShowSuccessDialog = (state) => state.versionControl.showSucce
 export const selectSuccessMessage = (state) => state.versionControl.successMessage
 export const selectAreCredentialsValid = (state) => state.versionControl.areCredentialsValid
 export const selectErrorsTitle = (state) => state.versionControl.errorTitle
+export const selectErrorsFooterMessage = (state) => state.versionControl.footerErrorMessage
 
 export default versionControlSlice.reducer

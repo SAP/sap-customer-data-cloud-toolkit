@@ -23,7 +23,7 @@ import reducer, {
   setShowErrorDialog,
   setShowSuccessDialog,
   setSuccessMessage,
-  clearErrors
+  clearErrors,
 } from './versionControlSlice'
 
 jest.mock('js-cookie', () => ({
@@ -79,6 +79,7 @@ describe('versionControlSlice', () => {
         isFetching: false,
         errorTitle: '',
         errors: [],
+        footerErrorMessage: '',
         repo: '',
         revert: false,
         filesToUpdate: [],

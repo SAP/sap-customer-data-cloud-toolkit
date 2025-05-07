@@ -193,19 +193,39 @@ class CdcService {
       const fileType = file.filename.split('/').pop().split('.').shift()
       const capitalizedFileType = fileType.charAt(0).toUpperCase() + fileType.slice(1)
       const filteredResponse = file.content
+
       if (configHandlers[fileType]) {
         return configHandlers[fileType](filteredResponse).catch((error) => {
-          const wrappedError = new Error(error)
-          wrappedError.titleText = capitalizedFileType
-          wrappedError.subtitleText = error.errorMessage
-          wrappedError.originalError = error
-          throw wrappedError
+          const errors = Array.isArray(error) ? error : [error]
+          const wrappedErrors = errors.map((err) => ({
+            titleText: capitalizedFileType,
+            subtitleText: err.errorMessage,
+            originalError: err,
+          }))
+          return Promise.reject(wrappedErrors)
         })
       } else {
-        throw new Error(`Unknown file type: ${fileType}`)
+        return Promise.reject({
+          errors: [{ titleText: fileType, subtitleText: 'Unknown file type', originalError: null }],
+        })
       }
     })
-    return Promise.all(promises)
+
+    const results = await Promise.allSettled(promises)
+    const fulfilled = results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    const rejected = results.filter((result) => result.status === 'rejected').map((result) => result.reason)
+    if (rejected.length > 0) {
+      const allErrors = rejected.flatMap((rejection) => {
+        const errors = Array.isArray(rejection) ? rejection : []
+        return errors.map((error) => ({
+          ...error,
+        }))
+      })
+
+      throw allErrors
+    }
+
+    return fulfilled
   }
 
   async applyEmailsConfig(filteredResponse) {
@@ -221,18 +241,30 @@ class CdcService {
     const options = createOptions(filteredResponse.result)
 
     const response = await this.extension.copyExtensions(this.apiKey, this.siteInfo, filteredResponse, options)
+    const errors = []
     for (const result of response) {
       if (result.errorCode !== 0) {
-        return Promise.reject(response)
+        errors.push(result)
       }
+    }
+    if (errors.length > 0) {
+      return Promise.reject(errors)
     }
   }
 
   async applySchemaConfig(filteredResponse) {
+    const errors = []
+
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
-        await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
+        const response = await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
+        if (response.errorCode !== 0) {
+          errors.push(response)
+        }
       }
+    }
+    if (errors.length > 0) {
+      return Promise.reject(errors)
     }
   }
 

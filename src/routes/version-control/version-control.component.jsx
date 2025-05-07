@@ -52,6 +52,7 @@ import {
   selectAreCredentialsValid,
   clearErrors,
   selectErrorsTitle,
+  selectErrorsFooterMessage,
 } from '../../redux/versionControl/versionControlSlice'
 import { selectCredentials } from '../../redux/credentials/credentialsSlice'
 import { getCurrentSiteInformation, selectCurrentSiteApiKey, updateCurrentSiteApiKey, selectIsLoading } from '../../redux/copyConfigurationExtended/copyConfigurationExtendedSlice'
@@ -86,7 +87,7 @@ const VersionControlComponent = ({ t }) => {
   const successMessage = useSelector(selectSuccessMessage)
   const areCredentialsValid = useSelector(selectAreCredentialsValid)
   const areConfigurationsLoading = useSelector(selectIsLoading)
-
+  const footerMessage = useSelector(selectErrorsFooterMessage)
   const [commitMessage, setCommitMessage] = useState('')
   const [areEventListenersAttached, setAreEventListenersAttached] = useState(false)
 
@@ -215,6 +216,30 @@ const VersionControlComponent = ({ t }) => {
       onAfterClose={onErrorDialogAfterClose}
       id="versionControlErrorPopup"
       data-cy="versionControlErrorPopup"
+      footer={
+        footerMessage ? (
+          <div className={classes.footerDivStyle}>
+            <div style={{ marginBottom: '10px' }}>
+              <Text design="Emphasized" data-cy="errorDialogFooterText" className={classes.errorDialogFooterText}>
+                {footerMessage}
+              </Text>
+            </div>
+            <div className={classes.footerButtonDivStyle}>
+              <Button data-cy="errorPopUpButton" className="btn dialog-button-1" onClick={onErrorDialogAfterClose}>
+                {t('GLOBAL.CONFIRM')}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className={classes.footerBackupDivStyle}>
+            <div className={classes.footerButtonDivStyle}>
+              <Button data-cy="errorPopUpButton" onClick={onErrorDialogAfterClose} className="btn dialog-button-1">
+                {t('GLOBAL.CONFIRM')}
+              </Button>
+            </div>
+          </div>
+        )
+      }
     >
       <MessageList messages={errors} />
     </DialogMessageInform>

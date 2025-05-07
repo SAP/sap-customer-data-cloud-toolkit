@@ -77,7 +77,7 @@ describe('CdcService', () => {
 
       const mockFiles = getMockFiles(sanitizedSchemaResponse)
 
-      await cdcService.applyCommitConfig(mockFiles)
+      const config = await cdcService.applyCommitConfig(mockFiles)
       expect(webSdkSpy).toHaveBeenCalled()
       expect(webSdkSpy.mock.calls.length).toBe(1)
       expect(setSiteEmailsWithDataCenterMock).toHaveBeenCalled()
@@ -158,7 +158,18 @@ describe('CdcService', () => {
         apiVersion: 2,
         time: Date.now(),
       }
-
+      const expectedError = [
+        {
+          originalError: new Error('emails error'),
+          subtitleText: undefined,
+          titleText: 'Emails',
+        },
+        {
+          originalError: new TypeError("Cannot read properties of undefined (reading 'find')"),
+          subtitleText: undefined,
+          titleText: 'Extension',
+        },
+      ]
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
@@ -173,8 +184,9 @@ describe('CdcService', () => {
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
-
-      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toThrow(expect.any(Error))
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
+      await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toEqual(expectedError)
     })
 
     it('should fetch all CDC configs', async () => {
