@@ -232,6 +232,7 @@ class CdcService {
 
     return fulfilled
   }
+
   generateErrorResponse = (error) => {
     for (const key in error) {
       if (error.hasOwnProperty(key)) {
@@ -255,30 +256,30 @@ class CdcService {
     const options = createOptions(filteredResponse.result)
 
     const response = await this.extension.copyExtensions(this.apiKey, this.siteInfo, filteredResponse, options)
-    const promises = []
+    const errors = []
     for (const result of response) {
       if (result.errorCode !== 0) {
-        promises.push(result)
+        errors.push(result)
       }
     }
-    if (promises.length > 0) {
-      return Promise.reject(promises)
+    if (errors.length > 0) {
+      return Promise.reject(errors)
     }
   }
 
   async applySchemaConfig(filteredResponse) {
-    const promises = []
+    const errors = []
 
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
         const response = await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
         if (response.errorCode !== 0) {
-          promises.push(response)
+          errors.push(response)
         }
       }
     }
-    if (promises.length > 0) {
-      return Promise.reject(promises)
+    if (errors.length > 0) {
+      return Promise.reject(errors)
     }
   }
 

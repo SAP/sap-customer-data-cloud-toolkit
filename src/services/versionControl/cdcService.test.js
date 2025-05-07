@@ -161,13 +161,13 @@ describe('CdcService', () => {
       const expectedError = [
         {
           fileType: 'emails',
-          originalError: new Error('emails error'), // Use an actual Error object
+          originalError: new Error('emails error'),
           subtitleText: 'Unknown error',
           titleText: 'Emails',
         },
         {
           fileType: 'extension',
-          originalError: new TypeError("Cannot read properties of undefined (reading 'find')"), // Use an actual TypeError object
+          originalError: new TypeError("Cannot read properties of undefined (reading 'find')"),
           subtitleText: 'Unknown error',
           titleText: 'Extension',
         },
@@ -188,7 +188,6 @@ describe('CdcService', () => {
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
       axios.mockResolvedValueOnce({ data: expectedGigyaResponseNotOk })
-
       await expect(cdcService.applyCommitConfig(mockFiles)).rejects.toEqual(expectedError)
     })
 

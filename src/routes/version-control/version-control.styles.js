@@ -31,6 +31,16 @@ const styles = {
     textAlign: 'center',
   },
 
+  footerDivStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'flex-end', minHeight: '100px' },
+  footerBackupDivStyle: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: '10px',
+  },
+
   errorDialogFooterButton: {
     width: '50px',
     marginBottom: '5px',

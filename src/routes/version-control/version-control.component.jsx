@@ -218,31 +218,25 @@ const VersionControlComponent = ({ t }) => {
       data-cy="versionControlErrorPopup"
       footer={
         footerMessage ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              minHeight: '100px',
-            }}
-          >
+          <div className={classes.footerDivStyle}>
             <div style={{ marginBottom: '10px' }}>
               <Text design="Emphasized" data-cy="errorDialogFooterText" className={classes.errorDialogFooterText}>
                 {footerMessage}
               </Text>
             </div>
             <div className={classes.footerButtonDivStyle}>
-              <Button data-cy="importZipButton" className="btn dialog-button-1">
+              <Button data-cy="errorPopUpButton" className="btn dialog-button-1" onClick={onErrorDialogAfterClose}>
                 {t('GLOBAL.CONFIRM')}
               </Button>
             </div>
           </div>
         ) : (
-          <div className={classes.footerButtonDivStyle}>
-            <Button data-cy="cancelImportZipButton" className="btn dialog-button-2">
-              {t('GLOBAL.CANCEL')}
-            </Button>
+          <div className={classes.footerBackupDivStyle}>
+            <div className={classes.footerButtonDivStyle}>
+              <Button data-cy="errorPopUpButton" onClick={onErrorDialogAfterClose} className="btn dialog-button-1">
+                {t('GLOBAL.CONFIRM')}
+              </Button>
+            </div>
           </div>
         )
       }
