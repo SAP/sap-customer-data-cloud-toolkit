@@ -195,34 +195,30 @@ class CdcService {
       const filteredResponse = file.content
 
       if (configHandlers[fileType]) {
-        return configHandlers[fileType](filteredResponse)
-          .then(() => ({ status: 'fulfilled', fileType }))
-          .catch((error) => {
-            const errors = Array.isArray(error) ? error : [error]
-            const wrappedErrors = errors.map((err) => ({
-              titleText: capitalizedFileType,
-              subtitleText: err.errorMessage || 'Unknown error',
-              originalError: err,
-            }))
-            return { status: 'rejected', fileType, errors: wrappedErrors }
-          })
+        return configHandlers[fileType](filteredResponse).catch((error) => {
+          const errors = Array.isArray(error) ? error : [error]
+          const wrappedErrors = errors.map((err) => ({
+            titleText: capitalizedFileType,
+            subtitleText: err.errorMessage,
+            originalError: err,
+          }))
+          return Promise.reject(wrappedErrors)
+        })
       } else {
-        return Promise.resolve({
-          status: 'rejected',
-          fileType,
+        return Promise.reject({
           errors: [{ titleText: fileType, subtitleText: 'Unknown file type', originalError: null }],
         })
       }
     })
 
     const results = await Promise.allSettled(promises)
+    console.log('results', results)
     const fulfilled = results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
-    const rejected = fulfilled.filter((result) => result.status === 'rejected').map((result) => result)
+    const rejected = results.filter((result) => result.status === 'rejected').map((result) => result.reason)
     if (rejected.length > 0) {
       const allErrors = rejected.flatMap((rejection) => {
-        const errors = Array.isArray(rejection.errors) ? rejection.errors : []
+        const errors = Array.isArray(rejection) ? rejection : []
         return errors.map((error) => ({
-          fileType: rejection.fileType || 'Unknown',
           ...error,
         }))
       })
