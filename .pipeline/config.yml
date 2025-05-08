@@ -13,8 +13,8 @@ general:
   nativeBuild: true
   nativeVoting: true
 stages:
-  Central Build:
-    hadolintExecute: false
+  Build:
+    hadolintExecute: true
 steps:
   artifactPrepareVersion:
     gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
