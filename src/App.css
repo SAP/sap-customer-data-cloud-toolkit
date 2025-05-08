@@ -10,7 +10,6 @@
   right: 0px;
   height: 0;
   width: calc(100% - 241px);
-  display: none;
 }
 
 .cdc-tools-app-loading {
