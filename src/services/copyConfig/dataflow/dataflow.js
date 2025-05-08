@@ -127,13 +127,6 @@ class Dataflow {
     parameters.context = JSON.stringify({ id: `${Dataflow.#CONTEXT_ID}_createScheduling`, targetApiKey: apiKey })
     return parameters
   }
-  #setSchedulingDataflowParameters(apiKey, config) {
-    const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
-
-    parameters.data = JSON.stringify(config.data)
-
-    return parameters
-  }
 
   static #getSetDataflowEndpoint() {
     return `${Dataflow.#NAMESPACE}.setDataflow`
