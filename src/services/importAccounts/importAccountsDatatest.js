@@ -5,6 +5,7 @@
 
 import { profileBranches, dataBranches, subscriptionsBranches, internalBranches, addressesBranches, preferencesBranches, communicationsBranches } from './mainDataSet'
 import { passwordObjectStructure } from './passwordImport/passwordObjectStructure'
+import { createSimpleNode } from './utils'
 export const expectedFullAccount = [
   { id: 'uid', name: 'uid', value: true, branches: [], mandatory: true, tooltip: 'When importing a new account the UID column must be empty' },
   { id: 'profile', name: 'profile', value: false, branches: profileBranches, switchId: 'object' },
@@ -15,26 +16,17 @@ export const expectedFullAccount = [
   { id: 'preferences', name: 'preferences', value: false, branches: preferencesBranches },
   { id: 'communications', name: 'communications', value: false, branches: communicationsBranches },
   passwordObjectStructure()[0],
-  { id: 'phoneNumber', name: 'phoneNumber', value: false, branches: [] },
-  {
-    id: 'loginIds',
-    name: 'loginIds',
-    value: false,
-    branches: [
-      { id: 'loginIds.username', name: 'username', value: false, branches: [] },
-      { id: 'loginIds.emails', name: 'emails', value: false, branches: [] },
-      { id: 'loginIds.unverifiedEmails', name: 'unverifiedEmails', value: false, branches: [] },
-    ],
-  },
-  { id: 'isActive', name: 'isActive', value: false, branches: [] },
-  { id: 'isRegistered', name: 'isRegistered', value: false, branches: [] },
-  { id: 'isVerified', name: 'isVerified', value: false, branches: [] },
-  { id: 'verified', name: 'verified', value: false, branches: [] },
-  { id: 'regSource', name: 'regSource', value: false, branches: [] },
-  { id: 'dataCenter', name: 'dataCenter', value: false, branches: [] },
-  { id: 'registered', name: 'registered', value: false, branches: [] },
-  { id: 'context', name: 'context', value: false, branches: [] },
-  { id: 'lang', name: 'lang', value: false, branches: [] },
+  createSimpleNode('phoneNumber'),
+  createSimpleNode('loginIds', null, false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
+  createSimpleNode('isActive'),
+  createSimpleNode('isRegistered'),
+  createSimpleNode('isVerified'),
+  createSimpleNode('verified'),
+  createSimpleNode('regSource'),
+  createSimpleNode('dataCenter'),
+  createSimpleNode('registered'),
+  createSimpleNode('context'),
+  createSimpleNode('lang'),
 ]
 
 export const expectedResultFromTree = [

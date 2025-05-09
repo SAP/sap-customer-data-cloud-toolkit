@@ -4,12 +4,14 @@
  */
 
 .cdc-tools-app {
+  display: none;
   position: absolute;
   top: 72px;
   right: 0px;
   height: 0;
   width: calc(100% - 241px);
 }
+
 .cdc-tools-app-loading {
   position: absolute;
   top: 50px;
@@ -24,21 +26,19 @@
   display: block;
 }
 .cdc-tools-app-container {
+  display: none;
   position: absolute;
   top: 6px;
   right: 0px;
   height: auto;
   width: 100%;
-}
-.cdc-tools-app {
   display: none;
 }
+
 .cdc-tools-app.show-cdc-tools {
   display: block;
 }
-.cdc-tools-app-container {
-  display: none;
-}
+
 .cdc-tools-app-container.show-cdc-tools-app-container {
   display: block;
 }
@@ -135,14 +135,7 @@
     border-color: var(--sapField_Hover_BorderColor);
   }
 
-  .cdc-tools-app-container {
-    top: 0;
-  }
   .cdc-toolbox--topbar-menu-container {
     top: -68px;
   }
-}
-
-/* Theme specific fixes: new_horizon */
-[data-sap-theme='new_horizon'] {
 }

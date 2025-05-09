@@ -3,6 +3,8 @@
  * License: Apache-2.0
  */
 
+import { createSimpleNode } from '../utils'
+
 const UID_TOOLTIP = 'When importing a new account the UID column must be empty'
 
 function createMandatoryBranch(branchId) {
@@ -23,107 +25,28 @@ function createMandatoryBranch(branchId) {
 export function getUID() {
   return createMandatoryBranch('uid')
 }
+
 export const getRootElementsStructure = () => {
   const rootElementsStructure = [
-    {
-      id: 'phoneNumber',
-      name: 'phoneNumber',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'loginIds',
-      name: 'loginIds',
-      value: false,
-      branches: [
-        {
-          id: 'loginIds.username',
-          name: 'username',
-          value: false,
-          branches: [],
-        },
-        {
-          id: 'loginIds.emails',
-          name: 'emails',
-          value: false,
-          branches: [],
-        },
-        {
-          id: 'loginIds.unverifiedEmails',
-          name: 'unverifiedEmails',
-          value: false,
-          branches: [],
-        },
-      ],
-    },
-    {
-      id: 'isActive',
-      name: 'isActive',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'isRegistered',
-      name: 'isRegistered',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'isVerified',
-      name: 'isVerified',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'verified',
-      name: 'verified',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'regSource',
-      name: 'regSource',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'dataCenter',
-      name: 'dataCenter',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'registered',
-      name: 'registered',
-      value: false,
-      branches: [],
-    },
-    {
-      id: 'context',
-      name: 'context',
-      value: false,
-      branches: [],
-    },
-
-    {
-      id: 'lang',
-      name: 'lang',
-      value: false,
-      branches: [],
-    },
+    createSimpleNode('phoneNumber'),
+    createSimpleNode('loginIds', null, false, [createSimpleNode('loginIds.username'), createSimpleNode('loginIds.emails'), createSimpleNode('loginIds.unverifiedEmails')]),
+    createSimpleNode('isActive'),
+    createSimpleNode('isRegistered'),
+    createSimpleNode('isVerified'),
+    createSimpleNode('verified'),
+    createSimpleNode('regSource'),
+    createSimpleNode('dataCenter'),
+    createSimpleNode('registered'),
+    createSimpleNode('context'),
+    createSimpleNode('lang'),
   ]
   return rootElementsStructure
 }
+
 export const getContext = () => {
-  return [
-    {
-      id: 'context',
-      name: 'context',
-      value: false,
-      branches: [],
-    },
-  ]
+  return [createSimpleNode('context')]
 }
+
 export const getLiteRootElementsStructure = () => {
   return createMandatoryBranch('email')
 }

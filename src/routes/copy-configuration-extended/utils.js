@@ -73,7 +73,7 @@ export const onSelectAllIncludeUrlChangeHandler = (dispatch, configurations, sit
 }
 
 export const onSelectAllCheckboxChange =
-  (siteId = null, setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus) =>
+  (setSelectAllCheckboxState, configurations, dispatch, setConfigurationStatus, siteId = null) =>
   (event) => {
     const value = event.srcElement.checked
     setSelectAllCheckboxState(value)
