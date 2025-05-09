@@ -246,7 +246,7 @@ class Schema {
     removePropertyFromObjectCascading(clonePayload, Schema.INTERNAL_SCHEMA)
     removePropertyFromObjectCascading(clonePayload, Schema.ADDRESSES_SCHEMA)
     clonePayload.context = { targetApiKey: destinationSite, id: Schema.PROFILE_SCHEMA }
-    Schema.#removeUnsuportedProfileSchemaFields(clonePayload)
+    Schema.removeUnsuportedProfileSchemaFields(clonePayload)
     const schemaPayloads = this.breakSchemaPayloadIntoSeveralSmallerIfNeeded(clonePayload, Schema.PROFILE_SCHEMA, Schema.GIGYA_MAXIMUM_PAYLOAD_SIZE)
     for (const schemaPayload of schemaPayloads) {
       if (isParentSite) {
@@ -262,7 +262,7 @@ class Schema {
     return responses
   }
 
-  static #removeUnsuportedProfileSchemaFields(clonePayload) {
+  static removeUnsuportedProfileSchemaFields(clonePayload) {
     // the fields 'allowNull' and 'dynamicSchema' cannot be copied
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'allowNull')
     removePropertyFromObjectCascading(clonePayload.profileSchema, 'dynamicSchema')
@@ -272,7 +272,7 @@ class Schema {
       removePropertyFromObjectCascading(clonePayload.profileSchema.fields['lastLoginLocation.coordinates.lon'], 'type')
     }
   }
-
+  
   async #copySchemaToChildSite(destinationSite, dataCenter, payload, schemaName) {
     let response
     let clonePayload = JSON.parse(JSON.stringify(payload))

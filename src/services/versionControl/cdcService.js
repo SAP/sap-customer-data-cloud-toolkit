@@ -244,6 +244,7 @@ class CdcService {
 
     for (let key in filteredResponse) {
       if (filteredResponse.hasOwnProperty(key)) {
+        Schema.removeUnsuportedProfileSchemaFields(filteredResponse)
         const response = await this.schema.set(this.apiKey, this.dataCenter, { [key]: filteredResponse[key] })
         if (response.errorCode !== 0) {
           errors.push(response)
