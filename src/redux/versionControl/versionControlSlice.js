@@ -238,14 +238,21 @@ const getCommonData = (state) => {
 const setCookies = (state) => {
   const credentials = state.credentials
   if (state.gitToken && state.owner && state.repo && credentials?.secretKey) {
-    const encryptedToken = encryptData(state.gitToken, credentials.secretKey)
-    const encryptedOwner = encryptData(state.owner, credentials.secretKey)
+    const encryptedToken = encryptData(sanitizeValue(state.gitToken), credentials.secretKey)
+    const encryptedOwner = encryptData(sanitizeValue(state.owner), credentials.secretKey)
     if (encryptedToken && encryptedOwner) {
       Cookies.set('gitToken', encryptedToken, { secure: true, sameSite: 'strict' })
       Cookies.set('owner', encryptedOwner, { secure: true, sameSite: 'strict' })
     }
   }
-  Cookies.set('repo', state.repo, { secure: true, sameSite: 'strict' })
+  Cookies.set('repo', sanitizeValue(state.repo), { secure: true, sameSite: 'strict' })
+}
+
+const sanitizeValue = (value) => {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+  return value.replace(/[^a-zA-Z0-9-_]/g, '')
 }
 
 export const { setGitToken, setOwner, setRepo, setCredentials, clearCommits, setOpenConfirmDialog, setShowErrorDialog, setShowSuccessDialog, setSuccessMessage, clearErrors } =
