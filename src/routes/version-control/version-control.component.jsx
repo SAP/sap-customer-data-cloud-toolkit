@@ -147,6 +147,11 @@ const VersionControlComponent = ({ t }) => {
 
   const onCancelBackupClick = () => {
     dispatch(setOpenConfirmDialog(false))
+    clearCommitMessage()
+  }
+
+  const clearCommitMessage = () => {
+    setCommitMessage('')
   }
 
   const onCommitRevertClick = (sha) => {
