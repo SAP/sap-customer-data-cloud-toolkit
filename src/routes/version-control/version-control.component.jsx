@@ -143,7 +143,6 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     dispatch(createBackup(commitMessage))
     dispatch(setOpenConfirmDialog(false))
-    clearCommitMessage()
   }
 
   const onCancelBackupClick = () => {
