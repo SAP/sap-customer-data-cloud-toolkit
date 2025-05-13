@@ -29,11 +29,6 @@ steps:
     applicationName: 'OS_CX_AUTOMATION'
     preset: 'SAP_Corp_JavaScript_Client' # you can find the preset per language here - https://github.wdf.sap.corp/pages/Security-Testing/doc/cxone/Presets/
     filterPattern: '!**/node_modules/**,!**/coverage/**,!**/whitesource/**,!**/build/**,**/*.html, **/*.xml, **/*.js, **/*.jsx'
-  sapCheckPPMSCompliance:
-    ppmsCredentialsId: ''
-    ppmsID: '73554900100200022073'
-    uploadChangeRequest: true
-    whitesourceProductToken: ''
   whitesourceExecuteScan:
     buildTool: 'npm'
     userTokenCredentialsId: cdc-tools-chrome-extension-whitesource
