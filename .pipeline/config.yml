@@ -18,7 +18,6 @@ stages:
 steps:
   artifactPrepareVersion:
     gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
-    versioningType: 'cloud_noTag'
   executeBuild:
     buildType: stage
   sapCallStagingService:
