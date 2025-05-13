@@ -17,7 +17,7 @@ stages:
     hadolintExecute: false
 steps:
   artifactPrepareVersion:
-    gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
+    versioningType: 'library'
   executeBuild:
     buildType: stage
   sapCallStagingService:
