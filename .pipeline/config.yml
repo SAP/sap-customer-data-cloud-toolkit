@@ -1,6 +1,6 @@
 general:
   buildTool: 'npm'
-  productiveBranch: 'dev'
+  productiveBranch: 'main'
   pipelineOptimization: false
   gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
   vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-45640'
@@ -18,6 +18,7 @@ stages:
 steps:
   artifactPrepareVersion:
     gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
+    versioningType: 'cloud_noTag'
   executeBuild:
     buildType: stage
   sapCallStagingService:
