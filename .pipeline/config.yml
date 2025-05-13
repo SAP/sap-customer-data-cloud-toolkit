@@ -1,6 +1,6 @@
 general:
   buildTool: 'npm'
-  productiveBranch: 'main'
+  productiveBranch: 'dev'
   pipelineOptimization: false
   gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
   vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-45640'
@@ -17,8 +17,7 @@ stages:
     hadolintExecute: false
 steps:
   artifactPrepareVersion:
-    gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
-    versioningType: 'cloud_noTag'
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
   executeBuild:
     buildType: stage
   sapCallStagingService:
