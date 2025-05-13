@@ -138,4 +138,11 @@
   .cdc-toolbox--topbar-menu-container {
     top: -68px;
   }
+  
+  ui5-checkbox:hover {
+    --_ui5-v1-24-21_checkbox_hover_border_color: #0070f2;
+    --_ui5-v1-24-21_checkbox_hover_background: #e0f7fa;
+    --_ui5-v1-24-21_checkbox_inner_active_border_color: #0070f2;
+    --_ui5-v1-24-21_checkbox_active_background: #e0f7fa;
+  }
 }
