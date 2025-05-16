@@ -31,7 +31,7 @@ steps:
     filterPattern: '!**/node_modules/**,!**/coverage/**,!**/whitesource/**,!**/build/**,**/*.html, **/*.xml, **/*.js, **/*.jsx'
   sapCheckPPMSCompliance:
     ppmsCredentialsId: ''
-    ppmsID: '73554900100200022073'
+    ppmsID: '73555000106100155341'
     uploadChangeRequest: true
     whitesourceProductToken: '724f6571b0ec47b89cf24c1b4d5319d079d83c3da2d04aacb7a4efa0eb98a1b3'
     whitesourceUserTokenCredentialsId: 'cdc-tools-chrome-extension-whitesource'
