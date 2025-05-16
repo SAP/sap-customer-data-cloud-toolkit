@@ -32,8 +32,17 @@ class ScreenSetOptions extends Options {
     }
     for (const set of screenSets) {
       const collectionName = this.#getCollectionName(set)
-      this.#addScreenSetInfo(set, collectionName)
-    }
+   if(collectionName){
+     this.#addScreenSetInfo(set, collectionName)
+   }else{
+      this.options.branches.push({
+        id: set.screenSetID,
+        name: set.screenSetID,
+        formatName: false,
+        value: true,
+      })
+   }
+  }
   }
 
   #getCollectionName(set) {
