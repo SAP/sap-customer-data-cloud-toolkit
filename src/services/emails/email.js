@@ -29,6 +29,7 @@ class Email {
   }
 
   async getSiteEmailsWithDataCenter(site, dataCenter) {
+    debugger
     const url = UrlBuilder.buildUrl(Email.#NAMESPACE, dataCenter, Email.getGetEmailsTemplatesEndpoint(), this.gigyaConsole)
     const res = await client.post(url, this.#getEmailsTemplatesParameters(site)).catch(function (error) {
       //console.log(`error=${error}`)
