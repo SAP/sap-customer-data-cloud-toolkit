@@ -118,13 +118,13 @@ class Dataflow {
   #setDataflowParameters(apiKey, body) {
     const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
     parameters.data = JSON.stringify(body)
+    parameters.context = JSON.stringify({ id: `${Dataflow.#CONTEXT_ID}_setDataflow`, targetApiKey: apiKey })
     return parameters
   }
   #setSchedulingDataflowParameters(apiKey, config) {
     const parameters = Object.assign({}, this.#authenticationDataflowParameters(apiKey))
-
     parameters.data = JSON.stringify(config.data)
-
+    parameters.context = JSON.stringify({ id: `${Dataflow.#CONTEXT_ID}_createScheduling`, targetApiKey: apiKey })
     return parameters
   }
 
@@ -211,6 +211,9 @@ class Dataflow {
     for (const resp of dataflows) {
       if (response.length === 0) {
         response.push(resp)
+        if (!response[0].result) {
+          response[0].result = []
+        }
       } else if (resp.result) {
         response[0].result.push(...resp.result)
         response[0].resultCount += resp.resultCount

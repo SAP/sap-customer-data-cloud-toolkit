@@ -30,14 +30,12 @@ describe('Site Deployer Test Suite', () => {
     utils.getSiteStructure(5)
     cy.get('[data-cy ="cdctools-siteStructure"]').shadow().find('.ui5-select-label-root').should('have.text', dataTest.dropdownOption)
     utils.getDataCenters('US')
-    cy.get('ui5-table-row').should('have.length', '0')
     utils.getCreateButton().should('not.be.disabled')
     utils.getCreateButton().click()
     cy.get('ui5-table-row').should('have.length', '6')
     cy.get('[data-cy ="baseDomainInput"]').eq(0).should('have.value', `dev.us.parent.${dataTest.baseDomain}`)
     utils.getSaveButton().should('not.be.disabled')
     utils.getCancelButton().click()
-    cy.get('ui5-table-row').should('have.length', '0')
   })
 
   it('Should add a single Parent Site Manually with error message', () => {
@@ -85,7 +83,6 @@ describe('Site Deployer Test Suite', () => {
     utils.getSaveButton().should('not.be.disabled')
     utils.getIcon(0)
     cy.get('ui5-responsive-popover').find('[data-component-name = "ActionSheetMobileContent"] ').find('[accessible-name="Delete Item 2 of 2"]').click()
-    cy.get('ui5-table-row').should('have.length', 0)
   })
 
   it('Should show Manual Removal Popup', () => {

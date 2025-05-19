@@ -23,13 +23,6 @@ export default class PayloadCreator {
   }
 
   static #isPrimitiveType(value) {
-    if (value === null) {
-      return true
-    }
-    if (typeof value == 'object' || typeof value == 'function') {
-      return false
-    } else {
-      return true
-    }
+    return value === null || (typeof value !== 'object' && typeof value !== 'function')
   }
 }

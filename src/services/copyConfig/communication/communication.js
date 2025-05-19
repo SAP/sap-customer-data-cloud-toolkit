@@ -39,6 +39,23 @@ class Communication {
     return responses
   }
 
+  async setChannels(destinationSite, destinationSiteConfiguration, content) {
+    const responses = []
+    const channelsPayload = Communication.#splitChannels(content)
+    for (const channel of channelsPayload) {
+      responses.push(this.#channel.set(destinationSite, destinationSiteConfiguration, channel))
+    }
+    return responses
+  }
+  async setTopics(destinationSite, destinationSiteConfiguration, content) {
+    const responses = []
+
+    for (const topic of content) {
+      responses.push(this.#topic.set(destinationSite, destinationSiteConfiguration, topic))
+    }
+    return responses
+  }
+
   #isChildSite(siteInfo, siteApiKey) {
     return siteInfo.siteGroupOwner !== undefined && siteInfo.siteGroupOwner !== siteApiKey
   }

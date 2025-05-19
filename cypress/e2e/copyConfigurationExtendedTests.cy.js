@@ -49,7 +49,9 @@ describe('Copy Configuration extended test suite', () => {
     it('should delete an added Target Site from the Targe Sites list', () => {
       utils.fillTargetApiKeyInput()
       utils.checkTargetSitesList()
-      cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').shadow().find('ui5-button').click()
+      cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').shadow().find('ui5-button').shadow().find('button').should('be.visible')
+      cy.wait(1000)
+      cy.get('[data-cy ="selectedTargetApiKeysList"]').find('ui5-li-custom').shadow().find('ui5-button').shadow().find('button').should('not.be.disabled').click()
       cy.get('[data-cy ="selectedTargetApiKeysList"]').should('not.exist')
     })
 

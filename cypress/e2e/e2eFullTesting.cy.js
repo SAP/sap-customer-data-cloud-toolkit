@@ -12,6 +12,7 @@ describe('All features full Test Suite', () => {
     utils.resizeObserverLoopErrRe()
 
     loginToGigya(dataTest.gigyaURL)
+    cy.get('#automated-usage-tracking-tool-dialog-confirm-button').click()
     // Site creation using Site Deployer with the domain dev.us.e2e_testing
     getSelectedOption(dataTest.siteDeployerIconName)
     testSiteDeployer(dataTest.baseDomainName)
@@ -51,6 +52,8 @@ describe('All features full Test Suite', () => {
     validateChanges(dataTest.childOfBaseDomainName, true)
     navigateToChosenSite(dataTest.baseDomainName)
     deleteSiteCreated()
+
+    cy.run('versionControl.cy.js')
   })
 
   function createSiteAndCopyConfig(pareSiteDomain, childSiteDomain) {
@@ -335,7 +338,7 @@ describe('All features full Test Suite', () => {
   }
 
   function getSelectedOption(optionName) {
-    cy.get('main-app').shadow().find('[class ="fd-nested-list__item"]').contains(optionName).click({ force: true })
+    cy.get('main-app').shadow().find('[class ="list-item fd-nested-list__item"]').contains(optionName).click()
     cy.wait(5000)
   }
   function loginToGigya(URL) {
