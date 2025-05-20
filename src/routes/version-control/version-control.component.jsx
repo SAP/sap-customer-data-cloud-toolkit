@@ -62,6 +62,7 @@ import { decryptData } from '../../redux/encryptionUtils'
 import { ROUTE_VERSION_CONTROL } from '../../inject/constants'
 import MessageList from '../../components/message-list/message-list.component'
 import { setEventListenersForRoute } from '../utils'
+import { trackUsage } from '../../lib/tracker'
 
 const PAGE_TITLE = 'VersionControl'
 const useStyles = createUseStyles(styles, { name: PAGE_TITLE })
@@ -143,6 +144,7 @@ const VersionControlComponent = ({ t }) => {
   const onConfirmBackupClick = async () => {
     dispatch(createBackup(commitMessage))
     dispatch(setOpenConfirmDialog(false))
+    await trackUsage({featureName:PAGE_TITLE})
   }
 
   const onCancelBackupClick = () => {
@@ -154,8 +156,9 @@ const VersionControlComponent = ({ t }) => {
     setCommitMessage('')
   }
 
-  const onCommitRevertClick = (sha) => {
+  const onCommitRevertClick = async (sha) => {
     dispatch(revertBackup(sha))
+    await trackUsage({featureName:PAGE_TITLE})
   }
 
   const handleGitTokenChange = (e) => {
