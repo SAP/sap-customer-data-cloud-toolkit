@@ -97,6 +97,9 @@ class ScreenSet {
   async copyScreenSets(destinationSite, dataCenter, response, options) {
     const promises = []
     for (const screenSetCollectionInfo of options.getOptions().branches) {
+      if(screenSetCollectionInfo.branches.length === 0){
+        promises.push(this.#copyScreenSet(destinationSite, screenSetCollectionInfo.name, dataCenter, response))
+      }
       for (const screenSetInfo of screenSetCollectionInfo.branches) {
         if (screenSetInfo.value) {
           promises.push(this.#copyScreenSet(destinationSite, screenSetInfo.name, dataCenter, response))

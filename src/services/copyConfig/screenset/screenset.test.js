@@ -42,11 +42,13 @@ describe('ScreenSets test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[5].screenSetID, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[6].screenSetID, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[7].screenSetID, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[8].screenSetID, apiKey) })
     const responses = await screenSet.copy(apiKey, dataCenterConfiguration, screenSetOptions)
-    expect(responses.length).toBe(8)
+
+    expect(responses.length).toBe(9)
     validateResponses(responses, serverResponse)
 
-    expect(spy.mock.calls.length).toBe(8)
+    expect(spy.mock.calls.length).toBe(9)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 0))
     expect(spy).toHaveBeenNthCalledWith(2, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 1))
     expect(spy).toHaveBeenNthCalledWith(3, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 2))
@@ -55,6 +57,7 @@ describe('ScreenSets test suite', () => {
     expect(spy).toHaveBeenNthCalledWith(6, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 5))
     expect(spy).toHaveBeenNthCalledWith(7, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 6))
     expect(spy).toHaveBeenNthCalledWith(8, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 7))
+    expect(spy).toHaveBeenNthCalledWith(9, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 8))
   })
 
   test('copy unsuccessfully - error on get', async () => {
@@ -81,6 +84,7 @@ describe('ScreenSets test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[5].screenSetID, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[6].screenSetID, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[7].screenSetID, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(serverResponse, expectedScreenSetResponse.screenSets[8].screenSetID, apiKey) })
     const responses = await screenSet.copy(apiKey, dataCenterConfiguration, screenSetOptions)
     validateResponses(responses, serverResponse)
   })
@@ -88,14 +92,14 @@ describe('ScreenSets test suite', () => {
   test('copy single screenset successfully', async () => {
     const screenSetSingleOptions = new Options(getInfoExpectedResponse(false)[screenSetIndex])
     screenSetSingleOptions.getOptions().branches[0].branches[0].value = true
+    screenSetSingleOptions.getOptions().branches.splice(1, 1)
     let spy = jest.spyOn(screenSet, 'set')
     axios.mockResolvedValueOnce({ data: getExpectedScreenSetResponse() }).mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
-    const responses = await screenSet.copy(apiKey, dataCenterConfiguration, screenSetSingleOptions)
+    const responses = await screenSet.copy(apiKey, dataCenterConfiguration,screenSetSingleOptions)
     expect(responses.length).toBe(1)
     expect(responses[0]).toEqual(getExpectedResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey))
     expect(responses[0].context.id).toEqual(screenSetId)
     expect(responses[0].context.targetApiKey).toEqual(apiKey)
-
     expect(spy.mock.calls.length).toBe(1)
     expect(spy).toHaveBeenNthCalledWith(1, apiKey, dataCenter, getScreenSetExpectedBody(apiKey, 0))
   })

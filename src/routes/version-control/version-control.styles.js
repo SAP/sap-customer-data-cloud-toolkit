@@ -208,6 +208,7 @@ const styles = {
   cardTitle: {
     ...spacing.sapUiSmallMarginTop,
     ...spacing.sapUiSmallMarginBegin,
+    ...spacing.sapUiSmallMarginBottom,
     width: '-webkit-fill-available',
     display: 'flex',
     alignItems: 'center',

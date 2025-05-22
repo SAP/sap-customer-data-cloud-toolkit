@@ -165,6 +165,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, socialIdentitiesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, channelId, apiKey) })
@@ -202,7 +203,7 @@ describe('Config Manager test suite', () => {
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
 
-    expect(response.length).toEqual(37)
+    expect(response.length).toEqual(38)
     verifyAllResponsesAreOk(response)
     verifyAllContext(response)
   })
@@ -302,6 +303,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
+      .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, policyId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, socialIdentitiesId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(mockedResponse, channelId, apiKey) })
@@ -336,7 +338,7 @@ describe('Config Manager test suite', () => {
 
     const infoExpectedResponse = getInfoExpectedResponse(true)
     disableFeatures(infoExpectedResponse)
-    await executeCopyAllUnsuccessfully(mockedResponse, 37)
+    await executeCopyAllUnsuccessfully(mockedResponse, 38)
   })
 
   test('copy all unsuccessfully - error on single copy', async () => {
@@ -358,6 +360,7 @@ describe('Config Manager test suite', () => {
       .mockResolvedValueOnce({ data: expectedGetRiskAssessmentResponseOk })
       .mockResolvedValueOnce({ data: expectedGetUnknownLocationNotificationResponseOk })
       .mockResolvedValueOnce({ data: expectedGetRbaPolicyResponseOk })
+      .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
       .mockResolvedValueOnce({ data: getResponseWithContext(expectedGigyaResponseOk, screenSetId, apiKey) })
@@ -402,7 +405,7 @@ describe('Config Manager test suite', () => {
     infoExpectedResponse[12].branches[2].operation = 'replace'
     disableFeatures(infoExpectedResponse)
     const response = await configManager.copy([apiKey], infoExpectedResponse)
-    expect(response.length).toEqual(37)
+    expect(response.length).toEqual(38)
     const errorResponseIndex = 0
     CommonTestData.verifyResponseIsNotOk(response[errorResponseIndex], mockedResponse)
     expect(response[errorResponseIndex].context.id).toEqual(schemaId)

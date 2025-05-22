@@ -25,6 +25,14 @@ function createScreenSetCollection(collection, value) {
         formatName: false,
         branches: [],
       },
+      {
+        id: 'newScreenSet',
+        name: 'newScreenSet',
+        value: value,
+        formatName: false,
+        branches: [],
+      },
+      
     ],
   }
   const screenSetIds = [
