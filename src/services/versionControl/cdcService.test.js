@@ -383,7 +383,7 @@ const validateConfigs = (configs) => {
 
   expect(configs.riskAssessment).toBeDefined()
 
-  expect(configs.screenSets.screenSets.length).toEqual(8)
+  expect(configs.screenSets.screenSets.length).toEqual(9)
 
   expect(configs.sms.templates.tfa).toBeDefined()
   expect(configs.sms.templates.otp).toBeDefined()

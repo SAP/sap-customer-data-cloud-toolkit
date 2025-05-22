@@ -44,6 +44,7 @@ export function getExpectedScreenSetResponse() {
     'Default-ReAuthentication',
     'Default-RegistrationLogin',
     'Default-Subscriptions',
+    'newScreenSet',
   ]
 
   for (const id of screenSetIds) {
