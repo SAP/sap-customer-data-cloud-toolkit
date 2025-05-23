@@ -25,6 +25,7 @@ import { getExpectedRejectionError, getExpectedRejectionErrors } from './cdcServ
 
 jest.mock('axios')
 jest.mock('./versionControlManager/github')
+
 describe('CdcService', () => {
   const credentials = { userKey: 'testUserKey', secret: 'testSecret', gigyaConsole: 'testConsole' }
   const apiKey = 'testApiKey'
