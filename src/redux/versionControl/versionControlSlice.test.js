@@ -25,6 +25,7 @@ import reducer, {
   setSuccessMessage,
   clearErrors,
 } from './versionControlSlice'
+import * as Tracker from '../../lib/tracker'
 
 jest.mock('js-cookie', () => ({
   set: jest.fn(),
@@ -37,6 +38,7 @@ const middlewares = [thunk]
 const mockStore = configureMockStore(middlewares)
 
 describe('versionControlSlice', () => {
+  let tracker
   const originalWindow = { ...global.window }
   const credentials = { secretKey: 'testSecretKey' }
   const initialState = {
@@ -63,7 +65,10 @@ describe('versionControlSlice', () => {
     global.window.location = {
       hash: '',
     }
+      tracker = jest.spyOn(Tracker, 'trackUsage').mockImplementation(() => {})
+  
   })
+
 
   afterAll(() => {
     global.window = originalWindow
@@ -125,6 +130,8 @@ describe('versionControlSlice', () => {
       const expectedState = { ...initialState.versionControl, isFetching: true, errors: [] }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
+      expect(tracker).not.toHaveBeenCalled()
+
     })
     it('should update state when getting services', async () => {
       const store = mockStore({ ...initialState, versionControl: { ...initialState.versionControl } })
@@ -135,6 +142,7 @@ describe('versionControlSlice', () => {
       const expectedState = { ...initialState.versionControl, isFetching: true, errors: [], showErrorDialog: false, showSuccessDialog: false }
       const state = reducer(initialState.versionControl, actions[0])
       expect(state).toEqual(expectedState)
+      expect(tracker).not.toHaveBeenCalled()
     })
 
     it('should update state with commits on fetchCommits fulfilled', () => {
@@ -249,12 +257,15 @@ describe('versionControlSlice', () => {
       expect(newState.isFetching).toEqual(true)
       expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
+      expect(tracker).not.toHaveBeenCalled()
+
     })
     it('should update state when getRevertChanges is rejected', async () => {
       const action = revertBackup.rejected('', '', '', 'Failed to revert configurations')
       const newState = reducer(initialState, action)
       expect(newState.errors).toEqual('Failed to revert configurations')
       expect(newState.isFetching).toEqual(false)
+      expect(tracker).not.toHaveBeenCalled()
     })
     it('should update state when fetchCommits is fulfilled', async () => {
       const commits = [
@@ -295,12 +306,14 @@ describe('versionControlSlice', () => {
       expect(newState.isFetching).toEqual(true)
       expect(newState.errors).toEqual([])
       expect(newState.versionControl.commits.length).toEqual(0)
+      expect(tracker).not.toHaveBeenCalled()
     })
     it('should update state when getServices is rejected', async () => {
       const action = createBackup.rejected('', '', '', 'Failed to get services')
       const newState = reducer(initialState, action)
       expect(newState.errors).toEqual('Failed to get services')
       expect(newState.isFetching).toEqual(false)
+      expect(tracker).not.toHaveBeenCalled()
     })
     it('should update state when prepareFilesForUpdate is fulfilled', async () => {
       const formattedFiles = ['Dataflow', 'WebSdk']

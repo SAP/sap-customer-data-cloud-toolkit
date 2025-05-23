@@ -40,6 +40,7 @@ class ScreenSetOptions extends Options {
         name: set.screenSetID,
         formatName: false,
         value: true,
+        branches: [],
       })
    }
   }
