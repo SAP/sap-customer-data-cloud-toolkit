@@ -61,6 +61,7 @@ class Email {
     const parameters = Object.assign({})
     parameters.apiKey = apiKey
     parameters.userKey = this.userKey
+    parameters.secret = this.secret
     parameters.context = JSON.stringify({ id: 'emailTemplates', targetApiKey: apiKey })
 
     return parameters
@@ -69,7 +70,6 @@ class Email {
   #setEmailsTemplatesParameters(apiKey, templateName, template) {
     const tokens = templateName.split('.')
     const parameters = this.#getEmailsTemplatesParameters(apiKey)
-    parameters.secret = this.secret
     parameters[tokens[0]] = JSON.stringify(template)
     parameters.context = JSON.stringify({ id: tokens[tokens.length - 1], targetApiKey: apiKey })
     return parameters
