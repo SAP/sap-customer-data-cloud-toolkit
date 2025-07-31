@@ -1,6 +1,6 @@
 {
   "name": "sap-customer-data-cloud-toolkit",
-  "version": "1.10.0",
+  "version": "1.11.2",
   "private": false,
   "dependencies": {
     "@octokit/rest": "^21.0.2",
