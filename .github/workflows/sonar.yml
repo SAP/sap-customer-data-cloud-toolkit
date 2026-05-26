@@ -1,0 +1,17 @@
+name: Sonar
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  piper:
+    uses: "project-piper/piper-pipeline-github/.github/workflows/sap-piper-workflow.yml@v1"
+    secrets: inherit
+    permissions:
+      contents: write
+      id-token: write

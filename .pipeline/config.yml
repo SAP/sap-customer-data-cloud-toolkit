@@ -1,0 +1,17 @@
+general:
+  buildTool: 'npm'
+  productiveBranch: 'main'
+  vaultPath: 'piper/sap-project-sap-customer-data-cloud-toolkit'
+  vaultBasePath: 'piper/sap-project-sap-customer-data-cloud-toolkit'
+  vaultPipelineName: 'sap-customer-data-cloud-toolkit'
+  vaultServerUrl: 'https://vault.tools.sap'
+  vaultNamespace: 'ies/hyperspace/pipelines'
+  nativeBuild: true
+stages:
+  Release:
+    sapDownloadArtifact: false
+  Post:
+    vaultRotateSecretId: false
+steps:
+  sonarExecuteScan:
+    serverUrl: 'https://sonar.tools.sap'
