@@ -16,7 +16,7 @@ jobs:
         uses: checkmarx/ast-github-action@main
         with:
           base_uri: https://checkmarx.tools.sap
-          cx_tenant: sap
+          cx_tenant: ${{ secrets.CHECKMARX_TENANT_ID }}
           cx_client_id: ${{ secrets.CHECKMARX_CLIENT_ID }}
           cx_client_secret: ${{ secrets.CHECKMARX_CLIENT_SECRET }}
           project_name: sap-customer-data-cloud-toolkit
