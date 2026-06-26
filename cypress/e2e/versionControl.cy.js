@@ -584,7 +584,7 @@ describe('Version Control Test Suite', () => {
     cy.get('[data-cy="repoInput"]').should('be.visible').shadow().find('input').type('testRepo{enter}')
   })
 
-  it.only('should popup the error dialog when reverting', () => {
+  it('should popup the error dialog when reverting', () => {
     utils.mockGetConfigurationRequests()
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches`, { body: dataTest.mockedVersionControlGetListBranches }).as('getBranches')
     cy.intercept('GET', `${url}/repos/testOwner/testRepo/branches/main`, { body: dataTest.mockedVersionControlGetResponse })
