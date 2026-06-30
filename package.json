@@ -1,12 +1,12 @@
 {
   "name": "sap-customer-data-cloud-toolkit",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "private": false,
   "dependencies": {
-    "@octokit/rest": "^21.0.2",
     "@babel/runtime": "^7.27.0",
+    "@octokit/rest": "^21.0.2",
     "@reduxjs/toolkit": "^1.8.6",
-    "@sap_oss/automated-usage-tracking-tool": "^1.0.0",
+    "@sap_oss/automated-usage-tracking-tool": "^1.2.5",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -54,7 +54,7 @@
   },
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit|universal-user-agent|before-after-hook)).*\\.js$"
+      "node_modules/(?!(@ui5|lit-html|@babel|axios|@octokit|universal-user-agent|before-after-hook|uuid|@sap_oss)).*\\.js$"
     ],
     "moduleNameMapper": {
       "\\.(css)$": "identity-obj-proxy"
@@ -113,8 +113,8 @@
     "nyc": "^15.1.0",
     "prettier": "3.0.0",
     "react-scripts": "5.0.1",
+    "redux-thunk": "^2.4.2",
     "release-it": "^19.0.2",
-    "start-server-and-test": "^2.0.0",
-    "redux-thunk": "^2.4.2"
+    "start-server-and-test": "^2.0.0"
   }
 }

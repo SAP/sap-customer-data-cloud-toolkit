@@ -1425,6 +1425,19 @@ const mockedGetCommunicationTopicsExpectedResponse = {
     },
   },
 }
+const mockedGetCommunicationSettingsSearchExpectedResponse = {
+  callId: '015f04e745e9798c81026b182es73504',
+  context: '{}',
+  errorCode: 0,
+  errorDetails: '',
+  apiVersion: 2,
+  statusCode: 200,
+  statusReason: 'OK',
+  time: '2026-06-25T17:08:14.119Z',
+  results: [],
+  objectsCount: 0,
+  totalCount: 0,
+}
 
 const mockedSetCommunicationResponse = {
   callId: 'f88bef4a500440a2914e17c0c1177276',
@@ -2407,4 +2420,5 @@ export {
   mockedVersionControlGetListBranches,
   mockedVersionControlGetListBranches2,
   mockedVersionControlGetCommitsEmptyResponse,
+  mockedGetCommunicationSettingsSearchExpectedResponse,
 }

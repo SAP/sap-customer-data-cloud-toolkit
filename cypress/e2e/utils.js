@@ -26,6 +26,7 @@ import {
   mockedGetWebhookExpectedResponse,
   mockedSearchDataflowsResponse,
   mockedUserSitesResponse,
+  mockedGetCommunicationSettingsSearchExpectedResponse,
   policiesPopoverText,
   siteConfigResponse,
   targetSitePopoverText,
@@ -47,9 +48,13 @@ export function startUp(pageName) {
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
+  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
+  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
 
-  cy.contains(pageName).realClick()
+  cy.contains(pageName).click()
+
   cy.reload()
+  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
 }
 export function getImportAccountsInformation() {
   cy.get('#importAccountsTitle').should('contain.text', importData)
@@ -169,6 +174,7 @@ export function mockGetConfigurationRequests() {
   cy.intercept('POST', 'accounts.getConsentsStatements', { body: mockedGetConsentStatementExpectedResponse }).as('getConsentsStatements')
   cy.intercept('POST', 'accounts.communication.getChannels', { body: mockedGetCommunicationChannelsExpectedResponse }).as('communication.getChannels')
   cy.intercept('POST', 'accounts.communication.getTopicSettings', { body: mockedGetCommunicationTopicsExpectedResponse }).as('communication.getTopicSettings')
+  cy.intercept('POST', 'accounts.communications.settings.search', { body: mockedGetCommunicationSettingsSearchExpectedResponse }).as('communication.getComminicationSettingsSearch')
   cy.intercept('POST', 'accounts.webhooks.getAll', { body: mockedGetWebhookExpectedResponse }).as('webhooks.getAll')
   cy.intercept('POST', 'accounts.extensions.list', { body: mockedGetExtensionExpectedResponse }).as('extensions.list')
   cy.intercept('POST', 'accounts.extensions.create', { body: mockedCreateExtensionExpectedResponse }).as('extensions.create')
