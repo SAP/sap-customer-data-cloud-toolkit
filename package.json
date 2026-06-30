@@ -1,6 +1,6 @@
 {
   "name": "sap-customer-data-cloud-toolkit",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "private": false,
   "dependencies": {
     "@babel/runtime": "^7.27.0",
