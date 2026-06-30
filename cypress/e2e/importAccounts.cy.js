@@ -1,5 +1,4 @@
 import * as utils from './utils'
-import * as dataTest from './dataTest'
 
 describe('Import Account - Configuration Tree test suite', () => {
   context('Configuration Tree ', () => {
