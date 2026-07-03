@@ -27,6 +27,9 @@ export const initTracker = () => {
     return null
   }
 
+  localStorage.setItem('aoaClientId', 'sb-xsuaa-aoa-tracking-api-credentials!t516000')
+  localStorage.setItem('aoaClientSecret', 'ebe1f113-695d-4722-a65e-974e6dc72cac$lWCtSfQ52XNYqIFUJqkAMN2hhMhaukFlengA5eh3a-Y=')
+
   return new Web(credentials)
 }
 
@@ -53,7 +56,8 @@ export async function trackUsage({ featureName }) {
     return null
   }
   return await trackingTool.trackUsage({
-    toolName: 'Customer Data Cloud toolkit',
+    // toolName: 'Customer Data Cloud toolkit',
+    toolName: 'acc2cs',
     featureName,
   })
 }
