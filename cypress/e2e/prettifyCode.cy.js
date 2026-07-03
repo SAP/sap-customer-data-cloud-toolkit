@@ -14,8 +14,6 @@ describe('UI Builder - Prettify Code', () => {
     context('Single Screen - No javascript on the screenSet', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${liteRegistration}`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
 
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
@@ -33,8 +31,6 @@ describe('UI Builder - Prettify Code', () => {
     context('Single Screen - View Success PopUp', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${linkAccounts}`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
       afterEach(() => {
@@ -51,8 +47,6 @@ describe('UI Builder - Prettify Code', () => {
     context('Single Screen - View Error PopUp', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web/uiBuilder?screenSetId=${organizationRegistration}`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
         utils.getScreenSets(datatest.mockedPrettierGetScreenSetResponse)
       })
       afterEach(() => {
@@ -71,9 +65,6 @@ describe('UI Builder - Prettify Code', () => {
     context('All Screens - Success Prettier', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
-
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
       })
       afterEach(() => {
@@ -92,8 +83,6 @@ describe('UI Builder - Prettify Code', () => {
     context('All Screens - No Javascript on any screen', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
         utils.removeJavascript(datatest.mockGetAllSuccessScreenSets)
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
       })
@@ -110,8 +99,6 @@ describe('UI Builder - Prettify Code', () => {
     context('All Screens - Javascript error on a single screenSet', () => {
       beforeEach(() => {
         cy.visit(`/#/99999999/4_AAAAAAAAAAAAAAAAAAAAAA/user-interfacing/screen-sets-app/web`)
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-        cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
         utils.getScreenSets(datatest.mockGetAllSuccessScreenSets)
         utils.addErrorOnJavascript(datatest.mockGetAllSuccessScreenSets, liteRegistration)
       })

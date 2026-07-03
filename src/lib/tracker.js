@@ -27,6 +27,9 @@ export const initTracker = () => {
     return null
   }
 
+  localStorage.setItem('aoaClientId', 'sb-xsuaa-aoa-tracking-api-credentials!t516000')
+  localStorage.setItem('aoaClientSecret', '272f8c6e-ed20-4af3-8b35-80575d6d292c$8O9dIz6bK77h3Qn2LSX3kFun5QPvF2tKgmq0tZwrAkk=')
+
   return new Web(credentials)
 }
 

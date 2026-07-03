@@ -48,13 +48,11 @@ export function startUp(pageName) {
   cy.clearAllCookies()
   cy.clearAllLocalStorage()
   cy.clearAllSessionStorage()
-  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
-  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').should('not.be.visible')
+  
 
   cy.contains(pageName).click()
 
   cy.reload()
-  cy.get('#automated-usage-tracking-tool-dialog-warning-close-button').click()
 }
 export function getImportAccountsInformation() {
   cy.get('#importAccountsTitle').should('contain.text', importData)
