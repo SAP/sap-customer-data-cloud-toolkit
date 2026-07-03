@@ -56,8 +56,7 @@ export async function trackUsage({ featureName }) {
     return null
   }
   return await trackingTool.trackUsage({
-    // toolName: 'Customer Data Cloud toolkit',
-    toolName: 'acc2cs',
+    toolName: 'Customer Data Cloud toolkit',
     featureName,
   })
 }
